@@ -14,6 +14,7 @@ import type {
 import { container } from '../container';
 import { SyncHook } from '../tapable';
 import { application } from '../application';
+import { EventListenerManager } from '../common/event-listener-manager';
 
 export const VWindow = Symbol.for('VWindow');
 
@@ -25,7 +26,7 @@ export const WindowHandlerContribution = Symbol.for('WindowHandlerContribution')
  * 对于原生，就是管理这个系统窗口
  */
 @injectable()
-export class DefaultWindow implements IWindow {
+export class DefaultWindow extends EventListenerManager implements IWindow {
   protected _width: number;
   protected _height: number;
   protected _handler: IWindowHandlerContribution;
@@ -76,9 +77,33 @@ export class DefaultWindow implements IWindow {
   }
 
   constructor() {
+    super();
     this._uid = Generator.GenAutoIncrementId();
     this.global = application.global;
     this.postInit();
+  }
+
+  // Override from EventListenerManager
+  protected _nativeAddEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions
+  ): void {
+    return this._handler.addEventListener(type, listener, options);
+  }
+
+  // Override from EventListenerManager
+  protected _nativeRemoveEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions
+  ): void {
+    return this._handler.removeEventListener(type, listener, options);
+  }
+
+  // Override from EventListenerManager
+  protected _nativeDispatchEvent(event: Event): boolean {
+    return this._handler.dispatchEvent(event);
   }
 
   protected postInit() {
@@ -151,7 +176,8 @@ export class DefaultWindow implements IWindow {
   }
   release(): void {
     this.global.hooks.onSetEnv.unTap('window', this.active);
-
+    // Clean up all event listeners
+    this.clearAllEventListeners();
     return this._handler.releaseWindow();
   }
   getContext(): IContext2d {
@@ -165,35 +191,6 @@ export class DefaultWindow implements IWindow {
       return null;
     }
     return this._handler.getImageBuffer(type);
-  }
-
-  addEventListener<K extends keyof DocumentEventMap>(
-    type: K,
-    listener: (this: Document, ev: DocumentEventMap[K]) => any,
-    options?: boolean | AddEventListenerOptions
-  ): void;
-  addEventListener(
-    type: string,
-    listener: EventListenerOrEventListenerObject,
-    options?: boolean | AddEventListenerOptions
-  ): void {
-    return this._handler.addEventListener(type, listener, options);
-  }
-  removeEventListener<K extends keyof DocumentEventMap>(
-    type: K,
-    listener: (this: Document, ev: DocumentEventMap[K]) => any,
-    options?: boolean | EventListenerOptions
-  ): void;
-  removeEventListener(
-    type: string,
-    listener: EventListenerOrEventListenerObject,
-    options?: boolean | EventListenerOptions
-  ): void {
-    return this._handler.removeEventListener(type, listener, options);
-  }
-
-  dispatchEvent(event: any): boolean {
-    return this._handler.dispatchEvent(event);
   }
 
   getBoundingClientRect(): IDomRectLike {

@@ -129,7 +129,7 @@ export interface IEnvContribution
    */
   loadFont: (
     font: string,
-    source: string | BinaryData,
+    source: string | any,
     descriptors?: FontFaceDescriptors
   ) => Promise<{
     loadState: 'success' | 'fail';
@@ -208,6 +208,7 @@ export interface IGlobal extends Omit<IEventElement, 'on' | 'off' | 'once' | 'em
   createCanvas: (params: ICreateCanvasParams) => HTMLCanvasElement | any;
   createOffscreenCanvas: (params: ICreateCanvasParams) => HTMLCanvasElement | any;
   releaseCanvas: (canvas: HTMLCanvasElement | string | any) => void;
+  setEventListenerTransformer: (transformer: (event: Event) => Event) => void;
 
   /**
    * 获取环境中最大动态canvas的数量，offscreenCanvas或者framebuffer

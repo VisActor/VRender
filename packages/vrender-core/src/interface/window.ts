@@ -74,6 +74,8 @@ export interface IWindow
   onVisibleChange: (cb: (currentVisible: boolean) => void) => void;
 
   getTopLeft: (baseWindow?: boolean) => { top: number; left: number };
+
+  setEventListenerTransformer: (transformer: (event: Event) => Event) => void;
 }
 
 export interface IWindowHandlerContribution

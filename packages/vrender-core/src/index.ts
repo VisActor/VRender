@@ -45,6 +45,7 @@ export * from './common/morphing-utils';
 export * from './common/split-path';
 export * from './common/enums';
 export * from './common/generator';
+export * from './common/event-transformer';
 export * from './plugins/constants';
 export * from './plugins/builtin-plugin/richtext-edit-plugin';
 export * from './allocator/matrix-allocate';

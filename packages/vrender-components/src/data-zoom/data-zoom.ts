@@ -242,12 +242,15 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     const evtTarget = vglobal.env === 'browser' ? vglobal : this.stage;
     const triggers = getEndTriggersOfDrag();
 
-    evtTarget.removeEventListener('pointermove', this._onHandlerPointerMove, { capture: true });
+    evtTarget.removeEventListener('pointermove', this._onHandlerPointerMove, { capture: true, passive: false });
     triggers.forEach((trigger: string) => {
       evtTarget.removeEventListener(trigger, this._onHandlerPointerUp);
     });
 
-    (this as unknown as IGroup).removeEventListener('pointermove', this._onHandlerPointerMove, { capture: true });
+    (this as unknown as IGroup).removeEventListener('pointermove', this._onHandlerPointerMove, {
+      capture: true,
+      passive: false
+    });
   }
 
   /**
@@ -282,8 +285,11 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     /**
      * move的时候，需要通过 capture: true，能够在捕获截断被拦截，
      */
-    evtTarget.addEventListener('pointermove', this._onHandlerPointerMove, { capture: true });
-    (this as unknown as IGroup).addEventListener('pointermove', this._onHandlerPointerMove, { capture: true });
+    evtTarget.addEventListener('pointermove', this._onHandlerPointerMove, { capture: true, passive: false });
+    (this as unknown as IGroup).addEventListener('pointermove', this._onHandlerPointerMove, {
+      capture: true,
+      passive: false
+    });
 
     triggers.forEach((trigger: string) => {
       evtTarget.addEventListener(trigger, this._onHandlerPointerUp);

@@ -225,6 +225,8 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   // 不考虑transform的宽高，特殊情况下会使用到
   declare widthWithoutTransform?: number;
   declare heightWithoutTransform?: number;
+  declare x1WithoutTransform?: number;
+  declare y1WithoutTransform?: number;
 
   // aabbBounds，所有图形都需要有，所以初始化即赋值
   protected declare _AABBBounds: IAABBBounds;

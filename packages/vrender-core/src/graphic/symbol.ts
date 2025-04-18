@@ -87,6 +87,8 @@ export class Symbol extends Graphic<ISymbolGraphicAttribute> implements ISymbol 
 
     this.widthWithoutTransform = aabbBounds.x2 - aabbBounds.x1;
     this.heightWithoutTransform = aabbBounds.y2 - aabbBounds.y1;
+    this.x1WithoutTransform = aabbBounds.x1;
+    this.y1WithoutTransform = aabbBounds.y1;
 
     const { lineJoin = symbolTheme.lineJoin } = attribute;
     application.graphicService.transformAABBBounds(attribute, aabbBounds, symbolTheme, lineJoin === 'miter', this);

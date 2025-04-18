@@ -445,9 +445,11 @@ export class Animate implements IAnimate {
       step = step.next;
     }
 
-    this.status = AnimateStatus.END;
+    if (this.status !== AnimateStatus.END) {
+      this.onEnd();
+    }
 
-    this.onEnd();
+    this.status = AnimateStatus.END;
 
     if (!this.target) {
       return;

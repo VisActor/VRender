@@ -11,6 +11,7 @@ export { registerAnimate } from './register';
 export { ACustomAnimate, AComponentAnimate } from './custom/custom-animate';
 export { ComponentAnimator } from './component/component-animator';
 export { IncreaseCount } from './custom/number';
+export { MorphingPath, MultiToOneMorphingPath, oneToMultiMorph, multiToOneMorph } from './custom/morphing';
 export { InputText } from './custom/input-text';
 export { ClipGraphicAnimate, ClipAngleAnimate, ClipRadiusAnimate, ClipDirectionAnimate } from './custom/clip-graphic';
 export { TagPointsUpdate } from './custom/tag-points';

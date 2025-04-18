@@ -72,6 +72,13 @@ export class DefaultDrawContribution implements IDrawContribution {
     this.init();
   }
 
+  reInit() {
+    this.init();
+    this.contributions.forEach(item => {
+      item.reInit();
+    });
+  }
+
   init() {
     this.contributions.forEach(item => {
       if (item.style) {

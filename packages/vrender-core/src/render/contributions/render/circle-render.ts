@@ -32,7 +32,7 @@ export class DefaultCanvasCircleRender extends BaseRender<ICircle> implements IG
   constructor(
     @inject(ContributionProvider)
     @named(CircleRenderContribution)
-    protected readonly circleRenderContribitions: IContributionProvider<ICircleRenderContribution>
+    protected readonly graphicRenderContributions: IContributionProvider<ICircleRenderContribution>
   ) {
     super();
     this.builtinContributions = [
@@ -40,7 +40,7 @@ export class DefaultCanvasCircleRender extends BaseRender<ICircle> implements IG
       defaultCircleBackgroundRenderContribution,
       defaultCircleTextureRenderContribution
     ];
-    this.init(circleRenderContribitions);
+    this.init(graphicRenderContributions);
   }
 
   drawShape(

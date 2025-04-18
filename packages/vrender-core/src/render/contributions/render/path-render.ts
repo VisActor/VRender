@@ -35,11 +35,11 @@ export class DefaultCanvasPathRender extends BaseRender<IPath> implements IGraph
   constructor(
     @inject(ContributionProvider)
     @named(PathRenderContribution)
-    protected readonly pathRenderContribitions: IContributionProvider<IPathRenderContribution>
+    protected readonly graphicRenderContributions: IContributionProvider<IPathRenderContribution>
   ) {
     super();
     this.builtinContributions = [defaultPathBackgroundRenderContribution, defaultPathTextureRenderContribution];
-    this.init(pathRenderContribitions);
+    this.init(graphicRenderContributions);
   }
 
   drawShape(

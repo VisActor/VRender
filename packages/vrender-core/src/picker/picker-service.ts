@@ -48,6 +48,10 @@ export abstract class DefaultPickService implements IPickerService {
     this.global = application.global;
   }
 
+  reInit() {
+    this._init();
+  }
+
   protected _init() {
     this.InterceptorContributions = this.pickItemInterceptorContributions
       .getContributions()

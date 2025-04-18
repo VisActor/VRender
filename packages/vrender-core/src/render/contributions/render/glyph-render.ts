@@ -20,6 +20,10 @@ export class DefaultCanvasGlyphRender implements IGraphicRender {
 
   // constructor() {}
 
+  reInit() {
+    return;
+  }
+
   drawShape(
     glyph: IGlyph,
     context: IContext2d,

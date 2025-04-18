@@ -58,6 +58,10 @@ export class DefaultRenderService implements IRenderService {
     this.drawContribution.afterDraw && this.drawContribution.afterDraw(this, { ...this.drawParams });
     return;
   }
+
+  reInit() {
+    this.drawContribution.reInit();
+  }
   // 对外暴露的绘制方法
   render(groups: IGroup[], params: IRenderServiceDrawParams): void {
     this.renderTreeRoots = groups;

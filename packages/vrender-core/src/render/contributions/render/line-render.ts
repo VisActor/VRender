@@ -83,7 +83,7 @@ export class DefaultCanvasLineRender extends BaseRender<ILine> implements IGraph
 
     const z = this.z ?? 0;
 
-    drawSegments(context.camera ? context : context.nativeContext, cache, clipRange, clipRangeByDimension, {
+    drawSegments(context, cache, clipRange, clipRangeByDimension, {
       offsetX,
       offsetY,
       offsetZ: z

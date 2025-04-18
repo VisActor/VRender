@@ -376,6 +376,12 @@ export interface CommonDomOptions {
   anchorType?: 'position' | 'boundsLeftTop' | BoundsAnchorType;
 }
 
+export type IRoughStyle = {
+  fillStyle: 'hachure' | 'solid' | 'zigzag' | 'cross-hatch' | 'dots' | 'sunburst' | 'dashed' | 'zigzag-line';
+  roughness: number;
+  bowing: number;
+};
+
 export type IGraphicStyle = ILayout &
   IFillStyle &
   IStrokeStyle &
@@ -497,6 +503,7 @@ export type IGraphicStyle = ILayout &
     cursor: Cursor | null;
     filter: string;
     renderStyle?: 'default' | 'rough' | any;
+    roughStyle?: IRoughStyle | null;
     /**
      * HTML的dom或者string
      */

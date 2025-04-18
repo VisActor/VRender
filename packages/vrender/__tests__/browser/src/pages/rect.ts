@@ -1,8 +1,7 @@
-import { createStage, createRect, IGraphic, createGroup, createSymbol } from '@visactor/vrender';
+import { createStage, container, createRect, IGraphic, createGroup, createSymbol } from '@visactor/vrender';
 import { roughModule } from '@visactor/vrender-kits';
-import { addShapesToStage, colorPools } from '../utils';
 
-// container.load(roughModule);
+container.load(roughModule);
 export const page = () => {
   const graphics: IGraphic[] = [];
   // graphics.push(
@@ -60,13 +59,14 @@ export const page = () => {
     stroke: 'red',
     // scaleCenter: ['50%', '50%'],
     // _debug_bounds: true,
-    fill: 'conic-gradient(from 90deg, rgba(5,0,255,1) 16%, rgba(0,255,10,1) 41%, rgba(9,9,121,1) 53%, rgba(0,212,255,1) 100%)',
+    fill: 'red',
     // cornerRadius: [5, 10, 15, 20],
-    lineWidth: 5,
+    lineWidth: 2,
     anchor: ['50%', '50%'],
     // anchor: [400, 200],
     lineDash: [100, 10],
-    lineDashOffset: -100
+    lineDashOffset: -100,
+    renderStyle: 'rough'
   });
   const star = createSymbol({
     x: 300,
@@ -75,7 +75,7 @@ export const page = () => {
     scaleY: 2,
     angle: 30,
     size: 100,
-    symbolType: 'square',
+    symbolType: 'star',
     // cornerRadius: [0, 10, 10, 0],
     stroke: 'red',
     // scaleCenter: ['50%', '50%'],
@@ -87,7 +87,8 @@ export const page = () => {
     anchor: ['50%', '50%'],
     // anchor: [400, 200],
     lineDash: [100, 10],
-    lineDashOffset: -100
+    lineDashOffset: -100,
+    renderStyle: 'rough'
   });
 
   const group = createGroup({

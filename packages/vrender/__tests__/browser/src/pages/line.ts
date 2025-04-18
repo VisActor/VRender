@@ -3,7 +3,7 @@ import { roughModule } from '@visactor/vrender-kits';
 import { addShapesToStage, colorPools } from '../utils';
 import { createSymbol } from '@visactor/vrender';
 
-// container.load(roughModule);
+container.load(roughModule);
 
 const subP1 = [
   [0, 100],
@@ -174,6 +174,7 @@ export const page = () => {
         x: ((i * 300) % 900) + 100,
         y: Math.floor((i * 300) / 900) * 200,
         closePath: true,
+        renderStyle: 'rough',
         // segments: [
         //   {
         //     points: subP1,

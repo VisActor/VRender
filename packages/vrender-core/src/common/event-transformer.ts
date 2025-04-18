@@ -50,8 +50,12 @@ export function createEventTransformer(
       // For touch events, we need to transform each touch point
       // This is a simplified version that assumes we're only using the first touch
       if (event.touches.length > 0) {
-        const touch = event.touches[0];
-        transformPoint(touch.clientX, touch.clientY, transformMatrix, containerRect, transformedEvent);
+        const touch = transformedEvent.touches[0];
+        transformPoint(touch.clientX, touch.clientY, transformMatrix, containerRect, touch);
+      }
+      if (event.changedTouches.length > 0) {
+        const touch = transformedEvent.changedTouches[0];
+        transformPoint(touch.clientX, touch.clientY, transformMatrix, containerRect, touch);
       }
     }
 
@@ -137,6 +141,17 @@ export function mapToCanvasPointForCanvas(nativeEvent: any) {
       x: nativeEvent._canvasX,
       y: nativeEvent._canvasY
     };
+  } else if ((nativeEvent as TouchEvent).changedTouches) {
+    const data = (nativeEvent as TouchEvent).changedTouches[0] ?? ({} as any);
+    return {
+      x: data._canvasX,
+      y: data._canvasY
+    };
   }
-  return;
+  const x = (nativeEvent as any)._canvasX || 0;
+  const y = (nativeEvent as any)._canvasY || 0;
+  return {
+    x,
+    y
+  };
 }

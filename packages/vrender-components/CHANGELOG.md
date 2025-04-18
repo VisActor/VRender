@@ -1,6 +1,15 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Wed, 16 Apr 2025 03:17:31 GMT and should not be manually modified.
+This log was last generated on Fri, 18 Apr 2025 06:59:46 GMT and should not be manually modified.
+
+## 0.22.9
+Fri, 18 Apr 2025 06:59:46 GMT
+
+### Updates
+
+- fix: fix state not sync with mouse
+
+
 
 ## 0.22.8
 Wed, 16 Apr 2025 03:17:31 GMT

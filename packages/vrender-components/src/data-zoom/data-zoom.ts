@@ -242,10 +242,12 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     const evtTarget = vglobal.env === 'browser' ? vglobal : this.stage;
     const triggers = getEndTriggersOfDrag();
 
-    evtTarget.removeEventListener('pointermove', this._onHandlerPointerMove, { capture: true, passive: false });
+    evtTarget.removeEventListener('pointermove', this._onHandlerPointerMove, { capture: true });
     triggers.forEach((trigger: string) => {
       evtTarget.removeEventListener(trigger, this._onHandlerPointerUp);
     });
+
+    (this as unknown as IGroup).removeEventListener('pointermove', this._onHandlerPointerMove, { capture: true });
   }
 
   /**
@@ -279,9 +281,10 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
 
     /**
      * move的时候，需要通过 capture: true，能够在捕获截断被拦截，
-     * move的时候，需要显示的设置passive: false，因为在移动端需要禁用浏览器默认行为
      */
-    evtTarget.addEventListener('pointermove', this._onHandlerPointerMove, { capture: true, passive: false });
+    evtTarget.addEventListener('pointermove', this._onHandlerPointerMove, { capture: true });
+    (this as unknown as IGroup).addEventListener('pointermove', this._onHandlerPointerMove, { capture: true });
+
     triggers.forEach((trigger: string) => {
       evtTarget.addEventListener(trigger, this._onHandlerPointerUp);
     });
@@ -326,6 +329,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
           end = end + dis;
         }
       }
+      this._activeCache.lastPos = pos;
       brushSelect && this.renderDragMask();
     }
     start = Math.min(Math.max(start, 0), 1);
@@ -333,7 +337,6 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
 
     // 避免attributes相同时, 重复渲染
     if (startAttr !== start || endAttr !== end) {
-      this._activeCache.lastPos = pos;
       this.setStateAttr(start, end, true);
       if (realTime) {
         this._dispatchEvent('change', {

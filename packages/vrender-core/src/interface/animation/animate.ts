@@ -179,3 +179,23 @@ export interface IAnimateTarget {
   animates: Map<string | number, IAnimate>;
   [key: string]: any;
 }
+
+export interface BaseAnimateConfig {
+  id?: number | string;
+  interpolate?: (key: string, ratio: number, from: any, to: any, nextAttributes: any) => boolean;
+  onStart?: () => void;
+  onFrame?: (step: IStep, ratio: number) => void;
+  onEnd?: () => void;
+  onRemove?: () => void;
+}
+
+export interface MorphingAnimateConfig extends Omit<BaseAnimateConfig, 'interpolate'> {
+  duration?: number;
+  easing?: EasingType; // 统一到easing
+  delay?: number;
+}
+
+export interface MultiMorphingAnimateConfig extends MorphingAnimateConfig {
+  splitPath?: 'clone' | ((graphic: IGraphic, count: number, needAppend?: boolean) => IGraphic[]);
+  individualDelay?: (index: number, count: number, fromGraphic: IGraphic, toGraphic: IGraphic) => number;
+}

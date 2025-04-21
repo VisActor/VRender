@@ -1,6 +1,13 @@
 # Change Log - @visactor/vrender-kits
 
-This log was last generated on Fri, 18 Apr 2025 06:59:46 GMT and should not be manually modified.
+This log was last generated on Mon, 21 Apr 2025 02:48:16 GMT and should not be manually modified.
+
+## 0.22.10
+Mon, 21 Apr 2025 02:48:16 GMT
+
+### Updates
+
+- fix: fix issue with symbol gradient, and support native conical gradient
 
 ## 0.22.9
 Fri, 18 Apr 2025 06:59:46 GMT

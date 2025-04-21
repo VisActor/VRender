@@ -1,3 +1,17 @@
+# v0.22.9
+
+2025-04-18
+
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-components**: fix state not sync with mouse
+- **@visactor/vrender-core**: fix issue with string anchor and scale
+
+
+
+[more detail about v0.22.9](https://github.com/VisActor/VRender/releases/tag/v0.22.9)
+
 # v0.22.8
 
 2025-04-16

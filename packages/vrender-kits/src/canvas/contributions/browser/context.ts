@@ -706,6 +706,11 @@ export class BrowserContext2d implements IContext2d {
   }
 
   createConicGradient(x: number, y: number, startAngle: number, endAngle: number): IConicalGradientData {
+    // 检测浏览器是否原生支持conic-gradient
+    const isNative = this.nativeContext.createConicGradient;
+    if (isNative && Math.abs(endAngle - startAngle - Math.PI * 2) < 0.001) {
+      return this.nativeContext.createConicGradient(startAngle, x, y);
+    }
     let edit = false;
     let pattern: CanvasPattern | null;
     // eslint-disable-next-line @typescript-eslint/no-this-alias

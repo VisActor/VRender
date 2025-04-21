@@ -59,8 +59,9 @@ export function createColor(
       x /= scaleX;
       y /= scaleY;
       if (angle || scaleX !== 1 || scaleY !== 1) {
-        x = 0;
-        y = 0;
+        // symbol的时候锚点是在中间的，所以bounds不能按0算
+        x = (params as any).x1WithoutTransform ?? 0;
+        y = (params as any).y1WithoutTransform ?? 0;
         w = (params as any).widthWithoutTransform ?? w;
         h = (params as any).heightWithoutTransform ?? h;
       }
@@ -117,5 +118,7 @@ function createConicGradient(context: IContext2d, color: IConicalGradient, x: nu
   });
 
   let deltaAngle;
-  return (canvasGradient as any).GetPattern(w + x, h + y, deltaAngle);
+  return (canvasGradient as any).GetPattern
+    ? (canvasGradient as any).GetPattern(w + x, h + y, deltaAngle)
+    : canvasGradient;
 }

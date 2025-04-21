@@ -31,6 +31,7 @@ export interface IRenderService {
   renderTreeRoots: IGraphic[]; // 此次render的数组
   renderLists: IGraphic[];
   drawParams: IRenderServiceDrawParams;
+  drawContribution: IDrawContribution;
 
   prepare: (updateBounds: boolean) => void;
   prepareRenderList: () => void;

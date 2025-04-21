@@ -247,7 +247,9 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
       evtTarget.removeEventListener(trigger, this._onHandlerPointerUp);
     });
 
-    (this as unknown as IGroup).removeEventListener('pointermove', this._onHandlerPointerMove, { capture: true });
+    (this as unknown as IGroup).removeEventListener('pointermove', this._onHandlerPointerMove, {
+      capture: true
+    });
   }
 
   /**
@@ -283,7 +285,9 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
      * move的时候，需要通过 capture: true，能够在捕获截断被拦截，
      */
     evtTarget.addEventListener('pointermove', this._onHandlerPointerMove, { capture: true });
-    (this as unknown as IGroup).addEventListener('pointermove', this._onHandlerPointerMove, { capture: true });
+    (this as unknown as IGroup).addEventListener('pointermove', this._onHandlerPointerMove, {
+      capture: true
+    });
 
     triggers.forEach((trigger: string) => {
       evtTarget.addEventListener(trigger, this._onHandlerPointerUp);
@@ -299,7 +303,6 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
    * 4. 在endHandler上拖拽，同上
    */
   private _pointerMove = (e: FederatedPointerEvent) => {
-    e.preventDefault();
     const { start: startAttr, end: endAttr, brushSelect, realTime = true } = this.attribute as DataZoomAttributes;
     const pos = this.eventPosToStagePos(e);
     const { attPos, max } = this._layoutCache;

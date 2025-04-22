@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "fix: incorrect result for TagPointsUpdate animation",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

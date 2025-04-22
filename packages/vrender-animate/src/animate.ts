@@ -190,7 +190,9 @@ export class Animate implements IAnimate {
     if (!this._lastStep) {
       return;
     }
-
+    if (!step.props) {
+      step.props = {};
+    }
     /* 预设置step的属性，基于性能考虑，实现比较复杂 */
     // step.propKeys为真实的props属性的key
     step.propKeys = step.propKeys || Object.keys(step.props);

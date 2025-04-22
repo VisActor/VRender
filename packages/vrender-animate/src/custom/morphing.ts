@@ -30,7 +30,7 @@ import {
   type IArea,
   type IPath
 } from '@visactor/vrender-core';
-import { isNil, type IMatrix } from '@visactor/vutils';
+import { isArray, isNil, type IMatrix } from '@visactor/vutils';
 import { ACustomAnimate } from './custom-animate';
 import { DefaultMorphingAnimateConfig } from '../config/morphing';
 import { isTransformKey } from '../utils/transform';
@@ -51,6 +51,12 @@ interface OtherAttrItem {
   key: string;
 }
 
+/**
+ * 插值计算非路径属性（如颜色、透明度等）
+ * @param attrs 要插值的属性数组
+ * @param out 输出对象
+ * @param ratio 插值比例
+ */
 const interpolateOtherAttrs = (attrs: OtherAttrItem[], out: any, ratio: number) => {
   attrs.forEach(entry => {
     if (Number.isFinite(entry.to)) {
@@ -72,6 +78,12 @@ const interpolateOtherAttrs = (attrs: OtherAttrItem[], out: any, ratio: number) 
  * url: https://github.com/ecomfe/zrender/blob/master/src/tool/morphPath.ts
  * License: https://github.com/ecomfe/zrender/blob/master/LICENSE
  * @license
+ */
+/**
+ * 根据给定比例插值计算形变数据并应用到路径
+ * @param morphingData 形变数据
+ * @param path 目标路径对象
+ * @param ratio 插值比例
  */
 const interpolateMorphingData = (morphingData: MorphingDataItem[], path: ICustomPath2D, ratio: number) => {
   const tmpArr: number[] = [];
@@ -129,6 +141,13 @@ const interpolateMorphingData = (morphingData: MorphingDataItem[], path: ICustom
   }
 };
 
+/**
+ * 解析形变数据，将源路径和目标路径转换为贝塞尔曲线并找到最佳旋转角度
+ * @param fromPath 源路径
+ * @param toPath 目标路径
+ * @param config 变换配置
+ * @returns 形变数据数组
+ */
 const parseMorphingData = (
   fromPath: ICustomPath2D | null,
   toPath: ICustomPath2D,
@@ -137,6 +156,7 @@ const parseMorphingData = (
     toTransfrom: IMatrix;
   }
 ) => {
+  // [fromPath, toPath] = [toPath, fromPath];
   const fromBezier = fromPath ? pathToBezierCurves(fromPath) : [];
   const toBezier = pathToBezierCurves(toPath);
 
@@ -174,6 +194,12 @@ const validateOtherAttrs = [
   // 'lineWidth'
 ];
 
+/**
+ * 解析可动画属性，提取源属性和目标属性的差异
+ * @param fromAttrs 源属性
+ * @param toAttrs 目标属性
+ * @returns 可动画属性数组
+ */
 const parseOtherAnimateAttrs = (
   fromAttrs: Partial<IGraphicAttribute> | null,
   toAttrs: Partial<IGraphicAttribute> | null
@@ -192,12 +218,14 @@ const parseOtherAnimateAttrs = (
     const toValue = (toAttrs as any)[fromKey];
     if (!isNil(toValue) && !isNil((fromAttrs as any)[fromKey]) && toValue !== (fromAttrs as any)[fromKey]) {
       if (fromKey === 'fill' || fromKey === 'stroke') {
+        const parseColor = (color: string) => {
+          return typeof color === 'string' ? ColorStore.Get(color, ColorType.Color255) : color;
+        };
         res.push({
-          from:
-            typeof fromAttrs[fromKey] === 'string'
-              ? ColorStore.Get(fromAttrs[fromKey] as unknown as string, ColorType.Color255)
-              : fromAttrs[fromKey],
-          to: typeof toValue === 'string' ? ColorStore.Get(toValue as string, ColorType.Color255) : toValue,
+          from: isArray(fromAttrs[fromKey])
+            ? fromAttrs[fromKey].map(parseColor)
+            : parseColor((fromAttrs as any)[fromKey]),
+          to: isArray(toValue) ? toValue.map(parseColor) : parseColor(toValue),
           key: fromKey
         });
       } else {
@@ -211,6 +239,9 @@ const parseOtherAnimateAttrs = (
   return hasAttr ? res : null;
 };
 
+/**
+ * 形变路径动画类，用于处理路径和其他属性的形变
+ */
 export class MorphingPath extends ACustomAnimate<Record<string, any>> {
   declare path: CustomPath2D;
 
@@ -243,6 +274,12 @@ export class MorphingPath extends ACustomAnimate<Record<string, any>> {
     return;
   }
 
+  /**
+   * 更新动画状态
+   * @param end 是否结束
+   * @param ratio 动画进度比例
+   * @param out 输出属性对象
+   */
   onUpdate(end: boolean, ratio: number, out: Record<string, any>): void {
     const target = this.target as IGraphic;
     const pathProxy = typeof target.pathProxy === 'function' ? target.pathProxy(target.attribute) : target.pathProxy;
@@ -258,6 +295,14 @@ export class MorphingPath extends ACustomAnimate<Record<string, any>> {
   }
 }
 
+/**
+ * 创建从一个图形到另一个图形的形变动画
+ * @param fromGraphic 源图形
+ * @param toGraphic 目标图形
+ * @param animationConfig 动画配置
+ * @param fromGraphicTransform 源图形变换矩阵
+ * @returns 动画实例
+ */
 export const morphPath = (
   fromGraphic: IGraphic | null,
   toGraphic: IGraphic,
@@ -307,6 +352,12 @@ export const morphPath = (
   return animate;
 };
 
+/**
+ * 创建从一个图形到多个图形的形变动画
+ * @param fromGraphic 源图形
+ * @param toGraphics 目标图形数组
+ * @param animationConfig 动画配置
+ */
 export const oneToMultiMorph = (
   fromGraphic: IGraphic,
   toGraphics: IGraphic[],
@@ -354,6 +405,9 @@ export const oneToMultiMorph = (
   });
 };
 
+/**
+ * 多对一形变路径动画类，用于处理多个路径形变为一个目标路径
+ */
 export class MultiToOneMorphingPath extends ACustomAnimate<Record<string, any>> {
   declare path: CustomPath2D;
 
@@ -379,6 +433,9 @@ export class MultiToOneMorphingPath extends ACustomAnimate<Record<string, any>> 
     this.addPathProxy();
   }
 
+  /**
+   * 为每个子图形添加路径代理
+   */
   private addPathProxy() {
     const shadowRoot = (this.target as IGraphic).shadowRoot;
 
@@ -389,6 +446,9 @@ export class MultiToOneMorphingPath extends ACustomAnimate<Record<string, any>> 
     this.onUpdate(false, 0, (this.target as IGraphic).attribute);
   }
 
+  /**
+   * 清除所有子图形的路径代理
+   */
   private clearPathProxy() {
     const shadowRoot = (this.target as IGraphic).shadowRoot;
 
@@ -401,6 +461,12 @@ export class MultiToOneMorphingPath extends ACustomAnimate<Record<string, any>> 
     return;
   }
 
+  /**
+   * 更新动画状态
+   * @param end 是否结束
+   * @param ratio 动画进度比例
+   * @param out 输出属性对象
+   */
   onUpdate(end: boolean, ratio: number, out: Record<string, any>): void {
     const shadowRoot = (this.target as IGraphic).shadowRoot;
 
@@ -424,6 +490,11 @@ export class MultiToOneMorphingPath extends ACustomAnimate<Record<string, any>> 
   }
 }
 
+/**
+ * 解析图形的阴影子元素属性（排除变换相关属性）
+ * @param graphicAttrs 图形属性
+ * @returns 阴影子元素属性
+ */
 const parseShadowChildAttrs = (graphicAttrs: Partial<IGraphicAttribute>) => {
   const attrs: Partial<IGraphicAttribute> = {};
 
@@ -443,6 +514,12 @@ const parseShadowChildAttrs = (graphicAttrs: Partial<IGraphicAttribute>) => {
   return attrs;
 };
 
+/**
+ * 将阴影子元素添加到图形中
+ * @param graphic 目标图形
+ * @param children 子元素数组
+ * @param count 子元素数量
+ */
 const appendShadowChildrenToGraphic = (graphic: IGraphic, children: IGraphic[], count: number) => {
   const childAttrs = parseShadowChildAttrs(graphic.attribute);
   const shadowRoot = graphic.attachShadow();
@@ -477,6 +554,13 @@ const appendShadowChildrenToGraphic = (graphic: IGraphic, children: IGraphic[], 
   }
 };
 
+/**
+ * 克隆图形为多个相同的图形
+ * @param graphic 源图形
+ * @param count 克隆数量
+ * @param needAppend 是否需要添加到源图形中
+ * @returns 克隆的图形数组
+ */
 export const cloneGraphic = (graphic: IGraphic, count: number, needAppend?: boolean) => {
   const children: IGraphic[] = [];
   const childAttrs = needAppend ? null : parseShadowChildAttrs(graphic.attribute);
@@ -499,6 +583,13 @@ export const cloneGraphic = (graphic: IGraphic, count: number, needAppend?: bool
   return children;
 };
 
+/**
+ * 将图形分割为多个子图形
+ * @param graphic 源图形
+ * @param count 分割数量
+ * @param needAppend 是否需要添加到源图形中
+ * @returns 分割后的图形数组
+ */
 export const splitGraphic = (graphic: IGraphic, count: number, needAppend?: boolean) => {
   const children: IGraphic[] = [];
   const childAttrs = needAppend ? null : parseShadowChildAttrs(graphic.attribute);
@@ -572,10 +663,10 @@ export const splitGraphic = (graphic: IGraphic, count: number, needAppend?: bool
 };
 
 /**
- * 多对一动画
- * @param fromGraphics
- * @param toGraphic
- * @param animationConfig
+ * 创建从多个图形到一个图形的形变动画
+ * @param fromGraphics 源图形数组
+ * @param toGraphic 目标图形
+ * @param animationConfig 动画配置
  */
 export const multiToOneMorph = (
   fromGraphics: IGraphic[],

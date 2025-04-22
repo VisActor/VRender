@@ -51,6 +51,7 @@ import { builtinSymbolsMap, builtInSymbolStrMap, CustomSymbolClass } from './bui
 import { isSvg, XMLParser } from '../common/xml';
 import { SVG_PARSE_ATTRIBUTE_MAP, SVG_PARSE_ATTRIBUTE_MAP_KEYS } from './constants';
 import { DefaultStateAnimateConfig } from '../animate/config';
+import { EmptyContext2d } from '../canvas';
 
 const _tempBounds = new AABBBounds();
 /**
@@ -1567,6 +1568,19 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   abstract getNoWorkAnimateAttr(): Record<string, number>;
 
   abstract clone(): IGraphic<any>;
+
+  toCustomPath(): ICustomPath2D {
+    // throw new Error('暂不支持');
+    const renderer = (this.stage?.renderService || application.renderService)?.drawContribution?.getRenderContribution(
+      this
+    );
+    if (renderer) {
+      const context = new EmptyContext2d(null, 1);
+      renderer.drawShape(this, context, 0, 0, {} as any, {});
+      return context.path;
+    }
+    return null;
+  }
 }
 
 Graphic.mixin(EventTarget);

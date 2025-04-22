@@ -173,6 +173,17 @@ export function drawArc(
  * @license
  */
 
+/**
+ * 将弧形添加到贝塞尔路径
+ * @param bezierPath 贝塞尔路径数组
+ * @param startAngle 起始角度
+ * @param endAngle 结束角度
+ * @param cx 圆心x坐标
+ * @param cy 圆心y坐标
+ * @param rx x半径
+ * @param ry y半径
+ * @param counterclockwise 是否逆时针，默认为false(顺时针)
+ */
 export const addArcToBezierPath = (
   bezierPath: number[],
   startAngle: number,
@@ -180,19 +191,47 @@ export const addArcToBezierPath = (
   cx: number,
   cy: number,
   rx: number,
-  ry: number
+  ry: number,
+  counterclockwise: boolean = false
 ) => {
   // https://stackoverflow.com/questions/1734745/how-to-create-circle-with-b%C3%A9zier-curves
-  const delta = Math.abs(endAngle - startAngle);
-  const count = delta > 0.5 * Math.PI ? Math.ceil((2 * delta) / Math.PI) : 1;
-  const stepAngle = (endAngle - startAngle) / count;
 
+  // 标准化角度到 [0, 2π] 范围
+  const PI2 = Math.PI * 2;
+  const sAngle = ((startAngle % PI2) + PI2) % PI2;
+  let eAngle = ((endAngle % PI2) + PI2) % PI2;
+
+  // 确定角度差并进行角度调整
+  let deltaAngle;
+  if (counterclockwise) {
+    // 逆时针时，确保终点角度小于起点角度
+    if (eAngle >= sAngle) {
+      eAngle -= PI2;
+    }
+    deltaAngle = eAngle - sAngle;
+  } else {
+    // 顺时针时，确保终点角度大于起点角度
+    if (eAngle <= sAngle) {
+      eAngle += PI2;
+    }
+    deltaAngle = eAngle - sAngle;
+  }
+
+  // 计算需要分成的段数，每段不超过90度
+  const count = Math.ceil(Math.abs(deltaAngle) / (Math.PI * 0.5));
+  // 每段的角度增量
+  const stepAngle = deltaAngle / count;
+
+  // 对每段生成贝塞尔曲线
   for (let i = 0; i < count; i++) {
-    const sa = startAngle + stepAngle * i;
-    const ea = startAngle + stepAngle * (i + 1);
-    const len = (Math.tan(Math.abs(stepAngle) / 4) * 4) / 3;
-    const dir = ea < sa ? -1 : 1;
+    const sa = sAngle + stepAngle * i;
+    const ea = sAngle + stepAngle * (i + 1);
 
+    // 计算贝塞尔控制点的参数
+    // 4/3 * tan(θ/4) 是贝塞尔曲线近似圆弧的最佳比例
+    const len = (4 / 3) * Math.tan(Math.abs(stepAngle) / 4);
+
+    // 计算起点和终点坐标
     const c1 = Math.cos(sa);
     const s1 = Math.sin(sa);
     const c2 = Math.cos(ea);
@@ -204,17 +243,19 @@ export const addArcToBezierPath = (
     const x4 = c2 * rx + cx;
     const y4 = s2 * ry + cy;
 
-    const hx = rx * len * dir;
-    const hy = ry * len * dir;
+    // 计算控制点坐标，符号根据方向调整
+    const sign = counterclockwise ? -1 : 1;
+    const hx = rx * len * sign;
+    const hy = ry * len * sign;
 
+    // 将贝塞尔曲线点添加到路径
     bezierPath.push(
-      // Move control points on tangent.
-      x1 - hx * s1,
-      y1 + hy * c1,
-      x4 + hx * s2,
-      y4 - hy * c2,
-      x4,
-      y4
+      x1 - hx * s1, // 第一个控制点x
+      y1 + hy * c1, // 第一个控制点y
+      x4 + hx * s2, // 第二个控制点x
+      y4 - hy * c2, // 第二个控制点y
+      x4, // 终点x
+      y4 // 终点y
     );
   }
 };

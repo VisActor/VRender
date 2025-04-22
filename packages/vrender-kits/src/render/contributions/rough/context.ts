@@ -54,6 +54,10 @@ export class RoughContext2d implements IContext2d {
     this.customPath = customPath;
   }
 
+  reset(setTransform: boolean = true) {
+    return this.originContext.reset(setTransform);
+  }
+
   // Path-related methods that affect both the original context and the custom path
   beginPath(): void {
     this.originContext.beginPath();

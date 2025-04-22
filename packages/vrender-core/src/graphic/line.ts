@@ -117,8 +117,12 @@ export class Line extends Graphic<ILineGraphicAttribute> implements ILine {
   }
 
   toCustomPath() {
+    let path = super.toCustomPath();
+    if (path) {
+      return path;
+    }
     const attribute = this.attribute;
-    const path = new CustomPath2D();
+    path = new CustomPath2D();
     const segments = attribute.segments;
 
     const parsePoints = (points: IPointLike[]) => {

@@ -12,10 +12,9 @@ export class AxisEnter extends AComponentAnimate<any> {
     const { config, lastScale, getTickCoord } = this.params;
 
     let ratio = 1;
-
-    if (lastScale && getTickCoord) {
+    const currData = this.target.data;
+    if (lastScale && getTickCoord && currData) {
       ratio = 0.7;
-      const currData = this.target.data;
 
       const oldValue = lastScale.scale(currData.rawValue);
       const point = getTickCoord(oldValue);
@@ -100,7 +99,7 @@ export class AxisUpdate extends AComponentAnimate<any> {
     // );
     // console.log('this.props', this.props, { ...this.target.attribute });
     animator.animate(this.target, {
-      type: config.type ?? 'to',
+      type: 'to',
       to: { ...diffAttrs },
       duration,
       easing,

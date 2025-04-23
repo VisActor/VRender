@@ -28,6 +28,10 @@ export const pages = [
         path: 'animate-state'
       },
       {
+        name: 'animate-ticker',
+        path: 'animate-ticker'
+      },
+      {
         name: 'custom-animate',
         path: 'custom-animate'
       },

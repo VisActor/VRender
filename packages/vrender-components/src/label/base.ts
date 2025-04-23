@@ -732,6 +732,12 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
   ): IBoundsLike {
     if (graphic) {
       if (graphic.attribute.visible !== false) {
+        // TODO （这里有些hack）如果是入场的时候，需要使用finalAttribute
+        if (graphic.context?.animationState === 'appear') {
+          const clonedGraphic = graphic.clone();
+          Object.assign(clonedGraphic.attribute, graphic.getAttributes(true));
+          return clonedGraphic.AABBBounds;
+        }
         return graphic.AABBBounds;
       }
       const { x, y } = graphic.attribute;

@@ -13,6 +13,14 @@ export class ClipIn extends CommonIn {
     this.keys = ['clipRange'];
     this.from = { clipRange: 0 };
   }
+  onFirstRun(): void {
+    super.onFirstRun();
+    const { clipDimension } = this.params?.options || {};
+    // 需要设置clipRangeByDimension
+    if (clipDimension) {
+      (this.target.attribute as any).clipRangeByDimension = clipDimension;
+    }
+  }
 }
 
 export class ClipOut extends CommonOut {

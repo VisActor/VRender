@@ -115,7 +115,7 @@ export class AnimateExecutor implements IAnimateExecutor {
 
     // execute只在mark层面调用，所以性能影响可以忽略
     // TODO 存在性能问题，如果后续调用频繁，需要重新修改
-    const parsedParams: Record<string, any> = cloneDeep(params);
+    const parsedParams: Record<string, any> = { ...params };
     parsedParams.oneByOneDelay = 0;
     parsedParams.startTime = startTime;
     parsedParams.totalTime = totalTime;
@@ -128,11 +128,19 @@ export class AnimateExecutor implements IAnimateExecutor {
         (parsedParams as IAnimationTimeline).timeSlices = [timeSlices];
       }
       let sliceTime = 0;
-      ((parsedParams as IAnimationTimeline).timeSlices as IAnimationTimeSlice[]).forEach(slice => {
-        slice.delay = this.resolveValue(slice.delay, child, 0);
-        slice.delayAfter = this.resolveValue(slice.delayAfter, child, 0);
-        slice.duration = this.resolveValue(slice.duration, child, 300);
-        sliceTime += slice.delay + slice.duration + slice.delayAfter;
+      ((parsedParams as IAnimationTimeline).timeSlices as IAnimationTimeSlice[]) = (
+        (parsedParams as IAnimationTimeline).timeSlices as IAnimationTimeSlice[]
+      ).map(slice => {
+        const delay = this.resolveValue(slice.delay, child, 0);
+        const delayAfter = this.resolveValue(slice.delayAfter, child, 0);
+        const duration = this.resolveValue(slice.duration, child, 300);
+        sliceTime += delay + duration + delayAfter;
+        return {
+          ...slice,
+          delay,
+          delayAfter,
+          duration
+        };
       });
       let oneByOneDelay = 0;
       let oneByOneTime = 0;

@@ -223,7 +223,7 @@ const parseOtherAnimateAttrs = (
         };
         res.push({
           from: isArray(fromAttrs[fromKey])
-            ? fromAttrs[fromKey].map(parseColor)
+            ? (fromAttrs[fromKey] as any).map(parseColor)
             : parseColor((fromAttrs as any)[fromKey]),
           to: isArray(toValue) ? toValue.map(parseColor) : parseColor(toValue),
           key: fromKey

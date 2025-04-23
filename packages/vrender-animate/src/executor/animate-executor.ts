@@ -143,12 +143,9 @@ export class AnimateExecutor implements IAnimateExecutor {
         };
       });
       let oneByOneDelay = 0;
-      let oneByOneTime = 0;
       if (oneByOne) {
-        oneByOneTime = Number(oneByOne);
-        oneByOneDelay = oneByOneTime;
+        oneByOneDelay = typeof oneByOne === 'number' ? (oneByOne as number) : oneByOne ? sliceTime : 0;
       }
-      parsedParams.oneByOne = oneByOneTime;
       parsedParams.oneByOneDelay = oneByOneDelay;
 
       let scale = 1;
@@ -180,21 +177,18 @@ export class AnimateExecutor implements IAnimateExecutor {
           })
         };
       });
-      parsedParams.oneByOne = oneByOneTime * scale;
       parsedParams.oneByOneDelay = oneByOneDelay * scale;
       (parsedParams as IAnimationTimeline).startTime = startTime * scale;
     } else {
       const delay = this.resolveValue((params as IAnimationTypeConfig).delay, child, 0);
       const delayAfter = this.resolveValue((params as IAnimationTypeConfig).delayAfter, child, 0);
       const duration = this.resolveValue((params as IAnimationTypeConfig).duration, child, 300);
+      const loopTime = delay + delayAfter + duration;
 
       let oneByOneDelay = 0;
-      let oneByOneTime = 0;
       if (oneByOne) {
-        oneByOneTime = Number(oneByOne);
-        oneByOneDelay = duration + oneByOneTime;
+        oneByOneDelay = typeof oneByOne === 'number' ? (oneByOne as number) : oneByOne ? loopTime : 0;
       }
-      parsedParams.oneByOne = oneByOneTime;
       parsedParams.oneByOneDelay = oneByOneDelay;
       parsedParams.custom =
         (params as IAnimationTypeConfig).custom ??
@@ -214,7 +208,6 @@ export class AnimateExecutor implements IAnimateExecutor {
         parsedParams.delay = delay * scale;
         parsedParams.delayAfter = delayAfter * scale;
         parsedParams.duration = duration * scale;
-        parsedParams.oneByOne = oneByOneTime * scale;
         parsedParams.oneByOneDelay = oneByOneDelay * scale;
         (parsedParams as IAnimationTypeConfig).startTime = startTime;
       }

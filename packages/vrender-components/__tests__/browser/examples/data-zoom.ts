@@ -20,7 +20,7 @@ export function run() {
     },
     showDetail: false,
     delayTime: 1000,
-    // brushSelect: false,
+    brushSelect: true,
     backgroundChartStyle: {
       line: {
         visible: false

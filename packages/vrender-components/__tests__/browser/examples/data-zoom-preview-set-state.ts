@@ -26,7 +26,11 @@ export function run() {
       height: 30
     },
     realTime: false,
-    brushSelect: false,
+    brushSelect: true,
+    middleHandlerStyle: {
+      visible: true
+    },
+    showDetail: 'auto',
     updateStateCallback: (start, end) => {
       console.log('setCallback', start, end);
     }
@@ -40,4 +44,5 @@ export function run() {
   dataZoom.setPreviewPointsY1(d => 265);
 
   const stage = render([dataZoom], 'main');
+  console.log('stage', stage);
 }

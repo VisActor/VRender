@@ -100,6 +100,7 @@ export class ScaleIn extends ACustomAnimate<Record<string, number>> {
     if (this._updateFunction) {
       this._updateFunction(ratio);
       this.target.addUpdatePositionTag();
+      this.target.addUpdateBoundTag();
     }
   }
 }
@@ -149,5 +150,6 @@ export class ScaleOut extends ACustomAnimate<Record<string, number>> {
       attribute[key] = this.from[key] + (this.to[key] - this.from[key]) * ratio;
     });
     this.target.addUpdatePositionTag();
+    this.target.addUpdateBoundTag();
   }
 }

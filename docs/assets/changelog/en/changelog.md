@@ -1,3 +1,25 @@
+# v0.22.10
+
+2025-04-21
+
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-components**: fix preventDefault() error when passive: true
+- **@visactor/vrender-kits**: fix issue with symbol gradient, and support native conical gradient
+- **@visactor/vrender-core**: fix issue with symbol gradient, and support native conical gradient
+- **@visactor/vrender-core**: fix preventDefault() error when passive: true
+
+**📖 Site / documentation update**
+
+- **@visactor/vrender-components**: update changlog of rush
+- **@visactor/vrender-core**: update changlog of rush
+
+
+**Full Changelog**: https://github.com/VisActor/VRender/compare/v0.22.9...v0.22.10
+
+[more detail about v0.22.10](https://github.com/VisActor/VRender/releases/tag/v0.22.10)
+
 # v0.22.9
 
 2025-04-18

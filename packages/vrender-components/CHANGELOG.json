@@ -2,6 +2,21 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.22.10",
+      "tag": "@visactor/vrender-components_v0.22.10",
+      "date": "Mon, 21 Apr 2025 02:48:16 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix preventDefault() error when passive: true\n\n"
+          },
+          {
+            "comment": "docs: update changlog of rush\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.22.9",
       "tag": "@visactor/vrender-components_v0.22.9",
       "date": "Fri, 18 Apr 2025 06:59:46 GMT",

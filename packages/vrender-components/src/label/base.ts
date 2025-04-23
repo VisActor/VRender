@@ -176,6 +176,14 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
     if (isNil(this._idToGraphic) || (this._isCollectionBase && isNil(this._idToPoint))) {
       return;
     }
+    // 如果有动画的话，需要先设置入场的最终属性，否则无法计算放重叠、反色之类的逻辑
+    const markAttributeList: any[] = [];
+    if (this._enableAnimation !== false) {
+      this._baseMarks.forEach(mark => {
+        markAttributeList.push(mark.attribute);
+        mark.initAttributes(mark.getAttributes(true));
+      });
+    }
 
     const { overlap, smartInvert, dataFilter, customLayoutFunc, customOverlapFunc } = this.attribute;
     let data = this.attribute.data;
@@ -240,6 +248,12 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
     }
 
     this._renderLabels(labels);
+
+    if (this._enableAnimation !== false) {
+      this._baseMarks.forEach((mark, index) => {
+        mark.initAttributes(markAttributeList[index]);
+      });
+    }
   }
 
   private _bindEvent(target: IGraphic) {
@@ -732,8 +746,8 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
   ): IBoundsLike {
     if (graphic) {
       if (graphic.attribute.visible !== false) {
-        // TODO （这里有些hack）如果是入场的时候，需要使用finalAttribute
-        if (graphic.context?.animationState === 'appear') {
+        // TODO 这里有些hack 如果有动画，需要使用finalAttribute
+        if (graphic.context?.animationState) {
           const clonedGraphic = graphic.clone();
           Object.assign(clonedGraphic.attribute, graphic.getAttributes(true));
           return clonedGraphic.AABBBounds;
@@ -817,7 +831,8 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
                 relatedGraphics: this._idToGraphic,
                 config: {
                   ...enter,
-                  type: item === text ? (enter as any).type : 'clipIn'
+                  // 默认fadeIn
+                  type: item === text ? (enter as any).type : 'fadeIn'
                 }
               }
             }

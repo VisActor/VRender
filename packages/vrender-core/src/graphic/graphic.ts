@@ -1012,7 +1012,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       });
 
       const stateAnimateConfig =
-        this.context.stateAnimateConfig ?? this.stateAnimateConfig ?? DefaultStateAnimateConfig;
+        (this.context && this.context.stateAnimateConfig) ?? this.stateAnimateConfig ?? DefaultStateAnimateConfig;
       // 需要注册动画
       (this as any).applyAnimationState(
         ['state'],

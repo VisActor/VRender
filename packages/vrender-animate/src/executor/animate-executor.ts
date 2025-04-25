@@ -495,7 +495,7 @@ export class AnimateExecutor implements IAnimateExecutor {
     const slices = Array.isArray(timeSlices) ? timeSlices : [timeSlices];
 
     slices.forEach(slice => {
-      this.applyTimeSliceToAnimate(slice, animate, graphic);
+      this.applyTimeSliceToAnimate(slice, animate, graphic, controlOptions);
     });
 
     // 后等待
@@ -509,7 +509,12 @@ export class AnimateExecutor implements IAnimateExecutor {
   /**
    * 将时间切片应用到动画实例
    */
-  private applyTimeSliceToAnimate(slice: IAnimationTimeSlice, animate: IAnimate, graphic: IGraphic) {
+  private applyTimeSliceToAnimate(
+    slice: IAnimationTimeSlice,
+    animate: IAnimate,
+    graphic: IGraphic,
+    controlOptions: any
+  ) {
     const { effects, duration = 300, delay = 0, delayAfter = 0 } = slice;
 
     // 解析时间参数
@@ -555,7 +560,7 @@ export class AnimateExecutor implements IAnimateExecutor {
         duration as number,
         easing,
         customParameters,
-        null,
+        controlOptions,
         options,
         type,
         graphic

@@ -10,6 +10,7 @@ export interface IMoveAnimationOptions {
   offset?: number;
   point?: { x?: number; y?: number } | FunctionCallback<{ x?: number; y?: number }>;
   excludeChannels?: string[];
+  layoutRect?: { width: number; height: number };
 }
 
 interface IAnimationParameters {
@@ -29,13 +30,13 @@ export const moveIn = (
   options: IMoveAnimationOptions,
   animationParameters: IAnimationParameters
 ) => {
-  const { offset = 0, orient, direction, point: pointOpt, excludeChannels = [] } = options ?? {};
+  const { offset = 0, orient, direction, point: pointOpt, excludeChannels = [], layoutRect = {} } = options ?? {};
   let changedX = 0;
   let changedY = 0;
 
   if (orient === 'negative') {
-    changedX = graphic.stage.viewWidth;
-    changedY = graphic.stage.viewHeight;
+    changedX = layoutRect.width ?? graphic.stage.viewWidth;
+    changedY = layoutRect.height ?? graphic.stage.viewHeight;
   }
 
   changedX += offset;
@@ -81,8 +82,8 @@ export const moveOut = (
 
   // consider the offset of group
   // const groupBounds = graphic.parent ? graphic.parent.getBounds() : null;
-  const groupWidth = graphic.stage.viewWidth;
-  const groupHeight = graphic.stage.viewHeight;
+  const groupWidth = options.layoutRect?.width ?? graphic.stage.viewWidth;
+  const groupHeight = options.layoutRect?.height ?? graphic.stage.viewHeight;
   const changedX = (orient === 'negative' ? groupWidth : 0) + offset;
   const changedY = (orient === 'negative' ? groupHeight : 0) + offset;
   const point = isFunction(pointOpt)

@@ -18,7 +18,7 @@ export class ClipGraphicAnimate extends ACustomAnimate<any> {
     easing: EasingType,
     params: { group: IGroup; clipGraphic: IGraphic }
   ) {
-    super(null, null, duration, easing, params);
+    super(null, {}, duration, easing, params);
     this.clipFromAttribute = from;
     this.clipToAttribute = to;
     this._group = params?.group;

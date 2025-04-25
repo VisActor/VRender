@@ -6,6 +6,7 @@ interface IGrowCartesianAnimationOptions {
   orient?: 'positive' | 'negative';
   overall?: boolean | number;
   direction?: 'x' | 'y' | 'xy';
+  layoutRect?: { width: number; height: number };
 }
 
 interface IAnimationParameters {
@@ -63,7 +64,10 @@ function growHeightInOverall(
     if (isNumber(options.overall)) {
       overallValue = options.overall;
     } else if (animationParameters.group) {
-      overallValue = (animationParameters as any).groupHeight ?? animationParameters.group.getBounds().height();
+      overallValue =
+        (animationParameters as any).groupHeight ??
+        options.layoutRect?.height ??
+        animationParameters.group.getBounds().height();
 
       (animationParameters as any).groupHeight = overallValue;
     } else {
@@ -168,7 +172,10 @@ function growHeightOutOverall(
     if (isNumber(options.overall)) {
       overallValue = options.overall;
     } else if (animationParameters.group) {
-      overallValue = (animationParameters as any).groupHeight ?? animationParameters.group.getBounds().height();
+      overallValue =
+        (animationParameters as any).groupHeight ??
+        options.layoutRect?.height ??
+        animationParameters.group.getBounds().height();
 
       (animationParameters as any).groupHeight = overallValue;
     } else {

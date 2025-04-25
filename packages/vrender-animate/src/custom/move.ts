@@ -35,8 +35,8 @@ export const moveIn = (
   let changedY = 0;
 
   if (orient === 'negative') {
-    changedX = layoutRect.width ?? graphic.stage.viewWidth;
-    changedY = layoutRect.height ?? graphic.stage.viewHeight;
+    changedX = (layoutRect as any).width ?? graphic.stage.viewWidth;
+    changedY = (layoutRect as any).height ?? graphic.stage.viewHeight;
   }
 
   changedX += offset;

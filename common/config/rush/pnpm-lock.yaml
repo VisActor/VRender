@@ -399,9 +399,6 @@ importers:
 
   ../../packages/vrender-core:
     dependencies:
-      '@visactor/vrender-animate':
-        specifier: workspace:0.22.8
-        version: link:../vrender-animate
       '@visactor/vutils':
         specifier: ~0.19.5
         version: 0.19.5

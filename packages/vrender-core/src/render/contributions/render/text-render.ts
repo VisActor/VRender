@@ -31,11 +31,11 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
   constructor(
     @inject(ContributionProvider)
     @named(TextRenderContribution)
-    protected readonly textRenderContribitions: IContributionProvider<ITextRenderContribution>
+    protected readonly graphicRenderContributions: IContributionProvider<ITextRenderContribution>
   ) {
     super();
     this.builtinContributions = [defaultTextBackgroundRenderContribution as any];
-    this.init(textRenderContribitions);
+    this.init(graphicRenderContributions);
   }
 
   drawShape(

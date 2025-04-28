@@ -40,6 +40,11 @@ export class DefaultCanvasGroupRender implements IGraphicRender {
     protected readonly groupRenderContribitions: IContributionProvider<IGroupRenderContribution>
   ) {}
 
+  reInit() {
+    this._groupRenderContribitions = this.groupRenderContribitions.getContributions() || [];
+    this._groupRenderContribitions.push(defaultGroupBackgroundRenderContribution);
+  }
+
   drawShape(
     group: IGroup,
     context: IContext2d,

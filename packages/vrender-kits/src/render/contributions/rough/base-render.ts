@@ -33,4 +33,8 @@ export abstract class RoughBaseRender {
       return this.canvasRenderer.drawShape(graphic, ctx, x, y, drawContext, params, fillCb, strokeCb);
     }
   }
+
+  reInit() {
+    this.canvasRenderer?.reInit();
+  }
 }

@@ -1123,4 +1123,9 @@ export class Stage extends Group implements IStage {
     }
     return this.pickerService;
   }
+
+  reInit() {
+    this.renderService.reInit();
+    this.pickerService.reInit();
+  }
 }

@@ -7,4 +7,6 @@ export abstract class AbstractGraphicRender implements IGraphicRender {
   numberType: number;
 
   abstract draw(graphic: IGraphic, renderService: IRenderService): void;
+
+  abstract reInit(): void;
 }

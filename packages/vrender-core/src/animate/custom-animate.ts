@@ -1,6 +1,7 @@
 import type { IPoint, IPointLike } from '@visactor/vutils';
 import {
   clamp,
+  cloneDeep,
   getDecimalPlaces,
   isArray,
   isNumber,
@@ -863,6 +864,12 @@ export class TagPointsUpdate extends ACustomAnimate<{ points?: IPointLike[]; seg
   }
 
   onUpdate(end: boolean, ratio: number, out: Record<string, any>): void {
+    if (end) {
+      Object.keys(this.to).forEach(k => {
+        out[k] = this.to[k];
+      });
+      return;
+    }
     // if not create new points, multi points animation might not work well.
     this.points = this.points.map((point, index) => {
       const newPoint = pointInterpolation(this.interpolatePoints[index][0], this.interpolatePoints[index][1], ratio);

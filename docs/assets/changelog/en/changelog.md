@@ -1,3 +1,16 @@
+# v0.22.11
+
+2025-04-28
+
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-core**: incorrect result for TagPointsUpdate animation
+
+
+
+[more detail about v0.22.11](https://github.com/VisActor/VRender/releases/tag/v0.22.11)
+
 # v0.22.10
 
 2025-04-21

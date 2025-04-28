@@ -2,7 +2,6 @@ import * as VRender from '@visactor/vrender';
 import * as VRenderCore from '@visactor/vrender-core';
 import * as VRenderKits from '@visactor/vrender-kits';
 import * as VRenderComponents from '@visactor/vrender-components';
-import { addShapesToStage, colorPools } from '../utils';
 import { pi, pi2 } from '@visactor/vutils';
 
 export const page = () => {
@@ -23,89 +22,40 @@ export const page = () => {
       'M 8.25 -11 L 11 -11 V -8.25 L -8.25 11 H -11 V 8.25 L 8.25 -11 Z M -11 -11 H -8.3789 L -11 -8.2539 V -11 Z M 11 11 H 8.3789 L 11 8.2539 V 11 Z';
 
     const spec = {
-      type: 'linearProgress',
+      type: 'bar',
+      width: 600,
+      height: 300,
       data: [
         {
-          id: 'id0',
+          id: 'barData',
           values: [
-            {
-              type: 'Tradition Industries',
-              value: 0.795,
-              text: '79.5%'
-            },
-            {
-              type: 'Business Companies',
-              value: 0.25,
-              text: '25%'
-            },
-            {
-              type: 'Customer-facing Companies',
-              value: 0.065,
-              text: '6.5%'
-            }
+            { month: 'Monday', sales: 22 },
+            { month: 'Tuesday', sales: 13 },
+            { month: 'Wednesday', sales: 25 },
+            { month: 'Thursday', sales: 29 },
+            { month: 'Friday', sales: 38 }
           ]
         }
       ],
-      direction: 'horizontal',
-      xField: 'value',
-      yField: 'type',
-      seriesField: 'type',
-      progress: {
-        style: {
-          // boundsMode: 'imprecise',
-          _debug_bounds: true,
-          texture: path,
-          textureSize: 30,
-          texturePadding: 0,
-          textureRatio: 1,
-          textureColor: 'orange',
-          textureOptions: datum => {
-            return {
-              // useNewCanvas: true,
-              beforeDynamicTexture: (ctx, row, column, rowCount, columnCount, ratio, graphic) => {
-                const dx = ratio - 0.5;
-                const size = 30;
-                ctx.translate(dx * size, 0);
-              },
-              dynamicTexture: (ctx, row, column, rowCount, columnCount, ratio, graphic) => {
-                const dx = ratio - 0.5;
-                const size = 30;
-                ctx.translate(-dx * size, 0);
-                ctx.fillStyle = 'white';
-                ctx.globalAlpha = 0.6;
-                ctx.fill();
-              }
-            };
+      bar: {
+        state: {
+          hover: {
+            fill: 'red'
           }
         }
       },
-      animationAppear: {
-        progress: {
-          channel: {
-            textureRatio: {
-              from: 0,
-              to: 1
-            }
-          },
-          easing: 'linear',
-          duration: 3000,
-          loop: true
-        }
+      tooltip: {
+        parentElement: 'container'
       },
-      cornerRadius: 20,
-      bandWidth: 30,
-      axes: [
-        {
-          orient: 'left',
-          label: { visible: true },
-          type: 'band',
-          domainLine: { visible: false },
-          tick: { visible: false }
-        },
-        { orient: 'bottom', label: { visible: true }, type: 'linear', visible: false }
-      ]
+      xField: 'month',
+      yField: 'sales'
     };
 
+    const container = document.getElementById('container')!;
+
+    Array.from(container.childNodes).forEach(child => {
+      container.removeChild(child);
+    });
     // const spec = {
     //   type: 'area',
     //   data: {
@@ -446,87 +396,52 @@ export const page = () => {
     // };
 
     const chartSpace = new window.ChartSpace.default(spec, {
-      dom: 'container'
+      dom: container
     });
 
-    // setTimeout(() => {
-    //   chartSpace.updateSpec({
-    //     type: 'treemap',
-    //     color: ['#F2F6FF', '#D9E3FF', '#BFD0FF', '#A6BDFF', '#8CAAFF', '#7397FF', '#5984FF', '#4071FF', '#2E5DE5'],
-    //     label: {
-    //       visible: true,
-    //       style: {
-    //         html: (_, a) => {
-    //           return {
-    //             dom: `<div style="color: red;">测试</div>`,
-    //             width: 70,
-    //             height: 60
-    //           };
-    //         }
-    //       }
-    //     },
-    //     categoryField: 'name',
-    //     valueField: 'value',
-    //     data: [
-    //       {
-    //         values: [
-    //           {
-    //             name: 'A',
-    //             value: 1
-    //           },
-    //           {
-    //             name: 'B',
-    //             value: 2
-    //           },
-    //           {
-    //             name: 'C',
-    //             value: 6
-    //           },
-    //           {
-    //             name: 'D',
-    //             value: 12
-    //           },
-    //           {
-    //             name: 'E',
-    //             value: 29
-    //           }
-    //         ]
-    //       }
-    //     ]
-    //   });
+    const domRect = container.getBoundingClientRect();
+    const x1 = domRect.left;
+    const y1 = domRect.top;
+    const x2 = domRect.right;
+    const y2 = domRect.bottom;
+    const getRect = () => {
+      return {
+        x1,
+        y1,
+        x2,
+        y2
+      };
+    };
 
-    //   // chartSpace.updateData('data0', [
-    //   //   {
-    //   //     name: 'A',
-    //   //     value: 1
-    //   //   },
-    //   //   {
-    //   //     name: 'B',
-    //   //     value: 2
-    //   //   },
-    //   //   {
-    //   //     name: 'C',
-    //   //     value: 6
-    //   //   },
-    //   //   {
-    //   //     name: 'D',
-    //   //     value: 12
-    //   //   },
-    //   //   {
-    //   //     name: 'E',
-    //   //     value: 29
-    //   //   }
-    //   // ]);
-    //   setTimeout(() => {
-    //     console.log(
-    //       '2',
-    //       chartSpace
-    //         .getStage()
-    //         .getElementsByType('text')
-    //         .map(item => item._uid)
-    //     );
-    //   }, 2000);
-    // }, 3000);
+    container.style.transform = 'rotate(90deg)';
+    console.log('aaa', x1, y1, x2, y2);
+
+    const getMatrix = () => {
+      const matrix = VRender.matrixAllocate.allocate(1, 0, 0, 1, 0, 0);
+      matrix.translate(x1, y1);
+      const width = x2 - x1;
+      const height = y2 - y1;
+      matrix.translate(width / 2, height / 2);
+      matrix.rotate(pi / 2);
+      matrix.translate(-width / 2, -height / 2);
+
+      return matrix;
+    };
+    VRender.registerGlobalEventTransformer(
+      VRender.vglobal,
+      container,
+      getMatrix,
+      getRect,
+      VRender.transformPointForCanvas
+    );
+    VRender.registerWindowEventTransformer(
+      chartSpace.getStage().window as any,
+      container,
+      getMatrix,
+      getRect,
+      VRender.transformPointForCanvas
+    );
+    VRender.vglobal.mapToCanvasPoint = VRender.mapToCanvasPointForCanvas;
 
     chartSpace.renderSync();
     console.log(

@@ -104,10 +104,10 @@ export * from './plugins/builtin-plugin/flex-layout-plugin';
 
 export * from './plugins/builtin-plugin/edit-module';
 
-// export const morphPath = {};
-// export const multiToOneMorph = {};
-// export const oneToMultiMorph = {};
-// export class ACustomAnimate {}
-// export const AnimateGroup = {};
-// export const Animate = {};
-// export const defaultTicker = {};
+export const morphPath = {};
+export const multiToOneMorph = {};
+export const oneToMultiMorph = {};
+export class ACustomAnimate {}
+export const AnimateGroup = {};
+export const Animate = {};
+export const defaultTicker = {};

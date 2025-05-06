@@ -142,11 +142,11 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
     if (!this.shouldUpdateAABBBounds()) {
       return this._AABBBounds;
     }
-    application.graphicService.beforeUpdateAABBBounds(this, this.stage, true, this._AABBBounds);
+    this.stage?.graphicService.beforeUpdateAABBBounds(this, this.stage, true, this._AABBBounds);
     const selfChange = this.shouldSelfChangeUpdateAABBBounds();
     const bounds = this.doUpdateAABBBounds();
     this.addUpdateLayoutTag();
-    application.graphicService.afterUpdateAABBBounds(this, this.stage, this._AABBBounds, this, selfChange);
+    this.stage?.graphicService.afterUpdateAABBBounds(this, this.stage, this._AABBBounds, this, selfChange);
     // 直接返回空Bounds，但是前面的流程还是要走
     if (this.attribute.boundsMode === 'empty') {
       bounds.clear();
@@ -259,13 +259,13 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
       (data as unknown as this).layer = this.layer;
     }
     this.addUpdateBoundTag();
-    application.graphicService.onAddIncremental(node as unknown as IGraphic, this, this.stage);
+    this.stage?.graphicService.onAddIncremental(node as unknown as IGraphic, this, this.stage);
     return data;
   }
   incrementalClearChild(): void {
     super.removeAllChild();
     this.addUpdateBoundTag();
-    application.graphicService.onClearIncremental(this, this.stage);
+    this.stage?.graphicService.onClearIncremental(this, this.stage);
     return;
   }
 
@@ -298,14 +298,14 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
   removeChild(child: IGraphic): IGraphic {
     const data = super.removeChild(child);
     child.stage = null;
-    application.graphicService.onRemove(child);
+    this.stage?.graphicService.onRemove(child);
     this.addUpdateBoundTag();
     return data as IGraphic;
   }
 
   removeAllChild(deep: boolean = false): void {
     this.forEachChildren((child: IGraphic) => {
-      application.graphicService.onRemove(child);
+      this.stage?.graphicService.onRemove(child);
       if (deep && child.isContainer) {
         child.removeAllChild(deep);
       }
@@ -320,7 +320,7 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
       this.layer = layer;
       this.setStageToShadowRoot(stage, layer);
       this._onSetStage && this._onSetStage(this, stage, layer);
-      application.graphicService.onSetStage(this, stage);
+      this.stage?.graphicService.onSetStage(this, stage);
       this.forEachChildren(item => {
         (item as any).setStage(stage, this.layer);
       });

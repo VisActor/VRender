@@ -13,6 +13,7 @@ import type { IPlugin, IPluginService } from './plugin';
 import type { IWindow } from './window';
 import type { ILayerService } from './core';
 import type { IFullThemeSpec } from './graphic/theme';
+import type { IGraphicService } from './graphic-service';
 
 export type IExportType = 'canvas' | 'imageData';
 
@@ -172,6 +173,7 @@ export interface IStage extends INode {
   ticker: ITicker;
   increaseAutoRender: boolean;
   readonly renderService: IRenderService;
+  readonly graphicService: IGraphicService;
   getPickerService: () => IPickerService;
   readonly pluginService: IPluginService;
   readonly layerService: ILayerService;

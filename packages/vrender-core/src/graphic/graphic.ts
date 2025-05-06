@@ -374,10 +374,10 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       return this._AABBBounds;
     }
 
-    application.graphicService.beforeUpdateAABBBounds(this, this.stage, true, this._AABBBounds);
+    this.stage?.graphicService.beforeUpdateAABBBounds(this, this.stage, true, this._AABBBounds);
     const bounds = this.doUpdateAABBBounds(full);
     // this.addUpdateLayoutTag();
-    application.graphicService.afterUpdateAABBBounds(this, this.stage, this._AABBBounds, this, true);
+    this.stage?.graphicService.afterUpdateAABBBounds(this, this.stage, this._AABBBounds, this, true);
 
     // 直接返回空Bounds，但是前面的流程还是要走
     if (this.attribute.boundsMode === 'empty') {
@@ -956,7 +956,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     if (context && context.skipUpdateCallback) {
       return;
     }
-    application.graphicService.onAttributeUpdate(this);
+    this.stage?.graphicService.onAttributeUpdate(this);
     this._emitCustomEvent('afterAttributeUpdate', context);
   }
 
@@ -1368,7 +1368,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
         });
       }
       this._onSetStage && this._onSetStage(this, stage, layer);
-      application.graphicService.onSetStage(this, stage);
+      this.stage?.graphicService.onSetStage(this, stage);
     }
   }
 

@@ -24,7 +24,8 @@ import type {
   IOptimizeType,
   LayerMode,
   PickResult,
-  IPlugin
+  IPlugin,
+  IGraphicService
 } from '../interface';
 import { VWindow } from './window';
 import type { Layer } from './layer';
@@ -44,7 +45,7 @@ import { LayerService } from './constants';
 import { application } from '../application';
 import { isBrowserEnv } from '../env-check';
 import { Factory } from '../factory';
-import { Graphic } from '../graphic';
+import { Graphic, GraphicService } from '../graphic';
 
 const DefaultConfig = {
   WIDTH: 500,
@@ -178,6 +179,7 @@ export class Stage extends Group implements IStage {
   protected pickerService?: IPickerService;
   readonly pluginService: IPluginService;
   readonly layerService: ILayerService;
+  readonly graphicService: IGraphicService;
   private _eventSystem?: EventSystem;
   private get eventSystem(): EventSystem {
     return this._eventSystem;
@@ -241,6 +243,7 @@ export class Stage extends Group implements IStage {
     this.renderService = container.get<IRenderService>(RenderService);
     this.pluginService = container.get<IPluginService>(PluginService);
     this.layerService = container.get<ILayerService>(LayerService);
+    this.graphicService = container.get<IGraphicService>(GraphicService);
     this.pluginService.active(this, params);
 
     this.window.create({
@@ -303,7 +306,7 @@ export class Stage extends Group implements IStage {
     this.supportInteractiveLayer = params.interactiveLayer !== false;
     if (!params.optimize) {
       params.optimize = {
-        tickRenderMode: 'performance'
+        tickRenderMode: 'effect'
       };
     }
     this.optmize(params.optimize);

@@ -20,9 +20,13 @@ export class AutoRenderPlugin implements IPlugin {
 
   activate(context: IPluginService): void {
     this.pluginService = context;
-    application.graphicService.hooks.onAttributeUpdate.tap(this.key, this.handleChange);
-    application.graphicService.hooks.onSetStage.tap(this.key, this.handleChange);
-    application.graphicService.hooks.onRemove.tap(this.key, this.handleChange);
+    const stage = this.pluginService.stage;
+    if (!stage) {
+      return;
+    }
+    stage.graphicService.hooks.onAttributeUpdate.tap(this.key, this.handleChange);
+    stage.graphicService.hooks.onSetStage.tap(this.key, this.handleChange);
+    stage.graphicService.hooks.onRemove.tap(this.key, this.handleChange);
   }
   deactivate(context: IPluginService): void {
     const filterByName = (taps: FullTap[]) => {
@@ -30,11 +34,13 @@ export class AutoRenderPlugin implements IPlugin {
         return item.name !== this.key;
       });
     };
+    const stage = this.pluginService.stage;
+    if (!stage) {
+      return;
+    }
 
-    application.graphicService.hooks.onAttributeUpdate.taps = filterByName(
-      application.graphicService.hooks.onAttributeUpdate.taps
-    );
-    application.graphicService.hooks.onSetStage.taps = filterByName(application.graphicService.hooks.onSetStage.taps);
-    application.graphicService.hooks.onRemove.taps = filterByName(application.graphicService.hooks.onRemove.taps);
+    stage.graphicService.hooks.onAttributeUpdate.taps = filterByName(stage.graphicService.hooks.onAttributeUpdate.taps);
+    stage.graphicService.hooks.onSetStage.taps = filterByName(stage.graphicService.hooks.onSetStage.taps);
+    stage.graphicService.hooks.onRemove.taps = filterByName(stage.graphicService.hooks.onRemove.taps);
   }
 }

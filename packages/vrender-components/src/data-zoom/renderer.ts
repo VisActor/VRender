@@ -1,33 +1,27 @@
 import type { DataZoomAttributes } from './type';
 import type { IBoundsLike, IPointLike } from '@visactor/vutils';
 import { flatten_simplify } from '@visactor/vrender-core';
-// eslint-disable-next-line no-duplicate-imports
 import type { IArea, IGroup, ILine, IRect, ISymbol, INode } from '@visactor/vrender-core';
-// eslint-disable-next-line no-duplicate-imports
-import { Bounds, cloneDeep, isFunction, merge } from '@visactor/vutils';
+import { Bounds, isFunction, merge } from '@visactor/vutils';
 import { Tag, type TagAttributes } from '../tag';
 import { DEFAULT_HANDLER_ATTR_MAP } from './config';
 import { isTextOverflow } from './utils';
-export interface IRenderer {
+export interface DataZoomRendererAttrs {
   attribute: Partial<Required<DataZoomAttributes>>;
   getLayoutAttrFromConfig: any;
   getState: () => { start: number; end: number };
   setState: (state: { start: number; end: number }) => void;
+  getContainer: () => IGroup;
 }
-export class Renderer {
+export class DataZoomRenderer {
   /** 上层透传 */
   attribute: Partial<Required<DataZoomAttributes>>;
-  private _container!: IGroup;
-  set container(container: IGroup) {
-    this._container = container;
-  }
-  get container() {
-    return this._container;
-  }
   private _getLayoutAttrFromConfig: any;
-  private _isHorizontal: boolean;
-
   private _getState: () => { start: number; end: number };
+  private _getContainer: () => IGroup;
+
+  /** 中间变量 */
+  private _isHorizontal: boolean;
 
   /** 手柄 */
   private _startHandlerMask!: IRect;
@@ -122,16 +116,12 @@ export class Renderer {
     this._statePointToData = statePointToData;
   }
 
-  private _initAttrs(props: IRenderer) {
+  private _initAttrs(props: DataZoomRendererAttrs) {
     this.attribute = props.attribute;
     this._isHorizontal = this.attribute.orient === 'top' || this.attribute.orient === 'bottom';
     const { previewData, showDetail, previewPointsX, previewPointsY, previewPointsX1, previewPointsY1 } = this
       .attribute as DataZoomAttributes;
-    if (showDetail === 'auto') {
-      this._showText = false as boolean;
-    } else {
-      this._showText = showDetail as boolean;
-    }
+    this._showText = showDetail === 'auto' ? false : showDetail;
     previewData && (this._previewData = previewData);
     isFunction(previewPointsX) && (this._previewPointsX = previewPointsX);
     isFunction(previewPointsY) && (this._previewPointsY = previewPointsY);
@@ -139,23 +129,58 @@ export class Renderer {
     isFunction(previewPointsY1) && (this._previewPointsY1 = previewPointsY1);
     this._getState = props.getState;
     this._getLayoutAttrFromConfig = props.getLayoutAttrFromConfig;
+    this._getContainer = props.getContainer;
   }
 
-  constructor(props: IRenderer) {
+  constructor(props: DataZoomRendererAttrs) {
     this._initAttrs(props);
   }
 
-  setAttributes(props: IRenderer): void {
+  setAttributes(props: DataZoomRendererAttrs): void {
     this._initAttrs(props);
   }
 
-  // 渲染拖拽mask
+  renderDataZoom() {
+    const {
+      backgroundChartStyle = {},
+      selectedBackgroundChartStyle = {},
+      brushSelect
+    } = this.attribute as DataZoomAttributes;
+
+    this._renderBackground();
+
+    /** 背景图表 */
+    backgroundChartStyle.line?.visible && this._setPreviewAttributes('line', this._getContainer());
+    backgroundChartStyle.area?.visible && this._setPreviewAttributes('area', this._getContainer());
+
+    /** 背景选框 */
+    brushSelect && this.renderDragMask();
+
+    /** 选中背景 */
+    this._renderSelectedBackground();
+
+    /** 选中的背景图表 */
+    selectedBackgroundChartStyle.line?.visible && this._setSelectedPreviewAttributes('line', this._getContainer());
+    selectedBackgroundChartStyle.area?.visible && this._setSelectedPreviewAttributes('area', this._getContainer());
+
+    /** 左右 和 中间手柄 */
+    this._renderHandler();
+
+    /** 左右文字 */
+    if (this._showText) {
+      this.renderText();
+    }
+  }
+
+  /**
+   * @description 渲染拖拽mask
+   */
   renderDragMask() {
     const { dragMaskStyle } = this.attribute as DataZoomAttributes;
     const { position, width, height } = this._getLayoutAttrFromConfig();
     const { start, end } = this._getState();
     if (this._isHorizontal) {
-      this._dragMask = this._container.createOrUpdateChild(
+      this._dragMask = this._getContainer().createOrUpdateChild(
         'dragMask',
         {
           x: position.x + start * width,
@@ -167,7 +192,7 @@ export class Renderer {
         'rect'
       ) as IRect;
     } else {
-      this._dragMask = this._container.createOrUpdateChild(
+      this._dragMask = this._getContainer().createOrUpdateChild(
         'dragMask',
         {
           x: position.x,
@@ -182,27 +207,13 @@ export class Renderer {
     return { start, end };
   }
 
-  renderDataZoom() {
-    const {
-      orient,
-      backgroundStyle,
-      backgroundChartStyle = {},
-      selectedBackgroundStyle = {},
-      selectedBackgroundChartStyle = {},
-      middleHandlerStyle = {},
-      startHandlerStyle = {},
-      endHandlerStyle = {},
-      brushSelect,
-      zoomLock
-    } = this.attribute as DataZoomAttributes;
-    const { start, end } = this._getState();
-
-    // console.log('state, start, end', start, end);
-
+  /**
+   * @description 渲染背景
+   */
+  private _renderBackground() {
+    const { backgroundStyle, brushSelect, zoomLock } = this.attribute as DataZoomAttributes;
     const { position, width, height } = this._getLayoutAttrFromConfig();
-    const startHandlerMinSize = startHandlerStyle.triggerMinSize ?? 40;
-    const endHandlerMinSize = endHandlerStyle.triggerMinSize ?? 40;
-    const group = this._container;
+    const group = this._getContainer();
     this._background = group.createOrUpdateChild(
       'background',
       {
@@ -216,52 +227,25 @@ export class Renderer {
       },
       'rect'
     ) as IRect;
+  }
+  /**
+   * @description 渲染手柄
+   */
+  private _renderHandler() {
+    const {
+      orient,
+      middleHandlerStyle = {},
+      startHandlerStyle = {},
+      endHandlerStyle = {},
+      zoomLock
+    } = this.attribute as DataZoomAttributes;
+    const { start, end } = this._getState();
 
-    /** 背景图表 */
-    backgroundChartStyle.line?.visible && this._setPreviewAttributes('line', group);
-    backgroundChartStyle.area?.visible && this._setPreviewAttributes('area', group);
+    const { position, width, height } = this._getLayoutAttrFromConfig();
+    const startHandlerMinSize = startHandlerStyle.triggerMinSize ?? 40;
+    const endHandlerMinSize = endHandlerStyle.triggerMinSize ?? 40;
 
-    /** drag mask */
-    brushSelect && this.renderDragMask();
-
-    /** 选中背景 */
-    if (this._isHorizontal) {
-      // 选中部分
-      this._selectedBackground = group.createOrUpdateChild(
-        'selectedBackground',
-        {
-          x: position.x + start * width,
-          y: position.y,
-          width: (end - start) * width,
-          height: height,
-          cursor: brushSelect ? 'crosshair' : 'move',
-          ...selectedBackgroundStyle,
-          pickable: zoomLock ? false : ((selectedBackgroundChartStyle as any).pickable ?? true)
-        },
-        'rect'
-      ) as IRect;
-    } else {
-      // 选中部分
-      this._selectedBackground = group.createOrUpdateChild(
-        'selectedBackground',
-        {
-          x: position.x,
-          y: position.y + start * height,
-          width,
-          height: (end - start) * height,
-          cursor: brushSelect ? 'crosshair' : 'move',
-          ...selectedBackgroundStyle,
-          pickable: zoomLock ? false : (selectedBackgroundStyle.pickable ?? true)
-        },
-        'rect'
-      ) as IRect;
-    }
-
-    /** 选中的背景图表 */
-    selectedBackgroundChartStyle.line?.visible && this._setSelectedPreviewAttributes('line', group);
-    selectedBackgroundChartStyle.area?.visible && this._setSelectedPreviewAttributes('area', group);
-
-    /** 左右 和 中间手柄 */
+    const group = this._getContainer();
     if (this._isHorizontal) {
       if (middleHandlerStyle.visible) {
         const middleHandlerBackgroundSize = middleHandlerStyle.background?.size || 10;
@@ -453,14 +437,57 @@ export class Renderer {
         'rect'
       ) as IRect;
     }
+  }
 
-    /** 左右文字 */
-    if (this._showText) {
-      this._renderText();
+  /**
+   * @description 渲染选中背景
+   */
+  private _renderSelectedBackground() {
+    const {
+      selectedBackgroundStyle = {},
+      selectedBackgroundChartStyle = {},
+      brushSelect,
+      zoomLock
+    } = this.attribute as DataZoomAttributes;
+    const { start, end } = this._getState();
+
+    const { position, width, height } = this._getLayoutAttrFromConfig();
+
+    const group = this._getContainer();
+    if (this._isHorizontal) {
+      // 选中部分
+      this._selectedBackground = group.createOrUpdateChild(
+        'selectedBackground',
+        {
+          x: position.x + start * width,
+          y: position.y,
+          width: (end - start) * width,
+          height: height,
+          cursor: brushSelect ? 'crosshair' : 'move',
+          ...selectedBackgroundStyle,
+          pickable: zoomLock ? false : ((selectedBackgroundChartStyle as any).pickable ?? true)
+        },
+        'rect'
+      ) as IRect;
+    } else {
+      // 选中部分
+      this._selectedBackground = group.createOrUpdateChild(
+        'selectedBackground',
+        {
+          x: position.x,
+          y: position.y + start * height,
+          width,
+          height: (end - start) * height,
+          cursor: brushSelect ? 'crosshair' : 'move',
+          ...selectedBackgroundStyle,
+          pickable: zoomLock ? false : (selectedBackgroundStyle.pickable ?? true)
+        },
+        'rect'
+      ) as IRect;
     }
   }
 
-  /** 使用callback绘制背景图表 (数据和数据映射从外部传进来) */
+  // 使用callback绘制背景图表 (数据和数据映射从外部传进来)
   private _setPreviewAttributes(type: 'line' | 'area', group: IGroup) {
     if (!this._previewGroup) {
       this._previewGroup = group.createOrUpdateChild('previewGroup', { pickable: false }, 'group') as IGroup;
@@ -490,6 +517,70 @@ export class Renderer {
         curveType: 'basis',
         pickable: false,
         ...backgroundChartStyle.area
+      });
+  }
+
+  // 使用callback绘制选中的背景图表 (数据和数据映射从外部传进来)
+  private _setSelectedPreviewAttributes(type: 'area' | 'line', group: IGroup) {
+    if (!this._selectedPreviewGroupClip) {
+      this._selectedPreviewGroupClip = group.createOrUpdateChild(
+        'selectedPreviewGroupClip',
+        { pickable: false },
+        'group'
+      ) as IGroup;
+      this._selectedPreviewGroup = this._selectedPreviewGroupClip.createOrUpdateChild(
+        'selectedPreviewGroup',
+        {},
+        'group'
+      ) as IGroup;
+    }
+
+    if (type === 'line') {
+      this._selectedPreviewLine = this._selectedPreviewGroup.createOrUpdateChild(
+        'selectedPreviewLine',
+        {},
+        'line'
+      ) as ILine;
+    } else {
+      this._selectedPreviewArea = this._selectedPreviewGroup.createOrUpdateChild(
+        'selectedPreviewArea',
+        { curveType: 'basis' },
+        'area'
+      ) as IArea;
+    }
+
+    const { selectedBackgroundChartStyle = {} } = this.attribute as DataZoomAttributes;
+
+    const { start, end } = this._getState();
+    const { position, width, height } = this._getLayoutAttrFromConfig();
+    this._selectedPreviewGroupClip.setAttributes({
+      x: this._isHorizontal ? position.x + start * width : position.x,
+      y: this._isHorizontal ? position.y : position.y + start * height,
+      width: this._isHorizontal ? (end - start) * width : width,
+      height: this._isHorizontal ? height : (end - start) * height,
+      clip: true,
+      pickable: false
+    } as any);
+    this._selectedPreviewGroup.setAttributes({
+      x: -(this._isHorizontal ? position.x + start * width : position.x),
+      y: -(this._isHorizontal ? position.y : position.y + start * height),
+      width: this._isHorizontal ? (end - start) * width : width,
+      height: this._isHorizontal ? height : (end - start) * height,
+      pickable: false
+    } as any);
+    type === 'line' &&
+      this._selectedPreviewLine.setAttributes({
+        points: this._getPreviewLinePoints(),
+        curveType: 'basis',
+        pickable: false,
+        ...selectedBackgroundChartStyle.line
+      });
+    type === 'area' &&
+      this._selectedPreviewArea.setAttributes({
+        points: this._getPreviewAreaPoints(),
+        curveType: 'basis',
+        pickable: false,
+        ...selectedBackgroundChartStyle.area
       });
   }
 
@@ -594,70 +685,45 @@ export class Renderer {
     return basePointStart.concat(previewPoints).concat(basePointEnd);
   }
 
-  /** 使用callback绘制选中的背景图表 (数据和数据映射从外部传进来) */
-  private _setSelectedPreviewAttributes(type: 'area' | 'line', group: IGroup) {
-    if (!this._selectedPreviewGroupClip) {
-      this._selectedPreviewGroupClip = group.createOrUpdateChild(
-        'selectedPreviewGroupClip',
-        { pickable: false },
-        'group'
-      ) as IGroup;
-      this._selectedPreviewGroup = this._selectedPreviewGroupClip.createOrUpdateChild(
-        'selectedPreviewGroup',
-        {},
-        'group'
-      ) as IGroup;
+  /**
+   * @description 渲染文本
+   */
+  renderText() {
+    let startTextBounds: IBoundsLike | null = null;
+    let endTextBounds: IBoundsLike | null = null;
+
+    // 第一次绘制
+    this._setTextAttr(startTextBounds, endTextBounds);
+    if (this._showText) {
+      // 得到bounds
+      startTextBounds = this._startText.AABBBounds;
+      endTextBounds = this._endText.AABBBounds;
+
+      // 第二次绘制: 将text限制在组件bounds内
+      this._setTextAttr(startTextBounds, endTextBounds);
+      // 得到bounds
+      startTextBounds = this._startText.AABBBounds;
+      endTextBounds = this._endText.AABBBounds;
+      const { x1, x2, y1, y2 } = startTextBounds;
+      const { dx: startTextDx = 0, dy: startTextDy = 0 } = this.attribute.startTextStyle;
+
+      // 第三次绘制: 避免startText和endText重叠, 如果重叠了, 对startText做位置调整(考虑到调整的最小化，只单独调整startText而不调整endText)
+      if (new Bounds().set(x1, y1, x2, y2).intersects(endTextBounds)) {
+        const direction = this.attribute.orient === 'bottom' || this.attribute.orient === 'right' ? -1 : 1;
+        if (this._isHorizontal) {
+          this._startText.setAttribute('dy', startTextDy + direction * Math.abs(endTextBounds.y1 - endTextBounds.y2));
+        } else {
+          this._startText.setAttribute('dx', startTextDx + direction * Math.abs(endTextBounds.x1 - endTextBounds.x2));
+        }
+      } else {
+        if (this._isHorizontal) {
+          this._startText.setAttribute('dy', startTextDy);
+        } else {
+          this._startText.setAttribute('dx', startTextDx);
+        }
+      }
     }
-
-    if (type === 'line') {
-      this._selectedPreviewLine = this._selectedPreviewGroup.createOrUpdateChild(
-        'selectedPreviewLine',
-        {},
-        'line'
-      ) as ILine;
-    } else {
-      this._selectedPreviewArea = this._selectedPreviewGroup.createOrUpdateChild(
-        'selectedPreviewArea',
-        { curveType: 'basis' },
-        'area'
-      ) as IArea;
-    }
-
-    const { selectedBackgroundChartStyle = {} } = this.attribute as DataZoomAttributes;
-
-    const { start, end } = this._getState();
-    const { position, width, height } = this._getLayoutAttrFromConfig();
-    this._selectedPreviewGroupClip.setAttributes({
-      x: this._isHorizontal ? position.x + start * width : position.x,
-      y: this._isHorizontal ? position.y : position.y + start * height,
-      width: this._isHorizontal ? (end - start) * width : width,
-      height: this._isHorizontal ? height : (end - start) * height,
-      clip: true,
-      pickable: false
-    } as any);
-    this._selectedPreviewGroup.setAttributes({
-      x: -(this._isHorizontal ? position.x + start * width : position.x),
-      y: -(this._isHorizontal ? position.y : position.y + start * height),
-      width: this._isHorizontal ? (end - start) * width : width,
-      height: this._isHorizontal ? height : (end - start) * height,
-      pickable: false
-    } as any);
-    type === 'line' &&
-      this._selectedPreviewLine.setAttributes({
-        points: this._getPreviewLinePoints(),
-        curveType: 'basis',
-        pickable: false,
-        ...selectedBackgroundChartStyle.line
-      });
-    type === 'area' &&
-      this._selectedPreviewArea.setAttributes({
-        points: this._getPreviewAreaPoints(),
-        curveType: 'basis',
-        pickable: false,
-        ...selectedBackgroundChartStyle.area
-      });
   }
-
   private _setTextAttr(startTextBounds: IBoundsLike, endTextBounds: IBoundsLike) {
     const { startTextStyle, endTextStyle } = this.attribute as DataZoomAttributes;
     const { formatMethod: startTextFormat, ...restStartTextStyle } = startTextStyle;
@@ -718,7 +784,7 @@ export class Renderer {
     }
 
     this._startText = this._maybeAddLabel(
-      this._container,
+      this._getContainer(),
       merge({}, restStartTextStyle, {
         text: startTextValue,
         x: startTextPosition.x,
@@ -731,7 +797,7 @@ export class Renderer {
       `data-zoom-start-text-${position.x}-${position.y}`
     );
     this._endText = this._maybeAddLabel(
-      this._container,
+      this._getContainer(),
       merge({}, restEndTextStyle, {
         text: endTextValue,
         x: endTextPosition.x,
@@ -744,44 +810,6 @@ export class Renderer {
       `data-zoom-end-text-${position.x}-${position.y}`
     );
   }
-
-  _renderText() {
-    let startTextBounds: IBoundsLike | null = null;
-    let endTextBounds: IBoundsLike | null = null;
-
-    // 第一次绘制
-    this._setTextAttr(startTextBounds, endTextBounds);
-    // 得到bounds
-    startTextBounds = this._startText.AABBBounds;
-    endTextBounds = this._endText.AABBBounds;
-
-    // 第二次绘制: 将text限制在组件bounds内
-    this._setTextAttr(startTextBounds, endTextBounds);
-    // 得到bounds
-    startTextBounds = this._startText.AABBBounds;
-    endTextBounds = this._endText.AABBBounds;
-    const { x1, x2, y1, y2 } = startTextBounds;
-    const { dx: startTextDx = 0, dy: startTextDy = 0 } = this.attribute.startTextStyle;
-
-    // 第三次绘制: 避免startText和endText重叠, 如果重叠了, 对startText做位置调整(考虑到调整的最小化，只单独调整startText而不调整endText)
-    if (new Bounds().set(x1, y1, x2, y2).intersects(endTextBounds)) {
-      const direction = this.attribute.orient === 'bottom' || this.attribute.orient === 'right' ? -1 : 1;
-      if (this._isHorizontal) {
-        this._startText.setAttribute('dy', startTextDy + direction * Math.abs(endTextBounds.y1 - endTextBounds.y2));
-      } else {
-        this._startText.setAttribute('dx', startTextDx + direction * Math.abs(endTextBounds.x1 - endTextBounds.x2));
-      }
-    } else {
-      if (this._isHorizontal) {
-        this._startText.setAttribute('dy', startTextDy);
-      } else {
-        this._startText.setAttribute('dx', startTextDx);
-      }
-    }
-
-    // console.log('this._showText', this._showText, cloneDeep(this._startText.attribute));
-  }
-
   private _maybeAddLabel(container: IGroup, attributes: TagAttributes, name: string): Tag {
     let labelShape = container.find(node => node.name === name, true) as unknown as Tag;
     if (labelShape) {

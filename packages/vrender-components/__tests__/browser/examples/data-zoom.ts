@@ -5,35 +5,6 @@ import render from '../../util/render';
 import { DataZoom } from '../../../src';
 
 export function run() {
-  console.log('RectCrosshair');
-
-  const dataZoom = new DataZoom({
-    start: 0.2,
-    end: 0.5,
-    position: {
-      x: 50,
-      y: 235
-    },
-    size: {
-      width: 400,
-      height: 30
-    },
-    showDetail: false,
-    delayTime: 1000,
-    brushSelect: true,
-    backgroundChartStyle: {
-      line: {
-        visible: false
-      },
-      area: {
-        visible: false
-      }
-    },
-    middleHandlerStyle: {
-      visible: true
-    }
-  });
-
   const dataZoomdisableTriggerEvent = new DataZoom({
     start: 0.2,
     end: 0.5,
@@ -58,14 +29,42 @@ export function run() {
     middleHandlerStyle: {
       visible: true
     },
-    disableTriggerEvent: false
+    disableTriggerEvent: false,
+    showDetail: 'auto'
   });
 
-  vglobal.supportsPointerEvents = false;
+  const dataZoom = new DataZoom({
+    start: 0.2,
+    end: 0.5,
+    position: {
+      x: 50,
+      y: 235
+    },
+    size: {
+      width: 400,
+      height: 30
+    },
+    showDetail: 'auto',
+    delayTime: 100,
+    brushSelect: true,
+    backgroundChartStyle: {
+      line: {
+        visible: false
+      },
+      area: {
+        visible: false
+      }
+    },
+    middleHandlerStyle: {
+      visible: true
+    }
+  });
+  console.log('dataZoom', dataZoom);
 
-  const stage = render([dataZoom, dataZoomdisableTriggerEvent], 'main');
+  // vglobal.supportsPointerEvents = false;
+
+  const stage = render([dataZoomdisableTriggerEvent, dataZoom], 'main');
   stage.defaultLayer.scale(1.5, 1.5);
-  stage.x = 10;
 
   // stage.addEventListener('pointermove', e => {
   //   dataZoom.setLocation({

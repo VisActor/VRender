@@ -1,10 +1,10 @@
-import type { IGroup } from '@visactor/vrender-core';
+import { type IGroup } from '@visactor/vrender-core';
 import { array, isFunction, isValid, merge } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
-import type { DataZoomAttributes } from './type';
+import { IDataZoomEvent, IDataZoomInteractiveEvent, type DataZoomAttributes } from './type';
 import type { ComponentOptions } from '../interface';
-import { Renderer, type IRenderer } from './renderer';
-import { InteractionManager, type InteractionManagerAttributes } from './interaction';
+import { DataZoomRenderer, type DataZoomRendererAttrs } from './renderer';
+import { DataZoomInteraction, type InteractionAttributes } from './interaction';
 import { loadDataZoomComponent } from './register';
 import { DEFAULT_DATA_ZOOM_ATTRIBUTES } from './config';
 
@@ -13,28 +13,34 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
   name = 'dataZoom';
   static defaultAttributes = DEFAULT_DATA_ZOOM_ATTRIBUTES;
   /** 交互控制 */
-  private _interaction: InteractionManager;
+  private _interaction: DataZoomInteraction;
   /** 渲染控制 */
-  private _renderer: Renderer;
+  private _renderer: DataZoomRenderer;
+  /** 共享变量: 容器 */
+  private _container: IGroup;
   /** 共享变量: 状态 */
   private _state: { start: number; end: number } = { start: 0, end: 1 };
   /** 共享变量: 布局 */
   private _layoutCacheFromConfig: any;
 
+  /** 中间量 */
+  private _isHorizontal: boolean;
+
   constructor(attributes: DataZoomAttributes, options?: ComponentOptions) {
     super(options?.skipDefault ? attributes : merge({}, DataZoom.defaultAttributes, attributes));
-    this._renderer = new Renderer(this._rendererAttrs());
-    this._interaction = new InteractionManager(this._interactionAttrs());
-    const { start, end } = this.attribute as DataZoomAttributes;
+    this._renderer = new DataZoomRenderer(this._getRendererAttrs());
+    this._interaction = new DataZoomInteraction(this._getInteractionAttrs());
+    const { start, end, orient } = this.attribute as DataZoomAttributes;
     start && (this._state.start = start);
     end && (this._state.end = end);
+    this._isHorizontal = orient === 'top' || orient === 'bottom';
   }
 
   /**
    * 获取背景框中的位置和宽高
    * @description 实际绘制的背景框中的高度或宽度 减去 中间手柄的高度或宽度
    */
-  private _getLayoutAttrFromConfig() {
+  getLayoutAttrFromConfig() {
     if (this._layoutCacheFromConfig) {
       return this._layoutCacheFromConfig;
     }
@@ -55,7 +61,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     let height;
     let position;
     if (middleHandlerStyle.visible) {
-      if (this.attribute.orient === 'top' || this.attribute.orient === 'bottom') {
+      if (this._isHorizontal) {
         width = widthConfig;
         height = heightConfig - middleHandlerSize;
         position = {
@@ -76,13 +82,11 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
       position = positionConfig;
     }
 
-    const isHorizontal = this.attribute.orient === 'top' || this.attribute.orient === 'bottom';
-
-    const startHandlerSize = (startHandlerStyle.size as number) ?? (isHorizontal ? height : width);
-    const endHandlerSize = (endHandlerStyle.size as number) ?? (isHorizontal ? height : width);
+    const startHandlerSize = (startHandlerStyle.size as number) ?? (this._isHorizontal ? height : width);
+    const endHandlerSize = (endHandlerStyle.size as number) ?? (this._isHorizontal ? height : width);
     // 如果startHandler显示的话，要将其宽高计入dataZoom宽高
     if (startHandlerStyle.visible) {
-      if (isHorizontal) {
+      if (this._isHorizontal) {
         width -= (startHandlerSize + endHandlerSize) / 2;
         position = {
           x: position.x + startHandlerSize / 2,
@@ -109,24 +113,19 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     return this._layoutCacheFromConfig;
   }
 
-  get getLayoutAttrFromConfig() {
-    return this._getLayoutAttrFromConfig;
-  }
-
-  private _rendererAttrs(): IRenderer {
+  private _getRendererAttrs(): DataZoomRendererAttrs {
     return {
       attribute: this.attribute,
       getLayoutAttrFromConfig: this.getLayoutAttrFromConfig,
       setState: (state: { start: number; end: number }) => {
         this._state = state;
       },
-      getState: () => {
-        return this._state;
-      }
+      getState: () => this._state,
+      getContainer: () => this._container
     };
   }
 
-  private _interactionAttrs(): InteractionManagerAttributes {
+  private _getInteractionAttrs(): InteractionAttributes {
     return {
       stage: this.stage,
       attribute: this.attribute,
@@ -142,9 +141,8 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
       setState: (state: { start: number; end: number }) => {
         this._state = state;
       },
-      getState: () => {
-        return this._state;
-      }
+      getState: () => this._state,
+      getGlobalTransMatrix: () => this.globalTransMatrix
     };
   }
 
@@ -154,31 +152,25 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
       return;
     }
     this._interaction.bindEvents();
-    this._interaction.on('stateChange', ({ shouldRender }) => {
+    this._interaction.on(IDataZoomInteractiveEvent.stateUpdate, ({ shouldRender }) => {
       if (shouldRender) {
         this._renderer.renderDataZoom();
       }
     });
-    this._interaction.on('eventChange', ({ start, end, tag }) => {
-      this._dispatchEvent('change', { start, end, tag });
+    this._interaction.on(IDataZoomInteractiveEvent.dataZoomUpdate, ({ start, end, tag }) => {
+      this._dispatchEvent(IDataZoomEvent.dataZoomChange, { start, end, tag });
     });
-    this._interaction.on('renderMask', () => {
+    this._interaction.on(IDataZoomInteractiveEvent.maskUpdate, () => {
       this._renderer.renderDragMask();
     });
-    this._interaction.on('enter', () => {
-      this._renderer.showText = true;
-      this._renderer._renderText();
-    });
-
-    // hover
     if (this.attribute.showDetail === 'auto') {
-      (this as unknown as IGroup).addEventListener('pointerenter', () => {
+      this._container.addEventListener('pointerenter', () => {
         this._renderer.showText = true;
-        this._renderer._renderText();
+        this._renderer.renderText();
       });
-      (this as unknown as IGroup).addEventListener('pointerleave', () => {
+      this._container.addEventListener('pointerleave', () => {
         this._renderer.showText = false;
-        this._renderer._renderText();
+        this._renderer.renderText();
       });
     }
   }
@@ -189,17 +181,15 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     start && (this._state.start = start);
     end && (this._state.end = end);
 
-    this._renderer.setAttributes(this._rendererAttrs());
-    this._interaction.setAttributes(this._interactionAttrs());
+    this._renderer.setAttributes(this._getRendererAttrs());
+    this._interaction.setAttributes(this._getInteractionAttrs());
   }
 
   render(): void {
     this._layoutCacheFromConfig = null;
-
-    const group = (this as unknown as IGroup).createOrUpdateChild('dataZoom-container', {}, 'group') as IGroup;
-    this._renderer.container = group;
+    this._container = this.createOrUpdateChild('datazoom-container', {}, 'group') as IGroup;
     this._renderer.renderDataZoom();
-    this._interaction.setAttributes(this._interactionAttrs());
+    this._interaction.setAttributes(this._getInteractionAttrs());
   }
 
   release(all?: boolean): void {
@@ -208,21 +198,18 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
      */
     super.release(all);
     this._interaction.clearDragEvents();
-    this._interaction.clearDragEvents();
   }
 
   /** 外部重置组件的起始状态 */
   setStartAndEnd(start?: number, end?: number) {
-    const { start: startAttr, end: endAttr } = this.attribute as DataZoomAttributes;
     const { start: startState, end: endState } = this._state;
     if (isValid(start) && isValid(end) && (start !== startState || end !== endState)) {
-      if (startAttr !== startState || endAttr !== endState) {
-        this._renderer.renderDataZoom();
-        this._dispatchEvent('change', {
-          start,
-          end
-        });
-      }
+      this._state = { start, end };
+      this.render();
+      this._dispatchEvent(IDataZoomEvent.dataZoomChange, {
+        start,
+        end
+      });
     }
   }
 

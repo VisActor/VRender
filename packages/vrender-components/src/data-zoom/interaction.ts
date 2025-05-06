@@ -1,16 +1,14 @@
-import { DataZoomActiveTag, type DataZoomAttributes } from './type';
+import { DataZoomActiveTag, IDataZoomInteractiveEvent, type DataZoomAttributes } from './type';
 import { getEndTriggersOfDrag } from '../util/event';
-import type { IPointLike, Dict } from '@visactor/vutils';
+import type { IPointLike, Dict, Matrix } from '@visactor/vutils';
 import { vglobal } from '@visactor/vrender-core';
-// eslint-disable-next-line no-duplicate-imports
-import type { FederatedPointerEvent, IGroup, IRect, ISymbol, IStage, INode } from '@visactor/vrender-core';
-// eslint-disable-next-line no-duplicate-imports
+import type { FederatedPointerEvent, IGroup, IRect, ISymbol, IStage } from '@visactor/vrender-core';
 import { clamp, debounce, EventEmitter, throttle } from '@visactor/vutils';
 const delayMap = {
   debounce: debounce,
   throttle: throttle
 };
-export interface InteractionManagerAttributes {
+export interface InteractionAttributes {
   stage: IStage;
   attribute: Partial<Required<DataZoomAttributes>>;
   startHandlerMask?: IRect;
@@ -24,13 +22,18 @@ export interface InteractionManagerAttributes {
   getLayoutAttrFromConfig?: any;
   getState: () => { start: number; end: number };
   setState: (state: { start: number; end: number }) => void;
+  getGlobalTransMatrix: () => Matrix;
 }
-export class InteractionManager extends EventEmitter {
+export class DataZoomInteraction extends EventEmitter {
   /** 上层透传 */
   stage: IStage;
   attribute!: Partial<Required<DataZoomAttributes>>;
   private _getLayoutAttrFromConfig: any;
-  // 图元
+  private _getState: () => { start: number; end: number };
+  private _setState: (state: { start: number; end: number }) => void;
+  private _getGlobalTransMatrix: () => Matrix;
+
+  /** 图元 */
   private _startHandlerMask: IRect | undefined;
   private _middleHandlerSymbol: ISymbol | undefined;
   private _middleHandlerRect: IRect | undefined;
@@ -40,18 +43,18 @@ export class InteractionManager extends EventEmitter {
   private _selectedPreviewGroup: IGroup | undefined;
   private _selectedBackground: IRect | undefined;
 
-  /** 交互相关 */
-  _activeTag!: DataZoomActiveTag;
-  _activeItem!: any;
-  _activeState = false;
-  _activeCache: {
+  /** 交互 */
+  private _activeTag!: DataZoomActiveTag;
+  private _activeItem!: any;
+  private _activeState = false;
+  private _activeCache: {
     startPos: IPointLike;
     lastPos: IPointLike;
   } = {
     startPos: { x: 0, y: 0 },
     lastPos: { x: 0, y: 0 }
   };
-  _layoutCache: {
+  private _layoutCache: {
     attPos: 'x' | 'y';
     attSize: 'width' | 'height';
     size: number;
@@ -60,22 +63,24 @@ export class InteractionManager extends EventEmitter {
     attSize: 'width',
     size: 0
   };
-  _spanCache: number;
+  private _spanCache: number;
 
-  private _getState: () => { start: number; end: number };
-  private _setState: (state: { start: number; end: number }) => void;
+  private _onHandlerPointerMove: (e: FederatedPointerEvent) => void;
 
-  constructor(props: InteractionManagerAttributes) {
+  constructor(props: InteractionAttributes) {
     super();
-    this.attribute = props.attribute;
     this._initAttrs(props);
   }
 
-  setAttributes(props: InteractionManagerAttributes): void {
+  setAttributes(props: InteractionAttributes): void {
     this._initAttrs(props);
+    this._onHandlerPointerMove =
+      (this.attribute?.delayTime ?? 0) === 0
+        ? this._pointerMove
+        : delayMap[this.attribute?.delayType ?? 'debounce'](this._pointerMove, this.attribute?.delayTime ?? 0);
   }
 
-  private _initAttrs(props: InteractionManagerAttributes) {
+  private _initAttrs(props: InteractionAttributes) {
     this.stage = props.stage;
     this.attribute = props.attribute;
     this._startHandlerMask = props.startHandlerMask;
@@ -96,6 +101,7 @@ export class InteractionManager extends EventEmitter {
     this._layoutCache.size = isHorizontal ? width : height;
     this._layoutCache.attPos = isHorizontal ? 'x' : 'y';
     this._layoutCache.attSize = isHorizontal ? 'width' : 'height';
+    this._getGlobalTransMatrix = props.getGlobalTransMatrix;
   }
 
   clearDragEvents() {
@@ -224,9 +230,12 @@ export class InteractionManager extends EventEmitter {
    */
   private _pointerMove = (e: FederatedPointerEvent) => {
     const { brushSelect } = this.attribute as DataZoomAttributes;
+    const { position } = this._getLayoutAttrFromConfig();
     const pos = this._eventPosToStagePos(e);
-    const { attPos, size } = this._layoutCache;
+
+    const { attPos, size, attSize } = this._layoutCache;
     const dis = (pos[attPos] - this._activeCache.lastPos[attPos]) / size;
+    const statePos = (pos[attPos] - position[attPos]) / this._getLayoutAttrFromConfig()[attSize];
 
     let { start, end } = this._getState();
     let shouldRender = true;
@@ -234,23 +243,13 @@ export class InteractionManager extends EventEmitter {
       if (this._activeTag === DataZoomActiveTag.middleHandler) {
         ({ start, end } = this._moveZoomWithMiddle(dis));
       } else if (this._activeTag === DataZoomActiveTag.startHandler) {
-        ({ start, end } = this._moveZoomWithHandler('start', dis));
+        ({ start, end } = this._moveZoomWithHandler(statePos, 'start'));
       } else if (this._activeTag === DataZoomActiveTag.endHandler) {
-        ({ start, end } = this._moveZoomWithHandler('end', dis));
+        ({ start, end } = this._moveZoomWithHandler(statePos, 'end'));
       } else if (this._activeTag === DataZoomActiveTag.background && brushSelect) {
-        const { position, width } = this._getLayoutAttrFromConfig();
-        const currentPos = pos ?? this._activeCache.lastPos;
-        start = clamp(
-          (this._activeCache.startPos[this._layoutCache.attPos] - position[this._layoutCache.attPos]) / width,
-          0,
-          1
-        );
-        end = clamp((currentPos[this._layoutCache.attPos] - position[this._layoutCache.attPos]) / width, 0, 1);
-        if (start > end) {
-          [start, end] = [end, start];
-        }
+        ({ start, end } = this._moveZoomWithBackground(statePos));
         shouldRender = false;
-        this._dispatchEvent('renderMask');
+        this._dispatchEvent(IDataZoomInteractiveEvent.maskUpdate);
       }
       this._activeCache.lastPos = pos;
     }
@@ -258,14 +257,14 @@ export class InteractionManager extends EventEmitter {
     // 避免attributes相同时, 重复渲染
     if (this._getState().start !== start || this._getState().end !== end) {
       this._setStateAttr(start, end);
-      this._dispatchEvent('stateChange', {
+      this._dispatchEvent(IDataZoomInteractiveEvent.stateUpdate, {
         start: this._getState().start,
         end: this._getState().end,
         shouldRender,
         tag: this._activeTag
       });
       if (this.attribute.realTime) {
-        this._dispatchEvent('eventChange', {
+        this._dispatchEvent(IDataZoomInteractiveEvent.dataZoomUpdate, {
           start: this._getState().start,
           end: this._getState().end,
           shouldRender: true,
@@ -274,10 +273,6 @@ export class InteractionManager extends EventEmitter {
       }
     }
   };
-  private _onHandlerPointerMove =
-    (this.attribute?.delayTime ?? 0) === 0
-      ? this._pointerMove
-      : delayMap[this.attribute?.delayType ?? 'debounce'](this._pointerMove, this.attribute?.delayTime ?? 0);
 
   /** state 边界处理 */
   private _setStateAttr(start: number, end: number) {
@@ -309,25 +304,25 @@ export class InteractionManager extends EventEmitter {
   /**
    * @description 拖拽startHandler/endHandler, 改变start和end
    */
-  private _moveZoomWithHandler(handler: 'start' | 'end', dis: number) {
+  private _moveZoomWithHandler(statePos: number, handler: 'start' | 'end') {
     const { start, end } = this._getState();
     let newStart = start;
     let newEnd = end;
     if (handler === 'start') {
-      if (start + dis > end) {
+      if (statePos > end) {
         newStart = end;
-        newEnd = start + dis;
+        newEnd = statePos;
         this._activeTag = DataZoomActiveTag.endHandler;
       } else {
-        newStart = start + dis;
+        newStart = statePos;
       }
     } else if (handler === 'end') {
-      if (end + dis < start) {
+      if (statePos < start) {
         newEnd = start;
-        newStart = end + dis;
+        newStart = statePos;
         this._activeTag = DataZoomActiveTag.startHandler;
       } else {
-        newEnd = end + dis;
+        newEnd = statePos;
       }
     }
     return {
@@ -335,6 +330,25 @@ export class InteractionManager extends EventEmitter {
       end: clamp(newEnd, 0, 1)
     };
   }
+
+  /**
+   * @description 拖拽背景, 改变start和end
+   */
+  private _moveZoomWithBackground(statePos: number) {
+    const { position } = this._getLayoutAttrFromConfig();
+    const { attSize } = this._layoutCache;
+    const startPos =
+      (this._activeCache.startPos[this._layoutCache.attPos] - position[this._layoutCache.attPos]) /
+      this._getLayoutAttrFromConfig()[attSize];
+    const endPos = statePos;
+    let start = clamp(startPos, 0, 1);
+    let end = clamp(endPos, 0, 1);
+    if (start > end) {
+      [start, end] = [end, start];
+    }
+    return { start, end };
+  }
+
   /**
    * 拖拽结束事件
    * @description 关闭activeState + 边界情况处理: 防止拖拽后start和end过近
@@ -344,7 +358,7 @@ export class InteractionManager extends EventEmitter {
       // brush的时候, 只改变了state, 没有触发重新渲染, 在抬起鼠标时触发
       if (this._activeTag === DataZoomActiveTag.background) {
         this._setStateAttr(this._getState().start, this._getState().end);
-        this._dispatchEvent('stateChange', {
+        this._dispatchEvent(IDataZoomInteractiveEvent.stateUpdate, {
           start: this._getState().start,
           end: this._getState().end,
           shouldRender: true,
@@ -356,7 +370,7 @@ export class InteractionManager extends EventEmitter {
     // 此次dispatch不能被省略
     // 因为pointermove时, 已经将状态更新至最新, 所以在pointerup时, 必定start = state.start & end = state.end
     // 而realTime = false时, 需要依赖这次dispatch来更新图表图元
-    this._dispatchEvent('eventChange', {
+    this._dispatchEvent(IDataZoomInteractiveEvent.dataZoomUpdate, {
       start: this._getState().start,
       end: this._getState().end,
       shouldRender: true,
@@ -366,38 +380,17 @@ export class InteractionManager extends EventEmitter {
     this.clearDragEvents();
   };
 
-  /**
-   * 鼠标进入事件
-   * @description 鼠标进入选中部分出现start和end文字
-   */
-  private _onHandlerPointerEnter(e: FederatedPointerEvent) {
-    this._dispatchEvent('enter', {
-      start: this._getState().start,
-      end: this._getState().end,
-      shouldRender: true
-    });
-  }
-
-  /**
-   * 鼠标移出事件
-   * @description 鼠标移出选中部分不出现start和end文字
-   */
-  private _onHandlerPointerLeave(e: FederatedPointerEvent) {
-    this._dispatchEvent('leave', {
-      start: this._getState().start,
-      end: this._getState().end,
-      shouldRender: true
-    });
-  }
-
   /** 事件系统坐标转换为stage坐标 */
   private _eventPosToStagePos(e: FederatedPointerEvent) {
-    // updateSpec过程中交互的话, stage可能为空
-    return this.stage?.eventPointTransform(e as any) ?? { x: 0, y: 0 };
+    const result = { x: 0, y: 0 };
+    // 1. 外部坐标 -> 内部坐标
+    const stagePoints = this.stage?.eventPointTransform(e as any) ?? { x: 0, y: 0 }; // updateSpec过程中交互的话, stage可能为空
+    // 2. 内部坐标 -> 组件坐标 (比如: 给layer设置 scale / x / y)
+    this._getGlobalTransMatrix().transformPoint(stagePoints, result);
+    return result;
   }
 
-  protected _dispatchEvent(eventName: string, details?: Dict<any>) {
+  protected _dispatchEvent(eventName: IDataZoomInteractiveEvent, details?: Dict<any>) {
     this.emit(eventName, details);
-    // return !changeEvent.defaultPrevented;
   }
 }

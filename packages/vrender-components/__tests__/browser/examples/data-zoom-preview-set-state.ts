@@ -36,7 +36,7 @@ export function run() {
     }
   });
 
-  // dataZoom.setStartAndEnd(0, 1);
+  dataZoom.setStartAndEnd(0, 1);
   dataZoom.setPreviewData(data);
   dataZoom.setPreviewPointsX(d => d.x);
   dataZoom.setPreviewPointsY(d => d.y);

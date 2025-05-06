@@ -221,3 +221,23 @@ export interface DataZoomAttributes extends IGroupGraphicAttribute {
    */
   tolerance?: number;
 }
+
+/**
+ * 交互模块向外部抛出的事件
+ */
+export enum IDataZoomInteractiveEvent {
+  // 更新start和end
+  stateUpdate = 'stateUpdate',
+  // 更新dragMask
+  maskUpdate = 'maskUpdate',
+  // 更新dataZoom
+  dataZoomUpdate = 'dataZoomUpdate'
+}
+
+/**
+ * vrender-components 对外抛出的事件
+ * 由vchart层监听
+ */
+export enum IDataZoomEvent {
+  dataZoomChange = 'dataZoomChange'
+}

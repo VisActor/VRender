@@ -19,7 +19,7 @@ export type IGroupAttribute = {
   /**
    * 圆角半径
    */
-  cornerRadius: number | number[];
+  cornerRadius: number | string | (number | string)[];
   /**
    * 圆角类型，
    * 'round' - 圆弧

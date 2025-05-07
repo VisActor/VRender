@@ -47,6 +47,8 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AnimateComp
 
   lastScale: IBaseScale;
 
+  lastAttribute: T;
+
   // TODO: 组件整体统一起来
   protected _innerView: IGroup;
   getInnerView() {
@@ -120,9 +122,14 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AnimateComp
    * TODO：后面看情况再抽象为通用的方法
    */
   getBoundsWithoutRender(attributes: Partial<T>) {
+    // 如果属性没有变化，则直接返回上一次的包围盒
     const currentAttribute = cloneDeep(this.attribute);
     // scale 不能拷贝
     currentAttribute.scale = (this.attribute as any).scale;
+    // 如果属性没有变化，则直接返回组件的包围盒
+    if (isEqual(currentAttribute, this.attribute)) {
+      return this.AABBBounds;
+    }
     merge(this.attribute, attributes);
 
     const offscreenGroup = graphicCreator.group({
@@ -139,6 +146,14 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AnimateComp
   }
 
   protected render(): void {
+    // 坐标轴的scale 不用比较
+    if (this.lastAttribute) {
+      // @ts-ignore
+      this.lastAttribute.scale = this.attribute.scale;
+    }
+    if (this.lastAttribute && isEqual(this.lastAttribute, this.attribute)) {
+      return;
+    }
     this._prepare();
     this._prevInnerView = this._innerView && getElMap(this._innerView);
     this.removeAllChild(true);
@@ -149,6 +164,8 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AnimateComp
     this._bindEvent();
     // 尝试执行动画
     this.runAnimation();
+
+    // this.lastAttribute = cloneDeep(this.attribute);
   }
 
   protected _prepare() {

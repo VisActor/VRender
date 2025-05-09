@@ -15,7 +15,7 @@ import type {
 } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
 import { graphicCreator, diff } from '@visactor/vrender-core';
-import type { Dict } from '@visactor/vutils';
+import type { Dict, IBounds } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports
 import { abs, cloneDeep, get, isArray, isEmpty, isEqual, isFunction, merge, pi } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
@@ -47,7 +47,11 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AnimateComp
 
   lastScale: IBaseScale;
 
-  lastAttribute: T;
+  // 上一次执行render的attribute
+  protected lastAttribute: T;
+  // 上一次执行BoundsWithoutRender的attribute
+  protected lastBoundsWithoutRenderAttribute: Partial<T>;
+  protected lastBoundsWithoutRenderBounds: IBounds;
 
   // TODO: 组件整体统一起来
   protected _innerView: IGroup;
@@ -122,15 +126,20 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AnimateComp
    * TODO：后面看情况再抽象为通用的方法
    */
   getBoundsWithoutRender(attributes: Partial<T>) {
+    delete (attributes as any).scale;
     // 如果属性没有变化，则直接返回上一次的包围盒
     const currentAttribute = cloneDeep(this.attribute);
-    // scale 不能拷贝
+    // scale 不能拷贝，它是一个实例，重新设置上去
     currentAttribute.scale = (this.attribute as any).scale;
-    // 如果属性没有变化，则直接返回组件的包围盒
-    if (isEqual(currentAttribute, this.attribute)) {
-      return this.AABBBounds;
-    }
     merge(this.attribute, attributes);
+
+    // 如果属性没有变化，则直接返回组件的包围盒
+    if (this.lastBoundsWithoutRenderAttribute && isEqual(this.lastBoundsWithoutRenderAttribute, this.attribute)) {
+      this.attribute = currentAttribute;
+      return this.lastBoundsWithoutRenderBounds;
+    }
+    // 更新属性
+    this.lastBoundsWithoutRenderAttribute = this.attribute;
 
     const offscreenGroup = graphicCreator.group({
       x: this.attribute.x,
@@ -142,7 +151,8 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AnimateComp
 
     this.removeChild(offscreenGroup);
     this.attribute = currentAttribute;
-    return offscreenGroup.AABBBounds;
+    this.lastBoundsWithoutRenderBounds = offscreenGroup.AABBBounds;
+    return this.lastBoundsWithoutRenderBounds;
   }
 
   protected render(): void {
@@ -165,7 +175,7 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AnimateComp
     // 尝试执行动画
     this.runAnimation();
 
-    // this.lastAttribute = cloneDeep(this.attribute);
+    this.lastAttribute = cloneDeep(this.attribute);
   }
 
   protected _prepare() {

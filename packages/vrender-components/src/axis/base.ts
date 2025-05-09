@@ -123,7 +123,7 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AnimateComp
     const currentAttribute = cloneDeep(this.attribute);
     // scale 不能拷贝，它是一个实例，重新设置上去
     currentAttribute.scale = (this.attribute as any).scale;
-    merge(this.attribute, attributes);
+    this.attribute = attributes;
 
     const offscreenGroup = graphicCreator.group({
       x: this.attribute.x,

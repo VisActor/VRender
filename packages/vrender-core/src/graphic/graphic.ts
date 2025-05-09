@@ -165,7 +165,7 @@ export const NOWORK_ANIMATE_ATTR = {
 //       return Reflect.get(target, property);
 //     },
 //     set(target: any, property: any, value: any) {
-//       if (property === 'opacity' && obj.text === 'Nail polish') {
+//       if (property === 'size' && !isFinite(value)) {
 //         console.log('set', property, value);
 //       }
 //       // modifiedProperties.add(property); // 记录设置/修改操作
@@ -176,8 +176,8 @@ export const NOWORK_ANIMATE_ATTR = {
 //   const proxy = new Proxy(obj, handler);
 
 //   // 提供方法获取被追踪的属性
-//   proxy.getAccessedProperties = () => [...accessedProperties];
-//   proxy.getModifiedProperties = () => [...modifiedProperties];
+//   // proxy.getAccessedProperties = () => [...accessedProperties];
+//   // proxy.getModifiedProperties = () => [...modifiedProperties];
 
 //   return proxy;
 // }

@@ -179,7 +179,7 @@ export class TagPointsUpdate extends ACustomAnimate<{ points?: IPointLike[]; seg
           points
         };
       });
-      (this.target.attribute as ILineAttribute).points = segments;
+      (this.target.attribute as ILineAttribute).segments = segments;
     } else {
       (this.target.attribute as ILineAttribute).points = this.points;
     }

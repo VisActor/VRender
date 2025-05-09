@@ -130,8 +130,8 @@ export class DefaultDrawContribution implements IDrawContribution {
     }
     this.backupDirtyBounds.copy(dirtyBounds);
     // TODO：不需要设置context.transform，后续translate会设置
-    context.save();
     context.reset(false);
+    context.save();
     context.setClearMatrix(transMatrix.a, transMatrix.b, transMatrix.c, transMatrix.d, transMatrix.e, transMatrix.f);
     // 初始化context
     context.clearMatrix(false);

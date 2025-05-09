@@ -47,12 +47,6 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AnimateComp
 
   lastScale: IBaseScale;
 
-  // 上一次执行render的attribute
-  protected lastAttribute: T;
-  // 上一次执行BoundsWithoutRender的attribute
-  protected lastBoundsWithoutRenderAttribute: Partial<T>;
-  protected lastBoundsWithoutRenderBounds: IBounds;
-
   // TODO: 组件整体统一起来
   protected _innerView: IGroup;
   getInnerView() {
@@ -126,20 +120,10 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AnimateComp
    * TODO：后面看情况再抽象为通用的方法
    */
   getBoundsWithoutRender(attributes: Partial<T>) {
-    delete (attributes as any).scale;
-    // 如果属性没有变化，则直接返回上一次的包围盒
     const currentAttribute = cloneDeep(this.attribute);
     // scale 不能拷贝，它是一个实例，重新设置上去
     currentAttribute.scale = (this.attribute as any).scale;
     merge(this.attribute, attributes);
-
-    // 如果属性没有变化，则直接返回组件的包围盒
-    if (this.lastBoundsWithoutRenderAttribute && isEqual(this.lastBoundsWithoutRenderAttribute, this.attribute)) {
-      this.attribute = currentAttribute;
-      return this.lastBoundsWithoutRenderBounds;
-    }
-    // 更新属性
-    this.lastBoundsWithoutRenderAttribute = this.attribute;
 
     const offscreenGroup = graphicCreator.group({
       x: this.attribute.x,
@@ -151,19 +135,10 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AnimateComp
 
     this.removeChild(offscreenGroup);
     this.attribute = currentAttribute;
-    this.lastBoundsWithoutRenderBounds = offscreenGroup.AABBBounds;
-    return this.lastBoundsWithoutRenderBounds;
+    return offscreenGroup.AABBBounds;
   }
 
   protected render(): void {
-    // 坐标轴的scale 不用比较
-    if (this.lastAttribute) {
-      // @ts-ignore
-      this.lastAttribute.scale = this.attribute.scale;
-    }
-    if (this.lastAttribute && isEqual(this.lastAttribute, this.attribute)) {
-      return;
-    }
     this._prepare();
     this._prevInnerView = this._innerView && getElMap(this._innerView);
     this.removeAllChild(true);
@@ -174,8 +149,6 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AnimateComp
     this._bindEvent();
     // 尝试执行动画
     this.runAnimation();
-
-    this.lastAttribute = cloneDeep(this.attribute);
   }
 
   protected _prepare() {

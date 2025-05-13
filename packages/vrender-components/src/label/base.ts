@@ -873,6 +873,12 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
     );
   }
 
+  protected _syncStateWithRelatedGraphic(relatedGraphic: IGraphic) {
+    if (this.attribute.syncState && relatedGraphic) {
+      relatedGraphic.on('afterStateUpdate', this._handleRelatedGraphicSetState);
+    }
+  }
+
   protected _addLabel(
     label: LabelContent,
     texts?: LabelContent['text'][],
@@ -881,8 +887,8 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
   ) {
     const { text, labelLine } = label;
     // TODO: 或许还需要判断关联图元是否有动画？
-    // const relatedGraphic = this.getRelatedGraphic(text.attribute);
-    // this._syncStateWithRelatedGraphic(relatedGraphic);
+    const relatedGraphic = this.getRelatedGraphic(text.attribute);
+    this._syncStateWithRelatedGraphic(relatedGraphic);
 
     if (text) {
       this.add(text);

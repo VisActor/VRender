@@ -191,6 +191,7 @@ export class CommonDrawItemInterceptorContribution implements IDrawItemIntercept
     if (
       (!graphic.in3dMode || drawContext.in3dInterceptor) &&
       !graphic.shadowRoot &&
+      !graphic.attribute._debug_bounds &&
       !(graphic.baseGraphic || graphic.attribute.globalZIndex || graphic.interactiveGraphic)
     ) {
       return false;
@@ -218,6 +219,7 @@ export class CommonDrawItemInterceptorContribution implements IDrawItemIntercept
     if (
       (!graphic.in3dMode || drawContext.in3dInterceptor) &&
       !graphic.shadowRoot &&
+      !graphic.attribute._debug_bounds &&
       !(graphic.baseGraphic || graphic.attribute.globalZIndex || graphic.interactiveGraphic)
     ) {
       return false;

@@ -1062,13 +1062,15 @@ export class BrowserContext2d implements IContext2d {
     const {
       opacity = defaultParams.opacity,
       shadowBlur = defaultParams.shadowBlur,
+      shadowOffsetX = defaultParams.shadowOffsetX,
+      shadowOffsetY = defaultParams.shadowOffsetY,
       blur = defaultParams.blur,
       globalCompositeOperation = defaultParams.globalCompositeOperation
     } = attribute;
     if (opacity <= 1e-12) {
       return;
     }
-    if (shadowBlur) {
+    if (shadowOffsetX || shadowOffsetY || shadowBlur) {
       const {
         shadowColor = defaultParams.shadowColor,
         shadowOffsetX = defaultParams.shadowOffsetX,

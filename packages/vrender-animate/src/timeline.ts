@@ -1,4 +1,5 @@
 import { Generator, type IAnimate, type ITimeline, AnimateStatus } from '@visactor/vrender-core';
+import { EventEmitter } from '@visactor/vutils';
 
 // 定义链表节点
 interface AnimateNode {
@@ -7,7 +8,7 @@ interface AnimateNode {
   prev: AnimateNode | null;
 }
 
-export class DefaultTimeline implements ITimeline {
+export class DefaultTimeline extends EventEmitter implements ITimeline {
   declare id: number;
   protected head: AnimateNode | null = null;
   protected tail: AnimateNode | null = null;
@@ -28,6 +29,7 @@ export class DefaultTimeline implements ITimeline {
   }
 
   constructor() {
+    super();
     this.id = Generator.GenAutoIncrementId();
     this.paused = false;
   }
@@ -102,6 +104,10 @@ export class DefaultTimeline implements ITimeline {
         animate.advance(scaledDelta);
       }
     });
+
+    if (this._animateCount === 0) {
+      this.emit('animationEnd');
+    }
   }
 
   clear() {

@@ -309,9 +309,9 @@ export class DefaultCanvasArcRender extends BaseRender<IArc> implements IGraphic
 
       if (!fillStrokeOrder) {
         this._runFill(arc, context, x, y, arcAttribute, doFill, fVisible, originX, originY, fillCb);
-        this._runStroke(arc, context, x, y, arcAttribute, doStroke, sVisible, strokeCb);
+        this._runStroke(arc, context, x, y, arcAttribute, doStroke, isFullStroke, sVisible, strokeCb);
       } else {
-        this._runStroke(arc, context, x, y, arcAttribute, doStroke, sVisible, strokeCb);
+        this._runStroke(arc, context, x, y, arcAttribute, doStroke, isFullStroke, sVisible, strokeCb);
         this._runFill(arc, context, x, y, arcAttribute, doFill, fVisible, originX, originY, fillCb);
       }
     }
@@ -470,6 +470,7 @@ export class DefaultCanvasArcRender extends BaseRender<IArc> implements IGraphic
     y: number,
     arcAttribute: Required<IArcGraphicAttribute>,
     doStroke: boolean,
+    isFullStroke: boolean,
     sVisible: boolean,
     strokeCb?: (
       ctx: IContext2d,
@@ -477,7 +478,7 @@ export class DefaultCanvasArcRender extends BaseRender<IArc> implements IGraphic
       themeAttribute: IThemeAttribute
     ) => boolean
   ) {
-    if (doStroke) {
+    if (doStroke && isFullStroke) {
       if (strokeCb) {
         // fillCb(context, arc.attribute, arcAttribute);
       } else if (sVisible) {

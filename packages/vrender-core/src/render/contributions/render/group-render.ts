@@ -338,7 +338,12 @@ export class DefaultCanvasGroupRender implements IGraphicRender {
     }
     let p: any;
     if (params && params.renderInGroup) {
-      p = params.renderInGroup(params.skipDraw, group, drawContext, params.renderInGroupParams?.nextM);
+      p = params.renderInGroup(
+        params.renderInGroupParams?.skipSort,
+        group,
+        drawContext,
+        params.renderInGroupParams?.nextM
+      );
     }
 
     if (context.modelMatrix !== lastModelMatrix) {

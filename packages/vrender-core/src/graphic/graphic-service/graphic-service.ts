@@ -23,7 +23,6 @@ import { BoundsContext } from '../../common/bounds-context';
 import { renderCommandList } from '../../common/render-command-list';
 import { GraphicCreator } from '../constants';
 import { identityMat4, multiplyMat4Mat4, rotateX, rotateY, rotateZ, scaleMat4, translate } from '../../common/matrix';
-import { application } from '../../application';
 
 export function getExtraModelMatrix(dx: number, dy: number, graphic: IGraphic): mat4 | null {
   const { alpha, beta } = graphic.attribute;
@@ -381,7 +380,7 @@ export class DefaultGraphicService implements IGraphicService {
       // application.graphicService.beforeUpdateAABBBounds(graphic, graphic.stage, true, aabbBounds);
       if (!aabbBounds.empty()) {
         graphic.parent && aabbBounds.transformWithMatrix((graphic.parent as IGroup).globalTransMatrix);
-        application.graphicService.clearAABBBounds(graphic, graphic.stage, aabbBounds);
+        this.clearAABBBounds(graphic, graphic.stage, aabbBounds);
         aabbBounds.clear();
       }
       return false;

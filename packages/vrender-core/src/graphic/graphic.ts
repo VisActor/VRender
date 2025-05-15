@@ -332,6 +332,10 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     // this.attribute = createTrackableObject(this.attribute);
   }
 
+  getGraphicService() {
+    return this.stage?.graphicService ?? application.graphicService;
+  }
+
   getAttributes(): T {
     return this.attribute;
   }
@@ -374,10 +378,10 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       return this._AABBBounds;
     }
 
-    this.stage?.graphicService.beforeUpdateAABBBounds(this, this.stage, true, this._AABBBounds);
+    this.getGraphicService().beforeUpdateAABBBounds(this, this.stage, true, this._AABBBounds);
     const bounds = this.doUpdateAABBBounds(full);
     // this.addUpdateLayoutTag();
-    this.stage?.graphicService.afterUpdateAABBBounds(this, this.stage, this._AABBBounds, this, true);
+    this.getGraphicService().afterUpdateAABBBounds(this, this.stage, this._AABBBounds, this, true);
 
     // 直接返回空Bounds，但是前面的流程还是要走
     if (this.attribute.boundsMode === 'empty') {
@@ -597,7 +601,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     if (this.shadowRoot) {
       return (
         (!!(this._updateTag & UpdateTag.UPDATE_BOUNDS) || this.shadowRoot.shouldUpdateAABBBounds()) &&
-        application.graphicService.validCheck(
+        this.getGraphicService().validCheck(
           this.attribute,
           this.getGraphicTheme() as Required<T>,
           this._AABBBounds,
@@ -607,12 +611,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     }
     return (
       !!(this._updateTag & UpdateTag.UPDATE_BOUNDS) &&
-      application.graphicService.validCheck(
-        this.attribute,
-        this.getGraphicTheme() as Required<T>,
-        this._AABBBounds,
-        this
-      )
+      this.getGraphicService().validCheck(this.attribute, this.getGraphicTheme() as Required<T>, this._AABBBounds, this)
     );
   }
 
@@ -956,7 +955,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     if (context && context.skipUpdateCallback) {
       return;
     }
-    this.stage?.graphicService.onAttributeUpdate(this);
+    this.getGraphicService().onAttributeUpdate(this);
     this._emitCustomEvent('afterAttributeUpdate', context);
   }
 
@@ -1370,7 +1369,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
         });
       }
       this._onSetStage && this._onSetStage(this, stage, layer);
-      this.stage?.graphicService.onSetStage(this, stage);
+      this.getGraphicService().onSetStage(this, stage);
     }
   }
 

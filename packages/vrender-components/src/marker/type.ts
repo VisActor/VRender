@@ -286,33 +286,23 @@ export type MarkPointState = {
    */
   lineEndSymbol?: State<Partial<ISymbolGraphicAttribute>>;
   /**
-   * 设置标注图形在特定状态下的样式
-   */
-  symbol?: State<Partial<ISymbolGraphicAttribute>>;
-  /**
-   * 设置标注图形在特定状态下的样式
-   */
-  image?: State<Partial<IImageGraphicAttribute>>;
-  /**
-   * 设置标签在特定状态下的样式
-   */
-  text?: State<Partial<ITextGraphicAttribute>>;
-  /**
    * 设置标签背景区块在特定状态下的样式
    */
   textBackground?: State<Partial<IRectGraphicAttribute>>;
   /**
-   * 设置富文本在特定状态下的样式
-   */
-  richText?: State<Partial<IRichTextGraphicAttribute>>;
-  /**
-   * 设置自定义标注图形在特定状态下的样式
-   */
-  customMark?: State<Partial<IGroupGraphicAttribute>>;
-  /**
    * 设置目标元素在特定状态下的样式
    */
   targetItem?: State<Partial<ISymbolGraphicAttribute>>;
+  /**
+   * 设置content在特定状态下的样式
+   * 等价于原来的 symbol | image | text | richText | customMark
+   */
+  itemContent?: State<
+    | Partial<ISymbolGraphicAttribute>
+    | Partial<IImageGraphicAttribute>
+    | Partial<ITextGraphicAttribute>
+    | Partial<IGroupGraphicAttribute>
+  >;
 };
 
 export type MarkerLineLabelAttrs<LineLabelPosition> = {
@@ -494,9 +484,9 @@ export type MarkArcAreaAttrs = MarkerAttrs<CommonMarkAreaAnimationType> & {
 export type IItemContent = IMarkRef & {
   /**
    * 标注类型
-   * Tips: 保留'richText'与之前的定义做兼容
+   * Tips: 不保留'richText', 在vchart层做兼容
    */
-  type?: 'symbol' | 'text' | 'image' | 'richText' | 'custom';
+  type?: 'symbol' | 'text' | 'image' | 'custom';
   /**
    * 设置标注的位置
    */
@@ -510,22 +500,9 @@ export type IItemContent = IMarkRef & {
    */
   offsetY?: number;
   /**
-   * type为symbol时, symbol的样式
+   * item样式
    */
-  symbolStyle?: ISymbolGraphicAttribute;
-  /**
-   * type为image时, image的样式
-   */
-  imageStyle?: IImageGraphicAttribute;
-  /**
-   * type为text时, text的配置
-   * 'text'类型的ItemContent新增三种子类型：'text','rich','html'。配置在textStyle.type上，继承自TagAttributes。
-   */
-  textStyle?: IMarkLabel;
-  /**
-   * type为rich text时, rich text的样式
-   */
-  richTextStyle?: IRichTextGraphicAttribute;
+  style?: ISymbolGraphicAttribute | IImageGraphicAttribute | IMarkLabel;
   /**
    * type为custom时，允许以callback的方式传入需要render的item
    */

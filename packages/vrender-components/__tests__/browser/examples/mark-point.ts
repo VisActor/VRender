@@ -62,39 +62,16 @@ export function run() {
           fill: 'red'
         }
       },
-      symbol: {
+      itemContent: {
         hover: {
-          stroke: 'red',
-          fill: 'red'
-        }
-      },
-      image: {
-        hover: {
-          stroke: 'red',
-          fill: 'red',
+          stroke: 'blue',
+          fill: 'blue',
           width: 200,
-          height: 200
-        }
-      },
-      text: {
-        hover: {
-          stroke: 'red',
-          fill: 'red'
+          height: 200,
+          size: 200
         }
       },
       textBackground: {
-        hover: {
-          stroke: 'red',
-          fill: 'red'
-        }
-      },
-      richText: {
-        hover: {
-          stroke: 'red',
-          fill: 'red'
-        }
-      },
-      customMark: {
         hover: {
           stroke: 'red',
           fill: 'red'
@@ -150,85 +127,42 @@ export function run() {
       confine: true,
 
       autoRotate: guiObject.itemAutoRotate,
-      textStyle: {
-        // text: 'mark point label text'
-        type: 'text',
+      type: 'text',
+      style: {
+        type: 'rich',
         textStyle: {
-          text: 'Type your annotation text here',
+          textConfig: [{ text: 'Type your annotation text here' }],
           // fontWeight: 'bold',
           fontSize: 12,
           fill: '#3f51b5',
           height: 25
           // textAlign: 'center'
-        }
-        // text: [
-        //   {
-
-        // },
-        // {
-        //   text: '替代方案',
-        //   fontStyle: 'italic',
-        //   textDecoration: 'underline',
-        //   fill: '#3f51b5',
-        //   height: 25
-        // }
-        // ]
-      },
-      richTextStyle: {
-        textConfig: [
-          {
-            text: 'Mapbox',
-            fontWeight: 'bold',
-            fontSize: 10,
-            fill: '#3f51b5'
-          },
-          {
-            text: '公司成立于2010年，创立目标是为Google Map提供一个',
-
-            fontSize: 8
-          },
+        },
+        text: [
+          {},
           {
             text: '替代方案',
             fontStyle: 'italic',
-
+            textDecoration: 'underline',
             fill: '#3f51b5',
-            fontSize: 8
-          },
-          {
-            text: '。在当时，Google Map',
-
-            fontSize: 8
-          },
-          {
-            text: '地图',
-            textDecoration: 'line-through',
-
-            fontSize: 8
-          },
-          {
-            text: '[1]',
-            script: 'super',
-
-            fontSize: 8
-          },
-          {
-            text: '几乎垄断了所有线上地图业务，但是在Google Map中，几乎没有定制化的可能，也没有任何工具可以让制图者按照他们的设想来创建地图',
-
-            fontSize: 8
-          },
-          {
-            text: '。\n',
-
-            fill: '#30ff05',
-            fontSize: 8
+            height: 25
           }
         ]
-      },
-      imageStyle: {
-        image: `https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/shape_logo.png`
-        // width: 400,
-        // height: 400
       }
+
+      // type: 'image',
+      // style: {
+      //   image: `https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/shape_logo.png`,
+      //   width: 400,
+      //   height: 400
+      // },
+
+      // type: 'symbol',
+      // style: {
+      //   symbolType: `circle`,
+      //   size: 30,
+      //   fill: 'red'
+      // }
     },
     targetSymbol: {
       visible: true,
@@ -265,13 +199,12 @@ export function run() {
 
   const markPoint2 = new MarkPoint({
     position: {
-      x: 250,
+      x: 0,
       y: 250
     },
     ...(styleAttr as any),
     itemContent: {
-      ...styleAttr.itemContent,
-      type: 'text'
+      ...styleAttr.itemContent
     }
   });
 
@@ -283,7 +216,7 @@ export function run() {
     ...(styleAttr as any),
     itemContent: {
       ...styleAttr.itemContent,
-      type: 'richText'
+      type: 'text'
     }
   });
 
@@ -294,8 +227,7 @@ export function run() {
     },
     ...(styleAttr as any),
     itemContent: {
-      ...styleAttr.itemContent,
-      type: 'image'
+      ...styleAttr.itemContent
     }
   });
 

@@ -1,4 +1,4 @@
-import { vglobal } from '../modules';
+import { application } from '../application';
 
 /**
  * 性能优化，将requestAnimationFrame的回调函数存储起来，在下一帧执行
@@ -38,6 +38,6 @@ export class PerformanceRAF {
     if (this._rafHandle !== null || this.nextAnimationFrameCbs.length === 0) {
       return;
     }
-    this._rafHandle = vglobal.getRequestAnimationFrame()(this.runAnimationFrame);
+    this._rafHandle = application.global.getRequestAnimationFrame()(this.runAnimationFrame);
   };
 }

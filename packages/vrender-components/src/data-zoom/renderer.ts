@@ -1,7 +1,9 @@
 import type { DataZoomAttributes } from './type';
 import type { IBoundsLike, IPointLike } from '@visactor/vutils';
 import { flatten_simplify } from '@visactor/vrender-core';
+// eslint-disable-next-line no-duplicate-imports
 import type { IArea, IGroup, ILine, IRect, ISymbol, INode } from '@visactor/vrender-core';
+// eslint-disable-next-line no-duplicate-imports
 import { Bounds, isFunction, merge } from '@visactor/vutils';
 import { Tag, type TagAttributes } from '../tag';
 import { DEFAULT_HANDLER_ATTR_MAP } from './config';
@@ -119,9 +121,9 @@ export class DataZoomRenderer {
   private _initAttrs(props: DataZoomRendererAttrs) {
     this.attribute = props.attribute;
     this._isHorizontal = this.attribute.orient === 'top' || this.attribute.orient === 'bottom';
-    const { previewData, showDetail, previewPointsX, previewPointsY, previewPointsX1, previewPointsY1 } = this
+    const { previewData, previewPointsX, previewPointsY, previewPointsX1, previewPointsY1 } = this
       .attribute as DataZoomAttributes;
-    this._showText = showDetail === 'auto' ? false : showDetail;
+
     previewData && (this._previewData = previewData);
     isFunction(previewPointsX) && (this._previewPointsX = previewPointsX);
     isFunction(previewPointsY) && (this._previewPointsY = previewPointsY);
@@ -133,6 +135,8 @@ export class DataZoomRenderer {
   }
 
   constructor(props: DataZoomRendererAttrs) {
+    const { showDetail } = props.attribute as DataZoomAttributes;
+    this._showText = showDetail === 'auto' ? false : showDetail;
     this._initAttrs(props);
   }
 

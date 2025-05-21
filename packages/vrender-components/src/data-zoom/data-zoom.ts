@@ -28,19 +28,19 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
 
   constructor(attributes: DataZoomAttributes, options?: ComponentOptions) {
     super(options?.skipDefault ? attributes : merge({}, DataZoom.defaultAttributes, attributes));
-    this._renderer = new DataZoomRenderer(this._getRendererAttrs());
-    this._interaction = new DataZoomInteraction(this._getInteractionAttrs());
     const { start, end, orient } = this.attribute as DataZoomAttributes;
+    this._isHorizontal = orient === 'top' || orient === 'bottom';
     start && (this._state.start = start);
     end && (this._state.end = end);
-    this._isHorizontal = orient === 'top' || orient === 'bottom';
+    this._renderer = new DataZoomRenderer(this._getRendererAttrs());
+    this._interaction = new DataZoomInteraction(this._getInteractionAttrs());
   }
 
   /**
    * 获取背景框中的位置和宽高
    * @description 实际绘制的背景框中的高度或宽度 减去 中间手柄的高度或宽度
    */
-  getLayoutAttrFromConfig() {
+  getLayoutAttrFromConfig = () => {
     if (this._layoutCacheFromConfig) {
       return this._layoutCacheFromConfig;
     }
@@ -111,7 +111,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
       height
     };
     return this._layoutCacheFromConfig;
-  }
+  };
 
   private _getRendererAttrs(): DataZoomRendererAttrs {
     return {

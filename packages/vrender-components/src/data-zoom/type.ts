@@ -223,7 +223,8 @@ export interface DataZoomAttributes extends IGroupGraphicAttribute {
 }
 
 /**
- * 交互模块向外部抛出的事件
+ * 交互模块事件, datazoom内部监听
+ * 由vrender-component层监听
  */
 export enum IDataZoomInteractiveEvent {
   // 更新start和end

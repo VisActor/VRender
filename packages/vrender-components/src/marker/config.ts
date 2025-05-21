@@ -450,23 +450,15 @@ export const DEFAULT_MARK_POINT_THEME = {
     type: 'text',
     position: 'middle',
     refX: 10,
-    symbolStyle: {
+    style: {
       symbolType: 'star',
       fill: 'rgb(48, 115, 242)',
       fillOpacity: 0.8,
-      size: 20
-    },
-    textStyle: {
+      size: 20,
       dx: 0,
-      dy: 0
-    },
-    imageStyle: {
+      dy: 0,
       width: 80,
       height: 80
-    },
-    richTextStyle: {
-      width: 100,
-      height: 100
     }
   }
 };

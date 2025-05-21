@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix: delete-default-value",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

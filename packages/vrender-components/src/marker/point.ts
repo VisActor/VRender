@@ -121,7 +121,7 @@ export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
       const offsetY = newItemPosition.y - newPosition.y;
       item.setAttributes({
         ...(style as TagAttributes),
-        style: {
+        textStyle: {
           ...this.getTextAlignAttr(
             autoRotate,
             offsetX,
@@ -207,6 +207,13 @@ export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
           text: merge({}, DEFAULT_STATES, state?.itemContent)
         }
       });
+    } else if (type === 'richText') {
+      // 兼容老逻辑
+      item = graphicCreator.richtext({
+        ...newItemPosition,
+        ...style
+      });
+      item.states = merge({}, DEFAULT_STATES, state?.itemContent);
     } else if (type === 'image') {
       item = graphicCreator.image({
         ...newItemPosition,

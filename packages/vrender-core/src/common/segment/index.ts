@@ -14,6 +14,7 @@ export * from './basis';
 export * from './monotone';
 export * from './step';
 export * from './curve/curve-context';
+export * from './curve/cubic-bezier';
 
 export function calcLineCache(
   points: IPointLike[],

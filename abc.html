@@ -6,8 +6,66 @@
     <title>Document</title>
   </head>
   <body>
-    <img
-      src='<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="6" cy="6" r="6" fill="#FD9C87"></circle><circle opacity="0.6" cx="6" cy="6" r="1" stroke="white" stroke-width="2"></circle></svg>'
-    />
+    <canvas id="canvas"></canvas>
   </body>
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const text = '渐变文字效果';
+    let progress = 0;
+
+    // 设置画布尺寸
+    canvas.width = 600;
+    canvas.height = 200;
+
+    // 创建单个离屏Canvas（同时处理文字和遮罩）
+    const maskCanvas = document.createElement('canvas');
+    maskCanvas.width = canvas.width;
+    maskCanvas.height = canvas.height;
+    const maskCtx = maskCanvas.getContext('2d');
+
+    function draw() {
+      // 清空所有画布
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      maskCtx.clearRect(0, 0, maskCanvas.width, maskCanvas.height);
+
+      // 主Canvas绘制固定背景
+      ctx.fillStyle = 'pink';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // 在离屏Canvas完成所有动态效果
+      // 步骤1：绘制原始文字
+      const gradient = maskCtx.createLinearGradient(0, 0, canvas.width, 0);
+      gradient.addColorStop(0, 'red');
+      gradient.addColorStop(1, 'blue');
+      maskCtx.fillStyle = gradient;
+      maskCtx.font = '40px Arial';
+      maskCtx.textAlign = 'center';
+      maskCtx.textBaseline = 'middle';
+      maskCtx.fillText(text, canvas.width / 2, canvas.height / 2);
+
+      // 步骤2：在同一离屏Canvas上创建动态遮罩
+      const maskGradient = maskCtx.createLinearGradient(0, 0, canvas.width, 0);
+      maskGradient.addColorStop(0, 'rgba(0,0,0,1)');
+      maskGradient.addColorStop(Math.min(progress, 1), 'rgba(0,0,0,1)');
+      maskGradient.addColorStop(Math.min(progress + 0.1, 1), 'rgba(0,0,0,0)');
+
+      // 使用合成模式裁剪文字
+      maskCtx.globalCompositeOperation = 'destination-out';
+      maskCtx.fillStyle = maskGradient;
+      maskCtx.fillRect(0, 0, maskCanvas.width, maskCanvas.height);
+      maskCtx.globalCompositeOperation = 'source-over'; // 恢复默认
+
+      // 将处理后的离屏Canvas绘制到主Canvas
+      ctx.drawImage(maskCanvas, 0, 0);
+
+      // 更新动画进度
+      if (progress < 1) {
+        progress += 0.002;
+        requestAnimationFrame(draw);
+      }
+    }
+
+    draw();
+  </script>
 </html>

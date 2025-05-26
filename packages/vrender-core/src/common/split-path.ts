@@ -231,7 +231,7 @@ export const splitArea = (area: IArea, count: number) => {
 
   const res: { points: IPointLike[] }[] = [];
 
-  recursiveCallBinarySplit(points, count, res);
+  recursiveCallBinarySplit(allPoints, count, res);
 
   return res;
 };

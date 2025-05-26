@@ -10,7 +10,8 @@ import type {
   IRenderService,
   IGraphicRender,
   IGraphicRenderDrawParams,
-  IContributionProvider
+  IContributionProvider,
+  IGroupGraphicAttribute
 } from '../../../interface';
 import { getTheme } from '../../../graphic/theme';
 import { getModelMatrix } from '../../../graphic/graphic-service/graphic-service';
@@ -25,7 +26,7 @@ import { GROUP_NUMBER_TYPE } from '../../../graphic/constants';
 import { BaseRenderContributionTime } from '../../../common/enums';
 import { defaultGroupBackgroundRenderContribution } from './contributions';
 import { multiplyMat4Mat4 } from '../../../common/matrix';
-import { vglobal } from '../../../modules';
+import { application } from '../../../application';
 
 @injectable()
 export class DefaultCanvasGroupRender implements IGraphicRender {
@@ -56,18 +57,22 @@ export class DefaultCanvasGroupRender implements IGraphicRender {
       ctx: IContext2d,
       markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
       themeAttribute: IThemeAttribute
-    ) => boolean
+    ) => boolean,
+    groupAttribute?: Required<IGroupGraphicAttribute>
   ) {
-    // const groupAttribute = graphicService.themeService.getCurrentTheme().groupAttribute;
-    const groupAttribute = getTheme(group, params?.theme).group;
+    // 提前判定，否则每次都要获取一堆属性
+    const { clip, fill, stroke, background } = group.attribute;
+
+    if (!(clip || fill || stroke || background)) {
+      return;
+    }
+
+    groupAttribute = groupAttribute ?? getTheme(group, params?.theme).group;
+
     const {
-      fill = groupAttribute.fill,
-      background,
-      stroke = groupAttribute.stroke,
       opacity = groupAttribute.opacity,
       width = groupAttribute.width,
       height = groupAttribute.height,
-      clip = groupAttribute.clip,
       fillOpacity = groupAttribute.fillOpacity,
       strokeOpacity = groupAttribute.strokeOpacity,
       cornerRadius = groupAttribute.cornerRadius,
@@ -222,15 +227,15 @@ export class DefaultCanvasGroupRender implements IGraphicRender {
       return;
     }
 
-    // debugger;
-    const { clip, baseOpacity = 1, drawMode, x, y, width, height } = group.attribute;
+    const { clip, baseOpacity = 1, drawMode } = group.attribute;
     const lastNativeContext = context.nativeContext;
     const lastNativeCanvas = context.canvas.nativeCanvas;
 
     if (drawMode > 0) {
+      const { x, y, width, height } = group.attribute;
       // 绘制到新的Canvas上，然后再绘制回来
       const canvas = context.canvas;
-      const newCanvas = vglobal.createCanvas({ width: canvas.width, height: canvas.height, dpr: 1 });
+      const newCanvas = application.global.createCanvas({ width: canvas.width, height: canvas.height, dpr: 1 });
       const newContext = newCanvas.getContext('2d');
       const transform = context.nativeContext.getTransform();
       // 首先应用transform
@@ -270,8 +275,6 @@ export class DefaultCanvasGroupRender implements IGraphicRender {
     const baseGlobalAlpha = context.baseGlobalAlpha;
     context.baseGlobalAlpha *= baseOpacity;
 
-    const groupAttribute = getTheme(group, params?.theme).group;
-
     // const lastMatrix = context.modelMatrix;
     // if (context.camera) {
     //   const m = group.transMatrix;
@@ -293,6 +296,7 @@ export class DefaultCanvasGroupRender implements IGraphicRender {
     const lastModelMatrix = context.modelMatrix;
     const camera = context.camera;
     if (camera) {
+      const groupAttribute = getTheme(group, params?.theme).group;
       const nextModelMatrix = mat4Allocate.allocate();
       // 计算模型矩阵
       const modelMatrix = mat4Allocate.allocate();
@@ -324,17 +328,22 @@ export class DefaultCanvasGroupRender implements IGraphicRender {
         () => false
       );
     } else {
-      this.drawShape(group, context, 0, 0, drawContext);
+      this.drawShape(group, context, 0, 0, drawContext, null, null, null);
     }
 
     // 绘制子元素的时候要添加scroll
-    const { scrollX = groupAttribute.scrollX, scrollY = groupAttribute.scrollY } = group.attribute;
+    const { scrollX, scrollY } = group.attribute;
     if (scrollX || scrollY) {
       context.translate(scrollX, scrollY);
     }
     let p: any;
-    if (params && params.drawingCb) {
-      p = params.drawingCb();
+    if (params && params.renderInGroup) {
+      p = params.renderInGroup(
+        params.renderInGroupParams?.skipSort,
+        group,
+        drawContext,
+        params.renderInGroupParams?.nextM
+      );
     }
 
     if (context.modelMatrix !== lastModelMatrix) {
@@ -345,6 +354,7 @@ export class DefaultCanvasGroupRender implements IGraphicRender {
     context.baseGlobalAlpha = baseGlobalAlpha;
 
     if (drawMode > 0) {
+      const { x, y, width, height } = group.attribute;
       // 将原始的context和canvas恢复，另外将newCanvas上的内容绘制到lastCanvas上
       const newContext = context.nativeContext;
       const newCanvas = context.canvas.nativeCanvas;

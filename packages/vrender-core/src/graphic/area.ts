@@ -124,7 +124,11 @@ export class Area extends Graphic<IAreaGraphicAttribute> implements IArea {
   }
 
   toCustomPath() {
-    const path = new CustomPath2D();
+    let path = super.toCustomPath();
+    if (path) {
+      return path;
+    }
+    path = new CustomPath2D();
     const attribute = this.attribute;
     const segments = attribute.segments;
 

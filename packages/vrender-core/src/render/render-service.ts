@@ -20,7 +20,7 @@ export class DefaultRenderService implements IRenderService {
 
   constructor(
     @inject(DrawContribution)
-    private readonly drawContribution: IDrawContribution
+    public readonly drawContribution: IDrawContribution
   ) {}
 
   // 渲染前准备工作，计算bounds等逻辑

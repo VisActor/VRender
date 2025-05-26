@@ -15,9 +15,9 @@ import {
   mixin,
   last as peek
 } from '@visactor/vutils';
-import { graphicCreator } from '@visactor/vrender-core';
+import { diff, graphicCreator } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
-import type { TextAlignType, IGroup, INode, IText, TextBaselineType } from '@visactor/vrender-core';
+import type { TextAlignType, IGroup, INode, IText, TextBaselineType, IGraphic } from '@visactor/vrender-core';
 import type { SegmentAttributes } from '../segment';
 // eslint-disable-next-line no-duplicate-imports
 import { Segment } from '../segment';
@@ -27,7 +27,7 @@ import type { LineAttributes, LineAxisAttributes, TitleAttributes, AxisItem, Tra
 import { AxisBase } from './base';
 import { DEFAULT_AXIS_THEME } from './config';
 import { AXIS_ELEMENT_NAME, DEFAULT_STATES, TopZIndex } from './constant';
-import { measureTextSize } from '../util';
+import { measureTextSize, traverseGroup } from '../util';
 import { autoHide as autoHideFunc } from './overlap/auto-hide';
 import { autoRotate as autoRotateFunc, getXAxisLabelAlign, getYAxisLabelAlign } from './overlap/auto-rotate';
 import { autoLimit as autoLimitFunc } from './overlap/auto-limit';
@@ -241,8 +241,8 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
                   ? Math.min(bounds.x2 - baseX, bounds.width())
                   : 0
                 : bounds.x1 < baseX
-                ? Math.min(baseX - bounds.x1, bounds.width())
-                : 0) +
+                  ? Math.min(baseX - bounds.x1, bounds.width())
+                  : 0) +
               (layerCount - 1) * space;
           } else {
             labelLength = 0;
@@ -552,8 +552,8 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
         const verticalLimitLength = isVertical
           ? axisLength / labelShapes.length
           : !autoHide && !autoRotate
-          ? axisLength / labelShapes.length
-          : Infinity;
+            ? axisLength / labelShapes.length
+            : Infinity;
 
         autoLimitFunc(labelShapes, {
           limitLength,
@@ -646,8 +646,8 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
     let limitLength = limitSize;
     let titleHeight = 0;
     let titleSpacing = 0;
-    const axisLineWidth = line && line.visible ? line.style.lineWidth ?? 1 : 0;
-    const tickLength = tick && tick.visible ? tick.length ?? 4 : 0;
+    const axisLineWidth = line && line.visible ? (line.style.lineWidth ?? 1) : 0;
+    const tickLength = tick && tick.visible ? (tick.length ?? 4) : 0;
     if (title && title.visible && typeof title.text === 'string') {
       titleHeight = measureTextSize(title.text, title.textStyle, this.stage?.getTheme()?.text).height;
       const padding = normalizePadding(title.padding);

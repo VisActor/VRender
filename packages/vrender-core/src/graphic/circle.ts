@@ -100,6 +100,10 @@ export class Circle extends Graphic<ICircleGraphicAttribute> implements ICircle 
   }
 
   toCustomPath() {
+    let path = super.toCustomPath();
+    if (path) {
+      return path;
+    }
     const x = 0;
     const y = 0;
 
@@ -108,7 +112,7 @@ export class Circle extends Graphic<ICircleGraphicAttribute> implements ICircle 
     const startAngle = attribute.startAngle ?? this.getDefaultAttribute('startAngle');
     const endAngle = attribute.endAngle ?? this.getDefaultAttribute('endAngle');
 
-    const path = new CustomPath2D();
+    path = new CustomPath2D();
 
     path.arc(x, y, radius, startAngle, endAngle);
 

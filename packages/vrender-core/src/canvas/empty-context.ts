@@ -50,8 +50,8 @@ export class EmptyContext2d implements IContext2d {
   declare path: CustomPath2D;
   declare canvas: null;
   declare stack: Matrix[];
-  protected declare matrix: Matrix;
-  protected declare applyedMatrix?: Matrix; // 被应用的matrix
+  declare protected matrix: Matrix;
+  declare protected applyedMatrix?: Matrix; // 被应用的matrix
   // 属性代理
   declare fillStyle: string | CanvasGradient | CanvasPattern;
   /**
@@ -124,6 +124,12 @@ export class EmptyContext2d implements IContext2d {
     this.save();
     this.resetTransform();
     this.restore();
+  }
+
+  reset() {
+    this.matrix.setValue(1, 0, 0, 1, 0, 0);
+    this.applyedMatrix = new Matrix(1, 0, 0, 1, 0, 0);
+    this.stack.length = 0;
   }
 
   restore() {

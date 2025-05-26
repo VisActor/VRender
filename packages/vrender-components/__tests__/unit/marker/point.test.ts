@@ -30,7 +30,7 @@ describe('Marker', () => {
         refX: 10,
         refY: 0,
         refAngle: 0,
-        textStyle: {
+        style: {
           text: 'mark point label text',
           panel: {
             visible: true

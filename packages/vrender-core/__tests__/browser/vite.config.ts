@@ -31,6 +31,7 @@ export default defineConfig({
       '@visactor/vrender-core': path.resolve(__dirname, '../../../vrender-core/src/index.ts'),
       '@visactor/vrender-kits': path.resolve(__dirname, '../../../vrender-kits/src/index.ts'),
       '@visactor/vrender-components': path.resolve(__dirname, '../../../vrender-components/src/index.ts'),
+      '@visactor/vrender-animate': path.resolve(__dirname, '../../../vrender-animate/src/index.ts'),
       util: 'rollup-plugin-node-polyfills/polyfills/util'
     }
   },

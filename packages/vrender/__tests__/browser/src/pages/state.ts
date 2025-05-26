@@ -1,13 +1,8 @@
-import {
-  createStage,
-  createCircle,
-  FederatedEvent,
-  DefaultTicker,
-  defaultTimeline,
-  defaultTicker
-} from '@visactor/vrender';
+import { createStage, createCircle, FederatedEvent } from '@visactor/vrender';
+import { registerAnimate } from '@visactor/vrender-animate';
 import { addShapesToStage, colorPools } from '../utils';
 
+registerAnimate();
 // container.load(roughModule);
 
 export const page = () => {
@@ -153,13 +148,6 @@ export const page = () => {
     viewWidth: 1200,
     viewHeight: 600
   });
-
-  setTimeout(() => {
-    defaultTicker.pause();
-    setTimeout(() => {
-      defaultTicker.resume();
-    }, 2000);
-  }, 2000);
 
   (window as any).stage = stage;
   addShapesToStage(stage, shapes as any, true);

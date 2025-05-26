@@ -20,6 +20,30 @@ export const pages = [
         path: 'performance'
       },
       {
+        name: 'animate-next',
+        path: 'animate-next'
+      },
+      {
+        name: 'animate-state',
+        path: 'animate-state'
+      },
+      {
+        name: 'animate-ticker',
+        path: 'animate-ticker'
+      },
+      {
+        name: 'custom-animate',
+        path: 'custom-animate'
+      },
+      {
+        name: 'story-animate',
+        path: 'story-animate'
+      },
+      {
+        name: 'animate-tick',
+        path: 'animate-tick'
+      },
+      {
         name: '内存',
         path: 'memory'
       },

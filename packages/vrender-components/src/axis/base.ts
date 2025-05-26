@@ -14,14 +14,14 @@ import type {
   IText
 } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
-import { graphicCreator } from '@visactor/vrender-core';
-import type { Dict } from '@visactor/vutils';
+import { graphicCreator, diff } from '@visactor/vrender-core';
+import type { Dict, IBounds } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports
-import { abs, cloneDeep, get, isEmpty, isFunction, merge, pi } from '@visactor/vutils';
+import { abs, cloneDeep, get, isArray, isEmpty, isEqual, isFunction, merge, pi } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import type { Point } from '../core/type';
 import type { TagAttributes } from '../tag';
-import { createTextGraphicByType } from '../util';
+import { createTextGraphicByType, traverseGroup } from '../util';
 import { DEFAULT_STATES } from '../constant';
 import { AXIS_ELEMENT_NAME } from './constant';
 import { DEFAULT_AXIS_THEME } from './config';
@@ -38,9 +38,14 @@ import type {
 import { Tag } from '../tag/tag';
 import { getElMap, getVerticalCoord } from './util';
 import { dispatchClickState, dispatchHoverState, dispatchUnHoverState } from '../util/interaction';
+import { AnimateComponent } from '../animation/animate-component';
+import { DefaultAxisAnimation } from './animate/config';
+import type { IBaseScale } from '@visactor/vscale';
 
-export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractComponent<Required<T>> {
+export abstract class AxisBase<T extends AxisBaseAttributes> extends AnimateComponent<Required<T>> {
   name = 'axis';
+
+  lastScale: IBaseScale;
 
   // TODO: 组件整体统一起来
   protected _innerView: IGroup;
@@ -73,6 +78,9 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
 
   private _lastHover: IGraphic;
   private _lastSelect: IGraphic;
+
+  // 用于动画diff
+  protected _newElementAttrMap: Dict<any>;
 
   protected abstract renderLine(container: IGroup): void;
   abstract isInValidValue(value: number): boolean;
@@ -113,7 +121,9 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
    */
   getBoundsWithoutRender(attributes: Partial<T>) {
     const currentAttribute = cloneDeep(this.attribute);
-    merge(this.attribute, attributes);
+    // scale 不能拷贝，它是一个实例，重新设置上去
+    currentAttribute.scale = (this.attribute as any).scale;
+    this.attribute = attributes;
 
     const offscreenGroup = graphicCreator.group({
       x: this.attribute.x,
@@ -129,14 +139,20 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
   }
 
   protected render(): void {
+    this._prepare();
     this._prevInnerView = this._innerView && getElMap(this._innerView);
     this.removeAllChild(true);
     this._innerView = graphicCreator.group({ x: 0, y: 0, pickable: false });
     this.add(this._innerView);
-
     this._renderInner(this._innerView);
 
     this._bindEvent();
+    // 尝试执行动画
+    this.runAnimation();
+  }
+
+  protected _prepare() {
+    this._prepareAnimate(DefaultAxisAnimation);
   }
 
   private _bindEvent() {
@@ -551,6 +567,109 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
       });
     });
     return data;
+  }
+
+  protected runAnimation() {
+    const lastScale = this.lastScale;
+    if ((this.attribute as any).scale) {
+      const scale = (this.attribute as any).scale;
+      this.lastScale = scale.clone();
+      this.lastScale.range([0, 1]);
+    }
+
+    if (this.attribute.animation && (this as any).applyAnimationState) {
+      // @ts-ignore
+      const currentInnerView = this.getInnerView();
+      // @ts-ignore
+      const prevInnerView = this.getPrevInnerView();
+      if (!prevInnerView) {
+        return;
+      }
+
+      const animationConfig = this._animationConfig;
+
+      this._newElementAttrMap = {};
+
+      // 遍历新的场景树，将新节点属性更新为旧节点
+      // TODO: 目前只处理更新场景
+      traverseGroup(currentInnerView, (el: IGraphic) => {
+        if ((el as IGraphic).type !== 'group' && el.id) {
+          const oldEl = prevInnerView[el.id];
+          // 删除旧图元的动画
+          el.setFinalAttribute(el.attribute);
+          if (oldEl) {
+            oldEl.release();
+            // oldEl.stopAnimationState('enter');
+            // oldEl.stopAnimationState('update');
+            const oldAttrs = (oldEl as IGraphic).attribute;
+            const finalAttrs = el.getFinalAttribute();
+            const diffAttrs: Record<string, any> = diff(oldAttrs, finalAttrs);
+
+            let hasDiff = Object.keys(diffAttrs).length > 0;
+            // TODO 如果入场会有fadeIn，则需要处理opacity（后续还需要考虑其他动画情况）
+            if ('opacity' in oldAttrs && finalAttrs.opacity !== oldAttrs.opacity) {
+              diffAttrs.opacity = finalAttrs.opacity ?? 1;
+              hasDiff = true;
+            }
+
+            if (animationConfig.update && hasDiff) {
+              this._newElementAttrMap[el.id] = {
+                state: 'update',
+                node: el,
+                attrs: el.attribute
+              };
+              const oldAttrs = (oldEl as IGraphic).attribute;
+
+              (el as IGraphic).setAttributes(oldAttrs);
+
+              el.applyAnimationState(
+                ['update'],
+                [
+                  {
+                    name: 'update',
+                    animation: {
+                      selfOnly: true,
+                      ...animationConfig.update,
+                      type: 'axisUpdate',
+                      customParameters: {
+                        config: animationConfig.update,
+                        diffAttrs,
+                        lastScale
+                      }
+                    }
+                  }
+                ]
+              );
+            }
+          } else if (animationConfig.enter) {
+            this._newElementAttrMap[el.id] = {
+              state: 'enter',
+              node: el,
+              attrs: el.attribute
+            };
+
+            el.applyAnimationState(
+              ['enter'],
+              [
+                {
+                  name: 'enter',
+                  animation: {
+                    ...animationConfig.enter,
+                    type: 'axisEnter',
+                    selfOnly: true,
+                    customParameters: {
+                      config: animationConfig.enter,
+                      lastScale,
+                      getTickCoord: this.getTickCoord.bind(this)
+                    }
+                  }
+                }
+              ]
+            );
+          }
+        }
+      });
+    }
   }
 
   release(): void {

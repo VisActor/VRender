@@ -21,7 +21,11 @@ export class DirtyBoundsPlugin implements IPlugin {
       }
       stage.dirtyBounds.clear();
     });
-    application.graphicService.hooks.beforeUpdateAABBBounds.tap(
+    const stage = this.pluginService.stage;
+    if (!stage) {
+      return;
+    }
+    stage.graphicService.hooks.beforeUpdateAABBBounds.tap(
       this.key,
       (graphic: IGraphic, stage: IStage, willUpdate: boolean, bounds: IAABBBounds) => {
         if (graphic.glyphHost) {
@@ -40,7 +44,7 @@ export class DirtyBoundsPlugin implements IPlugin {
         }
       }
     );
-    application.graphicService.hooks.afterUpdateAABBBounds.tap(
+    stage.graphicService.hooks.afterUpdateAABBBounds.tap(
       this.key,
       (
         graphic: IGraphic,
@@ -59,7 +63,7 @@ export class DirtyBoundsPlugin implements IPlugin {
         stage.dirty(params.globalAABBBounds);
       }
     );
-    application.graphicService.hooks.clearAABBBounds.tap(
+    stage.graphicService.hooks.clearAABBBounds.tap(
       this.key,
       (graphic: IGraphic, stage: IStage, bounds: IAABBBounds) => {
         if (!(stage && stage === this.pluginService.stage && stage.renderCount)) {
@@ -70,7 +74,7 @@ export class DirtyBoundsPlugin implements IPlugin {
         }
       }
     );
-    application.graphicService.hooks.onRemove.tap(this.key, (graphic: IGraphic) => {
+    stage.graphicService.hooks.onRemove.tap(this.key, (graphic: IGraphic) => {
       const stage = graphic.stage;
       if (!(stage && stage === this.pluginService.stage && stage.renderCount)) {
         return;
@@ -81,22 +85,25 @@ export class DirtyBoundsPlugin implements IPlugin {
     });
   }
   deactivate(context: IPluginService): void {
-    application.graphicService.hooks.beforeUpdateAABBBounds.taps =
-      application.graphicService.hooks.beforeUpdateAABBBounds.taps.filter(item => {
+    const stage = this.pluginService.stage;
+    if (!stage) {
+      return;
+    }
+    stage.graphicService.hooks.beforeUpdateAABBBounds.taps =
+      stage.graphicService.hooks.beforeUpdateAABBBounds.taps.filter(item => {
         return item.name !== this.key;
       });
-    application.graphicService.hooks.afterUpdateAABBBounds.taps =
-      application.graphicService.hooks.afterUpdateAABBBounds.taps.filter(item => {
+    stage.graphicService.hooks.afterUpdateAABBBounds.taps =
+      stage.graphicService.hooks.afterUpdateAABBBounds.taps.filter(item => {
         return item.name !== this.key;
       });
-    application.graphicService.hooks.clearAABBBounds.taps =
-      application.graphicService.hooks.clearAABBBounds.taps.filter(item => {
-        return item.name !== this.key;
-      });
-    context.stage.hooks.afterRender.taps = context.stage.hooks.afterRender.taps.filter(item => {
+    stage.graphicService.hooks.clearAABBBounds.taps = stage.graphicService.hooks.clearAABBBounds.taps.filter(item => {
       return item.name !== this.key;
     });
-    application.graphicService.hooks.onRemove.taps = application.graphicService.hooks.onRemove.taps.filter(item => {
+    stage.hooks.afterRender.taps = stage.hooks.afterRender.taps.filter(item => {
+      return item.name !== this.key;
+    });
+    stage.graphicService.hooks.onRemove.taps = stage.graphicService.hooks.onRemove.taps.filter(item => {
       return item.name !== this.key;
     });
   }

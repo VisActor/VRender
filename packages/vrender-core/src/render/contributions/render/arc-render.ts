@@ -19,7 +19,8 @@ import type {
   IGraphicRender,
   IGraphicRenderDrawParams,
   IContributionProvider,
-  IConicalGradient
+  IConicalGradient,
+  IArcGraphicAttribute
 } from '../../../interface';
 import { cornerTangents, drawArcPath, fillVisible } from './utils';
 import { getConicGradientAt } from '../../../canvas/conical-gradient';
@@ -208,10 +209,11 @@ export class DefaultCanvasArcRender extends BaseRender<IArc> implements IGraphic
       ctx: IContext2d,
       markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
       themeAttribute: IThemeAttribute
-    ) => boolean
+    ) => boolean,
+    arcAttribute?: Required<IArcGraphicAttribute>
   ) {
     // const arcAttribute = graphicService.themeService.getCurrentTheme().arcAttribute;
-    const arcAttribute = getTheme(arc, params?.theme).arc;
+    arcAttribute = arcAttribute ?? getTheme(arc, params?.theme).arc;
     const {
       fill = arcAttribute.fill,
       stroke = arcAttribute.stroke,
@@ -282,34 +284,35 @@ export class DefaultCanvasArcRender extends BaseRender<IArc> implements IGraphic
         strokeCb
       );
 
-      const _runFill = () => {
-        if (doFill) {
-          if (fillCb) {
-            fillCb(context, arc.attribute, arcAttribute);
-          } else if (fVisible) {
-            context.setCommonStyle(arc, arc.attribute, originX - x, originY - y, arcAttribute);
-            context.fill();
-          }
-        }
-      };
+      // 内联的函数性能差
+      // const _runFill = () => {
+      //   if (doFill) {
+      //     if (fillCb) {
+      //       fillCb(context, arc.attribute, arcAttribute);
+      //     } else if (fVisible) {
+      //       context.setCommonStyle(arc, arc.attribute, originX - x, originY - y, arcAttribute);
+      //       context.fill();
+      //     }
+      //   }
+      // };
 
-      const _runStroke = () => {
-        if (doStroke && isFullStroke) {
-          if (strokeCb) {
-            strokeCb(context, arc.attribute, arcAttribute);
-          } else if (sVisible) {
-            context.setStrokeStyle(arc, arc.attribute, originX - x, originY - y, arcAttribute);
-            context.stroke();
-          }
-        }
-      };
+      // const _runStroke = () => {
+      //   if (doStroke && isFullStroke) {
+      //     if (strokeCb) {
+      //       strokeCb(context, arc.attribute, arcAttribute);
+      //     } else if (sVisible) {
+      //       context.setStrokeStyle(arc, arc.attribute, originX - x, originY - y, arcAttribute);
+      //       context.stroke();
+      //     }
+      //   }
+      // };
 
       if (!fillStrokeOrder) {
-        _runFill();
-        _runStroke();
+        this._runFill(arc, context, x, y, arcAttribute, doFill, fVisible, originX, originY, fillCb);
+        this._runStroke(arc, context, x, y, arcAttribute, doStroke, isFullStroke, sVisible, strokeCb);
       } else {
-        _runStroke();
-        _runFill();
+        this._runStroke(arc, context, x, y, arcAttribute, doStroke, isFullStroke, sVisible, strokeCb);
+        this._runFill(arc, context, x, y, arcAttribute, doFill, fVisible, originX, originY, fillCb);
       }
     }
 
@@ -434,8 +437,60 @@ export class DefaultCanvasArcRender extends BaseRender<IArc> implements IGraphic
     }
   }
 
+  private _runFill(
+    arc: IArc,
+    context: IContext2d,
+    x: number,
+    y: number,
+    arcAttribute: Required<IArcGraphicAttribute>,
+    doFill: boolean,
+    fVisible: boolean,
+    originX: number,
+    originY: number,
+    fillCb?: (
+      ctx: IContext2d,
+      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
+      themeAttribute: IThemeAttribute
+    ) => boolean
+  ) {
+    if (doFill) {
+      if (fillCb) {
+        fillCb(context, arc.attribute, arcAttribute);
+      } else if (fVisible) {
+        context.setCommonStyle(arc, arc.attribute, originX - x, originY - y, arcAttribute);
+        context.fill();
+      }
+    }
+  }
+
+  private _runStroke(
+    arc: IArc,
+    context: IContext2d,
+    x: number,
+    y: number,
+    arcAttribute: Required<IArcGraphicAttribute>,
+    doStroke: boolean,
+    isFullStroke: boolean,
+    sVisible: boolean,
+    strokeCb?: (
+      ctx: IContext2d,
+      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
+      themeAttribute: IThemeAttribute
+    ) => boolean
+  ) {
+    if (doStroke && isFullStroke) {
+      if (strokeCb) {
+        // fillCb(context, arc.attribute, arcAttribute);
+      } else if (sVisible) {
+        context.setStrokeStyle(arc, arc.attribute, x, y, arcAttribute);
+        // context.strokeStyle = 'red';
+        context.stroke();
+      }
+    }
+  }
+
   draw(arc: IArc, renderService: IRenderService, drawContext: IDrawContext, params?: IGraphicRenderDrawParams) {
     const arcAttribute = getTheme(arc, params?.theme).arc;
-    this._draw(arc, arcAttribute, false, drawContext, params);
+    this._draw(arc, arcAttribute, false, drawContext, params, arcAttribute);
   }
 }

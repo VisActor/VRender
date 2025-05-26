@@ -456,8 +456,12 @@ export class FlexLayoutPlugin implements IPlugin {
 
   activate(context: IPluginService): void {
     this.pluginService = context;
+    const stage = this.pluginService.stage;
+    if (!stage) {
+      return;
+    }
     // 属性更新
-    application.graphicService.hooks.onAttributeUpdate.tap(this.key, graphic => {
+    stage.graphicService.hooks.onAttributeUpdate.tap(this.key, graphic => {
       if (graphic.glyphHost) {
         graphic = graphic.glyphHost;
       }
@@ -467,7 +471,7 @@ export class FlexLayoutPlugin implements IPlugin {
       this.tryLayout(graphic, false);
     });
     // 包围盒更新（如果包围盒发生变化，就重新布局
-    application.graphicService.hooks.beforeUpdateAABBBounds.tap(
+    stage.graphicService.hooks.beforeUpdateAABBBounds.tap(
       this.key,
       (graphic: IGraphic, stage: IStage, willUpdate: boolean, bounds: IAABBBounds) => {
         if (graphic.glyphHost) {
@@ -482,7 +486,7 @@ export class FlexLayoutPlugin implements IPlugin {
         _tempBounds.copy(bounds);
       }
     );
-    application.graphicService.hooks.afterUpdateAABBBounds.tap(
+    stage.graphicService.hooks.afterUpdateAABBBounds.tap(
       this.key,
       (
         graphic: IGraphic,
@@ -503,7 +507,7 @@ export class FlexLayoutPlugin implements IPlugin {
       }
     );
     // 添加到场景树
-    application.graphicService.hooks.onSetStage.tap(this.key, graphic => {
+    stage.graphicService.hooks.onSetStage.tap(this.key, graphic => {
       if (graphic.glyphHost) {
         graphic = graphic.glyphHost;
       }
@@ -511,19 +515,24 @@ export class FlexLayoutPlugin implements IPlugin {
     });
   }
   deactivate(context: IPluginService): void {
-    application.graphicService.hooks.onAttributeUpdate.taps =
-      application.graphicService.hooks.onAttributeUpdate.taps.filter(item => {
+    const stage = this.pluginService.stage;
+    if (!stage) {
+      return;
+    }
+    stage.graphicService.hooks.onAttributeUpdate.taps = stage.graphicService.hooks.onAttributeUpdate.taps.filter(
+      item => {
+        return item.name !== this.key;
+      }
+    );
+    stage.graphicService.hooks.beforeUpdateAABBBounds.taps =
+      stage.graphicService.hooks.beforeUpdateAABBBounds.taps.filter(item => {
         return item.name !== this.key;
       });
-    application.graphicService.hooks.beforeUpdateAABBBounds.taps =
-      application.graphicService.hooks.beforeUpdateAABBBounds.taps.filter(item => {
+    stage.graphicService.hooks.afterUpdateAABBBounds.taps =
+      stage.graphicService.hooks.afterUpdateAABBBounds.taps.filter(item => {
         return item.name !== this.key;
       });
-    application.graphicService.hooks.afterUpdateAABBBounds.taps =
-      application.graphicService.hooks.afterUpdateAABBBounds.taps.filter(item => {
-        return item.name !== this.key;
-      });
-    application.graphicService.hooks.onSetStage.taps = application.graphicService.hooks.onSetStage.taps.filter(item => {
+    stage.graphicService.hooks.onSetStage.taps = stage.graphicService.hooks.onSetStage.taps.filter(item => {
       return item.name !== this.key;
     });
   }

@@ -11,13 +11,18 @@ export class PerformanceRAF {
     this.nextAnimationFrameCbs.push(callback);
     // 下一帧执行nextAnimationFrameCbs
     this.tryRunAnimationFrameNextFrame();
-    return this.nextAnimationFrameCbs.length - 1;
+    return this.nextAnimationFrameCbs.length;
   }
 
+  /**
+   * 移除指定索引的回调函数
+   * @param index raf索引，从1开始，相当于内部nextAnimationFrameCbs的idx + 1
+   * @returns 是否移除成功
+   */
   removeAnimationFrameCb(index: number): boolean {
-    if (index >= 0 && index < this.nextAnimationFrameCbs.length) {
+    if (index > 0 && index <= this.nextAnimationFrameCbs.length) {
       // Set to null instead of empty function to avoid linter error
-      this.nextAnimationFrameCbs[index] = null;
+      this.nextAnimationFrameCbs[index - 1] = null;
       return true;
     }
     return false;

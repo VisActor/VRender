@@ -63,14 +63,14 @@ export class AnimateExtension {
     return new DefaultTicker(stage);
   }
 
-  setFinalAttribute(finalAttribute: Record<string, any>) {
+  setFinalAttributes(finalAttribute: Record<string, any>) {
     if (!this.finalAttribute) {
       this.finalAttribute = {};
     }
     Object.assign(this.finalAttribute, finalAttribute);
   }
 
-  initFinalAttribute(finalAttribute: Record<string, any>) {
+  initFinalAttributes(finalAttribute: Record<string, any>) {
     this.finalAttribute = finalAttribute;
   }
 

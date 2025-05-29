@@ -37,8 +37,12 @@ export class DefaultBaseBackgroundRenderContribution implements IBaseRenderContr
     strokeCb?: (ctx: IContext2d, markAttribute: Partial<IGraphicAttribute>, themeAttribute: IThemeAttribute) => boolean,
     options?: any
   ) {
+    const { background } = graphic.attribute;
+    if (!background) {
+      return;
+    }
+
     const {
-      background,
       backgroundOpacity = graphic.attribute.fillOpacity ?? graphicAttribute.backgroundOpacity,
       opacity = graphicAttribute.opacity,
       backgroundMode = graphicAttribute.backgroundMode,
@@ -47,11 +51,9 @@ export class DefaultBaseBackgroundRenderContribution implements IBaseRenderContr
       backgroundScale = graphicAttribute.backgroundScale,
       backgroundOffsetX = graphicAttribute.backgroundOffsetX,
       backgroundOffsetY = graphicAttribute.backgroundOffsetY,
-      backgroundClip = graphicAttribute.backgroundClip
+      backgroundClip = graphicAttribute.backgroundClip,
+      backgroundFlip = graphicAttribute.backgroundFlip
     } = graphic.attribute;
-    if (!background) {
-      return;
-    }
 
     if (graphic.backgroundImg && graphic.resources) {
       const res = graphic.resources.get(background as any);
@@ -71,13 +73,15 @@ export class DefaultBaseBackgroundRenderContribution implements IBaseRenderContr
       const b = graphic.AABBBounds;
       context.setCommonStyle(graphic, graphic.attribute, x, y, graphicAttribute);
       context.globalAlpha = backgroundOpacity * opacity;
+
       this.doDrawImage(context, res.data, b, {
         backgroundMode,
         backgroundFit,
         backgroundKeepAspectRatio,
         backgroundScale,
         backgroundOffsetX,
-        backgroundOffsetY
+        backgroundOffsetY,
+        backgroundFlip
       });
       context.restore();
       if (!graphic.transMatrix.onlyTranslate()) {
@@ -104,6 +108,7 @@ export class DefaultBaseBackgroundRenderContribution implements IBaseRenderContr
       backgroundScale?: number;
       backgroundOffsetX?: number;
       backgroundOffsetY?: number;
+      backgroundFlip?: { horizontal: boolean; vertical: boolean };
     }
   ): void {
     const {
@@ -112,8 +117,24 @@ export class DefaultBaseBackgroundRenderContribution implements IBaseRenderContr
       backgroundKeepAspectRatio,
       backgroundScale = 1,
       backgroundOffsetX = 0,
-      backgroundOffsetY = 0
+      backgroundOffsetY = 0,
+      backgroundFlip
     } = params;
+
+    // 处理图片翻转
+    const shouldFlip = backgroundFlip && (backgroundFlip.horizontal || backgroundFlip.vertical);
+    if (shouldFlip) {
+      const centerX = b.x1 + b.width() / 2;
+      const centerY = b.y1 + b.height() / 2;
+
+      // 移动到翻转中心点
+      context.translate(centerX, centerY);
+      // 应用翻转变换
+      context.scale(backgroundFlip.horizontal ? -1 : 1, backgroundFlip.vertical ? -1 : 1);
+      // 移回原位置
+      context.translate(-centerX, -centerY);
+    }
+
     const targetW = b.width();
     const targetH = b.height();
     let w = targetW;

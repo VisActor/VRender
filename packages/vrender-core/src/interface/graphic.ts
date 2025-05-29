@@ -439,6 +439,13 @@ export type IGraphicStyle = ILayout &
      */
     backgroundOpacity: number;
     /**
+     * 背景是否翻转
+     */
+    backgroundFlip: {
+      horizontal: boolean;
+      vertical: boolean;
+    } | null;
+    /**
      * 背景，支持颜色字符串、html image元素、html canvas元素
      */
     // 纹理是否自动做动画

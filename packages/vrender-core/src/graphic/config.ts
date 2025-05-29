@@ -134,6 +134,7 @@ export const DefaultStyle: IGraphicStyle = {
   textureRatio: 1,
   textureOptions: null,
   backgroundOpacity: 1,
+  backgroundFlip: null,
   backgroundCornerRadius: 0,
   texture: null,
   textureColor: 'black',

@@ -1,6 +1,33 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Wed, 16 Apr 2025 03:17:31 GMT and should not be manually modified.
+This log was last generated on Mon, 28 Apr 2025 09:08:54 GMT and should not be manually modified.
+
+## 0.22.11
+Mon, 28 Apr 2025 09:08:54 GMT
+
+### Updates
+
+- fix: incorrect result for TagPointsUpdate animation
+
+## 0.22.10
+Mon, 21 Apr 2025 02:48:16 GMT
+
+### Updates
+
+- fix: fix issue with symbol gradient, and support native conical gradient
+- fix: fix preventDefault() error when passive: true
+
+
+- docs: update changlog of rush
+
+
+
+## 0.22.9
+Fri, 18 Apr 2025 06:59:46 GMT
+
+### Updates
+
+- fix: fix issue with string anchor and scale
 
 ## 0.22.8
 Wed, 16 Apr 2025 03:17:31 GMT

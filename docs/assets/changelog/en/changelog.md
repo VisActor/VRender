@@ -1,3 +1,52 @@
+# v0.22.11
+
+2025-04-28
+
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-core**: incorrect result for TagPointsUpdate animation
+
+
+
+[more detail about v0.22.11](https://github.com/VisActor/VRender/releases/tag/v0.22.11)
+
+# v0.22.10
+
+2025-04-21
+
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-components**: fix preventDefault() error when passive: true
+- **@visactor/vrender-kits**: fix issue with symbol gradient, and support native conical gradient
+- **@visactor/vrender-core**: fix issue with symbol gradient, and support native conical gradient
+- **@visactor/vrender-core**: fix preventDefault() error when passive: true
+
+**📖 Site / documentation update**
+
+- **@visactor/vrender-components**: update changlog of rush
+- **@visactor/vrender-core**: update changlog of rush
+
+
+**Full Changelog**: https://github.com/VisActor/VRender/compare/v0.22.9...v0.22.10
+
+[more detail about v0.22.10](https://github.com/VisActor/VRender/releases/tag/v0.22.10)
+
+# v0.22.9
+
+2025-04-18
+
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-components**: fix state not sync with mouse
+- **@visactor/vrender-core**: fix issue with string anchor and scale
+
+
+
+[more detail about v0.22.9](https://github.com/VisActor/VRender/releases/tag/v0.22.9)
+
 # v0.22.8
 
 2025-04-16

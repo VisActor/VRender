@@ -41,11 +41,11 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
   constructor(
     @inject(ContributionProvider)
     @named(AreaRenderContribution)
-    protected readonly areaRenderContribitions: IContributionProvider<IAreaRenderContribution>
+    protected readonly graphicRenderContributions: IContributionProvider<IAreaRenderContribution>
   ) {
     super();
     this.builtinContributions = [defaultAreaTextureRenderContribution, defaultAreaBackgroundRenderContribution];
-    this.init(areaRenderContribitions);
+    this.init(graphicRenderContributions);
   }
 
   drawLinearAreaHighPerformance(

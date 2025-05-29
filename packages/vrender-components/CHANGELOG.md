@@ -1,6 +1,32 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Wed, 16 Apr 2025 03:17:31 GMT and should not be manually modified.
+This log was last generated on Mon, 28 Apr 2025 09:08:54 GMT and should not be manually modified.
+
+## 0.22.11
+Mon, 28 Apr 2025 09:08:54 GMT
+
+_Version update only_
+
+## 0.22.10
+Mon, 21 Apr 2025 02:48:16 GMT
+
+### Updates
+
+- fix: fix preventDefault() error when passive: true
+
+
+- docs: update changlog of rush
+
+
+
+## 0.22.9
+Fri, 18 Apr 2025 06:59:46 GMT
+
+### Updates
+
+- fix: fix state not sync with mouse
+
+
 
 ## 0.22.8
 Wed, 16 Apr 2025 03:17:31 GMT

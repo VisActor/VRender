@@ -2,6 +2,39 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.22.11",
+      "tag": "@visactor/vrender-components_v0.22.11",
+      "date": "Mon, 28 Apr 2025 09:08:54 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.22.10",
+      "tag": "@visactor/vrender-components_v0.22.10",
+      "date": "Mon, 21 Apr 2025 02:48:16 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix preventDefault() error when passive: true\n\n"
+          },
+          {
+            "comment": "docs: update changlog of rush\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.22.9",
+      "tag": "@visactor/vrender-components_v0.22.9",
+      "date": "Fri, 18 Apr 2025 06:59:46 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix state not sync with mouse\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.22.8",
       "tag": "@visactor/vrender-components_v0.22.8",
       "date": "Wed, 16 Apr 2025 03:17:31 GMT",

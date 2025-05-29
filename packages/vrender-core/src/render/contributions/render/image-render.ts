@@ -35,11 +35,11 @@ export class DefaultCanvasImageRender extends BaseRender<IImage> implements IGra
   constructor(
     @inject(ContributionProvider)
     @named(ImageRenderContribution)
-    protected readonly imageRenderContribitions: IContributionProvider<IImageRenderContribution>
+    protected readonly graphicRenderContributions: IContributionProvider<IImageRenderContribution>
   ) {
     super();
     this.builtinContributions = [defaultImageRenderContribution, defaultImageBackgroundRenderContribution];
-    this.init(imageRenderContribitions);
+    this.init(graphicRenderContributions);
   }
 
   drawShape(

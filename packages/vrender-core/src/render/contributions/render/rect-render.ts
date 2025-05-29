@@ -37,7 +37,7 @@ export class DefaultCanvasRectRender extends BaseRender<IRect> implements IGraph
   constructor(
     @inject(ContributionProvider)
     @named(RectRenderContribution)
-    protected readonly rectRenderContribitions: IContributionProvider<IRectRenderContribution>
+    protected readonly graphicRenderContributions: IContributionProvider<IRectRenderContribution>
   ) {
     super();
     this.builtinContributions = [
@@ -45,7 +45,7 @@ export class DefaultCanvasRectRender extends BaseRender<IRect> implements IGraph
       defaultRectBackgroundRenderContribution,
       defaultRectTextureRenderContribution
     ];
-    this.init(rectRenderContribitions);
+    this.init(graphicRenderContributions);
   }
 
   drawShape(

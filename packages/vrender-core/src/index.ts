@@ -46,11 +46,13 @@ export * from './common/split-path';
 export * from './common/enums';
 export * from './common/generator';
 export * from './common/performance-raf';
+export * from './common/event-transformer';
 export * from './plugins/constants';
 export * from './plugins/builtin-plugin/richtext-edit-plugin';
 export * from './allocator/matrix-allocate';
 export * from './allocator/canvas-allocate';
 export * from './allocator/graphic-allocate';
+export * from './common/contribution-provider';
 
 export { wrapCanvas, wrapContext } from './canvas/util';
 export * from './common/xml';

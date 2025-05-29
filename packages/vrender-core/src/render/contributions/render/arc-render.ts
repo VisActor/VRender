@@ -57,7 +57,7 @@ export class DefaultCanvasArcRender extends BaseRender<IArc> implements IGraphic
   constructor(
     @inject(ContributionProvider)
     @named(ArcRenderContribution)
-    protected readonly arcRenderContribitions: IContributionProvider<IArcRenderContribution>
+    protected readonly graphicRenderContributions: IContributionProvider<IArcRenderContribution>
   ) {
     super();
     this.builtinContributions = [
@@ -65,7 +65,7 @@ export class DefaultCanvasArcRender extends BaseRender<IArc> implements IGraphic
       defaultArcBackgroundRenderContribution,
       defaultArcTextureRenderContribution
     ];
-    this.init(arcRenderContribitions);
+    this.init(graphicRenderContributions);
   }
 
   // 绘制尾部cap

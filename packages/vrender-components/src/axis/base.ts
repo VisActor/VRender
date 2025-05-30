@@ -596,7 +596,7 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AnimateComp
         if ((el as IGraphic).type !== 'group' && el.id) {
           const oldEl = prevInnerView[el.id];
           // 删除旧图元的动画
-          el.setFinalAttribute(el.attribute);
+          el.setFinalAttributes(el.attribute);
           if (oldEl) {
             oldEl.release();
             // oldEl.stopAnimationState('enter');

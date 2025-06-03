@@ -17,22 +17,27 @@ export class RotateBySphereAnimate extends ACustomAnimate<any> {
   onBind(): void {
     super.onBind();
 
-    const to: Record<string, number> = {};
-    const from: Record<string, number> = this.from ?? {};
+    // const to: Record<string, number> = {};
+    // const from: Record<string, number> = this.from ?? {};
 
     // 用于入场的时候设置属性（因为有动画的时候VChart不会再设置属性了）
+
+    // this.props = to;
+    this.propKeys = ['x', 'y', 'z', 'alpha', 'zIndex'];
+    // this.from = from;
+    // this.to = to;
+  }
+
+  onFirstRun(): void {
+    super.onFirstRun();
     const finalAttribute = this.target.getFinalAttribute();
     if (finalAttribute) {
       this.target.setAttributes(finalAttribute);
     }
-
-    this.props = to;
-    this.propKeys = ['x', 'y', 'z', 'alpha', 'zIndex'];
-    this.from = from;
-    this.to = to;
   }
 
   onStart(): void {
+    super.onStart();
     const { center, r } = typeof this.params === 'function' ? this.params() : this.params;
     const startX = this.target.finalAttribute.x;
     const startY = this.target.finalAttribute.y;

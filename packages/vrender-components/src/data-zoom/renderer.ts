@@ -798,7 +798,7 @@ export class DataZoomRenderer {
         childrenPickable: false,
         textStyle: startTextAlignStyle
       }),
-      `data-zoom-start-text-${position.x}-${position.y}`
+      `data-zoom-start-text`
     );
     this._endText = this._maybeAddLabel(
       this._getContainer(),
@@ -811,7 +811,7 @@ export class DataZoomRenderer {
         childrenPickable: false,
         textStyle: endTextAlignStyle
       }),
-      `data-zoom-end-text-${position.x}-${position.y}`
+      `data-zoom-end-text`
     );
   }
   private _maybeAddLabel(container: IGroup, attributes: TagAttributes, name: string): Tag {

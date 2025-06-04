@@ -31,7 +31,6 @@ import {
   isObject,
   pointInRect
 } from '@visactor/vutils';
-import { AbstractComponent } from '../core/base';
 import type { PointLocationCfg } from '../core/type';
 import { labelSmartInvert, contrastAccessibilityChecker, smartInvertStrategy } from '../util/label-smartInvert';
 import { createTextGraphicByType, getMarksByName, getNoneGroupMarksByName, traverseGroup } from '../util';
@@ -787,19 +786,20 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
         if (showLabelLine) {
           labelLine = this._createLabelLine(text as IText, relatedGraphic);
         }
+        const currentLabel = labelLine ? { text, labelLine } : { text };
         if (syncState) {
-          this.updateStatesOfLabels([labelLine ? { text, labelLine } : { text }], relatedGraphic.currentStates ?? []);
+          this.updateStatesOfLabels([currentLabel], relatedGraphic.currentStates ?? []);
         }
 
         if (state === 'enter') {
           texts.push(text);
-          currentTextMap.set(textKey, labelLine ? { text, labelLine } : { text });
-          this._addLabel({ text, labelLine }, texts, labelLines, index);
+          currentTextMap.set(textKey, currentLabel);
+          this._addLabel(currentLabel, texts, labelLines, index);
         } else if (state === 'update') {
           const prevLabel = prevTextMap.get(textKey);
           prevTextMap.delete(textKey);
           currentTextMap.set(textKey, prevLabel);
-          this._updateLabel(prevLabel, { text, labelLine });
+          this._updateLabel(prevLabel, currentLabel);
         }
       });
 
@@ -843,14 +843,8 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
   }
 
   protected _runUpdateAnimation(prevLabel: LabelContent, currentLabel: LabelContent) {
-    if (this._enableAnimation === false || !this._animationConfig.update) {
-      return;
-    }
-
     const { text: prevText, labelLine: prevLabelLine } = prevLabel;
     const { text: curText, labelLine: curLabelLine } = currentLabel;
-
-    const { duration, easing } = this._animationConfig.update;
 
     prevText.applyAnimationState(
       ['update'],
@@ -859,8 +853,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
           name: 'update',
           animation: {
             type: 'labelUpdate',
-            duration,
-            easing,
+            ...this._animationConfig.update,
             customParameters: {
               prevText,
               curText,
@@ -904,7 +897,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
     const { text: prevText, labelLine: prevLabelLine } = prevLabel;
     const { text: curText, labelLine: curLabelLine } = currentLabel;
 
-    if (this._enableAnimation === false || !this._animationConfig.update) {
+    if (this._enableAnimation === false || this._animationConfig.update === false) {
       prevLabel.text.setAttributes(curText.attribute as any);
       if (prevLabelLine && curLabelLine) {
         prevLabel.labelLine.setAttributes(curLabelLine.attribute);

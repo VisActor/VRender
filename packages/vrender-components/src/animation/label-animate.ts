@@ -1,4 +1,4 @@
-import { AComponentAnimate, AnimateExecutor, createComponentAnimator } from '@visactor/vrender-animate';
+import { AComponentAnimate, AnimateExecutor, createComponentAnimator, IncreaseCount } from '@visactor/vrender-animate';
 
 /**
  * LabelUpdate class handles the update animation for Label components
@@ -108,6 +108,7 @@ export class LabelEnter extends AComponentAnimate<any> {
 }
 
 export function registerLabelAnimate() {
+  AnimateExecutor.registerBuiltInAnimate('increaseCount', IncreaseCount);
   // Label update animation
   AnimateExecutor.registerBuiltInAnimate('labelUpdate', LabelUpdate);
   AnimateExecutor.registerBuiltInAnimate('labelEnter', LabelEnter);

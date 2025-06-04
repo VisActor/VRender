@@ -443,13 +443,6 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
   }
 
   /**
-   * 事件系统坐标转换为stage坐标
-   */
-  protected eventPosToStagePos(e: FederatedPointerEvent) {
-    return this.stage.eventPointTransform(e);
-  }
-
-  /**
    * 根据操作类型触发对应的事件
    */
   private _dispatchBrushEvent(operateType: IOperateType, e: any) {

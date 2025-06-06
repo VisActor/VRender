@@ -2,7 +2,7 @@
   "changes": [
     {
       "packageName": "@visactor/vrender-components",
-      "comment": "fix: brush active problem. fix visactor/vchart#4017",
+      "comment": "fix: use removeAllChild to remove brush mask. fix visactor/vchart#4017",
       "type": "none"
     }
   ],

@@ -1,6 +1,12 @@
 {
-  "name": "@visactor/vrender-kits",
+  "name": "@visactor/vrender-animate",
   "entries": [
+    {
+      "version": "1.0.0",
+      "tag": "@visactor/vrender-animate_v1.0.0",
+      "date": "Fri, 06 Jun 2025 09:38:19 GMT",
+      "comments": {}
+    },
     {
       "version": "0.22.1",
       "tag": "@visactor/vrender-kits_v0.22.1",

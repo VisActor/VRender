@@ -1,6 +1,14 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Mon, 28 Apr 2025 09:08:54 GMT and should not be manually modified.
+This log was last generated on Fri, 06 Jun 2025 09:38:19 GMT and should not be manually modified.
+
+## 1.0.0
+Fri, 06 Jun 2025 09:38:19 GMT
+
+### Updates
+
+- fix: delete-default-value
+- feat: remove marker type. close @VisActor/VChart#3782
 
 ## 0.22.11
 Mon, 28 Apr 2025 09:08:54 GMT

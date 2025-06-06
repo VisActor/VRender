@@ -613,10 +613,13 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     // 第三次绘制: 避免startText和endText重叠, 如果重叠了, 对startText做位置调整(考虑到调整的最小化，只单独调整startText而不调整endText)
     if (new Bounds().set(x1, y1, x2, y2).intersects(endTextBounds)) {
       const direction = this.attribute.orient === 'bottom' || this.attribute.orient === 'right' ? -1 : 1;
+
       if (this._isHorizontal) {
-        this._startText.setAttribute('dy', startTextDy + direction * Math.abs(endTextBounds.y1 - endTextBounds.y2));
+        const boundsYDiff = Math.abs(endTextBounds.y1 - endTextBounds.y2); // visible: false时, bounds可能是非法的
+        this._startText.setAttribute('dy', startTextDy + direction * (Number.isFinite(boundsYDiff) ? boundsYDiff : 0));
       } else {
-        this._startText.setAttribute('dx', startTextDx + direction * Math.abs(endTextBounds.x1 - endTextBounds.x2));
+        const boundsXDiff = Math.abs(endTextBounds.x1 - endTextBounds.x2); // visible: false时, bounds可能是非法的
+        this._startText.setAttribute('dx', startTextDx + direction * (Number.isFinite(boundsXDiff) ? boundsXDiff : 0));
       }
     } else {
       if (this._isHorizontal) {

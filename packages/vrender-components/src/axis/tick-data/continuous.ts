@@ -166,7 +166,7 @@ export const continuousTicks = (scale: ContinuousScale, op: ITickDataOpt): ITick
             samplingScaleTicks.push(tick);
           }
         });
-        items = getCartesianLabelBounds(scale, samplingScaleTicks, op as ICartesianTickDataOpt).map(
+        items = getCartesianLabelBounds(scale, samplingScaleTicks, op as ICartesianTickDataOpt)?.map(
           (bounds, i) =>
             ({
               AABBBounds: bounds,
@@ -174,7 +174,7 @@ export const continuousTicks = (scale: ContinuousScale, op: ITickDataOpt): ITick
             } as ILabelItem<number>)
         );
       } else {
-        items = getCartesianLabelBounds(scale, scaleTicks, op as ICartesianTickDataOpt).map(
+        items = getCartesianLabelBounds(scale, scaleTicks, op as ICartesianTickDataOpt)?.map(
           (bounds, i) =>
             ({
               AABBBounds: bounds,
@@ -182,49 +182,52 @@ export const continuousTicks = (scale: ContinuousScale, op: ITickDataOpt): ITick
             } as ILabelItem<number>)
         );
       }
-      const firstSourceItem = items[0];
-      const lastSourceItem = last(items);
 
-      const samplingMethod = breakData && breakData() ? methods.greedy : methods.parity; // 由于轴截断后刻度会存在不均匀的情况，所以不能使用 parity 算法
-      while (items.length >= 3 && hasOverlap(items as any, labelGap)) {
-        items = samplingMethod(items, labelGap);
-      }
+      if (items) {
+        const firstSourceItem = items[0];
+        const lastSourceItem = last(items);
 
-      const checkFirst = op.labelFirstVisible;
-      let checkLast = op.labelLastVisible; // 这里和 auto-hide 里的逻辑有差异，不根据 length 自动强制显示最后一个（会引起 vtable 较多 badcase）。
-
-      if (intersect(firstSourceItem as any, lastSourceItem as any, labelGap)) {
-        if (items.includes(lastSourceItem) && items.length > 1 && checkFirst && checkLast) {
-          items.splice(items.indexOf(lastSourceItem), 1);
-          checkLast = false;
+        const samplingMethod = breakData && breakData() ? methods.greedy : methods.parity; // 由于轴截断后刻度会存在不均匀的情况，所以不能使用 parity 算法
+        while (items.length >= 3 && hasOverlap(items as any, labelGap)) {
+          items = samplingMethod(items, labelGap);
         }
-      }
 
-      forceItemVisible(firstSourceItem, items, checkFirst, (item: ILabelItem<number>) =>
-        intersect(item as any, firstSourceItem as any, labelGap)
-      );
-      forceItemVisible(
-        lastSourceItem,
-        items,
-        checkLast,
-        (item: ILabelItem<number>) =>
-          intersect(item as any, lastSourceItem as any, labelGap) ||
-          (checkFirst && item !== firstSourceItem ? intersect(item as any, firstSourceItem as any, labelGap) : false),
-        true
-      );
+        const checkFirst = op.labelFirstVisible;
+        let checkLast = op.labelLastVisible; // 这里和 auto-hide 里的逻辑有差异，不根据 length 自动强制显示最后一个（会引起 vtable 较多 badcase）。
 
-      const ticks = items.map(item => item.value);
-
-      if (ticks.length < 3 && labelFlush) {
-        if (ticks.length > 1) {
-          ticks.pop();
+        if (intersect(firstSourceItem as any, lastSourceItem as any, labelGap)) {
+          if (items.includes(lastSourceItem) && items.length > 1 && checkFirst && checkLast) {
+            items.splice(items.indexOf(lastSourceItem), 1);
+            checkLast = false;
+          }
         }
-        if (last(ticks) !== last(scaleTicks)) {
-          ticks.push(last(scaleTicks));
-        }
-      }
 
-      scaleTicks = ticks;
+        forceItemVisible(firstSourceItem, items, checkFirst, (item: ILabelItem<number>) =>
+          intersect(item as any, firstSourceItem as any, labelGap)
+        );
+        forceItemVisible(
+          lastSourceItem,
+          items,
+          checkLast,
+          (item: ILabelItem<number>) =>
+            intersect(item as any, lastSourceItem as any, labelGap) ||
+            (checkFirst && item !== firstSourceItem ? intersect(item as any, firstSourceItem as any, labelGap) : false),
+          true
+        );
+
+        const ticks = items.map(item => item.value);
+
+        if (ticks.length < 3 && labelFlush) {
+          if (ticks.length > 1) {
+            ticks.pop();
+          }
+          if (last(ticks) !== last(scaleTicks)) {
+            ticks.push(last(scaleTicks));
+          }
+        }
+
+        scaleTicks = ticks;
+      }
     }
   }
   return convertDomainToTickData(scaleTicks);

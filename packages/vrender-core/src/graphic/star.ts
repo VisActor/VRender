@@ -127,9 +127,13 @@ export class Star extends Graphic<IStarGraphicAttribute> implements IStar {
   }
 
   toCustomPath() {
+    let path = super.toCustomPath();
+    if (path) {
+      return path;
+    }
     const starTheme = this.getGraphicTheme();
     const points = this.getStarPoints(this.attribute, starTheme);
-    const path = new CustomPath2D();
+    path = new CustomPath2D();
 
     points.forEach((point, index) => {
       if (index === 0) {

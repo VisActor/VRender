@@ -16,6 +16,7 @@ import { EnvContribution } from '../constants';
 import type { IAABBBoundsLike } from '@visactor/vutils';
 import { container } from '../container';
 import { Generator } from '../common/generator';
+import { PerformanceRAF } from '../common/performance-raf';
 import { EventListenerManager } from '../common/event-listener-manager';
 
 const defaultEnv: EnvType = 'browser';
@@ -26,6 +27,8 @@ export class DefaultGlobal extends EventListenerManager implements IGlobal {
   private _isSafari?: boolean;
   private _isChrome?: boolean;
   private _isImageAnonymous?: boolean = true;
+  private _performanceRAFList: PerformanceRAF[] = [];
+
   get env(): EnvType {
     return this._env;
   }
@@ -273,6 +276,50 @@ export class DefaultGlobal extends EventListenerManager implements IGlobal {
       this.setEnv(defaultEnv);
     }
     return this.envContribution.getRequestAnimationFrame();
+  }
+
+  /**
+   * 获取特定的requestAnimationFrame，同一个id底层共用一个原生的requestAnimationFrame
+   * @param id 唯一标识，用于区分不同的requestAnimationFrame，请使用数字，不要太大，因为底层使用的是数组索引
+   */
+  getSpecifiedRequestAnimationFrame(id: number) {
+    if (!this._env) {
+      this.setEnv(defaultEnv);
+    }
+
+    // Check if PerformanceRAF instance exists for this id
+    if (!this._performanceRAFList[id]) {
+      this._performanceRAFList[id] = new PerformanceRAF();
+    }
+
+    const performanceRAF = this._performanceRAFList[id];
+
+    // Return a function that adds the callback to the specific PerformanceRAF instance
+    return (callback: FrameRequestCallback): number => {
+      return performanceRAF.addAnimationFrameCb(callback);
+    };
+  }
+
+  /**
+   * 获取特定的cancelAnimationFrame，用于取消特定id的requestAnimationFrame
+   * @param id
+   */
+  getSpecifiedCancelAnimationFrame(id: number) {
+    if (!this._env) {
+      this.setEnv(defaultEnv);
+    }
+
+    // Return no-op if no PerformanceRAF instance exists for this id
+    if (!this._performanceRAFList[id]) {
+      return () => false;
+    }
+
+    const performanceRAF = this._performanceRAFList[id];
+
+    // Return a function that removes the callback from the specific PerformanceRAF instance
+    return (handle: number): boolean => {
+      return performanceRAF.removeAnimationFrameCb(handle);
+    };
   }
 
   getCancelAnimationFrame() {

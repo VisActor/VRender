@@ -15,7 +15,6 @@ export * from './core';
 export * from './core/light';
 export * from './core/camera';
 export * from './picker';
-export * from './animate';
 export * from './resource-loader/loader';
 export * from './color-string';
 export * from './factory';
@@ -35,6 +34,7 @@ export * from './common/shape/arc';
 export * from './common/shape/rect';
 export * from './common/matrix';
 export * from './common/simplify';
+export * from './common/diff';
 
 export * from './common/path-svg';
 export * from './common/render-curve';
@@ -45,6 +45,7 @@ export * from './common/morphing-utils';
 export * from './common/split-path';
 export * from './common/enums';
 export * from './common/generator';
+export * from './common/performance-raf';
 export * from './common/event-transformer';
 export * from './plugins/constants';
 export * from './plugins/builtin-plugin/richtext-edit-plugin';
@@ -53,7 +54,6 @@ export * from './allocator/canvas-allocate';
 export * from './allocator/graphic-allocate';
 export * from './common/contribution-provider';
 
-export * from './animate/default-ticker';
 export { wrapCanvas, wrapContext } from './canvas/util';
 export * from './common/xml';
 export * from './common/inversify-lite';
@@ -104,5 +104,12 @@ export * from './plugins/builtin-plugin/react-attribute-plugin';
 export * from './plugins/builtin-plugin/3dview-transform-plugin';
 export * from './plugins/builtin-plugin/flex-layout-plugin';
 
-export * from './animate/easing-func';
 export * from './plugins/builtin-plugin/edit-module';
+
+// export const morphPath = {};
+// export const multiToOneMorph = {};
+// export const oneToMultiMorph = {};
+// export class ACustomAnimate {}
+// export const AnimateGroup = {};
+// export const Animate = {};
+// export const defaultTicker = {};

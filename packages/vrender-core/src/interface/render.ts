@@ -31,6 +31,7 @@ export interface IRenderService {
   renderTreeRoots: IGraphic[]; // 此次render的数组
   renderLists: IGraphic[];
   drawParams: IRenderServiceDrawParams;
+  drawContribution: IDrawContribution;
 
   prepare: (updateBounds: boolean) => void;
   prepareRenderList: () => void;
@@ -54,6 +55,8 @@ export interface IDrawContext extends IRenderServiceDrawParams {
   drawContribution?: IDrawContribution;
   // hack内容
   hack_pieFace?: 'inside' | 'bottom' | 'top' | 'outside';
+  // group是否有旋转，每一个renderGroup都会更新，用于在renderItem的时候给子节点使用
+  isGroupScroll?: boolean;
 }
 
 export interface IDrawContribution {
@@ -80,6 +83,14 @@ export interface IGraphicRenderDrawParams {
   drawingCb?: () => void;
   skipDraw?: boolean;
   theme?: IFullThemeSpec;
+  // TODO 这里是为了性能优化，之前使用匿名函数的方式闭包等逻辑会影响性能，现在直接将函数显示定义，将参数传入提升性能，就是牺牲了代码可读性
+  // 用于在group中进行递归渲染的参数
+  renderInGroupParams?: {
+    skipSort?: boolean;
+    nextM?: IMatrixLike;
+  };
+  // 用于在group中进行递归渲染的函数
+  renderInGroup?: (skipSort: boolean, group: IGroup, drawContext: IDrawContext, nextM: IMatrixLike) => void;
 }
 
 export interface IGraphicRender {

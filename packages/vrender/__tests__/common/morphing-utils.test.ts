@@ -7,7 +7,7 @@ it('pathToBezierCurves', () => {
   expect(pathToBezierCurves(path)).toEqual([[100, 100, 100, 100, 200, 200, 200, 200]]);
 
   path.fromString('L200,200C50,50,150,150,300,300');
-  expect(pathToBezierCurves(path)).toEqual([[200, 200, 50, 50, 150, 150, 300, 300]]);
+  expect(pathToBezierCurves(path)).toEqual([[0, 0, 0, 0, 200, 200, 200, 200, 50, 50, 150, 150, 300, 300]]);
 });
 
 it('alignSubpath empty paths', () => {

@@ -7,6 +7,7 @@ import { application } from '../application';
 import { RECT_NUMBER_TYPE } from './constants';
 import { normalizeRectAttributes } from '../common/rect-utils';
 import { updateBoundsOfCommonOuterBorder } from './graphic-service/common-outer-boder-bounds';
+import { EmptyContext2d } from '../canvas';
 
 const RECT_UPDATE_TAG_KEY = ['width', 'x1', 'y1', 'height', 'cornerRadius', ...GRAPHIC_UPDATE_TAG_KEY];
 
@@ -71,10 +72,14 @@ export class Rect extends Graphic<IRectGraphicAttribute> implements IRect {
 
   toCustomPath(): ICustomPath2D {
     // throw new Error('暂不支持');
+    let path = super.toCustomPath();
+    if (path) {
+      return path;
+    }
     const attribute = this.attribute;
     const { x, y, width, height } = normalizeRectAttributes(attribute);
 
-    const path = new CustomPath2D();
+    path = new CustomPath2D();
     path.moveTo(x, y);
     path.rect(x, y, width, height);
 

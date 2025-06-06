@@ -2,7 +2,6 @@
  * @description PopTip组件
  */
 import {
-  InputText,
   type IGraphic,
   type IGroup,
   type IRect,
@@ -559,41 +558,5 @@ export class PopTip extends AbstractComponent<Required<PopTipAttributes>> {
           offset: symbolType === 'arrow2Left' ? [width + sizeH, (height / 5) * 4] : [width + sizeH, height]
         };
     }
-  }
-
-  appearAnimate(animateConfig: { duration?: number; easing?: string; wave?: number }) {
-    // 基准时间，line[0, 500], point[100, 600] 100 onebyone, pointNormal[600, 1000] 90+90 onebyone, activeLine[500, 700]
-    // line和activeLine的clipRange
-    const { duration = 1000, easing = 'quadOut' } = animateConfig;
-    this.setAttributes({ scaleX: 0, scaleY: 0 });
-    this.animate().to({ scaleX: 1, scaleY: 1 }, (duration / 3) * 2, easing as any);
-    this.titleShape &&
-      this.titleShape
-        .animate()
-        .play(new InputText({ text: '' }, { text: this.titleShape.attribute.text as string }, duration, easing as any));
-    this.contentShape &&
-      this.contentShape
-        .animate()
-        .play(
-          new InputText({ text: '' }, { text: this.contentShape.attribute.text as string }, duration, easing as any)
-        );
-
-    // 摇摆
-    if (animateConfig.wave) {
-      const dur = duration / 6;
-      this.group
-        .animate()
-        .to({ angle: animateConfig.wave }, dur, easing as any)
-        .to({ angle: -animateConfig.wave }, dur * 2, easing as any)
-        .to({ angle: animateConfig.wave }, dur * 2, easing as any)
-        .to({ angle: 0 }, dur, easing as any);
-    }
-  }
-
-  disappearAnimate(animateConfig: { duration?: number; easing?: string }) {
-    // 基准时间，line[0, 500], point[100, 600] 100 onebyone, pointNormal[600, 1000] 90+90 onebyone, activeLine[500, 700]
-    // line和activeLine的clipRange
-    const { duration = 1000, easing = 'quadOut' } = animateConfig;
-    this.animate().to({ scaleX: 0, scaleY: 0 }, duration, easing as any);
   }
 }

@@ -255,6 +255,8 @@ export interface IGlobal extends Omit<IEventElement, 'on' | 'off' | 'once' | 'em
 
   getRequestAnimationFrame: () => null | ((callback: FrameRequestCallback) => number);
   getCancelAnimationFrame: () => null | ((h: number) => void);
+  getSpecifiedRequestAnimationFrame: (id: number) => (callback: FrameRequestCallback) => number;
+  getSpecifiedCancelAnimationFrame: (id: number) => (h: number) => void;
 
   /**
    * 将窗口坐标转换为画布坐标，小程序/小组件环境需要兼容

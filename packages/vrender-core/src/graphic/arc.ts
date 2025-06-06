@@ -343,6 +343,10 @@ export class Arc extends Graphic<IArcGraphicAttribute> implements IArc {
   }
 
   toCustomPath() {
+    let path = super.toCustomPath();
+    if (path) {
+      return path;
+    }
     const x = 0;
     const y = 0;
 
@@ -359,7 +363,7 @@ export class Arc extends Graphic<IArcGraphicAttribute> implements IArc {
       innerRadius = temp;
     }
 
-    const path = new CustomPath2D();
+    path = new CustomPath2D();
 
     if (outerRadius <= epsilon) {
       path.moveTo(x, y);

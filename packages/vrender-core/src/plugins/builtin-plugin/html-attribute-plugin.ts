@@ -52,8 +52,8 @@ export class HtmlAttributePlugin implements IPlugin {
     context.stage.hooks.afterRender.taps = context.stage.hooks.afterRender.taps.filter(item => {
       return item.name !== this.key;
     });
-    application.graphicService.hooks.onRemove.unTap(this.key);
-    application.graphicService.hooks.onRelease.unTap(this.key);
+    // application.graphicService.hooks.onRemove.unTap(this.key);
+    // application.graphicService.hooks.onRelease.unTap(this.key);
     this.release();
   }
 

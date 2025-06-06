@@ -7,12 +7,14 @@ import {
   registerRichtext,
   registerText
 } from '@visactor/vrender-kits';
+import { registerAxisAnimate } from '../animation/axis-animate';
 
 function loadBasicAxis() {
   registerGroup();
   registerLine();
   registerRichtext();
   registerText();
+  registerAxisAnimate();
 }
 
 export function loadLineAxisComponent() {

@@ -109,11 +109,9 @@ export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
       refX = 0,
       refY = 0,
       refAngle = 0,
-      textStyle = {},
-      richTextStyle = {},
-      imageStyle = {},
+      style,
       position: positionType = IMarkPointItemPosition.middle
-    } = itemContent;
+    } = itemContent as any;
     const { state } = this.attribute as MarkPointAttrs;
     const lineEndAngle = this._line?.getEndAngle() || 0;
     const itemRefOffsetX = refX * Math.cos(lineEndAngle) + refY * Math.cos(lineEndAngle - Math.PI / 2);
@@ -122,7 +120,7 @@ export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
       const offsetX = newItemPosition.x - newPosition.x;
       const offsetY = newItemPosition.y - newPosition.y;
       item.setAttributes({
-        ...(textStyle as TagAttributes),
+        ...(style as TagAttributes),
         textStyle: {
           ...this.getTextAlignAttr(
             autoRotate,
@@ -131,25 +129,25 @@ export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
             lineEndAngle,
             itemContent.position ?? ('end' as keyof typeof IMarkPointItemPosition)
           ),
-          ...textStyle.textStyle
+          ...style.textStyle
         },
         state: {
           panel: merge({}, DEFAULT_STATES, state?.textBackground),
-          text: merge({}, DEFAULT_STATES, state?.text)
+          text: merge({}, DEFAULT_STATES, state?.itemContent)
         }
       } as any);
     } else if (itemType === 'richText') {
       item.setAttributes({
-        dx: this.getItemDx(item, positionType, richTextStyle) + (richTextStyle.dx || 0),
-        dy: this.getItemDy(item, positionType, richTextStyle) + (richTextStyle.dy || 0)
+        dx: this.getItemDx(item, positionType, style) + (style.dx || 0),
+        dy: this.getItemDy(item, positionType, style) + (style.dy || 0)
       });
-      item.states = merge({}, DEFAULT_STATES, state?.richText);
+      item.states = merge({}, DEFAULT_STATES, state?.itemContent);
     } else if (itemType === 'image') {
       item.setAttributes({
-        dx: this.getItemDx(item, positionType, imageStyle) + (imageStyle.dx || 0),
-        dy: this.getItemDy(item, positionType, imageStyle) + (imageStyle.dy || 0)
+        dx: this.getItemDx(item, positionType, style) + (style.dx || 0),
+        dy: this.getItemDy(item, positionType, style) + (style.dy || 0)
       });
-      item.states = merge({}, DEFAULT_STATES, state?.image);
+      item.states = merge({}, DEFAULT_STATES, state?.itemContent);
     }
 
     const itemAngle = isPostiveXAxis(lineEndAngle) ? lineEndAngle : lineEndAngle - Math.PI;
@@ -193,37 +191,38 @@ export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
 
   protected initItem(itemContent: IItemContent, newPosition: Point, newItemPosition: Point) {
     const { state } = this.attribute as MarkPointAttrs;
-    const { type = 'text', symbolStyle, richTextStyle, imageStyle, renderCustomCallback } = itemContent;
+    const { type = 'text', style, renderCustomCallback } = itemContent as any;
     let item: ISymbol | Tag | IImage | IRichText | IGroup;
     if (type === 'symbol') {
       item = graphicCreator.symbol({
         ...newItemPosition,
-        ...symbolStyle
+        ...style
       });
-      item.states = merge({}, DEFAULT_STATES, state?.symbol);
+      item.states = merge({}, DEFAULT_STATES, state?.itemContent);
     } else if (type === 'text') {
       item = new Tag({
         ...newItemPosition,
         state: {
           panel: merge({}, DEFAULT_STATES, state?.textBackground),
-          text: merge({}, DEFAULT_STATES, state?.text)
+          text: merge({}, DEFAULT_STATES, state?.itemContent)
         }
       });
     } else if (type === 'richText') {
+      // 兼容老逻辑
       item = graphicCreator.richtext({
         ...newItemPosition,
-        ...richTextStyle
+        ...style
       });
-      item.states = merge({}, DEFAULT_STATES, state?.richText);
+      item.states = merge({}, DEFAULT_STATES, state?.itemContent);
     } else if (type === 'image') {
       item = graphicCreator.image({
         ...newItemPosition,
-        ...imageStyle
+        ...style
       });
-      item.states = merge({}, DEFAULT_STATES, state?.image);
+      item.states = merge({}, DEFAULT_STATES, state?.itemContent);
     } else if (type === 'custom' && renderCustomCallback) {
       item = renderCustomCallback();
-      item.states = merge({}, DEFAULT_STATES, state?.customMark);
+      item.states = merge({}, DEFAULT_STATES, state?.itemContent);
     }
     item.name = `mark-point-${type}`;
     this.setItemAttributes(item, itemContent, newPosition, newItemPosition, type);
@@ -461,7 +460,7 @@ export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
       visible: targetItemvisible = false,
       size: targetSymbolSize
     } = targetSymbol;
-    const targetSize = targetItemvisible ? targetSymbolStyle.size ?? targetSymbolSize ?? 20 : 0;
+    const targetSize = targetItemvisible ? (targetSymbolStyle.size ?? targetSymbolSize ?? 20) : 0;
 
     let targetOffsetAngle;
     if (itemLine.type === 'type-do') {

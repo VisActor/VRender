@@ -1,8 +1,10 @@
 import '@visactor/vrender';
-import { IPointLike } from '@visactor/vutils';
 import render from '../../util/render';
 import { StoryLabelItem } from '../../../src';
-import { createLine } from '@visactor/vrender-core';
+import { registerAnimate, registerCustomAnimate } from '@visactor/vrender-animate';
+
+registerAnimate();
+registerCustomAnimate();
 
 export function run() {
   const labels: StoryLabelItem[] = [];
@@ -97,22 +99,32 @@ export function run() {
     })
   );
 
-  const stage = render(labels, 'main', 'black');
+  const stage = render(labels, 'main', { background: 'black' });
 
   stage.render();
   labels.forEach((label, index) => {
-    label.appearAnimate({
+    label.applyAppearState({
+      type: 'labelItemAppear',
       duration: 1000,
       easing: 'cubicIn',
-      symbolStartOuterType: 'scale',
-      titleType: 'move',
-      titlePanelType: index > 3 ? 'stroke' : 'scale'
+      selfOnly: true,
+      customParameters: {
+        symbolStartOuterType: 'scale',
+        titleType: 'typewriter',
+        titlePanelType: index > 3 ? 'stroke' : 'scale'
+      }
     });
   });
 
   setTimeout(() => {
     labels.forEach(label => {
-      label.disappearAnimate({ duration: 1000, easing: 'cubicIn' });
+      label.applyDisappearState({
+        type: 'labelItemDisappear',
+        duration: 1000,
+        easing: 'cubicIn',
+        selfOnly: true,
+        customParameters: {}
+      });
     });
   }, 3000);
 }

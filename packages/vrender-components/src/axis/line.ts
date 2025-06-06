@@ -15,9 +15,9 @@ import {
   mixin,
   last as peek
 } from '@visactor/vutils';
-import { graphicCreator } from '@visactor/vrender-core';
+import { diff, graphicCreator } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
-import type { TextAlignType, IGroup, INode, IText, TextBaselineType } from '@visactor/vrender-core';
+import type { TextAlignType, IGroup, INode, IText, TextBaselineType, IGraphic } from '@visactor/vrender-core';
 import type { SegmentAttributes } from '../segment';
 // eslint-disable-next-line no-duplicate-imports
 import { Segment } from '../segment';
@@ -27,7 +27,7 @@ import type { LineAttributes, LineAxisAttributes, TitleAttributes, AxisItem, Tra
 import { AxisBase } from './base';
 import { DEFAULT_AXIS_THEME } from './config';
 import { AXIS_ELEMENT_NAME, DEFAULT_STATES, TopZIndex } from './constant';
-import { measureTextSize } from '../util';
+import { measureTextSize, traverseGroup } from '../util';
 import { autoHide as autoHideFunc } from './overlap/auto-hide';
 import { autoRotate as autoRotateFunc, getXAxisLabelAlign, getYAxisLabelAlign } from './overlap/auto-rotate';
 import { autoLimit as autoLimitFunc } from './overlap/auto-limit';

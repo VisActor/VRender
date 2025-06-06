@@ -14,7 +14,11 @@ export class IncrementalAutoRenderPlugin implements IPlugin {
 
   activate(context: IPluginService): void {
     this.pluginService = context;
-    application.graphicService.hooks.onAddIncremental.tap(this.key, (graphic, group, stage) => {
+    const stage = this.pluginService.stage;
+    if (!stage) {
+      return;
+    }
+    stage.graphicService.hooks.onAddIncremental.tap(this.key, (graphic, group, stage) => {
       if (graphic.glyphHost) {
         graphic = graphic.glyphHost;
       }
@@ -23,7 +27,7 @@ export class IncrementalAutoRenderPlugin implements IPlugin {
         this.renderNextFrame(group);
       }
     });
-    application.graphicService.hooks.onClearIncremental.tap(this.key, (group, stage) => {
+    stage.graphicService.hooks.onClearIncremental.tap(this.key, (group, stage) => {
       if (group.stage === context.stage && group.stage != null) {
         this.nextUserParams.startAtId = group._uid;
         this.nextUserParams.restartIncremental = true;
@@ -32,14 +36,18 @@ export class IncrementalAutoRenderPlugin implements IPlugin {
     });
   }
   deactivate(context: IPluginService): void {
-    application.graphicService.hooks.onAddIncremental.taps =
-      application.graphicService.hooks.onAddIncremental.taps.filter(item => {
+    const stage = this.pluginService.stage;
+    if (!stage) {
+      return;
+    }
+    stage.graphicService.hooks.onAddIncremental.taps = stage.graphicService.hooks.onAddIncremental.taps.filter(item => {
+      return item.name !== this.key;
+    });
+    stage.graphicService.hooks.onClearIncremental.taps = stage.graphicService.hooks.onClearIncremental.taps.filter(
+      item => {
         return item.name !== this.key;
-      });
-    application.graphicService.hooks.onClearIncremental.taps =
-      application.graphicService.hooks.onClearIncremental.taps.filter(item => {
-        return item.name !== this.key;
-      });
+      }
+    );
   }
 
   renderNextFrame(group: IGroup): void {

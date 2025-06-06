@@ -1,0 +1,16 @@
+{
+  "extends": "@internal/ts-config/tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "outDir": "./es",
+    "rootDir": "./src",
+    "composite": true,
+    "target": "ES2016"
+  },
+  "include": ["src"],
+  "references": [
+    {
+      "path": "../vrender-core"
+    }
+  ]
+}

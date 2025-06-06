@@ -139,15 +139,15 @@ export class CustomPath2D extends CurvePath implements ICustomPath2D {
       list[enumCommandMap.C] = (cmd: CommandType) => `C${cmd[1]} ${cmd[2]} ${cmd[3]} ${cmd[4]} ${cmd[5]} ${cmd[6]}`;
       list[enumCommandMap.A] = (cmd: CommandType) => {
         const bezierPathList: number[] = [];
-        addArcToBezierPath(
-          bezierPathList,
-          cmd[4] as number,
-          cmd[5] as number,
-          cmd[1] as number,
-          cmd[2] as number,
-          cmd[3] as number,
-          cmd[3] as number
-        );
+        const x = cmd[1] as number;
+        const y = cmd[2] as number;
+        const radius = cmd[3] as number;
+        const startAngle = cmd[4] as number;
+        const endAngle = cmd[5] as number;
+        const counterclockwise = cmd[6] as boolean;
+
+        addArcToBezierPath(bezierPathList, startAngle, endAngle, x, y, radius, radius, counterclockwise);
+
         let path = '';
         for (let i = 0; i < bezierPathList.length; i += 6) {
           path += `C${bezierPathList[i]} ${bezierPathList[i + 1]} ${bezierPathList[i + 2]} ${bezierPathList[i + 3]} ${

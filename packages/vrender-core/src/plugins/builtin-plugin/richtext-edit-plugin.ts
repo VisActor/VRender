@@ -8,6 +8,7 @@ import {
   createRichText,
   createText,
   getRichTextBounds,
+  Graphic,
   RichText
 } from '../../graphic';
 import type {
@@ -27,7 +28,6 @@ import type {
   ITicker,
   ITimeline
 } from '../../interface';
-import { Animate, DefaultTicker, DefaultTimeline } from '../../animate';
 import { EditModule, findConfigIndexByCursorIdx, getDefaultCharacterConfig } from './edit-module';
 import { application } from '../../application';
 import { getWordStartEndIdx } from '../../graphic/richtext/utils';
@@ -148,8 +148,8 @@ export class RichTextEditPlugin implements IPlugin {
   shadowPlaceHolder: IRichText;
   shadowBounds: IRect;
 
-  ticker: ITicker;
-  timeline: ITimeline;
+  ticker?: ITicker;
+  timeline?: ITimeline;
 
   currRt: IRichText;
 
@@ -208,8 +208,6 @@ export class RichTextEditPlugin implements IPlugin {
     this.commandCbs.set(FORMAT_TEXT_COMMAND, [this.formatTextCommandCb]);
     this.commandCbs.set(FORMAT_ALL_TEXT_COMMAND, [this.formatAllTextCommandCb]);
     this.updateCbs = [];
-    this.timeline = new DefaultTimeline();
-    this.ticker = new DefaultTicker([this.timeline]);
     this.deltaX = 0;
     this.deltaY = 0;
   }
@@ -310,6 +308,9 @@ export class RichTextEditPlugin implements IPlugin {
     this.editModule.onInput(this.handleInput);
     this.editModule.onChange(this.handleChange);
     this.editModule.onFocusOut(this.handleFocusOut);
+
+    this.timeline = (this as any).createTimeline && (this as any).createTimeline();
+    this.ticker = (this as any).createTicker && (this as any).createTicker(context.stage);
   }
 
   copyToClipboard(e: KeyboardEvent): boolean {
@@ -793,7 +794,7 @@ export class RichTextEditPlugin implements IPlugin {
       // 不使用stage的Ticker，避免影响其他的动画以及受到其他动画影响
       this.addAnimateToLine(line);
       this.editLine = line;
-      this.ticker.start(true);
+      this.ticker && this.ticker.start(true);
 
       const g = createGroup({ x: 0, y: 0, width: 0, height: 0 });
       this.editBg = g;
@@ -933,6 +934,9 @@ export class RichTextEditPlugin implements IPlugin {
   }
 
   protected addAnimateToLine(line: ILine) {
+    if (!line.animate) {
+      return;
+    }
     line.setAttributes({ opacity: 1 });
     line.animates &&
       line.animates.forEach(animate => {

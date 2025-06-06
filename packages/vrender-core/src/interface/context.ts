@@ -100,6 +100,8 @@ export interface IContext2d extends Releaseable {
 
   getContext: () => any;
 
+  reset: (setTransform?: boolean) => void;
+
   /**
    * 设置当前ctx 的transform信息
    */

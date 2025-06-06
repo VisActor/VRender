@@ -67,18 +67,10 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
    * @description
    * 1. 判断状态: 如果在brushMask中，则属于移动状态; 否则属于绘制状态
    *（移动状态和绘制状态互斥, 且移动状态考虑brushMoved配置, 如果在brush点内但brushMoved为false, 则走绘制状态, 而非两个状态都不响应, 此效果与echarts保持一致）
-   * 2. 判断坐标是否在有效交互范围内
    * 2. 如果是移动状态: 标记移动状态 & 标记正在移动的mask & 初始化mask的dx和dy
    * 3. 如果是绘制状态: 标记绘制状态 & 标记正在绘制的mask & 清除之前的mask & 添加新的mask
    */
   private _onBrushStart = (e: FederatedPointerEvent) => {
-    if (this._outOfInteractiveRange(e)) {
-      if (!this._isEmptyMask()) {
-        this._clearMask();
-        this._dispatchBrushEvent(IOperateType.brushClear, e);
-      }
-      return;
-    }
     const {
       updateTrigger = DEFAULT_BRUSH_ATTRIBUTES.updateTrigger,
       endTrigger = DEFAULT_BRUSH_ATTRIBUTES.endTrigger,
@@ -397,7 +389,7 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
       cursor: 'move',
       pickable: false,
       ...brushStyle,
-      opacity: hasMask ? (brushStyle.opacity ?? 1) : 0
+      opacity: hasMask ? brushStyle.opacity ?? 1 : 0
     });
     brushMask.name = `brush-${Date.now()}`; // 用Date给mask唯一标记
     this._operatingMask = brushMask;
@@ -457,7 +449,7 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
    */
   private _clearMask() {
     this._brushMaskAABBBoundsDict = {};
-    this._container.incrementalClearChild();
+    this._container.removeAllChild();
     this._operatingMask = null;
   }
 

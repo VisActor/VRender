@@ -11,7 +11,8 @@
     "@visactor/vrender": "workspace:1.0.0",
     "@visactor/vrender-core": "workspace:1.0.0",
     "@visactor/vrender-kits": "workspace:1.0.0",
-    "@visactor/vrender-components": "workspace:1.0.0"
+    "@visactor/vrender-components": "workspace:1.0.0",
+    "@visactor/vrender-animate": "workspace:1.0.0"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "~1.1.4",

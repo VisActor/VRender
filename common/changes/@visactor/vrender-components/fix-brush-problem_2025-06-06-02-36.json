@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix: brush event pos problem when stage scale",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

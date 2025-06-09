@@ -53,7 +53,7 @@ export class RichTextIcon extends Image implements IRichTextIcon {
   }
   animationBackUps?: { from: Record<string, any>; to: Record<string, any> } | undefined;
   incrementalAt?: number | undefined;
-  toCustomPath?: (() => ICustomPath2D) | undefined;
+  toCustomPath: (() => ICustomPath2D) | undefined;
 
   get width(): number {
     return (this.attribute.width ?? 0) + this._marginArray[1] + this._marginArray[3];

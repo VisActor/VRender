@@ -35,13 +35,11 @@ import type {
   IShadowRoot,
   IStage,
   IStep,
-  ISubAnimate,
   ISymbolClass
 } from '../interface';
 import { EventTarget, CustomEvent } from '../event';
 import { DefaultTransform } from './config';
 import { application } from '../application';
-import { Animate, DefaultStateAnimateConfig, defaultTimeline } from '../animate';
 import { interpolateColor } from '../color-string/interpolate';
 import { CustomPath2D } from '../common/custom-path2d';
 import { ResourceLoader } from '../resource-loader/loader';
@@ -52,6 +50,8 @@ import { parsePadding } from '../common/utils';
 import { builtinSymbolsMap, builtInSymbolStrMap, CustomSymbolClass } from './builtin-symbol';
 import { isSvg, XMLParser } from '../common/xml';
 import { SVG_PARSE_ATTRIBUTE_MAP, SVG_PARSE_ATTRIBUTE_MAP_KEYS } from './constants';
+import { DefaultStateAnimateConfig } from '../animate/config';
+import { EmptyContext2d } from '../canvas';
 
 const _tempBounds = new AABBBounds();
 /**
@@ -155,6 +155,33 @@ export const NOWORK_ANIMATE_ATTR = {
   html: 1
 };
 
+// function createTrackableObject(obj: any) {
+//   // const accessedProperties = new Set(); // 记录被读取的属性
+//   // const modifiedProperties = new Set(); // 记录被设置/修改的属性
+
+//   const handler = {
+//     get(target: any, property: any) {
+//       // accessedProperties.add(property); // 记录读取操作
+//       return Reflect.get(target, property);
+//     },
+//     set(target: any, property: any, value: any) {
+//       if (property === 'size' && !isFinite(value)) {
+//         console.log('set', property, value);
+//       }
+//       // modifiedProperties.add(property); // 记录设置/修改操作
+//       return Reflect.set(target, property, value);
+//     }
+//   };
+
+//   const proxy = new Proxy(obj, handler);
+
+//   // 提供方法获取被追踪的属性
+//   // proxy.getAccessedProperties = () => [...accessedProperties];
+//   // proxy.getModifiedProperties = () => [...modifiedProperties];
+
+//   return proxy;
+// }
+
 /**
  * globalTransMatrix更新逻辑
  * 1. group的transform修改，会下发到所有下层group，将所有下层的tag修改
@@ -191,6 +218,9 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   }
 
   declare _events?: any;
+
+  // 保存语法上下文
+  declare context?: Record<string, any>;
 
   static userSymbolMap: Record<string, ISymbolClass> = {};
 
@@ -274,9 +304,11 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   declare stateProxy?: (stateName: string, targetStates?: string[]) => T;
   declare animates: Map<string | number, IAnimate>;
 
-  declare nextAttrs?: T;
-  declare prevAttrs?: T;
-  declare finalAttrs?: T;
+  declare animate?: () => IAnimate;
+
+  // declare nextAttrs?: T;
+  // declare prevAttrs?: T;
+  // declare finalAttrs?: T;
 
   declare pathProxy?: ICustomPath2D;
   // 依附于某个theme，如果该节点不存在parent，那么这个Theme就作为节点的Theme，避免添加到节点前计算属性
@@ -297,6 +329,15 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     } else if (params.shadowGraphic) {
       this.setShadowGraphic(params.shadowGraphic);
     }
+    // this.attribute = createTrackableObject(this.attribute);
+  }
+
+  getGraphicService() {
+    return this.stage?.graphicService ?? application.graphicService;
+  }
+
+  getAttributes(): T {
+    return this.attribute;
   }
 
   setMode(mode: '2d' | '3d') {
@@ -323,7 +364,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     return point;
   }
 
-  onAnimateBind(animate: IAnimate | ISubAnimate) {
+  onAnimateBind(animate: IAnimate) {
     this._emitCustomEvent('animate-bind', animate);
   }
 
@@ -337,10 +378,10 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       return this._AABBBounds;
     }
 
-    application.graphicService.beforeUpdateAABBBounds(this, this.stage, true, this._AABBBounds);
+    this.getGraphicService().beforeUpdateAABBBounds(this, this.stage, true, this._AABBBounds);
     const bounds = this.doUpdateAABBBounds(full);
     // this.addUpdateLayoutTag();
-    application.graphicService.afterUpdateAABBBounds(this, this.stage, this._AABBBounds, this, true);
+    this.getGraphicService().afterUpdateAABBBounds(this, this.stage, this._AABBBounds, this, true);
 
     // 直接返回空Bounds，但是前面的流程还是要走
     if (this.attribute.boundsMode === 'empty') {
@@ -560,7 +601,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     if (this.shadowRoot) {
       return (
         (!!(this._updateTag & UpdateTag.UPDATE_BOUNDS) || this.shadowRoot.shouldUpdateAABBBounds()) &&
-        application.graphicService.validCheck(
+        this.getGraphicService().validCheck(
           this.attribute,
           this.getGraphicTheme() as Required<T>,
           this._AABBBounds,
@@ -570,12 +611,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     }
     return (
       !!(this._updateTag & UpdateTag.UPDATE_BOUNDS) &&
-      application.graphicService.validCheck(
-        this.attribute,
-        this.getGraphicTheme() as Required<T>,
-        this._AABBBounds,
-        this
-      )
+      this.getGraphicService().validCheck(this.attribute, this.getGraphicTheme() as Required<T>, this._AABBBounds, this)
     );
   }
 
@@ -634,6 +670,15 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   protected setWidthHeightWithoutTransform(aabbBounds: IAABBBounds) {
     this.widthWithoutTransform = aabbBounds.x2 - aabbBounds.x1;
     this.heightWithoutTransform = aabbBounds.y2 - aabbBounds.y1;
+  }
+  setAttributesAndPreventAnimate(params: Partial<T>, forceUpdateTag: boolean = false, context?: ISetAttributeContext) {
+    this.setAttributes(params, forceUpdateTag, context);
+    this.animates &&
+      this.animates.forEach(animate => {
+        Object.keys(params).forEach(key => {
+          animate.preventAttr(key);
+        });
+      });
   }
 
   setAttributes(params: Partial<T>, forceUpdateTag: boolean = false, context?: ISetAttributeContext) {
@@ -906,39 +951,11 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     return this;
   }
 
-  animate(params?: IGraphicAnimateParams) {
-    if (!this.animates) {
-      this.animates = new Map();
-    }
-    const animate = new Animate(
-      params?.id,
-      params?.timeline ?? (this.stage && this.stage.getTimeline()),
-      params?.slience
-    );
-
-    animate.bind(this);
-    if (params) {
-      const { onStart, onFrame, onEnd, onRemove } = params;
-      onStart != null && animate.onStart(onStart);
-      onFrame != null && animate.onFrame(onFrame);
-      onEnd != null && animate.onEnd(onEnd);
-      onRemove != null && animate.onRemove(onRemove);
-      animate.interpolateFunc = params.interpolate;
-    }
-    this.animates.set(animate.id, animate);
-    animate.onRemove(() => {
-      animate.stop();
-      this.animates.delete(animate.id);
-    });
-
-    return animate;
-  }
-
   onAttributeUpdate(context?: ISetAttributeContext) {
     if (context && context.skipUpdateCallback) {
       return;
     }
-    application.graphicService.onAttributeUpdate(this);
+    this.getGraphicService().onAttributeUpdate(this);
     this._emitCustomEvent('afterAttributeUpdate', context);
   }
 
@@ -974,6 +991,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   }
 
   applyStateAttrs(attrs: Partial<T>, stateNames: string[], hasAnimation?: boolean, isClear?: boolean) {
+    // 应用状态的时候要停掉动画
     if (hasAnimation) {
       const keys = Object.keys(attrs);
       const noWorkAttrs = this.getNoWorkAnimateAttr();
@@ -992,18 +1010,34 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
         }
       });
 
-      const animate = this.animate({ slience: true });
-      (animate as any).stateNames = stateNames;
-      animate.to(
-        animateAttrs,
-        this.stateAnimateConfig?.duration ?? DefaultStateAnimateConfig.duration,
-        this.stateAnimateConfig?.easing ?? DefaultStateAnimateConfig.easing
+      const stateAnimateConfig =
+        (this.context && this.context.stateAnimateConfig) ?? this.stateAnimateConfig ?? DefaultStateAnimateConfig;
+      // 需要注册动画
+      (this as any).applyAnimationState(
+        ['state'],
+        [
+          {
+            name: 'state',
+            animation: {
+              type: 'state',
+              to: animateAttrs,
+              duration: stateAnimateConfig.duration,
+              easing: stateAnimateConfig.easing
+            }
+          }
+        ]
       );
-      noAnimateAttrs && this.setAttributes(noAnimateAttrs, false, { type: AttributeUpdateType.STATE });
+      // const animate = (this.animate as any)({ slience: true });
+      // (animate as any).stateNames = stateNames;
+      // animate.to(animateAttrs, stateAnimateConfig.duration, stateAnimateConfig.easing);
+      noAnimateAttrs && this.setAttributesAndPreventAnimate(noAnimateAttrs, false, { type: AttributeUpdateType.STATE });
+      // Object.assign((this as any).finalAttribute, attrs);
     } else {
       this.stopStateAnimates();
-      this.setAttributes(attrs, false, { type: AttributeUpdateType.STATE });
+      this.setAttributesAndPreventAnimate(attrs, false, { type: AttributeUpdateType.STATE });
     }
+
+    this._emitCustomEvent('afterStateUpdate', { type: AttributeUpdateType.STATE });
   }
 
   updateNormalAttrs(stateAttrs: Partial<T>) {
@@ -1041,20 +1075,22 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   }
 
   private getNormalAttribute(key: string) {
-    let value = (this.attribute as any)[key];
+    const value = (this.attribute as any)[key];
 
     if (this.animates) {
-      this.animates.forEach(animate => {
-        if ((animate as any).stateNames) {
-          const endProps = animate.getEndProps();
-          if (has(endProps, key)) {
-            value = endProps[key];
-          }
-        }
-      });
+      // this.animates.forEach(animate => {
+      //   if ((animate as any).stateNames) {
+      //     const endProps = animate.getEndProps();
+      //     if (has(endProps, key)) {
+      //       value = endProps[key];
+      //     }
+      //   }
+      // });
+      // console.log(this.finalAttrs);
+      return (this as any).finalAttribute?.[key];
     }
 
-    return value;
+    return value ?? (this as any).finalAttribute?.[key];
   }
 
   clearStates(hasAnimation?: boolean) {
@@ -1326,13 +1362,14 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
         // 设置timeline为所属的stage上的timeline，但如果timeline并不是默认的timeline，就不用覆盖
         const timeline = stage.getTimeline();
         this.animates.forEach(a => {
-          if (a.timeline === defaultTimeline) {
+          if (a.timeline.isGlobal) {
             a.setTimeline(timeline);
+            timeline.addAnimate(a);
           }
         });
       }
       this._onSetStage && this._onSetStage(this, stage, layer);
-      application.graphicService.onSetStage(this, stage);
+      this.getGraphicService().onSetStage(this, stage);
     }
   }
 
@@ -1349,169 +1386,6 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     if (props) {
       this.setAttributes(props, false, { type: AttributeUpdateType.ANIMATE_END });
     }
-  }
-  // step时调用
-  onStep(subAnimate: ISubAnimate, animate: IAnimate, step: IStep, ratio: number, end: boolean) {
-    const nextAttributes = {};
-    if (step.customAnimate) {
-      step.customAnimate.update(end, ratio, nextAttributes);
-    } else {
-      const nextProps = step.props;
-      const nextParsedProps = step.parsedProps;
-      const propKeys = step.propKeys;
-      this.stepInterpolate(
-        subAnimate,
-        animate,
-        nextAttributes,
-        step,
-        ratio,
-        end,
-        nextProps,
-        undefined,
-        nextParsedProps,
-        propKeys
-      );
-    }
-    this.setAttributes(nextAttributes, false, {
-      type: AttributeUpdateType.ANIMATE_UPDATE,
-      animationState: {
-        ratio,
-        end,
-        step,
-        isFirstFrameOfStep: subAnimate.getLastStep() !== step
-      }
-    });
-    this.stage && this.stage.renderNextFrame();
-  }
-
-  stepInterpolate(
-    subAnimate: ISubAnimate,
-    animate: IAnimate,
-    nextAttributes: Record<string, any>,
-    step: IStep,
-    ratio: number,
-    end: boolean,
-    nextProps: Record<string, any>,
-    lastProps?: Record<string, any>,
-    nextParsedProps?: any,
-    propKeys?: string[]
-  ) {
-    if (!propKeys) {
-      propKeys = Object.keys(nextProps);
-      step.propKeys = propKeys;
-    }
-    if (end) {
-      step.propKeys.forEach(key => {
-        if (!animate.validAttr(key)) {
-          return;
-        }
-        nextAttributes[key] = nextProps[key];
-      });
-    } else {
-      propKeys.forEach(key => {
-        // 如果属性不合法，那直接return
-        if (!animate.validAttr(key)) {
-          return;
-        }
-        const nextStepVal = nextProps[key];
-        const lastStepVal = (lastProps && lastProps[key]) ?? subAnimate.getLastPropByName(key, step);
-        if (nextStepVal == null || lastStepVal == null || nextStepVal === lastStepVal) {
-          // 用户直接调用stepInterpolate可能会走进来，如果传入的参数出现null或者undefined，直接赋值最终的值
-          nextAttributes[key] = nextStepVal;
-          return;
-        }
-        let match: boolean;
-        match =
-          animate.interpolateFunc && animate.interpolateFunc(key, ratio, lastStepVal, nextStepVal, nextAttributes);
-        if (match) {
-          return;
-        }
-        match = animate.customInterpolate(key, ratio, lastStepVal, nextStepVal, this, nextAttributes);
-        if (match) {
-          return;
-        }
-        if (!this.defaultInterpolate(nextStepVal, lastStepVal, key, nextAttributes, nextParsedProps, ratio)) {
-          this._interpolate(key, ratio, lastStepVal, nextStepVal, nextAttributes);
-        }
-      });
-    }
-
-    step.parsedProps = nextParsedProps;
-  }
-
-  defaultInterpolate(
-    nextStepVal: any,
-    lastStepVal: any,
-    key: string,
-    nextAttributes: Record<string, any>,
-    nextParsedProps: any,
-    ratio: number
-  ) {
-    if (Number.isFinite(nextStepVal) && Number.isFinite(lastStepVal)) {
-      nextAttributes[key] = lastStepVal + (nextStepVal - lastStepVal) * ratio;
-      return true;
-    } else if (key === 'fill') {
-      if (!nextParsedProps) {
-        nextParsedProps = {};
-      }
-      // 保存解析的结果到step
-      const fillColorArray: [number, number, number, number] = nextParsedProps.fillColorArray;
-      const color = interpolateColor(lastStepVal, fillColorArray ?? nextStepVal, ratio, false, (fArray, tArray) => {
-        nextParsedProps.fillColorArray = tArray;
-      });
-      if (color) {
-        nextAttributes[key] = color;
-      }
-      return true;
-    } else if (key === 'stroke') {
-      if (!nextParsedProps) {
-        nextParsedProps = {};
-      }
-      // 保存解析的结果到step
-      const strokeColorArray: [number, number, number, number] = nextParsedProps.strokeColorArray;
-      const color = interpolateColor(lastStepVal, strokeColorArray ?? nextStepVal, ratio, false, (fArray, tArray) => {
-        nextParsedProps.strokeColorArray = tArray;
-      });
-      if (color) {
-        nextAttributes[key] = color;
-      }
-      return true;
-    } else if (key === 'shadowColor') {
-      if (!nextParsedProps) {
-        nextParsedProps = {};
-      }
-      // 保存解析的结果到step
-      const shadowColorArray: [number, number, number, number] = nextParsedProps.shadowColorArray;
-      const color = interpolateColor(lastStepVal, shadowColorArray ?? nextStepVal, ratio, true, (fArray, tArray) => {
-        nextParsedProps.shadowColorArray = tArray;
-      });
-      if (color) {
-        nextAttributes[key] = color;
-      }
-
-      return true;
-    } else if (Array.isArray(nextStepVal) && nextStepVal.length === lastStepVal.length) {
-      const nextList = [];
-      let valid = true;
-      for (let i = 0; i < nextStepVal.length; i++) {
-        const v = lastStepVal[i];
-        const val = v + (nextStepVal[i] - v) * ratio;
-        if (!Number.isFinite(val)) {
-          valid = false;
-          break;
-        }
-        nextList.push(val);
-      }
-      if (valid) {
-        nextAttributes[key] = nextList;
-      }
-    }
-
-    return false;
-  }
-
-  protected _interpolate(key: string, ratio: number, lastStepVal: any, nextStepVal: any, nextAttributes: any) {
-    return;
   }
 
   getDefaultAttribute(name: string) {
@@ -1695,6 +1569,19 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   abstract getNoWorkAnimateAttr(): Record<string, number>;
 
   abstract clone(): IGraphic<any>;
+
+  toCustomPath(): ICustomPath2D {
+    // throw new Error('暂不支持');
+    const renderer = (this.stage?.renderService || application.renderService)?.drawContribution?.getRenderContribution(
+      this
+    );
+    if (renderer) {
+      const context = new EmptyContext2d(null, 1);
+      renderer.drawShape(this, context, 0, 0, {} as any, {});
+      return context.path;
+    }
+    return null;
+  }
 }
 
 Graphic.mixin(EventTarget);

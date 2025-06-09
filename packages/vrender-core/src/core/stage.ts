@@ -24,7 +24,8 @@ import type {
   IOptimizeType,
   LayerMode,
   PickResult,
-  IPlugin
+  IPlugin,
+  IGraphicService
 } from '../interface';
 import { VWindow } from './window';
 import type { Layer } from './layer';
@@ -39,13 +40,12 @@ import { AutoRenderPlugin } from '../plugins/builtin-plugin/auto-render-plugin';
 import { AutoRefreshPlugin } from '../plugins/builtin-plugin/auto-refresh-plugin';
 import { IncrementalAutoRenderPlugin } from '../plugins/builtin-plugin/incremental-auto-render-plugin';
 import { DirtyBoundsPlugin } from '../plugins/builtin-plugin/dirty-bounds-plugin';
-import { defaultTicker } from '../animate/default-ticker';
 import { SyncHook } from '../tapable';
 import { LayerService } from './constants';
-import { DefaultTimeline } from '../animate';
 import { application } from '../application';
 import { isBrowserEnv } from '../env-check';
 import { Factory } from '../factory';
+import { Graphic, GraphicService } from '../graphic';
 
 const DefaultConfig = {
   WIDTH: 500,
@@ -164,7 +164,7 @@ export class Stage extends Group implements IStage {
     return this.at(0) as unknown as ILayer;
   }
 
-  ticker: ITicker;
+  protected _ticker: ITicker;
 
   autoRender: boolean;
   autoRefresh: boolean;
@@ -179,6 +179,7 @@ export class Stage extends Group implements IStage {
   protected pickerService?: IPickerService;
   readonly pluginService: IPluginService;
   readonly layerService: ILayerService;
+  readonly graphicService: IGraphicService;
   private _eventSystem?: EventSystem;
   private get eventSystem(): EventSystem {
     return this._eventSystem;
@@ -200,6 +201,23 @@ export class Stage extends Group implements IStage {
   // 是否在render之前执行了tick，如果没有执行，尝试执行tick用来应用动画属性，避免动画过程中随意赋值然后又调用同步render导致属性的突变
   // 第一次render不需要强行走动画
   protected tickedBeforeRender: boolean = true;
+
+  // 随机分配一个rafId
+  readonly rafId: number;
+
+  get ticker() {
+    return this._ticker;
+  }
+
+  set ticker(ticker: ITicker) {
+    ticker.bindStage(this);
+    if (this._ticker) {
+      this._ticker.removeListener('tick', this.afterTickCb);
+    }
+    ticker.addTimeline(this.timeline);
+    this._ticker = ticker;
+    this._ticker.on('tick', this.afterTickCb);
+  }
 
   /**
    * 所有属性都具有默认值。
@@ -225,6 +243,7 @@ export class Stage extends Group implements IStage {
     this.renderService = container.get<IRenderService>(RenderService);
     this.pluginService = container.get<IPluginService>(PluginService);
     this.layerService = container.get<ILayerService>(LayerService);
+    this.graphicService = container.get<IGraphicService>(GraphicService);
     this.pluginService.active(this, params);
 
     this.window.create({
@@ -284,20 +303,40 @@ export class Stage extends Group implements IStage {
     this.hooks.afterRender.tap('constructor', this.afterRender);
     this._beforeRender = params.beforeRender;
     this._afterRender = params.afterRender;
-    this.ticker = params.ticker || defaultTicker;
     this.supportInteractiveLayer = params.interactiveLayer !== false;
-    this.timeline = new DefaultTimeline();
-    this.ticker.addTimeline(this.timeline);
-    this.timeline.pause();
     if (!params.optimize) {
-      params.optimize = {};
+      params.optimize = {
+        tickRenderMode: 'effect'
+      };
     }
     this.optmize(params.optimize);
     // 如果背景是图片，触发加载图片操作
     if (params.background && isString(this._background) && this._background.includes('/')) {
       this.setAttributes({ background: this._background });
     }
-    this.ticker.on('afterTick', this.afterTickCb);
+
+    this.initAnimate(params);
+    this.rafId = params.rafId ?? Math.floor(Math.random() * 6);
+  }
+
+  initAnimate(params: Partial<IStageParams>) {
+    if ((this as any).createTicker && (this as any).createTimeline) {
+      this._ticker = params.ticker || (this as any).createTicker(this);
+      this._ticker.bindStage(this);
+      if (this.params.optimize?.tickRenderMode === 'performance') {
+        this._ticker.setFPS(30);
+      }
+      this.timeline = (this as any).createTimeline();
+      this._ticker.addTimeline(this.timeline);
+      this._ticker.on('tick', this.afterTickCb);
+    }
+  }
+
+  startAnimate() {
+    if (this._ticker && this.timeline) {
+      this._ticker.start();
+      this.timeline.resume();
+    }
   }
 
   pauseRender(sr: number = -1) {
@@ -463,12 +502,7 @@ export class Stage extends Group implements IStage {
   protected afterTickCb = () => {
     this.tickedBeforeRender = true;
     // 性能模式不用立刻渲染
-    if (this.params.optimize?.tickRenderMode === 'performance') {
-      // do nothing
-    } else {
-      // 不是rendering的时候，render
-      this.state !== 'rendering' && this.render();
-    }
+    this.state !== 'rendering' && this.renderNextFrame();
   };
 
   setBeforeRender(cb: (stage: IStage) => void) {
@@ -723,14 +757,9 @@ export class Stage extends Group implements IStage {
     if (this.releaseStatus === 'released') {
       return;
     }
-    this.ticker.start();
-    this.timeline.resume();
+    this.startAnimate();
     const state = this.state;
     this.state = 'rendering';
-    // 判断是否需要手动执行tick
-    if (!this.tickedBeforeRender) {
-      this.ticker.trySyncTickStatus();
-    }
     this.layerService.prepareStageLayer(this);
     if (!this._skipRender) {
       this.lastRenderparams = params;
@@ -789,7 +818,7 @@ export class Stage extends Group implements IStage {
     }
     if (!this.willNextFrameRender) {
       this.willNextFrameRender = true;
-      this.global.getRequestAnimationFrame()(() => {
+      this.global.getSpecifiedRequestAnimationFrame(this.rafId)(() => {
         this._doRenderInThisFrame(), (this.willNextFrameRender = false);
       });
     }
@@ -799,8 +828,7 @@ export class Stage extends Group implements IStage {
     if (this.releaseStatus === 'released') {
       return;
     }
-    this.timeline.resume();
-    this.ticker.start();
+    this.startAnimate();
     const state = this.state;
     this.state = 'rendering';
     this.layerService.prepareStageLayer(this);
@@ -959,10 +987,6 @@ export class Stage extends Group implements IStage {
     return false;
   }
 
-  // 动画相关
-  startAnimate(t: number): void {
-    throw new Error('暂不支持');
-  }
   setToFrame(t: number): void {
     throw new Error('暂不支持');
   }
@@ -988,8 +1012,8 @@ export class Stage extends Group implements IStage {
       this.interactiveLayer.release();
     }
     this.window.release();
-    this.ticker.remTimeline(this.timeline);
-    this.ticker.removeListener('afterTick', this.afterTickCb);
+    this._ticker?.remTimeline(this?.timeline);
+    this._ticker?.removeListener('tick', this.afterTickCb);
     this.renderService.renderTreeRoots = [];
   }
 

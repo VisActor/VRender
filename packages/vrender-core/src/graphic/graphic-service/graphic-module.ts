@@ -6,7 +6,7 @@ import { graphicCreator } from '../graphic-creator';
 // import { DefaultThemeService, Theme, ThemeServce } from './theme-service';
 
 export default new ContainerModule(bind => {
-  bind(GraphicService).to(DefaultGraphicService).inSingletonScope();
+  bind(GraphicService).to(DefaultGraphicService);
 
   bind(GraphicCreator).toConstantValue(graphicCreator);
 });

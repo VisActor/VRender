@@ -1,3 +1,16 @@
+# v0.22.11
+
+2025-04-28
+
+
+**🐛 功能修复**
+
+- **@visactor/vrender-core**: incorrect result for TagPointsUpdate animation
+
+
+
+[更多详情请查看 v0.22.11](https://github.com/VisActor/VRender/releases/tag/v0.22.11)
+
 # v0.22.10
 
 2025-04-21

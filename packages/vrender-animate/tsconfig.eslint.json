@@ -1,0 +1,16 @@
+{
+  "extends": "@internal/ts-config/tsconfig.base.json",
+  "compilerOptions": {
+    "types": ["jest", "node"],
+    "lib": ["DOM", "ESNext"],
+    "baseUrl": "./",
+    "rootDir": "./"
+  },
+  "include": ["src", "__tests__", "examples"],
+  "exclude": ["bugserver-config"],
+  "references": [
+    {
+      "path": "../vrender-core"
+    }
+  ]
+}

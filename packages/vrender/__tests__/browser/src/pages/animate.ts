@@ -21,7 +21,9 @@ import {
   Meteor,
   AttributeUpdateType,
   IStage,
-  Easing
+  Easing,
+  DefaultTicker,
+  DefaultTimeline
 } from '@visactor/vrender';
 import { addShapesToStage, colorPools } from '../utils';
 
@@ -50,6 +52,27 @@ export const page = () => {
   const container = document.querySelector<HTMLDivElement>('#container')!;
   const br = document.createElement('br');
   container.appendChild(br);
+  addCase('Animate Performance Example', container, stage => {
+    const rect = createRect({
+      x: 100,
+      y: 100,
+      width: 100,
+      height: 100,
+      fill: 'red'
+    });
+    const ticker = new DefaultTicker([]);
+    const timeline = new DefaultTimeline();
+    ticker.addTimeline(timeline);
+
+    console.time('animate');
+    for (let i = 0; i < 2; i++) {
+      const animate = rect.animate().to({ fill: 'green' }, 100000, 'linear');
+      timeline.addAnimate(animate);
+    }
+
+    ticker.start();
+    console.timeEnd('animate');
+  });
   addCase('text', container, stage => {
     stage.background = 'black';
     const g = createGroup({});

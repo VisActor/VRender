@@ -551,7 +551,7 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
     } else {
       direction = xTotalLength > yTotalLength ? Direction.ROW : Direction.COLUMN;
     }
-    drawAreaSegments(context.camera ? context : context.nativeContext, cache, clipRange, {
+    drawAreaSegments(context, cache, clipRange, {
       offsetX,
       offsetY,
       offsetZ,
@@ -599,7 +599,7 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
           if (isArray(stroke) && (stroke[0] || stroke[2]) && stroke[1] === false) {
             context.beginPath();
             drawSegments(
-              context.camera ? context : context.nativeContext,
+              context,
               stroke[0] ? cache.top : cache.bottom,
               clipRange,
               direction === Direction.ROW ? 'x' : 'y',

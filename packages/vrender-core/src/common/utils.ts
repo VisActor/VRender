@@ -289,23 +289,6 @@ export function pointsInterpolation(
   return points;
 }
 
-export const transformKeys = [
-  'x',
-  'y',
-  'dx',
-  'dy',
-  'scaleX',
-  'scaleY',
-  'angle',
-  'anchor',
-  'postMatrix',
-  'scrollX',
-  'scrollY'
-];
-export const isTransformKey = (key: string) => {
-  return transformKeys.includes(key);
-};
-
 export function getAttributeFromDefaultAttrList(attr: Record<string, any> | Record<string, any>[], key: string) {
   if (isArray(attr)) {
     let val;

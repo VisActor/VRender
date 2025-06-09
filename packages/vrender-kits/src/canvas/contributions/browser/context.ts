@@ -125,6 +125,8 @@ export class BrowserContext2d implements IContext2d {
   declare fontFamily: string;
   declare fontSize: number;
   declare _clearMatrix: IMatrix;
+  declare _font?: string;
+
   // 属性代理
   set fillStyle(d: string | CanvasGradient | CanvasPattern) {
     this.nativeContext.fillStyle = d;
@@ -133,10 +135,14 @@ export class BrowserContext2d implements IContext2d {
     return this.nativeContext.fillStyle;
   }
   set font(d: string) {
+    if (d === this._font) {
+      return;
+    }
+    this._font = d;
     this.nativeContext.font = d;
   }
   get font(): string {
-    return this.nativeContext.font;
+    return this._font ?? this.nativeContext.font;
   }
   set globalAlpha(d: number) {
     this.nativeContext.globalAlpha = d * this.baseGlobalAlpha;
@@ -251,14 +257,14 @@ export class BrowserContext2d implements IContext2d {
     this.baseGlobalAlpha = 1;
   }
 
-  reset() {
+  reset(setTransform: boolean = true) {
     if (this.stack.length) {
       Logger.getInstance().warn('可能存在bug，matrix没有清空');
     }
     this.matrix.setValue(1, 0, 0, 1, 0, 0);
     this.applyedMatrix = new Matrix(1, 0, 0, 1, 0, 0);
     this.stack.length = 0;
-    this.nativeContext.setTransform(1, 0, 0, 1, 0, 0);
+    setTransform && this.nativeContext.setTransform(1, 0, 0, 1, 0, 0);
   }
 
   getCanvas() {
@@ -325,6 +331,9 @@ export class BrowserContext2d implements IContext2d {
       this.matrix = this.stack.pop() as Matrix;
       this.setTransformForCurrent(true);
     }
+    this.font = '';
+    this._clearFilterStyle = false;
+    this._clearShadowStyle = false;
   }
   highPerformanceRestore() {
     if (this.stack.length > 0) {
@@ -1053,17 +1062,21 @@ export class BrowserContext2d implements IContext2d {
     const {
       opacity = defaultParams.opacity,
       shadowBlur = defaultParams.shadowBlur,
-      shadowColor = defaultParams.shadowColor,
       shadowOffsetX = defaultParams.shadowOffsetX,
       shadowOffsetY = defaultParams.shadowOffsetY,
       blur = defaultParams.blur,
-      filter = defaultParams.filter,
       globalCompositeOperation = defaultParams.globalCompositeOperation
     } = attribute;
     if (opacity <= 1e-12) {
       return;
     }
-    if (shadowBlur || shadowOffsetX || shadowOffsetY) {
+    if (shadowOffsetX || shadowOffsetY || shadowBlur) {
+      const {
+        shadowColor = defaultParams.shadowColor,
+        shadowOffsetX = defaultParams.shadowOffsetX,
+        shadowOffsetY = defaultParams.shadowOffsetY
+      } = attribute;
+
       // canvas的shadow不支持dpr，这里手动设置
       _context.shadowBlur = shadowBlur * this.dpr;
       _context.shadowColor = shadowColor;
@@ -1079,9 +1092,6 @@ export class BrowserContext2d implements IContext2d {
 
     if (blur) {
       _context.filter = `blur(${blur}px)`;
-      this._clearFilterStyle = true;
-    } else if (filter) {
-      _context.filter = filter;
       this._clearFilterStyle = true;
     } else if (this._clearFilterStyle) {
       _context.filter = 'blur(0px)';
@@ -1167,13 +1177,9 @@ export class BrowserContext2d implements IContext2d {
     }
     const { scaleIn3d = defaultParams.scaleIn3d } = params;
     if (params.font) {
-      _context.font = params.font;
+      this.font = params.font;
     } else {
-      _context.font = getContextFont(
-        params,
-        defaultParams,
-        scaleIn3d && this.camera && this.camera.getProjectionScale(z)
-      );
+      this.font = getContextFont(params, defaultParams, scaleIn3d && this.camera && this.camera.getProjectionScale(z));
     }
     const { fontFamily = defaultParams.fontFamily, fontSize = defaultParams.fontSize } = params;
     this.fontFamily = fontFamily;
@@ -1190,9 +1196,9 @@ export class BrowserContext2d implements IContext2d {
       defaultParams = this.textAttributes;
     }
     if (params.font) {
-      _context.font = params.font;
+      this.font = params.font;
     } else {
-      _context.font = getContextFont(params, defaultParams, this.camera && this.camera.getProjectionScale(z));
+      this.font = getContextFont(params, defaultParams, this.camera && this.camera.getProjectionScale(z));
     }
     const { fontFamily = defaultParams.fontFamily, fontSize = defaultParams.fontSize } = params;
     this.fontFamily = fontFamily;

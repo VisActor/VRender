@@ -7,12 +7,13 @@ import type { vec3 } from './matrix';
 import type { IDirectionLight } from './light';
 import type { ISyncHook } from './sync-hook';
 import type { IDrawContext, IRenderService } from './render';
-import type { ITicker, ITimeline } from './animate';
+import type { ITicker, ITimeline } from './animation';
 import type { IPickerService, PickResult } from './picker';
 import type { IPlugin, IPluginService } from './plugin';
 import type { IWindow } from './window';
 import type { ILayerService } from './core';
 import type { IFullThemeSpec } from './graphic/theme';
+import type { IGraphicService } from './graphic-service';
 
 export type IExportType = 'canvas' | 'imageData';
 
@@ -85,6 +86,9 @@ export interface IStageParams {
   supportsPointerEvents?: boolean;
 
   context?: IStageCreateContext;
+
+  // 被分配的rafId，用于renderNextFrame，避免使用大量原生的RAF
+  rafId?: number;
 }
 
 export type EventConfig = {
@@ -106,6 +110,9 @@ export type IOptimizeType = {
   // 如果有dirtyBounds那么该配置不生效
   disableCheckGraphicWidthOutRange?: boolean;
   // tick渲染模式，effect会在tick之后立刻执行render，保证动画效果正常。performance模式中tick和render均是RAF，属性可能会被篡改
+  // 是否开启高性能动画，默认开启
+  // 开启后不会执行某些安全校验，比如跳帧处理
+  // 开启后会自动降帧，最高60fps
   tickRenderMode?: 'effect' | 'performance';
 };
 
@@ -166,6 +173,7 @@ export interface IStage extends INode {
   ticker: ITicker;
   increaseAutoRender: boolean;
   readonly renderService: IRenderService;
+  readonly graphicService: IGraphicService;
   getPickerService: () => IPickerService;
   readonly pluginService: IPluginService;
   readonly layerService: ILayerService;

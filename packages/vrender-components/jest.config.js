@@ -26,6 +26,7 @@ module.exports = {
     '@visactor/vrender-core': path.resolve(__dirname, '../vrender-core/src/index.ts'),
     '@visactor/vrender/es/core': path.resolve(__dirname, '../vrender/src/index.ts'),
     '@visactor/vrender/es/register': path.resolve(__dirname, '../vrender/src/register.ts'),
-    '@visactor/vrender/es/kits': path.resolve(__dirname, '../vrender/src/kits.ts')
+    '@visactor/vrender/es/kits': path.resolve(__dirname, '../vrender/src/kits.ts'),
+    '@visactor/vrender-animate': path.resolve(__dirname, '../vrender-animate/src/index.ts')
   }
 };

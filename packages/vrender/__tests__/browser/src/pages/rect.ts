@@ -1,8 +1,7 @@
-import { createStage, createRect, IGraphic, createGroup, createSymbol } from '@visactor/vrender';
+import { createStage, container, createRect, IGraphic, createGroup, createSymbol } from '@visactor/vrender';
 import { roughModule } from '@visactor/vrender-kits';
-import { addShapesToStage, colorPools } from '../utils';
 
-// container.load(roughModule);
+container.load(roughModule);
 export const page = () => {
   const graphics: IGraphic[] = [];
   // graphics.push(
@@ -19,17 +18,15 @@ export const page = () => {
   // );
 
   const rect = createRect({
-    x: 20,
-    y: 20,
-    width: 101.55555555555556,
-    height: 30,
-    cornerRadius: -4,
-    background:
-      'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgY2xpcC1wYXRoPSJ1cmwoI2NsaXAwXzFfMTUxNjkpIj4KPHBhdGggZD0iTTEwIDIwQzE1LjUyMjggMjAgMjAgMTUuNTIyOCAyMCAxMEMyMCA0LjQ3NzE1IDE1LjUyMjggMCAxMCAwQzQuNDc3MTUgMCAwIDQuNDc3MTUgMCAxMEMwIDE1LjUyMjggNC40NzcxNSAyMCAxMCAyMFoiIGZpbGw9IiNGMEYwRjAiLz4KPHBhdGggZD0iTTIwIDkuOTk5OTZDMjAgNS43MDAzMSAxNy4yODYzIDIuMDM0ODggMTMuNDc4MyAwLjYyMTk0OFYxOS4zNzhDMTcuMjg2MyAxNy45NjUgMjAgMTQuMjk5NiAyMCA5Ljk5OTk2WiIgZmlsbD0iI0Q4MDAyNyIvPgo8cGF0aCBkPSJNMCA5Ljk5OTk2QzAgMTQuMjk5NiAyLjcxMzc1IDE3Ljk2NSA2LjUyMTc2IDE5LjM3OFYwLjYyMTk0OEMyLjcxMzc1IDIuMDM0ODggMCA1LjcwMDMxIDAgOS45OTk5NloiIGZpbGw9IiM2REE1NDQiLz4KPC9nPgo8ZGVmcz4KPGNsaXBQYXRoIGlkPSJjbGlwMF8xXzE1MTY5Ij4KPHJlY3Qgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiBmaWxsPSJ3aGl0ZSIvPgo8L2NsaXBQYXRoPgo8L2RlZnM+Cjwvc3ZnPgo=',
-    fill: 'rgba(0,0,0,0.3)',
-    backgroundMode: 'repeat-x',
-    boundsPadding: [2, 2, 2, 2],
-    pickMode: 'imprecise'
+    visible: true,
+    lineWidth: 0,
+    fill: '#FF8A00',
+    stroke: '#FF8A00',
+    x: 207.40897089999999,
+    y: 148.53125,
+    width: NaN,
+    x1: 49.113898,
+    height: 381.9375
   });
 
   rect.states = {
@@ -60,13 +57,14 @@ export const page = () => {
     stroke: 'red',
     // scaleCenter: ['50%', '50%'],
     // _debug_bounds: true,
-    fill: 'conic-gradient(from 90deg, rgba(5,0,255,1) 16%, rgba(0,255,10,1) 41%, rgba(9,9,121,1) 53%, rgba(0,212,255,1) 100%)',
+    fill: 'red',
     // cornerRadius: [5, 10, 15, 20],
-    lineWidth: 5,
+    lineWidth: 2,
     anchor: ['50%', '50%'],
     // anchor: [400, 200],
     lineDash: [100, 10],
-    lineDashOffset: -100
+    lineDashOffset: -100,
+    renderStyle: 'rough'
   });
   const star = createSymbol({
     x: 300,
@@ -75,7 +73,7 @@ export const page = () => {
     scaleY: 2,
     angle: 30,
     size: 100,
-    symbolType: 'square',
+    symbolType: 'star',
     // cornerRadius: [0, 10, 10, 0],
     stroke: 'red',
     // scaleCenter: ['50%', '50%'],
@@ -87,7 +85,8 @@ export const page = () => {
     anchor: ['50%', '50%'],
     // anchor: [400, 200],
     lineDash: [100, 10],
-    lineDashOffset: -100
+    lineDashOffset: -100,
+    renderStyle: 'rough'
   });
 
   const group = createGroup({

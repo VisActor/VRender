@@ -70,3 +70,4 @@ registerDirectionalLight();
 registerOrthoCamera();
 export * from '@visactor/vrender-core';
 export * from '@visactor/vrender-kits';
+export * from '@visactor/vrender-animate';

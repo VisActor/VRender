@@ -2,6 +2,21 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "1.0.0",
+      "tag": "@visactor/vrender-components_v1.0.0",
+      "date": "Fri, 06 Jun 2025 09:38:19 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: delete-default-value"
+          },
+          {
+            "comment": "feat: remove marker type. close @VisActor/VChart#3782"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.22.11",
       "tag": "@visactor/vrender-components_v0.22.11",
       "date": "Mon, 28 Apr 2025 09:08:54 GMT",

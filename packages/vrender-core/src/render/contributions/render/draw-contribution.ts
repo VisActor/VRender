@@ -136,11 +136,13 @@ export class DefaultDrawContribution implements IDrawContribution {
       dirtyBounds.y2 = Math.ceil(dirtyBounds.y2 * context.dpr) / context.dpr;
     }
     this.backupDirtyBounds.copy(dirtyBounds);
-    context.inuse = true;
+    // TODO：不需要设置context.transform，后续translate会设置
+    context.reset(false);
+    context.save();
     context.setClearMatrix(transMatrix.a, transMatrix.b, transMatrix.c, transMatrix.d, transMatrix.e, transMatrix.f);
     // 初始化context
-    context.clearMatrix();
-    context.setTransformForCurrent(true);
+    context.clearMatrix(false);
+    // context.setTransformForCurrent(true);
 
     // const drawInArea =
     //   dirtyBounds.width() * context.dpr < context.canvas.width ||
@@ -167,7 +169,7 @@ export class DefaultDrawContribution implements IDrawContribution {
     // // 设置translate
     // context.translate(x, y, true);
 
-    context.save();
+    // context.save();
     renderService.renderTreeRoots
       .sort((a, b) => {
         return (a.attribute.zIndex ?? DefaultAttribute.zIndex) - (b.attribute.zIndex ?? DefaultAttribute.zIndex);
@@ -179,10 +181,11 @@ export class DefaultDrawContribution implements IDrawContribution {
       });
 
     // context.restore();
-    context.restore();
-    context.setClearMatrix(1, 0, 0, 1, 0, 0);
+    // context.restore();
+    // context.setClearMatrix(1, 0, 0, 1, 0, 0);
     // this.break = false;
-    context.inuse = false;
+    // context.inuse = false;
+    context.restore();
     context.draw();
   }
 
@@ -235,36 +238,14 @@ export class DefaultDrawContribution implements IDrawContribution {
       this.dirtyBounds.copy(this.backupDirtyBounds).transformWithMatrix(nextM.getInverse());
     }
 
+    drawContext.isGroupScroll = !!(group.attribute.scrollX || group.attribute.scrollY);
+
     this.renderItem(group, drawContext, {
-      drawingCb: () => {
-        skipSort
-          ? group.forEachChildren((item: IGraphic) => {
-              if (drawContext.break) {
-                return;
-              }
-              if (item.isContainer) {
-                this.renderGroup(item as IGroup, drawContext, nextM);
-              } else {
-                this.renderItem(item, drawContext);
-              }
-            })
-          : foreach(
-              group,
-              DefaultAttribute.zIndex,
-              (item: IGraphic) => {
-                if (drawContext.break) {
-                  return;
-                }
-                if (item.isContainer) {
-                  this.renderGroup(item as IGroup, drawContext, nextM);
-                } else {
-                  this.renderItem(item, drawContext);
-                }
-              },
-              false,
-              !!drawContext.context?.camera
-            );
-      }
+      renderInGroupParams: {
+        skipSort,
+        nextM
+      },
+      renderInGroup: this._renderInGroup
     });
 
     if (this.useDirtyBounds) {
@@ -273,6 +254,36 @@ export class DefaultDrawContribution implements IDrawContribution {
       matrixAllocate.free(nextM);
     }
   }
+
+  _renderInGroup = (skipSort: boolean, group: IGroup, drawContext: IDrawContext, nextM: IMatrix) => {
+    skipSort
+      ? group.forEachChildren((item: IGraphic) => {
+          if (drawContext.break) {
+            return;
+          }
+          if (item.isContainer) {
+            this.renderGroup(item as IGroup, drawContext, nextM);
+          } else {
+            this.renderItem(item, drawContext);
+          }
+        })
+      : foreach(
+          group,
+          DefaultAttribute.zIndex,
+          (item: IGraphic) => {
+            if (drawContext.break) {
+              return;
+            }
+            if (item.isContainer) {
+              this.renderGroup(item as IGroup, drawContext, nextM);
+            } else {
+              this.renderItem(item, drawContext);
+            }
+          },
+          false,
+          !!drawContext.context?.camera
+        );
+  };
 
   protected _increaseRender(group: IGroup, drawContext: IDrawContext) {
     const { layer, stage } = drawContext;
@@ -363,19 +374,27 @@ export class DefaultDrawContribution implements IDrawContribution {
       return;
     }
 
-    let retrans: boolean = this.scrollMatrix && (this.scrollMatrix.e !== 0 || this.scrollMatrix.f !== 0);
+    let retrans: boolean = false;
     let tempBounds: IBounds;
 
-    if (graphic.parent) {
+    if (drawContext.isGroupScroll) {
       const { scrollX = 0, scrollY = 0 } = graphic.parent.attribute;
-      if (!!(scrollX || scrollY)) {
-        retrans = true;
-        if (!this.scrollMatrix) {
-          this.scrollMatrix = matrixAllocate.allocate(1, 0, 0, 1, 0, 0);
-        }
-        this.scrollMatrix.translate(-scrollX, -scrollY);
+      retrans = true;
+      if (!this.scrollMatrix) {
+        this.scrollMatrix = matrixAllocate.allocate(1, 0, 0, 1, 0, 0);
       }
+      this.scrollMatrix.translate(-scrollX, -scrollY);
     }
+    // if (graphic.parent) {
+    //   const { scrollX = 0, scrollY = 0 } = graphic.parent.attribute;
+    //   if (!!(scrollX || scrollY)) {
+    //     retrans = true;
+    //     if (!this.scrollMatrix) {
+    //       this.scrollMatrix = matrixAllocate.allocate(1, 0, 0, 1, 0, 0);
+    //     }
+    //     this.scrollMatrix.translate(-scrollX, -scrollY);
+    //   }
+    // }
     // 需要二次变化，那就重新算一个变换后的Bounds
     if (retrans) {
       tempBounds = this.dirtyBounds.clone().transformWithMatrix(this.scrollMatrix);

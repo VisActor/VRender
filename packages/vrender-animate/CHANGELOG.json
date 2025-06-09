@@ -1,0 +1,1464 @@
+{
+  "name": "@visactor/vrender-animate",
+  "entries": [
+    {
+      "version": "1.0.0",
+      "tag": "@visactor/vrender-animate_v1.0.0",
+      "date": "Fri, 06 Jun 2025 09:38:19 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.22.1",
+      "tag": "@visactor/vrender-kits_v0.22.1",
+      "date": "Tue, 18 Feb 2025 10:14:45 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: datazoom error when spec is updating. fix@visactor/vchart#3712"
+          },
+          {
+            "comment": "feat: support dynamicTexture"
+          },
+          {
+            "comment": "feat: `removeState` of graphic should support array or string\n\n"
+          },
+          {
+            "comment": "fix: fix the bug of dpr will not work when createWindowByCanvas in node env\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.22.0",
+      "tag": "@visactor/vrender-kits_v0.22.0",
+      "date": "Fri, 07 Feb 2025 14:23:36 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.21.14",
+      "tag": "@visactor/vrender-kits_v0.21.14",
+      "date": "Fri, 07 Feb 2025 13:42:01 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.21.13",
+      "tag": "@visactor/vrender-kits_v0.21.13",
+      "date": "Thu, 06 Feb 2025 08:25:45 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.21.12",
+      "tag": "@visactor/vrender-kits_v0.21.12",
+      "date": "Wed, 05 Feb 2025 07:04:09 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix issue with inversify error when nobind"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.21.11",
+      "tag": "@visactor/vrender-kits_v0.21.11",
+      "date": "Wed, 15 Jan 2025 12:13:28 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.21.10",
+      "tag": "@visactor/vrender-kits_v0.21.10",
+      "date": "Wed, 15 Jan 2025 03:14:32 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix issue with duplicate getContext in wx env"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.21.9",
+      "tag": "@visactor/vrender-kits_v0.21.9",
+      "date": "Mon, 13 Jan 2025 03:23:50 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix drawShape function in gif-image render "
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.21.8",
+      "tag": "@visactor/vrender-kits_v0.21.8",
+      "date": "Mon, 06 Jan 2025 11:07:36 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.21.7",
+      "tag": "@visactor/vrender-kits_v0.21.7",
+      "date": "Wed, 25 Dec 2024 07:53:11 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: upgrade vutils to 0.19.3\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.21.6",
+      "tag": "@visactor/vrender-kits_v0.21.6",
+      "date": "Tue, 24 Dec 2024 12:46:37 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.21.5",
+      "tag": "@visactor/vrender-kits_v0.21.5",
+      "date": "Tue, 24 Dec 2024 07:53:11 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.21.4",
+      "tag": "@visactor/vrender-kits_v0.21.4",
+      "date": "Mon, 23 Dec 2024 10:16:00 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix issue with gesture emitEvent when gesture is released"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.21.3",
+      "tag": "@visactor/vrender-kits_v0.21.3",
+      "date": "Mon, 23 Dec 2024 08:28:14 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: support loadFont"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.21.2",
+      "tag": "@visactor/vrender-kits_v0.21.2",
+      "date": "Thu, 12 Dec 2024 10:23:51 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.21.1",
+      "tag": "@visactor/vrender-kits_v0.21.1",
+      "date": "Thu, 05 Dec 2024 07:50:47 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.21.0",
+      "tag": "@visactor/vrender-kits_v0.21.0",
+      "date": "Thu, 28 Nov 2024 03:30:36 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.20.16",
+      "tag": "@visactor/vrender-kits_v0.20.16",
+      "date": "Thu, 21 Nov 2024 06:58:23 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.20.15",
+      "tag": "@visactor/vrender-kits_v0.20.15",
+      "date": "Fri, 15 Nov 2024 08:34:34 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix press in andiord"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.20.14",
+      "tag": "@visactor/vrender-kits_v0.20.14",
+      "date": "Wed, 13 Nov 2024 07:47:16 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.20.13",
+      "tag": "@visactor/vrender-kits_v0.20.13",
+      "date": "Wed, 13 Nov 2024 06:35:02 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix trigger of press in mobile\n\n"
+          },
+          {
+            "comment": "fix: fix smartInvert of gradient bar\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.20.12",
+      "tag": "@visactor/vrender-kits_v0.20.12",
+      "date": "Thu, 31 Oct 2024 02:49:49 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.20.11",
+      "tag": "@visactor/vrender-kits_v0.20.11",
+      "date": "Wed, 30 Oct 2024 13:10:03 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.20.10",
+      "tag": "@visactor/vrender-kits_v0.20.10",
+      "date": "Wed, 23 Oct 2024 08:37:33 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.20.9",
+      "tag": "@visactor/vrender-kits_v0.20.9",
+      "date": "Tue, 15 Oct 2024 03:50:15 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix max width of arc label in left\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.20.8",
+      "tag": "@visactor/vrender-kits_v0.20.8",
+      "date": "Sun, 29 Sep 2024 09:44:02 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.20.7",
+      "tag": "@visactor/vrender-kits_v0.20.7",
+      "date": "Fri, 27 Sep 2024 03:22:31 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.20.6",
+      "tag": "@visactor/vrender-kits_v0.20.6",
+      "date": "Thu, 26 Sep 2024 09:28:36 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.20.5",
+      "tag": "@visactor/vrender-kits_v0.20.5",
+      "date": "Fri, 20 Sep 2024 06:37:57 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix path string of arc, fix #1434\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.20.4",
+      "tag": "@visactor/vrender-kits_v0.20.4",
+      "date": "Thu, 12 Sep 2024 07:33:20 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.20.3",
+      "tag": "@visactor/vrender-kits_v0.20.3",
+      "date": "Sat, 07 Sep 2024 09:16:33 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.20.2",
+      "tag": "@visactor/vrender-kits_v0.20.2",
+      "date": "Wed, 04 Sep 2024 12:52:31 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.20.1",
+      "tag": "@visactor/vrender-kits_v0.20.1",
+      "date": "Fri, 30 Aug 2024 09:55:08 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.20.0",
+      "tag": "@visactor/vrender-kits_v0.20.0",
+      "date": "Thu, 15 Aug 2024 07:26:54 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix bug of auto-render when remove some graphics\n\n"
+          },
+          {
+            "comment": "fix: optimize triangle symbols\n\n"
+          },
+          {
+            "comment": "refactor: optimize cornerRadius parse of arc\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.19.24",
+      "tag": "@visactor/vrender-kits_v0.19.24",
+      "date": "Tue, 13 Aug 2024 07:47:29 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix wrong stroke style is applied to area\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.19.23",
+      "tag": "@visactor/vrender-kits_v0.19.23",
+      "date": "Tue, 06 Aug 2024 05:17:39 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.19.22",
+      "tag": "@visactor/vrender-kits_v0.19.22",
+      "date": "Mon, 05 Aug 2024 09:08:30 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.19.21",
+      "tag": "@visactor/vrender-kits_v0.19.21",
+      "date": "Mon, 05 Aug 2024 01:39:45 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.19.20",
+      "tag": "@visactor/vrender-kits_v0.19.20",
+      "date": "Wed, 31 Jul 2024 09:48:37 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.19.19",
+      "tag": "@visactor/vrender-kits_v0.19.19",
+      "date": "Tue, 23 Jul 2024 11:56:39 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.19.18",
+      "tag": "@visactor/vrender-kits_v0.19.18",
+      "date": "Fri, 12 Jul 2024 07:18:10 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.19.17",
+      "tag": "@visactor/vrender-kits_v0.19.17",
+      "date": "Fri, 05 Jul 2024 17:26:17 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.19.16",
+      "tag": "@visactor/vrender-kits_v0.19.16",
+      "date": "Fri, 05 Jul 2024 14:29:15 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.19.15",
+      "tag": "@visactor/vrender-kits_v0.19.15",
+      "date": "Fri, 28 Jun 2024 10:32:37 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.19.14",
+      "tag": "@visactor/vrender-kits_v0.19.14",
+      "date": "Wed, 26 Jun 2024 09:16:23 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: upgrade @visactor/vutils"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.19.13",
+      "tag": "@visactor/vrender-kits_v0.19.13",
+      "date": "Tue, 25 Jun 2024 11:17:14 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.19.12",
+      "tag": "@visactor/vrender-kits_v0.19.12",
+      "date": "Fri, 21 Jun 2024 06:52:50 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.19.11",
+      "tag": "@visactor/vrender-kits_v0.19.11",
+      "date": "Fri, 14 Jun 2024 09:50:59 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.19.10",
+      "tag": "@visactor/vrender-kits_v0.19.10",
+      "date": "Thu, 13 Jun 2024 09:52:46 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.19.9",
+      "tag": "@visactor/vrender-kits_v0.19.9",
+      "date": "Wed, 05 Jun 2024 12:25:00 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.19.8",
+      "tag": "@visactor/vrender-kits_v0.19.8",
+      "date": "Wed, 05 Jun 2024 08:24:28 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.19.7",
+      "tag": "@visactor/vrender-kits_v0.19.7",
+      "date": "Tue, 04 Jun 2024 11:10:08 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.19.6",
+      "tag": "@visactor/vrender-kits_v0.19.6",
+      "date": "Wed, 29 May 2024 06:57:11 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.19.5",
+      "tag": "@visactor/vrender-kits_v0.19.5",
+      "date": "Fri, 24 May 2024 09:21:23 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.19.4",
+      "tag": "@visactor/vrender-kits_v0.19.4",
+      "date": "Fri, 17 May 2024 06:46:41 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: support harmony env"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.19.3",
+      "tag": "@visactor/vrender-kits_v0.19.3",
+      "date": "Fri, 10 May 2024 09:24:39 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: support baseOpacity for group"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.19.2",
+      "tag": "@visactor/vrender-kits_v0.19.2",
+      "date": "Thu, 09 May 2024 12:26:00 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: support tt env, closed #1129"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.19.1",
+      "tag": "@visactor/vrender-kits_v0.19.1",
+      "date": "Wed, 08 May 2024 08:47:35 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.19.0",
+      "tag": "@visactor/vrender-kits_v0.19.0",
+      "date": "Tue, 30 Apr 2024 08:40:53 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: support style callback in html and react, fix 1102\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.18.17",
+      "tag": "@visactor/vrender-kits_v0.18.17",
+      "date": "Tue, 30 Apr 2024 07:48:41 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix issue with setLineDash crash, closed #1047"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.18.16",
+      "tag": "@visactor/vrender-kits_v0.18.16",
+      "date": "Mon, 29 Apr 2024 07:40:31 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.18.15",
+      "tag": "@visactor/vrender-kits_v0.18.15",
+      "date": "Fri, 26 Apr 2024 10:37:19 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.18.14",
+      "tag": "@visactor/vrender-kits_v0.18.14",
+      "date": "Wed, 24 Apr 2024 08:07:48 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.18.13",
+      "tag": "@visactor/vrender-kits_v0.18.13",
+      "date": "Fri, 19 Apr 2024 08:46:08 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.18.12",
+      "tag": "@visactor/vrender-kits_v0.18.12",
+      "date": "Fri, 19 Apr 2024 07:48:17 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.18.11",
+      "tag": "@visactor/vrender-kits_v0.18.11",
+      "date": "Wed, 17 Apr 2024 03:02:22 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix for dragenter triggering error in drag event"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.18.10",
+      "tag": "@visactor/vrender-kits_v0.18.10",
+      "date": "Fri, 29 Mar 2024 08:02:16 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.18.9",
+      "tag": "@visactor/vrender-kits_v0.18.9",
+      "date": "Thu, 28 Mar 2024 10:13:24 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.18.8",
+      "tag": "@visactor/vrender-kits_v0.18.8",
+      "date": "Wed, 27 Mar 2024 11:33:58 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix issue with pointer tap event point map"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.18.7",
+      "tag": "@visactor/vrender-kits_v0.18.7",
+      "date": "Fri, 22 Mar 2024 08:46:19 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: set vtag params to optional"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.18.6",
+      "tag": "@visactor/vrender-kits_v0.18.6",
+      "date": "Tue, 19 Mar 2024 10:10:17 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.18.5",
+      "tag": "@visactor/vrender-kits_v0.18.5",
+      "date": "Tue, 12 Mar 2024 15:16:46 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.18.4",
+      "tag": "@visactor/vrender-kits_v0.18.4",
+      "date": "Tue, 12 Mar 2024 09:40:06 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.18.3",
+      "tag": "@visactor/vrender-kits_v0.18.3",
+      "date": "Mon, 11 Mar 2024 08:24:00 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.18.2",
+      "tag": "@visactor/vrender-kits_v0.18.2",
+      "date": "Fri, 08 Mar 2024 03:19:08 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.18.1",
+      "tag": "@visactor/vrender-kits_v0.18.1",
+      "date": "Mon, 04 Mar 2024 08:29:15 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.18.0",
+      "tag": "@visactor/vrender-kits_v0.18.0",
+      "date": "Wed, 28 Feb 2024 10:09:04 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.17.26",
+      "tag": "@visactor/vrender-kits_v0.17.26",
+      "date": "Wed, 28 Feb 2024 08:06:31 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix issue with load svg sync, fix issue with decode react dom"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.17.25",
+      "tag": "@visactor/vrender-kits_v0.17.25",
+      "date": "Fri, 23 Feb 2024 04:29:58 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: support offscreenCanvas in lynx env, closed #994"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.17.24",
+      "tag": "@visactor/vrender-kits_v0.17.24",
+      "date": "Tue, 06 Feb 2024 09:48:26 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.17.23",
+      "tag": "@visactor/vrender-kits_v0.17.23",
+      "date": "Sun, 04 Feb 2024 12:41:45 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.17.22",
+      "tag": "@visactor/vrender-kits_v0.17.22",
+      "date": "Fri, 02 Feb 2024 07:17:07 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.17.21",
+      "tag": "@visactor/vrender-kits_v0.17.21",
+      "date": "Thu, 01 Feb 2024 12:22:29 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.17.20",
+      "tag": "@visactor/vrender-kits_v0.17.20",
+      "date": "Thu, 01 Feb 2024 09:26:17 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.17.19",
+      "tag": "@visactor/vrender-kits_v0.17.19",
+      "date": "Wed, 24 Jan 2024 13:11:27 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.17.18",
+      "tag": "@visactor/vrender-kits_v0.17.18",
+      "date": "Wed, 24 Jan 2024 10:10:41 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: compatible canvas in lynx env"
+          },
+          {
+            "comment": "fix: fix issue with interface"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.17.17",
+      "tag": "@visactor/vrender-kits_v0.17.17",
+      "date": "Mon, 22 Jan 2024 08:19:38 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix issue with loaded tree-shaking"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.17.16",
+      "tag": "@visactor/vrender-kits_v0.17.16",
+      "date": "Wed, 17 Jan 2024 09:02:13 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.17.15",
+      "tag": "@visactor/vrender-kits_v0.17.15",
+      "date": "Wed, 17 Jan 2024 06:43:01 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.17.14",
+      "tag": "@visactor/vrender-kits_v0.17.14",
+      "date": "Fri, 12 Jan 2024 10:33:32 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.17.13",
+      "tag": "@visactor/vrender-kits_v0.17.13",
+      "date": "Wed, 10 Jan 2024 14:18:21 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.17.12",
+      "tag": "@visactor/vrender-kits_v0.17.12",
+      "date": "Wed, 10 Jan 2024 03:56:46 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.17.11",
+      "tag": "@visactor/vrender-kits_v0.17.11",
+      "date": "Fri, 05 Jan 2024 11:54:56 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.17.10",
+      "tag": "@visactor/vrender-kits_v0.17.10",
+      "date": "Wed, 03 Jan 2024 13:19:34 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: support fillPickable and strokePickable for area, closed #792"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.17.9",
+      "tag": "@visactor/vrender-kits_v0.17.9",
+      "date": "Fri, 29 Dec 2023 09:59:13 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.17.8",
+      "tag": "@visactor/vrender-kits_v0.17.8",
+      "date": "Fri, 29 Dec 2023 07:20:26 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix issue with mapToCanvasPoint in miniapp, closed #828"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.17.7",
+      "tag": "@visactor/vrender-kits_v0.17.7",
+      "date": "Wed, 20 Dec 2023 10:05:55 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix issue with create layer in miniapp env"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.17.6",
+      "tag": "@visactor/vrender-kits_v0.17.6",
+      "date": "Wed, 20 Dec 2023 07:39:54 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.17.5",
+      "tag": "@visactor/vrender-kits_v0.17.5",
+      "date": "Tue, 19 Dec 2023 09:13:27 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.17.4",
+      "tag": "@visactor/vrender-kits_v0.17.4",
+      "date": "Thu, 14 Dec 2023 11:00:38 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.17.3",
+      "tag": "@visactor/vrender-kits_v0.17.3",
+      "date": "Wed, 13 Dec 2023 12:04:17 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.17.2",
+      "tag": "@visactor/vrender-kits_v0.17.2",
+      "date": "Tue, 12 Dec 2023 13:05:58 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat(dataZoom): add mask to modify hot zone. feat @visactor/vchart#1415'"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.17.1",
+      "tag": "@visactor/vrender-kits_v0.17.1",
+      "date": "Wed, 06 Dec 2023 11:19:22 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: support pickStrokeBuffer, closed #758"
+          },
+          {
+            "comment": "fix: fix issue with rebind pick-contribution"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.17.0",
+      "tag": "@visactor/vrender-kits_v0.17.0",
+      "date": "Thu, 30 Nov 2023 12:58:15 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: rect support x1 and y1"
+          },
+          {
+            "comment": "refactor: refact inversify completely, closed #657"
+          }
+        ],
+        "minor": [
+          {
+            "comment": "feat: optmize bounds performance"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.16.18",
+      "tag": "@visactor/vrender-kits_v0.16.18",
+      "date": "Thu, 30 Nov 2023 09:40:58 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: doubletap should not be triggered when the target is different twice before and after"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.16.17",
+      "tag": "@visactor/vrender-kits_v0.16.17",
+      "date": "Thu, 23 Nov 2023 13:32:49 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: support 'tap' gesture for Gesture plugin"
+          },
+          {
+            "comment": "fix: \\`pickMode: 'imprecise'\\` not work in polygon"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.16.16",
+      "tag": "@visactor/vrender-kits_v0.16.16",
+      "date": "Fri, 17 Nov 2023 02:33:59 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.16.15",
+      "tag": "@visactor/vrender-kits_v0.16.15",
+      "date": "Thu, 16 Nov 2023 02:46:27 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.16.14",
+      "tag": "@visactor/vrender-kits_v0.16.14",
+      "date": "Wed, 15 Nov 2023 09:56:28 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.16.13",
+      "tag": "@visactor/vrender-kits_v0.16.13",
+      "date": "Thu, 09 Nov 2023 11:49:33 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: temp fix issue with lynx measuretext"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.16.12",
+      "tag": "@visactor/vrender-kits_v0.16.12",
+      "date": "Tue, 07 Nov 2023 10:52:54 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix node-canvas max count issue"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.16.11",
+      "tag": "@visactor/vrender-kits_v0.16.11",
+      "date": "Thu, 02 Nov 2023 13:43:18 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.16.10",
+      "tag": "@visactor/vrender-kits_v0.16.10",
+      "date": "Thu, 02 Nov 2023 11:17:24 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix issue with xul and html attribute, closed #634"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.16.9",
+      "tag": "@visactor/vrender-kits_v0.16.9",
+      "date": "Fri, 27 Oct 2023 02:21:19 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.16.8",
+      "tag": "@visactor/vrender-kits_v0.16.8",
+      "date": "Mon, 23 Oct 2023 11:38:47 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.16.7",
+      "tag": "@visactor/vrender-kits_v0.16.7",
+      "date": "Mon, 23 Oct 2023 08:53:33 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.16.6",
+      "tag": "@visactor/vrender-kits_v0.16.6",
+      "date": "Mon, 23 Oct 2023 06:30:33 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.16.5",
+      "tag": "@visactor/vrender-kits_v0.16.5",
+      "date": "Fri, 20 Oct 2023 04:22:42 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.16.4",
+      "tag": "@visactor/vrender-kits_v0.16.4",
+      "date": "Thu, 19 Oct 2023 10:30:12 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.16.3",
+      "tag": "@visactor/vrender-kits_v0.16.3",
+      "date": "Wed, 18 Oct 2023 07:43:09 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: add canvas resize support in lynx env, closed #581"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.16.2",
+      "tag": "@visactor/vrender-kits_v0.16.2",
+      "date": "Tue, 10 Oct 2023 11:48:48 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.16.1",
+      "tag": "@visactor/vrender-kits_v0.16.1",
+      "date": "Mon, 09 Oct 2023 09:51:01 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix flex issue, closed, fix node dpr issue, closed #554, closed #555"
+          },
+          {
+            "comment": "fix: fix reinit env issue"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.16.0",
+      "tag": "@visactor/vrender-kits_v0.16.0",
+      "date": "Thu, 28 Sep 2023 07:23:52 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.15.5",
+      "tag": "@visactor/vrender-kits_v0.15.5",
+      "date": "Wed, 27 Sep 2023 09:33:50 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.15.4",
+      "tag": "@visactor/vrender-kits_v0.15.4",
+      "date": "Mon, 25 Sep 2023 03:05:18 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.15.3",
+      "tag": "@visactor/vrender-kits_v0.15.3",
+      "date": "Wed, 20 Sep 2023 13:12:13 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.15.2",
+      "tag": "@visactor/vrender-kits_v0.15.2",
+      "date": "Thu, 14 Sep 2023 09:55:56 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.15.1",
+      "tag": "@visactor/vrender-kits_v0.15.1",
+      "date": "Wed, 13 Sep 2023 02:21:58 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.15.0",
+      "tag": "@visactor/vrender-kits_v0.15.0",
+      "date": "Tue, 12 Sep 2023 12:20:48 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.14.8",
+      "tag": "@visactor/vrender-kits_v0.14.8",
+      "date": "Thu, 07 Sep 2023 11:56:00 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.12.21",
+      "tag": "@visactor/vrender-kits_v0.12.21",
+      "date": "Thu, 31 Aug 2023 10:03:38 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.14.6` to `0.14.7`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.12.20",
+      "tag": "@visactor/vrender-kits_v0.12.20",
+      "date": "Tue, 29 Aug 2023 11:30:33 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.14.5` to `0.14.6`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.12.19",
+      "tag": "@visactor/vrender-kits_v0.12.19",
+      "date": "Wed, 23 Aug 2023 11:53:28 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.14.4` to `0.14.5`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.12.18",
+      "tag": "@visactor/vrender-kits_v0.12.18",
+      "date": "Fri, 18 Aug 2023 10:16:08 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.14.3` to `0.14.4`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.12.17",
+      "tag": "@visactor/vrender-kits_v0.12.17",
+      "date": "Wed, 16 Aug 2023 06:46:13 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.14.2` to `0.14.3`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.12.16",
+      "tag": "@visactor/vrender-kits_v0.12.16",
+      "date": "Fri, 11 Aug 2023 10:05:27 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.14.1` to `0.14.2`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.12.15",
+      "tag": "@visactor/vrender-kits_v0.12.15",
+      "date": "Thu, 10 Aug 2023 12:14:14 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.14.0` to `0.14.1`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.12.14",
+      "tag": "@visactor/vrender-kits_v0.12.14",
+      "date": "Thu, 10 Aug 2023 07:22:55 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.13.9` to `0.14.0`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.12.13",
+      "tag": "@visactor/vrender-kits_v0.12.13",
+      "date": "Wed, 09 Aug 2023 07:34:23 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.13.8` to `0.13.9`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.12.12",
+      "tag": "@visactor/vrender-kits_v0.12.12",
+      "date": "Tue, 08 Aug 2023 09:27:52 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.13.7` to `0.13.8`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.12.11",
+      "tag": "@visactor/vrender-kits_v0.12.11",
+      "date": "Thu, 03 Aug 2023 10:04:34 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.13.6` to `0.13.7`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.12.10",
+      "tag": "@visactor/vrender-kits_v0.12.10",
+      "date": "Wed, 02 Aug 2023 03:13:00 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.13.5` to `0.13.6`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.12.9",
+      "tag": "@visactor/vrender-kits_v0.12.9",
+      "date": "Thu, 27 Jul 2023 12:27:43 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.13.4` to `0.13.5`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.12.8",
+      "tag": "@visactor/vrender-kits_v0.12.8",
+      "date": "Tue, 25 Jul 2023 13:33:47 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.13.3` to `0.13.4`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.12.7",
+      "tag": "@visactor/vrender-kits_v0.12.7",
+      "date": "Tue, 25 Jul 2023 07:34:59 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.13.2` to `0.13.3`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.12.6",
+      "tag": "@visactor/vrender-kits_v0.12.6",
+      "date": "Fri, 21 Jul 2023 10:50:41 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.13.1` to `0.13.2`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.12.5",
+      "tag": "@visactor/vrender-kits_v0.12.5",
+      "date": "Thu, 20 Jul 2023 10:41:23 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix: fix the error caused by reflect-metadata in react env"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.13.0` to `0.13.1`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.12.4",
+      "tag": "@visactor/vrender-kits_v0.12.4",
+      "date": "Wed, 19 Jul 2023 08:29:52 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.12.3` to `0.13.0`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.12.3",
+      "tag": "@visactor/vrender-kits_v0.12.3",
+      "date": "Wed, 12 Jul 2023 12:30:46 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.12.2` to `0.12.3`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.12.2",
+      "tag": "@visactor/vrender-kits_v0.12.2",
+      "date": "Tue, 11 Jul 2023 13:17:12 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.12.1` to `0.12.2`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.12.1",
+      "tag": "@visactor/vrender-kits_v0.12.1",
+      "date": "Fri, 07 Jul 2023 09:04:45 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.12.0` to `0.12.1`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.12.0",
+      "tag": "@visactor/vrender-kits_v0.12.0",
+      "date": "Thu, 06 Jul 2023 09:09:12 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "refactor: refactor interfaces and types of typescript"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.11.1` to `0.12.0`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.11.1",
+      "tag": "@visactor/vrender-kits_v0.11.1",
+      "date": "Tue, 27 Jun 2023 13:38:36 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.11.0` to `0.11.1`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.11.0",
+      "tag": "@visactor/vrender-kits_v0.11.0",
+      "date": "Tue, 27 Jun 2023 03:18:18 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "update vUtils version"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.11.0-alpha.2` to `0.11.0`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.10.3",
+      "tag": "@visactor/vrender-kits_v0.10.3",
+      "date": "Tue, 20 Jun 2023 06:23:42 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.10.2` to `0.10.3`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.10.2",
+      "tag": "@visactor/vrender-kits_v0.10.2",
+      "date": "Tue, 20 Jun 2023 03:25:23 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.10.1` to `0.10.2`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.10.1",
+      "tag": "@visactor/vrender-kits_v0.10.1",
+      "date": "Mon, 19 Jun 2023 09:49:38 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix the bug of node-canvas wh"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.10.0` to `0.10.1`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.10.0",
+      "tag": "@visactor/vrender-kits_v0.10.0",
+      "date": "Fri, 16 Jun 2023 03:13:09 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "code style"
+          }
+        ],
+        "patch": [
+          {
+            "comment": "upgrade vrender"
+          },
+          {
+            "comment": "fix enableView3dTranform"
+          },
+          {
+            "comment": "upgrade vrender"
+          }
+        ],
+        "none": [
+          {
+            "comment": "release"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.9.2-alpha.0` to `0.10.0`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.9.1",
+      "tag": "@visactor/vrender-kits_v0.9.1",
+      "date": "Thu, 08 Jun 2023 11:34:32 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.9.0` to `0.9.1`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.9.0",
+      "tag": "@visactor/vrender-kits_v0.9.0",
+      "date": "Wed, 07 Jun 2023 12:20:05 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.9.0-alpha.1` to `0.9.0`"
+          }
+        ]
+      }
+    }
+  ]
+}

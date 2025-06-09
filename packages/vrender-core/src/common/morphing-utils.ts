@@ -332,263 +332,132 @@ export function alignBezierCurves(array1: number[][], array2: number[][]) {
   return [newArray1, newArray2];
 }
 
-const addLineToBezierPath = (bezierPath: number[], x0: number, y0: number, x1: number, y1: number) => {
-  if (!(isNumberClose(x0, x1) && isNumberClose(y0, y1))) {
-    bezierPath.push(x0, y0, x1, y1, x1, y1);
-  }
-};
-
+/**
+ * 将路径转换为贝塞尔曲线数组
+ * 通过复用CustomPath2D中的方法，确保处理的一致性
+ * @param path 要转换的路径
+ * @returns 贝塞尔曲线数组
+ */
 export function pathToBezierCurves(path: ICustomPath2D): number[][] {
-  const commandList = path.commandList;
+  // 创建临时路径和临时上下文
+  const tempPath = new CustomPath2D();
 
-  const bezierArrayGroups: number[][] = [];
-  let currentSubpath: number[];
+  // 将路径转换为SVG路径字符串，这样可以利用CustomPath2D中的解析能力
+  const svgPathString = path.toString();
 
-  // end point
-  let xi: number = 0;
-  let yi: number = 0;
-  // start point
-  let x0: number = 0;
-  let y0: number = 0;
+  // 如果路径为空，直接返回空数组
+  if (!svgPathString) {
+    return [];
+  }
 
-  const createNewSubpath = (x: number, y: number) => {
-    // More than one M command
-    if (currentSubpath && currentSubpath.length > 2) {
-      bezierArrayGroups.push(currentSubpath);
+  // 使用临时路径解析SVG字符串
+  tempPath.fromString(svgPathString);
+
+  // 确保曲线已经构建
+  const curves = tempPath.tryBuildCurves();
+
+  if (!curves || curves.length === 0) {
+    return [];
+  }
+
+  // 用于存储分离的子路径
+  const bezierSubpaths: number[][] = [];
+  let currentSubpath: number[] = null;
+
+  // 初始化当前子路径
+  currentSubpath = [];
+  let firstX = 0; // 记录子路径起点X (用于闭合路径)
+  let firstY = 0; // 记录子路径起点Y (用于闭合路径)
+  let lastX = 0; // 记录上一个点的X (用于连续线段)
+  let lastY = 0; // 记录上一个点的Y (用于连续线段)
+  let isSubpathStart = true;
+  let isPathClosed = false;
+
+  for (let i = 0; i < curves.length; i++) {
+    const curve = curves[i];
+
+    // 如果是新的子路径开始或者第一个点
+    if (isSubpathStart) {
+      firstX = curve.p0.x;
+      firstY = curve.p0.y;
+      lastX = firstX;
+      lastY = firstY;
+      currentSubpath = [firstX, firstY];
+      bezierSubpaths.push(currentSubpath);
+      isSubpathStart = false;
     }
-    currentSubpath = [x, y];
-  };
 
-  // the first control point
-  let x1: number;
-  let y1: number;
-  // the second control point
-  let x2: number;
-  let y2: number;
+    // 处理不同类型的曲线
+    if (curve.p1 && curve.p2 && curve.p3) {
+      // 三次贝塞尔曲线
+      currentSubpath.push(curve.p1.x, curve.p1.y, curve.p2.x, curve.p2.y, curve.p3.x, curve.p3.y);
+      lastX = curve.p3.x;
+      lastY = curve.p3.y;
+    } else if (curve.p1 && curve.p2) {
+      // 二次贝塞尔曲线，转换为三次贝塞尔曲线
+      const x1 = curve.p1.x;
+      const y1 = curve.p1.y;
+      const x2 = curve.p2.x;
+      const y2 = curve.p2.y;
 
-  for (let i = 0, len = commandList.length; i < len; i++) {
-    const cmd = commandList[i];
+      currentSubpath.push(
+        lastX + (2 / 3) * (x1 - lastX),
+        lastY + (2 / 3) * (y1 - lastY),
+        x2 + (2 / 3) * (x1 - x2),
+        y2 + (2 / 3) * (y1 - y2),
+        x2,
+        y2
+      );
 
-    const isFirst = i === 0;
+      lastX = x2;
+      lastY = y2;
+    } else if (curve.p1) {
+      // 直线段，转换为贝塞尔曲线格式
+      // 直线的情况，p1就是终点
+      const endX = curve.p1.x;
+      const endY = curve.p1.y;
 
-    if (isFirst) {
-      // 如果第一个命令是 L, C, Q
-      // 则 previous point 同绘制命令的第一个 point
-      // 第一个命令为 Arc 的情况下会在后面特殊处理
-      x0 = xi = cmd[1] as number;
-      y0 = yi = cmd[2] as number;
+      // 避免添加长度为0的线段
+      if (!(Math.abs(lastX - endX) < 1e-10 && Math.abs(lastY - endY) < 1e-10)) {
+        // 使用addLineToBezierPath的逻辑：x0,y0, x1,y1, x1,y1
+        // 第一个控制点等于起点，第二个控制点等于终点，终点等于终点
+        currentSubpath.push(
+          lastX,
+          lastY, // 第一个控制点 = 起点
+          endX,
+          endY, // 第二个控制点 = 终点
+          endX,
+          endY // 终点
+        );
+      }
 
-      if ([enumCommandMap.L, enumCommandMap.C, enumCommandMap.Q].includes(cmd[0])) {
-        // Start point
-        currentSubpath = [x0, y0];
+      lastX = endX;
+      lastY = endY;
+    }
+
+    // 检查是否是闭合路径（最后一个点回到起点）
+    if (i === curves.length - 1) {
+      if (Math.abs(lastX - firstX) < 1e-10 && Math.abs(lastY - firstY) < 1e-10) {
+        isPathClosed = true;
       }
     }
 
-    switch (cmd[0]) {
-      case enumCommandMap.M:
-        // moveTo 命令重新创建一个新的 subpath, 并且更新新的起点
-        // 在 closePath 的时候使用
-        xi = x0 = cmd[1] as number;
-        yi = y0 = cmd[2] as number;
-
-        createNewSubpath(x0, y0);
-        break;
-      case enumCommandMap.L:
-        x1 = cmd[1] as number;
-        y1 = cmd[2] as number;
-        addLineToBezierPath(currentSubpath, xi, yi, x1, y1);
-        xi = x1;
-        yi = y1;
-        break;
-      case enumCommandMap.C:
-        currentSubpath.push(
-          cmd[1] as number,
-          cmd[2] as number,
-          cmd[3] as number,
-          cmd[4] as number,
-          (xi = cmd[5] as number),
-          (yi = cmd[6] as number)
-        );
-        break;
-      case enumCommandMap.Q:
-        x1 = cmd[1] as number;
-        y1 = cmd[2] as number;
-        x2 = cmd[3] as number;
-        y2 = cmd[4] as number;
-        currentSubpath.push(
-          // Convert quadratic to cubic
-          xi + (2 / 3) * (x1 - xi),
-          yi + (2 / 3) * (y1 - yi),
-          x2 + (2 / 3) * (x1 - x2),
-          y2 + (2 / 3) * (y1 - y2),
-          x2,
-          y2
-        );
-        xi = x2;
-        yi = y2;
-        break;
-      case enumCommandMap.A: {
-        const cx = cmd[1] as number;
-        const cy = cmd[2] as number;
-        const rx = cmd[3] as number;
-        const ry = rx;
-        const startAngle = cmd[4] as number;
-        const endAngle = cmd[5] as number;
-
-        const counterClockwise = !!(cmd[6] as number);
-
-        x1 = Math.cos(startAngle) * rx + cx;
-        y1 = Math.sin(startAngle) * rx + cy;
-        if (isFirst) {
-          // 直接使用 arc 命令
-          // 第一个命令起点还未定义
-          x0 = x1;
-          y0 = y1;
-          createNewSubpath(x0, y0);
-        } else {
-          // Connect a line between current point to arc start point.
-          addLineToBezierPath(currentSubpath, xi, yi, x1, y1);
-        }
-
-        xi = Math.cos(endAngle) * rx + cx;
-        yi = Math.sin(endAngle) * rx + cy;
-
-        const step = ((counterClockwise ? -1 : 1) * Math.PI) / 2;
-
-        for (let angle = startAngle; counterClockwise ? angle > endAngle : angle < endAngle; angle += step) {
-          const nextAngle = counterClockwise ? Math.max(angle + step, endAngle) : Math.min(angle + step, endAngle);
-          addArcToBezierPath(currentSubpath, angle, nextAngle, cx, cy, rx, ry);
-        }
-        break;
-      }
-      case enumCommandMap.E: {
-        const cx = cmd[1] as number;
-        const cy = cmd[2] as number;
-        const rx = cmd[3] as number;
-        const ry = cmd[4] as number;
-        const rotate = cmd[5] as number;
-        const startAngle = cmd[6] as number;
-        const endAngle = (cmd[7] as number) + startAngle;
-
-        const anticlockwise = !!(cmd[8] as number);
-        const hasRotate = !isNumberClose(rotate, 0);
-        const rc = Math.cos(rotate);
-        const rs = Math.sin(rotate);
-
-        let xTemp = Math.cos(startAngle) * rx;
-        let yTemp = Math.sin(startAngle) * ry;
-
-        if (hasRotate) {
-          x1 = xTemp * rc - yTemp * rs + cx;
-          y1 = xTemp * rs + yTemp * rc + cy;
-        } else {
-          x1 = xTemp + cx;
-          y1 = yTemp + cy;
-        }
-        if (isFirst) {
-          // 直接使用 arc 命令
-          // 第一个命令起点还未定义
-          x0 = x1;
-          y0 = y1;
-          createNewSubpath(x0, y0);
-        } else {
-          // Connect a line between current point to arc start point.
-          addLineToBezierPath(currentSubpath, xi, yi, x1, y1);
-        }
-
-        xTemp = Math.cos(endAngle) * rx;
-        yTemp = Math.sin(endAngle) * ry;
-        if (hasRotate) {
-          xi = xTemp * rc - yTemp * rs + cx;
-          yi = xTemp * rs + yTemp * rc + cy;
-        } else {
-          xi = xTemp + cx;
-          yi = yTemp + cy;
-        }
-
-        const step = ((anticlockwise ? -1 : 1) * Math.PI) / 2;
-
-        for (let angle = startAngle; anticlockwise ? angle > endAngle : angle < endAngle; angle += step) {
-          const nextAngle = anticlockwise ? Math.max(angle + step, endAngle) : Math.min(angle + step, endAngle);
-          addArcToBezierPath(currentSubpath, angle, nextAngle, cx, cy, rx, ry);
-
-          if (hasRotate) {
-            const curLen = currentSubpath.length;
-
-            for (let j = curLen - 6; j <= curLen - 1; j += 2) {
-              xTemp = currentSubpath[j];
-              yTemp = currentSubpath[j + 1];
-
-              currentSubpath[j] = (xTemp - cx) * rc - (yTemp - cy) * rs + cx;
-              currentSubpath[j + 1] = (xTemp - cx) * rs + (yTemp - cy) * rc + cy;
-            }
-          }
-        }
-
-        break;
-      }
-      case enumCommandMap.R: {
-        x0 = xi = cmd[1] as number;
-        y0 = yi = cmd[2] as number;
-        x1 = x0 + (cmd[3] as number);
-        y1 = y0 + (cmd[4] as number);
-
-        // rect is an individual path.
-        createNewSubpath(x1, y0);
-        addLineToBezierPath(currentSubpath, x1, y0, x1, y1);
-        addLineToBezierPath(currentSubpath, x1, y1, x0, y1);
-        addLineToBezierPath(currentSubpath, x0, y1, x0, y0);
-        addLineToBezierPath(currentSubpath, x0, y0, x1, y0);
-        break;
-      }
-      case enumCommandMap.AT: {
-        const tx1 = cmd[1] as number;
-        const ty1 = cmd[2] as number;
-        const tx2 = cmd[3] as number;
-        const ty2 = cmd[4] as number;
-        const r = cmd[5] as number;
-
-        const dis1 = PointService.distancePP({ x: xi, y: yi }, { x: tx1, y: ty1 });
-        const dis2 = PointService.distancePP({ x: tx2, y: ty2 }, { x: tx1, y: ty1 });
-        const theta = ((xi - tx1) * (tx2 - tx1) + (yi - ty1) * (ty2 - ty1)) / (dis1 * dis2);
-        const dis = r / Math.sin(theta / 2);
-        const midX = (xi + tx2 - 2 * tx1) / 2;
-        const midY = (yi + ty2 - 2 * ty1) / 2;
-        const midLen = PointService.distancePP({ x: midX, y: midY }, { x: 0, y: 0 });
-        const cx = tx1 + (dis * midX) / midLen;
-        const cy = tx2 + (dis * midY) / midLen;
-        const disP = Math.sqrt(dis * dis - r * r);
-        x0 = tx1 + (disP * (xi - tx1)) / dis1;
-        y0 = ty1 + (disP * (yi - ty1)) / dis1;
-
-        // Connect a line between current point to arc start point.
-        addLineToBezierPath(currentSubpath, xi, yi, x0, y0);
-
-        xi = tx1 + (disP * (tx2 - tx1)) / dis2;
-        yi = ty1 + (disP * (ty2 - ty1)) / dis2;
-
-        const startAngle = getAngleByPoint({ x: cx, y: cy }, { x: x0, y: y0 });
-
-        const endAngle = getAngleByPoint({ x: cx, y: cy }, { x: xi, y: yi });
-
-        addArcToBezierPath(currentSubpath, startAngle, endAngle, cx, cy, r, r);
-
-        break;
-      }
-      case enumCommandMap.Z: {
-        currentSubpath && addLineToBezierPath(currentSubpath, xi, yi, x0, y0);
-        xi = x0;
-        yi = y0;
-        break;
+    // 检查是否需要开始新的子路径
+    // 只有在检测到明确的路径中断（不连续的点）时才开始新子路径
+    if (i < curves.length - 1) {
+      const nextCurve = curves[i + 1];
+      if (Math.abs(lastX - nextCurve.p0.x) > 1e-10 || Math.abs(lastY - nextCurve.p0.y) > 1e-10) {
+        // 当前子路径结束，需要创建新的子路径
+        isSubpathStart = true;
       }
     }
   }
 
-  if (currentSubpath && currentSubpath.length > 2) {
-    bezierArrayGroups.push(currentSubpath);
-  }
+  // 移除空的子路径
+  const validSubpaths = bezierSubpaths.filter(subpath => subpath.length > 2);
 
-  return bezierArrayGroups;
+  // 为了保持与原始函数一致，如果只有一个子路径，返回它的数组
+  return validSubpaths.length === 1 ? [validSubpaths[0]] : validSubpaths;
 }
 
 export function applyTransformOnBezierCurves(bezierCurves: number[][], martrix: IMatrix) {

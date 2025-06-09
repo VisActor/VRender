@@ -3,21 +3,21 @@ import {
   createRect,
   createLine,
   createCircle,
-  MorphingPath,
-  morphPath,
-  pathToBezierCurves,
   createSymbol,
-  oneToMultiMorph,
   multiToOneMorph,
   createPolygon,
-  splitPolygon,
-  createText,
   createArea,
   createArc,
-  splitGraphic,
-  defaultTicker
+  registerAnimate,
+  registerCustomAnimate,
+  oneToMultiMorph,
+  morphPath,
+  createGroup
 } from '@visactor/vrender';
 import { colorPools } from '../utils';
+
+registerAnimate();
+registerCustomAnimate();
 
 // container.load(roughModule);
 
@@ -113,13 +113,14 @@ export const page = () => {
   });
 
   const area = createArea({
-    curveType: 'basis',
+    curveType: 'monotoneX',
     x: 400,
     y: 200,
     points: [
-      { x: 0, y: 100, y1: 50 },
-      { x: 50, y: 80, y1: 60 },
-      { x: 80, y: 150, y1: 20 }
+      { x: 0, y: 100, y1: 200 },
+      { x: 50, y: 80, y1: 200 },
+      { x: 80, y: 150, y1: 200 },
+      { x: 100, y: 100, y1: 200 }
     ],
     fill: colorPools[10],
     stroke: 'green'
@@ -153,7 +154,7 @@ export const page = () => {
 
   // rect.pathProxy = pathToBezierCurves(circle.toCustomPath());
   const line = createLine({
-    x: 800,
+    x: 300,
     y: 100,
     points: [
       { x: 0, y: 0 },
@@ -179,24 +180,24 @@ export const page = () => {
   // morphPath(circle, rect, { duration: 2000, easing: 'quadIn' });
   // morphPath(line, rect, { duration: 2000, ease: 'cubicIn' });
 
-  const symbolList = [];
-  for (let i = 0; i < 21; i++) {
-    const symbols = createSymbol({
-      x: Math.random() * 500,
-      y: Math.random() * 500,
-      symbolType: 'arrow',
-      size: 10,
-      fill: colorPools[2],
-      // angle: Math.PI / 4,
-      lineWidth: 6
-    });
-    symbolList.push(symbols);
-    stage.defaultLayer.appendChild(symbols);
-  }
+  // const symbolList = [];
+  // for (let i = 0; i < 21; i++) {
+  //   const symbols = createSymbol({
+  //     x: Math.random() * 500,
+  //     y: Math.random() * 500,
+  //     symbolType: 'arrow',
+  //     size: 10,
+  //     fill: colorPools[2],
+  //     // angle: Math.PI / 4,
+  //     lineWidth: 6
+  //   });
+  //   symbolList.push(symbols);
+  //   stage.defaultLayer.appendChild(symbols);
+  // }
 
-  // stage.defaultLayer.appendChild(arc);
+  // // stage.defaultLayer.appendChild(area);
 
-  // oneToMultiMorph(arc, symbolList, { duration: 2000, easing: 'quadIn' });
+  // oneToMultiMorph(area, symbolList, { duration: 2000, easing: 'quadIn' });
 
   const fromSymbolList = [];
   for (let i = 0; i < 23; i++) {
@@ -222,22 +223,63 @@ export const page = () => {
       return index * 100;
     }
   });
-  // morphPath(fromSymbolList[0], polygon, { duration: 2000, easing: 'quadIn' });
 
-  const fromSymbolList2 = [];
-  for (let i = 0; i < 20; i++) {
-    const symbols = createSymbol({
-      x: 300 + i * 20,
-      y: 300,
-      symbolType: 'triangleLeft',
-      size: 5 + Math.floor(Math.random() * 10),
-      fill: 'green',
-      // angle: Math.PI / 4,
-      lineWidth: 6
-    });
-    fromSymbolList2.push(symbols);
-    // stage.defaultLayer.appendChild(symbols);
-  }
+  // const r1 = createRect({
+  //   visible: true,
+  //   lineWidth: 0,
+  //   fillOpacity: 0.8,
+  //   // cornerRadius: 100,
+  //   fill: '#FF8A00',
+  //   stroke: '#FF8A00',
+  //   x: 200,
+  //   y: 200,
+  //   height: 300,
+  //   width: 100
+  // });
+
+  // const a1 = createArc({
+  //   visible: true,
+  //   lineWidth: 0,
+  //   innerPadding: 0,
+  //   outerPadding: 0,
+  //   fillOpacity: 1,
+  //   fill: '#FF8A00',
+  //   padAngle: 0,
+  //   stroke: '#FF8A00',
+  //   x: 200,
+  //   y: 200,
+  //   startAngle: 0,
+  //   endAngle: Math.PI,
+  //   outerRadius: 200,
+  //   innerRadius: 100,
+  //   cornerRadius: 100
+  // });
+  // stage.defaultLayer.ad(r1);
+  // const group = createGroup({
+  //   x: 300,
+  //   y: 200
+  // });
+  // group.add(a1);
+  // stage.defaultLayer.appendChild(a1);
+  // morphPath(r1, a1, { duration: 2000, easing: 'linear' });
+  // stage.defaultLayer.appendChild(r1);
+  // stage.defaultLayer.appendChild(a1);
+  // morphPath(a1, r1, { duration: 2000, easing: 'linear' });
+
+  // const fromSymbolList2 = [];
+  // for (let i = 0; i < 20; i++) {
+  //   const symbols = createSymbol({
+  //     x: 300 + i * 20,
+  //     y: 300,
+  //     symbolType: 'triangleLeft',
+  //     size: 5 + Math.floor(Math.random() * 10),
+  //     fill: 'green',
+  //     // angle: Math.PI / 4,
+  //     lineWidth: 6
+  //   });
+  //   fromSymbolList2.push(symbols);
+  //   // stage.defaultLayer.appendChild(symbols);
+  // }
   // stage.defaultLayer.appendChild(rect4);
   // multiToOneMorph(fromSymbolList2, rect4, {
   //   duration: 2000,
@@ -254,10 +296,10 @@ export const page = () => {
   stage.on('click', () => {
     if (isPause) {
       isPause = false;
-      defaultTicker.resume();
+      // defaultTicker.resume();
     } else {
       isPause = true;
-      defaultTicker.pause();
+      // defaultTicker.pause();
     }
   });
 

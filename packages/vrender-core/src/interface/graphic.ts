@@ -1,5 +1,5 @@
 import type { IAABBBounds, IMatrix, IPointLike, IPoint, BoundsAnchorType, IOBBBounds } from '@visactor/vutils';
-import type { IAnimate, IStep, EasingType, IAnimateTarget, ITimeline } from './animate';
+import type { IAnimate, IStep, EasingType, IAnimateTarget, ITimeline } from './animation';
 import type { IColor } from './color';
 import type { IGroup } from './graphic/group';
 import type { IShadowRoot } from './graphic/shadow-root';
@@ -376,6 +376,12 @@ export interface CommonDomOptions {
   anchorType?: 'position' | 'boundsLeftTop' | BoundsAnchorType;
 }
 
+export type IRoughStyle = {
+  fillStyle: 'hachure' | 'solid' | 'zigzag' | 'cross-hatch' | 'dots' | 'sunburst' | 'dashed' | 'zigzag-line';
+  roughness: number;
+  bowing: number;
+};
+
 export type IGraphicStyle = ILayout &
   IFillStyle &
   IStrokeStyle &
@@ -495,8 +501,10 @@ export type IGraphicStyle = ILayout &
      * 设置图形对应的鼠标样式
      */
     cursor: Cursor | null;
+    // @deprecated 用处少废弃，后续考虑新设计API
     filter: string;
     renderStyle?: 'default' | 'rough' | any;
+    roughStyle?: IRoughStyle | null;
     /**
      * HTML的dom或者string
      */
@@ -685,7 +693,10 @@ export interface IGraphic<T extends Partial<IGraphicAttribute> = Partial<IGraphi
   glyphHost?: IGraphic<IGlyphGraphicAttribute>;
   backgroundImg?: boolean;
   attachedThemeGraphic?: IGraphic<any>;
-
+  /**
+   * 保存语法上下文
+   */
+  context?: Record<string, any>;
   bindDom?: Map<
     string | HTMLElement,
     { container: HTMLElement | string; dom: HTMLElement | any; wrapGroup: HTMLDivElement | any; root?: any }
@@ -721,7 +732,7 @@ export interface IGraphic<T extends Partial<IGraphicAttribute> = Partial<IGraphi
   stateProxy?: (stateName: string, targetStates?: string[]) => Partial<T>;
   findFace?: () => IFace3d;
   toggleState: (stateName: string, hasAnimation?: boolean) => void;
-  removeState: (stateName: string, hasAnimation?: boolean) => void;
+  removeState: (stateName: string | string[], hasAnimation?: boolean) => void;
   clearStates: (hasAnimation?: boolean) => void;
   useStates: (states: string[], hasAnimation?: boolean) => void;
   addState: (stateName: string, keepCurrentStates?: boolean, hasAnimation?: boolean) => void;
@@ -769,7 +780,7 @@ export interface IGraphic<T extends Partial<IGraphicAttribute> = Partial<IGraphi
   update: (d?: { bounds: boolean; trans: boolean }) => void;
 
   // animate
-  animate: (params?: IGraphicAnimateParams) => IAnimate;
+  animate?: (params?: IGraphicAnimateParams) => IAnimate;
 
   // 语法糖，可有可无，有的为了首屏性能考虑做成get方法，有的由外界直接托管，内部不赋值
   name?: string;
@@ -822,6 +833,8 @@ export interface IGraphic<T extends Partial<IGraphicAttribute> = Partial<IGraphi
   stopAnimates: (stopChildren?: boolean) => void;
   getNoWorkAnimateAttr: () => Record<string, number>;
   getGraphicTheme: () => T;
+
+  getAttributes: (final?: boolean) => Partial<T>;
 }
 
 export interface IRoot extends IGraphic {

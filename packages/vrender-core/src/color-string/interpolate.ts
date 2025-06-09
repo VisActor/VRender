@@ -25,8 +25,8 @@ export function interpolateColor(
     // 待性能优化
     const out: string[] = new Array(4).fill(0).map((_, index) => {
       return _interpolateColor(
-        isArray(from) ? (from[index] as string) : from,
-        isArray(to) ? (to[index] as string) : to,
+        isArray(from) ? ((from[index] ?? from[0]) as string) : from,
+        isArray(to) ? ((to[index] ?? to[0]) as string) : to,
         ratio,
         alphaChannel
       ) as string;
@@ -185,6 +185,16 @@ export function interpolatePureColorArray(
     from[2] + (to[2] - from[2]) * ratio,
     from[3] + (to[3] - from[3]) * ratio
   ];
+}
+export function interpolatePureColorArrayToStr(
+  from: [number, number, number, number],
+  to: [number, number, number, number],
+  ratio: number
+): string {
+  // eslint-disable-next-line max-len
+  return `rgba(${from[0] + (to[0] - from[0]) * ratio},${from[1] + (to[1] - from[1]) * ratio},${
+    from[2] + (to[2] - from[2]) * ratio
+  },${from[3] + (to[3] - from[3]) * ratio})`;
 }
 
 const _fromColorRGB: [number, number, number, number] = [0, 0, 0, 0];

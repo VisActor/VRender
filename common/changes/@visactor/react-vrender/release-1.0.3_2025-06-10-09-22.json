@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/react-vrender",
+      "comment": "fix: fix release version",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/react-vrender"
+}

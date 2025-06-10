@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-animate",
+      "comment": "fix: fix rele",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-animate"
+}

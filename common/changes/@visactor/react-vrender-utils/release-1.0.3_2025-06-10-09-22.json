@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/react-vrender-utils",
+      "comment": "fix: fix rele",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/react-vrender-utils"
+}

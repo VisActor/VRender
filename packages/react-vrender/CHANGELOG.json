@@ -2,6 +2,18 @@
   "name": "@visactor/react-vrender",
   "entries": [
     {
+      "version": "1.0.3",
+      "tag": "@visactor/react-vrender_v1.0.3",
+      "date": "Tue, 10 Jun 2025 09:32:32 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix release version"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.0.1",
       "tag": "@visactor/react-vrender_v1.0.1",
       "date": "Mon, 09 Jun 2025 07:29:07 GMT",

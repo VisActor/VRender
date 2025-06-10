@@ -2,6 +2,30 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.22.12",
+      "tag": "@visactor/vrender-components_v0.22.12",
+      "date": "Tue, 10 Jun 2025 12:24:12 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: brush active problem. fix visactor/vchart#4017"
+          },
+          {
+            "comment": "fix: brush event pos problem when stage scale"
+          },
+          {
+            "comment": "fix: use removeAllChild to remove brush mask. fix visactor/vchart#4017"
+          },
+          {
+            "comment": "fix: datazoom text render error. fix visactor/vchart#4018"
+          },
+          {
+            "comment": "fix: disable sampling when label is rich text\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.22.11",
       "tag": "@visactor/vrender-components_v0.22.11",
       "date": "Mon, 28 Apr 2025 09:08:54 GMT",

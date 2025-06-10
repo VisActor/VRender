@@ -1,6 +1,19 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Mon, 28 Apr 2025 09:08:54 GMT and should not be manually modified.
+This log was last generated on Tue, 10 Jun 2025 12:24:12 GMT and should not be manually modified.
+
+## 0.22.12
+Tue, 10 Jun 2025 12:24:12 GMT
+
+### Updates
+
+- fix: brush active problem. fix visactor/vchart#4017
+- fix: brush event pos problem when stage scale
+- fix: use removeAllChild to remove brush mask. fix visactor/vchart#4017
+- fix: datazoom text render error. fix visactor/vchart#4018
+- fix: disable sampling when label is rich text
+
+
 
 ## 0.22.11
 Mon, 28 Apr 2025 09:08:54 GMT

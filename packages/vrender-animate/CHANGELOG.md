@@ -1,6 +1,15 @@
-# Change Log - @visactor/vrender-kits
+# Change Log - @visactor/vrender-animate
 
-This log was last generated on Tue, 18 Feb 2025 10:14:45 GMT and should not be manually modified.
+This log was last generated on Tue, 10 Jun 2025 08:21:29 GMT and should not be manually modified.
+
+## 0.22.12
+Tue, 10 Jun 2025 08:21:29 GMT
+
+### Updates
+
+- fix: fix aniamtion of dx, dy and customParameters
+
+
 
 ## 0.22.1
 Tue, 18 Feb 2025 10:14:45 GMT

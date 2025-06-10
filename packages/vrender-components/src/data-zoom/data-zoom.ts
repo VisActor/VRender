@@ -733,7 +733,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
         height,
         cursor: brushSelect ? 'crosshair' : 'auto',
         ...backgroundStyle,
-        pickable: zoomLock ? false : (backgroundStyle.pickable ?? true)
+        pickable: zoomLock ? false : backgroundStyle.pickable ?? true
       },
       'rect'
     ) as IRect;
@@ -757,7 +757,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
           height: height,
           cursor: brushSelect ? 'crosshair' : 'move',
           ...selectedBackgroundStyle,
-          pickable: zoomLock ? false : ((selectedBackgroundChartStyle as any).pickable ?? true)
+          pickable: zoomLock ? false : (selectedBackgroundChartStyle as any).pickable ?? true
         },
         'rect'
       ) as IRect;
@@ -772,7 +772,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
           height: (end - start) * height,
           cursor: brushSelect ? 'crosshair' : 'move',
           ...selectedBackgroundStyle,
-          pickable: zoomLock ? false : (selectedBackgroundStyle.pickable ?? true)
+          pickable: zoomLock ? false : selectedBackgroundStyle.pickable ?? true
         },
         'rect'
       ) as IRect;
@@ -794,7 +794,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
             width: (end - start) * width,
             height: middleHandlerBackgroundSize,
             ...middleHandlerStyle.background?.style,
-            pickable: zoomLock ? false : (middleHandlerStyle.background?.style?.pickable ?? true)
+            pickable: zoomLock ? false : middleHandlerStyle.background?.style?.pickable ?? true
           },
           'rect'
         ) as IRect;
@@ -807,7 +807,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
             angle: 0,
             symbolType: middleHandlerStyle.icon?.symbolType ?? 'square',
             ...middleHandlerStyle.icon,
-            pickable: zoomLock ? false : (middleHandlerStyle.icon.pickable ?? true)
+            pickable: zoomLock ? false : middleHandlerStyle.icon.pickable ?? true
           },
           'symbol'
         ) as ISymbol;
@@ -821,7 +821,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
           symbolType: startHandlerStyle.symbolType ?? 'square',
           ...(DEFAULT_HANDLER_ATTR_MAP.horizontal as any),
           ...startHandlerStyle,
-          pickable: zoomLock ? false : (startHandlerStyle.pickable ?? true)
+          pickable: zoomLock ? false : startHandlerStyle.pickable ?? true
         },
         'symbol'
       ) as ISymbol;
@@ -834,7 +834,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
           symbolType: endHandlerStyle.symbolType ?? 'square',
           ...(DEFAULT_HANDLER_ATTR_MAP.horizontal as any),
           ...endHandlerStyle,
-          pickable: zoomLock ? false : (endHandlerStyle.pickable ?? true)
+          pickable: zoomLock ? false : endHandlerStyle.pickable ?? true
         },
         'symbol'
       ) as ISymbol;
@@ -887,7 +887,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
             width: middleHandlerBackgroundSize,
             height: (end - start) * height,
             ...middleHandlerStyle.background?.style,
-            pickable: zoomLock ? false : (middleHandlerStyle.background?.style?.pickable ?? true)
+            pickable: zoomLock ? false : middleHandlerStyle.background?.style?.pickable ?? true
           },
           'rect'
         ) as IRect;
@@ -904,7 +904,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
             symbolType: middleHandlerStyle.icon?.symbolType ?? 'square',
             strokeBoundsBuffer: 0,
             ...middleHandlerStyle.icon,
-            pickable: zoomLock ? false : (middleHandlerStyle.icon?.pickable ?? true)
+            pickable: zoomLock ? false : middleHandlerStyle.icon?.pickable ?? true
           },
           'symbol'
         ) as ISymbol;
@@ -918,7 +918,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
           symbolType: startHandlerStyle.symbolType ?? 'square',
           ...(DEFAULT_HANDLER_ATTR_MAP.vertical as any),
           ...startHandlerStyle,
-          pickable: zoomLock ? false : (startHandlerStyle.pickable ?? true)
+          pickable: zoomLock ? false : startHandlerStyle.pickable ?? true
         },
         'symbol'
       ) as ISymbol;
@@ -932,7 +932,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
           symbolType: endHandlerStyle.symbolType ?? 'square',
           ...(DEFAULT_HANDLER_ATTR_MAP.vertical as any),
           ...endHandlerStyle,
-          pickable: zoomLock ? false : (endHandlerStyle.pickable ?? true)
+          pickable: zoomLock ? false : endHandlerStyle.pickable ?? true
         },
         'symbol'
       ) as ISymbol;

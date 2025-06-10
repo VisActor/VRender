@@ -398,7 +398,7 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
       cursor: 'move',
       pickable: false,
       ...brushStyle,
-      opacity: hasMask ? (brushStyle.opacity ?? 1) : 0
+      opacity: hasMask ? brushStyle.opacity ?? 1 : 0
     });
     brushMask.name = `brush-${Date.now()}`; // 用Date给mask唯一标记
     this._operatingMask = brushMask;

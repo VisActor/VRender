@@ -2,6 +2,42 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "1.0.1",
+      "tag": "@visactor/vrender-components_v1.0.1",
+      "date": "Mon, 09 Jun 2025 07:29:07 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: brush active problem. fix visactor/vchart#4017"
+          },
+          {
+            "comment": "fix: brush event pos problem when stage scale"
+          },
+          {
+            "comment": "fix: use removeAllChild to remove brush mask. fix visactor/vchart#4017"
+          },
+          {
+            "comment": "fix: datazoom text render error. fix visactor/vchart#4018"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.0.0",
+      "tag": "@visactor/vrender-components_v1.0.0",
+      "date": "Fri, 06 Jun 2025 09:38:19 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: delete-default-value"
+          },
+          {
+            "comment": "feat: remove marker type. close @VisActor/VChart#3782"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.22.11",
       "tag": "@visactor/vrender-components_v0.22.11",
       "date": "Mon, 28 Apr 2025 09:08:54 GMT",

@@ -14,14 +14,14 @@ export class FromTo extends ACustomAnimate<Record<string, number>> {
   onBind(): void {
     super.onBind();
 
-    const finalAttribute = this.target.getFinalAttribute();
     // 如果存在from，不存在to，那么需要设置给props
     Object.keys(this.from).forEach(key => {
       if (this.props[key] == null) {
-        this.props[key] = finalAttribute[key];
+        this.props[key] = this.target.getGraphicAttribute(key);
       }
     });
 
+    const finalAttribute = this.target.getFinalAttribute();
     // 如果入场动画，那么需要设置属性
     if (this.target.context?.animationState === 'appear') {
       if (finalAttribute) {

@@ -1,6 +1,16 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Mon, 09 Jun 2025 07:29:07 GMT and should not be manually modified.
+This log was last generated on Tue, 10 Jun 2025 09:32:32 GMT and should not be manually modified.
+
+## 1.0.3
+Tue, 10 Jun 2025 09:32:32 GMT
+
+### Updates
+
+- fix: disable sampling when label is rich text
+
+
+- fix: fix rele
 
 ## 1.0.1
 Mon, 09 Jun 2025 07:29:07 GMT

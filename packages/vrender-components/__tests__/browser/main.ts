@@ -301,6 +301,18 @@ const specs = [
   {
     path: 'story-label-item',
     name: 'story-label-item'
+  },
+  {
+    path: 'story-list',
+    name: 'story-list'
+  },
+  {
+    path: 'story-arrow-list',
+    name: 'story-arrow-list'
+  },
+  {
+    path: 'story-thin-arrow-list',
+    name: 'story-thin-arrow-list'
   }
 ];
 

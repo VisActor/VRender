@@ -26,18 +26,12 @@ export default function render(component: IGraphic | IGraphic[], canvasId: strin
 export function createRenderer(canvasId: string, option: Partial<IStageParams> = {}) {
   return createStage({
     canvas: canvasId,
-    width: 600,
-    height: 600,
+    width: 1000,
+    height: 1000,
     autoRender: true,
     disableDirtyBounds: false,
     // canvasControled: false,
     background: 'rgba(238,238,238,0.5)',
-    viewBox: {
-      x1: 50,
-      y1: 50,
-      x2: 550,
-      y2: 550
-    },
     pluginList: ['poptipForText', 'scrollbar'],
     enableHtmlAttribute: true,
     ...option

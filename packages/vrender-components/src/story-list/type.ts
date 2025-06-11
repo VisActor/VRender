@@ -8,6 +8,7 @@ export interface ILiItemAttrs {
   title?: IRichTextGraphicAttribute; // 标题样式
   text?: IRichTextGraphicAttribute; // 内容样式
   icon?: ISymbolGraphicAttribute; // 图标样式
+  position?: 'top' | 'bottom'; // title和text的位置，默认为top
 }
 
 export interface IStoryListAttrs extends IGroupGraphicAttribute {

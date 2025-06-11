@@ -80,7 +80,7 @@ export class StoryArrowList extends StoryBaseList {
       this.renderIconForSegment(list[index], segment, index, arrowStartY, arrowHeight);
 
       // 绘制对应的文字
-      this.renderTextForSegment(list[index], segment, index, arrowStartY - 20);
+      this.renderTextForSegment(list[index], segment, index, arrowStartY, arrowHeight);
     });
 
     this.alignText(segments.length);
@@ -240,9 +240,14 @@ export class StoryArrowList extends StoryBaseList {
     item: ILiItemAttrs,
     segment: { textX: number; textWidth: number },
     index: number,
-    startY: number
+    startY: number,
+    arrowHeight: number
   ) {
     const { titleTextOrder = 'top' } = this.attribute;
+    const { position = 'top' } = item; // 获取position属性，默认为top
+    const padding = 10;
+
+    startY = position === 'top' ? startY - padding : startY + arrowHeight + padding;
 
     const createTitle = (dy: number = 0, textBaseline: string = 'top') => {
       if (item.title) {
@@ -280,29 +285,48 @@ export class StoryArrowList extends StoryBaseList {
       }
     };
 
-    // 标题和文本的顺序，默认是标题在上，文本在下
-    if (titleTextOrder === 'top') {
-      const title = createTitle(10, 'top');
-      if (title) {
-        // 因为是顶部对齐，所以需要减去标题的高度
-        let height = title.AABBBounds.height();
-        title.setAttribute('y', title.attribute.y - height);
-        const text = createText(-height, 'top');
+    if (position === 'top') {
+      // 文本在箭头上方（现有逻辑）
+      if (titleTextOrder === 'top') {
+        const title = createTitle(0, 'top');
+        if (title) {
+          // 因为是顶部对齐，所以需要减去标题的高度
+          let height = title.AABBBounds.height();
+          title.setAttribute('y', title.attribute.y - height);
+          const text = createText(-height, 'top');
+          if (text) {
+            height = text.AABBBounds.height();
+            text.setAttribute('y', text.attribute.y - height);
+          }
+        }
+      } else {
+        const text = createText(0, 'top');
         if (text) {
-          height = text.AABBBounds.height();
+          // 因为是顶部对齐，所以需要减去文本的高度
+          let height = text.AABBBounds.height();
           text.setAttribute('y', text.attribute.y - height);
+          const title = createTitle(-height, 'top');
+          if (title) {
+            height = title.AABBBounds.height();
+            title.setAttribute('y', title.attribute.y - height);
+          }
         }
       }
     } else {
-      const text = createText(10, 'top');
-      if (text) {
-        // 因为是顶部对齐，所以需要减去文本的高度
-        let height = text.AABBBounds.height();
-        text.setAttribute('y', text.attribute.y - height);
-        const title = createTitle(-height, 'top');
+      // 文本在箭头下方
+      // 计算箭头下方的起始位置（startY是箭头上方的位置）
+
+      if (titleTextOrder === 'top') {
+        const title = createTitle(0, 'top');
         if (title) {
-          height = title.AABBBounds.height();
-          title.setAttribute('y', title.attribute.y - height);
+          const height = title.AABBBounds.height();
+          createText(height, 'top');
+        }
+      } else {
+        const text = createText(startY, 'top');
+        if (text) {
+          const height = text.AABBBounds.height();
+          const title = createTitle(startY + (text ? text.AABBBounds.height() : 0), 'top');
         }
       }
     }
@@ -310,28 +334,63 @@ export class StoryArrowList extends StoryBaseList {
 
   // 有些文字长，有些文字短，需要全局对齐
   private alignText(segmentCount: number) {
-    let titleY = Infinity;
-    let textY = Infinity;
+    // 分别处理上方和下方的文本对齐
+    let topTitleY = Infinity;
+    let topTextY = Infinity;
+    let bottomTitleY = -Infinity;
+    let bottomTextY = -Infinity;
 
-    // 获取最小的y坐标，然后统一应用
+    const { list } = this.attribute;
+
+    // 获取上方和下方文本的边界坐标
     for (let i = 0; i < segmentCount; i++) {
       const title = this.getElementsByName(`title-${i}`)[0] as IRichText;
       const text = this.getElementsByName(`text-${i}`)[0] as IRichText;
-      if (title) {
-        titleY = Math.min(titleY, title.attribute.y);
-      }
-      if (text) {
-        textY = Math.min(textY, text.attribute.y);
+      const item = list[i];
+      const position = item?.position || 'top';
+
+      if (position === 'top') {
+        // 上方文本：找最小Y坐标
+        if (title) {
+          topTitleY = Math.min(topTitleY, title.attribute.y);
+        }
+        if (text) {
+          topTextY = Math.min(topTextY, text.attribute.y);
+        }
+      } else {
+        // 下方文本：找最大Y坐标（实际上是最小的起始Y，因为向下增长）
+        if (title) {
+          bottomTitleY = Math.max(bottomTitleY, title.attribute.y);
+        }
+        if (text) {
+          bottomTextY = Math.max(bottomTextY, text.attribute.y);
+        }
       }
     }
+
+    // 应用对齐
     for (let i = 0; i < segmentCount; i++) {
       const title = this.getElementsByName(`title-${i}`)[0] as IRichText;
       const text = this.getElementsByName(`text-${i}`)[0] as IRichText;
-      if (title) {
-        title.setAttribute('y', titleY);
-      }
-      if (text) {
-        text.setAttribute('y', textY);
+      const item = list[i];
+      const position = item?.position || 'top';
+
+      if (position === 'top') {
+        // 上方文本：统一到最小Y坐标
+        if (title && topTitleY !== Infinity) {
+          title.setAttribute('y', topTitleY);
+        }
+        if (text && topTextY !== Infinity) {
+          text.setAttribute('y', topTextY);
+        }
+      } else {
+        // 下方文本：统一到最小Y坐标
+        if (title && bottomTitleY !== -Infinity) {
+          title.setAttribute('y', bottomTitleY);
+        }
+        if (text && bottomTextY !== -Infinity) {
+          text.setAttribute('y', bottomTextY);
+        }
       }
     }
   }

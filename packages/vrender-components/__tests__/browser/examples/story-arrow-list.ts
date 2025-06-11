@@ -251,6 +251,71 @@ export function run() {
     })
   );
 
+  // 测试文本在箭头下方的position功能
+  storyLists.push(
+    new StoryArrowList({
+      x: 50,
+      y: 50,
+      width: 700,
+      height: 300,
+      direction: 'right',
+      themeStyle: 'normal',
+      colors: ['#8B5CF6'], // 单色渐变
+      list: [
+        {
+          title: {
+            textConfig: [
+              {
+                text: '下方文本示例下方文本示例下方文本示例',
+                fontSize: 16,
+                fontWeight: 'bold',
+                fill: '#1f2937',
+                textAlign: 'center'
+              }
+            ]
+          },
+          text: {
+            textConfig: [{ text: '这个文本显示在箭头下方', fontSize: 14, fill: '#6b7280', textAlign: 'center' }]
+          },
+          icon: {
+            background: svg1,
+            stroke: '#fff',
+            lineWidth: 2
+          },
+          position: 'bottom' // 文本显示在箭头下方
+        },
+        {
+          title: {
+            textConfig: [{ text: '混合位置', fontSize: 16, fontWeight: 'bold', fill: '#1f2937', textAlign: 'center' }]
+          },
+          text: {
+            textConfig: [{ text: '这个还是在上方', fontSize: 14, fill: '#6b7280', textAlign: 'center' }]
+          },
+          icon: {
+            background: svg2,
+            stroke: '#fff',
+            lineWidth: 1
+          },
+          position: 'top' // 文本显示在箭头上方
+        },
+        {
+          title: {
+            textConfig: [{ text: '又是下方', fontSize: 16, fontWeight: 'bold', fill: '#1f2937', textAlign: 'center' }]
+          },
+          text: {
+            textConfig: [{ text: '这个也在箭头下方显示', fontSize: 14, fill: '#6b7280', textAlign: 'center' }]
+          },
+          icon: {
+            background: svg3,
+            stroke: '#fff',
+            lineWidth: 1
+          },
+          position: 'bottom' // 文本显示在箭头下方
+        }
+      ]
+    })
+  );
+
   const stage = render(storyLists as any, 'main');
 
   console.log('Story Arrow List demo rendered:', storyLists.length, 'components');

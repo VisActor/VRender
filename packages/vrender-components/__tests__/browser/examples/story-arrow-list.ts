@@ -1,6 +1,7 @@
 import '@visactor/vrender';
 import render from '../../util/render';
 import { StoryArrowList } from '../../../src';
+import { svg1, svg2, svg3 } from './assets';
 
 export function run() {
   const storyLists: StoryArrowList[] = [];
@@ -23,6 +24,11 @@ export function run() {
             textConfig: [
               { text: '2024年到2025年是全球经济的重要转折点', fontSize: 14, fill: '#6b7280', textAlign: 'center' }
             ]
+          },
+          icon: {
+            background: svg1,
+            stroke: '#fff',
+            lineWidth: 2
           }
         }
       ]
@@ -48,6 +54,11 @@ export function run() {
             textConfig: [
               { text: '各国央行政策调整为经济增长创造条件', fontSize: 14, fill: '#6b7280', textAlign: 'center' }
             ]
+          },
+          icon: {
+            background: svg2,
+            stroke: '#fff',
+            lineWidth: 1
           }
         },
         {
@@ -58,6 +69,11 @@ export function run() {
             textConfig: [
               { text: '预计2025年全球经济将迎来强劲复苏', fontSize: 14, fill: '#6b7280', textAlign: 'center' }
             ]
+          },
+          icon: {
+            background: svg3,
+            stroke: '#fff',
+            lineWidth: 1
           }
         }
       ]

@@ -1,6 +1,7 @@
 import '@visactor/vrender';
 import render from '../../util/render';
 import { StoryThinArrowList } from '../../../src';
+import { svg1, svg2, svg3 } from './assets';
 
 export function run() {
   const storyLists: StoryThinArrowList[] = [];
@@ -24,6 +25,11 @@ export function run() {
             textConfig: [
               { text: '箭头身体较细，三角形较宽的设计风格', fontSize: 14, fill: '#6b7280', textAlign: 'center' }
             ]
+          },
+          icon: {
+            background: svg3,
+            stroke: '#fff',
+            lineWidth: 2
           }
         }
       ]
@@ -47,6 +53,11 @@ export function run() {
           },
           text: {
             textConfig: [{ text: '较浅的绿色段', fontSize: 14, fill: '#6b7280', textAlign: 'center' }]
+          },
+          icon: {
+            background: svg1,
+            stroke: '#fff',
+            lineWidth: 1
           }
         },
         {
@@ -55,6 +66,11 @@ export function run() {
           },
           text: {
             textConfig: [{ text: '较深的绿色段', fontSize: 14, fill: '#6b7280', textAlign: 'center' }]
+          },
+          icon: {
+            background: svg2,
+            stroke: '#fff',
+            lineWidth: 1
           }
         }
       ]

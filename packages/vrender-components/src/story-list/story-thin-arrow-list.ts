@@ -1,7 +1,4 @@
-import { merge } from '@visactor/vutils';
-import type { IStoryArrowListAttrs, ILiItemAttrs } from './type';
-import type { ComponentOptions } from '../interface';
-import type { IRichText } from '@visactor/vrender-core';
+import type { ILiItemAttrs } from './type';
 import { loadStoryListComponent } from './register';
 import { StoryArrowList } from './story-arrow-list';
 
@@ -137,5 +134,43 @@ export class StoryThinArrowList extends StoryArrowList {
     }
 
     return segments;
+  }
+
+  // 重写icon渲染方法以适配细箭头的尺寸
+  protected renderIconForSegment(
+    item: ILiItemAttrs,
+    segment: { points: Array<{ x: number; y: number }>; textX: number; textWidth: number },
+    index: number,
+    arrowStartY: number,
+    arrowHeight: number
+  ) {
+    if (!item.icon) {
+      return;
+    }
+
+    // 细箭头的身体高度为原高度的60%
+    const bodyHeight = arrowHeight * 0.6;
+    const bodyOffsetY = (arrowHeight - bodyHeight) / 2;
+
+    // 计算矩形部分的中心位置（排除三角形部分）
+    const iconX = segment.textX; // 使用文本的X坐标作为icon的X坐标
+    const iconY = arrowStartY + bodyOffsetY + bodyHeight / 2; // 细箭头身体的垂直中心
+    const iconSize = Math.min(bodyHeight * 0.7, 100); // icon大小，适配细箭头的身体高度
+
+    // 创建icon
+    this.createOrUpdateChild(
+      `icon-${index}`,
+      {
+        x: iconX,
+        y: iconY,
+        size: iconSize,
+        symbolType: 'square', // 使用圆形作为基础形状
+        background: item.icon.background || '', // 使用background显示复杂icon
+        stroke: item.icon.stroke || '#fff',
+        lineWidth: item.icon.lineWidth || 1,
+        ...item.icon
+      },
+      'symbol'
+    );
   }
 }

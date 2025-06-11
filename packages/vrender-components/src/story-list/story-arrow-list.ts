@@ -76,6 +76,9 @@ export class StoryArrowList extends StoryBaseList {
         'polygon'
       );
 
+      // 绘制icon（如果配置了）
+      this.renderIconForSegment(list[index], segment, index, arrowStartY, arrowHeight);
+
       // 绘制对应的文字
       this.renderTextForSegment(list[index], segment, index, arrowStartY - 20);
     });
@@ -198,6 +201,39 @@ export class StoryArrowList extends StoryBaseList {
     }
 
     return segments;
+  }
+
+  protected renderIconForSegment(
+    item: ILiItemAttrs,
+    segment: { points: Array<{ x: number; y: number }>; textX: number; textWidth: number },
+    index: number,
+    arrowStartY: number,
+    arrowHeight: number
+  ) {
+    if (!item.icon) {
+      return;
+    }
+
+    // 计算矩形部分的中心位置（排除三角形部分）
+    const iconX = segment.textX; // 使用文本的X坐标作为icon的X坐标
+    const iconY = arrowStartY + arrowHeight / 2; // 箭头段的垂直中心
+    const iconSize = Math.min(arrowHeight * 0.7, 100); // icon大小，不超过箭头高度的70%，最大100px
+
+    // 创建icon
+    this.createOrUpdateChild(
+      `icon-${index}`,
+      {
+        x: iconX,
+        y: iconY,
+        size: iconSize,
+        symbolType: 'square', // 使用圆形作为基础形状
+        background: item.icon.background || '', // 使用background显示复杂icon
+        stroke: item.icon.stroke || '#fff',
+        lineWidth: item.icon.lineWidth || 1,
+        ...item.icon
+      },
+      'symbol'
+    );
   }
 
   private renderTextForSegment(

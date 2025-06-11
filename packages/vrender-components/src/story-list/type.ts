@@ -9,6 +9,8 @@ export interface ILiItemAttrs {
   text?: IRichTextGraphicAttribute; // 内容样式
   icon?: ISymbolGraphicAttribute; // 图标样式
   position?: 'top' | 'bottom'; // title和text的位置，默认为top
+  spaceTitleText?: number; // title和text的间距，默认为10
+  space?: number; // 主体和文本的间距，默认为10
 }
 
 export interface IStoryListAttrs extends IGroupGraphicAttribute {
@@ -19,7 +21,7 @@ export interface IStoryListAttrs extends IGroupGraphicAttribute {
 }
 
 export interface IStoryArrowListAttrs extends IStoryListAttrs {
-  direction?: 'right' | 'left' | 'up' | 'down'; // 箭头方向
+  direction?: 'right' | 'left' | 'up' | 'down' | 'left-right'; // 箭头方向，添加left-right表示左右都有箭头
   titleTextOrder?: 'top' | 'bottom'; // 标题文本顺序，默认是标题在上，文本在下
   themeStyle?: 'normal' | 'stroke-only' | 'fill-only'; // 主题风格
 }

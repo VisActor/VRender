@@ -218,6 +218,64 @@ export function run() {
     })
   );
 
+  // 测试left-right方向（左右都有箭头，细箭头样式）
+  storyLists.push(
+    new StoryThinArrowList({
+      x: 50,
+      y: 800,
+      width: 800,
+      height: 200,
+      direction: 'left-right', // 左右都有箭头
+      // themeStyle: 'stroke-only',
+      colors: ['#DC2626'], // 单色渐变
+      list: [
+        {
+          title: {
+            textConfig: [{ text: '输入', fontSize: 14, fontWeight: 'bold', fill: '#1f2937', textAlign: 'center' }]
+          },
+          text: {
+            textConfig: [{ text: '数据输入阶段', fontSize: 12, fill: '#6b7280', textAlign: 'center' }]
+          },
+          space: 0,
+          spaceTitleText: 0,
+          icon: {
+            background: svg1,
+            stroke: '#fff',
+            lineWidth: 1
+          }
+        },
+        {
+          title: {
+            textConfig: [{ text: '处理', fontSize: 14, fontWeight: 'bold', fill: '#1f2937', textAlign: 'center' }]
+          },
+          text: {
+            textConfig: [{ text: '数据处理阶段', fontSize: 12, fill: '#6b7280', textAlign: 'center' }]
+          },
+          space: 0,
+          icon: {
+            background: svg2,
+            stroke: '#fff',
+            lineWidth: 1
+          }
+        },
+        {
+          title: {
+            textConfig: [{ text: '输出', fontSize: 14, fontWeight: 'bold', fill: '#1f2937', textAlign: 'center' }]
+          },
+          text: {
+            textConfig: [{ text: '结果输出阶段', fontSize: 12, fill: '#6b7280', textAlign: 'center' }]
+          },
+          space: 0,
+          icon: {
+            background: svg3,
+            stroke: '#fff',
+            lineWidth: 1
+          }
+        }
+      ]
+    })
+  );
+
   const stage = render(storyLists as any, 'main');
 
   console.log('Story Thin Arrow List demo rendered:', storyLists.length, 'components');

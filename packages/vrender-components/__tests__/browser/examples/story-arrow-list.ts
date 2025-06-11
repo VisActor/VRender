@@ -316,6 +316,60 @@ export function run() {
     })
   );
 
+  // 测试left-right方向（左右都有箭头）
+  storyLists.push(
+    new StoryArrowList({
+      x: 50,
+      y: 400,
+      width: 700,
+      height: 200,
+      direction: 'left-right', // 左右都有箭头
+      themeStyle: 'normal',
+      colors: ['#F59E0B'], // 单色渐变
+      list: [
+        {
+          title: {
+            textConfig: [{ text: '起始阶段', fontSize: 16, fontWeight: 'bold', fill: '#1f2937', textAlign: 'center' }]
+          },
+          text: {
+            textConfig: [{ text: '项目启动', fontSize: 14, fill: '#6b7280', textAlign: 'center' }]
+          },
+          icon: {
+            background: svg1,
+            stroke: '#fff',
+            lineWidth: 2
+          }
+        },
+        {
+          title: {
+            textConfig: [{ text: '发展阶段', fontSize: 16, fontWeight: 'bold', fill: '#1f2937', textAlign: 'center' }]
+          },
+          text: {
+            textConfig: [{ text: '快速成长', fontSize: 14, fill: '#6b7280', textAlign: 'center' }]
+          },
+          icon: {
+            background: svg2,
+            stroke: '#fff',
+            lineWidth: 1
+          }
+        },
+        {
+          title: {
+            textConfig: [{ text: '成熟阶段', fontSize: 16, fontWeight: 'bold', fill: '#1f2937', textAlign: 'center' }]
+          },
+          text: {
+            textConfig: [{ text: '稳定运营', fontSize: 14, fill: '#6b7280', textAlign: 'center' }]
+          },
+          icon: {
+            background: svg3,
+            stroke: '#fff',
+            lineWidth: 1
+          }
+        }
+      ]
+    })
+  );
+
   const stage = render(storyLists as any, 'main');
 
   console.log('Story Arrow List demo rendered:', storyLists.length, 'components');

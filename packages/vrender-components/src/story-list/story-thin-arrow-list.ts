@@ -54,82 +54,102 @@ export class StoryThinArrowList extends StoryArrowList {
           textX: startX + (totalWidth + bigTipWidth) / 2,
           textWidth: Math.max(totalWidth - bigTipWidth - 10, (totalWidth - bigTipWidth) * 0.8, 0)
         });
+      } else if (direction === 'left-right') {
+        // 左右都有箭头的情况（细箭头）
+        const points = [
+          { x: startX, y: startY + height / 2 },
+          { x: startX + bigTipWidth, y: startY },
+          { x: startX + bigTipWidth, y: startY + bodyOffsetY },
+          { x: startX + totalWidth - bigTipWidth, y: startY + bodyOffsetY },
+          { x: startX + totalWidth - bigTipWidth, y: startY },
+          { x: startX + totalWidth, y: startY + height / 2 },
+          { x: startX + totalWidth - bigTipWidth, y: startY + height },
+          { x: startX + totalWidth - bigTipWidth, y: startY + bodyOffsetY + bodyHeight },
+          { x: startX + bigTipWidth, y: startY + bodyOffsetY + bodyHeight },
+          { x: startX + bigTipWidth, y: startY + height }
+        ];
+        segments.push({
+          points,
+          textX: startX + totalWidth / 2,
+          textWidth: Math.max(totalWidth - bigTipWidth * 2 - 10, (totalWidth - bigTipWidth * 2) * 0.8, 0)
+        });
       }
     } else {
-      // 多个段的箭头
-      const rectWidth = (totalWidth - bigTipWidth) / segmentCount;
+      // 多个段的箭头 - 统一处理left、right、left-right
+      // 计算箭头尖端的总宽度
+      const totalTipWidth = direction === 'left-right' ? bigTipWidth * 2 : bigTipWidth;
+      const rectWidth = (totalWidth - totalTipWidth) / segmentCount;
       const textWidth = Math.max(rectWidth - 10, rectWidth * 0.8, 0);
 
       for (let i = 0; i < segmentCount; i++) {
-        if (direction === 'right') {
-          const rectX = startX + i * rectWidth;
-          const isLast = i === segmentCount - 1;
+        const isFirst = i === 0;
+        const isLast = i === segmentCount - 1;
 
-          if (isLast) {
-            // 最后一段包含箭头尖端
-            const points = [
-              { x: rectX, y: startY + bodyOffsetY },
-              { x: rectX + rectWidth, y: startY + bodyOffsetY },
-              { x: rectX + rectWidth, y: startY },
-              { x: startX + totalWidth, y: startY + height / 2 },
-              { x: rectX + rectWidth, y: startY + height },
-              { x: rectX + rectWidth, y: startY + bodyOffsetY + bodyHeight },
-              { x: rectX, y: startY + bodyOffsetY + bodyHeight }
-            ];
-            segments.push({
-              points,
-              textX: rectX + rectWidth / 2,
-              textWidth
-            });
-          } else {
-            // 普通矩形段（细身体）
-            const points = [
-              { x: rectX, y: startY + bodyOffsetY },
-              { x: rectX + rectWidth, y: startY + bodyOffsetY },
-              { x: rectX + rectWidth, y: startY + bodyOffsetY + bodyHeight },
-              { x: rectX, y: startY + bodyOffsetY + bodyHeight }
-            ];
-            segments.push({
-              points,
-              textX: rectX + rectWidth / 2,
-              textWidth
-            });
-          }
-        } else if (direction === 'left') {
-          const rectX = startX + bigTipWidth + i * rectWidth;
-          const isFirst = i === 0;
-
-          if (isFirst) {
-            // 第一段包含箭头尖端
-            const points = [
-              { x: startX, y: startY + height / 2 },
-              { x: startX + bigTipWidth, y: startY },
-              { x: startX + bigTipWidth, y: startY + bodyOffsetY },
-              { x: rectX + rectWidth, y: startY + bodyOffsetY },
-              { x: rectX + rectWidth, y: startY + bodyOffsetY + bodyHeight },
-              { x: startX + bigTipWidth, y: startY + bodyOffsetY + bodyHeight },
-              { x: startX + bigTipWidth, y: startY + height }
-            ];
-            segments.push({
-              points,
-              textX: rectX + rectWidth / 2,
-              textWidth
-            });
-          } else {
-            // 普通矩形段（细身体）
-            const points = [
-              { x: rectX, y: startY + bodyOffsetY },
-              { x: rectX + rectWidth, y: startY + bodyOffsetY },
-              { x: rectX + rectWidth, y: startY + bodyOffsetY + bodyHeight },
-              { x: rectX, y: startY + bodyOffsetY + bodyHeight }
-            ];
-            segments.push({
-              points,
-              textX: rectX + rectWidth / 2,
-              textWidth
-            });
-          }
+        // 计算每段的起始X坐标
+        let rectX: number;
+        if (direction === 'left' || direction === 'left-right') {
+          rectX = startX + bigTipWidth + i * rectWidth;
+        } else {
+          rectX = startX + i * rectWidth;
         }
+
+        // 判断当前段是否需要特殊处理
+        const hasLeftTip = (direction === 'left' || direction === 'left-right') && isFirst;
+        const hasRightTip = (direction === 'right' || direction === 'left-right') && isLast;
+
+        let points: Array<{ x: number; y: number }>;
+
+        if (hasLeftTip && hasRightTip) {
+          // 左右都有箭头尖端（只在left-right且只有一段时发生）
+          points = [
+            { x: startX, y: startY + height / 2 },
+            { x: startX + bigTipWidth, y: startY },
+            { x: startX + bigTipWidth, y: startY + bodyOffsetY },
+            { x: rectX + rectWidth, y: startY + bodyOffsetY },
+            { x: rectX + rectWidth, y: startY },
+            { x: startX + totalWidth, y: startY + height / 2 },
+            { x: rectX + rectWidth, y: startY + height },
+            { x: rectX + rectWidth, y: startY + bodyOffsetY + bodyHeight },
+            { x: startX + bigTipWidth, y: startY + bodyOffsetY + bodyHeight },
+            { x: startX + bigTipWidth, y: startY + height }
+          ];
+        } else if (hasLeftTip) {
+          // 只有左侧箭头尖端
+          points = [
+            { x: startX, y: startY + height / 2 },
+            { x: startX + bigTipWidth, y: startY },
+            { x: startX + bigTipWidth, y: startY + bodyOffsetY },
+            { x: rectX + rectWidth, y: startY + bodyOffsetY },
+            { x: rectX + rectWidth, y: startY + bodyOffsetY + bodyHeight },
+            { x: startX + bigTipWidth, y: startY + bodyOffsetY + bodyHeight },
+            { x: startX + bigTipWidth, y: startY + height }
+          ];
+        } else if (hasRightTip) {
+          // 只有右侧箭头尖端
+          points = [
+            { x: rectX, y: startY + bodyOffsetY },
+            { x: rectX + rectWidth, y: startY + bodyOffsetY },
+            { x: rectX + rectWidth, y: startY },
+            { x: startX + totalWidth, y: startY + height / 2 },
+            { x: rectX + rectWidth, y: startY + height },
+            { x: rectX + rectWidth, y: startY + bodyOffsetY + bodyHeight },
+            { x: rectX, y: startY + bodyOffsetY + bodyHeight }
+          ];
+        } else {
+          // 普通矩形段（细身体）
+          points = [
+            { x: rectX, y: startY + bodyOffsetY },
+            { x: rectX + rectWidth, y: startY + bodyOffsetY },
+            { x: rectX + rectWidth, y: startY + bodyOffsetY + bodyHeight },
+            { x: rectX, y: startY + bodyOffsetY + bodyHeight }
+          ];
+        }
+
+        segments.push({
+          points,
+          textX: rectX + rectWidth / 2,
+          textWidth
+        });
       }
     }
 

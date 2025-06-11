@@ -125,78 +125,90 @@ export class StoryArrowList extends StoryBaseList {
           textX: startX + (totalWidth + tipWidth) / 2,
           textWidth: Math.max(totalWidth - tipWidth - 10, (totalWidth - tipWidth) * 0.8, 0)
         });
+      } else if (direction === 'left-right') {
+        // 左右都有箭头的情况
+        const points = [
+          { x: startX, y: startY + height / 2 },
+          { x: startX + tipWidth, y: startY },
+          { x: startX + totalWidth - tipWidth, y: startY },
+          { x: startX + totalWidth, y: startY + height / 2 },
+          { x: startX + totalWidth - tipWidth, y: startY + height },
+          { x: startX + tipWidth, y: startY + height }
+        ];
+        segments.push({
+          points,
+          textX: startX + totalWidth / 2,
+          textWidth: Math.max(totalWidth - tipWidth * 2 - 10, (totalWidth - tipWidth * 2) * 0.8, 0)
+        });
       }
     } else {
-      // 多个段的箭头
-      const rectWidth = (totalWidth - tipWidth) / segmentCount;
+      // 多个段的箭头 - 统一处理left、right、left-right
+      // 计算箭头尖端的总宽度
+      const totalTipWidth = direction === 'left-right' ? tipWidth * 2 : tipWidth;
+      const rectWidth = (totalWidth - totalTipWidth) / segmentCount;
       const textWidth = Math.max(rectWidth - 10, rectWidth * 0.8, 0);
 
       for (let i = 0; i < segmentCount; i++) {
-        if (direction === 'right') {
-          const rectX = startX + i * rectWidth;
-          const isLast = i === segmentCount - 1;
+        const isFirst = i === 0;
+        const isLast = i === segmentCount - 1;
 
-          if (isLast) {
-            // 最后一段包含箭头尖端
-            const points = [
-              { x: rectX, y: startY },
-              { x: rectX + rectWidth, y: startY },
-              { x: startX + totalWidth, y: startY + height / 2 },
-              { x: rectX + rectWidth, y: startY + height },
-              { x: rectX, y: startY + height }
-            ];
-            segments.push({
-              points,
-              textX: rectX + rectWidth / 2,
-              textWidth
-            });
-          } else {
-            // 普通矩形段
-            const points = [
-              { x: rectX, y: startY },
-              { x: rectX + rectWidth, y: startY },
-              { x: rectX + rectWidth, y: startY + height },
-              { x: rectX, y: startY + height }
-            ];
-            segments.push({
-              points,
-              textX: rectX + rectWidth / 2,
-              textWidth
-            });
-          }
-        } else if (direction === 'left') {
-          const rectX = startX + tipWidth + i * rectWidth;
-          const isFirst = i === 0;
-
-          if (isFirst) {
-            // 第一段包含箭头尖端
-            const points = [
-              { x: startX, y: startY + height / 2 },
-              { x: startX + tipWidth, y: startY },
-              { x: rectX + rectWidth, y: startY },
-              { x: rectX + rectWidth, y: startY + height },
-              { x: startX + tipWidth, y: startY + height }
-            ];
-            segments.push({
-              points,
-              textX: rectX + rectWidth / 2,
-              textWidth
-            });
-          } else {
-            // 普通矩形段
-            const points = [
-              { x: rectX, y: startY },
-              { x: rectX + rectWidth, y: startY },
-              { x: rectX + rectWidth, y: startY + height },
-              { x: rectX, y: startY + height }
-            ];
-            segments.push({
-              points,
-              textX: rectX + rectWidth / 2,
-              textWidth
-            });
-          }
+        // 计算每段的起始X坐标
+        let rectX: number;
+        if (direction === 'left' || direction === 'left-right') {
+          rectX = startX + tipWidth + i * rectWidth;
+        } else {
+          rectX = startX + i * rectWidth;
         }
+
+        // 判断当前段是否需要特殊处理
+        const hasLeftTip = (direction === 'left' || direction === 'left-right') && isFirst;
+        const hasRightTip = (direction === 'right' || direction === 'left-right') && isLast;
+
+        let points: Array<{ x: number; y: number }>;
+
+        if (hasLeftTip && hasRightTip) {
+          // 左右都有箭头尖端（只在left-right且只有一段时发生）
+          points = [
+            { x: startX, y: startY + height / 2 },
+            { x: startX + tipWidth, y: startY },
+            { x: rectX + rectWidth, y: startY },
+            { x: startX + totalWidth, y: startY + height / 2 },
+            { x: rectX + rectWidth, y: startY + height },
+            { x: startX + tipWidth, y: startY + height }
+          ];
+        } else if (hasLeftTip) {
+          // 只有左侧箭头尖端
+          points = [
+            { x: startX, y: startY + height / 2 },
+            { x: startX + tipWidth, y: startY },
+            { x: rectX + rectWidth, y: startY },
+            { x: rectX + rectWidth, y: startY + height },
+            { x: startX + tipWidth, y: startY + height }
+          ];
+        } else if (hasRightTip) {
+          // 只有右侧箭头尖端
+          points = [
+            { x: rectX, y: startY },
+            { x: rectX + rectWidth, y: startY },
+            { x: startX + totalWidth, y: startY + height / 2 },
+            { x: rectX + rectWidth, y: startY + height },
+            { x: rectX, y: startY + height }
+          ];
+        } else {
+          // 普通矩形段
+          points = [
+            { x: rectX, y: startY },
+            { x: rectX + rectWidth, y: startY },
+            { x: rectX + rectWidth, y: startY + height },
+            { x: rectX, y: startY + height }
+          ];
+        }
+
+        segments.push({
+          points,
+          textX: rectX + rectWidth / 2,
+          textWidth
+        });
       }
     }
 
@@ -244,10 +256,9 @@ export class StoryArrowList extends StoryBaseList {
     arrowHeight: number
   ) {
     const { titleTextOrder = 'top' } = this.attribute;
-    const { position = 'top' } = item; // 获取position属性，默认为top
-    const padding = 10;
+    const { position = 'top', spaceTitleText = 2, space = 10 } = item; // 获取position属性，默认为top
 
-    startY = position === 'top' ? startY - padding : startY + arrowHeight + padding;
+    startY = position === 'top' ? startY - space : startY + arrowHeight + space;
 
     const createTitle = (dy: number = 0, textBaseline: string = 'top') => {
       if (item.title) {
@@ -293,6 +304,7 @@ export class StoryArrowList extends StoryBaseList {
           // 因为是顶部对齐，所以需要减去标题的高度
           let height = title.AABBBounds.height();
           title.setAttribute('y', title.attribute.y - height);
+          height += spaceTitleText;
           const text = createText(-height, 'top');
           if (text) {
             height = text.AABBBounds.height();
@@ -305,6 +317,7 @@ export class StoryArrowList extends StoryBaseList {
           // 因为是顶部对齐，所以需要减去文本的高度
           let height = text.AABBBounds.height();
           text.setAttribute('y', text.attribute.y - height);
+          height += spaceTitleText;
           const title = createTitle(-height, 'top');
           if (title) {
             height = title.AABBBounds.height();
@@ -319,14 +332,16 @@ export class StoryArrowList extends StoryBaseList {
       if (titleTextOrder === 'top') {
         const title = createTitle(0, 'top');
         if (title) {
-          const height = title.AABBBounds.height();
+          let height = title.AABBBounds.height();
+          height += spaceTitleText;
           createText(height, 'top');
         }
       } else {
         const text = createText(startY, 'top');
         if (text) {
-          const height = text.AABBBounds.height();
-          const title = createTitle(startY + (text ? text.AABBBounds.height() : 0), 'top');
+          let height = text.AABBBounds.height();
+          height += spaceTitleText;
+          createTitle(startY + height, 'top');
         }
       }
     }

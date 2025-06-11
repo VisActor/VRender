@@ -201,7 +201,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
       /**
        * https://developer.mozilla.org/zh-CN/docs/Web/CSS/overscroll-behavior
        * 由于浏览器的overscroll-behavior属性，需要在move的时候阻止浏览器默认行为，否则会因为浏览器检测到scroll行为，阻止pointer事件，
-       * 抛出pointercancel事件，导致拖拽行为中断。
+       * 抛出pointercancel事件，导致拖拽行为中断
        */
       e.preventDefault();
     }

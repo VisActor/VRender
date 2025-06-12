@@ -69,6 +69,21 @@ export class StoryRectList extends AbstractComponent<Required<IStoryListAttrs>> 
       },
       'symbol'
     );
+    this.createOrUpdateChild(
+      'icon-2',
+      {
+        x: corner.iconX,
+        y: corner.iconY,
+        size: iconSize,
+        symbolType:
+          'M 30 10 Q 20 10 20 20 Q 20 30 30 30 L 70 30 Q 80 30 80 40 Q 80 50 70 50 L 30 50 Q 20 50 20 60 Q 20 70 30 70 L 50 70 L 50 80 L 40 80 L 40 70 Q 20 70 10 60 Q 0 50 10 40 Q 20 30 40 30 L 70 30 Q 80 30 80 20 Q 80 10 70 10 L 50 10 L 50 0 L 40 0 L 40 10 Z',
+        fill: colors[index] || '#4285F4',
+        stroke: colors[index] || '#4285F4',
+        lineWidth: 2,
+        ...item.icon
+      },
+      'symbol'
+    );
   }
 
   // ...

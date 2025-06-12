@@ -7,7 +7,7 @@ import { StoryBaseList } from './story-base-list';
 
 loadStoryListComponent();
 
-export class StoryArrowList extends StoryBaseList {
+export class StoryArrowList extends StoryBaseList<IStoryArrowListAttrs> {
   static defaultAttributes: Partial<IStoryArrowListAttrs> = {
     colors: ['#4285F4', '#34A853', '#00BCD4', '#8BC34A'], // 蓝、绿、青、黄绿
     list: [],

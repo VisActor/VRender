@@ -1,11 +1,11 @@
 import { hexToRgb, rgbToHex, hslToRgb, rgbToHsl } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
-import type { IStoryArrowListAttrs } from './type';
+import type { IStoryListAttrs } from './type';
 import { loadStoryListComponent } from './register';
 
 loadStoryListComponent();
 
-export abstract class StoryBaseList extends AbstractComponent<Required<IStoryArrowListAttrs>> {
+export abstract class StoryBaseList<T extends IStoryListAttrs> extends AbstractComponent<Required<T>> {
   protected getThemeStyle(themeStyle: string, fillColor: string, strokeColor: string, lineWidth: number) {
     switch (themeStyle) {
       case 'fill-only':

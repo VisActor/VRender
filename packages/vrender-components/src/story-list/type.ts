@@ -26,6 +26,13 @@ export interface IStoryArrowListAttrs extends IStoryListAttrs {
   themeStyle?: 'normal' | 'stroke-only' | 'fill-only'; // 主题风格
 }
 
+export interface IStoryShapeListAttrs extends IStoryListAttrs {
+  shapePath?: string; // SVG路径字符串，定义左侧的形状
+  shapeRatio?: number; // 左侧形状占据总宽度的比例，默认0.4
+  spacing?: number; // 列表项之间的间距，默认10
+  themeStyle?: 'normal' | 'stroke-only' | 'fill-only'; // 主题风格
+}
+
 export interface IIconLabelItemAttrs extends ILiItemAttrs {
   height: number; // 整体的高度，icon、title、text会在范围内进行布局
   color: string; // 颜色，会影响icon、title、text的填充色

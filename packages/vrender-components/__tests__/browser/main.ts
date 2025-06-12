@@ -317,6 +317,10 @@ const specs = [
   {
     path: 'icon-label-component',
     name: 'icon-label-component'
+  },
+  {
+    path: 'story-vertical-shape-clip-list',
+    name: 'story-vertical-shape-clip-list'
   }
 ];
 

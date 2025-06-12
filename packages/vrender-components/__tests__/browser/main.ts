@@ -313,6 +313,10 @@ const specs = [
   {
     path: 'story-thin-arrow-list',
     name: 'story-thin-arrow-list'
+  },
+  {
+    path: 'icon-label-component',
+    name: 'icon-label-component'
   }
 ];
 

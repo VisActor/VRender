@@ -108,6 +108,47 @@ export class StoryRectList extends AbstractComponent<Required<IStoryListAttrs>> 
 }
 ```
 
+**裁剪**
+
+group 图元支持裁剪，可以通过配置 width 和 height 来确定 group 的大小，然后配置 clip 就能实现裁剪
+
+```ts
+const group = createGroup({
+  x: 0,
+  y: 0,
+  width: 100,
+  height: 100,
+  clip: true
+});
+
+// 裁剪的图元需要配置在group的子图元中
+// 下面的矩形就只会显示自身的0,0 - 100,100的区域
+group.createOrUpdateChild(
+  'rect-1',
+  {
+    x: 0,
+    y: 0,
+    width: 300,
+    height: 300,
+    fill: 'red'
+  },
+  'rect'
+);
+
+// 下面的矩形会显示自身的100,100 - 200,200的区域，因为它从group坐标系的-100,-100开始，所以group的0,0位置其实是rect的100,100位置
+group.createOrUpdateChild(
+  'rect-2',
+  {
+    x: -100,
+    y: -100,
+    width: 300,
+    height: 300,
+    fill: 'red'
+  },
+  'rect'
+);
+```
+
 ### VRenderComponent 介绍
 
 而组件本身是一个 VRender 的 Group 图元。所有的组件都继承自 AbstractComponent，AbstractComponent 会提供一个 render 函数，会在设置组件属性的时候执行。
@@ -420,3 +461,12 @@ export class Radio extends AbstractComponent<Required<RadioAttributes>> {
   }
 }
 ```
+
+### 参考组件
+
+`StoryArrowList`是一个已经实现了的箭头效果的组件效果，它实现了：
+
+1. 列表的形状是一个水平的箭头，将箭头切成几部分，每个部分对应一个列表项
+2. icon 可以配置在箭头的身体居中位置
+3. title 和 text 可以配置在箭头身体的上方和下方
+4. colors 数组对应的是箭头的颜色，每个颜色对应一个列表项，如果只配置了一个颜色，则会通过 generateColors 生成基于亮度和饱和度的颜色数组

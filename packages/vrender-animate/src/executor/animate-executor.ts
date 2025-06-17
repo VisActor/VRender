@@ -423,6 +423,7 @@ export class AnimateExecutor implements IAnimateExecutor {
       const customParams = {
         width: graphic.stage.width,
         height: graphic.stage.height,
+        group: this._target.parent,
         ...this.resolveValue(customParameters, graphic)
       };
       const objOptions = isFunction(options)

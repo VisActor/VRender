@@ -80,10 +80,9 @@ export const moveOut = (
 ) => {
   const { offset = 0, orient, direction, point: pointOpt } = options ?? {};
 
-  // consider the offset of group
-  // const groupBounds = graphic.parent ? graphic.parent.getBounds() : null;
-  const groupWidth = options.layoutRect?.width ?? graphic.stage.viewWidth;
-  const groupHeight = options.layoutRect?.height ?? graphic.stage.viewHeight;
+  const groupBounds = animationParameters.group ? animationParameters.group.AABBBounds : null;
+  const groupWidth = groupBounds.width() ?? animationParameters.width;
+  const groupHeight = groupBounds.height() ?? animationParameters.height;
   const changedX = (orient === 'negative' ? groupWidth : 0) + offset;
   const changedY = (orient === 'negative' ? groupHeight : 0) + offset;
   const point = isFunction(pointOpt)

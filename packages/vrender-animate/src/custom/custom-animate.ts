@@ -16,6 +16,8 @@ export abstract class ACustomAnimate<T> extends Step implements ICustomAnimate {
     super('customAnimate', customTo, duration, easing);
     this.customFrom = customFrom;
     this.params = params;
+    this.from = customFrom;
+    this.to = customTo;
   }
 
   update(end: boolean, ratio: number, out: Record<string, any>): void {

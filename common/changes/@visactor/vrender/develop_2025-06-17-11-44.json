@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "feat: timeline support animationStart flag",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

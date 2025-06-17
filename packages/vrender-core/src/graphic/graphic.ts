@@ -671,10 +671,19 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     this.widthWithoutTransform = aabbBounds.x2 - aabbBounds.x1;
     this.heightWithoutTransform = aabbBounds.y2 - aabbBounds.y1;
   }
-  setAttributesAndPreventAnimate(params: Partial<T>, forceUpdateTag: boolean = false, context?: ISetAttributeContext) {
+  setAttributesAndPreventAnimate(
+    params: Partial<T>,
+    forceUpdateTag: boolean = false,
+    context?: ISetAttributeContext,
+    ignorePriority?: boolean
+  ) {
     this.setAttributes(params, forceUpdateTag, context);
     this.animates &&
       this.animates.forEach(animate => {
+        // 优先级最高的动画（一般是循环动画），不屏蔽
+        if (animate.priority === Infinity && !ignorePriority) {
+          return;
+        }
         Object.keys(params).forEach(key => {
           animate.preventAttr(key);
         });

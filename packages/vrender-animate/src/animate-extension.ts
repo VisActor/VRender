@@ -27,9 +27,6 @@ export class AnimateExtension {
   }
 
   animate(params?: IGraphicAnimateParams) {
-    if (!this.animates) {
-      this.animates = new Map();
-    }
     const animate = new Animate(
       params?.id,
       params?.timeline ?? ((this as any).stage && (this as any).stage.getTimeline()) ?? defaultTimeline,
@@ -43,11 +40,6 @@ export class AnimateExtension {
       onEnd != null && animate.onEnd(onEnd);
       onRemove != null && animate.onRemove(onRemove);
     }
-    this.animates.set(animate.id, animate);
-    animate.onRemove(() => {
-      animate.stop();
-      this.animates.delete(animate.id);
-    });
 
     // TODO 考虑性能问题
     (this as any).stage?.ticker.start();

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-animate",
+      "comment": "feat: don't prevent normal animate attribute",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-animate"
+}

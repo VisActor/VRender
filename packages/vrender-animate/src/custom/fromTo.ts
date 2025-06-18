@@ -51,6 +51,11 @@ export class FromTo extends ACustomAnimate<Record<string, number>> {
     this.target.setAttributes(this.from);
   }
 
+  deleteSelfAttr(key: string): void {
+    super.deleteSelfAttr(key);
+    delete this.from[key];
+  }
+
   /**
    * 更新执行的时候调用
    * 如果跳帧了就不一定会执行

@@ -124,6 +124,15 @@ export class Animate implements IAnimate {
   bind(target: IGraphic): this {
     this.target = target;
 
+    if (!this.target.animates) {
+      this.target.animates = new Map();
+    }
+    this.target.animates.set(this.id, this);
+    this.onRemove(() => {
+      this.stop();
+      this.target.animates.delete(this.id);
+    });
+
     if (this.target.onAnimateBind && !this.slience) {
       this.target.onAnimateBind(this as any);
     }

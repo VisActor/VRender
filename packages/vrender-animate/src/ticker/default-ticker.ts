@@ -224,7 +224,7 @@ export class DefaultTicker extends EventEmitter implements ITicker {
   }
 
   protected checkSkip(delta: number): boolean {
-    if (this.stage.params.optimize.tickRenderMode === 'performance') {
+    if (this.stage?.params?.optimize?.tickRenderMode === 'performance') {
       return false;
     }
     // 随机扰动（每次都对interval进行随机的扰动，避免所有tick都发生在同一帧）

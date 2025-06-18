@@ -8,7 +8,44 @@ export class ResourceLoader {
   private static toLoadAueue: { url: string; marks: ImagePayload[] }[] = [];
   private static onLoadSuccessCb: (() => void)[] = [];
 
-  static GetImage(url: string, mark: ImagePayload) {
+  static LoadAll(urls: string[], marks: ImagePayload[]) {
+    const promises = urls.map((url, index) => {
+      return ResourceLoader.GetImage(url, marks[index]);
+    });
+    return Promise.all(promises);
+  }
+
+  static GetImage(url: string, mark?: ImagePayload) {
+    return new Promise((resolve, reject) => {
+      ResourceLoader._GetImage(url, {
+        imageLoadSuccess: (url: string, data: HTMLImageElement) => {
+          mark?.imageLoadSuccess(url, data);
+          resolve(data);
+        },
+        imageLoadFail: (url: string) => {
+          mark?.imageLoadFail(url);
+          reject();
+        }
+      });
+    });
+  }
+
+  static GetSvg(svgStr: string, mark?: ImagePayload) {
+    return new Promise((resolve, reject) => {
+      ResourceLoader._GetSvg(svgStr, {
+        imageLoadSuccess: (url: string, data: HTMLImageElement) => {
+          mark?.imageLoadSuccess(url, data);
+          resolve(data);
+        },
+        imageLoadFail: (url: string) => {
+          mark?.imageLoadFail(url);
+          reject();
+        }
+      });
+    });
+  }
+
+  static _GetImage(url: string, mark: ImagePayload) {
     const data = ResourceLoader.cache.get(url);
     if (data) {
       // 存在缓存
@@ -56,7 +93,7 @@ export class ResourceLoader {
     }
   }
 
-  static GetSvg(svgStr: string, mark: ImagePayload) {
+  static _GetSvg(svgStr: string, mark: ImagePayload) {
     let data = ResourceLoader.cache.get(svgStr);
     if (data) {
       // 存在缓存
@@ -129,7 +166,7 @@ export class ResourceLoader {
     return data.dataPromise.then(data => data.data);
   }
 
-  static loading() {
+  private static loading() {
     setTimeout(() => {
       if (!ResourceLoader.isLoading && ResourceLoader.toLoadAueue.length) {
         ResourceLoader.isLoading = true;
@@ -190,7 +227,7 @@ export class ResourceLoader {
     }, 0);
   }
 
-  static loadImage(url: string, mark: ImagePayload) {
+  private static loadImage(url: string, mark: ImagePayload) {
     // find url in toLoadAueue
     const index = getIndex(url, ResourceLoader.toLoadAueue);
     if (index !== -1) {

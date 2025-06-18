@@ -2,6 +2,27 @@
   "name": "@visactor/vrender-animate",
   "entries": [
     {
+      "version": "1.0.4",
+      "tag": "@visactor/vrender-animate_v1.0.4",
+      "date": "Wed, 18 Jun 2025 05:41:49 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: timeline support animationStart flag"
+          },
+          {
+            "comment": "feat: don't prevent normal animate attribute"
+          },
+          {
+            "comment": "fix: fix default params of animation\n\n"
+          },
+          {
+            "comment": "fix: fix issue with recall setupTickHandler"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.0.3",
       "tag": "@visactor/vrender-animate_v1.0.3",
       "date": "Tue, 10 Jun 2025 09:32:32 GMT",

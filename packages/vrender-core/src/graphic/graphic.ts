@@ -1035,6 +1035,9 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     } else {
       this.stopStateAnimates();
       this.setAttributesAndPreventAnimate(attrs, false, { type: AttributeUpdateType.STATE });
+      if ((this as any).finalAttribute) {
+        Object.assign((this as any).finalAttribute, attrs);
+      }
     }
 
     this._emitCustomEvent('afterStateUpdate', { type: AttributeUpdateType.STATE });

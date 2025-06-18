@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "fix: set finalAttribute when applyStateAttrs",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

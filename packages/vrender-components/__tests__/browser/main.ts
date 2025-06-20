@@ -3,6 +3,10 @@ import './style.css';
 const LOCAL_STORAGE_KEY = 'VRENDER_COMPONENTS_DEMOS';
 const specs = [
   {
+    path: 'table-series-number',
+    name: '表格序号'
+  },
+  {
     path: 'axis-break',
     name: '轴截断'
   },

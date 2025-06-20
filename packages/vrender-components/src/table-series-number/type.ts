@@ -5,11 +5,14 @@ import type {
   ILineGraphicAttribute,
   ITextGraphicAttribute
 } from '@visactor/vrender-core';
-// export type ColumnSeriesNumberAttributes = IGroupGraphicAttribute ;
 
 // export type EmptyTipIcon = IImageGraphicAttribute;
 
 export type TableSeriesNumberAttributes = IGroupGraphicAttribute & {
+  frozenTopRow?: number;
+  frozenLeftCol?: number;
+  frozenRightCol?: number;
+  frozenBottomRow?: number;
   rowSeriesNumberGenerate?: (index: number) => string;
   rowSeriesNumberWidth?: number | 'auto';
   rowHeight?: number | 'auto';
@@ -29,10 +32,10 @@ export type TableSeriesNumberAttributes = IGroupGraphicAttribute & {
       };
     };
   };
-  columnSeriesNumberGenerate?: (index: number) => string;
-  columnSeriesNumberHeight?: number | 'auto';
-  columnWidth?: number | 'auto';
-  columnSeriesNumberCellStyle?: {
+  colSeriesNumberGenerate?: (index: number) => string;
+  colSeriesNumberHeight?: number | 'auto';
+  colWidth?: number | 'auto';
+  colSeriesNumberCellStyle?: {
     text?: ITextGraphicAttribute;
     borderLine?: ILineGraphicAttribute;
     bgColor?: IColor;
@@ -47,7 +50,7 @@ export type TableSeriesNumberAttributes = IGroupGraphicAttribute & {
       };
     };
   };
-  columnCount?: number;
+  colCount?: number;
   cornerCellStyle?: {
     borderLine?: ILineGraphicAttribute;
     bgColor?: IColor;

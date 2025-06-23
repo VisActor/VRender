@@ -2,6 +2,27 @@
   "name": "@visactor/vrender-animate",
   "entries": [
     {
+      "version": "1.0.6",
+      "tag": "@visactor/vrender-animate_v1.0.6",
+      "date": "Mon, 23 Jun 2025 12:24:15 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: support pauseAnimation resumeAnimation stopAnimation reApplyAnimationState"
+          },
+          {
+            "comment": "fix: fix issue with immediatelyApply in custom animate"
+          },
+          {
+            "comment": "fix: disable increaseEffect in label did not take effect"
+          },
+          {
+            "comment": "fix: fix moveIn animation\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.0.5",
       "tag": "@visactor/vrender-animate_v1.0.5",
       "date": "Wed, 18 Jun 2025 10:09:34 GMT",

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-animate",
+      "comment": "feat: support pauseAnimation resumeAnimation stopAnimation reApplyAnimationState",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-animate"
+}

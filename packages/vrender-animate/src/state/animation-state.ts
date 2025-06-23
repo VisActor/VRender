@@ -231,6 +231,14 @@ export class AnimationStateManager {
     this.stateList = null;
   }
 
+  reApplyState(state: string): void {
+    const stateInfo = this.stateList?.find(stateInfo => stateInfo.state === state);
+    if (stateInfo) {
+      stateInfo.executor.stop();
+      stateInfo.executor.execute(stateInfo.animationConfig);
+    }
+  }
+
   // getstateList(): string[] | null {
   //   return this.stateList;
   // }

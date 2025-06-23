@@ -1129,7 +1129,7 @@ export class Stage extends Group implements IStage {
   }
 
   eventPointTransform(e: PointerEvent | WheelEvent | TouchEvent): { x: number; y: number } {
-    const point = this.global.mapToCanvasPoint(e, this.window.getContext().canvas.nativeCanvas);
+    const point = this.global.mapToCanvasPoint(e, this.window);
 
     return this.stage.window.pointTransform(point.x, point.y);
   }

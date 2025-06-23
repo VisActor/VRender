@@ -1,6 +1,18 @@
 # Change Log - @visactor/vrender-animate
 
-This log was last generated on Wed, 18 Jun 2025 10:09:34 GMT and should not be manually modified.
+This log was last generated on Mon, 23 Jun 2025 12:24:15 GMT and should not be manually modified.
+
+## 1.0.6
+Mon, 23 Jun 2025 12:24:15 GMT
+
+### Updates
+
+- feat: support pauseAnimation resumeAnimation stopAnimation reApplyAnimationState
+- fix: fix issue with immediatelyApply in custom animate
+- fix: disable increaseEffect in label did not take effect
+- fix: fix moveIn animation
+
+
 
 ## 1.0.5
 Wed, 18 Jun 2025 10:09:34 GMT

@@ -107,4 +107,31 @@ export class AnimateExtension {
     }
     return (this as any).attribute[key];
   }
+
+  pauseAnimation(deep: boolean = false) {
+    this.animates && this.animates.forEach(animate => animate.pause());
+    if (deep && (this as any).isContainer) {
+      (this as any).forEachChildren((child: any) => {
+        child.pauseAnimation(deep);
+      });
+    }
+  }
+
+  resumeAnimation(deep: boolean = false) {
+    this.animates && this.animates.forEach(animate => animate.resume());
+    if (deep && (this as any).isContainer) {
+      (this as any).forEachChildren((child: any) => {
+        child.resumeAnimation(deep);
+      });
+    }
+  }
+
+  stopAnimation(deep: boolean = false) {
+    this.animates && this.animates.forEach(animate => animate.stop());
+    if (deep && (this as any).isContainer) {
+      (this as any).forEachChildren((child: any) => {
+        child.stopAnimation(deep);
+      });
+    }
+  }
 }

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-animate",
+      "comment": "fix: fix issue with immediatelyApply in custom animate",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-animate"
+}

@@ -297,8 +297,8 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
 
   removeChild(child: IGraphic): IGraphic {
     const data = super.removeChild(child);
-    child.stage = null;
     this.getGraphicService().onRemove(child);
+    child.stage = null;
     this.addUpdateBoundTag();
     return data as IGraphic;
   }

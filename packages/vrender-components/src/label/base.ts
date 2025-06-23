@@ -853,8 +853,8 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
           name: 'update',
           animation: {
             type: 'labelUpdate',
-            ...this._animationConfig.update,
             customParameters: {
+              ...this._animationConfig.update,
               prevText,
               curText,
               prevLabelLine,

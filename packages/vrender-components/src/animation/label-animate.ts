@@ -10,7 +10,7 @@ export class LabelUpdate extends AComponentAnimate<any> {
     const duration = this.duration;
     const easing = this.easing;
 
-    const { prevText, curText, prevLabelLine, curLabelLine } = this.params;
+    const { prevText, curText, prevLabelLine, curLabelLine, increaseEffect = true } = this.params;
     const diff: Record<string, any> = {};
 
     for (const key in curText.attribute) {
@@ -28,14 +28,16 @@ export class LabelUpdate extends AComponentAnimate<any> {
       easing
     });
 
-    animator.animate(prevText, {
-      type: 'increaseCount',
-      to: {
-        text: curText.attribute.text
-      },
-      duration,
-      easing
-    });
+    if (increaseEffect !== false) {
+      animator.animate(prevText, {
+        type: 'increaseCount',
+        to: {
+          text: curText.attribute.text
+        },
+        duration,
+        easing
+      });
+    }
 
     if (prevLabelLine) {
       animator.animate(prevLabelLine, {

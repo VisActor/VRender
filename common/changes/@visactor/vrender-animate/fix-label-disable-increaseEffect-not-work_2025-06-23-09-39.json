@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-animate",
+      "comment": "fix: disable increaseEffect in label did not take effect",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-animate"
+}

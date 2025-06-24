@@ -248,6 +248,11 @@ export interface IStage extends INode {
   eventPointTransform: (e: PointerEvent | WheelEvent | TouchEvent) => { x: number; y: number };
   pauseTriggerEvent: () => void;
   resumeTriggerEvent: () => void;
+
+  pauseAnimation?: (deep?: boolean) => void;
+  resumeAnimation?: (deep?: boolean) => void;
+  stopAnimation?: (deep?: boolean) => void;
+  reApplyAnimationState?: (state: string, deep?: boolean) => this;
 }
 
 export declare function combineStage(srages: IStage[], params: { canvas: string | HTMLCanvasElement }): IStage;

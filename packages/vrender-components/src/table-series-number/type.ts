@@ -9,10 +9,10 @@ import type {
 // export type EmptyTipIcon = IImageGraphicAttribute;
 
 export type TableSeriesNumberAttributes = IGroupGraphicAttribute & {
-  frozenTopRow?: number;
-  frozenLeftCol?: number;
-  frozenRightCol?: number;
-  frozenBottomRow?: number;
+  frozenRowCount?: number;
+  frozenColCount?: number;
+  rightFrozenColCount?: number;
+  bottomFrozenRowCount?: number;
   rowSeriesNumberGenerate?: (index: number) => string;
   rowSeriesNumberWidth?: number | 'auto';
   rowHeight?: number | 'auto';

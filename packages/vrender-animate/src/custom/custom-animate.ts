@@ -1,5 +1,5 @@
 import type { ComponentAnimator } from '../component';
-import type { EasingType, IAnimateStepType, ICustomAnimate } from '@visactor/vrender-core';
+import type { EasingType, IAnimateStepType, ICustomAnimate, Stage } from '@visactor/vrender-core';
 import { Step } from '../step';
 
 export abstract class ACustomAnimate<T> extends Step implements ICustomAnimate {
@@ -50,5 +50,80 @@ export abstract class AComponentAnimate<T> extends ACustomAnimate<T> {
 
   stop(): void {
     this._animator && this._animator.stop();
+  }
+}
+
+export abstract class AStageAnimate<T> extends ACustomAnimate<T> {
+  willCallBeforeStageRender: boolean = true;
+  willCallAfterStageRender: boolean = true;
+  constructor(customFrom: T, customTo: T, duration: number, easing: EasingType, params?: any) {
+    super(customFrom, customTo, duration, easing, params);
+    this.props = {} as T;
+  }
+
+  // 用户重载
+  protected beforeStageRender(stage: Stage, canvas: HTMLCanvasElement): HTMLCanvasElement | void | null | false {
+    return false;
+  }
+
+  // 用户重载
+  protected afterStageRender(stage: Stage, canvas: HTMLCanvasElement): HTMLCanvasElement | void | null | false {
+    return false;
+  }
+
+  onFirstRun(): void {
+    super.onFirstRun();
+    this.target.stage.setBeforeRender(this._beforeStageRender);
+    this.target.stage.setAfterRender(this._afterStageRender);
+    // 禁用脏矩形，因为stage动画可能会批量修改整体画面
+    this.target.stage.disableDirtyBounds();
+  }
+
+  stop() {
+    super.stop();
+    this.target.stage.removeBeforeRender(this._beforeStageRender);
+    this.target.stage.removeAfterRender(this._afterStageRender);
+  }
+  onUpdate(end: boolean, ratio: number, out: Record<string, any>): void {
+    super.onUpdate(end, ratio, out);
+    this.willCallBeforeStageRender = true;
+    this.willCallAfterStageRender = true;
+  }
+
+  protected _beforeStageRender = () => {
+    if (!this.willCallBeforeStageRender) {
+      return;
+    }
+    this.willCallBeforeStageRender = false;
+    const stage = this.target.stage as any;
+    const canvas = stage.window.getContext().canvas.nativeCanvas;
+    const outputCanvas = this.beforeStageRender(stage, canvas);
+    if (outputCanvas) {
+      this.renderToStage(stage, outputCanvas);
+    }
+  };
+
+  protected _afterStageRender = () => {
+    if (!this.willCallAfterStageRender) {
+      return;
+    }
+    this.willCallAfterStageRender = false;
+    const stage = this.target.stage as any;
+    const canvas = stage.window.getContext().canvas.nativeCanvas;
+    const outputCanvas = this.afterStageRender(stage, canvas);
+    if (outputCanvas) {
+      this.renderToStage(stage, outputCanvas);
+    }
+  };
+
+  protected renderToStage(stage: Stage, canvas: HTMLCanvasElement): HTMLCanvasElement | void | null | false {
+    const stageCanvas = stage.window.getContext().canvas.nativeCanvas;
+    const ctx = stageCanvas.getContext('2d');
+    if (!ctx) {
+      return false;
+    }
+    ctx.clearRect(0, 0, stageCanvas.width, stageCanvas.height);
+    ctx.drawImage(canvas, 0, 0);
+    return stageCanvas;
   }
 }

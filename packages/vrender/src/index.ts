@@ -32,6 +32,7 @@ import {
   registerText,
   registerWrapText
 } from '@visactor/vrender-kits';
+import { registerCustomAnimate, registerAnimate } from '@visactor/vrender-animate';
 // 导出版本号
 export const version = __VERSION__;
 
@@ -68,6 +69,10 @@ registerHtmlAttributePlugin();
 registerReactAttributePlugin();
 registerDirectionalLight();
 registerOrthoCamera();
+
+registerCustomAnimate();
+registerAnimate();
+
 export * from '@visactor/vrender-core';
 export * from '@visactor/vrender-kits';
 export * from '@visactor/vrender-animate';

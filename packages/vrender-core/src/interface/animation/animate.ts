@@ -66,6 +66,9 @@ export interface IStep {
 
   // 停止
   stop: () => void;
+
+  // 释放
+  release: () => void;
 }
 
 export interface IAnimate {

@@ -9,7 +9,7 @@ export { Step as AnimateStep } from './step';
 export * from './utils/easing-func';
 export * from './utils/easing';
 export { registerAnimate } from './register';
-export { ACustomAnimate, AComponentAnimate } from './custom/custom-animate';
+export { ACustomAnimate, AComponentAnimate, AStageAnimate } from './custom/custom-animate';
 export { ComponentAnimator } from './component/component-animator';
 export { IncreaseCount } from './custom/number';
 export { MorphingPath, MultiToOneMorphingPath, oneToMultiMorph, multiToOneMorph, morphPath } from './custom/morphing';

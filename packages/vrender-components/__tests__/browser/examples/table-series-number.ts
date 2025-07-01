@@ -4,11 +4,14 @@ import render from '../../util/render';
 import { EmptyTip, SeriesNumberEvent, TableSeriesNumber } from '../../../src';
 
 export function run() {
-  const tableSeriesNumber: TableSeriesNumber = new TableSeriesNumber({
-    rowCount: 10,
-    colCount: 10
-  });
-
+  const tableSeriesNumber: TableSeriesNumber = new TableSeriesNumber(
+    {
+      rowCount: 100,
+      colCount: 100
+    },
+    { initRenderAll: true }
+  );
+  window.tableSeriesNumber = tableSeriesNumber;
   const stage = render(tableSeriesNumber, 'main');
   tableSeriesNumber.on(SeriesNumberEvent.seriesNumberCellClick, e => {
     console.log(SeriesNumberEvent.seriesNumberCellClick, e);

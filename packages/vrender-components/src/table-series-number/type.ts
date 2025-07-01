@@ -18,7 +18,7 @@ export type TableSeriesNumberAttributes = IGroupGraphicAttribute & {
   rowHeight?: number | 'auto';
   rowCount?: number;
   rowSeriesNumberCellStyle?: {
-    text?: ITextGraphicAttribute;
+    text?: ITextGraphicAttribute & { padding?: number | number[] };
     borderLine?: ILineGraphicAttribute;
     bgColor?: IColor;
     states?: {
@@ -36,7 +36,7 @@ export type TableSeriesNumberAttributes = IGroupGraphicAttribute & {
   colSeriesNumberHeight?: number | 'auto';
   colWidth?: number | 'auto';
   colSeriesNumberCellStyle?: {
-    text?: ITextGraphicAttribute;
+    text?: ITextGraphicAttribute & { padding?: number | number[] };
     borderLine?: ILineGraphicAttribute;
     bgColor?: IColor;
     states?: {

@@ -30,24 +30,29 @@ export class TableSeriesNumber extends AbstractComponent<Required<TableSeriesNum
     pickable: false,
     rowCount: 100,
     colCount: 100,
-    rowSeriesNumberWidth: 'auto',
-    colSeriesNumberHeight: 'auto',
+    rowHeight: 20,
+    colWidth: 50,
+    // rowSer
+    rowSeriesNumberWidth: 30,
+    colSeriesNumberHeight: 30,
     rowSeriesNumberCellStyle: {
       text: {
         fontSize: 14,
         fill: '#7A7A7A',
         pickable: false,
-        boundsPadding: 4
+        textAlign: 'left',
+        textBaseline: 'middle',
+        padding: [2, 4, 2, 4]
       },
       borderLine: {
-        stroke: 'red', // '#D9D9D9',
+        stroke: '#D9D9D9',
         lineWidth: 1,
         pickable: false
       },
       bgColor: '#F9F9F9',
       states: {
         hover: {
-          fill: 'red',
+          fill: '#98C8A5',
           opacity: 0.7
         },
         select: {
@@ -60,7 +65,10 @@ export class TableSeriesNumber extends AbstractComponent<Required<TableSeriesNum
       text: {
         fontSize: 14,
         fill: '#7A7A7A',
-        pickable: false
+        pickable: false,
+        textAlign: 'left',
+        textBaseline: 'middle',
+        padding: [2, 4, 2, 4]
       },
       borderLine: {
         stroke: '#D9D9D9',
@@ -121,32 +129,46 @@ export class TableSeriesNumber extends AbstractComponent<Required<TableSeriesNum
     selectIndexs?: Set<string>; //记录选中的行号或列号 cellGroup的name
     // selectColIndexs?:number[],
   } = { selectIndexs: new Set() };
-  constructor(attributes: TableSeriesNumberAttributes, options?: ComponentOptions) {
+  _parsedRowSeriesNumberCellPadding: number[] = [0, 0, 0, 0];
+  _parsedColSeriesNumberCellPadding: number[] = [0, 0, 0, 0];
+  initRenderAll: boolean = false;
+  constructor(attributes: TableSeriesNumberAttributes, options?: ComponentOptions & { initRenderAll?: boolean }) {
     super(options?.skipDefault ? attributes : merge({}, TableSeriesNumber.defaultAttributes, attributes));
+    this.initRenderAll = options?.initRenderAll || false;
     this._skipRenderAttributes.push('frozenTopRow');
     this._skipRenderAttributes.push('frozenLeftCol');
     this._skipRenderAttributes.push('frozenRightCol');
     this._skipRenderAttributes.push('frozenBottomRow');
     this._skipRenderAttributes.push('rowCount');
     this._skipRenderAttributes.push('colCount');
+    if (this.attribute.rowSeriesNumberCellStyle.text.padding) {
+      const padding = parsePadding(this.attribute.rowSeriesNumberCellStyle.text.padding);
+      if (typeof padding === 'number') {
+        this._parsedRowSeriesNumberCellPadding = [padding, padding, padding, padding];
+      } else {
+        this._parsedRowSeriesNumberCellPadding = padding;
+      }
+    }
+    if (this.attribute.colSeriesNumberCellStyle.text.padding) {
+      const padding = parsePadding(this.attribute.colSeriesNumberCellStyle.text.padding);
+      if (typeof padding === 'number') {
+        this._parsedColSeriesNumberCellPadding = [padding, padding, padding, padding];
+      } else {
+        this._parsedColSeriesNumberCellPadding = padding;
+      }
+    }
     // this.render();
   }
+
   get rowSeriesNumberWidth() {
     const { rowSeriesNumberWidth } = this.attribute;
     if (this._maxTextWidth) {
-      const textPadding = parsePadding(this.attribute.rowSeriesNumberCellStyle.text.boundsPadding);
-      let totalPadding = 0;
-      if (typeof textPadding === 'number') {
-        totalPadding = textPadding * 2;
-      } else {
-        totalPadding = textPadding[3] + textPadding[1];
-      }
       return Math.max(
-        this._maxTextWidth + totalPadding,
-        typeof rowSeriesNumberWidth === 'number' ? rowSeriesNumberWidth : 20
+        this._maxTextWidth + this._parsedRowSeriesNumberCellPadding[3] + this._parsedRowSeriesNumberCellPadding[1],
+        typeof rowSeriesNumberWidth === 'number' ? rowSeriesNumberWidth : 40
       );
     }
-    return typeof rowSeriesNumberWidth === 'number' ? rowSeriesNumberWidth : 20;
+    return typeof rowSeriesNumberWidth === 'number' ? rowSeriesNumberWidth : 40;
   }
   get colSeriesNumberHeight() {
     const { colSeriesNumberHeight } = this.attribute;
@@ -202,6 +224,26 @@ export class TableSeriesNumber extends AbstractComponent<Required<TableSeriesNum
     this._renderFrozenTopRowSeriesNumber();
     this._renderFrozenLeftColSeriesNumber();
     this._renderCorner();
+    if (this.initRenderAll) {
+      this.recreateCellsToRowSeriesNumberGroup(0, this.attribute.rowCount - 1);
+      this.recreateCellsToColSeriesNumberGroup(0, this.attribute.colCount - 1);
+      let y = 0;
+      for (let i = 0; i < this.attribute.rowCount; i++) {
+        this.setRowSeriesNumberCellAttributes(i, {
+          y,
+          height: typeof this.attribute.rowHeight === 'number' ? this.attribute.rowHeight : 20
+        });
+        y += typeof this.attribute.rowHeight === 'number' ? this.attribute.rowHeight : 20;
+      }
+      let x = 0;
+      for (let i = 0; i < this.attribute.colCount; i++) {
+        this.setColSeriesNumberCellAttributes(i, {
+          x,
+          width: typeof this.attribute.colWidth === 'number' ? this.attribute.colWidth : 20
+        });
+        x += typeof this.attribute.colWidth === 'number' ? this.attribute.colWidth : 20;
+      }
+    }
     // this._renderFrozenRightSeriesNumber();
     // this._renderFrozenBottomSeriesNumber();
   }
@@ -406,8 +448,8 @@ export class TableSeriesNumber extends AbstractComponent<Required<TableSeriesNum
       {
         x: this.rowSeriesNumberWidth,
         y: 0,
-        width: this.colSeriesNumberHeight,
-        height: frozenColCount * (typeof colWidth === 'number' ? colWidth : 20)
+        height: this.colSeriesNumberHeight,
+        width: frozenColCount * (typeof colWidth === 'number' ? colWidth : 20)
       },
       'group'
     ) as IGroup;
@@ -449,6 +491,37 @@ export class TableSeriesNumber extends AbstractComponent<Required<TableSeriesNum
     } = this.attribute;
     this._frozenTopRowSeriesNumberGroup.removeAllChild();
     this._rowSeriesNumberGroup.removeAllChild();
+
+    //#region根据textBaseline 计算每个cell中text的y坐标
+    let y = 0;
+    const height =
+      (typeof rowHeight === 'number' ? rowHeight : 20) -
+      this._parsedRowSeriesNumberCellPadding[0] -
+      this._parsedRowSeriesNumberCellPadding[2];
+    if (rowSeriesNumberCellStyle.text.textBaseline === 'middle') {
+      y = this._parsedRowSeriesNumberCellPadding[0] + (height - rowSeriesNumberCellStyle.text.fontSize) / 2;
+    } else if (rowSeriesNumberCellStyle.text.textBaseline === 'bottom') {
+      y = this._parsedRowSeriesNumberCellPadding[0] + height - rowSeriesNumberCellStyle.text.fontSize;
+    } else {
+      y = this._parsedRowSeriesNumberCellPadding[0];
+    }
+    //#endregion
+
+    //#region 根据textAlign 计算子元素Text的x坐标
+    let x;
+    const width =
+      this.rowSeriesNumberWidth - this._parsedRowSeriesNumberCellPadding[3] - this._parsedRowSeriesNumberCellPadding[1];
+    const textAlign = this.attribute.rowSeriesNumberCellStyle.text.textAlign;
+    const padding = this._parsedRowSeriesNumberCellPadding;
+    if (textAlign === 'center') {
+      x = padding[3] + +width / 2;
+    } else if (textAlign === 'right') {
+      x = padding[3] + width;
+    } else {
+      x = padding[3];
+    }
+    //#endregion
+
     // #region 冻结行序号
     for (let i = 0; i < frozenRowCount; i++) {
       const cellGroup = this._frozenTopRowSeriesNumberGroup.createOrUpdateChild(
@@ -470,14 +543,17 @@ export class TableSeriesNumber extends AbstractComponent<Required<TableSeriesNum
       if (this.interactionState.selectIndexs?.has(cellGroup.name)) {
         cellGroup.useStates([SeriesNumberCellStateValue.select]);
       }
+
       const text = cellGroup.createOrUpdateChild(
         `rowSeriesNumberCellText-${i}`,
         {
-          x: 0,
-          y: typeof rowHeight === 'number' ? rowHeight : 20,
+          x,
+          y,
           text: `${i + 1}`,
           pickable: false,
-          ...rowSeriesNumberCellStyle.text
+          dx: 0,
+          ...rowSeriesNumberCellStyle.text,
+          textBaseline: 'top'
         },
         'text'
       );
@@ -510,12 +586,13 @@ export class TableSeriesNumber extends AbstractComponent<Required<TableSeriesNum
       const text = cellGroup.createOrUpdateChild(
         `rowSeriesNumberCellText-${i + frozenRowCount}`,
         {
-          x: 0,
-          y: typeof rowHeight === 'number' ? rowHeight : 20,
-          boundsPadding: 4,
+          x,
+          y,
           text: `${i + 1 + frozenRowCount}`,
           pickable: false,
-          ...rowSeriesNumberCellStyle.text
+          dx: 0,
+          ...rowSeriesNumberCellStyle.text,
+          textBaseline: 'top'
         },
         'text'
       );
@@ -544,12 +621,45 @@ export class TableSeriesNumber extends AbstractComponent<Required<TableSeriesNum
       .attribute as TableSeriesNumberAttributes;
     this._frozenLeftColSeriesNumberGroup.removeAllChild();
     this._colSeriesNumberGroup.removeAllChild();
+
+    //#region 根据textBaseline 计算每个cell中text的y坐标
+    let y = 0;
+    const height =
+      this.colSeriesNumberHeight -
+      this._parsedColSeriesNumberCellPadding[0] -
+      this._parsedColSeriesNumberCellPadding[2];
+    if (colSeriesNumberCellStyle.text.textBaseline === 'middle') {
+      y = this._parsedColSeriesNumberCellPadding[0] + (height - colSeriesNumberCellStyle.text.fontSize) / 2;
+    } else if (colSeriesNumberCellStyle.text.textBaseline === 'bottom') {
+      y = this._parsedColSeriesNumberCellPadding[0] + height - colSeriesNumberCellStyle.text.fontSize;
+    } else {
+      y = this._parsedColSeriesNumberCellPadding[0];
+    }
+    //#endregion
+
+    //#region 根据textAlign 计算子元素Text的x坐标
+    let x;
+    const width =
+      (typeof colWidth === 'number' ? colWidth : 20) -
+      this._parsedColSeriesNumberCellPadding[3] -
+      this._parsedColSeriesNumberCellPadding[1];
+    const textAlign = this.attribute.colSeriesNumberCellStyle.text.textAlign;
+    const padding = this._parsedColSeriesNumberCellPadding;
+    if (textAlign === 'center') {
+      x = padding[3] + +width / 2;
+    } else if (textAlign === 'right') {
+      x = padding[3] + width;
+    } else {
+      x = padding[3];
+    }
+    //#endregion
+
     // #region 冻结列序号
     for (let i = 0; i < frozenColCount; i++) {
       const cellGroup = this._frozenLeftColSeriesNumberGroup.createOrUpdateChild(
         `colSeriesNumberCell-${i}`,
         {
-          x: i * (typeof colWidth === 'number' ? colWidth : 20),
+          x: 0,
           y: 0,
           pickable: true,
           fill: colSeriesNumberCellStyle.bgColor,
@@ -568,11 +678,13 @@ export class TableSeriesNumber extends AbstractComponent<Required<TableSeriesNum
       const text = cellGroup.createOrUpdateChild(
         `colSeriesNumberCellText-${i}`,
         {
-          x: 0,
-          y: this.colSeriesNumberHeight,
+          x,
+          y,
+          dx: 0,
           text: generateColField(i),
           pickable: false,
-          ...colSeriesNumberCellStyle.text
+          ...colSeriesNumberCellStyle.text,
+          textBaseline: 'top'
         },
         'text'
       );
@@ -604,12 +716,13 @@ export class TableSeriesNumber extends AbstractComponent<Required<TableSeriesNum
       const text = cellGroup.createOrUpdateChild(
         `colSeriesNumberCellText-${i + frozenColCount}`,
         {
-          x: 0,
-          y: this.colSeriesNumberHeight,
-          boundsPadding: 4,
+          x,
+          y,
+          dx: 0,
           text: generateColField(i + frozenColCount),
           pickable: false,
-          ...colSeriesNumberCellStyle.text
+          ...colSeriesNumberCellStyle.text,
+          textBaseline: 'top'
         },
         'text'
       );
@@ -831,9 +944,11 @@ export class TableSeriesNumber extends AbstractComponent<Required<TableSeriesNum
   setRowSeriesNumberCellAttributes(index: number, attributes: TableSeriesNumberAttributes) {
     //找到rowSeriesNumberGroup中对应的子元素，并设置其属性
     const { frozenRowCount } = this.getAttributes() as TableSeriesNumberAttributes;
+    let targetCellGroup: IGroup;
     if (index >= 0 && index < frozenRowCount) {
       const { height: oldHeight, width: oldWidth, y } = this._frozenTopRowSeriesNumberGroup.getAttributes();
-      this._frozenTopRowSeriesNumberGroup.children[index].setAttributes(attributes);
+      targetCellGroup = this._frozenTopRowSeriesNumberGroup.children[index];
+      targetCellGroup.setAttributes(attributes);
       if (attributes.height) {
         this._frozenTopRowSeriesNumberGroup.setAttributes({
           height: this._frozenTopRowSeriesNumberGroup.getAttributes().height + (attributes.height - oldHeight)
@@ -851,19 +966,62 @@ export class TableSeriesNumber extends AbstractComponent<Required<TableSeriesNum
             this._frozenTopRowSeriesNumberGroup.getAttributes().y
         });
       }
-
-      return;
+    } else {
+      const rowSeriesNumberGroup = this._rowSeriesNumberGroup;
+      targetCellGroup = rowSeriesNumberGroup.children[index - frozenRowCount - this._firstRowSeriesNumberIndex];
+      targetCellGroup.setAttributes(attributes);
     }
-    const rowSeriesNumberGroup = this._rowSeriesNumberGroup;
-    const rowSeriesNumberCell = rowSeriesNumberGroup.children[index - frozenRowCount - this._firstRowSeriesNumberIndex];
-    rowSeriesNumberCell.setAttributes(attributes);
+    //#region 更新子元素Text的x坐标
+    if (attributes.width) {
+      // debugger
+      let x;
+      const width =
+        attributes.width - this._parsedRowSeriesNumberCellPadding[3] - this._parsedRowSeriesNumberCellPadding[1];
+      const textAlign = this.attribute.rowSeriesNumberCellStyle.text.textAlign;
+      const padding = this._parsedRowSeriesNumberCellPadding;
+      if (textAlign === 'center') {
+        x = padding[3] + +width / 2;
+      } else if (textAlign === 'right') {
+        x = padding[3] + width;
+      } else {
+        x = padding[3];
+      }
+      // debugger
+      targetCellGroup.children[0].setAttributes({
+        x
+      });
+    }
+    //#endregion
+
+    //#region 更新子元素Text的y坐标
+    if (attributes.height) {
+      const height =
+        attributes.height - this._parsedRowSeriesNumberCellPadding[0] - this._parsedRowSeriesNumberCellPadding[2];
+      const textBaseline = this.attribute.rowSeriesNumberCellStyle.text.textBaseline;
+      const padding = this._parsedRowSeriesNumberCellPadding;
+      let y;
+      if (textBaseline === 'middle') {
+        y = padding[0] + (height - this.attribute.rowSeriesNumberCellStyle.text.fontSize) / 2;
+      } else if (textBaseline === 'bottom') {
+        y = padding[0] + height - this.attribute.rowSeriesNumberCellStyle.text.fontSize;
+      } else {
+        y = padding[0];
+      }
+      targetCellGroup.children[0].setAttributes({
+        y
+      });
+    }
+    //#endregion
   }
   setColSeriesNumberCellAttributes(index: number, attributes: TableSeriesNumberAttributes) {
     //找到colSeriesNumberGroup中对应的子元素，并设置其属性
     const { frozenColCount: frozenColCount } = this.getAttributes() as TableSeriesNumberAttributes;
+    let targetCellGroup: IGroup;
     if (index >= 0 && index < frozenColCount) {
-      const { height: oldHeight, width: oldWidth, x } = this._frozenLeftColSeriesNumberGroup.getAttributes();
-      this._frozenLeftColSeriesNumberGroup.children[index].setAttributes(attributes);
+      targetCellGroup = this._frozenLeftColSeriesNumberGroup.children[index];
+      const { height: oldHeight, width: oldWidth } = targetCellGroup.getAttributes();
+      targetCellGroup.setAttributes(attributes);
+
       if (attributes.height) {
         this._frozenLeftColSeriesNumberGroup.setAttributes({
           height: this._frozenLeftColSeriesNumberGroup.getAttributes().height + (attributes.height - oldHeight)
@@ -881,12 +1039,50 @@ export class TableSeriesNumber extends AbstractComponent<Required<TableSeriesNum
             this._frozenLeftColSeriesNumberGroup.getAttributes().x
         });
       }
-
-      return;
+    } else {
+      const colSeriesNumberGroup = this._colSeriesNumberGroup;
+      targetCellGroup = colSeriesNumberGroup.children[index - frozenColCount - this._firstColSeriesNumberIndex];
+      targetCellGroup.setAttributes(attributes);
     }
-    const colSeriesNumberGroup = this._colSeriesNumberGroup;
-    const colSeriesNumberCell = colSeriesNumberGroup.children[index - frozenColCount - this._firstColSeriesNumberIndex];
-    colSeriesNumberCell.setAttributes(attributes);
+    //#region 更新子元素Text的x坐标
+    if (attributes.width) {
+      let x;
+      const width =
+        attributes.width - this._parsedColSeriesNumberCellPadding[3] - this._parsedColSeriesNumberCellPadding[1];
+      const textAlign = this.attribute.colSeriesNumberCellStyle.text.textAlign;
+      const padding = this._parsedColSeriesNumberCellPadding;
+      if (textAlign === 'center') {
+        x = padding[3] + +width / 2;
+      } else if (textAlign === 'right') {
+        x = padding[3] + width;
+      } else {
+        x = padding[3];
+      }
+      targetCellGroup.children[0].setAttributes({
+        x
+      });
+    }
+    //#endregion
+
+    //#region 更新子元素Text的y坐标
+    if (attributes.height) {
+      const height =
+        attributes.height - this._parsedColSeriesNumberCellPadding[0] - this._parsedColSeriesNumberCellPadding[2];
+      const textBaseline = this.attribute.colSeriesNumberCellStyle.text.textBaseline;
+      const padding = this._parsedColSeriesNumberCellPadding;
+      let y;
+      if (textBaseline === 'middle') {
+        y = padding[0] + (height - this.attribute.colSeriesNumberCellStyle.text.fontSize) / 2;
+      } else if (textBaseline === 'bottom') {
+        y = padding[0] + height - this.attribute.colSeriesNumberCellStyle.text.fontSize;
+      } else {
+        y = padding[0];
+      }
+      targetCellGroup.children[0].setAttributes({
+        y
+      });
+    }
+    //#endregion
   }
   setRowSeriesNumberGroupAttributes(attributes: TableSeriesNumberAttributes) {
     this._rowSeriesNumberGroup.setAttributes(attributes);

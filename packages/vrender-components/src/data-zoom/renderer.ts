@@ -144,7 +144,7 @@ export class DataZoomRenderer {
     this._initAttrs(props);
   }
 
-  renderDataZoom() {
+  renderDataZoom(onlyStateChange: boolean = false) {
     const {
       backgroundChartStyle = {},
       selectedBackgroundChartStyle = {},
@@ -154,8 +154,8 @@ export class DataZoomRenderer {
     this._renderBackground();
 
     /** 背景图表 */
-    backgroundChartStyle.line?.visible && this._setPreviewAttributes('line', this._getContainer());
-    backgroundChartStyle.area?.visible && this._setPreviewAttributes('area', this._getContainer());
+    backgroundChartStyle.line?.visible && !onlyStateChange && this._setPreviewAttributes('line', this._getContainer());
+    backgroundChartStyle.area?.visible && !onlyStateChange && this._setPreviewAttributes('area', this._getContainer());
 
     /** 背景选框 */
     brushSelect && this.renderDragMask();
@@ -164,8 +164,11 @@ export class DataZoomRenderer {
     this._renderSelectedBackground();
 
     /** 选中的背景图表 */
-    selectedBackgroundChartStyle.line?.visible && this._setSelectedPreviewAttributes('line', this._getContainer());
-    selectedBackgroundChartStyle.area?.visible && this._setSelectedPreviewAttributes('area', this._getContainer());
+    selectedBackgroundChartStyle.line?.visible && this._setSelectedPreviewClipAttributes('line', this._getContainer());
+    selectedBackgroundChartStyle.line?.visible && !onlyStateChange && this._setSelectedPreviewAttributes('line');
+
+    selectedBackgroundChartStyle.line?.visible && this._setSelectedPreviewClipAttributes('area', this._getContainer());
+    selectedBackgroundChartStyle.area?.visible && !onlyStateChange && this._setSelectedPreviewAttributes('area');
 
     /** 左右 和 中间手柄 */
     this._renderHandler();
@@ -525,7 +528,7 @@ export class DataZoomRenderer {
   }
 
   // 使用callback绘制选中的背景图表 (数据和数据映射从外部传进来)
-  private _setSelectedPreviewAttributes(type: 'area' | 'line', group: IGroup) {
+  private _setSelectedPreviewClipAttributes(type: 'area' | 'line', group: IGroup) {
     if (!this._selectedPreviewGroupClip) {
       this._selectedPreviewGroupClip = group.createOrUpdateChild(
         'selectedPreviewGroupClip',
@@ -538,22 +541,6 @@ export class DataZoomRenderer {
         'group'
       ) as IGroup;
     }
-
-    if (type === 'line') {
-      this._selectedPreviewLine = this._selectedPreviewGroup.createOrUpdateChild(
-        'selectedPreviewLine',
-        {},
-        'line'
-      ) as ILine;
-    } else {
-      this._selectedPreviewArea = this._selectedPreviewGroup.createOrUpdateChild(
-        'selectedPreviewArea',
-        { curveType: 'basis' },
-        'area'
-      ) as IArea;
-    }
-
-    const { selectedBackgroundChartStyle = {} } = this.attribute as DataZoomAttributes;
 
     const { start, end } = this._getState();
     const { position, width, height } = this._getLayoutAttrFromConfig();
@@ -572,6 +559,23 @@ export class DataZoomRenderer {
       height: this._isHorizontal ? height : (end - start) * height,
       pickable: false
     } as any);
+  }
+
+  private _setSelectedPreviewAttributes(type: 'line' | 'area') {
+    const { selectedBackgroundChartStyle = {} } = this.attribute as DataZoomAttributes;
+    if (type === 'line') {
+      this._selectedPreviewLine = this._selectedPreviewGroup.createOrUpdateChild(
+        'selectedPreviewLine',
+        {},
+        'line'
+      ) as ILine;
+    } else {
+      this._selectedPreviewArea = this._selectedPreviewGroup.createOrUpdateChild(
+        'selectedPreviewArea',
+        { curveType: 'basis' },
+        'area'
+      ) as IArea;
+    }
     type === 'line' &&
       this._selectedPreviewLine.setAttributes({
         points: this._getPreviewLinePoints(),

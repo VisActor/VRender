@@ -7,7 +7,23 @@ import type {
 } from '@visactor/vrender-core';
 
 // export type EmptyTipIcon = IImageGraphicAttribute;
+export enum SeriesNumberCellStateValue {
+  hover = 'hover',
+  select = 'select'
+}
+export enum SeriesNumberEvent {
+  seriesNumberCellHover = 'seriesNumberCellHover',
+  seriesNumberCellUnHover = 'seriesNumberCellUnHover',
+  seriesNumberCellClick = 'seriesNumberCellClick',
+  seriesNumberCellCancelClick = 'seriesNumberCellCancelClick',
+  rowSeriesNumberWidthChange = 'rowSeriesNumberWidthChange',
 
+  /** 调整行高开始 */
+  resizeRowHeightStart = 'resizeRowHeightStart',
+
+  /** 调整列宽开始 */
+  resizeColWidthStart = 'resizeColWidthStart'
+}
 export type TableSeriesNumberAttributes = IGroupGraphicAttribute & {
   frozenRowCount?: number;
   frozenColCount?: number;

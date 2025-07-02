@@ -29,6 +29,7 @@ export abstract class BaseRender<T extends IGraphic> {
   declare z: number;
 
   builtinContributions: IBaseRenderContribution<T, T['attribute']>[];
+  declare protected graphicRenderContributions: IContributionProvider<IBaseRenderContribution<T, T['attribute']>>;
 
   // declare renderContribitions: IContributionProvider<IBaseRenderContribution<T, T['attribute']>> | null;
 
@@ -59,6 +60,10 @@ export abstract class BaseRender<T extends IGraphic> {
         c => c.time === BaseRenderContributionTime.afterFillStroke
       );
     }
+  }
+
+  reInit() {
+    this.init(this.graphicRenderContributions);
   }
 
   beforeRenderStep(

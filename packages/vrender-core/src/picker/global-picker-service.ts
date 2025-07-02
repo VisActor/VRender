@@ -30,6 +30,10 @@ export class DefaultGlobalPickerService implements IPickerService {
     this.configure(this.global, this.global.env);
   }
 
+  reInit() {
+    return;
+  }
+
   configure(global: IGlobal, env: EnvType) {
     // if (!this.global.env) return;
     // this.contributions.getContributions().forEach(handlerContribution => {

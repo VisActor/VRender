@@ -10,6 +10,9 @@ import type { IPath2D } from '../interface';
  * @param y
  */
 export function drawPolygon(path: IPath2D, points: IPointLike[], x: number, y: number) {
+  if (!points || !points.length) {
+    return;
+  }
   path.moveTo(points[0].x + x, points[0].y + y);
   for (let i = 1; i < points.length; i++) {
     path.lineTo(points[i].x + x, points[i].y + y);
@@ -60,7 +63,7 @@ export function drawRoundedPolygon(
     const tan = Math.abs(Math.tan(angle));
 
     // get config radius
-    let radius = Array.isArray(cornerRadius) ? cornerRadius[i % points.length] ?? 0 : cornerRadius;
+    let radius = Array.isArray(cornerRadius) ? (cornerRadius[i % points.length] ?? 0) : cornerRadius;
     let segment = radius / tan;
 
     //Check the segment

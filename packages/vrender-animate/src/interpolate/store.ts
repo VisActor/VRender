@@ -147,6 +147,16 @@ export class InterpolateUpdateStore {
     target.addUpdateBoundTag();
     target.addUpdatePositionTag();
   };
+  dx = (key: string, from: number, to: number, ratio: number, step: IStep, target: IGraphic) => {
+    target.attribute.dx = interpolateNumber(from, to, ratio);
+    target.addUpdateBoundTag();
+    target.addUpdatePositionTag();
+  };
+  dy = (key: string, from: number, to: number, ratio: number, step: IStep, target: IGraphic) => {
+    target.attribute.dy = interpolateNumber(from, to, ratio);
+    target.addUpdateBoundTag();
+    target.addUpdatePositionTag();
+  };
   angle = (key: string, from: number, to: number, ratio: number, step: IStep, target: IGraphic) => {
     target.attribute.angle = interpolateNumber(from, to, ratio);
     target.addUpdateBoundTag();

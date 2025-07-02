@@ -63,6 +63,7 @@ export interface IPickerService {
   ) => PickResult | null;
   containsPoint: (graphic: IGraphic, point: IPointLike, params?: IPickParams) => boolean;
   drawContribution?: IDrawContribution;
+  reInit: () => void;
 }
 
 export interface IPickItemInterceptorContribution {

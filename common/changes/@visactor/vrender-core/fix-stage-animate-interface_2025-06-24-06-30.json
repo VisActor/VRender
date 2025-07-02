@@ -2,7 +2,7 @@
   "changes": [
     {
       "packageName": "@visactor/vrender-core",
-      "comment": "fix: fix issue with symbol gradient, and support native conical gradient",
+      "comment": "feat: add animate interface",
       "type": "none"
     }
   ],

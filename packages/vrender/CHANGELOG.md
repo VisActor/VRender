@@ -1,6 +1,58 @@
 # Change Log - @visactor/vrender
 
-This log was last generated on Fri, 18 Apr 2025 06:59:46 GMT and should not be manually modified.
+This log was last generated on Mon, 23 Jun 2025 13:56:24 GMT and should not be manually modified.
+
+## 1.0.7
+Mon, 23 Jun 2025 13:56:24 GMT
+
+_Version update only_
+
+## 1.0.6
+Mon, 23 Jun 2025 12:24:15 GMT
+
+_Version update only_
+
+## 1.0.5
+Wed, 18 Jun 2025 10:09:34 GMT
+
+_Version update only_
+
+## 1.0.4
+Wed, 18 Jun 2025 05:41:49 GMT
+
+### Updates
+
+- feat: timeline support animationStart flag
+- fix: fix default params of animation
+
+
+
+## 1.0.3
+Tue, 10 Jun 2025 09:32:32 GMT
+
+### Updates
+
+- fix: fix rele
+
+## 1.0.1
+Mon, 09 Jun 2025 07:29:07 GMT
+
+_Version update only_
+
+## 1.0.0
+Fri, 06 Jun 2025 09:38:19 GMT
+
+_Version update only_
+
+## 0.22.11
+Mon, 28 Apr 2025 09:08:54 GMT
+
+_Version update only_
+
+## 0.22.10
+Mon, 21 Apr 2025 02:48:16 GMT
+
+_Version update only_
 
 ## 0.22.9
 Fri, 18 Apr 2025 06:59:46 GMT

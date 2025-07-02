@@ -54,7 +54,7 @@ export class Step implements IStep {
     this.duration = duration;
     // 设置缓动函数
     if (easing) {
-      this.easing = typeof easing === 'function' ? easing : Easing[easing];
+      this.easing = typeof easing === 'function' ? easing : (Easing[easing] ?? Easing.linear);
     } else {
       this.easing = Easing.linear;
     }

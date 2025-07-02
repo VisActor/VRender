@@ -148,6 +148,14 @@ export class TagPointsUpdate extends ACustomAnimate<{ points?: IPointLike[]; seg
   }
 
   onUpdate(end: boolean, ratio: number, out: Record<string, any>): void {
+    if (end) {
+      Object.keys(this.to).forEach(k => {
+        (this.target.attribute as any)[k] = (this.to as any)[k];
+      });
+      this.target.addUpdatePositionTag();
+      this.target.addUpdateShapeAndBoundsTag();
+      return;
+    }
     // if not create new points, multi points animation might not work well.
     this.points = this.points.map((point, index) => {
       const newPoint = pointInterpolation(this.interpolatePoints[index][0], this.interpolatePoints[index][1], ratio);

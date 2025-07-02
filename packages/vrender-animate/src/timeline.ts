@@ -21,6 +21,7 @@ export class DefaultTimeline extends EventEmitter implements ITimeline {
   protected _totalDuration: number = 0;
   protected _startTime: number = 0;
   protected _currentTime: number = 0;
+  protected _animationEndFlag: boolean = true;
 
   declare isGlobal?: boolean;
 
@@ -90,6 +91,10 @@ export class DefaultTimeline extends EventEmitter implements ITimeline {
     if (this.paused) {
       return;
     }
+    if (this._animationEndFlag) {
+      this._animationEndFlag = false;
+      this.emit('animationStart');
+    }
 
     // 应用播放速度
     const scaledDelta = delta * this._playSpeed;
@@ -106,6 +111,7 @@ export class DefaultTimeline extends EventEmitter implements ITimeline {
     });
 
     if (this._animateCount === 0) {
+      this._animationEndFlag = true;
       this.emit('animationEnd');
     }
   }

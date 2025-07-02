@@ -1,7 +1,7 @@
 /**
  * @description 组件基类
  */
-import type { IGroupGraphicAttribute, ISetAttributeContext } from '@visactor/vrender-core';
+import type { FederatedPointerEvent, IGroupGraphicAttribute, ISetAttributeContext } from '@visactor/vrender-core';
 import { Group, CustomEvent } from '@visactor/vrender-core';
 import type { Dict } from '@visactor/vutils';
 import { merge, isFunction, isPlainObject, isNil } from '@visactor/vutils';
@@ -165,5 +165,15 @@ export abstract class AbstractComponent<T extends IGroupGraphicAttribute = IGrou
     changeEvent.manager = this.stage?.eventSystem.manager;
 
     this.dispatchEvent(changeEvent);
+  }
+
+  /** 事件系统坐标转换为stage坐标 */
+  protected eventPosToStagePos(e: FederatedPointerEvent) {
+    const result = { x: 0, y: 0 };
+    // 1. 外部坐标 -> 内部坐标
+    const stagePoints = this.stage?.eventPointTransform(e as any) ?? { x: 0, y: 0 }; // updateSpec过程中交互的话, stage可能为空
+    // 2. 内部坐标 -> 组件坐标 (比如: 给layer设置 scale / x / y)
+    this.globalTransMatrix.transformPoint(stagePoints, result);
+    return result;
   }
 }

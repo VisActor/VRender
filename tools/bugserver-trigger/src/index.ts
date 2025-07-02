@@ -2,6 +2,7 @@ import * as VRender from '@visactor/vrender';
 import * as VRenderKits from '@visactor/vrender-kits';
 import * as VRenderCore from '@visactor/vrender-core';
 import * as VRenderComponents from '@visactor/vrender-components';
+import * as VRenderAnimate from '@visactor/vrender-animate';
 
 import {
   registerArcDataLabel,
@@ -18,6 +19,8 @@ window.VRenderComponents = VRenderComponents;
 window.VRenderCore = VRenderCore;
 // @ts-ignore
 window.VRenderKits = VRenderKits;
+// @ts-ignore
+window.VRenderAnimate = VRenderAnimate;
 
 registerSymbolDataLabel();
 registerRectDataLabel();
@@ -28,7 +31,8 @@ export default {
   VRender,
   VRenderComponents,
   VRenderKits,
-  VRenderCore
+  VRenderCore,
+  VRenderAnimate
 };
 
 // export const a = 'a';

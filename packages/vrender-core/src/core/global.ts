@@ -17,10 +17,11 @@ import type { IAABBBoundsLike } from '@visactor/vutils';
 import { container } from '../container';
 import { Generator } from '../common/generator';
 import { PerformanceRAF } from '../common/performance-raf';
+import { EventListenerManager } from '../common/event-listener-manager';
 
 const defaultEnv: EnvType = 'browser';
 @injectable()
-export class DefaultGlobal implements IGlobal {
+export class DefaultGlobal extends EventListenerManager implements IGlobal {
   readonly id: number;
   private _env: EnvType;
   private _isSafari?: boolean;
@@ -127,18 +128,55 @@ export class DefaultGlobal implements IGlobal {
     onSetEnv: ISyncHook<[EnvType | undefined, EnvType, IGlobal]>;
   };
 
+  // 事件监听器转换器，用于进行Event属性的转换，接收一个原生的Event，返回一个修改后的Event（默认不进行转换直接返回原始Event）
+  // 注意返回的Event和原始的Event不是同一个对象，但也不能拷贝，返回的Event和原始Event是同一个Event类的实例（比如MouseEvent、FederatedPointerEvent等，不能直接拷贝或者用CustomEvent）
+  eventListenerTransformer: (event: Event) => Event = event => event;
+
   constructor(
     // todo: 不需要创建，动态获取就行？
     @inject(ContributionProvider)
     @named(EnvContribution)
     protected readonly contributions: IContributionProvider<IEnvContribution>
   ) {
+    super();
     this.id = Generator.GenAutoIncrementId();
     this.hooks = {
       onSetEnv: new SyncHook<[EnvType | undefined, EnvType, IGlobal]>(['lastEnv', 'env', 'global'])
     };
     this.measureTextMethod = 'native';
     this.optimizeVisible = false;
+  }
+
+  // Override from EventListenerManager
+  protected _nativeAddEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions
+  ): void {
+    if (!this._env) {
+      this.setEnv(defaultEnv);
+    }
+    return this.envContribution.addEventListener(type, listener, options);
+  }
+
+  // Override from EventListenerManager
+  protected _nativeRemoveEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions
+  ): void {
+    if (!this._env) {
+      this.setEnv(defaultEnv);
+    }
+    return this.envContribution.removeEventListener(type, listener, options);
+  }
+
+  // Override from EventListenerManager
+  protected _nativeDispatchEvent(event: Event): boolean {
+    if (!this._env) {
+      this.setEnv(defaultEnv);
+    }
+    return this.envContribution.dispatchEvent(event);
   }
 
   protected bindContribution(params?: any): void | Promise<any> {
@@ -231,43 +269,6 @@ export class DefaultGlobal implements IGlobal {
       this.setEnv(defaultEnv);
     }
     return this.envContribution.releaseCanvas(canvas);
-  }
-
-  addEventListener<K extends keyof DocumentEventMap>(
-    type: K,
-    listener: (this: Document, ev: DocumentEventMap[K]) => any,
-    options?: boolean | AddEventListenerOptions
-  ): void;
-  addEventListener(
-    type: string,
-    listener: EventListenerOrEventListenerObject,
-    options?: boolean | AddEventListenerOptions
-  ): void {
-    if (!this._env) {
-      this.setEnv(defaultEnv);
-    }
-    return this.envContribution.addEventListener(type, listener, options);
-  }
-  removeEventListener<K extends keyof DocumentEventMap>(
-    type: K,
-    listener: (this: Document, ev: DocumentEventMap[K]) => any,
-    options?: boolean | EventListenerOptions
-  ): void;
-  removeEventListener(
-    type: string,
-    listener: EventListenerOrEventListenerObject,
-    options?: boolean | EventListenerOptions
-  ): void {
-    if (!this._env) {
-      this.setEnv(defaultEnv);
-    }
-    return this.envContribution.removeEventListener(type, listener, options);
-  }
-  dispatchEvent(event: any): boolean {
-    if (!this._env) {
-      this.setEnv(defaultEnv);
-    }
-    return this.envContribution.dispatchEvent(event);
   }
 
   getRequestAnimationFrame() {
@@ -403,7 +404,7 @@ export class DefaultGlobal implements IGlobal {
     return this.envContribution.loadBlob(url);
   }
 
-  async loadFont(name: string, source: string | BinaryData, descriptors?: FontFaceDescriptors) {
+  async loadFont(name: string, source: string | ArrayBuffer, descriptors?: FontFaceDescriptors) {
     if (!this._env) {
       this.setEnv('browser');
     }

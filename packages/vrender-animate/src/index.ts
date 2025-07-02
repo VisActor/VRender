@@ -7,6 +7,7 @@ export { Step as AnimateStep } from './step';
 
 // 导出工具函数
 export * from './utils/easing-func';
+export * from './utils/easing';
 export { registerAnimate } from './register';
 export { ACustomAnimate, AComponentAnimate } from './custom/custom-animate';
 export { ComponentAnimator } from './component/component-animator';

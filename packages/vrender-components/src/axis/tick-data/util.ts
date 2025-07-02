@@ -1,5 +1,5 @@
 import type { IBaseScale } from '@visactor/vscale';
-import { AABBBounds, degreeToRadian } from '@visactor/vutils';
+import { AABBBounds, degreeToRadian, isPlainObject } from '@visactor/vutils';
 import type { TextAlignType, TextBaselineType } from '@visactor/vrender-core';
 import { initTextMeasure } from '../../util/text';
 import type { ICartesianTickDataOpt, IOrientType, ITickData } from '../type';
@@ -46,10 +46,10 @@ const calculateFlushPos = (basePosition: number, size: number, rangePosition: nu
   return rangePosition < basePosition
     ? Math.max(basePosition - size / 2, rangePosition)
     : rangePosition > basePosition
-    ? Math.min(basePosition - size / 2, rangePosition - size)
-    : rangePosition < otherEnd
-    ? rangePosition
-    : rangePosition - size;
+      ? Math.min(basePosition - size / 2, rangePosition - size)
+      : rangePosition < otherEnd
+        ? rangePosition
+        : rangePosition - size;
 };
 
 export const getCartesianLabelBounds = (scale: IBaseScale, domain: any[], op: ICartesianTickDataOpt): AABBBounds[] => {
@@ -74,8 +74,16 @@ export const getCartesianLabelBounds = (scale: IBaseScale, domain: any[], op: IC
 
   const textMeasure = initTextMeasure(labelStyle);
   const range = scale.range();
-  const labelBoundsList = domain.map((v: any, i: number) => {
+  let labelBoundsList: AABBBounds[] = [];
+
+  for (let i = 0; i < domain.length; i++) {
+    const v = domain[i];
     const str = labelFormatter ? labelFormatter(v) : `${v}`;
+
+    if (isPlainObject(str)) {
+      labelBoundsList = undefined;
+      break;
+    }
 
     // 估算文本宽高
     const { width, height } = textMeasure.quickMeasure(str);
@@ -124,8 +132,8 @@ export const getCartesianLabelBounds = (scale: IBaseScale, domain: any[], op: IC
       bounds.rotate(labelAngle, baseTextX, baseTextY);
     }
 
-    return bounds;
-  });
+    labelBoundsList.push(bounds);
+  }
 
   return labelBoundsList;
 };

@@ -169,4 +169,6 @@ export interface INode extends Releaseable, IEventElement {
    */
   getElementsByType: (type: string) => INode[];
   // 其他不常用
+
+  [key: string]: any;
 }

@@ -1,6 +1,60 @@
-# Change Log - @visactor/vrender-kits
+# Change Log - @visactor/vrender-animate
 
-This log was last generated on Tue, 18 Feb 2025 10:14:45 GMT and should not be manually modified.
+This log was last generated on Mon, 23 Jun 2025 13:56:24 GMT and should not be manually modified.
+
+## 1.0.7
+Mon, 23 Jun 2025 13:56:24 GMT
+
+_Version update only_
+
+## 1.0.6
+Mon, 23 Jun 2025 12:24:15 GMT
+
+### Updates
+
+- feat: support pauseAnimation resumeAnimation stopAnimation reApplyAnimationState
+- fix: fix issue with immediatelyApply in custom animate
+- fix: disable increaseEffect in label did not take effect
+- fix: fix moveIn animation
+
+
+
+## 1.0.5
+Wed, 18 Jun 2025 10:09:34 GMT
+
+_Version update only_
+
+## 1.0.4
+Wed, 18 Jun 2025 05:41:49 GMT
+
+### Updates
+
+- feat: timeline support animationStart flag
+- feat: don't prevent normal animate attribute
+- fix: fix default params of animation
+
+
+- fix: fix issue with recall setupTickHandler
+
+## 1.0.3
+Tue, 10 Jun 2025 09:32:32 GMT
+
+### Updates
+
+- fix: fix aniamtion of dx, dy and customParameters
+
+
+- fix: fix rele
+
+## 1.0.1
+Mon, 09 Jun 2025 07:29:07 GMT
+
+_Version update only_
+
+## 1.0.0
+Fri, 06 Jun 2025 09:38:19 GMT
+
+_Version update only_
 
 ## 0.22.1
 Tue, 18 Feb 2025 10:14:45 GMT

@@ -37,7 +37,7 @@ export class DefaultCanvasSymbolRender extends BaseRender<ISymbol> implements IG
   constructor(
     @inject(ContributionProvider)
     @named(SymbolRenderContribution)
-    protected readonly symbolRenderContribitions: IContributionProvider<ISymbolRenderContribution>
+    protected readonly graphicRenderContributions: IContributionProvider<ISymbolRenderContribution>
   ) {
     super();
     this.builtinContributions = [
@@ -46,7 +46,7 @@ export class DefaultCanvasSymbolRender extends BaseRender<ISymbol> implements IG
       defaultSymbolTextureRenderContribution,
       defaultSymbolClipRangeStrokeRenderContribution
     ];
-    this.init(symbolRenderContribitions);
+    this.init(graphicRenderContributions);
   }
 
   drawShape(

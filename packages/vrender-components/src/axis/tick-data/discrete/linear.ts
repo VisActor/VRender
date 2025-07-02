@@ -1,5 +1,5 @@
 import type { BandScale, IBaseScale } from '@visactor/vscale';
-import { isFunction, isValid, maxInArray, minInArray, binaryFuzzySearchInNumberRange } from '@visactor/vutils';
+import { isFunction, isValid, maxInArray, minInArray, binaryFuzzySearchInNumberRange, isNil } from '@visactor/vutils';
 import type { ICartesianTickDataOpt, ITickData } from '../../type';
 import { convertDomainToTickData, getCartesianLabelBounds, isAxisHorizontal } from '../util';
 
@@ -13,12 +13,15 @@ const getOneDimensionalLabelBounds = (
   isHorizontal: boolean
 ): OneDimensionalBounds[] => {
   const labelBoundsList = getCartesianLabelBounds(scale, domain, op);
-  return labelBoundsList.map(bounds => {
-    if (isHorizontal) {
-      return [bounds.x1, bounds.x2, bounds.width()];
-    }
-    return [bounds.y1, bounds.y2, bounds.height()];
-  });
+  return (
+    labelBoundsList &&
+    labelBoundsList.map(bounds => {
+      if (isHorizontal) {
+        return [bounds.x1, bounds.x2, bounds.width()];
+      }
+      return [bounds.y1, bounds.y2, bounds.height()];
+    })
+  );
 };
 
 /** 判断两个 bounds 是否有重叠情况 */
@@ -79,63 +82,71 @@ export const linearDiscreteTicks = (scale: BandScale, op: ICartesianTickDataOpt)
     const rangeEnd = maxInArray(range);
 
     if (domain.length <= rangeSize / fontSize) {
-      const incrementUnit = (rangeEnd - rangeStart) / domain.length;
       const labelBoundsList = getOneDimensionalLabelBounds(scale, domain, op, isHorizontal);
-      const minBoundsLength = Math.min(...labelBoundsList.map(bounds => bounds[2]));
 
-      const stepResult = getStep(
-        domain,
-        labelBoundsList,
-        labelGap,
-        op.labelLastVisible,
-        Math.floor(minBoundsLength / incrementUnit), // 给step赋上合适的初值，有效改善外层循环次数
-        false
-      );
+      if (labelBoundsList) {
+        const minBoundsLength = Math.min(...labelBoundsList.map(bounds => bounds[2]));
 
-      scaleTicks = (scale as BandScale).stepTicks(stepResult.step);
-      if (op.labelLastVisible) {
-        if (stepResult.delCount) {
-          scaleTicks = scaleTicks.slice(0, scaleTicks.length - stepResult.delCount);
+        const incrementUnit = (rangeEnd - rangeStart) / domain.length;
+        const stepResult = getStep(
+          domain,
+          labelBoundsList,
+          labelGap,
+          op.labelLastVisible,
+          Math.floor(minBoundsLength / incrementUnit), // 给step赋上合适的初值，有效改善外层循环次数
+          false
+        );
+
+        scaleTicks = (scale as BandScale).stepTicks(stepResult.step);
+        if (op.labelLastVisible) {
+          if (stepResult.delCount) {
+            scaleTicks = scaleTicks.slice(0, scaleTicks.length - stepResult.delCount);
+          }
+          scaleTicks.push(domain[domain.length - 1]);
         }
-        scaleTicks.push(domain[domain.length - 1]);
       }
     } else {
       // only check first middle last, use the max size to sampling
       const tempDomain = [domain[0], domain[Math.floor(domain.length / 2)], domain[domain.length - 1]];
       const tempList = getOneDimensionalLabelBounds(scale, tempDomain, op, isHorizontal);
-      let maxBounds: OneDimensionalBounds = null;
-      tempList.forEach(current => {
-        if (!maxBounds) {
-          maxBounds = current;
-          return;
-        }
-        if (maxBounds[2] < current[2]) {
-          maxBounds = current;
-        }
-      });
 
-      const step =
-        rangeEnd - rangeStart - labelGap > 0
-          ? Math.ceil((domain.length * (labelGap + maxBounds[2])) / (rangeEnd - rangeStart - labelGap))
-          : domain.length - 1;
+      if (tempList) {
+        let maxBounds: OneDimensionalBounds = null;
+        tempList.forEach(current => {
+          if (!maxBounds) {
+            maxBounds = current;
+            return;
+          }
+          if (maxBounds[2] < current[2]) {
+            maxBounds = current;
+          }
+        });
 
-      scaleTicks = (scale as BandScale).stepTicks(step);
+        const step =
+          rangeEnd - rangeStart - labelGap > 0
+            ? Math.ceil((domain.length * (labelGap + maxBounds[2])) / (rangeEnd - rangeStart - labelGap))
+            : domain.length - 1;
 
-      if (
-        op.labelLastVisible &&
-        (!scaleTicks.length || scaleTicks[scaleTicks.length - 1] !== domain[domain.length - 1])
-      ) {
+        scaleTicks = (scale as BandScale).stepTicks(step);
+
         if (
-          scaleTicks.length &&
-          Math.abs(scale.scale(scaleTicks[scaleTicks.length - 1]) - scale.scale(domain[domain.length - 1])) <
-            maxBounds[2]
+          op.labelLastVisible &&
+          (!scaleTicks.length || scaleTicks[scaleTicks.length - 1] !== domain[domain.length - 1])
         ) {
-          scaleTicks = scaleTicks.slice(0, -1);
+          if (
+            scaleTicks.length &&
+            Math.abs(scale.scale(scaleTicks[scaleTicks.length - 1]) - scale.scale(domain[domain.length - 1])) <
+              maxBounds[2]
+          ) {
+            scaleTicks = scaleTicks.slice(0, -1);
+          }
+          scaleTicks.push(domain[domain.length - 1]);
         }
-        scaleTicks.push(domain[domain.length - 1]);
       }
     }
-  } else {
+  }
+
+  if (isNil(scaleTicks)) {
     scaleTicks = scale.domain();
   }
 

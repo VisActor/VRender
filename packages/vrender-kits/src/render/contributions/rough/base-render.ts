@@ -144,4 +144,7 @@ export abstract class RoughBaseRender {
 
     // context.highPerformanceRestore();
   }
+  reInit() {
+    this.canvasRenderer?.reInit();
+  }
 }

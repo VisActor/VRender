@@ -117,7 +117,9 @@ export class GrowHeightIn extends ACustomAnimate<Record<string, number>> {
       this.target.setAttributes(finalAttribute);
     }
 
-    this.target.setAttributes(fromAttrs);
+    if (this.params.controlOptions?.immediatelyApply !== false) {
+      this.target.setAttributes(fromAttrs);
+    }
   }
 
   onEnd(cb?: (animate: IAnimate, step: IStep) => void): void {

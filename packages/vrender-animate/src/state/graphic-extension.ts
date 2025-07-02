@@ -95,8 +95,13 @@ export class GraphicStateExtension {
   /**
    * 停止一个动画状态
    */
-  stopAnimationState(state: string, type?: 'start' | 'end' | Record<string, any>): this {
+  stopAnimationState(state: string, type?: 'start' | 'end' | Record<string, any>, deep: boolean = false): this {
     this._getAnimationStateManager(this as unknown as IGraphic).stopState(state, type);
+    if (deep && (this as any).isContainer) {
+      (this as any).forEachChildren((child: any) => {
+        child.stopAnimationState(state, type, deep);
+      });
+    }
     return this;
   }
 
@@ -105,6 +110,16 @@ export class GraphicStateExtension {
    */
   clearAnimationStates(): this {
     this._getAnimationStateManager(this as unknown as IGraphic).clearState();
+    return this;
+  }
+
+  reApplyAnimationState(state: string, deep: boolean = false): this {
+    this._getAnimationStateManager(this as unknown as IGraphic).reApplyState(state);
+    if (deep && (this as any).isContainer) {
+      (this as any).forEachChildren((child: any) => {
+        child.reApplyAnimationState(state, deep);
+      });
+    }
     return this;
   }
 

@@ -27,8 +27,8 @@ export class Update extends ACustomAnimate<Record<string, number>> {
     let { diffAttrs = {} } = this.target.context ?? ({} as any);
     const { options } = this.params as any;
 
+    diffAttrs = { ...diffAttrs };
     if (options?.excludeChannels?.length) {
-      diffAttrs = { ...diffAttrs };
       options.excludeChannels.forEach((channel: string) => {
         delete diffAttrs[channel];
       });

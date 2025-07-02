@@ -60,6 +60,9 @@ jobs:
       - name: Build vrender-kits
         run: node common/scripts/install-run-rush.js build --only @visactor/vrender-kits
 
+      - name: Build vrender-animate
+        run: node common/scripts/install-run-rush.js build --only @visactor/vrender-animate
+
       - name: Build vrender
         run: node common/scripts/install-run-rush.js build --only @visactor/vrender
 
@@ -85,7 +88,7 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
           NPM_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
-        run: node common/scripts/install-run-rush.js publish --publish --include-all
+        run: node common/scripts/install-run-rush.js publish --publish --include-all --tag latest
 
       - name: Update shrinkwrap
         run: node common/scripts/install-run-rush.js update

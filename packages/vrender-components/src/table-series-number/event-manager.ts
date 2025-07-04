@@ -215,8 +215,10 @@ export class TableSeriesNumberEventManager {
     if (this._tableSeriesNumber.interactionState.selectIndexs?.size) {
       if (this._tableSeriesNumber.interactionState.selectIndexs.has(target.name)) {
         if (e.nativeEvent.ctrlKey || e.nativeEvent.metaKey) {
+          this._tableSeriesNumber.removeOneGroupSelected(target);
           this._unClickHandler(target.name, e);
         } else {
+          this._tableSeriesNumber.removeAllSelectedIndexs();
           for (const name of this._tableSeriesNumber.interactionState.selectIndexs) {
             this._unClickHandler(name, e);
           }
@@ -225,6 +227,7 @@ export class TableSeriesNumberEventManager {
         if (e.nativeEvent.ctrlKey || e.nativeEvent.metaKey) {
           // nothing
         } else {
+          this._tableSeriesNumber.removeAllSelectedIndexs();
           for (const name of this._tableSeriesNumber.interactionState.selectIndexs) {
             if (
               (target.name.startsWith('row') && name.startsWith('row')) ||
@@ -275,8 +278,9 @@ export class TableSeriesNumberEventManager {
   }
 
   private _clickHandler(seriesNumberCell: IGroup, e: FederatedPointerEvent) {
-    this._tableSeriesNumber.interactionState.selectIndexs.add(seriesNumberCell.name);
-    seriesNumberCell.useStates([SeriesNumberCellStateValue.select]);
+    // this._tableSeriesNumber.interactionState.selectIndexs.add(seriesNumberCell.name);
+    // seriesNumberCell.useStates([SeriesNumberCellStateValue.select]);
+    this._tableSeriesNumber.addOneGroupSelected(seriesNumberCell);
     this._tableSeriesNumber.interactionState._lastClickItem = seriesNumberCell;
     this._tableSeriesNumber.dispatchTableSeriesNumberEvent(SeriesNumberEvent.seriesNumberCellClick, {
       seriesNumberCell,
@@ -285,10 +289,10 @@ export class TableSeriesNumberEventManager {
   }
   private _unClickHandler(seriesNumberIndex: string, e: FederatedPointerEvent) {
     const isRow = seriesNumberIndex.startsWith('row');
-    const isCol = seriesNumberIndex.startsWith('col');
+    // const isCol = seriesNumberIndex.startsWith('col');
 
-    this._tableSeriesNumber.interactionState.selectIndexs.delete(seriesNumberIndex);
-
+    // this._tableSeriesNumber.interactionState.selectIndexs.delete(seriesNumberIndex);
+    // this._tableSeriesNumber.removeOneGroupSelected(seriesNumberIndex);
     const seriesNumberCell = isRow
       ? this._tableSeriesNumber.getRowSeriesNumberCellGroup(Number(seriesNumberIndex.split('-')[1]))
       : this._tableSeriesNumber.getColSeriesNumberCellGroup(Number(seriesNumberIndex.split('-')[1]));

@@ -992,6 +992,9 @@ export class TableSeriesNumber extends AbstractComponent<Required<TableSeriesNum
       }
     }
   }
+  addCornderSelected() {
+    this.interactionState.selectIndexs.add(this._cornerGroup.name);
+  }
   resetAllSelectedIndexs({ rowIndexs, colIndexs }: { rowIndexs?: number[]; colIndexs?: number[] }) {
     this.interactionState.selectIndexs = new Set();
     if (rowIndexs) {
@@ -1019,24 +1022,38 @@ export class TableSeriesNumber extends AbstractComponent<Required<TableSeriesNum
   removeAllSelectedIndexs() {
     for (const name of this.interactionState.selectIndexs) {
       const isRow = name.startsWith('row');
+      const isCol = name.startsWith('col');
       const index = Number(name.split('-')[1]);
       if (isRow) {
         this.getRowSeriesNumberCellGroup(index)?.removeState(SeriesNumberCellStateValue.select);
-      } else {
+      } else if (isCol) {
         this.getColSeriesNumberCellGroup(index)?.removeState(SeriesNumberCellStateValue.select);
+      } else {
+        this._cornerGroup.removeState(SeriesNumberCellStateValue.select);
       }
     }
     this.interactionState.selectIndexs.clear();
+  }
+  removeOneGroupSelected(group: IGroup) {
+    this.interactionState.selectIndexs.delete(group.name);
+    group.removeState(SeriesNumberCellStateValue.select);
+  }
+  addOneGroupSelected(group: IGroup) {
+    this.interactionState.selectIndexs.add(group.name);
+    group.useStates([SeriesNumberCellStateValue.select]);
   }
   renderSelectedIndexsState() {
     const { rowSeriesNumberCellStyle, colSeriesNumberCellStyle } = this.attribute as TableSeriesNumberAttributes;
     for (const name of this.interactionState.selectIndexs) {
       const isRow = name.startsWith('row');
+      const isCol = name.startsWith('col');
       const index = Number(name.split('-')[1]);
       if (isRow) {
         this.getRowSeriesNumberCellGroup(index)?.useStates([SeriesNumberCellStateValue.select]);
-      } else {
+      } else if (isCol) {
         this.getColSeriesNumberCellGroup(index)?.useStates([SeriesNumberCellStateValue.select]);
+      } else {
+        this._cornerGroup.useStates([SeriesNumberCellStateValue.select]);
       }
     }
     this.stage.render();

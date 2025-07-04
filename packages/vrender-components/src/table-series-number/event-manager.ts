@@ -4,7 +4,7 @@ import { SeriesNumberCellStateValue, SeriesNumberEvent } from './type';
 
 export class TableSeriesNumberEventManager {
   private _tableSeriesNumber: TableSeriesNumber;
-  isPointerDown: boolean = false;
+  isPointerDownStartSelect: boolean = false;
   constructor(tableSeriesNumber: TableSeriesNumber) {
     this._tableSeriesNumber = tableSeriesNumber;
   }
@@ -88,7 +88,7 @@ export class TableSeriesNumberEventManager {
   private _onPointermove = (e: FederatedPointerEvent) => {
     //ff
     const target = e.target as unknown as IGroup;
-    if (this.isPointerDown) {
+    if (this.isPointerDownStartSelect) {
       if (!this._tableSeriesNumber.interactionState.selectIndexs.has(target.name)) {
         this._tableSeriesNumber.interactionState.selectIndexs.add(target.name);
         this._tableSeriesNumber.renderSelectedIndexsState();
@@ -98,7 +98,20 @@ export class TableSeriesNumberEventManager {
           isDragSelect: true
         });
       } else {
+        if (
+          this._tableSeriesNumber.interactionState._lastClickItem &&
+          this._tableSeriesNumber.interactionState._lastClickItem.id === target.id
+        ) {
+          return;
+        }
+        this._tableSeriesNumber.renderSelectedIndexsState();
+        this._tableSeriesNumber.dispatchTableSeriesNumberEvent(SeriesNumberEvent.seriesNumberCellClick, {
+          seriesNumberCell: target,
+          event: e,
+          isDragSelect: true
+        });
       }
+      this._tableSeriesNumber.interactionState._lastClickItem = target;
       return;
     }
 
@@ -134,11 +147,11 @@ export class TableSeriesNumberEventManager {
       }
     }
     // // 如果上个激活元素存在，则判断当前元素是否和上个激活元素相同，相同则不做处理，不相同则触发 unhover
-    if (this._tableSeriesNumber._lastHoverItem) {
-      if (this._tableSeriesNumber._lastHoverItem.id === target.id) {
+    if (this._tableSeriesNumber.interactionState._lastHoverItem) {
+      if (this._tableSeriesNumber.interactionState._lastHoverItem.id === target.id) {
         return;
       }
-      this._unHoverHandler(this._tableSeriesNumber._lastHoverItem, e);
+      this._unHoverHandler(this._tableSeriesNumber.interactionState._lastHoverItem, e);
     }
     if ((this._tableSeriesNumber.getAttributes() as any).hover) {
       this._hoverHandler(target, e);
@@ -146,13 +159,12 @@ export class TableSeriesNumberEventManager {
   };
   private _onPointerleave = (e: FederatedPointerEvent) => {
     //ff
-    if (this._tableSeriesNumber._lastHoverItem) {
-      this._unHoverHandler(this._tableSeriesNumber._lastHoverItem, e);
-      this._tableSeriesNumber._lastHoverItem = null;
+    if (this._tableSeriesNumber.interactionState._lastHoverItem) {
+      this._unHoverHandler(this._tableSeriesNumber.interactionState._lastHoverItem, e);
+      this._tableSeriesNumber.interactionState._lastHoverItem = null;
     }
   };
   private _onPointerdown = (e: FederatedPointerEvent) => {
-    this.isPointerDown = true;
     //ff
     const target = e.target as unknown as IGroup;
 
@@ -199,6 +211,7 @@ export class TableSeriesNumberEventManager {
         return;
       }
     }
+    this.isPointerDownStartSelect = true;
     if (this._tableSeriesNumber.interactionState.selectIndexs?.size) {
       if (this._tableSeriesNumber.interactionState.selectIndexs.has(target.name)) {
         if (e.nativeEvent.ctrlKey || e.nativeEvent.metaKey) {
@@ -228,14 +241,18 @@ export class TableSeriesNumberEventManager {
   private _onPointerup = (e: FederatedPointerEvent) => {
     //ff
     const target = e.target as unknown as IGroup;
-    if (this.isPointerDown) {
-      this.isPointerDown = false;
-      // this._tableSeriesNumber.dispatchTableSeriesNumberEvent(SeriesNumberEvent.seriesNumberCellClick, { seriesNumberCell:target, event: e });
+    if (this.isPointerDownStartSelect) {
+      this.isPointerDownStartSelect = false;
+      this._tableSeriesNumber.interactionState._lastClickItem = null;
+      this._tableSeriesNumber.dispatchTableSeriesNumberEvent(SeriesNumberEvent.seriesNumberCellClickUp, {
+        seriesNumberCell: target,
+        event: e
+      });
     }
   };
 
   private _hoverHandler(seriesNumberCell: IGroup, e: FederatedPointerEvent) {
-    this._tableSeriesNumber._lastHoverItem = seriesNumberCell;
+    this._tableSeriesNumber.interactionState._lastHoverItem = seriesNumberCell;
     //需兼顾select状态
     if (seriesNumberCell.hasState(SeriesNumberCellStateValue.select)) {
       seriesNumberCell.useStates([SeriesNumberCellStateValue.select, SeriesNumberCellStateValue.hover]);
@@ -260,6 +277,7 @@ export class TableSeriesNumberEventManager {
   private _clickHandler(seriesNumberCell: IGroup, e: FederatedPointerEvent) {
     this._tableSeriesNumber.interactionState.selectIndexs.add(seriesNumberCell.name);
     seriesNumberCell.useStates([SeriesNumberCellStateValue.select]);
+    this._tableSeriesNumber.interactionState._lastClickItem = seriesNumberCell;
     this._tableSeriesNumber.dispatchTableSeriesNumberEvent(SeriesNumberEvent.seriesNumberCellClick, {
       seriesNumberCell,
       event: e
@@ -274,9 +292,9 @@ export class TableSeriesNumberEventManager {
     const seriesNumberCell = isRow
       ? this._tableSeriesNumber.getRowSeriesNumberCellGroup(Number(seriesNumberIndex.split('-')[1]))
       : this._tableSeriesNumber.getColSeriesNumberCellGroup(Number(seriesNumberIndex.split('-')[1]));
-    seriesNumberCell.removeState(SeriesNumberCellStateValue.select);
+    seriesNumberCell?.removeState(SeriesNumberCellStateValue.select);
     this._tableSeriesNumber.dispatchTableSeriesNumberEvent(SeriesNumberEvent.seriesNumberCellCancelClick, {
-      seriesNumberCell,
+      index: seriesNumberIndex,
       event: e
     });
   }

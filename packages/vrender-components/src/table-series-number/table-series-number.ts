@@ -109,7 +109,7 @@ export class TableSeriesNumber extends AbstractComponent<Required<TableSeriesNum
   _frozenLeftColSeriesNumberGroup: IGroup;
   _frozenRightColSeriesNumberGroup: IGroup;
   _frozenBottomRowSeriesNumberGroup: IGroup;
-  _lastHoverItem: IGroup;
+
   // _lastClickItem: IGroup;
   // 记录rowSeriesNumberGroup中第一个元素的索引
   _firstRowSeriesNumberIndex: number = 0;
@@ -119,9 +119,11 @@ export class TableSeriesNumber extends AbstractComponent<Required<TableSeriesNum
   _maxTextWidth: number = 0;
   _changeRowSeriesNumberWidthTimer: number = null;
   interactionState: {
+    _lastHoverItem: IGroup;
+    _lastClickItem: IGroup;
     selectIndexs?: Set<string>; //记录选中的行号或列号 cellGroup的name
     // selectColIndexs?:number[],
-  } = { selectIndexs: new Set() };
+  } = { selectIndexs: new Set(), _lastHoverItem: null, _lastClickItem: null };
   _parsedRowSeriesNumberCellPadding: number[] = [0, 0, 0, 0];
   _parsedColSeriesNumberCellPadding: number[] = [0, 0, 0, 0];
   initRenderAll: boolean = false;

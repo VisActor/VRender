@@ -15,6 +15,7 @@ export enum SeriesNumberEvent {
   seriesNumberCellHover = 'seriesNumberCellHover',
   seriesNumberCellUnHover = 'seriesNumberCellUnHover',
   seriesNumberCellClick = 'seriesNumberCellClick',
+  seriesNumberCellClickUp = 'seriesNumberCellClickUp',
   seriesNumberCellCancelClick = 'seriesNumberCellCancelClick',
   rowSeriesNumberWidthChange = 'rowSeriesNumberWidthChange',
 

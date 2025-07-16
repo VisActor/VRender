@@ -84,7 +84,34 @@ export class TableSeriesNumberEventManager {
 
       vglobal.addEventListener('pointerup', this._onPointerup as EventListenerOrEventListenerObject);
     }
+    this._tableSeriesNumber._rowSeriesNumberGroup.addEventListener(
+      'rightdown',
+      this._onRightDown as EventListenerOrEventListenerObject
+    );
+    this._tableSeriesNumber._colSeriesNumberGroup.addEventListener(
+      'rightdown',
+      this._onRightDown as EventListenerOrEventListenerObject
+    );
+    this._tableSeriesNumber._cornerGroup.addEventListener(
+      'rightdown',
+      this._onRightDown as EventListenerOrEventListenerObject
+    );
+    this._tableSeriesNumber._frozenTopRowSeriesNumberGroup.addEventListener(
+      'rightdown',
+      this._onRightDown as EventListenerOrEventListenerObject
+    );
+    this._tableSeriesNumber._frozenLeftColSeriesNumberGroup.addEventListener(
+      'rightdown',
+      this._onRightDown as EventListenerOrEventListenerObject
+    );
   }
+  private _onRightDown = (e: FederatedPointerEvent) => {
+    const target = e.target as unknown as IGroup;
+    this._tableSeriesNumber.dispatchTableSeriesNumberEvent(SeriesNumberEvent.seriesNumberCellRightClick, {
+      seriesNumberCell: target,
+      event: e
+    });
+  };
   private _onPointermove = (e: FederatedPointerEvent) => {
     //ff
     const target = e.target as unknown as IGroup;

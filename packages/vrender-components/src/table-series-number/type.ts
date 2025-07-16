@@ -23,7 +23,9 @@ export enum SeriesNumberEvent {
   resizeRowHeightStart = 'resizeRowHeightStart',
 
   /** 调整列宽开始 */
-  resizeColWidthStart = 'resizeColWidthStart'
+  resizeColWidthStart = 'resizeColWidthStart',
+  /** 右键事件 */
+  seriesNumberCellRightClick = 'seriesNumberCellRightClick'
 }
 export type TableSeriesNumberAttributes = IGroupGraphicAttribute & {
   frozenRowCount?: number;

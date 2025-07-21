@@ -109,12 +109,15 @@ export class GraphicStateExtension {
    * 清除图形上的所有动画状态
    */
   clearAnimationStates(): this {
-    this._getAnimationStateManager(this as unknown as IGraphic).clearState();
+    const stateManager = (this as any)._animationStateManager as AnimationStateManager;
+    if (stateManager) {
+      stateManager.clearState();
+    }
     return this;
   }
 
   reApplyAnimationState(state: string, deep: boolean = false): this {
-    const stateManager = this._getAnimationStateManager(this as unknown as IGraphic);
+    const stateManager = (this as any)._animationStateManager as AnimationStateManager;
     if (stateManager) {
       stateManager.reApplyState(state);
     }

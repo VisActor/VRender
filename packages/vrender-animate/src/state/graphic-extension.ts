@@ -114,7 +114,10 @@ export class GraphicStateExtension {
   }
 
   reApplyAnimationState(state: string, deep: boolean = false): this {
-    this._getAnimationStateManager(this as unknown as IGraphic).reApplyState(state);
+    const stateManager = this._getAnimationStateManager(this as unknown as IGraphic);
+    if (stateManager) {
+      stateManager.reApplyState(state);
+    }
     if (deep && (this as any).isContainer) {
       (this as any).forEachChildren((child: any) => {
         child.reApplyAnimationState(state, deep);

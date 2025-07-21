@@ -162,6 +162,9 @@ export class DefaultDrawContribution implements IDrawContribution {
     }
 
     this.clearScreen(renderService, context, drawContext);
+    if (renderService.drawParams?.stage) {
+      renderService.drawParams.stage.hooks.afterClearScreen.call(renderService.drawParams);
+    }
     // // 渲染的时候图元的起始位置就是x，y
     // this.backupDirtyBounds.translate(-x, -y);
     // this.dirtyBounds.translate(-x, -y);

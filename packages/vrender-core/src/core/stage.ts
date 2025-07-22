@@ -25,7 +25,8 @@ import type {
   LayerMode,
   PickResult,
   IPlugin,
-  IGraphicService
+  IGraphicService,
+  IRenderServiceDrawParams
 } from '../interface';
 import { VWindow } from './window';
 import type { Layer } from './layer';
@@ -87,6 +88,7 @@ export class Stage extends Group implements IStage {
   declare hooks: {
     beforeRender: ISyncHook<[IStage]>;
     afterRender: ISyncHook<[IStage]>;
+    afterClearScreen: ISyncHook<[IRenderServiceDrawParams]>;
   };
 
   set viewBox(b: IBoundsLike) {
@@ -187,6 +189,7 @@ export class Stage extends Group implements IStage {
 
   protected _beforeRender?: (stage: IStage) => void;
   protected _afterRender?: (stage: IStage) => void;
+  protected _afterClearScreen?: (drawParams: any) => void;
   // 0: 正常渲染, > 0: 跳过隐藏canvas的渲染, < 0: 禁止渲染
   protected _skipRender?: number;
   protected _afterNextRenderCbs?: ((stage: IStage) => void)[];
@@ -232,7 +235,8 @@ export class Stage extends Group implements IStage {
     this.theme = new Theme();
     this.hooks = {
       beforeRender: new SyncHook(['stage']),
-      afterRender: new SyncHook(['stage'])
+      afterRender: new SyncHook(['stage']),
+      afterClearScreen: new SyncHook(['stage'])
     };
     this.global = application.global;
     if (!this.global.env && isBrowserEnv()) {
@@ -301,8 +305,10 @@ export class Stage extends Group implements IStage {
     params.enableLayout && this.enableLayout();
     this.hooks.beforeRender.tap('constructor', this.beforeRender);
     this.hooks.afterRender.tap('constructor', this.afterRender);
+    this.hooks.afterClearScreen.tap('constructor', this.afterClearScreen);
     this._beforeRender = params.beforeRender;
     this._afterRender = params.afterRender;
+    this._afterClearScreen = params.afterClearScreen;
     this.supportInteractiveLayer = params.interactiveLayer !== false;
     if (!params.optimize) {
       params.optimize = {
@@ -489,6 +495,9 @@ export class Stage extends Group implements IStage {
 
   protected beforeRender = (stage: IStage) => {
     this._beforeRender && this._beforeRender(stage);
+  };
+  protected afterClearScreen = (drawParams: any) => {
+    this._afterClearScreen && this._afterClearScreen(drawParams);
   };
 
   protected afterRender = (stage: IStage) => {

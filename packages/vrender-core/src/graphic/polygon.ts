@@ -77,8 +77,12 @@ export class Polygon extends Graphic<IPolygonGraphicAttribute> implements IPolyg
   }
 
   toCustomPath() {
+    let path = super.toCustomPath();
+    if (path) {
+      return path;
+    }
     const points = this.attribute.points;
-    const path = new CustomPath2D();
+    path = new CustomPath2D();
 
     points.forEach((point, index) => {
       if (index === 0) {

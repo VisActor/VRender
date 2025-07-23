@@ -1,6 +1,15 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Mon, 23 Jun 2025 13:56:24 GMT and should not be manually modified.
+This log was last generated on Wed, 23 Jul 2025 03:59:46 GMT and should not be manually modified.
+
+## 1.0.8
+Wed, 23 Jul 2025 03:59:46 GMT
+
+### Updates
+
+- feat: polygin support customPath with render strategy
+- feat: support afterClearScreen hooks
+- feat: add animate interface
 
 ## 1.0.7
 Mon, 23 Jun 2025 13:56:24 GMT

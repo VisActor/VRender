@@ -192,7 +192,10 @@ export class TableSeriesNumberEventManager {
     }
   };
   private _onPointerdown = (e: FederatedPointerEvent) => {
-    //ff
+    //验证是否右键点击
+    if (e.button === 2) {
+      return;
+    }
     const target = e.target as unknown as IGroup;
 
     if (target.name.startsWith('col')) {

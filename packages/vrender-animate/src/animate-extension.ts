@@ -27,9 +27,6 @@ export class AnimateExtension {
   }
 
   animate(params?: IGraphicAnimateParams) {
-    if (!this.animates) {
-      this.animates = new Map();
-    }
     const animate = new Animate(
       params?.id,
       params?.timeline ?? ((this as any).stage && (this as any).stage.getTimeline()) ?? defaultTimeline,
@@ -43,11 +40,6 @@ export class AnimateExtension {
       onEnd != null && animate.onEnd(onEnd);
       onRemove != null && animate.onRemove(onRemove);
     }
-    this.animates.set(animate.id, animate);
-    animate.onRemove(() => {
-      animate.stop();
-      this.animates.delete(animate.id);
-    });
 
     // TODO 考虑性能问题
     (this as any).stage?.ticker.start();
@@ -114,5 +106,32 @@ export class AnimateExtension {
       return this.finalAttribute[key];
     }
     return (this as any).attribute[key];
+  }
+
+  pauseAnimation(deep: boolean = false) {
+    this.animates && this.animates.forEach(animate => animate.pause());
+    if (deep && (this as any).isContainer) {
+      (this as any).forEachChildren((child: any) => {
+        child.pauseAnimation(deep);
+      });
+    }
+  }
+
+  resumeAnimation(deep: boolean = false) {
+    this.animates && this.animates.forEach(animate => animate.resume());
+    if (deep && (this as any).isContainer) {
+      (this as any).forEachChildren((child: any) => {
+        child.resumeAnimation(deep);
+      });
+    }
+  }
+
+  stopAnimation(deep: boolean = false) {
+    this.animates && this.animates.forEach(animate => animate.stop());
+    if (deep && (this as any).isContainer) {
+      (this as any).forEachChildren((child: any) => {
+        child.stopAnimation(deep);
+      });
+    }
   }
 }

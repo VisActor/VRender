@@ -44,16 +44,15 @@ export const moveIn = (
   const point = isFunction(pointOpt)
     ? pointOpt.call(null, graphic.context?.data?.[0], graphic, animationParameters)
     : pointOpt;
-  const fromX = point && isValidNumber(point.x) ? point.x : changedX;
-  const fromY = point && isValidNumber(point.y) ? point.y : changedY;
-  const finalAttrs = graphic.getFinalAttribute();
-  const finalAttrsX = excludeChannels.includes('x') ? graphic.attribute.x : finalAttrs.x;
-  const finalAttrsY = excludeChannels.includes('y') ? graphic.attribute.y : finalAttrs.y;
+  const finalAttrsX = graphic.getGraphicAttribute('x');
+  const finalAttrsY = graphic.getGraphicAttribute('y');
+  const fromX = excludeChannels.includes('x') ? finalAttrsX : point && isValidNumber(point.x) ? point.x : changedX;
+  const fromY = excludeChannels.includes('y') ? finalAttrsY : point && isValidNumber(point.y) ? point.y : changedY;
 
   switch (direction) {
     case 'x':
       return {
-        from: { x: fromX },
+        from: { x: excludeChannels.includes('x') ? finalAttrsX : fromX },
         to: { x: finalAttrsX }
       };
     case 'y':
@@ -80,10 +79,9 @@ export const moveOut = (
 ) => {
   const { offset = 0, orient, direction, point: pointOpt } = options ?? {};
 
-  // consider the offset of group
-  // const groupBounds = graphic.parent ? graphic.parent.getBounds() : null;
-  const groupWidth = options.layoutRect?.width ?? graphic.stage.viewWidth;
-  const groupHeight = options.layoutRect?.height ?? graphic.stage.viewHeight;
+  const groupBounds = animationParameters.group ? animationParameters.group.AABBBounds : null;
+  const groupWidth = groupBounds.width() ?? animationParameters.width;
+  const groupHeight = groupBounds.height() ?? animationParameters.height;
   const changedX = (orient === 'negative' ? groupWidth : 0) + offset;
   const changedY = (orient === 'negative' ? groupHeight : 0) + offset;
   const point = isFunction(pointOpt)
@@ -95,20 +93,20 @@ export const moveOut = (
   switch (direction) {
     case 'x':
       return {
-        from: { x: graphic.attribute.x },
+        from: { x: graphic.getGraphicAttribute('x') },
         to: { x: fromX }
       };
     case 'y':
       return {
-        from: { y: graphic.attribute.y },
+        from: { y: graphic.getGraphicAttribute('y') },
         to: { y: fromY }
       };
     case 'xy':
     default:
       return {
         from: {
-          x: graphic.attribute.x,
-          y: graphic.attribute.y
+          x: graphic.getGraphicAttribute('x'),
+          y: graphic.getGraphicAttribute('y')
         },
         to: { x: fromX, y: fromY }
       };

@@ -835,6 +835,11 @@ export interface IGraphic<T extends Partial<IGraphicAttribute> = Partial<IGraphi
   getGraphicTheme: () => T;
 
   getAttributes: (final?: boolean) => Partial<T>;
+
+  pauseAnimation?: (deep?: boolean) => void;
+  resumeAnimation?: (deep?: boolean) => void;
+  stopAnimation?: (deep?: boolean) => void;
+  reApplyAnimationState?: (state: string, deep?: boolean) => this;
 }
 
 export interface IRoot extends IGraphic {

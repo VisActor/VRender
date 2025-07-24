@@ -71,10 +71,10 @@ export class DefaultTicker extends EventEmitter implements ITicker {
     this.interval = 16;
     this.status = STATUS.INITIAL;
     application.global.hooks.onSetEnv.tap('graph-ticker', () => {
-      this.initHandler();
+      this.initHandler(false);
     });
     if (application.global.env) {
-      this.initHandler();
+      this.initHandler(false);
     }
   }
 
@@ -90,15 +90,18 @@ export class DefaultTicker extends EventEmitter implements ITicker {
     return this.timelines;
   }
 
-  protected initHandler() {
-    this.setupTickHandler();
+  protected initHandler(force: boolean = false) {
+    this.setupTickHandler(force);
   }
 
   /**
    * Set up the tick handler
    * @returns true if setup was successful, false otherwise
    */
-  protected setupTickHandler(): boolean {
+  protected setupTickHandler(force: boolean = false): boolean {
+    if (!force && this.tickerHandler) {
+      return true;
+    }
     const handler: ITickHandler = new RAFTickHandler();
 
     // Destroy the previous tick handler
@@ -196,7 +199,7 @@ export class DefaultTicker extends EventEmitter implements ITicker {
   stop(): void {
     // Reset the tick handler
     this.status = STATUS.INITIAL;
-    this.setupTickHandler();
+    this.setupTickHandler(true);
     this.lastFrameTime = -1;
   }
 
@@ -221,7 +224,7 @@ export class DefaultTicker extends EventEmitter implements ITicker {
   }
 
   protected checkSkip(delta: number): boolean {
-    if (this.stage.params.optimize.tickRenderMode === 'performance') {
+    if (this.stage?.params?.optimize?.tickRenderMode === 'performance') {
       return false;
     }
     // 随机扰动（每次都对interval进行随机的扰动，避免所有tick都发生在同一帧）

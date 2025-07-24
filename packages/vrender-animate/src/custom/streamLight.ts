@@ -119,9 +119,8 @@ export class StreamLight extends ACustomAnimate<any> {
       const width = w + x > parentWidth ? Math.max(parentWidth - x, 0) : w;
       this.rect.setAttributes(
         {
-          x,
-          width,
-          dx: Math.min(parentAttr.x1 - parentAttr.x, 0)
+          x: x + Math.min(parentAttr.x1 - parentAttr.x, 0),
+          width
         } as any,
         false,
         {
@@ -155,9 +154,8 @@ export class StreamLight extends ACustomAnimate<any> {
       }
       this.rect.setAttributes(
         {
-          y,
-          height,
-          dy: Math.min(parentAttr.y1 - parentAttr.y, 0)
+          y: y + Math.min(parentAttr.y1 - parentAttr.y, 0),
+          height
         } as any,
         false,
         {

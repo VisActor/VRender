@@ -65,6 +65,9 @@ export interface IStageParams {
   afterRender: (stage: IStage) => void;
   // 清屏之后的钩子函数
   afterClearScreen: (drawParams: any) => void;
+  // 清除矩形区域之后的钩子函数
+  afterClearRect: (drawParams: any) => void;
+
   renderStyle?: string;
   ticker?: ITicker;
   pluginList?: string[];
@@ -161,6 +164,7 @@ export interface IStage extends INode {
     beforeRender: ISyncHook<[IStage]>;
     afterRender: ISyncHook<[IStage]>;
     afterClearScreen: ISyncHook<[IRenderServiceDrawParams]>;
+    afterClearRect: ISyncHook<[IRenderServiceDrawParams]>;
   };
 
   option3d?: IOption3D;

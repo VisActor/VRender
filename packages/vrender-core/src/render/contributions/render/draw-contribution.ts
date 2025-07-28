@@ -471,6 +471,9 @@ export class DefaultDrawContribution implements IDrawContribution {
     const height = viewBox.height();
     if (clear) {
       context.clearRect(x, y, width, height);
+      if (renderService.drawParams?.stage) {
+        renderService.drawParams.stage.hooks.afterClearRect.call(renderService.drawParams);
+      }
       const stage = renderService.drawParams?.stage;
       stage && (context.globalAlpha = (stage as any).attribute.opacity ?? 1);
       if (stage && (stage as any).backgroundImg && (stage as any).resources) {

@@ -1,6 +1,13 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Fri, 25 Jul 2025 08:06:24 GMT and should not be manually modified.
+This log was last generated on Thu, 31 Jul 2025 09:44:34 GMT and should not be manually modified.
+
+## 1.0.10
+Thu, 31 Jul 2025 09:44:34 GMT
+
+### Updates
+
+- fix: ignore subGraphic wich glyph set state
 
 ## 1.0.9
 Fri, 25 Jul 2025 08:06:24 GMT

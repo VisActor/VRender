@@ -2,7 +2,7 @@
   "changes": [
     {
       "packageName": "@visactor/vrender-core",
-      "comment": "feat: support afterClearRect hooks",
+      "comment": "fix: ignore subGraphic wich glyph set state",
       "type": "none"
     }
   ],

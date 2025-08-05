@@ -16,6 +16,7 @@ export type IRectAttribute = {
    * 'bevel' - 斜角
    */
   cornerType: 'round' | 'bevel';
+  drawStrokeWhenZeroWH: boolean;
 };
 
 export type IRectGraphicAttribute = Partial<IGraphicAttribute> & Partial<IRectAttribute>;

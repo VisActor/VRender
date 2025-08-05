@@ -52,7 +52,8 @@ export class DefaultCanvasRect3dRender extends Base3dRender<IRect3d> implements 
       fillOpacity = rectAttribute.fillOpacity,
       lineWidth = rectAttribute.lineWidth,
       strokeOpacity = rectAttribute.strokeOpacity,
-      visible = rectAttribute.visible
+      visible = rectAttribute.visible,
+      drawStrokeWhenZeroWH = rectAttribute.drawStrokeWhenZeroWH ?? false
     } = rect.attribute;
     let { width, height } = rect.attribute;
 
@@ -63,7 +64,7 @@ export class DefaultCanvasRect3dRender extends Base3dRender<IRect3d> implements 
 
     // 不绘制或者透明
     const fVisible = rectFillVisible(opacity, fillOpacity, width, height, fill);
-    const sVisible = rectStrokeVisible(opacity, strokeOpacity, width, height);
+    const sVisible = rectStrokeVisible(opacity, strokeOpacity, width, height, drawStrokeWhenZeroWH);
     const doFill = runFill(fill);
     const doStroke = runStroke(stroke, lineWidth);
 

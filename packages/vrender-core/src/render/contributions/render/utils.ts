@@ -66,7 +66,16 @@ export function strokeVisible(opacity: number, strokeOpacity: number) {
   return opacity * strokeOpacity > 0;
 }
 
-export function rectStrokeVisible(opacity: number, strokeOpacity: number, width: number, height: number) {
+export function rectStrokeVisible(
+  opacity: number,
+  strokeOpacity: number,
+  width: number,
+  height: number,
+  drawStrokeWhenZeroWH: boolean
+) {
+  if (drawStrokeWhenZeroWH) {
+    return opacity * strokeOpacity > 0;
+  }
   return opacity * strokeOpacity > 0 && width !== 0 && height !== 0;
 }
 

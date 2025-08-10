@@ -71,7 +71,7 @@ export function rectStrokeVisible(
   strokeOpacity: number,
   width: number,
   height: number,
-  drawStrokeWhenZeroWH: boolean
+  drawStrokeWhenZeroWH?: boolean
 ) {
   if (drawStrokeWhenZeroWH) {
     return opacity * strokeOpacity > 0;

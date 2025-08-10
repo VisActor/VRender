@@ -16,6 +16,9 @@ export type IRectAttribute = {
    * 'bevel' - 斜角
    */
   cornerType: 'round' | 'bevel';
+  /**
+   * 当宽高为0时，是否绘制边框
+   */
   drawStrokeWhenZeroWH: boolean;
 };
 

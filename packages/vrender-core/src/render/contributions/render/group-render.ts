@@ -92,7 +92,7 @@ export class DefaultCanvasGroupRender implements IGraphicRender {
 
     // 不绘制或者透明
     const fVisible = rectFillVisible(opacity, fillOpacity, width, height, fill);
-    const sVisible = rectStrokeVisible(opacity, strokeOpacity, width, height, false);
+    const sVisible = rectStrokeVisible(opacity, strokeOpacity, width, height);
     const doFill = runFill(fill, background);
     const doStroke = runStroke(stroke, lineWidth);
 

@@ -234,7 +234,10 @@ export class AnimationStateManager {
   reApplyState(state: string): void {
     const stateInfo = this.stateList?.find(stateInfo => stateInfo.state === state);
     if (stateInfo) {
+      // stop状态会改变stateList，但因为是reapply，所以保留原始的stateList
+      const stateList = this.stateList.slice();
       stateInfo.executor.stop();
+      this.stateList = stateList;
       stateInfo.executor.execute(stateInfo.animationConfig);
     }
   }

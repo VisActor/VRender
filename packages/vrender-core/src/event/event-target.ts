@@ -61,6 +61,6 @@ export const EventTarget: Omit<IEventTarget, Exclude<keyof INode, 'dispatchEvent
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   emit(eventName: string, object: Dict<any>) {
-    return (this as any).dispatchEvent(new CustomEvent(eventName, object));
+    return (this as IEventTarget).dispatchEvent(new CustomEvent(eventName, object));
   }
 };

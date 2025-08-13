@@ -2,6 +2,48 @@
   "name": "@visactor/vrender-core",
   "entries": [
     {
+      "version": "1.0.10",
+      "tag": "@visactor/vrender-core_v1.0.10",
+      "date": "Thu, 31 Jul 2025 09:44:34 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: ignore subGraphic wich glyph set state"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.0.9",
+      "tag": "@visactor/vrender-core_v1.0.9",
+      "date": "Fri, 25 Jul 2025 08:06:24 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: support afterClearRect hooks"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.0.8",
+      "tag": "@visactor/vrender-core_v1.0.8",
+      "date": "Wed, 23 Jul 2025 03:59:46 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: polygin support customPath with render strategy"
+          },
+          {
+            "comment": "feat: support afterClearScreen hooks"
+          },
+          {
+            "comment": "feat: add animate interface"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.0.7",
       "tag": "@visactor/vrender-core_v1.0.7",
       "date": "Mon, 23 Jun 2025 13:56:24 GMT",

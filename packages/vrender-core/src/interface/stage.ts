@@ -6,7 +6,7 @@ import type { ICamera } from './camera';
 import type { vec3 } from './matrix';
 import type { IDirectionLight } from './light';
 import type { ISyncHook } from './sync-hook';
-import type { IDrawContext, IRenderService } from './render';
+import type { IDrawContext, IRenderService, IRenderServiceDrawParams } from './render';
 import type { ITicker, ITimeline } from './animation';
 import type { IPickerService, PickResult } from './picker';
 import type { IPlugin, IPluginService } from './plugin';
@@ -63,6 +63,11 @@ export interface IStageParams {
   beforeRender: (stage: IStage) => void;
   // 绘制之后的钩子函数
   afterRender: (stage: IStage) => void;
+  // 清屏之后的钩子函数
+  afterClearScreen: (drawParams: any) => void;
+  // 清除矩形区域之后的钩子函数
+  afterClearRect: (drawParams: any) => void;
+
   renderStyle?: string;
   ticker?: ITicker;
   pluginList?: string[];
@@ -158,6 +163,8 @@ export interface IStage extends INode {
   hooks: {
     beforeRender: ISyncHook<[IStage]>;
     afterRender: ISyncHook<[IStage]>;
+    afterClearScreen: ISyncHook<[IRenderServiceDrawParams]>;
+    afterClearRect: ISyncHook<[IRenderServiceDrawParams]>;
   };
 
   option3d?: IOption3D;

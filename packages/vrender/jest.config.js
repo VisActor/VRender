@@ -45,6 +45,7 @@ module.exports = {
   },
   moduleNameMapper: {
     '@visactor/vrender-kits': path.resolve(__dirname, '../vrender-kits/src/index.ts'),
-    '@visactor/vrender-core': path.resolve(__dirname, '../vrender-core/src/index.ts')
+    '@visactor/vrender-core': path.resolve(__dirname, '../vrender-core/src/index.ts'),
+    '@visactor/vrender-animate': path.resolve(__dirname, '../vrender-animate/src/index.ts')
   }
 };

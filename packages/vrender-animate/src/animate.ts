@@ -492,6 +492,10 @@ export class Animate implements IAnimate {
     this._onFrame = [];
     this._onEnd = [];
     this._onRemove = [];
+
+    this.forEachStep(step => {
+      step.release();
+    });
   }
 
   /**
@@ -715,5 +719,13 @@ export class Animate implements IAnimate {
 
   getLoop(): number {
     return this._loopCount;
+  }
+
+  protected forEachStep(cb: (step: IStep) => void): void {
+    let step = this._firstStep;
+    while (step) {
+      cb(step);
+      step = step.next;
+    }
   }
 }

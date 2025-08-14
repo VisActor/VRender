@@ -1,10 +1,32 @@
-import { createStage, createSymbol, container, IGraphic, XMLParser, createText } from '@visactor/vrender';
+import { createStage, createSymbol, container, IGraphic, XMLParser, createText, vglobal } from '@visactor/vrender';
 import { roughModule } from '@visactor/vrender-kits';
+import { AStageAnimate } from '@visactor/vrender-animate';
 // import { addShapesToStage, colorPools } from '../utils';
 // import { XMLParser, XMLValidator } from 'fast-xml-parser';
 import { AABBBounds } from '@visactor/vutils';
 
 container.load(roughModule);
+
+class TestStageAnimate extends AStageAnimate<any> {
+  protected afterStageRender(stage: any, canvas: HTMLCanvasElement): HTMLCanvasElement | void | null | false {
+    const c = vglobal.createCanvas({
+      width: canvas.width,
+      height: canvas.height,
+      dpr: vglobal.devicePixelRatio
+    });
+    const ctx = c.getContext('2d');
+    if (!ctx) {
+      return false;
+    }
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(canvas, 0, 0);
+    ctx.fillStyle = `rgba(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(
+      Math.random() * 255
+    )}, 0.2)`;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    return c;
+  }
+}
 
 export const page = () => {
   console.time();
@@ -152,4 +174,6 @@ export const page = () => {
 
   const c = stage.toCanvas(false, new AABBBounds().set(100, 100, 300, 360));
   document.body.appendChild(c);
+
+  stage.animate().play(new TestStageAnimate(null, null, 1000, 'linear'));
 };

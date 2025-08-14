@@ -316,6 +316,10 @@ export class Step implements IStep {
   stop(): void {
     // ...
   }
+
+  release(): void {
+    // ...
+  }
 }
 
 export class WaitStep extends Step {

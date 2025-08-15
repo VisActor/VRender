@@ -47,6 +47,10 @@ export class AnimateExecutor implements IAnimateExecutor {
     this._target = target;
   }
 
+  get started(): boolean {
+    return this._started;
+  }
+
   /**
    * 注册一个回调，当动画开始时调用
    */

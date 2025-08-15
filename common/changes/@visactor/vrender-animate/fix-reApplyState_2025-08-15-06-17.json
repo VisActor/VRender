@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-animate",
+      "comment": "fix: fix issue with reApplyState when this state is not running yet",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-animate"
+}

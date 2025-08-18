@@ -286,6 +286,34 @@ export abstract class DisappearAnimateBase<T = any> extends AStageAnimate<T> {
     return this.applyCanvas2DEffect !== DisappearAnimateBase.prototype.applyCanvas2DEffect;
   }
 
+  /**
+   * 释放WebGL资源
+   */
+  release(): void {
+    super.release();
+
+    // 清理WebGL资源
+    if (this.gl) {
+      // 删除着色器程序
+      if (this.program) {
+        this.gl.deleteProgram(this.program);
+        this.program = null;
+      }
+
+      // WebGL上下文会在canvas被垃圾回收时自动清理
+      this.gl = null;
+    }
+
+    // 清理WebGL canvas
+    if (this.webglCanvas) {
+      this.webglCanvas = null;
+    }
+
+    // 重置动画状态
+    this.currentAnimationRatio = 0;
+    this.animationTime = 0;
+  }
+
   protected afterStageRender(stage: any, canvas: HTMLCanvasElement): HTMLCanvasElement | void | null | false {
     let result: HTMLCanvasElement | null = null;
 

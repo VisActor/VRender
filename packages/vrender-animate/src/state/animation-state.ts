@@ -233,7 +233,8 @@ export class AnimationStateManager {
 
   reApplyState(state: string): void {
     const stateInfo = this.stateList?.find(stateInfo => stateInfo.state === state);
-    if (stateInfo) {
+    // 只有当状态存在且动画正在运行时才重新应用
+    if (stateInfo && stateInfo.executor.started) {
       // stop状态会改变stateList，但因为是reapply，所以保留原始的stateList
       const stateList = this.stateList.slice();
       stateInfo.executor.stop();

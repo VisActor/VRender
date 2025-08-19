@@ -1,6 +1,15 @@
 # Change Log - @visactor/vrender-animate
 
-This log was last generated on Thu, 31 Jul 2025 09:44:33 GMT and should not be manually modified.
+This log was last generated on Tue, 19 Aug 2025 06:31:41 GMT and should not be manually modified.
+
+## 1.0.11
+Tue, 19 Aug 2025 06:31:41 GMT
+
+### Updates
+
+- feat: support AStageAnimate
+- fix: fix issue with reApplyState when this state is not running yet
+- fix: fix issue with graphic run animate which unbind to scenegraph, closed #1914
 
 ## 1.0.10
 Thu, 31 Jul 2025 09:44:33 GMT

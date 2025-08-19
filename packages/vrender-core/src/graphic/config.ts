@@ -327,7 +327,8 @@ export const DefaultRectAttribute: Required<IRectGraphicAttribute> = {
   y1: 0,
   strokeBoundsBuffer: 0,
   cornerRadius: 0,
-  cornerType: 'round'
+  cornerType: 'round',
+  drawStrokeWhenZeroWH: false
 };
 
 export const DefaultRect3dAttribute: Required<IRect3dGraphicAttribute> = {
@@ -338,7 +339,8 @@ export const DefaultRect3dAttribute: Required<IRect3dGraphicAttribute> = {
   y1: 0,
   cornerRadius: 0,
   length: 0,
-  cornerType: 'round'
+  cornerType: 'round',
+  drawStrokeWhenZeroWH: false
 };
 
 export const DefaultSymbolAttribute: Required<ISymbolGraphicAttribute> = {

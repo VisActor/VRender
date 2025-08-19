@@ -188,8 +188,8 @@ export class Stage extends Group implements IStage {
     return this._eventSystem;
   }
 
-  protected _beforeRender?: (stage: IStage) => void;
-  protected _afterRender?: (stage: IStage) => void;
+  protected _beforeRenderList: Array<(stage: IStage) => void>;
+  protected _afterRenderList: Array<(stage: IStage) => void>;
   protected _afterClearScreen?: (drawParams: any) => void;
   protected _afterClearRect?: (drawParams: any) => void;
   // 0: 正常渲染, > 0: 跳过隐藏canvas的渲染, < 0: 禁止渲染
@@ -252,6 +252,8 @@ export class Stage extends Group implements IStage {
     this.layerService = container.get<ILayerService>(LayerService);
     this.graphicService = container.get<IGraphicService>(GraphicService);
     this.pluginService.active(this, params);
+    this._beforeRenderList = [];
+    this._afterRenderList = [];
 
     this.window.create({
       width: params.width,
@@ -308,10 +310,14 @@ export class Stage extends Group implements IStage {
     params.enableLayout && this.enableLayout();
     this.hooks.beforeRender.tap('constructor', this.beforeRender);
     this.hooks.afterRender.tap('constructor', this.afterRender);
+    if (params.beforeRender) {
+      this._beforeRenderList.push(params.beforeRender);
+    }
+    if (params.afterRender) {
+      this._afterRenderList.push(params.afterRender);
+    }
     this.hooks.afterClearScreen.tap('constructor', this.afterClearScreen);
     this.hooks.afterClearRect.tap('constructor', this.afterClearRect);
-    this._beforeRender = params.beforeRender;
-    this._afterRender = params.afterRender;
     this._afterClearScreen = params.afterClearScreen;
     this._afterClearRect = params.afterClearRect;
     this.supportInteractiveLayer = params.interactiveLayer !== false;
@@ -499,7 +505,7 @@ export class Stage extends Group implements IStage {
   }
 
   protected beforeRender = (stage: IStage) => {
-    this._beforeRender && this._beforeRender(stage);
+    this._beforeRenderList.forEach(cb => cb(stage));
   };
   protected afterClearScreen = (drawParams: any) => {
     this._afterClearScreen && this._afterClearScreen(drawParams);
@@ -510,7 +516,7 @@ export class Stage extends Group implements IStage {
 
   protected afterRender = (stage: IStage) => {
     this.renderCount++;
-    this._afterRender && this._afterRender(stage);
+    this._afterRenderList.forEach(cb => cb(stage));
     this._afterNextRenderCbs && this._afterNextRenderCbs.forEach(cb => cb(stage));
     this._afterNextRenderCbs = null;
     this.tickedBeforeRender = false;
@@ -523,11 +529,19 @@ export class Stage extends Group implements IStage {
   };
 
   setBeforeRender(cb: (stage: IStage) => void) {
-    this._beforeRender = cb;
+    this._beforeRenderList.push(cb);
+  }
+
+  removeBeforeRender(cb: (stage: IStage) => void) {
+    this._beforeRenderList = this._beforeRenderList.filter(c => c !== cb);
   }
 
   setAfterRender(cb: (stage: IStage) => void) {
-    this._afterRender = cb;
+    this._afterRenderList.push(cb);
+  }
+
+  removeAfterRender(cb: (stage: IStage) => void) {
+    this._afterRenderList = this._afterRenderList.filter(c => c !== cb);
   }
 
   afterNextRender(cb: (stage: IStage) => void) {

@@ -229,9 +229,9 @@ export interface IStage extends INode {
   toCanvas: (fullImage?: boolean, viewBox?: IAABBBounds) => HTMLCanvasElement | null;
 
   setBeforeRender: (cb: (stage: IStage) => void) => void;
-
+  removeBeforeRender: (cb: (stage: IStage) => void) => void;
   setAfterRender: (cb: (stage: IStage) => void) => void;
-
+  removeAfterRender: (cb: (stage: IStage) => void) => void;
   afterNextRender: (cb: (stage: IStage) => void) => void;
   enableAutoRender: () => void;
   disableAutoRender: () => void;

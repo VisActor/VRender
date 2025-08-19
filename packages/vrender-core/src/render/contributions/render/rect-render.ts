@@ -83,7 +83,8 @@ export class DefaultCanvasRectRender extends BaseRender<IRect> implements IGraph
       y1,
       x: originX = rectAttribute.x,
       y: originY = rectAttribute.y,
-      fillStrokeOrder = rectAttribute.fillStrokeOrder
+      fillStrokeOrder = rectAttribute.fillStrokeOrder,
+      drawStrokeWhenZeroWH = rectAttribute.drawStrokeWhenZeroWH
     } = rect.attribute;
     let { width, height } = rect.attribute;
     width = (width ?? x1 - originX) || 0;
@@ -91,7 +92,7 @@ export class DefaultCanvasRectRender extends BaseRender<IRect> implements IGraph
 
     // 不绘制或者透明
     const fVisible = rectFillVisible(opacity, fillOpacity, width, height, fill);
-    const sVisible = rectStrokeVisible(opacity, strokeOpacity, width, height);
+    const sVisible = rectStrokeVisible(opacity, strokeOpacity, width, height, drawStrokeWhenZeroWH);
     const doFill = runFill(fill, background);
     const doStroke = runStroke(stroke, lineWidth);
 

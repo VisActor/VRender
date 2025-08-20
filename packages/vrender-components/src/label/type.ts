@@ -189,6 +189,12 @@ export interface OverlapAttrs {
   clampForce?: boolean;
 
   /**
+   * 标签是否超出区域裁剪
+   * @default false
+   */
+  hideOnOverflow?: boolean;
+
+  /**
    * 是否躲避基础图元
    * @default false
    */

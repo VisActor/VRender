@@ -47,6 +47,10 @@ export class AnimateExecutor implements IAnimateExecutor {
     this._target = target;
   }
 
+  get started(): boolean {
+    return this._started;
+  }
+
   /**
    * 注册一个回调，当动画开始时调用
    */
@@ -421,8 +425,8 @@ export class AnimateExecutor implements IAnimateExecutor {
     // 处理自定义动画
     if (custom && customType) {
       const customParams = {
-        width: graphic.stage.width,
-        height: graphic.stage.height,
+        width: graphic.stage?.width || 0,
+        height: graphic.stage?.height || 0,
         group: this._target.parent,
         ...this.resolveValue(customParameters, graphic)
       };

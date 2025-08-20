@@ -1,6 +1,40 @@
 # Change Log - @visactor/vrender-animate
 
-This log was last generated on Mon, 23 Jun 2025 13:56:24 GMT and should not be manually modified.
+This log was last generated on Wed, 20 Aug 2025 07:07:52 GMT and should not be manually modified.
+
+## 1.0.12
+Wed, 20 Aug 2025 07:07:52 GMT
+
+_Version update only_
+
+## 1.0.11
+Tue, 19 Aug 2025 06:31:41 GMT
+
+### Updates
+
+- feat: support AStageAnimate
+- fix: fix issue with reApplyState when this state is not running yet
+- fix: fix issue with graphic run animate which unbind to scenegraph, closed #1914
+
+## 1.0.10
+Thu, 31 Jul 2025 09:44:33 GMT
+
+### Updates
+
+- fix: fix issue with immediatelyApply no work
+
+## 1.0.9
+Fri, 25 Jul 2025 08:06:24 GMT
+
+_Version update only_
+
+## 1.0.8
+Wed, 23 Jul 2025 03:59:46 GMT
+
+### Updates
+
+- fix: fixed the issue where stateList was erroneously cleared after calling reApplyState
+- fix: fix issue with streamlight gradient-color
 
 ## 1.0.7
 Mon, 23 Jun 2025 13:56:24 GMT

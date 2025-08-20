@@ -1,6 +1,31 @@
 # Change Log - @visactor/react-vrender-utils
 
-This log was last generated on Mon, 23 Jun 2025 13:56:24 GMT and should not be manually modified.
+This log was last generated on Wed, 20 Aug 2025 07:07:52 GMT and should not be manually modified.
+
+## 1.0.12
+Wed, 20 Aug 2025 07:07:52 GMT
+
+_Version update only_
+
+## 1.0.11
+Tue, 19 Aug 2025 06:31:41 GMT
+
+_Version update only_
+
+## 1.0.10
+Thu, 31 Jul 2025 09:44:33 GMT
+
+_Version update only_
+
+## 1.0.9
+Fri, 25 Jul 2025 08:06:24 GMT
+
+_Version update only_
+
+## 1.0.8
+Wed, 23 Jul 2025 03:59:46 GMT
+
+_Version update only_
 
 ## 1.0.7
 Mon, 23 Jun 2025 13:56:24 GMT

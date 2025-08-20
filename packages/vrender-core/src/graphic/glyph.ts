@@ -221,10 +221,10 @@ export class Glyph extends Graphic<IGlyphGraphicAttribute> implements IGlyph {
       }
     });
 
-    this.subGraphic.forEach((graphic, index) => {
-      graphic.updateNormalAttrs(subAttrs[index]);
-      graphic.applyStateAttrs(subAttrs[index], states, hasAnimation);
-    });
+    // this.subGraphic.forEach((graphic, index) => {
+    //   graphic.updateNormalAttrs(subAttrs[index]);
+    //   graphic.applyStateAttrs(subAttrs[index], states, hasAnimation);
+    // });
 
     this.updateNormalAttrs(stateAttrs);
     this.currentStates = states;
@@ -235,10 +235,10 @@ export class Glyph extends Graphic<IGlyphGraphicAttribute> implements IGlyph {
     this.stopStateAnimates();
     if (this.hasState() && this.normalAttrs) {
       this.currentStates = [];
-      this.subGraphic.forEach(graphic => {
-        graphic.applyStateAttrs(graphic.normalAttrs, this.currentStates, hasAnimation, true);
-        graphic.normalAttrs = null;
-      });
+      // this.subGraphic.forEach(graphic => {
+      //   graphic.applyStateAttrs(graphic.normalAttrs, this.currentStates, hasAnimation, true);
+      //   graphic.normalAttrs = null;
+      // });
       this.applyStateAttrs(this.normalAttrs, this.currentStates, hasAnimation, true);
     } else {
       this.currentStates = [];

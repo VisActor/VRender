@@ -231,7 +231,9 @@ export class GrowAngleIn extends GrowAngleBase {
       this.target.setAttributes(finalAttribute);
     }
 
-    this.target.setAttributes(fromAttrs);
+    if (this.params.controlOptions?.immediatelyApply !== false) {
+      this.target.setAttributes(fromAttrs);
+    }
     this.determineUpdateFunction();
   }
 }

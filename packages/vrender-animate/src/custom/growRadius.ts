@@ -157,7 +157,9 @@ export class GrowRadiusIn extends GrowPointsBase {
     if (finalAttribute) {
       this.target.setAttributes(finalAttribute);
     }
-    this.target.setAttributes(fromAttrs);
+    if (this.params.controlOptions?.immediatelyApply !== false) {
+      this.target.setAttributes(fromAttrs);
+    }
   }
 }
 

@@ -715,7 +715,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
         if (hasPlace !== false) {
           text.setAttributes({ x: hasPlace.x, y: hasPlace.y });
           // 需要判定是否超出边界
-          if (hideOnOverflow && this._processHideOnOverflow(text as IText, bmpTool)) {
+          if (!(hideOnOverflow && !this._processHideOnOverflow(text as IText, bmpTool))) {
             result.push(text);
             break;
           }

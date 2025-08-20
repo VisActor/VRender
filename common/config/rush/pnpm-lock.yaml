@@ -22,7 +22,7 @@ importers:
         specifier: ~0.5.7
         version: 0.5.7
       '@visactor/vrender':
-        specifier: workspace:0.22.15
+        specifier: workspace:0.22.16
         version: link:../packages/vrender
       '@visactor/vutils':
         specifier: ~0.19.5
@@ -95,7 +95,7 @@ importers:
   ../../packages/react-vrender:
     dependencies:
       '@visactor/vrender':
-        specifier: workspace:0.22.15
+        specifier: workspace:0.22.16
         version: link:../vrender
       '@visactor/vutils':
         specifier: ~0.19.5
@@ -153,10 +153,10 @@ importers:
   ../../packages/react-vrender-utils:
     dependencies:
       '@visactor/react-vrender':
-        specifier: workspace:0.22.15
+        specifier: workspace:0.22.16
         version: link:../react-vrender
       '@visactor/vrender':
-        specifier: workspace:0.22.15
+        specifier: workspace:0.22.16
         version: link:../vrender
       '@visactor/vutils':
         specifier: ~0.19.5
@@ -211,10 +211,10 @@ importers:
   ../../packages/vrender:
     dependencies:
       '@visactor/vrender-core':
-        specifier: workspace:0.22.15
+        specifier: workspace:0.22.16
         version: link:../vrender-core
       '@visactor/vrender-kits':
-        specifier: workspace:0.22.15
+        specifier: workspace:0.22.16
         version: link:../vrender-kits
     devDependencies:
       '@internal/bundler':
@@ -281,10 +281,10 @@ importers:
   ../../packages/vrender-components:
     dependencies:
       '@visactor/vrender-core':
-        specifier: workspace:0.22.15
+        specifier: workspace:0.22.16
         version: link:../vrender-core
       '@visactor/vrender-kits':
-        specifier: workspace:0.22.15
+        specifier: workspace:0.22.16
         version: link:../vrender-kits
       '@visactor/vscale':
         specifier: ~0.19.5
@@ -403,7 +403,7 @@ importers:
         specifier: 2.4.1
         version: 2.4.1
       '@visactor/vrender-core':
-        specifier: workspace:0.22.15
+        specifier: workspace:0.22.16
         version: link:../vrender-core
       '@visactor/vutils':
         specifier: ~0.19.5
@@ -519,16 +519,16 @@ importers:
   ../../tools/bugserver-trigger:
     dependencies:
       '@visactor/vrender':
-        specifier: workspace:0.22.15
+        specifier: workspace:0.22.16
         version: link:../../packages/vrender
       '@visactor/vrender-components':
-        specifier: workspace:0.22.15
+        specifier: workspace:0.22.16
         version: link:../../packages/vrender-components
       '@visactor/vrender-core':
-        specifier: workspace:0.22.15
+        specifier: workspace:0.22.16
         version: link:../../packages/vrender-core
       '@visactor/vrender-kits':
-        specifier: workspace:0.22.15
+        specifier: workspace:0.22.16
         version: link:../../packages/vrender-kits
     devDependencies:
       '@internal/bundler':

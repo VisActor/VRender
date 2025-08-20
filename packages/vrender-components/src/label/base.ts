@@ -535,14 +535,18 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
         this.isMarkInsideRect(this.getRelatedGraphic(label.attribute), bmpTool)
     );
 
-    const { clampForce = true, hideOnHit = true, overlapPadding, strategy } = option;
-    if (clampForce) {
+    const { clampForce = true, hideOnHit = true, hideOnOverflow = false, overlapPadding, strategy } = option;
+    if (clampForce || hideOnOverflow) {
       for (let i = 0; i < result.length; i++) {
         const text = labels[i];
         const { dx = 0, dy = 0 } = clampText(text as IText, bmpTool.width, bmpTool.height, bmpTool.padding);
         if (dx !== 0 || dy !== 0) {
-          text.setAttributes({ x: text.attribute.x + dx, y: text.attribute.y + dy });
-          text._isClamped = true;
+          if (hideOnOverflow) {
+            text.setAttributes({ visible: false });
+          } else {
+            text.setAttributes({ x: text.attribute.x + dx, y: text.attribute.y + dy });
+            text._isClamped = true;
+          }
         }
       }
     }
@@ -565,12 +569,16 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
       if (canPlace(bmpTool, bitmap, bounds, clampForce, overlapPadding)) {
         bitmap.setRange(range);
       } else {
-        if (clampForce) {
-          const placedAfterClampForce = this._processClampForce(text as IText, bmpTool, bitmap, overlapPadding);
-          if (placedAfterClampForce) {
+        if (hideOnOverflow) {
+          if (this._processHideOnOverflow(text as IText, bmpTool)) {
+            continue;
+          }
+        } else if (clampForce) {
+          if (this._processClampForce(text as IText, bmpTool, bitmap, overlapPadding)) {
             continue;
           }
         }
+
         if (hideOnHit) {
           text.setAttributes({ visible: false });
         } else {
@@ -579,6 +587,17 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
       }
     }
     return result;
+  }
+
+  protected _processHideOnOverflow(text: IText, bmpTool: BitmapTool) {
+    const { dy: dy = 0, dx: dx = 0 } = clampText(text, bmpTool.width, bmpTool.height, bmpTool.padding);
+    if (0 !== dx || 0 !== dy) {
+      text.setAttributes({
+        visible: false
+      });
+      return false;
+    }
+    return true;
   }
 
   protected _processClampForce(text: IText, bmpTool: BitmapTool, bitmap: Bitmap, overlapPadding = 0) {
@@ -621,7 +640,8 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
       hideOnHit = true,
       clampForce = true,
       avoidMarks = [],
-      overlapPadding
+      overlapPadding,
+      hideOnOverflow = false
     } = option;
     const result: (IText | IRichText)[] = [];
 
@@ -694,17 +714,29 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
         );
         if (hasPlace !== false) {
           text.setAttributes({ x: hasPlace.x, y: hasPlace.y });
-          result.push(text);
-          break;
+          // 需要判定是否超出边界
+          if (hideOnOverflow && this._processHideOnOverflow(text as IText, bmpTool)) {
+            result.push(text);
+            break;
+          }
         }
       }
 
       // 尝试向内挤压
-      if (!hasPlace && clampForce) {
-        const placedAfterClampForce = this._processClampForce(text as IText, bmpTool, bitmap, overlapPadding);
-        if (placedAfterClampForce) {
-          result.push(text);
-          continue;
+      if (!hasPlace) {
+        // 是否隐藏
+        if (hideOnOverflow) {
+          // 直接隐藏
+          if (!this._processHideOnOverflow(text as IText, bmpTool)) {
+            continue;
+          }
+        }
+        if (clampForce) {
+          // 向内挤压
+          if (this._processClampForce(text as IText, bmpTool, bitmap, overlapPadding)) {
+            result.push(text);
+            continue;
+          }
         }
       }
 

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "feat: linear-gradient support ignore percent, closed #1926",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

@@ -310,6 +310,13 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
       default:
         break;
     }
+    if (!height) {
+      if (this.verticalDirection === 'middle') {
+        deltaY -= aabbBounds.height() / 2;
+      } else if (this.verticalDirection === 'bottom') {
+        deltaY -= aabbBounds.height();
+      }
+    }
     aabbBounds.translate(deltaX, deltaY);
 
     application.graphicService.updateTempAABBBounds(aabbBounds);

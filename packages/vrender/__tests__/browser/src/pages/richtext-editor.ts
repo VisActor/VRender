@@ -55,8 +55,8 @@ export const page = () => {
       // lineHeight: '150%',
       // maxWidth: 120,
       strokeBoundsBuffer: -1,
-      // scaleX: 3,
-      // scaleY: 3,
+      scaleX: 3,
+      scaleY: 3,
       _debug_bounds: true,
       // textBaseline: 'top',
       textConfig: [

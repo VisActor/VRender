@@ -21,6 +21,7 @@ export * from './factory';
 
 /* export common */
 export * from './common/text';
+export * from './common/color-utils';
 export * from './common/bezier-utils';
 export * from './common/bounds-context';
 export * from './common/seg-context';

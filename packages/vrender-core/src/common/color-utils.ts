@@ -371,7 +371,9 @@ export class GradientParser {
     }
     return c;
   }
-  private static processColorStops(colorStops: any[]): { color: string; offset: number }[] {
+  static processColorStops(
+    colorStops: Array<{ value: string; length?: { value: string } }>
+  ): { color: string; offset: number }[] {
     if (!colorStops || colorStops.length === 0) {
       return [];
     }

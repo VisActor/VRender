@@ -7,6 +7,7 @@ export interface ParticleConfig {
   count?: number; // 粒子数量
   size?: number; // 粒子大小
   strength?: number; // 力场强度
+  useWebGL: boolean;
 }
 // 粒子数据结构
 export interface ParticleData {
@@ -41,7 +42,8 @@ export class Particle extends HybridEffectBase {
       effectType: params?.options?.effectType || 'gravity', //'explode' | 'vortex' | 'gravity'; // 粒子效果类型
       count: params?.options?.count || 4000,
       size: params?.options?.size || 20,
-      strength: params?.options?.strength || 1.5
+      strength: params?.options?.strength || 1.5,
+      useWebGL: params?.options?.useWebGL !== undefined ? params.options.useWebGL : true // 是否使用WebGL实现
     };
   }
 

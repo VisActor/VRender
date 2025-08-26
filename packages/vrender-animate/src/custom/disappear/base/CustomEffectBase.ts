@@ -94,7 +94,7 @@ export class HybridEffectBase extends DisappearAnimateBase {
     let result: HTMLCanvasElement | null = null;
 
     // 根据用户配置决定渲染策略
-    if (this.params?.options?.useWebGL) {
+    if (this.params?.options?.useWebGL !== false) {
       // 用户允许使用WebGL，按照父类的自动判别逻辑
       // 优先尝试WebGL实现
       if (this.supportsWebGL()) {

@@ -632,6 +632,8 @@ export class RichTextEditPlugin implements IPlugin {
     this.shadowBounds.setAttributes({
       x: 0,
       y: 0,
+      scaleX: 1 / (this.currRt.attribute.scaleX ?? 1),
+      scaleY: 1 / (this.currRt.attribute.scaleY ?? 1),
       width,
       height,
       fill: false,
@@ -815,7 +817,7 @@ export class RichTextEditPlugin implements IPlugin {
     } else {
       const x = 0;
       const y1 = 0;
-      const y2 = getRichTextBounds({ ...target.attribute, textConfig: [{ text: 'a' }] }).height();
+      const y2 = getRichTextBounds({ ...target.attribute, textConfig: [{ text: 'a' }], scaleX: 1, scaleY: 1 }).height();
       this.startCursorPos = { x, y: (y1 + y2) / 2 };
       this.curCursorIdx = -0.1;
       this.selectionStartCursorIdx = -0.1;
@@ -862,7 +864,7 @@ export class RichTextEditPlugin implements IPlugin {
       if (!attr.textConfig.length) {
         attr = { ...attr, textConfig: [{ text: 'a' }] };
       }
-      b = getRichTextBounds(attr);
+      b = getRichTextBounds({ ...attr, scaleX: 1, scaleY: 1 });
     }
     if (textBaseline === 'middle') {
       dy = -b.height() / 2;
@@ -1218,10 +1220,10 @@ export class RichTextEditPlugin implements IPlugin {
     const { textBaseline } = rt.attribute;
     let dy = 0;
     if (textBaseline === 'middle') {
-      const b = getRichTextBounds(rt.attribute);
+      const b = getRichTextBounds({ ...rt.attribute, scaleX: 1, scaleY: 1 });
       dy = b.height() / 2;
     } else if (textBaseline === 'bottom') {
-      const b = getRichTextBounds(rt.attribute);
+      const b = getRichTextBounds({ ...rt.attribute, scaleX: 1, scaleY: 1 });
       dy = b.height();
     }
     p1.y += dy;

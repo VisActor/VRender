@@ -39,55 +39,35 @@ export const page = () => {
       graphicBaseline: 'middle',
       fill: '#1F2329',
       ignoreBuf: true,
-      anchor: [-162.07207758976318, 216.49803822714284],
-      angle: 0,
+      // anchor: [-162.07207758976318, 216.49803822714284],
+      // angle: 0,
       editOptions: {
         placeholder: '请输入文本',
         placeholderColor: '#B3B8C3',
         keepHeightWhileEmpty: true,
-        boundsStrokeWhenInput: '#3073F2',
+        boundsStrokeWhenInput: 'red',
         syncPlaceholderToTextConfig: false,
         stopPropagation: true
       },
       fontFamily: 'D-Din',
       height: 0,
-      heightLimit: 999999,
-      lineHeight: '150%',
-      maxWidth: 120,
+      // heightLimit: 999999,
+      // lineHeight: '150%',
+      // maxWidth: 120,
       strokeBoundsBuffer: -1,
-      textBaseline: 'top',
+      scaleX: 3,
+      scaleY: 3,
+      _debug_bounds: true,
+      // textBaseline: 'top',
       textConfig: [
         {
           fill: '#1F2329',
           stroke: false,
           fontSize: 16,
           fontWeight: 'normal',
-          fontFamily: 'D-Din',
-          lineHeight: '150%',
-          text: 'a',
-          dy: 10,
-          isComposing: false
-        },
-        {
-          fill: '#1F2329',
-          stroke: false,
-          fontSize: 16,
-          fontWeight: 'normal',
-          fontFamily: 'D-Din',
-          lineHeight: '150%',
-          text: 'b',
-          dy: 20,
-          isComposing: false
-        },
-        {
-          fill: '#1F2329',
-          stroke: false,
-          fontSize: 16,
-          fontWeight: 'normal',
-          fontFamily: 'D-Din',
-          lineHeight: '150%',
-          text: 'c',
-          dx: 30,
+          // fontFamily: 'D-Din',
+          // lineHeight: '150%',
+          text: '这是什么内容',
           isComposing: false
         }
       ],
@@ -95,7 +75,7 @@ export const page = () => {
         lineHeight: true,
         multiBreakLine: true
       },
-      verticalDirection: 'middle',
+      verticalDirection: 'bottom',
       width: 0
     })
   );

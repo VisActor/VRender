@@ -11,6 +11,7 @@ export interface IGraphicUtil {
   canvas?: ICanvas;
   context?: IContext2d | null;
   textMeasure: ITextMeasure;
+  getTextMeasureInstance: (textMeasureId?: string) => ITextMeasure;
   measureText: (text: string, tc: TextOptionsType) => { width: number; height: number };
   bindTextMeasure: (tm: ITextMeasure) => void;
   createTextMeasureInstance: (

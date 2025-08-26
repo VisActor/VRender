@@ -317,6 +317,9 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   protected updateOBBBoundsStamp?: number;
   declare clipPathMap?: Map<string, ISymbolClass>;
 
+  // 外部设置，用于选择所使用的textMeasureId
+  declare textMeasureId?: string;
+
   constructor(params: T = {} as T) {
     super();
     this._AABBBounds = new AABBBounds();

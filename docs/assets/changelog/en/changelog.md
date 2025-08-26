@@ -1,3 +1,19 @@
+# v1.0.12
+
+2025-08-20
+
+
+**What's Changed**
+
+* Main by @neuqzxy in https://github.com/VisActor/VRender/pull/1919
+* feat: support hideOnOverflow by @xuefei1313 in https://github.com/VisActor/VRender/pull/1920
+* [Auto release] release 1.0.12 by @github-actions[bot] in https://github.com/VisActor/VRender/pull/1921
+
+
+**Full Changelog**: https://github.com/VisActor/VRender/compare/v1.0.11...v1.0.12
+
+[more detail about v1.0.12](https://github.com/VisActor/VRender/releases/tag/v1.0.12)
+
 # v0.22.11
 
 2025-04-28

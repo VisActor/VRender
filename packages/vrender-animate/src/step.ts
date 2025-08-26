@@ -329,9 +329,7 @@ export class WaitStep extends Step {
 
   onStart(): void {
     super.onStart();
-  }
-  onFirstRun(): void {
-    // 设置上一个阶段的props到attribute
+
     const fromProps = this.getFromProps();
     this.target.setAttributes(fromProps);
   }

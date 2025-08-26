@@ -1,6 +1,14 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Wed, 20 Aug 2025 07:07:52 GMT and should not be manually modified.
+This log was last generated on Tue, 26 Aug 2025 11:35:34 GMT and should not be manually modified.
+
+## 1.0.13
+Tue, 26 Aug 2025 11:35:34 GMT
+
+### Updates
+
+- feat: linear-gradient support ignore percent, closed #1926
+- fix: fix issue with scaled shadowBounds and editLine in richtext-edit-plugin, closed #1911
 
 ## 1.0.12
 Wed, 20 Aug 2025 07:07:52 GMT

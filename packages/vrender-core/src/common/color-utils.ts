@@ -371,6 +371,60 @@ export class GradientParser {
     }
     return c;
   }
+  static processColorStops(
+    colorStops: Array<{ value: string; length?: { value: string } }>
+  ): { color: string; offset: number }[] {
+    if (!colorStops || colorStops.length === 0) {
+      return [];
+    }
+
+    const anyStopHasLength = colorStops.some((item: any) => item.length);
+
+    if (anyStopHasLength) {
+      const stops = colorStops.map((item: any) => ({
+        color: item.value,
+        offset: item.length ? parseFloat(item.length.value) / 100 : -1
+      }));
+
+      // If first color stop has no position, it defaults to 0%
+      if (stops[0].offset < 0) {
+        stops[0].offset = 0;
+      }
+
+      // If last color stop has no position, it defaults to 100%
+      if (stops[stops.length - 1].offset < 0) {
+        stops[stops.length - 1].offset = 1;
+      }
+
+      // If a color stop in between has no position, its position is the average of the preceding and succeeding color stops with positions.
+      for (let i = 1; i < stops.length - 1; i++) {
+        if (stops[i].offset < 0) {
+          const prevWithOffsetIdx = i - 1;
+          let nextWithOffsetIdx = i + 1;
+          while (nextWithOffsetIdx < stops.length && stops[nextWithOffsetIdx].offset < 0) {
+            nextWithOffsetIdx++;
+          }
+
+          const startOffset = stops[prevWithOffsetIdx].offset;
+          const endOffset = stops[nextWithOffsetIdx].offset;
+          const unspecCount = nextWithOffsetIdx - prevWithOffsetIdx;
+
+          for (let j = 1; j < unspecCount; j++) {
+            stops[prevWithOffsetIdx + j].offset = startOffset + ((endOffset - startOffset) * j) / unspecCount;
+          }
+          i = nextWithOffsetIdx - 1;
+        }
+      }
+      return stops;
+    }
+    return colorStops.map((item: any, index: number) => {
+      const offset = colorStops.length > 1 ? index / (colorStops.length - 1) : 0;
+      return {
+        color: item.value,
+        offset
+      };
+    });
+  }
   private static ParseConic(datum: any): IConicalGradient {
     const { orientation, colorStops = [] } = datum;
     const halfPi = pi / 2;
@@ -381,12 +435,7 @@ export class GradientParser {
       y: 0.5,
       startAngle: sa,
       endAngle: sa + pi2,
-      stops: colorStops.map((item: any) => {
-        return {
-          color: item.value,
-          offset: parseFloat(item.length.value) / 100
-        };
-      })
+      stops: GradientParser.processColorStops(colorStops)
     };
   }
   private static ParseRadial(datum: any): IRadialGradient {
@@ -399,12 +448,7 @@ export class GradientParser {
       y1: 0.5,
       r0: 0,
       r1: 1,
-      stops: colorStops.map((item: any) => {
-        return {
-          color: item.value,
-          offset: parseFloat(item.length.value) / 100
-        };
-      })
+      stops: GradientParser.processColorStops(colorStops)
     };
   }
   private static ParseLinear(datum: any): ILinearGradient {
@@ -448,12 +492,7 @@ export class GradientParser {
       y0,
       x1,
       y1,
-      stops: colorStops.map((item: any) => {
-        return {
-          color: item.value,
-          offset: parseFloat(item.length.value) / 100
-        };
-      })
+      stops: GradientParser.processColorStops(colorStops)
     };
   }
 }

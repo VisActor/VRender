@@ -89,7 +89,7 @@ export class DefaultGraphicUtil implements IGraphicUtil {
   }
 
   bindTextMeasure(tm: ITextMeasure) {
-    if (!this._textMeasure) {
+    if (!this._textMeasure || tm.id === 'DefaultTextMeasureContribution') {
       this._textMeasure = tm;
     }
     if (!this._textMeasureMap.has(tm.id)) {

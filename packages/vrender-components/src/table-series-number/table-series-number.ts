@@ -624,6 +624,10 @@ export class TableSeriesNumber extends AbstractComponent<Required<TableSeriesNum
   recreateCellsToColSeriesNumberGroup(startIndex: number, endIndex: number) {
     const { colCount, colSeriesNumberCellStyle, frozenColCount, colWidth } = this
       .attribute as TableSeriesNumberAttributes;
+    const oldFrozenLeftColSeriesNumberGroupCellsWidth = new Map();
+    this._frozenLeftColSeriesNumberGroup?.forEachChildren?.((child: IGroup, index: number) => {
+      oldFrozenLeftColSeriesNumberGroupCellsWidth.set(index, child.getAttributes().width);
+    });
     this._frozenLeftColSeriesNumberGroup.removeAllChild();
     this._colSeriesNumberGroup.removeAllChild();
 
@@ -670,7 +674,7 @@ export class TableSeriesNumber extends AbstractComponent<Required<TableSeriesNum
           fill: colSeriesNumberCellStyle.bgColor,
           stroke: colSeriesNumberCellStyle.borderLine.stroke,
           lineWidth: colSeriesNumberCellStyle.borderLine.lineWidth,
-          width: typeof colWidth === 'number' ? colWidth : 20,
+          width: oldFrozenLeftColSeriesNumberGroupCellsWidth.get(i) || (typeof colWidth === 'number' ? colWidth : 20),
           height: this.colSeriesNumberHeight
         },
         'group'

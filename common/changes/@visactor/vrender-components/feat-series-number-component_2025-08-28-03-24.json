@@ -1,7 +1,7 @@
 {
   "changes": [
     {
-      "comment": "fix: left frozen group width error\n\n",
+      "comment": "feat: add table series number component \n\n",
       "type": "none",
       "packageName": "@visactor/vrender-components"
     }

@@ -97,7 +97,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       });
       const originText = Array.isArray(text) ? text.join('') : text;
 
-      return originText !== mergedText;
+      return originText.toString() !== mergedText;
     }
     if (attribute.direction === 'vertical' && this.cache.verticalList && this.cache.verticalList[0]) {
       return this.cache.verticalList[0].map(item => item.text).join('') !== attribute.text.toString();

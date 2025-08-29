@@ -2,6 +2,21 @@
   "name": "@visactor/vrender-core",
   "entries": [
     {
+      "version": "1.0.14",
+      "tag": "@visactor/vrender-core_v1.0.14",
+      "date": "Fri, 29 Aug 2025 09:17:17 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: support textMeasureId to select measure instance, closed #1897"
+          },
+          {
+            "comment": "fix: fix issue with number text in cliped attr, closed #1834"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.0.13",
       "tag": "@visactor/vrender-core_v1.0.13",
       "date": "Tue, 26 Aug 2025 11:35:34 GMT",

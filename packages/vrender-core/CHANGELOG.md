@@ -1,6 +1,14 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Tue, 26 Aug 2025 11:35:34 GMT and should not be manually modified.
+This log was last generated on Fri, 29 Aug 2025 09:17:17 GMT and should not be manually modified.
+
+## 1.0.14
+Fri, 29 Aug 2025 09:17:17 GMT
+
+### Updates
+
+- feat: support textMeasureId to select measure instance, closed #1897
+- fix: fix issue with number text in cliped attr, closed #1834
 
 ## 1.0.13
 Tue, 26 Aug 2025 11:35:34 GMT

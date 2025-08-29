@@ -37,6 +37,7 @@ export class DefaultGraphicUtil implements IGraphicUtil {
   _canvas?: ICanvas;
   _context?: IContext2d | null;
   _textMeasure: ITextMeasure;
+  _textMeasureMap: Map<string, ITextMeasure>;
   configured: boolean;
   global: IGlobal;
 
@@ -47,6 +48,7 @@ export class DefaultGraphicUtil implements IGraphicUtil {
   ) {
     this.configured = false;
     this.global = application.global;
+    this._textMeasureMap = new Map();
     this.global.hooks.onSetEnv.tap('graphic-util', (lastEnv, env, global) => {
       this.configured = false;
       this.configure(global, env);
@@ -58,6 +60,14 @@ export class DefaultGraphicUtil implements IGraphicUtil {
       this.configure(this.global, this.global.env);
     }
     return this._textMeasure;
+  }
+
+  getTextMeasureInstance(textMeasureId?: string): ITextMeasure {
+    if (!textMeasureId) {
+      return this.textMeasure;
+    }
+    const tm = this._textMeasureMap.get(textMeasureId);
+    return tm || this.textMeasure;
   }
 
   configure(global: IGlobal, env: EnvType) {
@@ -79,7 +89,12 @@ export class DefaultGraphicUtil implements IGraphicUtil {
   }
 
   bindTextMeasure(tm: ITextMeasure) {
-    this._textMeasure = tm;
+    if (!this._textMeasure || tm.id === 'DefaultTextMeasureContribution') {
+      this._textMeasure = tm;
+    }
+    if (!this._textMeasureMap.has(tm.id)) {
+      this._textMeasureMap.set(tm.id, tm);
+    }
   }
 
   measureText(

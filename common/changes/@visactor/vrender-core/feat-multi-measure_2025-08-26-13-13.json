@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "feat: support textMeasureId to select measure instance, closed #1897",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

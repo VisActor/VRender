@@ -9,6 +9,7 @@ import { Logger } from '@visactor/vutils';
 
 @injectable()
 export class ATextMeasure implements ITextMeasure {
+  id: string = 'ATextMeasure';
   release: (...params: any) => void;
   protected canvas?: ICanvas;
   protected context?: IContext2d | null;

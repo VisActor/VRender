@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "fix: fix issue with number text in cliped attr, closed #1834",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

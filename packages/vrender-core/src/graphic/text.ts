@@ -97,7 +97,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       });
       const originText = Array.isArray(text) ? text.join('') : text;
 
-      return originText !== mergedText;
+      return originText.toString() !== mergedText;
     }
     if (attribute.direction === 'vertical' && this.cache.verticalList && this.cache.verticalList[0]) {
       return this.cache.verticalList[0].map(item => item.text).join('') !== attribute.text.toString();
@@ -288,7 +288,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       }
       return this._AABBBounds;
     }
-    const textMeasure = application.graphicUtil.textMeasure;
+    const textMeasure = application.graphicUtil.getTextMeasureInstance(this.textMeasureId || this.stage?.textMeasureId);
     const layoutObj = new CanvasTextLayout(fontFamily, { fontSize, fontWeight, fontFamily, lineHeight }, textMeasure);
     const layoutData = layoutObj.GetLayoutByLines(
       text,
@@ -356,7 +356,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       return this._AABBBounds;
     }
 
-    const textMeasure = application.graphicUtil.textMeasure;
+    const textMeasure = application.graphicUtil.getTextMeasureInstance(this.textMeasureId || this.stage?.textMeasureId);
     const textOptions = { fontSize, fontWeight, fontFamily, lineHeight };
     const layoutObj = new CanvasTextLayout(fontFamily, textOptions, textMeasure as any);
 
@@ -529,7 +529,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
    */
   updateVerticalMultilineAABBBounds(text: (number | string)[]): IAABBBounds {
     const textTheme = this.getGraphicTheme();
-    const textMeasure = application.graphicUtil.textMeasure;
+    const textMeasure = application.graphicUtil.getTextMeasureInstance(this.textMeasureId || this.stage?.textMeasureId);
     let width: number;
     const attribute = this.attribute;
     const {

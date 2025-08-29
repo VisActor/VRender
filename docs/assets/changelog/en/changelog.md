@@ -1,3 +1,20 @@
+# v1.0.13
+
+2025-08-26
+
+
+**🆕 New feature**
+
+- **@visactor/vrender-core**: linear-gradient support ignore percent, closed [#1926](https://github.com/VisActor/VRender/issues/1926)
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-core**: fix issue with scaled shadowBounds and editLine in richtext-edit-plugin, closed [#1911](https://github.com/VisActor/VRender/issues/1911)
+
+
+
+[more detail about v1.0.13](https://github.com/VisActor/VRender/releases/tag/v1.0.13)
+
 # v1.0.12
 
 2025-08-20

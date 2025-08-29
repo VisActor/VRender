@@ -65,7 +65,7 @@ export class WrapText extends Text {
       return this._AABBBounds;
     }
 
-    const textMeasure = application.graphicUtil.textMeasure;
+    const textMeasure = application.graphicUtil.getTextMeasureInstance(this.textMeasureId || this.stage?.textMeasureId);
     const layoutObj = new CanvasTextLayout(fontFamily, { fontSize, fontWeight, fontFamily }, textMeasure as any) as any;
 
     // layoutObj内逻辑

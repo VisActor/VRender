@@ -14,6 +14,7 @@ export interface TextOptionsType {
 }
 
 export interface ITextMeasure extends IContribution<IGraphicUtil> {
+  id: string;
   measureTextWidth: (text: string, options: TextOptionsType) => number;
   measureTextPixelHeight: (text: string, options: TextOptionsType) => number;
   measureTextBoundHieght: (text: string, options: TextOptionsType) => number;

@@ -480,7 +480,7 @@ export class DefaultCanvasArcRender extends BaseRender<IArc> implements IGraphic
   ) {
     if (doStroke && isFullStroke) {
       if (strokeCb) {
-        // fillCb(context, arc.attribute, arcAttribute);
+        strokeCb(context, arc.attribute, arcAttribute);
       } else if (sVisible) {
         context.setStrokeStyle(arc, arc.attribute, x, y, arcAttribute);
         // context.strokeStyle = 'red';

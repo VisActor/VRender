@@ -63,7 +63,7 @@ export function drawRoundedPolygon(
     const tan = Math.abs(Math.tan(angle));
 
     // get config radius
-    let radius = Array.isArray(cornerRadius) ? cornerRadius[i % points.length] ?? 0 : cornerRadius;
+    let radius = Array.isArray(cornerRadius) ? (cornerRadius[i % points.length] ?? 0) : cornerRadius;
     let segment = radius / tan;
 
     //Check the segment

@@ -3,9 +3,6 @@ import type { IAABBBounds, IBounds } from '@visactor/vutils';
 import type { IGroup, IGraphic, IRenderService, IRenderServiceDrawParams, IDrawContribution } from '../interface';
 import { DrawContribution } from './contributions/render';
 
-export const RenderService = Symbol.for('RenderService');
-export const BeforeRenderConstribution = Symbol.for('BeforeRenderConstribution');
-
 /**
  * 渲染用的service，通常和stage一一绑定，
  * 并不是单例模式，所以会绑定此次渲染的一些数据

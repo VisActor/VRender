@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "fix: fix issue that renderService side effect lead to failure to rebind",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

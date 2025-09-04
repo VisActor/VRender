@@ -32,7 +32,7 @@ import { VWindow } from './window';
 import type { Layer } from './layer';
 import { EventSystem } from '../event';
 import { container } from '../container';
-import { RenderService } from '../render';
+import { RenderService } from '../render/constants';
 import { Group } from '../graphic/group';
 import { Theme } from '../graphic/theme';
 import { PickerService } from '../picker/constants';

@@ -72,6 +72,9 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
    * 3. 如果是绘制状态: 标记绘制状态 & 标记正在绘制的mask & 清除之前的mask & 添加新的mask
    */
   private _onBrushStart = (e: FederatedPointerEvent) => {
+    if (this._outOfInteractiveRange(e)) {
+      return;
+    }
     const {
       updateTrigger = DEFAULT_BRUSH_ATTRIBUTES.updateTrigger,
       endTrigger = DEFAULT_BRUSH_ATTRIBUTES.endTrigger,
@@ -398,7 +401,7 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
       cursor: 'move',
       pickable: false,
       ...brushStyle,
-      opacity: hasMask ? (brushStyle.opacity ?? 1) : 0
+      opacity: hasMask ? brushStyle.opacity ?? 1 : 0
     });
     brushMask.name = `brush-${Date.now()}`; // 用Date给mask唯一标记
     this._operatingMask = brushMask;

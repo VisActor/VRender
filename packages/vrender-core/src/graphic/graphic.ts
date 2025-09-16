@@ -259,29 +259,29 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   declare y1WithoutTransform?: number;
 
   // aabbBounds，所有图形都需要有，所以初始化即赋值
-  protected declare _AABBBounds: IAABBBounds;
+  declare protected _AABBBounds: IAABBBounds;
   get AABBBounds(): IAABBBounds {
     return this.tryUpdateAABBBounds();
   }
   // 具有旋转的包围盒，部分图元需要，动态初始化
-  protected declare _OBBBounds?: IOBBBounds;
+  declare protected _OBBBounds?: IOBBBounds;
   get OBBBounds(): IOBBBounds {
     return this.tryUpdateOBBBounds();
   }
-  protected declare _globalAABBBounds: IAABBBounds;
+  declare protected _globalAABBBounds: IAABBBounds;
   // 全局包围盒，部分图元需要，动态初始化，建议使用AABBBounds
   get globalAABBBounds(): IAABBBounds {
     return this.tryUpdateGlobalAABBBounds();
   }
-  protected declare _transMatrix: Matrix;
+  declare protected _transMatrix: Matrix;
   get transMatrix(): Matrix {
     return this.tryUpdateLocalTransMatrix(true);
   }
-  protected declare _globalTransMatrix: Matrix;
+  declare protected _globalTransMatrix: Matrix;
   get globalTransMatrix(): Matrix {
     return this.tryUpdateGlobalTransMatrix(true);
   }
-  protected declare _updateTag: number;
+  declare protected _updateTag: number;
 
   // 上次更新的stamp
   declare stamp?: number;

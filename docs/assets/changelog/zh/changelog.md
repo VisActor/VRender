@@ -1,3 +1,16 @@
+# v1.0.15
+
+2025-09-02
+
+
+**🐛 功能修复**
+
+- **@visactor/vrender-core**: fix issue with stroke arc pick not work
+
+
+
+[更多详情请查看 v1.0.15](https://github.com/VisActor/VRender/releases/tag/v1.0.15)
+
 # v1.0.13
 
 2025-08-26

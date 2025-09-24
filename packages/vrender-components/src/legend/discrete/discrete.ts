@@ -1014,7 +1014,8 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       (itemsContainer.getChildren() as unknown as IGroup[]).forEach((item, index) => {
         const { width, height } = item.attribute;
 
-        if (contentWidth < startX + (width as number)) {
+        // 第一个元素不能换行
+        if (contentWidth < startX + (width as number) && index > 0) {
           // 超出了，则换行
           startX = 0;
           startY += (height as number) + spaceRow;
@@ -1058,8 +1059,9 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       // 重新进行布局
 
       (itemsContainer.getChildren() as unknown as IGroup[]).forEach((item, index) => {
-        const { height } = item.attribute;
-        if (contentHeight < startY + (height as number)) {
+        const { width, height } = item.attribute;
+        // 第一个元素不能换行
+        if (contentHeight < startY + (height as number) && index > 0) {
           startY = 0;
           startX += this._itemMaxWidth + spaceCol;
           pages += 1;

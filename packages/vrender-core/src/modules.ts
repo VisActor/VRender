@@ -18,7 +18,6 @@ import { GraphicService } from './graphic/constants';
 import { GraphicUtil, TransformUtil } from './core/constants';
 import { container } from './container';
 import { VGlobal } from './constants';
-import { RenderService } from './render';
 
 export function preLoadAllModule() {
   if (preLoadAllModule.__loaded) {
@@ -50,8 +49,8 @@ export const transformUtil = container.get<ITransformUtil>(TransformUtil);
 application.transformUtil = transformUtil;
 export const graphicService = container.get<IGraphicService>(GraphicService);
 application.graphicService = graphicService;
-export const renderService = container.get<IRenderService>(RenderService);
-application.renderService = renderService;
+// export const renderService = container.get<IRenderService>(RenderService);
+// application.renderService = renderService;
 // export const matrixAllocate = container.get<IMatrixAllocate>(MatrixAllocate);
 // export const mat4Allocate = container.get<IMat4Allocate>(Mat4Allocate);
 // export const canvasAllocate = container.get<ICanvasAllocate>(CanvasAllocate);

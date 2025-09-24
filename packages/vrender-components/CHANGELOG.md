@@ -1,6 +1,15 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Tue, 16 Sep 2025 09:57:05 GMT and should not be manually modified.
+This log was last generated on Wed, 24 Sep 2025 07:38:57 GMT and should not be manually modified.
+
+## 1.0.17
+Wed, 24 Sep 2025 07:38:57 GMT
+
+### Updates
+
+- fix: fix the issue of legend pager
+
+
 
 ## 1.0.16
 Tue, 16 Sep 2025 09:57:05 GMT

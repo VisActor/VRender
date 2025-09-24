@@ -2,6 +2,18 @@
   "name": "@visactor/vrender-core",
   "entries": [
     {
+      "version": "1.0.17",
+      "tag": "@visactor/vrender-core_v1.0.17",
+      "date": "Wed, 24 Sep 2025 07:38:57 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix the issue of legend pager\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.0.16",
       "tag": "@visactor/vrender-core_v1.0.16",
       "date": "Tue, 16 Sep 2025 09:57:05 GMT",

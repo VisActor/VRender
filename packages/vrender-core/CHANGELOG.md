@@ -1,6 +1,13 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Tue, 02 Sep 2025 10:35:16 GMT and should not be manually modified.
+This log was last generated on Tue, 16 Sep 2025 09:57:05 GMT and should not be manually modified.
+
+## 1.0.16
+Tue, 16 Sep 2025 09:57:05 GMT
+
+### Updates
+
+- fix: fix issue that renderService side effect lead to failure to rebind
 
 ## 1.0.15
 Tue, 02 Sep 2025 10:35:16 GMT

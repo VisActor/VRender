@@ -40,10 +40,10 @@ export class CubicBezierCurve extends Curve implements ICubicBezierCurve {
   type: number = CurveTypeEnum.CubicBezierCurve;
   declare originP1?: IPointLike;
   declare originP2?: IPointLike;
-  declare readonly p0: IPoint;
-  declare readonly p1: IPoint;
-  declare readonly p2: IPoint;
-  declare readonly p3: IPoint;
+  declare p0: IPoint;
+  declare p1: IPoint;
+  declare p2: IPoint;
+  declare p3: IPoint;
   constructor(p0: IPoint, p1: IPoint, p2: IPoint, p3: IPoint) {
     super();
     this.p0 = p0;
@@ -123,5 +123,10 @@ export class CubicBezierCurve extends Curve implements ICubicBezierCurve {
     const maxX = max(this.p0.x, this.p1.x, this.p2.x, this.p3.x);
     const t = (x - minX) / (maxX - minX);
     return this.getPointAt(t).y;
+  }
+
+  reverse() {
+    [this.p0, this.p1, this.p2, this.p3] = [this.p3, this.p2, this.p1, this.p0];
+    [this.originP1, this.originP2] = [this.originP2, this.originP1];
   }
 }

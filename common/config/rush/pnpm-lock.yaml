@@ -213,6 +213,9 @@ importers:
       '@visactor/vrender-animate':
         specifier: workspace:1.0.17
         version: link:../vrender-animate
+      '@visactor/vrender-components':
+        specifier: workspace:1.0.17
+        version: link:../vrender-components
       '@visactor/vrender-core':
         specifier: workspace:1.0.17
         version: link:../vrender-core

@@ -76,3 +76,8 @@ registerAnimate();
 export * from '@visactor/vrender-core';
 export * from '@visactor/vrender-kits';
 export * from '@visactor/vrender-animate';
+export * from '@visactor/vrender-components';
+
+// avoid naming conflicts with 'State' & 'Direction' in '@visactor/vrender-components'
+export { State } from '@visactor/vrender-animate';
+export { Direction } from '@visactor/vrender-core';

@@ -2,9 +2,18 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "paths": {
-      "@visactor/vrender-core": ["../vrender-core/src"],
-      "@visactor/vrender-kits": ["../vrender-kits/src"],
-      "@visactor/vrender-animate": ["../vrender-animate/src"]
+      "@visactor/vrender-core": [
+        "../vrender-core/src"
+      ],
+      "@visactor/vrender-kits": [
+        "../vrender-kits/src"
+      ],
+      "@visactor/vrender-animate": [
+        "../vrender-animate/src"
+      ],
+      "@visactor/vrender-components": [
+        "../vrender-components/src"
+      ]
     }
   },
   "references": []

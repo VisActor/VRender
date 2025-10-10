@@ -566,7 +566,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
       const text = result[i];
       const bounds = text.AABBBounds;
       const range = boundToRange(bmpTool, bounds, true);
-      if (canPlace(bmpTool, bitmap, bounds, clampForce, overlapPadding)) {
+      if (canPlace(bmpTool, bitmap, bounds, clampForce || hideOnOverflow, overlapPadding)) {
         bitmap.setRange(range);
       } else {
         if (hideOnOverflow) {
@@ -678,7 +678,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
         continue;
       }
       // 默认位置可以放置
-      if (canPlace(bmpTool, bitmap, text.AABBBounds, clampForce, overlapPadding)) {
+      if (canPlace(bmpTool, bitmap, text.AABBBounds, clampForce || hideOnOverflow, overlapPadding)) {
         // 如果配置了限制在图形内部，需要提前判断；
         if (!checkBounds) {
           bitmap.setRange(boundToRange(bmpTool, text.AABBBounds, true));

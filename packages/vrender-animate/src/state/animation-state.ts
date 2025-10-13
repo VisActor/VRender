@@ -122,8 +122,9 @@ export class AnimationStateManager {
     }
 
     // 停止动画
+    // 停止的动画应该不触发回调
     shouldStopState.forEach(state => {
-      state.executor.stop();
+      state.executor.stop(null, false);
     });
 
     // 立即应用动画，串行的应用
@@ -225,8 +226,9 @@ export class AnimationStateManager {
 
   clearState(): void {
     // 清空状态
+    // 清空状态时，不触发回调
     this.stateList?.forEach(state => {
-      state.executor.stop();
+      state.executor.stop(null, false);
     });
     this.stateList = null;
   }

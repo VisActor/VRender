@@ -63,11 +63,11 @@ jobs:
       - name: Build vrender-animate
         run: node common/scripts/install-run-rush.js build --only @visactor/vrender-animate
 
-      - name: Build vrender
-        run: node common/scripts/install-run-rush.js build --only @visactor/vrender
-
       - name: Build vrender-components
         run: node common/scripts/install-run-rush.js build --only @visactor/vrender-components
+
+      - name: Build vrender
+        run: node common/scripts/install-run-rush.js build --only @visactor/vrender
 
       - name: Build bugserver
         run: node common/scripts/install-run-rush.js build --only @internal/bugserver-trigger

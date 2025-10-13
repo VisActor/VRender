@@ -760,9 +760,9 @@ export class AnimateExecutor implements IAnimateExecutor {
     this._activeCount = 0;
 
     // 如果动画正在运行，触发结束回调
-    if (this._started && callEnd) {
+    if (this._started) {
       this._started = false;
-      this.onEnd();
+      callEnd && this.onEnd();
     }
   }
 }

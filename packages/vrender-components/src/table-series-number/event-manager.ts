@@ -149,11 +149,18 @@ export class TableSeriesNumberEventManager {
       const XYtoTarget = { x: 0, y: 0 };
 
       target.globalTransMatrix.transformPoint(canvasPointXY, XYtoTarget);
+      //假如校验后，是整列被选中状态。鼠标样式变为抓手样式
       if (
         XYtoTarget.x <= 4 ||
         (XYtoTarget.x <= target.getAttributes().width && XYtoTarget.x >= target.getAttributes().width - 4)
       ) {
         target.setAttribute('cursor', 'col-resize');
+      } else if (
+        colIndex !== undefined &&
+        colIndex !== null &&
+        this._tableSeriesNumber.attribute.checkMoveColumnOrder(colIndex)
+      ) {
+        target.setAttribute('cursor', 'grab');
       } else {
         target.setAttribute('cursor', 'default');
       }
@@ -169,6 +176,12 @@ export class TableSeriesNumberEventManager {
         (XYtoTarget.y <= target.getAttributes().height && XYtoTarget.y >= target.getAttributes().height - 4)
       ) {
         target.setAttribute('cursor', 'row-resize');
+      } else if (
+        rowIndex !== undefined &&
+        rowIndex !== null &&
+        this._tableSeriesNumber.attribute.checkMoveRowOrder(rowIndex)
+      ) {
+        target.setAttribute('cursor', 'grab');
       } else {
         target.setAttribute('cursor', 'default');
       }
@@ -218,6 +231,16 @@ export class TableSeriesNumberEventManager {
           event: e
         });
         return;
+      } else if (
+        colIndex !== undefined &&
+        colIndex !== null &&
+        this._tableSeriesNumber.attribute.checkMoveColumnOrder(colIndex)
+      ) {
+        this._tableSeriesNumber.dispatchTableSeriesNumberEvent(SeriesNumberEvent.dragColumnOrderStart, {
+          colIndex: colIndex,
+          event: e
+        });
+        return;
       }
     } else if (target.name.startsWith('row')) {
       //判断鼠标是否位于行间隔线附近，如果是则触发resizeRowHeightStart事件
@@ -236,6 +259,16 @@ export class TableSeriesNumberEventManager {
         }
         this._tableSeriesNumber.dispatchTableSeriesNumberEvent(SeriesNumberEvent.resizeRowHeightStart, {
           rowIndex: resizeTargetRowIndex,
+          event: e
+        });
+        return;
+      } else if (
+        rowIndex !== undefined &&
+        rowIndex !== null &&
+        this._tableSeriesNumber.attribute.checkMoveRowOrder(rowIndex)
+      ) {
+        this._tableSeriesNumber.dispatchTableSeriesNumberEvent(SeriesNumberEvent.dragRowOrderStart, {
+          rowIndex: rowIndex,
           event: e
         });
         return;

@@ -154,7 +154,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     this._interaction.bindEvents();
     this._interaction.on(IDataZoomInteractiveEvent.stateUpdate, ({ shouldRender }) => {
       if (shouldRender) {
-        this._renderer.renderDataZoom();
+        this._renderer.renderDataZoom(true);
       }
     });
     this._interaction.on(IDataZoomInteractiveEvent.dataZoomUpdate, ({ start, end, tag }) => {
@@ -205,7 +205,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     const { start: startState, end: endState } = this._state;
     if (isValid(start) && isValid(end) && (start !== startState || end !== endState)) {
       this._state = { start, end };
-      this.render();
+      this._renderer.renderDataZoom(true);
       this._dispatchEvent(IDataZoomEvent.dataZoomChange, {
         start,
         end

@@ -41,7 +41,10 @@ export const page = () => {
   addTest('state map', () => {
     class AAA {
       transitions: Map<string, Map<string, any>> = new Map();
-      constructor(public from: string, public to: string) {}
+      constructor(
+        public from: string,
+        public to: string
+      ) {}
       /**
        * 注册默认的转换规则
        */

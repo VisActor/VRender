@@ -158,7 +158,7 @@ export class TableSeriesNumberEventManager {
       } else if (
         colIndex !== undefined &&
         colIndex !== null &&
-        this._tableSeriesNumber.attribute.checkMoveColumnOrder(colIndex)
+        this._tableSeriesNumber.attribute.checkMoveColumnOrder?.(colIndex)
       ) {
         target.setAttribute('cursor', 'grab');
       } else {
@@ -179,7 +179,7 @@ export class TableSeriesNumberEventManager {
       } else if (
         rowIndex !== undefined &&
         rowIndex !== null &&
-        this._tableSeriesNumber.attribute.checkMoveRowOrder(rowIndex)
+        this._tableSeriesNumber.attribute.checkMoveRowOrder?.(rowIndex)
       ) {
         target.setAttribute('cursor', 'grab');
       } else {
@@ -234,7 +234,7 @@ export class TableSeriesNumberEventManager {
       } else if (
         colIndex !== undefined &&
         colIndex !== null &&
-        this._tableSeriesNumber.attribute.checkMoveColumnOrder(colIndex)
+        this._tableSeriesNumber.attribute.checkMoveColumnOrder?.(colIndex)
       ) {
         this._tableSeriesNumber.dispatchTableSeriesNumberEvent(SeriesNumberEvent.dragColumnOrderStart, {
           colIndex: colIndex,
@@ -265,7 +265,7 @@ export class TableSeriesNumberEventManager {
       } else if (
         rowIndex !== undefined &&
         rowIndex !== null &&
-        this._tableSeriesNumber.attribute.checkMoveRowOrder(rowIndex)
+        this._tableSeriesNumber.attribute.checkMoveRowOrder?.(rowIndex)
       ) {
         this._tableSeriesNumber.dispatchTableSeriesNumberEvent(SeriesNumberEvent.dragRowOrderStart, {
           rowIndex: rowIndex,

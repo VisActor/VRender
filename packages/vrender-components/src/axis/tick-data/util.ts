@@ -46,10 +46,10 @@ const calculateFlushPos = (basePosition: number, size: number, rangePosition: nu
   return rangePosition < basePosition
     ? Math.max(basePosition - size / 2, rangePosition)
     : rangePosition > basePosition
-    ? Math.min(basePosition - size / 2, rangePosition - size)
-    : rangePosition < otherEnd
-    ? rangePosition
-    : rangePosition - size;
+      ? Math.min(basePosition - size / 2, rangePosition - size)
+      : rangePosition < otherEnd
+        ? rangePosition
+        : rangePosition - size;
 };
 
 export const getCartesianLabelBounds = (scale: IBaseScale, domain: any[], op: ICartesianTickDataOpt): AABBBounds[] => {

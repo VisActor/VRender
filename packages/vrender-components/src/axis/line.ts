@@ -241,8 +241,8 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
                   ? Math.min(bounds.x2 - baseX, bounds.width())
                   : 0
                 : bounds.x1 < baseX
-                ? Math.min(baseX - bounds.x1, bounds.width())
-                : 0) +
+                  ? Math.min(baseX - bounds.x1, bounds.width())
+                  : 0) +
               (layerCount - 1) * space;
           } else {
             labelLength = 0;
@@ -552,8 +552,8 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
         const verticalLimitLength = isVertical
           ? axisLength / labelShapes.length
           : !autoHide && !autoRotate
-          ? axisLength / labelShapes.length
-          : Infinity;
+            ? axisLength / labelShapes.length
+            : Infinity;
 
         autoLimitFunc(labelShapes, {
           limitLength,
@@ -646,8 +646,8 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
     let limitLength = limitSize;
     let titleHeight = 0;
     let titleSpacing = 0;
-    const axisLineWidth = line && line.visible ? line.style.lineWidth ?? 1 : 0;
-    const tickLength = tick && tick.visible ? tick.length ?? 4 : 0;
+    const axisLineWidth = line && line.visible ? (line.style.lineWidth ?? 1) : 0;
+    const tickLength = tick && tick.visible ? (tick.length ?? 4) : 0;
     if (title && title.visible && typeof title.text === 'string') {
       titleHeight = measureTextSize(title.text, title.textStyle, this.stage?.getTheme()?.text).height;
       const padding = normalizePadding(title.padding);

@@ -171,7 +171,7 @@ export const continuousTicks = (scale: ContinuousScale, op: ITickDataOpt): ITick
             ({
               AABBBounds: bounds,
               value: samplingScaleTicks[i]
-            } as ILabelItem<number>)
+            }) as ILabelItem<number>
         );
       } else {
         items = getCartesianLabelBounds(scale, scaleTicks, op as ICartesianTickDataOpt)?.map(
@@ -179,7 +179,7 @@ export const continuousTicks = (scale: ContinuousScale, op: ITickDataOpt): ITick
             ({
               AABBBounds: bounds,
               value: scaleTicks[i]
-            } as ILabelItem<number>)
+            }) as ILabelItem<number>
         );
       }
 

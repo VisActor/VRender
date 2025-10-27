@@ -377,7 +377,7 @@ export const oneToMultiMorph = (
   }
 
   const childGraphics: IGraphic[] = (
-    animationConfig?.splitPath === 'clone' ? cloneGraphic : animationConfig?.splitPath ?? splitGraphic
+    animationConfig?.splitPath === 'clone' ? cloneGraphic : (animationConfig?.splitPath ?? splitGraphic)
   )(fromGraphic, validateToGraphics.length, false);
 
   const oldOnEnd = animationConfig?.onEnd;
@@ -687,7 +687,7 @@ export const multiToOneMorph = (
   }
 
   const childGraphics: IGraphic[] = (
-    animationConfig?.splitPath === 'clone' ? cloneGraphic : animationConfig?.splitPath ?? splitGraphic
+    animationConfig?.splitPath === 'clone' ? cloneGraphic : (animationConfig?.splitPath ?? splitGraphic)
   )(toGraphic, validateFromGraphics.length, true);
 
   const toAttrs = toGraphic.attribute;

@@ -25,7 +25,9 @@ export enum SeriesNumberEvent {
   /** 调整列宽开始 */
   resizeColWidthStart = 'resizeColWidthStart',
   /** 右键事件 */
-  seriesNumberCellRightClick = 'seriesNumberCellRightClick'
+  seriesNumberCellRightClick = 'seriesNumberCellRightClick',
+  dragColumnOrderStart = 'dragColumnOrderStart',
+  dragRowOrderStart = 'dragRowOrderStart'
 }
 export type TableSeriesNumberAttributes = IGroupGraphicAttribute & {
   frozenRowCount?: number;
@@ -112,4 +114,6 @@ export type TableSeriesNumberAttributes = IGroupGraphicAttribute & {
   //      **/
   //     triggerOff?: GraphicEventType;
   //   };
+  checkMoveColumnOrder?: (colIndex: number) => boolean;
+  checkMoveRowOrder?: (rowIndex: number) => boolean;
 };

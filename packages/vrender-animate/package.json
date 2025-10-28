@@ -20,7 +20,7 @@
     "test": ""
   },
   "dependencies": {
-    "@visactor/vutils": "1.0.6",
+    "@visactor/vutils": "~1.0.12",
     "@visactor/vrender-core": "workspace:1.0.20"
   },
   "devDependencies": {

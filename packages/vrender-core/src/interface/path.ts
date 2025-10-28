@@ -53,6 +53,7 @@ export interface ICurve<T> {
   draw: (path: IPath2D, x: number, y: number, sx: number, sy: number, percent: number) => void;
   getYAt: (x: number) => number;
   includeX: (x: number) => boolean;
+  reverse: () => void;
 }
 
 export interface ICubicBezierCurve extends ICurve<IPoint> {

@@ -19,7 +19,7 @@ import type {
 } from '../../../interface';
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { ContributionProvider } from '../../../common/contribution-provider';
-import { calcLineCache } from '../../../common/segment';
+import { calcLineCache, calcSegLineCache } from '../../../common/segment';
 
 import { getTheme } from '../../../graphic/theme';
 import { AreaRenderContribution } from './contributions/constants';
@@ -240,62 +240,106 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
     // 更新cache
     if (area.shouldUpdateShape()) {
       if (segments && segments.length) {
-        let startPoint: IPointLike;
-        let lastTopSeg: { endX: number; endY: number };
-        const topCaches = segments
-          .map((seg, index) => {
-            if (seg.points.length <= 1) {
-              // 第一个点的话，直接设置lastTopSeg
-              if (index === 0) {
-                seg.points[0] && (lastTopSeg = { endX: seg.points[0].x, endY: seg.points[0].y });
-                return null;
-              }
-            }
-            // 添加上一个segment结束的点作为这个segment的起始点
-            if (index === 1) {
-              startPoint = { x: lastTopSeg.endX, y: lastTopSeg.endY };
-            } else if (index > 1) {
-              startPoint.x = lastTopSeg.endX;
-              startPoint.y = lastTopSeg.endY;
-            }
-            const data = calcLineCache(parsePoint(seg.points, connectedType), curveType, {
-              startPoint,
-              curveTension
-            });
-            lastTopSeg = data;
-            return data;
-          })
-          .filter(item => !!item);
-        let lastBottomSeg: ISegPath2D;
-        const bottomCaches = [];
-        for (let i = segments.length - 1; i >= 0; i--) {
-          const points = segments[i].points;
+        // let startPoint: IPointLike;
+        // let lastTopSeg: { endX: number; endY: number };
+        // 检测segment是否有定义curveType
+        const points: IPointLike[] = [];
+        segments.forEach(seg => {
+          parsePoint(seg.points, connectedType).forEach(p => {
+            points.push(p);
+          });
+        });
+        const topCaches = calcSegLineCache(segments, points, curveType, { curveTension });
+        // const topCaches = segments
+        //   .map((seg, index) => {
+        //     if (seg.points.length <= 1) {
+        //       // 第一个点的话，直接设置lastTopSeg
+        //       if (index === 0) {
+        //         seg.points[0] && (lastTopSeg = { endX: seg.points[0].x, endY: seg.points[0].y });
+        //         return null;
+        //       }
+        //     }
+        //     // 添加上一个segment结束的点作为这个segment的起始点
+        //     if (index === 1) {
+        //       startPoint = { x: lastTopSeg.endX, y: lastTopSeg.endY };
+        //     } else if (index > 1) {
+        //       startPoint.x = lastTopSeg.endX;
+        //       startPoint.y = lastTopSeg.endY;
+        //     }
+        //     const data = calcLineCache(parsePoint(seg.points, connectedType), curveType, {
+        //       startPoint,
+        //       curveTension
+        //     });
+        //     lastTopSeg = data;
+        //     return data;
+        //   })
+        //   .filter(item => !!item);
+        const bottomSegments = [];
+        for (let i = 0; i < segments.length; i++) {
+          const points = parsePoint(segments[i].points, connectedType);
           const bottomPoints: IPointLike[] = [];
-          for (let i = points.length - 1; i >= 0; i--) {
+          for (let i = 0; i < points.length; i++) {
             bottomPoints.push({
               x: points[i].x1 ?? points[i].x,
               y: points[i].y1 ?? points[i].y
             });
           }
-          // 处理一下bottom的segments，bottom的segments需要手动添加endPoints
-          if (i !== 0) {
-            const lastSegmentPoints = segments[i - 1].points;
-            const endPoint = lastSegmentPoints[lastSegmentPoints.length - 1];
-            endPoint &&
-              bottomPoints.push({
-                x: endPoint.x1 ?? endPoint.x,
-                y: endPoint.y1 ?? endPoint.y
-              });
-          }
-          if (bottomPoints.length > 1) {
-            lastBottomSeg = calcLineCache(
-              parsePoint(bottomPoints, connectedType),
-              curveType === 'stepBefore' ? 'stepAfter' : curveType === 'stepAfter' ? 'stepBefore' : curveType,
-              { curveTension }
-            );
-            bottomCaches.unshift(lastBottomSeg);
-          }
+          bottomSegments.push({
+            points: bottomPoints
+          });
         }
+        // const bottomSegments = segments.map(seg => ({...seg, points: seg.points.map(item => ({
+        //   x: item.x1 ?? item.x,
+        //   y: item.y1 ?? item.y
+        // }))}));
+        const bottomPoints: IPointLike[] = [];
+        bottomSegments.forEach(seg => {
+          parsePoint(seg.points, connectedType).forEach(p => {
+            bottomPoints.push(p);
+          });
+        });
+        const bottomCaches = calcSegLineCache(
+          bottomSegments,
+          bottomPoints,
+          curveType === 'stepBefore' ? 'stepAfter' : curveType === 'stepAfter' ? 'stepBefore' : curveType,
+          { curveTension }
+        ) as any[];
+        // // 翻转点
+        bottomCaches.forEach(cache => {
+          cache.reverse && cache.reverse();
+        });
+        // let lastBottomSeg: ISegPath2D;
+        // console.log(bottomCaches);
+        // bottomCaches = [];
+        // console.log(bottomCaches);
+        // for (let i = segments.length - 1; i >= 0; i--) {
+        //   const points = segments[i].points;
+        //   const bottomPoints: IPointLike[] = [];
+        //   for (let i = points.length - 1; i >= 0; i--) {
+        //     bottomPoints.push({
+        //       x: points[i].x1 ?? points[i].x,
+        //       y: points[i].y1 ?? points[i].y
+        //     });
+        //   }
+        //   // 处理一下bottom的segments，bottom的segments需要手动添加endPoints
+        //   if (i !== 0) {
+        //     const lastSegmentPoints = segments[i - 1].points;
+        //     const endPoint = lastSegmentPoints[lastSegmentPoints.length - 1];
+        //     endPoint &&
+        //       bottomPoints.push({
+        //         x: endPoint.x1 ?? endPoint.x,
+        //         y: endPoint.y1 ?? endPoint.y
+        //       });
+        //   }
+        //   if (bottomPoints.length > 1) {
+        //     lastBottomSeg = calcLineCache(
+        //       parsePoint(bottomPoints, connectedType),
+        //       curveType === 'stepBefore' ? 'stepAfter' : curveType === 'stepAfter' ? 'stepBefore' : curveType,
+        //       { curveTension }
+        //     );
+        //     bottomCaches.unshift(lastBottomSeg);
+        //   }
+        // }
         area.cacheArea = bottomCaches.map((item, index) => ({
           top: topCaches[index],
           bottom: item

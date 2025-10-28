@@ -36,4 +36,8 @@ export class ArcCurve extends Curve implements IArcCurve {
   includeX(x: number): boolean {
     throw new Error('ArcCurve暂不支持includeX');
   }
+
+  reverse() {
+    throw new Error('ArcCurve暂不支持reverse');
+  }
 }

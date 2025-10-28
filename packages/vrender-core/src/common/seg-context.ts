@@ -1,6 +1,6 @@
 import type { IPoint, IPointLike } from '@visactor/vutils';
 import { abs, Point } from '@visactor/vutils';
-import type { ICubicBezierCurve, ICurve, ICurveType, IDirection, ILineCurve, ISegPath2D } from '../interface';
+import type { ICubicBezierCurve, ICurve, ICurveType, IDirection, ILineCurve, ISegment, ISegPath2D } from '../interface';
 import { Direction } from './enums';
 import { CubicBezierCurve } from './segment/curve/cubic-bezier';
 import { LineCurve } from './segment/curve/line';
@@ -157,6 +157,53 @@ export class SegContext implements ISegPath2D {
     }
     this.length = this.curves.reduce((l, c) => l + c.getLength(), 0);
     return this.length;
+  }
+
+  reverse() {
+    this.curves.reverse();
+    [this._startX, this._lastX] = [this._lastX, this._startX];
+    [this._startY, this._lastY] = [this._lastY, this._startY];
+    [this._startOriginP, this._lastOriginP] = [this._lastOriginP, this._startOriginP];
+    this.curves.forEach(c => {
+      c.reverse();
+    });
+  }
+
+  splitBySegments(segments: ISegment[]) {
+    if (segments.length === 1) {
+      return [this];
+    }
+    const res: SegContext[] = [];
+    let curveIdx = 0;
+    segments.forEach(seg => {
+      const lastP = seg.points[seg.points.length - 1];
+      const ctx = new SegContext(this.curveType, this.direction);
+      res.push(ctx);
+      for (; curveIdx < this.curves.length; curveIdx++) {
+        let curve = this.curves[curveIdx];
+        if (curve.originP2 === lastP) {
+          ctx.curves.push(curve);
+          curveIdx++;
+          for (; curveIdx < this.curves.length; curveIdx++) {
+            curve = this.curves[curveIdx];
+            if (curve.originP2 === lastP) {
+              ctx.curves.push(curve);
+            } else {
+              break;
+            }
+          }
+          ctx._lastX = lastP.x;
+          ctx._lastY = lastP.y;
+          ctx._lastOriginP = lastP;
+          ctx._startX = ctx.curves[0].p0.x;
+          ctx._startY = ctx.curves[0].p0.y;
+          ctx._startOriginP = ctx.curves[0].p0;
+          break;
+        }
+        ctx.curves.push(curve);
+      }
+    });
+    return res;
   }
 }
 

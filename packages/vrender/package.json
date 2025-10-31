@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vrender",
-  "version": "1.0.20",
+  "version": "1.0.21",
   "description": "",
   "sideEffects": true,
   "main": "cjs/index.js",
@@ -24,17 +24,17 @@
     "test-watch": "cross-env DEBUG_MODE=1 jest --watch"
   },
   "dependencies": {
-    "@visactor/vrender-core": "workspace:1.0.20",
-    "@visactor/vrender-kits": "workspace:1.0.20",
-    "@visactor/vrender-animate": "workspace:1.0.20",
-    "@visactor/vrender-components": "workspace:1.0.20"
+    "@visactor/vrender-core": "workspace:1.0.21",
+    "@visactor/vrender-kits": "workspace:1.0.21",
+    "@visactor/vrender-animate": "workspace:1.0.21",
+    "@visactor/vrender-components": "workspace:1.0.21"
   },
   "devDependencies": {
     "@internal/bundler": "workspace:*",
     "@internal/eslint-config": "workspace:*",
     "@internal/ts-config": "workspace:*",
     "@rushstack/eslint-patch": "~1.1.4",
-    "@visactor/vutils": "1.0.6",
+    "@visactor/vutils": "~1.0.12",
     "canvas": "2.11.2",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",

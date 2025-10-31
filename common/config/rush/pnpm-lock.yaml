@@ -22,11 +22,11 @@ importers:
         specifier: ~0.5.7
         version: 0.5.7
       '@visactor/vrender':
-        specifier: workspace:1.0.20
+        specifier: workspace:1.0.21
         version: link:../packages/vrender
       '@visactor/vutils':
-        specifier: 1.0.6
-        version: 1.0.6
+        specifier: ~1.0.12
+        version: 1.0.12
       axios:
         specifier: ^1.4.0
         version: 1.8.4
@@ -95,11 +95,11 @@ importers:
   ../../packages/react-vrender:
     dependencies:
       '@visactor/vrender':
-        specifier: workspace:1.0.20
+        specifier: workspace:1.0.21
         version: link:../vrender
       '@visactor/vutils':
-        specifier: 1.0.6
-        version: 1.0.6
+        specifier: ~1.0.12
+        version: 1.0.12
       react-reconciler:
         specifier: ^0.29.0
         version: 0.29.2(react@18.3.1)
@@ -153,14 +153,14 @@ importers:
   ../../packages/react-vrender-utils:
     dependencies:
       '@visactor/react-vrender':
-        specifier: workspace:1.0.20
+        specifier: workspace:1.0.21
         version: link:../react-vrender
       '@visactor/vrender':
-        specifier: workspace:1.0.20
+        specifier: workspace:1.0.21
         version: link:../vrender
       '@visactor/vutils':
-        specifier: 1.0.6
-        version: 1.0.6
+        specifier: ~1.0.12
+        version: 1.0.12
       react-reconciler:
         specifier: ^0.29.0
         version: 0.29.2(react@18.3.1)
@@ -211,16 +211,16 @@ importers:
   ../../packages/vrender:
     dependencies:
       '@visactor/vrender-animate':
-        specifier: workspace:1.0.20
+        specifier: workspace:1.0.21
         version: link:../vrender-animate
       '@visactor/vrender-components':
-        specifier: workspace:1.0.20
+        specifier: workspace:1.0.21
         version: link:../vrender-components
       '@visactor/vrender-core':
-        specifier: workspace:1.0.20
+        specifier: workspace:1.0.21
         version: link:../vrender-core
       '@visactor/vrender-kits':
-        specifier: workspace:1.0.20
+        specifier: workspace:1.0.21
         version: link:../vrender-kits
     devDependencies:
       '@internal/bundler':
@@ -245,8 +245,8 @@ importers:
         specifier: ^18.0.0
         version: 18.3.5(@types/react@18.3.20)
       '@visactor/vutils':
-        specifier: 1.0.6
-        version: 1.0.6
+        specifier: ~1.0.12
+        version: 1.0.12
       '@vitejs/plugin-react':
         specifier: 3.1.0
         version: 3.1.0(vite@3.2.6(@types/node@22.13.17)(less@4.1.3)(terser@5.17.1))
@@ -287,11 +287,11 @@ importers:
   ../../packages/vrender-animate:
     dependencies:
       '@visactor/vrender-core':
-        specifier: workspace:1.0.20
+        specifier: workspace:1.0.21
         version: link:../vrender-core
       '@visactor/vutils':
-        specifier: 1.0.6
-        version: 1.0.6
+        specifier: ~1.0.12
+        version: 1.0.12
     devDependencies:
       '@internal/bundler':
         specifier: workspace:*
@@ -345,20 +345,20 @@ importers:
   ../../packages/vrender-components:
     dependencies:
       '@visactor/vrender-animate':
-        specifier: workspace:1.0.20
+        specifier: workspace:1.0.21
         version: link:../vrender-animate
       '@visactor/vrender-core':
-        specifier: workspace:1.0.20
+        specifier: workspace:1.0.21
         version: link:../vrender-core
       '@visactor/vrender-kits':
-        specifier: workspace:1.0.20
+        specifier: workspace:1.0.21
         version: link:../vrender-kits
       '@visactor/vscale':
-        specifier: 1.0.6
-        version: 1.0.6
+        specifier: ~1.0.12
+        version: 1.0.12
       '@visactor/vutils':
-        specifier: 1.0.6
-        version: 1.0.6
+        specifier: ~1.0.12
+        version: 1.0.12
     devDependencies:
       '@internal/bundler':
         specifier: workspace:*
@@ -403,8 +403,8 @@ importers:
   ../../packages/vrender-core:
     dependencies:
       '@visactor/vutils':
-        specifier: 1.0.6
-        version: 1.0.6
+        specifier: ~1.0.12
+        version: 1.0.12
       color-convert:
         specifier: 2.0.1
         version: 2.0.1
@@ -470,11 +470,11 @@ importers:
         specifier: 2.4.1
         version: 2.4.1
       '@visactor/vrender-core':
-        specifier: workspace:1.0.20
+        specifier: workspace:1.0.21
         version: link:../vrender-core
       '@visactor/vutils':
-        specifier: 1.0.6
-        version: 1.0.6
+        specifier: ~1.0.12
+        version: 1.0.12
       gifuct-js:
         specifier: 2.1.2
         version: 2.1.2
@@ -586,19 +586,19 @@ importers:
   ../../tools/bugserver-trigger:
     dependencies:
       '@visactor/vrender':
-        specifier: workspace:1.0.20
+        specifier: workspace:1.0.21
         version: link:../../packages/vrender
       '@visactor/vrender-animate':
-        specifier: workspace:1.0.20
+        specifier: workspace:1.0.21
         version: link:../../packages/vrender-animate
       '@visactor/vrender-components':
-        specifier: workspace:1.0.20
+        specifier: workspace:1.0.21
         version: link:../../packages/vrender-components
       '@visactor/vrender-core':
-        specifier: workspace:1.0.20
+        specifier: workspace:1.0.21
         version: link:../../packages/vrender-core
       '@visactor/vrender-kits':
-        specifier: workspace:1.0.20
+        specifier: workspace:1.0.21
         version: link:../../packages/vrender-kits
     devDependencies:
       '@internal/bundler':
@@ -2198,8 +2198,8 @@ packages:
   '@visactor/vscale@0.15.14':
     resolution: {integrity: sha512-ttGdvS49APcO23WFfsbq9zyQ1y767LjqchPPL78KOrd4UjhYQXRCdeqz7K4A57e333R37oLnPfSuIVFz9qJGYw==}
 
-  '@visactor/vscale@1.0.6':
-    resolution: {integrity: sha512-E6ySrzOIyL85luy5dKPpKzaCjf/hkLFF/mAn37Lv8XJWhyxWjYO29GM7cIlqDNCKAY0qsONPnfmgdGX+Hoe5vg==}
+  '@visactor/vscale@1.0.12':
+    resolution: {integrity: sha512-Mx81QatZKAWWcfX2BfX25jZRLwXVdWNt92PtA7hwVs8HplXA+ZcEvSQbZkma/ssZ66ijgSlWUQOlxJ87ZY0FBw==}
 
   '@visactor/vutils@0.13.3':
     resolution: {integrity: sha512-lCFiuUHwqz/0RCvIYa79ycduCLAILWaXddPOjxEd3VRX9CCoWMUmRtM3gF5JxtK2pK6Mu7hW7LaMSuWFw+0Kkw==}
@@ -2207,8 +2207,8 @@ packages:
   '@visactor/vutils@0.15.14':
     resolution: {integrity: sha512-mZuJhXdDZqq5arqc/LfEmWOY6l7ErK1MurO8bR3vESxeCaQ18pN36iit15K2IMQVJuKZPnZ2ksw8+a1irXi/8A==}
 
-  '@visactor/vutils@1.0.6':
-    resolution: {integrity: sha512-87/AYLrjY1rtvIT0N/9S+sESialMQUKYv7MDjLjUo37u0hmeL/AwRSGBSvjxdxayKHOmdwUK1BLpQrDIrssKLg==}
+  '@visactor/vutils@1.0.12':
+    resolution: {integrity: sha512-lHvWbB2gC+IvkGkgnGbxiAeRQ99EEvgPqor6joyZ5KOU2lelHo8KPeSGzZMbN6LNwrpAsnV3x9jds7lGdC1NHQ==}
 
   '@vitejs/plugin-react@3.1.0':
     resolution: {integrity: sha512-AfgcRL8ZBhAlc3BFdigClmTUMISmmzHn7sB2h9U1odvc5U/MjWXsAaz18b/WoppUTDBzxOJwo2VdClfUcItu9g==}
@@ -8845,9 +8845,9 @@ snapshots:
     dependencies:
       '@visactor/vutils': 0.15.14
 
-  '@visactor/vscale@1.0.6':
+  '@visactor/vscale@1.0.12':
     dependencies:
-      '@visactor/vutils': 1.0.6
+      '@visactor/vutils': 1.0.12
 
   '@visactor/vutils@0.13.3':
     dependencies:
@@ -8861,7 +8861,7 @@ snapshots:
       '@turf/invariant': 6.5.0
       eventemitter3: 4.0.7
 
-  '@visactor/vutils@1.0.6':
+  '@visactor/vutils@1.0.12':
     dependencies:
       '@turf/helpers': 6.5.0
       '@turf/invariant': 6.5.0

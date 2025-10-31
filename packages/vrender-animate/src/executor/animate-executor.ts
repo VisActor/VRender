@@ -424,12 +424,18 @@ export class AnimateExecutor implements IAnimateExecutor {
   ) {
     // 处理自定义动画
     if (custom && customType) {
-      const customParams = {
+      const _customParameters = this.resolveValue(customParameters, graphic);
+      let customParams = _customParameters;
+      if (typeof customParams !== 'function') {
+        customParams = customParams(graphic.context?.data?.[0], graphic, {});
+      }
+      customParams = {
         width: graphic.stage?.width || 0,
         height: graphic.stage?.height || 0,
         group: this._target.parent,
-        ...this.resolveValue(customParameters, graphic)
+        ..._customParameters
       };
+
       const objOptions = isFunction(options)
         ? options.call(
             null,

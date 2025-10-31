@@ -426,7 +426,7 @@ export class AnimateExecutor implements IAnimateExecutor {
     if (custom && customType) {
       const _customParameters = this.resolveValue(customParameters, graphic);
       let customParams = _customParameters;
-      if (typeof customParams !== 'function') {
+      if (typeof customParams === 'function') {
         customParams = customParams(graphic.context?.data?.[0], graphic, {});
       }
       customParams = {

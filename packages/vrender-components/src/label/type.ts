@@ -152,6 +152,19 @@ export interface BaseLabelAttrs extends IGroupGraphicAttribute {
     getRelatedPoint: ((data: LabelItem) => IPointLike) | null | undefined,
     labelComponent: IGroup
   ) => void;
+
+  /**
+   * 防重叠计算前的回调函数
+   * 返回true的标签会被计算防重叠
+   * 返回false的标签会被直接跳过防重叠计算
+   * @since 1.19.16
+   */
+  filterBeforeOverlap?: (
+    label: IText | IRichText,
+    getRelatedGraphic: (data: LabelItem) => IGraphic,
+    labelComponent: IGroup
+  ) => boolean;
+
   /**
    * 关闭交互效果
    * @default false
@@ -225,6 +238,18 @@ export interface OverlapAttrs {
    * @returns number 数值越大，权重越高。权重越高的标签越优先被布局。
    */
   priority?: (labelItem: LabelItem) => number;
+
+  /**
+   * 防重叠计算前的回调函数
+   * 返回true的标签会被计算防重叠
+   * 返回false的标签会被直接跳过防重叠计算
+   * @since 1.0.24
+   */
+  filterBeforeOverlap?: (
+    label: IText | IRichText,
+    getRelatedGraphic: (data: LabelItem) => IGraphic,
+    labelComponent: IGroup
+  ) => boolean;
 }
 
 export interface SmartInvertAttrs {

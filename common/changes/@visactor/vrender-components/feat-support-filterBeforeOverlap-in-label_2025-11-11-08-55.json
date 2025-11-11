@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "feat: support filterBeforeOverlap in label\n\n",
+      "type": "none",
+      "packageName": "@visactor/vrender-components"
+    }
+  ],
+  "packageName": "@visactor/vrender-components",
+  "email": "lixuef1313@163.com"
+}

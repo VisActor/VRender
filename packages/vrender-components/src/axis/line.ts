@@ -794,6 +794,7 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
         const textStr = formatMethod ? formatMethod(text) : text;
         this.labelHoverOnAxisGroup.setAttribute('text', textStr);
         this.labelHoverOnAxisGroup.setAttribute('visible', true);
+        this.labelHoverOnAxisGroup.setAttribute('visibleAll', true);
         if (this.attribute.orient === 'left' || this.attribute.orient === 'right') {
           this.labelHoverOnAxisGroup.setAttributes({
             y: position
@@ -815,17 +816,9 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
   hideLabelHoverOnAxis() {
     if (this.attribute.labelHoverOnAxis && this.labelHoverOnAxisGroup) {
       this.labelHoverOnAxisGroup.setAttributes({
-        visible: false
+        visible: false,
+        visibleAll: false
       });
-      if (this.attribute.orient === 'left' || this.attribute.orient === 'right') {
-        this.labelHoverOnAxisGroup.setAttributes({
-          y: -100000
-        });
-      } else {
-        this.labelHoverOnAxisGroup.setAttributes({
-          x: -100000
-        });
-      }
     }
   }
   release(): void {

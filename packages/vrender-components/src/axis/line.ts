@@ -17,18 +17,7 @@ import {
 } from '@visactor/vutils';
 import { graphicCreator } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
-import type {
-  TextAlignType,
-  IGroup,
-  INode,
-  IText,
-  TextBaselineType,
-  IGraphic,
-  ITextAttribute,
-  IRectGraphicAttribute,
-  IFillType,
-  IGraphicAttribute
-} from '@visactor/vrender-core';
+import type { TextAlignType, IGroup, INode, IText, TextBaselineType } from '@visactor/vrender-core';
 import type { SegmentAttributes } from '../segment';
 // eslint-disable-next-line no-duplicate-imports
 import { Segment } from '../segment';
@@ -45,7 +34,7 @@ import type {
 import { AxisBase } from './base';
 import { DEFAULT_AXIS_THEME } from './config';
 import { AXIS_ELEMENT_NAME, DEFAULT_STATES, TopZIndex } from './constant';
-import { measureTextSize, traverseGroup } from '../util';
+import { measureTextSize } from '../util';
 import { autoHide as autoHideFunc } from './overlap/auto-hide';
 import { autoRotate as autoRotateFunc, getXAxisLabelAlign, getYAxisLabelAlign } from './overlap/auto-rotate';
 import { autoLimit as autoLimitFunc } from './overlap/auto-limit';
@@ -65,7 +54,7 @@ export interface LineAxis
 export class LineAxis extends AxisBase<LineAxisAttributes> {
   static defaultAttributes = DEFAULT_AXIS_THEME;
   private _breaks: TransformedAxisBreak[];
-  private labelHoverOnAxisGroup: IGroup | null = null;
+  private labelHoverOnAxisGroup: Tag | null = null;
   constructor(attributes: LineAxisAttributes, options?: ComponentOptions) {
     super(options?.skipDefault ? attributes : merge({}, LineAxis.defaultAttributes, attributes), options);
   }
@@ -803,10 +792,8 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
       if (this.labelHoverOnAxisGroup) {
         const { formatMethod } = this.attribute.labelHoverOnAxis as LabelHoverOnAxisAttributes;
         const textStr = formatMethod ? formatMethod(text) : text;
-        this.labelHoverOnAxisGroup.setAttributes({
-          text: textStr,
-          visible: true
-        });
+        this.labelHoverOnAxisGroup.setAttribute('text', textStr);
+        this.labelHoverOnAxisGroup.setAttribute('visible', true);
         if (this.attribute.orient === 'left' || this.attribute.orient === 'right') {
           this.labelHoverOnAxisGroup.setAttributes({
             y: position

@@ -15,15 +15,33 @@ import {
   mixin,
   last as peek
 } from '@visactor/vutils';
-import { diff, graphicCreator } from '@visactor/vrender-core';
+import { graphicCreator } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
-import type { TextAlignType, IGroup, INode, IText, TextBaselineType, IGraphic } from '@visactor/vrender-core';
+import type {
+  TextAlignType,
+  IGroup,
+  INode,
+  IText,
+  TextBaselineType,
+  IGraphic,
+  ITextAttribute,
+  IRectGraphicAttribute,
+  IFillType,
+  IGraphicAttribute
+} from '@visactor/vrender-core';
 import type { SegmentAttributes } from '../segment';
 // eslint-disable-next-line no-duplicate-imports
 import { Segment } from '../segment';
 import { angleTo } from '../util/matrix';
-import type { TagAttributes } from '../tag';
-import type { LineAttributes, LineAxisAttributes, TitleAttributes, AxisItem, TransformedAxisBreak } from './type';
+import { Tag, type TagAttributes } from '../tag';
+import type {
+  LineAttributes,
+  LineAxisAttributes,
+  TitleAttributes,
+  AxisItem,
+  TransformedAxisBreak,
+  LabelHoverOnAxisAttributes
+} from './type';
 import { AxisBase } from './base';
 import { DEFAULT_AXIS_THEME } from './config';
 import { AXIS_ELEMENT_NAME, DEFAULT_STATES, TopZIndex } from './constant';
@@ -46,12 +64,11 @@ export interface LineAxis
 
 export class LineAxis extends AxisBase<LineAxisAttributes> {
   static defaultAttributes = DEFAULT_AXIS_THEME;
-
+  private _breaks: TransformedAxisBreak[];
+  private labelHoverOnAxisGroup: IGroup | null = null;
   constructor(attributes: LineAxisAttributes, options?: ComponentOptions) {
     super(options?.skipDefault ? attributes : merge({}, LineAxis.defaultAttributes, attributes), options);
   }
-
-  private _breaks: TransformedAxisBreak[];
 
   protected _renderInner(container: IGroup) {
     this._breaks = null; // 置空，防止轴更新时缓存了旧值
@@ -126,6 +143,20 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
       bgRect.states = merge({}, DEFAULT_STATES, panel.state ?? {});
       axisContainer.insertBefore(bgRect, axisContainer.firstChild);
     }
+    const { labelHoverOnAxis } = this.attribute;
+    if (labelHoverOnAxis && labelHoverOnAxis.visible) {
+      this.renderLabelHoverOnAxis();
+    }
+  }
+  protected renderLabelHoverOnAxis() {
+    const hoverOnLabelAttributes = this.getLabelHoverOnAxisAttribute();
+    const hoverOnLabel = new Tag({
+      ...hoverOnLabelAttributes
+    });
+    hoverOnLabel.name = AXIS_ELEMENT_NAME.title;
+    hoverOnLabel.id = this._getNodeId('hover-on-label');
+    this.labelHoverOnAxisGroup = hoverOnLabel;
+    this.axisContainer.add(hoverOnLabel as unknown as INode);
   }
 
   protected renderLine(container: IGroup): void {
@@ -241,8 +272,8 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
                   ? Math.min(bounds.x2 - baseX, bounds.width())
                   : 0
                 : bounds.x1 < baseX
-                  ? Math.min(baseX - bounds.x1, bounds.width())
-                  : 0) +
+                ? Math.min(baseX - bounds.x1, bounds.width())
+                : 0) +
               (layerCount - 1) * space;
           } else {
             labelLength = 0;
@@ -355,6 +386,114 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
     if (background && background.visible) {
       attrs.panel = {
         visible: true,
+        ...background.style
+      };
+    }
+
+    return attrs;
+  }
+
+  protected getLabelHoverOnAxisAttribute() {
+    const { orient } = this.attribute;
+    const {
+      position = 0,
+      space = 4,
+      autoRotate = true,
+      textStyle = {},
+      background = {},
+      formatMethod,
+      text: textContent = '' as string,
+      ...restAttrs
+    } = this.attribute.labelHoverOnAxis as LabelHoverOnAxisAttributes;
+    const point = this.getTickCoord(0);
+    /** 指定的位置position与轴的方位有关系 */
+    if (orient === 'bottom' || orient === 'top') {
+      point.x = position;
+    } else {
+      point.y = position;
+    }
+
+    // HACK;
+
+    // 计算悬浮标签的偏移量（距离轴线的距离）
+    let tickLength = 0;
+    if (this.attribute.tick?.visible && this.attribute.tick.inside === false) {
+      tickLength = this.attribute.tick.length || 4;
+    }
+    if (this.attribute.subTick?.visible && this.attribute.subTick.inside === false) {
+      tickLength = Math.max(tickLength, this.attribute.subTick.length || 2);
+    }
+    const labelLength = 0;
+    const offset = tickLength + labelLength + space;
+    const labelPoint = this.getVerticalCoord(point, offset, false);
+    const vector = this.getVerticalVector(offset, false, { x: 0, y: 0 });
+
+    let { angle } = restAttrs; // 用户设置的是角度
+    let textAlign = 'center';
+
+    let textBaseline;
+    if (isNil(angle) && autoRotate) {
+      const axisVector = this.getRelativeVector();
+      const v1: [number, number] = [1, 0]; // 水平方向的向量
+      const radian = angleTo(axisVector, v1, true);
+      angle = radian;
+      const { verticalFactor = 1 } = this.attribute;
+      const factor = -1 * verticalFactor;
+      if (factor === 1) {
+        textBaseline = 'bottom';
+      } else {
+        textBaseline = 'top';
+      }
+    } else {
+      textAlign = this.getTextAlign(vector as number[]);
+      textBaseline = this.getTextBaseline(vector as number[], false);
+    }
+
+    // 计算悬浮标签的缩略
+    let maxTagWidth = 100; // maxWidth;
+    if (isNil(maxTagWidth)) {
+      const { verticalLimitSize, verticalMinSize, orient } = this.attribute;
+      const limitSize = Math.min(verticalLimitSize || Infinity, verticalMinSize || Infinity);
+      if (isValidNumber(limitSize)) {
+        const isX = orient === 'bottom' || orient === 'top';
+        if (isX) {
+          if (angle !== Math.PI / 2) {
+            const cosValue = Math.abs(Math.cos(angle ?? 0));
+            maxTagWidth = cosValue < 1e-6 ? Infinity : this.attribute.end.x / cosValue;
+          } else {
+            maxTagWidth = limitSize - offset;
+          }
+        } else {
+          if (angle && angle !== 0) {
+            const sinValue = Math.abs(Math.sin(angle));
+            maxTagWidth = sinValue < 1e-6 ? Infinity : this.attribute.end.y / sinValue;
+          } else {
+            maxTagWidth = limitSize - offset;
+          }
+        }
+      }
+    }
+    const text = formatMethod ? formatMethod(textContent as string) : (textContent as string);
+    const attrs: TagAttributes = {
+      ...labelPoint,
+      ...restAttrs,
+      maxWidth: maxTagWidth,
+      textStyle: {
+        // @ts-ignore
+        textAlign,
+        // @ts-ignore
+        textBaseline,
+
+        ...textStyle
+      },
+      text
+    };
+    attrs.angle = angle;
+
+    if (background && background.visible) {
+      attrs.panel = {
+        visible: true,
+        ...(restAttrs as any).panel,
         ...background.style
       };
     }
@@ -552,8 +691,8 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
         const verticalLimitLength = isVertical
           ? axisLength / labelShapes.length
           : !autoHide && !autoRotate
-            ? axisLength / labelShapes.length
-            : Infinity;
+          ? axisLength / labelShapes.length
+          : Infinity;
 
         autoLimitFunc(labelShapes, {
           limitLength,
@@ -646,8 +785,8 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
     let limitLength = limitSize;
     let titleHeight = 0;
     let titleSpacing = 0;
-    const axisLineWidth = line && line.visible ? (line.style.lineWidth ?? 1) : 0;
-    const tickLength = tick && tick.visible ? (tick.length ?? 4) : 0;
+    const axisLineWidth = line && line.visible ? line.style.lineWidth ?? 1 : 0;
+    const tickLength = tick && tick.visible ? tick.length ?? 4 : 0;
     if (title && title.visible && typeof title.text === 'string') {
       titleHeight = measureTextSize(title.text, title.textStyle, this.stage?.getTheme()?.text).height;
       const padding = normalizePadding(title.padding);
@@ -658,7 +797,50 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
     }
     return limitLength;
   }
-
+  /** 显示交互中的悬浮标签 */
+  showLabelHoverOnAxis(position: number, text: string) {
+    if (this.attribute.labelHoverOnAxis) {
+      if (this.labelHoverOnAxisGroup) {
+        const { formatMethod } = this.attribute.labelHoverOnAxis as LabelHoverOnAxisAttributes;
+        const textStr = formatMethod ? formatMethod(text) : text;
+        this.labelHoverOnAxisGroup.setAttributes({
+          text: textStr,
+          visible: true
+        });
+        if (this.attribute.orient === 'left' || this.attribute.orient === 'right') {
+          this.labelHoverOnAxisGroup.setAttributes({
+            y: position
+          });
+        } else {
+          this.labelHoverOnAxisGroup.setAttributes({
+            x: position
+          });
+        }
+      } else {
+        this.attribute.labelHoverOnAxis.visible = true;
+        this.attribute.labelHoverOnAxis.position = position;
+        this.attribute.labelHoverOnAxis.text = text;
+        this.renderLabelHoverOnAxis();
+      }
+    }
+  }
+  /** 隐藏交互中的悬浮标签 */
+  hideLabelHoverOnAxis() {
+    if (this.attribute.labelHoverOnAxis && this.labelHoverOnAxisGroup) {
+      this.labelHoverOnAxisGroup.setAttributes({
+        visible: false
+      });
+      if (this.attribute.orient === 'left' || this.attribute.orient === 'right') {
+        this.labelHoverOnAxisGroup.setAttributes({
+          y: -100000
+        });
+      } else {
+        this.labelHoverOnAxisGroup.setAttributes({
+          x: -100000
+        });
+      }
+    }
+  }
   release(): void {
     super.release();
     this._breaks = null;

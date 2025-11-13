@@ -35,6 +35,14 @@ const specs = [
     name: '轴交互'
   },
   {
+    path: 'axis-hoverOn-label-bottom',
+    name: '轴hoverOn-bottom'
+  },
+  {
+    path: 'axis-hoverOn-label-left',
+    name: '轴hoverOn-left'
+  },
+  {
     path: 'cartesian-axis-label-align',
     name: '轴标签整体对齐'
   },

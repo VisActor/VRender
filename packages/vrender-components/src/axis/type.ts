@@ -100,6 +100,10 @@ export interface AxisBaseAttributes extends IGroupGraphicAttribute {
    */
   label?: LabelAttributes;
   /**
+   * 轴上悬浮label标签配置
+   */
+  labelHoverOnAxis?: LabelHoverOnAxisAttributes;
+  /**
    * 轴刻度线配置
    */
   tick?: TickAttributes;
@@ -534,6 +538,41 @@ export type LabelAttributes = Omit<AxisLabelOverlap, 'text'> &
     dataFilter?: (data: AxisItem[], layer: number) => AxisItem[];
   };
 
+export type LabelHoverOnAxisAttributes = Omit<TagAttributes, 'shape' | 'space' | 'panel' | 'state'> & {
+  /**
+   * 是否展示悬浮标签
+   */
+  visible?: boolean;
+  /** 标签同 tick 之间的间距 */
+  space?: number;
+  /**
+   * 悬浮标签的位置 ，与轴的方位有关系,如果是水平轴，则position代表x的位置，如果是垂直轴，则position代表y的位置
+   */
+  position?: number;
+  /**
+   * 是否自动旋转以和坐标轴平行
+   */
+  autoRotate?: boolean;
+  /**
+   * 背景设置
+   */
+  background?: {
+    /**
+     * 是否绘制背景层
+     */
+    visible?: boolean;
+    /**
+     * 背景层样式
+     */
+    style?: Omit<Partial<IRectGraphicAttribute>, 'visible' | 'width' | 'height'>;
+  };
+  /**
+   * 格式化文本回调
+   * @param value 文本原始值
+   * @returns 格式化文本
+   */
+  formatMethod?: (value: string) => string;
+};
 export type CoordinateType = 'cartesian' | 'polar' | 'geo' | 'none';
 export type IOrientType = 'left' | 'top' | 'right' | 'bottom' | 'z';
 export type IPolarOrientType = 'radius' | 'angle';

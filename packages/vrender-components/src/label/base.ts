@@ -29,7 +29,8 @@ import {
   isNil,
   isArray,
   isObject,
-  pointInRect
+  pointInRect,
+  isBoolean
 } from '@visactor/vutils';
 import type { PointLocationCfg } from '../core/type';
 import { labelSmartInvert, contrastAccessibilityChecker, smartInvertStrategy } from '../util/label-smartInvert';
@@ -212,17 +213,30 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
       labels = this._layout(labels);
     }
 
+    const filteredLabels: (IText | IRichText)[] = [];
+    const overlapLabels: (IText | IRichText)[] = labels;
+    if (!isBoolean(overlap) && isFunction(overlap.filterBeforeOverlap)) {
+      const getRelatedGraphic = this.getRelatedGraphic.bind(this);
+      labels.forEach(label => {
+        if (overlap.filterBeforeOverlap(label, getRelatedGraphic, this)) {
+          overlapLabels.push(label);
+        } else {
+          filteredLabels.push(label);
+        }
+      });
+    }
+
     if (isFunction(customOverlapFunc)) {
       labels = customOverlapFunc(
-        labels as Text[],
+        overlapLabels as Text[],
         this.getRelatedGraphic.bind(this),
         this._isCollectionBase ? (d: LabelItem) => this._idToPoint.get(d.id) : null,
         this
-      );
+      ).concat(filteredLabels);
     } else {
       // 防重叠逻辑
       if (overlap !== false) {
-        labels = this._overlapping(labels);
+        labels = this._overlapping(overlapLabels).concat(filteredLabels);
       }
     }
 

@@ -22,7 +22,7 @@ importers:
         specifier: ~0.5.7
         version: 0.5.7
       '@visactor/vrender':
-        specifier: workspace:1.0.24
+        specifier: workspace:1.0.26-alpha.0
         version: link:../packages/vrender
       '@visactor/vutils':
         specifier: ~1.0.12
@@ -95,7 +95,7 @@ importers:
   ../../packages/react-vrender:
     dependencies:
       '@visactor/vrender':
-        specifier: workspace:1.0.24
+        specifier: workspace:1.0.26-alpha.0
         version: link:../vrender
       '@visactor/vutils':
         specifier: ~1.0.12
@@ -153,10 +153,10 @@ importers:
   ../../packages/react-vrender-utils:
     dependencies:
       '@visactor/react-vrender':
-        specifier: workspace:1.0.24
+        specifier: workspace:1.0.26-alpha.0
         version: link:../react-vrender
       '@visactor/vrender':
-        specifier: workspace:1.0.24
+        specifier: workspace:1.0.26-alpha.0
         version: link:../vrender
       '@visactor/vutils':
         specifier: ~1.0.12
@@ -211,16 +211,16 @@ importers:
   ../../packages/vrender:
     dependencies:
       '@visactor/vrender-animate':
-        specifier: workspace:1.0.24
+        specifier: workspace:1.0.26-alpha.0
         version: link:../vrender-animate
       '@visactor/vrender-components':
-        specifier: workspace:1.0.24
+        specifier: workspace:1.0.26-alpha.0
         version: link:../vrender-components
       '@visactor/vrender-core':
-        specifier: workspace:1.0.24
+        specifier: workspace:1.0.26-alpha.0
         version: link:../vrender-core
       '@visactor/vrender-kits':
-        specifier: workspace:1.0.24
+        specifier: workspace:1.0.26-alpha.0
         version: link:../vrender-kits
     devDependencies:
       '@internal/bundler':
@@ -287,7 +287,7 @@ importers:
   ../../packages/vrender-animate:
     dependencies:
       '@visactor/vrender-core':
-        specifier: workspace:1.0.24
+        specifier: workspace:1.0.26-alpha.0
         version: link:../vrender-core
       '@visactor/vutils':
         specifier: ~1.0.12
@@ -345,13 +345,13 @@ importers:
   ../../packages/vrender-components:
     dependencies:
       '@visactor/vrender-animate':
-        specifier: workspace:1.0.24
+        specifier: workspace:1.0.26-alpha.0
         version: link:../vrender-animate
       '@visactor/vrender-core':
-        specifier: workspace:1.0.24
+        specifier: workspace:1.0.26-alpha.0
         version: link:../vrender-core
       '@visactor/vrender-kits':
-        specifier: workspace:1.0.24
+        specifier: workspace:1.0.26-alpha.0
         version: link:../vrender-kits
       '@visactor/vscale':
         specifier: ~1.0.12
@@ -470,7 +470,7 @@ importers:
         specifier: 2.4.1
         version: 2.4.1
       '@visactor/vrender-core':
-        specifier: workspace:1.0.24
+        specifier: workspace:1.0.26-alpha.0
         version: link:../vrender-core
       '@visactor/vutils':
         specifier: ~1.0.12
@@ -586,19 +586,19 @@ importers:
   ../../tools/bugserver-trigger:
     dependencies:
       '@visactor/vrender':
-        specifier: workspace:1.0.24
+        specifier: workspace:1.0.26-alpha.0
         version: link:../../packages/vrender
       '@visactor/vrender-animate':
-        specifier: workspace:1.0.24
+        specifier: workspace:1.0.26-alpha.0
         version: link:../../packages/vrender-animate
       '@visactor/vrender-components':
-        specifier: workspace:1.0.24
+        specifier: workspace:1.0.26-alpha.0
         version: link:../../packages/vrender-components
       '@visactor/vrender-core':
-        specifier: workspace:1.0.24
+        specifier: workspace:1.0.26-alpha.0
         version: link:../../packages/vrender-core
       '@visactor/vrender-kits':
-        specifier: workspace:1.0.24
+        specifier: workspace:1.0.26-alpha.0
         version: link:../../packages/vrender-kits
     devDependencies:
       '@internal/bundler':

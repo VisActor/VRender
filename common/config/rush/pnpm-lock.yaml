@@ -22,7 +22,7 @@ importers:
         specifier: ~0.5.7
         version: 0.5.7
       '@visactor/vrender':
-        specifier: workspace:1.0.24
+        specifier: workspace:1.0.26-alpha.2
         version: link:../packages/vrender
       '@visactor/vutils':
         specifier: ~1.0.12
@@ -95,7 +95,7 @@ importers:
   ../../packages/react-vrender:
     dependencies:
       '@visactor/vrender':
-        specifier: workspace:1.0.24
+        specifier: workspace:1.0.26-alpha.2
         version: link:../vrender
       '@visactor/vutils':
         specifier: ~1.0.12
@@ -153,10 +153,10 @@ importers:
   ../../packages/react-vrender-utils:
     dependencies:
       '@visactor/react-vrender':
-        specifier: workspace:1.0.24
+        specifier: workspace:1.0.26-alpha.2
         version: link:../react-vrender
       '@visactor/vrender':
-        specifier: workspace:1.0.24
+        specifier: workspace:1.0.26-alpha.2
         version: link:../vrender
       '@visactor/vutils':
         specifier: ~1.0.12
@@ -211,16 +211,16 @@ importers:
   ../../packages/vrender:
     dependencies:
       '@visactor/vrender-animate':
-        specifier: workspace:1.0.24
+        specifier: workspace:1.0.26-alpha.2
         version: link:../vrender-animate
       '@visactor/vrender-components':
-        specifier: workspace:1.0.24
+        specifier: workspace:1.0.26-alpha.2
         version: link:../vrender-components
       '@visactor/vrender-core':
-        specifier: workspace:1.0.24
+        specifier: workspace:1.0.26-alpha.2
         version: link:../vrender-core
       '@visactor/vrender-kits':
-        specifier: workspace:1.0.24
+        specifier: workspace:1.0.26-alpha.2
         version: link:../vrender-kits
     devDependencies:
       '@internal/bundler':
@@ -287,7 +287,7 @@ importers:
   ../../packages/vrender-animate:
     dependencies:
       '@visactor/vrender-core':
-        specifier: workspace:1.0.24
+        specifier: workspace:1.0.26-alpha.2
         version: link:../vrender-core
       '@visactor/vutils':
         specifier: ~1.0.12
@@ -345,13 +345,13 @@ importers:
   ../../packages/vrender-components:
     dependencies:
       '@visactor/vrender-animate':
-        specifier: workspace:1.0.24
+        specifier: workspace:1.0.26-alpha.2
         version: link:../vrender-animate
       '@visactor/vrender-core':
-        specifier: workspace:1.0.24
+        specifier: workspace:1.0.26-alpha.2
         version: link:../vrender-core
       '@visactor/vrender-kits':
-        specifier: workspace:1.0.24
+        specifier: workspace:1.0.26-alpha.2
         version: link:../vrender-kits
       '@visactor/vscale':
         specifier: ~1.0.12
@@ -470,7 +470,7 @@ importers:
         specifier: 2.4.1
         version: 2.4.1
       '@visactor/vrender-core':
-        specifier: workspace:1.0.24
+        specifier: workspace:1.0.26-alpha.2
         version: link:../vrender-core
       '@visactor/vutils':
         specifier: ~1.0.12
@@ -586,19 +586,19 @@ importers:
   ../../tools/bugserver-trigger:
     dependencies:
       '@visactor/vrender':
-        specifier: workspace:1.0.24
+        specifier: workspace:1.0.26-alpha.2
         version: link:../../packages/vrender
       '@visactor/vrender-animate':
-        specifier: workspace:1.0.24
+        specifier: workspace:1.0.26-alpha.2
         version: link:../../packages/vrender-animate
       '@visactor/vrender-components':
-        specifier: workspace:1.0.24
+        specifier: workspace:1.0.26-alpha.2
         version: link:../../packages/vrender-components
       '@visactor/vrender-core':
-        specifier: workspace:1.0.24
+        specifier: workspace:1.0.26-alpha.2
         version: link:../../packages/vrender-core
       '@visactor/vrender-kits':
-        specifier: workspace:1.0.24
+        specifier: workspace:1.0.26-alpha.2
         version: link:../../packages/vrender-kits
     devDependencies:
       '@internal/bundler':
@@ -7964,7 +7964,7 @@ snapshots:
       jest-resolve: 26.6.2
       jest-resolve-dependencies: 26.6.3
       jest-runner: 26.6.3(ts-node@10.9.0(@types/node@22.13.17)(typescript@4.9.5))
-      jest-runtime: 26.6.3(canvas@2.11.2)(ts-node@10.9.0(@types/node@22.13.17)(typescript@4.9.5))
+      jest-runtime: 26.6.3(ts-node@10.9.0(@types/node@22.13.17)(typescript@4.9.5))
       jest-snapshot: 26.6.2
       jest-util: 26.6.2
       jest-validate: 26.6.2
@@ -8103,7 +8103,7 @@ snapshots:
       graceful-fs: 4.2.11
       jest-haste-map: 26.6.2
       jest-runner: 26.6.3(ts-node@10.9.0(@types/node@22.13.17)(typescript@4.9.5))
-      jest-runtime: 26.6.3(canvas@2.11.2)(ts-node@10.9.0(@types/node@22.13.17)(typescript@4.9.5))
+      jest-runtime: 26.6.3(ts-node@10.9.0(@types/node@22.13.17)(typescript@4.9.5))
     transitivePeerDependencies:
       - bufferutil
       - canvas
@@ -11518,7 +11518,7 @@ snapshots:
       jest-environment-jsdom: 26.6.2(canvas@2.11.2)
       jest-environment-node: 26.6.2
       jest-get-type: 26.3.0
-      jest-jasmine2: 26.6.3
+      jest-jasmine2: 26.6.3(canvas@2.11.2)(ts-node@10.9.0(@types/node@22.13.17)(typescript@4.9.5))
       jest-regex-util: 26.0.0
       jest-resolve: 26.6.2
       jest-util: 26.6.2
@@ -11546,7 +11546,7 @@ snapshots:
       jest-environment-jsdom: 26.6.2(canvas@2.11.2)
       jest-environment-node: 26.6.2
       jest-get-type: 26.3.0
-      jest-jasmine2: 26.6.3
+      jest-jasmine2: 26.6.3(ts-node@10.9.0(@types/node@22.13.17)(typescript@4.9.5))
       jest-regex-util: 26.0.0
       jest-resolve: 26.6.2
       jest-util: 26.6.2
@@ -11751,7 +11751,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  jest-jasmine2@26.6.3:
+  jest-jasmine2@26.6.3(canvas@2.11.2)(ts-node@10.9.0(@types/node@22.13.17)(typescript@4.9.5)):
     dependencies:
       '@babel/traverse': 7.27.0
       '@jest/environment': 26.6.2
@@ -11772,7 +11772,38 @@ snapshots:
       pretty-format: 26.6.2
       throat: 5.0.0
     transitivePeerDependencies:
+      - bufferutil
+      - canvas
       - supports-color
+      - ts-node
+      - utf-8-validate
+
+  jest-jasmine2@26.6.3(ts-node@10.9.0(@types/node@22.13.17)(typescript@4.9.5)):
+    dependencies:
+      '@babel/traverse': 7.27.0
+      '@jest/environment': 26.6.2
+      '@jest/source-map': 26.6.2
+      '@jest/test-result': 26.6.2
+      '@jest/types': 26.6.2
+      '@types/node': 22.13.17
+      chalk: 4.1.2
+      co: 4.6.0
+      expect: 26.6.2
+      is-generator-fn: 2.1.0
+      jest-each: 26.6.2
+      jest-matcher-utils: 26.6.2
+      jest-message-util: 26.6.2
+      jest-runtime: 26.6.3(ts-node@10.9.0(@types/node@22.13.17)(typescript@4.9.5))
+      jest-snapshot: 26.6.2
+      jest-util: 26.6.2
+      pretty-format: 26.6.2
+      throat: 5.0.0
+    transitivePeerDependencies:
+      - bufferutil
+      - canvas
+      - supports-color
+      - ts-node
+      - utf-8-validate
 
   jest-leak-detector@24.9.0:
     dependencies:
@@ -11944,7 +11975,7 @@ snapshots:
       jest-leak-detector: 26.6.2
       jest-message-util: 26.6.2
       jest-resolve: 26.6.2
-      jest-runtime: 26.6.3(canvas@2.11.2)(ts-node@10.9.0(@types/node@22.13.17)(typescript@4.9.5))
+      jest-runtime: 26.6.3(ts-node@10.9.0(@types/node@22.13.17)(typescript@4.9.5))
       jest-util: 26.6.2
       jest-worker: 26.6.2
       source-map-support: 0.5.21
@@ -12002,6 +12033,42 @@ snapshots:
       glob: 7.2.3
       graceful-fs: 4.2.11
       jest-config: 26.6.3(canvas@2.11.2)(ts-node@10.9.0(@types/node@22.13.17)(typescript@4.9.5))
+      jest-haste-map: 26.6.2
+      jest-message-util: 26.6.2
+      jest-mock: 26.6.2
+      jest-regex-util: 26.0.0
+      jest-resolve: 26.6.2
+      jest-snapshot: 26.6.2
+      jest-util: 26.6.2
+      jest-validate: 26.6.2
+      slash: 3.0.0
+      strip-bom: 4.0.0
+      yargs: 15.4.1
+    transitivePeerDependencies:
+      - bufferutil
+      - canvas
+      - supports-color
+      - ts-node
+      - utf-8-validate
+
+  jest-runtime@26.6.3(ts-node@10.9.0(@types/node@22.13.17)(typescript@4.9.5)):
+    dependencies:
+      '@jest/console': 26.6.2
+      '@jest/environment': 26.6.2
+      '@jest/fake-timers': 26.6.2
+      '@jest/globals': 26.6.2
+      '@jest/source-map': 26.6.2
+      '@jest/test-result': 26.6.2
+      '@jest/transform': 26.6.2
+      '@jest/types': 26.6.2
+      '@types/yargs': 15.0.19
+      chalk: 4.1.2
+      cjs-module-lexer: 0.6.0
+      collect-v8-coverage: 1.0.2
+      exit: 0.1.2
+      glob: 7.2.3
+      graceful-fs: 4.2.11
+      jest-config: 26.6.3(ts-node@10.9.0(@types/node@22.13.17)(typescript@4.9.5))
       jest-haste-map: 26.6.2
       jest-message-util: 26.6.2
       jest-mock: 26.6.2

@@ -220,6 +220,11 @@ export interface DataZoomAttributes extends IGroupGraphicAttribute {
    * 参考: https://mourner.github.io/simplify-js/
    */
   tolerance?: number;
+
+  /**
+   * 是否反转DataZoom 作用于BasePoint的计算
+   */
+  isReverse?: boolean;
 }
 
 /**

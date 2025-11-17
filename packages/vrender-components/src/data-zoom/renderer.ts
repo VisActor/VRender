@@ -592,13 +592,8 @@ export class DataZoomRenderer {
       });
   }
 
-  private _computeBasePoints(points: IPointLike[]) {
-    const { orient } = this.attribute as DataZoomAttributes;
-    const key = orient === 'bottom' || orient === 'top' ? 'x' : 'y';
-    let lastPointSide = Math.sign(points[points.length - 1][key] - points[0][key]);
-    if (lastPointSide === 0) {
-      lastPointSide = 1;
-    }
+  private _computeBasePoints() {
+    const { orient, isReverse = false } = this.attribute as DataZoomAttributes;
     const { position, width, height } = this._getLayoutAttrFromConfig();
     let basePointStart: any;
     let basePointEnd: any;
@@ -643,7 +638,7 @@ export class DataZoomRenderer {
       ];
     }
 
-    if (Math.sign(basePointEnd[0][key] - basePointStart[0][key]) !== lastPointSide) {
+    if (isReverse) {
       return {
         basePointStart: basePointEnd,
         basePointEnd: basePointStart
@@ -681,7 +676,7 @@ export class DataZoomRenderer {
     // 采样
     previewPoints = this._simplifyPoints(previewPoints);
 
-    const { basePointStart, basePointEnd } = this._computeBasePoints(previewPoints);
+    const { basePointStart, basePointEnd } = this._computeBasePoints();
     return basePointStart.concat(previewPoints).concat(basePointEnd);
   }
 
@@ -702,7 +697,7 @@ export class DataZoomRenderer {
     // 采样
     previewPoints = this._simplifyPoints(previewPoints);
 
-    const { basePointStart, basePointEnd } = this._computeBasePoints(previewPoints);
+    const { basePointStart, basePointEnd } = this._computeBasePoints();
     return basePointStart.concat(previewPoints).concat(basePointEnd);
   }
 

@@ -23,12 +23,13 @@ export const DEFAULT_AXIS_THEME = {
   },
   labelHoverOnAxis: {
     visible: false,
-    space: 4,
+    space: 7,
+    padding: 2,
     position: 0,
     autoRotate: false,
     textStyle: {
       fontSize: 12,
-      fill: 'white',
+      fill: 'red',
       fontWeight: 'normal',
       fillOpacity: 1
     },

@@ -38,8 +38,7 @@ const axis = new LineAxis({
   label: {
     visible: true,
     inside: false,
-    space: 10,
-    padding: 0,
+    space: 20,
     style: {
       fontSize: 12,
       fill: '#6F6F6F',
@@ -58,8 +57,8 @@ const axis = new LineAxis({
   labelHoverOnAxis: {
     autoRotate: true,
     position: 130,
-    // space: 0,
-    // padding: 2,
+    // space: 10,
+    padding: 6,
     textStyle: {
       //   fontSize: 12,
       //   fill: '#363839',

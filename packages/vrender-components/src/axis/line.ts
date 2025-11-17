@@ -62,7 +62,13 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
         attributes.label.style,
         attributes.labelHoverOnAxis.textStyle
       );
-      attributes.labelHoverOnAxis.space = attributes.labelHoverOnAxis.space ?? attributes.label.space;
+      if (attributes.labelHoverOnAxis.space === undefined) {
+        const { padding = 2 } = attributes.labelHoverOnAxis;
+        const parsedPadding = normalizePadding(padding as any);
+        const topPadding = parsedPadding[0];
+        const space = (attributes.label.space ?? LineAxis.defaultAttributes.label.space) - topPadding;
+        attributes.labelHoverOnAxis.space = space;
+      }
     }
     super(options?.skipDefault ? attributes : merge({}, LineAxis.defaultAttributes, attributes), options);
   }
@@ -153,6 +159,7 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
     hoverOnLabel.name = AXIS_ELEMENT_NAME.title;
     hoverOnLabel.id = this._getNodeId('hover-on-label');
     this.labelHoverOnAxisGroup = hoverOnLabel;
+    // hoverOnLabel.setAttributes({ globalZIndex: 1 });
     this.axisContainer.add(hoverOnLabel as unknown as INode);
   }
 

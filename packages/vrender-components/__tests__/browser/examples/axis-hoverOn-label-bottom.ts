@@ -57,26 +57,25 @@ const axis = new LineAxis({
   },
   labelHoverOnAxis: {
     autoRotate: true,
-    position: 10,
-    space: 0,
-    padding: 2,
+    position: 130,
+    // space: 0,
+    // padding: 2,
     textStyle: {
-      fontSize: 12,
-      fill: '#363839',
-      fontWeight: 'normal',
-      fillOpacity: 1,
-      textAlign: 'center',
-      textBaseline: 'top'
+      //   fontSize: 12,
+      //   fill: '#363839',
+      //   fontWeight: 'normal',
+      //   fillOpacity: 1,
+      textAlign: 'center'
+      //   textBaseline: 'top'
     },
     visible: true,
-    background: {
-      visible: true,
-      style: {
-        fill: 'red'
-      }
-    },
-    text: '细分 rewqutiREWITrewt范德萨发',
-    maxWidth: 100
+    // background: {
+    //   visible: true,
+    //   style: {
+    //     fill: 'red'
+    //   }
+    // },
+    text: '细分细分细分细分细分细分'
   },
   // tick: {
   //   visible: true,

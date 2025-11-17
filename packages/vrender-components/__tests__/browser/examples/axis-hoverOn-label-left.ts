@@ -56,24 +56,24 @@ const axis = new LineAxis({
   },
   labelHoverOnAxis: {
     visible: true,
-    position: 50,
-    autoRotate: false,
-    space: 10,
-    padding: 2,
-    textStyle: {
-      fontSize: 12,
-      fill: '#363839',
-      fontWeight: 'normal',
-      fillOpacity: 1,
-      textAlign: 'right',
-      textBaseline: 'middle'
-    },
-    background: {
-      visible: true,
-      style: {
-        fill: 'red'
-      }
-    },
+    // position: 50,
+    // autoRotate: false,
+    // space: 10,
+    // padding: 2,
+    // textStyle: {
+    //   fontSize: 12,
+    //   fill: '#363839',
+    //   fontWeight: 'normal',
+    //   fillOpacity: 1,
+    //   textAlign: 'right',
+    //   textBaseline: 'middle'
+    // },
+    // background: {
+    //   visible: true,
+    //   style: {
+    //     fill: 'red'
+    //   }
+    // },
     text: '细分'
     // maxWidth: 100
   },

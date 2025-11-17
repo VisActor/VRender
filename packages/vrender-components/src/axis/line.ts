@@ -56,6 +56,14 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
   private _breaks: TransformedAxisBreak[];
   private labelHoverOnAxisGroup: Tag | null = null;
   constructor(attributes: LineAxisAttributes, options?: ComponentOptions) {
+    if (attributes.labelHoverOnAxis) {
+      attributes.labelHoverOnAxis.textStyle = Object.assign(
+        {},
+        attributes.label.style,
+        attributes.labelHoverOnAxis.textStyle
+      );
+      attributes.labelHoverOnAxis.space = attributes.labelHoverOnAxis.space ?? attributes.label.space;
+    }
     super(options?.skipDefault ? attributes : merge({}, LineAxis.defaultAttributes, attributes), options);
   }
 
@@ -392,6 +400,7 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
       background = {},
       formatMethod,
       text: textContent = '' as string,
+      maxWidth,
       ...restAttrs
     } = this.attribute.labelHoverOnAxis as LabelHoverOnAxisAttributes;
     const point = this.getTickCoord(0);
@@ -439,7 +448,7 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
     }
 
     // 计算悬浮标签的缩略
-    let maxTagWidth = 100; // maxWidth;
+    let maxTagWidth = maxWidth; // maxWidth;
     if (isNil(maxTagWidth)) {
       const { verticalLimitSize, verticalMinSize, orient } = this.attribute;
       const limitSize = Math.min(verticalLimitSize || Infinity, verticalMinSize || Infinity);

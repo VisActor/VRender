@@ -21,6 +21,25 @@ export const DEFAULT_AXIS_THEME = {
       fillOpacity: 1
     }
   },
+  labelHoverOnAxis: {
+    visible: false,
+    space: 4,
+    position: 0,
+    autoRotate: false,
+    textStyle: {
+      fontSize: 12,
+      fill: 'white',
+      fontWeight: 'normal',
+      fillOpacity: 1
+    },
+    background: {
+      visible: true,
+      style: {
+        cornerRadius: 2,
+        fill: 'black'
+      }
+    }
+  },
   tick: {
     visible: true,
     inside: false,

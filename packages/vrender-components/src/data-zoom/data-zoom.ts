@@ -177,8 +177,8 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
 
   setAttributes(params: Partial<Required<DataZoomAttributes>>, forceUpdateTag?: boolean): void {
     const { start, end } = this.attribute as DataZoomAttributes;
-    start && (this._state.start = start);
-    end && (this._state.end = end);
+    start && (this._state.start = params.start ?? start);
+    end && (this._state.end = params.end ?? end);
 
     this._renderer.setAttributes(this._getRendererAttrs());
     this._interaction.setAttributes(this._getInteractionAttrs());

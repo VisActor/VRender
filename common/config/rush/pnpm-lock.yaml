@@ -22,7 +22,7 @@ importers:
         specifier: ~0.5.7
         version: 0.5.7
       '@visactor/vrender':
-        specifier: workspace:1.0.24
+        specifier: workspace:1.0.25
         version: link:../packages/vrender
       '@visactor/vutils':
         specifier: ~1.0.12
@@ -95,7 +95,7 @@ importers:
   ../../packages/react-vrender:
     dependencies:
       '@visactor/vrender':
-        specifier: workspace:1.0.24
+        specifier: workspace:1.0.25
         version: link:../vrender
       '@visactor/vutils':
         specifier: ~1.0.12
@@ -153,10 +153,10 @@ importers:
   ../../packages/react-vrender-utils:
     dependencies:
       '@visactor/react-vrender':
-        specifier: workspace:1.0.24
+        specifier: workspace:1.0.25
         version: link:../react-vrender
       '@visactor/vrender':
-        specifier: workspace:1.0.24
+        specifier: workspace:1.0.25
         version: link:../vrender
       '@visactor/vutils':
         specifier: ~1.0.12
@@ -211,16 +211,16 @@ importers:
   ../../packages/vrender:
     dependencies:
       '@visactor/vrender-animate':
-        specifier: workspace:1.0.24
+        specifier: workspace:1.0.25
         version: link:../vrender-animate
       '@visactor/vrender-components':
-        specifier: workspace:1.0.24
+        specifier: workspace:1.0.25
         version: link:../vrender-components
       '@visactor/vrender-core':
-        specifier: workspace:1.0.24
+        specifier: workspace:1.0.25
         version: link:../vrender-core
       '@visactor/vrender-kits':
-        specifier: workspace:1.0.24
+        specifier: workspace:1.0.25
         version: link:../vrender-kits
     devDependencies:
       '@internal/bundler':
@@ -287,7 +287,7 @@ importers:
   ../../packages/vrender-animate:
     dependencies:
       '@visactor/vrender-core':
-        specifier: workspace:1.0.24
+        specifier: workspace:1.0.25
         version: link:../vrender-core
       '@visactor/vutils':
         specifier: ~1.0.12
@@ -345,13 +345,13 @@ importers:
   ../../packages/vrender-components:
     dependencies:
       '@visactor/vrender-animate':
-        specifier: workspace:1.0.24
+        specifier: workspace:1.0.25
         version: link:../vrender-animate
       '@visactor/vrender-core':
-        specifier: workspace:1.0.24
+        specifier: workspace:1.0.25
         version: link:../vrender-core
       '@visactor/vrender-kits':
-        specifier: workspace:1.0.24
+        specifier: workspace:1.0.25
         version: link:../vrender-kits
       '@visactor/vscale':
         specifier: ~1.0.12
@@ -470,7 +470,7 @@ importers:
         specifier: 2.4.1
         version: 2.4.1
       '@visactor/vrender-core':
-        specifier: workspace:1.0.24
+        specifier: workspace:1.0.25
         version: link:../vrender-core
       '@visactor/vutils':
         specifier: ~1.0.12
@@ -482,8 +482,8 @@ importers:
         specifier: ^5.12.2
         version: 5.12.2
       roughjs:
-        specifier: 4.5.2
-        version: 4.5.2
+        specifier: 4.6.6
+        version: 4.6.6
     devDependencies:
       '@internal/bundler':
         specifier: workspace:*
@@ -586,19 +586,19 @@ importers:
   ../../tools/bugserver-trigger:
     dependencies:
       '@visactor/vrender':
-        specifier: workspace:1.0.24
+        specifier: workspace:1.0.25
         version: link:../../packages/vrender
       '@visactor/vrender-animate':
-        specifier: workspace:1.0.24
+        specifier: workspace:1.0.25
         version: link:../../packages/vrender-animate
       '@visactor/vrender-components':
-        specifier: workspace:1.0.24
+        specifier: workspace:1.0.25
         version: link:../../packages/vrender-components
       '@visactor/vrender-core':
-        specifier: workspace:1.0.24
+        specifier: workspace:1.0.25
         version: link:../../packages/vrender-core
       '@visactor/vrender-kits':
-        specifier: workspace:1.0.24
+        specifier: workspace:1.0.25
         version: link:../../packages/vrender-kits
     devDependencies:
       '@internal/bundler':
@@ -3969,6 +3969,9 @@ packages:
     resolution: {integrity: sha512-hm6N8nrm3Y08jXie48jsC55eCZz9mnb4OirAStEk2deqeyhXU3C1otDVh+ccttMuc1sBi6RX6ZJ720hs9RCvgw==}
     engines: {node: '>= 0.10'}
 
+  hachure-fill@0.5.2:
+    resolution: {integrity: sha512-3GKBOn+m2LX9iq+JC1064cSFprJY4jL1jCXTcpnfER5HYE2l/4EfWSGzkPa/ZDBmYI0ZOEj5VHV/eKnPGkHuOg==}
+
   har-schema@2.0.0:
     resolution: {integrity: sha512-Oqluz6zhGX8cyRaTQlFMPw80bSJVG2x/cFb8ZPhUILGgHka9SsokCCOQgpveePerqidZOrT14ipqfJb7ILcW5Q==}
     engines: {node: '>=4'}
@@ -5887,8 +5890,8 @@ packages:
     engines: {node: '>=14.18.0', npm: '>=8.0.0'}
     hasBin: true
 
-  roughjs@4.5.2:
-    resolution: {integrity: sha512-2xSlLDKdsWyFxrveYWk9YQ/Y9UfK38EAMRNkYkMqYBJvPX8abCa9PN0x3w02H8Oa6/0bcZICJU+U95VumPqseg==}
+  roughjs@4.6.6:
+    resolution: {integrity: sha512-ZUz/69+SYpFN/g/lUlo2FXcIjRkSu3nDarreVdGGndHEBJ6cXPdKguS8JGxwj5HA5xIbVKSmLgr5b3AWxtRfvQ==}
 
   rsvp@4.8.5:
     resolution: {integrity: sha512-nfMOlASu9OnRJo1mbEk2cz0D56a1MBNrJ7orjRZQG10XDyuvwksKbuXNp6qa+kbn839HwjwhBzhFmdsaEAfauA==}
@@ -10977,6 +10980,8 @@ snapshots:
     dependencies:
       glogg: 1.0.2
 
+  hachure-fill@0.5.2: {}
+
   har-schema@2.0.0: {}
 
   har-validator@5.1.5:
@@ -13536,8 +13541,9 @@ snapshots:
     optionalDependencies:
       fsevents: 2.3.3
 
-  roughjs@4.5.2:
+  roughjs@4.6.6:
     dependencies:
+      hachure-fill: 0.5.2
       path-data-parser: 0.1.0
       points-on-curve: 0.2.0
       points-on-path: 0.2.1

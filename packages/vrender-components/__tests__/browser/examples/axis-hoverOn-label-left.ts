@@ -5,111 +5,109 @@ import { LineAxis, GroupTransition } from '../../../src';
 import render from '../../util/render';
 
 const axis = new LineAxis({
-  title: {
-    space: -30,
-    padding: 0,
-    textStyle: {
-      fontSize: 12,
-      fill: '#363839',
-      fontWeight: 'normal',
-      fillOpacity: 1,
-      textAlign: 'center',
-      textBaseline: 'bottom'
-    },
-    visible: true,
-    autoRotate: false,
-    // angle: 1.7,
-    shape: {},
-    background: {
-      visible: true,
-      style: {
-        fill: 'red'
-      }
-    },
-    state: {
-      text: null,
-      shape: null,
-      background: null
-    },
-    text: '细分',
-    maxWidth: null
-  },
-  label: {
-    visible: true,
-    inside: false,
-    space: 0,
-    padding: 0,
-    style: {
-      fontSize: 12,
-      fill: '#6F6F6F',
-      fontWeight: 'normal',
-      fillOpacity: 1,
-      angle: 0,
-      textAlign: 'center'
-    },
-    formatMethod: null,
-    state: null,
-    autoRotate: false,
-    autoHide: false,
-    autoLimit: false,
-    containerAlign: 'center'
-  },
-  labelHoverOnAxis: {
-    visible: true,
-    // position: 50,
-    // autoRotate: false,
-    // space: 10,
-    // padding: 2,
-    // textStyle: {
-    //   fontSize: 12,
-    //   fill: '#363839',
-    //   fontWeight: 'normal',
-    //   fillOpacity: 1,
-    //   textAlign: 'right',
-    //   textBaseline: 'middle'
-    // },
-    // background: {
-    //   visible: true,
-    //   style: {
-    //     fill: 'red'
-    //   }
-    // },
-    text: '细分'
-    // maxWidth: 100
-  },
-  tick: {
-    visible: true,
-    inside: false,
-    alignWithLabel: true,
-    length: 2,
+  orient: 'left',
+  hover: true,
+  line: {
+    visible: false,
     style: {
       lineWidth: 1,
       stroke: '#D9DDE4',
+      strokeOpacity: 1
+    }
+  },
+  label: {
+    style: {
+      fontSize: 12,
+      fill: '#BCC1CB',
+      fontWeight: 400,
+      fillOpacity: 1,
+      maxLineWidth: 80,
+      angle: 0
+    },
+    formatMethod: null,
+    state: null,
+    visible: true,
+    space: 0,
+    autoLimit: false,
+    flush: true,
+    containerAlign: 'right',
+    minGap: 1,
+    autoHide: false,
+    autoHideMethod: 'greedy',
+    autoHideSeparation: 1,
+    autoRotate: false,
+    autoRotateAngle: [0, -45, -90],
+    lastVisible: true
+  },
+  tick: {
+    visible: false,
+    length: 4,
+    inside: false,
+    style: {
+      lineWidth: 1,
+      stroke: '#21252C',
       strokeOpacity: 1
     },
     state: null
   },
   subTick: {
-    visible: true,
-    inside: false,
-    count: 4,
+    visible: false,
     length: 2,
     style: {
-      lineWidth: 10,
+      lineWidth: 1,
       stroke: '#D9DDE4',
       strokeOpacity: 1
     },
     state: null
   },
-  line: {
-    visible: true,
+  grid: {
+    type: 'line',
+    visible: false,
     style: {
       lineWidth: 1,
-      stroke: '#989999',
-      strokeOpacity: 1
+      stroke: '#E3E5EB',
+      strokeOpacity: 1,
+      lineDash: [4, 2]
+    }
+  },
+  subGrid: {
+    type: 'line',
+    visible: false,
+    style: {
+      lineWidth: 1,
+      stroke: '#EBEDF2',
+      strokeOpacity: 1,
+      lineDash: [4, 4]
+    }
+  },
+  title: {
+    visible: false,
+    space: 10,
+    autoRotate: false,
+    angle: -1.5707963267948966,
+    textStyle: {
+      textAlign: 'center',
+      textBaseline: 'bottom',
+      fontSize: 12,
+      fill: '#606773',
+      fontWeight: 400,
+      fillOpacity: 1
     },
-    startSymbol: {},
-    endSymbol: {}
+    shape: {},
+    background: {},
+    state: {
+      text: null,
+      shape: null,
+      background: null
+    },
+    text: 'order_date',
+    maxWidth: null
+  },
+  panel: {
+    state: null
+  },
+  labelHoverOnAxis: {
+    visible: true
   },
   x: 140,
   y: 0,
@@ -124,55 +122,38 @@ const axis = new LineAxis({
   items: [
     [
       {
-        id: '消费者',
-        label: '消费者',
-        value: 0.8333333333333334,
-        rawValue: '消费者'
+        id: '2016-01-01',
+        label: '2016-01-01',
+        value: 0.1308139534883721,
+        rawValue: '2016-01-01'
       },
       {
-        id: '公司',
-        label: '公司',
-        value: 0.4999999999999999,
-        rawValue: '公司'
+        id: '2017-01-01',
+        label: '2017-01-01',
+        value: 0.37693798449612403,
+        rawValue: '2017-01-01'
       },
       {
-        id: '小型企业',
-        label: '小型企业',
-        value: 0.1666666666666666,
-        rawValue: '小型企业'
+        id: '2018-01-01',
+        label: '2018-01-01',
+        value: 0.623062015503876,
+        rawValue: '2018-01-01'
+      },
+      {
+        id: '2019-01-01',
+        label: '2019-',
+        value: 0.8691860465116279,
+        rawValue: '2019-01-01'
       }
     ]
   ],
-  visible: true,
-  pickable: true,
-  orient: 'left',
-  hover: true,
-  select: true,
-  panel: {
-    visible: true,
-    state: {
-      // hover: {
-      //   fillOpacity: 0.08,
-      //   fill: 'red'
-      // },
-      selected: {
-        fillOpacity: 0.08,
-        fill: 'blue'
-      },
-      selected_reverse: {
-        fillOpacity: 0.08,
-        fill: 'red'
-      }
-      // hover_reverse: {
-      //   fillOpacity: 0.08,
-      //   fill: '#141414'
-      // }
-    }
-  },
-  verticalFactor: 1,
-  verticalLimitSize: 150,
-  verticalMinSize: 150
+  verticalLimitSize: 66,
+  verticalMinSize: 66,
+  verticalFactor: 1
 });
 window.axis = axis;
-// axis.showLabelHoverOnAxis(130);
+debugger;
+setTimeout(() => {
+  axis.showLabelHoverOnAxis(390, '2016-01-01');
+}, 100);
 render([axis], 'main');

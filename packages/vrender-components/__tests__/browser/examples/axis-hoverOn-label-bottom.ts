@@ -56,7 +56,7 @@ const axis = new LineAxis({
   },
   labelHoverOnAxis: {
     autoRotate: true,
-    position: 130,
+    position: 185,
     // space: 10,
     padding: 6,
     textStyle: {
@@ -74,7 +74,7 @@ const axis = new LineAxis({
     //     fill: 'red'
     //   }
     // },
-    text: '细分细分细分细分细分细分'
+    text: ''
   },
   // tick: {
   //   visible: true,
@@ -174,4 +174,7 @@ const axis = new LineAxis({
   horizontalMinSize: 150
 });
 window.axis = axis;
+setTimeout(() => {
+  axis.showLabelHoverOnAxis(490, '细分细分细分细分细分打撒规细分');
+}, 100);
 render([axis], 'main');

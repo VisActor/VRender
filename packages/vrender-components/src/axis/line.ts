@@ -17,7 +17,14 @@ import {
 } from '@visactor/vutils';
 import { graphicCreator } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
-import type { TextAlignType, IGroup, INode, IText, TextBaselineType } from '@visactor/vrender-core';
+import type {
+  TextAlignType,
+  IGroup,
+  INode,
+  IText,
+  TextBaselineType,
+  ITextGraphicAttribute
+} from '@visactor/vrender-core';
 import type { SegmentAttributes } from '../segment';
 // eslint-disable-next-line no-duplicate-imports
 import { Segment } from '../segment';
@@ -65,8 +72,15 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
       if (attributes.labelHoverOnAxis.space === undefined) {
         const { padding = 2 } = attributes.labelHoverOnAxis;
         const parsedPadding = normalizePadding(padding as any);
-        const topPadding = parsedPadding[0];
-        const space = (attributes.label.space ?? LineAxis.defaultAttributes.label.space) - topPadding;
+        const toDiffPadding =
+          attributes.orient === 'bottom'
+            ? parsedPadding[0]
+            : attributes.orient === 'left'
+            ? parsedPadding[1]
+            : attributes.orient === 'top'
+            ? parsedPadding[2]
+            : parsedPadding[3];
+        const space = (attributes.label.space ?? LineAxis.defaultAttributes.label.space) - toDiffPadding;
         attributes.labelHoverOnAxis.space = space;
       }
     }
@@ -450,34 +464,40 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
         textBaseline = 'top';
       }
     } else {
-      textAlign = this.getTextAlign(vector as number[]);
-      textBaseline = this.getTextBaseline(vector as number[], false);
+      const { textAlign: textAlign2, textBaseline: textBaseline2 } = this.getLabelAlign(
+        vector,
+        false,
+        (textStyle as ITextGraphicAttribute).angle
+      );
+      textAlign = textAlign2;
+      textBaseline = textBaseline2;
+      // textBaseline = this.getTextBaseline(vector as number[], false);
     }
 
     // 计算悬浮标签的缩略
-    let maxTagWidth = maxWidth; // maxWidth;
-    if (isNil(maxTagWidth)) {
-      const { verticalLimitSize, verticalMinSize, orient } = this.attribute;
-      const limitSize = Math.min(verticalLimitSize || Infinity, verticalMinSize || Infinity);
-      if (isValidNumber(limitSize)) {
-        const isX = orient === 'bottom' || orient === 'top';
-        if (isX) {
-          if (angle !== Math.PI / 2) {
-            const cosValue = Math.abs(Math.cos(angle ?? 0));
-            maxTagWidth = cosValue < 1e-6 ? Infinity : this.attribute.end.x / cosValue;
-          } else {
-            maxTagWidth = limitSize - offset;
-          }
-        } else {
-          if (angle && angle !== 0) {
-            const sinValue = Math.abs(Math.sin(angle));
-            maxTagWidth = sinValue < 1e-6 ? Infinity : this.attribute.end.y / sinValue;
-          } else {
-            maxTagWidth = limitSize - offset;
-          }
-        }
-      }
-    }
+    const maxTagWidth = maxWidth; // maxWidth;
+    // if (isNil(maxTagWidth)) {
+    //   const { verticalLimitSize, verticalMinSize, orient } = this.attribute;
+    //   const limitSize = Math.min(verticalLimitSize || Infinity, verticalMinSize || Infinity);
+    //   if (isValidNumber(limitSize)) {
+    //     const isX = orient === 'bottom' || orient === 'top';
+    //     if (isX) {
+    //       if (angle !== Math.PI / 2) {
+    //         const cosValue = Math.abs(Math.cos(angle ?? 0));
+    //         maxTagWidth = cosValue < 1e-6 ? Infinity : this.attribute.end.x / cosValue;
+    //       } else {
+    //         maxTagWidth = limitSize - offset;
+    //       }
+    //     } else {
+    //       if (angle && angle !== 0) {
+    //         const sinValue = Math.abs(Math.sin(angle));
+    //         maxTagWidth = sinValue < 1e-6 ? Infinity : this.attribute.end.y / sinValue;
+    //       } else {
+    //         maxTagWidth = limitSize - offset;
+    //       }
+    //     }
+    //   }
+    // }
     const text = formatMethod ? formatMethod(textContent as string) : (textContent as string);
     const attrs: TagAttributes = {
       ...labelPoint,
@@ -803,8 +823,15 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
     return limitLength;
   }
   /** 显示交互中的悬浮标签 */
-  showLabelHoverOnAxis(position: number, text: string) {
+  showLabelHoverOnAxis(position: number, text: string, adjustPosition: boolean = true) {
     if (this.attribute.labelHoverOnAxis) {
+      const preContainerBounds = this.axisContainer.AABBBounds;
+      const preWidth = preContainerBounds.width();
+      const preHeight = preContainerBounds.height();
+      const preX1 = preContainerBounds.x1;
+      const preY1 = preContainerBounds.y1;
+      const preX2 = preContainerBounds.x2;
+      const preY2 = preContainerBounds.y2;
       if (this.labelHoverOnAxisGroup) {
         const { formatMethod } = this.attribute.labelHoverOnAxis as LabelHoverOnAxisAttributes;
         const textStr = formatMethod ? formatMethod(text) : text;
@@ -825,6 +852,28 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
         this.attribute.labelHoverOnAxis.position = position;
         this.attribute.labelHoverOnAxis.text = text;
         this.renderLabelHoverOnAxis();
+      }
+      if (adjustPosition) {
+        //防止死循环
+        const afterContainerBounds = this.axisContainer.AABBBounds;
+        const afterWidth = afterContainerBounds.width();
+        const afterHeight = afterContainerBounds.height();
+        const diffWidth = afterWidth - preWidth;
+        const diffHeight = afterHeight - preHeight;
+        if (diffWidth > 0 && (this.attribute.orient === 'top' || this.attribute.orient === 'bottom')) {
+          if (afterContainerBounds.x1 < preX1) {
+            this.showLabelHoverOnAxis(position + diffWidth, text, false);
+          } else if (afterContainerBounds.x2 > preX2) {
+            this.showLabelHoverOnAxis(position - diffWidth, text, false);
+          }
+        }
+        if (diffHeight > 0 && (this.attribute.orient === 'left' || this.attribute.orient === 'right')) {
+          if (afterContainerBounds.y1 < preY1) {
+            this.showLabelHoverOnAxis(position + diffHeight, text, false);
+          } else if (afterContainerBounds.y2 > preY2) {
+            this.showLabelHoverOnAxis(position - diffHeight, text, false);
+          }
+        }
       }
     }
   }

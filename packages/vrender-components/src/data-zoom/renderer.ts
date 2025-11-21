@@ -230,7 +230,7 @@ export class DataZoomRenderer {
         height,
         cursor: brushSelect ? 'crosshair' : 'auto',
         ...backgroundStyle,
-        pickable: zoomLock ? false : (backgroundStyle.pickable ?? true)
+        pickable: zoomLock ? false : backgroundStyle.pickable ?? true
       },
       'rect'
     ) as IRect;
@@ -264,7 +264,7 @@ export class DataZoomRenderer {
             width: (end - start) * width,
             height: middleHandlerBackgroundSize,
             ...middleHandlerStyle.background?.style,
-            pickable: zoomLock ? false : (middleHandlerStyle.background?.style?.pickable ?? true)
+            pickable: zoomLock ? false : middleHandlerStyle.background?.style?.pickable ?? true
           },
           'rect'
         ) as IRect;
@@ -277,7 +277,7 @@ export class DataZoomRenderer {
             angle: 0,
             symbolType: middleHandlerStyle.icon?.symbolType ?? 'square',
             ...middleHandlerStyle.icon,
-            pickable: zoomLock ? false : (middleHandlerStyle.icon.pickable ?? true)
+            pickable: zoomLock ? false : middleHandlerStyle.icon.pickable ?? true
           },
           'symbol'
         ) as ISymbol;
@@ -291,7 +291,7 @@ export class DataZoomRenderer {
           symbolType: startHandlerStyle.symbolType ?? 'square',
           ...(DEFAULT_HANDLER_ATTR_MAP.horizontal as any),
           ...startHandlerStyle,
-          pickable: zoomLock ? false : (startHandlerStyle.pickable ?? true)
+          pickable: zoomLock ? false : startHandlerStyle.pickable ?? true
         },
         'symbol'
       ) as ISymbol;
@@ -304,7 +304,7 @@ export class DataZoomRenderer {
           symbolType: endHandlerStyle.symbolType ?? 'square',
           ...(DEFAULT_HANDLER_ATTR_MAP.horizontal as any),
           ...endHandlerStyle,
-          pickable: zoomLock ? false : (endHandlerStyle.pickable ?? true)
+          pickable: zoomLock ? false : endHandlerStyle.pickable ?? true
         },
         'symbol'
       ) as ISymbol;
@@ -357,7 +357,7 @@ export class DataZoomRenderer {
             width: middleHandlerBackgroundSize,
             height: (end - start) * height,
             ...middleHandlerStyle.background?.style,
-            pickable: zoomLock ? false : (middleHandlerStyle.background?.style?.pickable ?? true)
+            pickable: zoomLock ? false : middleHandlerStyle.background?.style?.pickable ?? true
           },
           'rect'
         ) as IRect;
@@ -374,7 +374,7 @@ export class DataZoomRenderer {
             symbolType: middleHandlerStyle.icon?.symbolType ?? 'square',
             strokeBoundsBuffer: 0,
             ...middleHandlerStyle.icon,
-            pickable: zoomLock ? false : (middleHandlerStyle.icon?.pickable ?? true)
+            pickable: zoomLock ? false : middleHandlerStyle.icon?.pickable ?? true
           },
           'symbol'
         ) as ISymbol;
@@ -388,7 +388,7 @@ export class DataZoomRenderer {
           symbolType: startHandlerStyle.symbolType ?? 'square',
           ...(DEFAULT_HANDLER_ATTR_MAP.vertical as any),
           ...startHandlerStyle,
-          pickable: zoomLock ? false : (startHandlerStyle.pickable ?? true)
+          pickable: zoomLock ? false : startHandlerStyle.pickable ?? true
         },
         'symbol'
       ) as ISymbol;
@@ -402,7 +402,7 @@ export class DataZoomRenderer {
           symbolType: endHandlerStyle.symbolType ?? 'square',
           ...(DEFAULT_HANDLER_ATTR_MAP.vertical as any),
           ...endHandlerStyle,
-          pickable: zoomLock ? false : (endHandlerStyle.pickable ?? true)
+          pickable: zoomLock ? false : endHandlerStyle.pickable ?? true
         },
         'symbol'
       ) as ISymbol;
@@ -472,7 +472,7 @@ export class DataZoomRenderer {
           height: height,
           cursor: brushSelect ? 'crosshair' : 'move',
           ...selectedBackgroundStyle,
-          pickable: zoomLock ? false : ((selectedBackgroundChartStyle as any).pickable ?? true)
+          pickable: zoomLock ? false : (selectedBackgroundChartStyle as any).pickable ?? true
         },
         'rect'
       ) as IRect;
@@ -487,7 +487,7 @@ export class DataZoomRenderer {
           height: (end - start) * height,
           cursor: brushSelect ? 'crosshair' : 'move',
           ...selectedBackgroundStyle,
-          pickable: zoomLock ? false : (selectedBackgroundStyle.pickable ?? true)
+          pickable: zoomLock ? false : selectedBackgroundStyle.pickable ?? true
         },
         'rect'
       ) as IRect;
@@ -592,8 +592,13 @@ export class DataZoomRenderer {
       });
   }
 
-  private _computeBasePoints() {
+  private _computeBasePoints(points: IPointLike[]) {
     const { orient } = this.attribute as DataZoomAttributes;
+    const key = orient === 'bottom' || orient === 'top' ? 'x' : 'y';
+    let lastPointSide = Math.sign(points[points.length - 1][key] - points[0][key]);
+    if (lastPointSide === 0) {
+      lastPointSide = 1;
+    }
     const { position, width, height } = this._getLayoutAttrFromConfig();
     let basePointStart: any;
     let basePointEnd: any;
@@ -637,6 +642,14 @@ export class DataZoomRenderer {
         }
       ];
     }
+
+    if (Math.sign(basePointEnd[0][key] - basePointStart[0][key]) !== lastPointSide) {
+      return {
+        basePointStart: basePointEnd,
+        basePointEnd: basePointStart
+      };
+    }
+
     return {
       basePointStart,
       basePointEnd
@@ -668,7 +681,7 @@ export class DataZoomRenderer {
     // 采样
     previewPoints = this._simplifyPoints(previewPoints);
 
-    const { basePointStart, basePointEnd } = this._computeBasePoints();
+    const { basePointStart, basePointEnd } = this._computeBasePoints(previewPoints);
     return basePointStart.concat(previewPoints).concat(basePointEnd);
   }
 
@@ -689,7 +702,7 @@ export class DataZoomRenderer {
     // 采样
     previewPoints = this._simplifyPoints(previewPoints);
 
-    const { basePointStart, basePointEnd } = this._computeBasePoints();
+    const { basePointStart, basePointEnd } = this._computeBasePoints(previewPoints);
     return basePointStart.concat(previewPoints).concat(basePointEnd);
   }
 

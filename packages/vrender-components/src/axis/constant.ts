@@ -7,6 +7,7 @@ export enum AXIS_ELEMENT_NAME {
   subTick = 'axis-sub-tick',
   label = 'axis-label',
   title = 'axis-title',
+  labelHoverOnAxis = 'axis-label-hover-on-axis',
   gridContainer = 'axis-grid-container',
   grid = 'axis-grid',
   gridRegion = 'axis-grid-region',

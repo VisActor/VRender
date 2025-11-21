@@ -57,6 +57,11 @@ const axisBottom = new LineAxis({
     //   angle: Math.PI * 0.5
     // }
   },
+  labelHoverOnAxis: {
+    visible: true,
+    position: 150,
+    text: 'BBBBBBBBBBBBBB'
+  },
   orient: 'bottom',
   verticalLimitSize: 100
 });

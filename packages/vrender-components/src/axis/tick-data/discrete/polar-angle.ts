@@ -73,7 +73,7 @@ export const getPolarAngleLabelBounds = (scale: IBaseScale, domain: any[], op: I
 export const polarAngleAxisDiscreteTicks = (scale: BandScale, op: IPolarTickDataOpt): ITickData[] => {
   const { tickCount, forceTickCount, tickStep, getRadius, labelOffset, labelGap = 0, labelStyle } = op;
   const radius = getRadius?.();
-  if (!radius) {
+  if (!radius || radius <= 0) {
     return convertDomainToTickData(scale.domain());
   }
 

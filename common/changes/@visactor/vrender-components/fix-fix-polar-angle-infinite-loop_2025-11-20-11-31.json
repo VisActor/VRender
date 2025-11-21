@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: fix bug of polar angle tick data loop\n\n",
+      "type": "none",
+      "packageName": "@visactor/vrender-components"
+    }
+  ],
+  "packageName": "@visactor/vrender-components",
+  "email": "lixuef1313@163.com"
+}

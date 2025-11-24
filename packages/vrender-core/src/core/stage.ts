@@ -590,7 +590,7 @@ export class Stage extends Group implements IStage {
     });
   }
   enableAutoRefresh() {
-    if (this.autoRefresh) {
+    if (this.autoRefresh || this.global.env === 'node') {
       return;
     }
     this.autoRefresh = true;

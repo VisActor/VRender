@@ -1,0 +1,2618 @@
+{
+  "attribute": {},
+  "_uid": 1206,
+  "type": "group",
+  "children": [
+    {
+      "attribute": {},
+      "_uid": 1212,
+      "type": "group",
+      "children": [
+        {
+          "attribute": {
+            "x": 0,
+            "y": 0,
+            "width": 300,
+            "height": 300
+          },
+          "_uid": 1217,
+          "type": "group",
+          "name": "root",
+          "children": [
+            {
+              "attribute": {
+                "visible": true,
+                "x": 47,
+                "y": 121,
+                "width": 233,
+                "height": 135,
+                "clip": false,
+                "zIndex": 450,
+                "pickable": false
+              },
+              "_uid": 1218,
+              "type": "group",
+              "name": "regionGroup_135",
+              "children": [
+                {
+                  "attribute": {
+                    "visible": true,
+                    "x": 0,
+                    "y": 0,
+                    "zIndex": 0,
+                    "pickable": false
+                  },
+                  "_uid": 1219,
+                  "type": "group",
+                  "name": "seriesGroup_bar_137_139",
+                  "children": [
+                    {
+                      "attribute": {
+                        "pickable": false,
+                        "zIndex": 300
+                      },
+                      "_uid": 1220,
+                      "type": "group",
+                      "name": "bar_140",
+                      "children": [
+                        {
+                          "attribute": {
+                            "visible": true,
+                            "lineWidth": 0,
+                            "fill": "#1664FF",
+                            "stroke": "#1664FF",
+                            "x": 12.70909090909089,
+                            "y": 118.125,
+                            "y1": 135,
+                            "width": 38.12727272727273
+                          },
+                          "_uid": 1297,
+                          "type": "rect",
+                          "children": []
+                        },
+                        {
+                          "attribute": {
+                            "visible": true,
+                            "lineWidth": 0,
+                            "fill": "#1664FF",
+                            "stroke": "#1664FF",
+                            "x": 55.072727272727256,
+                            "y": 101.25,
+                            "y1": 135,
+                            "width": 38.12727272727273
+                          },
+                          "_uid": 1298,
+                          "type": "rect",
+                          "children": []
+                        },
+                        {
+                          "attribute": {
+                            "visible": true,
+                            "lineWidth": 0,
+                            "fill": "#1664FF",
+                            "stroke": "#1664FF",
+                            "x": 97.43636363636362,
+                            "y": 84.375,
+                            "y1": 135,
+                            "width": 38.12727272727273
+                          },
+                          "_uid": 1299,
+                          "type": "rect",
+                          "children": []
+                        },
+                        {
+                          "attribute": {
+                            "visible": true,
+                            "lineWidth": 0,
+                            "fill": "#1664FF",
+                            "stroke": "#1664FF",
+                            "x": 139.79999999999998,
+                            "y": 109.6875,
+                            "y1": 135,
+                            "width": 38.12727272727273
+                          },
+                          "_uid": 1300,
+                          "type": "rect",
+                          "children": []
+                        },
+                        {
+                          "attribute": {
+                            "visible": true,
+                            "lineWidth": 0,
+                            "fill": "#1664FF",
+                            "stroke": "#1664FF",
+                            "x": 182.16363636363636,
+                            "y": 92.8125,
+                            "y1": 135,
+                            "width": 38.12727272727273
+                          },
+                          "_uid": 1301,
+                          "type": "rect",
+                          "children": []
+                        },
+                        {
+                          "attribute": {
+                            "visible": true,
+                            "lineWidth": 0,
+                            "fill": "#1AC6FF",
+                            "stroke": "#1AC6FF",
+                            "x": 12.70909090909089,
+                            "y": 92.8125,
+                            "y1": 118.125,
+                            "width": 38.12727272727273
+                          },
+                          "_uid": 1302,
+                          "type": "rect",
+                          "children": []
+                        },
+                        {
+                          "attribute": {
+                            "visible": true,
+                            "lineWidth": 0,
+                            "fill": "#1AC6FF",
+                            "stroke": "#1AC6FF",
+                            "x": 55.072727272727256,
+                            "y": 59.0625,
+                            "y1": 101.25,
+                            "width": 38.12727272727273
+                          },
+                          "_uid": 1303,
+                          "type": "rect",
+                          "children": []
+                        },
+                        {
+                          "attribute": {
+                            "visible": true,
+                            "lineWidth": 0,
+                            "fill": "#1AC6FF",
+                            "stroke": "#1AC6FF",
+                            "x": 97.43636363636362,
+                            "y": 25.3125,
+                            "y1": 84.375,
+                            "width": 38.12727272727273
+                          },
+                          "_uid": 1304,
+                          "type": "rect",
+                          "children": []
+                        },
+                        {
+                          "attribute": {
+                            "visible": true,
+                            "lineWidth": 0,
+                            "fill": "#1AC6FF",
+                            "stroke": "#1AC6FF",
+                            "x": 139.79999999999998,
+                            "y": 75.9375,
+                            "y1": 109.6875,
+                            "width": 38.12727272727273
+                          },
+                          "_uid": 1305,
+                          "type": "rect",
+                          "children": []
+                        },
+                        {
+                          "attribute": {
+                            "visible": true,
+                            "lineWidth": 0,
+                            "fill": "#1AC6FF",
+                            "stroke": "#1AC6FF",
+                            "x": 182.16363636363636,
+                            "y": 55.6875,
+                            "y1": 92.8125,
+                            "width": 38.12727272727273
+                          },
+                          "_uid": 1306,
+                          "type": "rect",
+                          "children": []
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "attribute": {
+                    "pickable": false,
+                    "zIndex": 300
+                  },
+                  "_uid": 1225,
+                  "type": "group",
+                  "name": "137-bar-label-0-component_164",
+                  "children": [
+                    {
+                      "attribute": {
+                        "dataLabels": [
+                          {
+                            "smartInvert": true,
+                            "baseMarkGroupName": "bar_140",
+                            "textStyle": {
+                              "pickable": false,
+                              "fontSize": 11,
+                              "fontWeight": "normal",
+                              "fillOpacity": 1,
+                              "lineJoin": "bevel",
+                              "lineWidth": 2,
+                              "stroke": "#ffffff",
+                              "fill": "#fff"
+                            },
+                            "overlap": {
+                              "avoidMarks": [],
+                              "strategy": [
+                                {
+                                  "type": "position"
+                                }
+                              ],
+                              "size": {
+                                "width": 233,
+                                "height": 135
+                              }
+                            },
+                            "visible": true,
+                            "offset": 5,
+                            "animation": true,
+                            "animationUpdate": true,
+                            "animationEnter": true,
+                            "animationExit": true,
+                            "hover": false,
+                            "select": false,
+                            "centerOffset": 0,
+                            "type": "rect",
+                            "data": [
+                              {
+                                "visible": true,
+                                "x": 0,
+                                "y": 0,
+                                "angle": 0,
+                                "textAlign": "center",
+                                "lineWidth": 2,
+                                "textConfig": [],
+                                "fontSize": 11,
+                                "fontWeight": "normal",
+                                "fillOpacity": 1,
+                                "lineJoin": "bevel",
+                                "stroke": "#ffffff",
+                                "fill": "#fff",
+                                "text": 10,
+                                "textType": "text",
+                                "data": {
+                                  "category": "A",
+                                  "series": "S1",
+                                  "value": 10,
+                                  "__VCHART_DEFAULT_DATA_INDEX": 0,
+                                  "__VCHART_DEFAULT_DATA_KEY": "A_S1",
+                                  "__VCHART_STACK_END": 10,
+                                  "__VCHART_STACK_START": 0,
+                                  "__VCHART_STACK_KEY": "A"
+                                },
+                                "id": "vrender-component-label-0"
+                              },
+                              {
+                                "visible": true,
+                                "x": 0,
+                                "y": 0,
+                                "angle": 0,
+                                "textAlign": "center",
+                                "lineWidth": 2,
+                                "textConfig": [],
+                                "fontSize": 11,
+                                "fontWeight": "normal",
+                                "fillOpacity": 1,
+                                "lineJoin": "bevel",
+                                "stroke": "#ffffff",
+                                "fill": "#fff",
+                                "text": 20,
+                                "textType": "text",
+                                "data": {
+                                  "category": "B",
+                                  "series": "S1",
+                                  "value": 20,
+                                  "__VCHART_DEFAULT_DATA_INDEX": 1,
+                                  "__VCHART_DEFAULT_DATA_KEY": "B_S1",
+                                  "__VCHART_STACK_END": 20,
+                                  "__VCHART_STACK_START": 0,
+                                  "__VCHART_STACK_KEY": "B"
+                                },
+                                "id": "vrender-component-label-1"
+                              },
+                              {
+                                "visible": true,
+                                "x": 0,
+                                "y": 0,
+                                "angle": 0,
+                                "textAlign": "center",
+                                "lineWidth": 2,
+                                "textConfig": [],
+                                "fontSize": 11,
+                                "fontWeight": "normal",
+                                "fillOpacity": 1,
+                                "lineJoin": "bevel",
+                                "stroke": "#ffffff",
+                                "fill": "#fff",
+                                "text": 30,
+                                "textType": "text",
+                                "data": {
+                                  "category": "C",
+                                  "series": "S1",
+                                  "value": 30,
+                                  "__VCHART_DEFAULT_DATA_INDEX": 2,
+                                  "__VCHART_DEFAULT_DATA_KEY": "C_S1",
+                                  "__VCHART_STACK_END": 30,
+                                  "__VCHART_STACK_START": 0,
+                                  "__VCHART_STACK_KEY": "C"
+                                },
+                                "id": "vrender-component-label-2"
+                              },
+                              {
+                                "visible": true,
+                                "x": 0,
+                                "y": 0,
+                                "angle": 0,
+                                "textAlign": "center",
+                                "lineWidth": 2,
+                                "textConfig": [],
+                                "fontSize": 11,
+                                "fontWeight": "normal",
+                                "fillOpacity": 1,
+                                "lineJoin": "bevel",
+                                "stroke": "#ffffff",
+                                "fill": "#fff",
+                                "text": 15,
+                                "textType": "text",
+                                "data": {
+                                  "category": "D",
+                                  "series": "S1",
+                                  "value": 15,
+                                  "__VCHART_DEFAULT_DATA_INDEX": 3,
+                                  "__VCHART_DEFAULT_DATA_KEY": "D_S1",
+                                  "__VCHART_STACK_END": 15,
+                                  "__VCHART_STACK_START": 0,
+                                  "__VCHART_STACK_KEY": "D"
+                                },
+                                "id": "vrender-component-label-3"
+                              },
+                              {
+                                "visible": true,
+                                "x": 0,
+                                "y": 0,
+                                "angle": 0,
+                                "textAlign": "center",
+                                "lineWidth": 2,
+                                "textConfig": [],
+                                "fontSize": 11,
+                                "fontWeight": "normal",
+                                "fillOpacity": 1,
+                                "lineJoin": "bevel",
+                                "stroke": "#ffffff",
+                                "fill": "#fff",
+                                "text": 25,
+                                "textType": "text",
+                                "data": {
+                                  "category": "E",
+                                  "series": "S1",
+                                  "value": 25,
+                                  "__VCHART_DEFAULT_DATA_INDEX": 4,
+                                  "__VCHART_DEFAULT_DATA_KEY": "E_S1",
+                                  "__VCHART_STACK_END": 25,
+                                  "__VCHART_STACK_START": 0,
+                                  "__VCHART_STACK_KEY": "E"
+                                },
+                                "id": "vrender-component-label-4"
+                              },
+                              {
+                                "visible": true,
+                                "x": 0,
+                                "y": 0,
+                                "angle": 0,
+                                "textAlign": "center",
+                                "lineWidth": 2,
+                                "textConfig": [],
+                                "fontSize": 11,
+                                "fontWeight": "normal",
+                                "fillOpacity": 1,
+                                "lineJoin": "bevel",
+                                "stroke": "#ffffff",
+                                "fill": "#fff",
+                                "text": 15,
+                                "textType": "text",
+                                "data": {
+                                  "category": "A",
+                                  "series": "S2",
+                                  "value": 15,
+                                  "__VCHART_DEFAULT_DATA_INDEX": 5,
+                                  "__VCHART_DEFAULT_DATA_KEY": "A_S2",
+                                  "__VCHART_STACK_END": 25,
+                                  "__VCHART_STACK_START": 10,
+                                  "__VCHART_STACK_KEY": "A"
+                                },
+                                "id": "vrender-component-label-5"
+                              },
+                              {
+                                "visible": true,
+                                "x": 0,
+                                "y": 0,
+                                "angle": 0,
+                                "textAlign": "center",
+                                "lineWidth": 2,
+                                "textConfig": [],
+                                "fontSize": 11,
+                                "fontWeight": "normal",
+                                "fillOpacity": 1,
+                                "lineJoin": "bevel",
+                                "stroke": "#ffffff",
+                                "fill": "#fff",
+                                "text": 25,
+                                "textType": "text",
+                                "data": {
+                                  "category": "B",
+                                  "series": "S2",
+                                  "value": 25,
+                                  "__VCHART_DEFAULT_DATA_INDEX": 6,
+                                  "__VCHART_DEFAULT_DATA_KEY": "B_S2",
+                                  "__VCHART_STACK_END": 45,
+                                  "__VCHART_STACK_START": 20,
+                                  "__VCHART_STACK_KEY": "B"
+                                },
+                                "id": "vrender-component-label-6"
+                              },
+                              {
+                                "visible": true,
+                                "x": 0,
+                                "y": 0,
+                                "angle": 0,
+                                "textAlign": "center",
+                                "lineWidth": 2,
+                                "textConfig": [],
+                                "fontSize": 11,
+                                "fontWeight": "normal",
+                                "fillOpacity": 1,
+                                "lineJoin": "bevel",
+                                "stroke": "#ffffff",
+                                "fill": "#fff",
+                                "text": 35,
+                                "textType": "text",
+                                "data": {
+                                  "category": "C",
+                                  "series": "S2",
+                                  "value": 35,
+                                  "__VCHART_DEFAULT_DATA_INDEX": 7,
+                                  "__VCHART_DEFAULT_DATA_KEY": "C_S2",
+                                  "__VCHART_STACK_END": 65,
+                                  "__VCHART_STACK_START": 30,
+                                  "__VCHART_STACK_KEY": "C"
+                                },
+                                "id": "vrender-component-label-7"
+                              },
+                              {
+                                "visible": true,
+                                "x": 0,
+                                "y": 0,
+                                "angle": 0,
+                                "textAlign": "center",
+                                "lineWidth": 2,
+                                "textConfig": [],
+                                "fontSize": 11,
+                                "fontWeight": "normal",
+                                "fillOpacity": 1,
+                                "lineJoin": "bevel",
+                                "stroke": "#ffffff",
+                                "fill": "#fff",
+                                "text": 20,
+                                "textType": "text",
+                                "data": {
+                                  "category": "D",
+                                  "series": "S2",
+                                  "value": 20,
+                                  "__VCHART_DEFAULT_DATA_INDEX": 8,
+                                  "__VCHART_DEFAULT_DATA_KEY": "D_S2",
+                                  "__VCHART_STACK_END": 35,
+                                  "__VCHART_STACK_START": 15,
+                                  "__VCHART_STACK_KEY": "D"
+                                },
+                                "id": "vrender-component-label-8"
+                              },
+                              {
+                                "visible": true,
+                                "x": 0,
+                                "y": 0,
+                                "angle": 0,
+                                "textAlign": "center",
+                                "lineWidth": 2,
+                                "textConfig": [],
+                                "fontSize": 11,
+                                "fontWeight": "normal",
+                                "fillOpacity": 1,
+                                "lineJoin": "bevel",
+                                "stroke": "#ffffff",
+                                "fill": "#fff",
+                                "text": 22,
+                                "textType": "text",
+                                "data": {
+                                  "category": "E",
+                                  "series": "S2",
+                                  "value": 22,
+                                  "__VCHART_DEFAULT_DATA_INDEX": 9,
+                                  "__VCHART_DEFAULT_DATA_KEY": "E_S2",
+                                  "__VCHART_STACK_END": 47,
+                                  "__VCHART_STACK_START": 25,
+                                  "__VCHART_STACK_KEY": "E"
+                                },
+                                "id": "vrender-component-label-9"
+                              }
+                            ]
+                          }
+                        ],
+                        "pickable": false,
+                        "size": {
+                          "width": 233,
+                          "height": 135
+                        }
+                      },
+                      "_uid": 1339,
+                      "type": "group",
+                      "name": "data-label",
+                      "children": [
+                        {
+                          "attribute": {
+                            "data": [
+                              {
+                                "visible": true,
+                                "x": 0,
+                                "y": 0,
+                                "angle": 0,
+                                "textAlign": "center",
+                                "lineWidth": 2,
+                                "textConfig": [],
+                                "fontSize": 11,
+                                "fontWeight": "normal",
+                                "fillOpacity": 1,
+                                "lineJoin": "bevel",
+                                "stroke": "#ffffff",
+                                "fill": "#fff",
+                                "text": 10,
+                                "textType": "text",
+                                "data": {
+                                  "category": "A",
+                                  "series": "S1",
+                                  "value": 10,
+                                  "__VCHART_DEFAULT_DATA_INDEX": 0,
+                                  "__VCHART_DEFAULT_DATA_KEY": "A_S1",
+                                  "__VCHART_STACK_END": 10,
+                                  "__VCHART_STACK_START": 0,
+                                  "__VCHART_STACK_KEY": "A"
+                                },
+                                "id": "vrender-component-label-0"
+                              },
+                              {
+                                "visible": true,
+                                "x": 0,
+                                "y": 0,
+                                "angle": 0,
+                                "textAlign": "center",
+                                "lineWidth": 2,
+                                "textConfig": [],
+                                "fontSize": 11,
+                                "fontWeight": "normal",
+                                "fillOpacity": 1,
+                                "lineJoin": "bevel",
+                                "stroke": "#ffffff",
+                                "fill": "#fff",
+                                "text": 20,
+                                "textType": "text",
+                                "data": {
+                                  "category": "B",
+                                  "series": "S1",
+                                  "value": 20,
+                                  "__VCHART_DEFAULT_DATA_INDEX": 1,
+                                  "__VCHART_DEFAULT_DATA_KEY": "B_S1",
+                                  "__VCHART_STACK_END": 20,
+                                  "__VCHART_STACK_START": 0,
+                                  "__VCHART_STACK_KEY": "B"
+                                },
+                                "id": "vrender-component-label-1"
+                              },
+                              {
+                                "visible": true,
+                                "x": 0,
+                                "y": 0,
+                                "angle": 0,
+                                "textAlign": "center",
+                                "lineWidth": 2,
+                                "textConfig": [],
+                                "fontSize": 11,
+                                "fontWeight": "normal",
+                                "fillOpacity": 1,
+                                "lineJoin": "bevel",
+                                "stroke": "#ffffff",
+                                "fill": "#fff",
+                                "text": 30,
+                                "textType": "text",
+                                "data": {
+                                  "category": "C",
+                                  "series": "S1",
+                                  "value": 30,
+                                  "__VCHART_DEFAULT_DATA_INDEX": 2,
+                                  "__VCHART_DEFAULT_DATA_KEY": "C_S1",
+                                  "__VCHART_STACK_END": 30,
+                                  "__VCHART_STACK_START": 0,
+                                  "__VCHART_STACK_KEY": "C"
+                                },
+                                "id": "vrender-component-label-2"
+                              },
+                              {
+                                "visible": true,
+                                "x": 0,
+                                "y": 0,
+                                "angle": 0,
+                                "textAlign": "center",
+                                "lineWidth": 2,
+                                "textConfig": [],
+                                "fontSize": 11,
+                                "fontWeight": "normal",
+                                "fillOpacity": 1,
+                                "lineJoin": "bevel",
+                                "stroke": "#ffffff",
+                                "fill": "#fff",
+                                "text": 15,
+                                "textType": "text",
+                                "data": {
+                                  "category": "D",
+                                  "series": "S1",
+                                  "value": 15,
+                                  "__VCHART_DEFAULT_DATA_INDEX": 3,
+                                  "__VCHART_DEFAULT_DATA_KEY": "D_S1",
+                                  "__VCHART_STACK_END": 15,
+                                  "__VCHART_STACK_START": 0,
+                                  "__VCHART_STACK_KEY": "D"
+                                },
+                                "id": "vrender-component-label-3"
+                              },
+                              {
+                                "visible": true,
+                                "x": 0,
+                                "y": 0,
+                                "angle": 0,
+                                "textAlign": "center",
+                                "lineWidth": 2,
+                                "textConfig": [],
+                                "fontSize": 11,
+                                "fontWeight": "normal",
+                                "fillOpacity": 1,
+                                "lineJoin": "bevel",
+                                "stroke": "#ffffff",
+                                "fill": "#fff",
+                                "text": 25,
+                                "textType": "text",
+                                "data": {
+                                  "category": "E",
+                                  "series": "S1",
+                                  "value": 25,
+                                  "__VCHART_DEFAULT_DATA_INDEX": 4,
+                                  "__VCHART_DEFAULT_DATA_KEY": "E_S1",
+                                  "__VCHART_STACK_END": 25,
+                                  "__VCHART_STACK_START": 0,
+                                  "__VCHART_STACK_KEY": "E"
+                                },
+                                "id": "vrender-component-label-4"
+                              },
+                              {
+                                "visible": true,
+                                "x": 0,
+                                "y": 0,
+                                "angle": 0,
+                                "textAlign": "center",
+                                "lineWidth": 2,
+                                "textConfig": [],
+                                "fontSize": 11,
+                                "fontWeight": "normal",
+                                "fillOpacity": 1,
+                                "lineJoin": "bevel",
+                                "stroke": "#ffffff",
+                                "fill": "#fff",
+                                "text": 15,
+                                "textType": "text",
+                                "data": {
+                                  "category": "A",
+                                  "series": "S2",
+                                  "value": 15,
+                                  "__VCHART_DEFAULT_DATA_INDEX": 5,
+                                  "__VCHART_DEFAULT_DATA_KEY": "A_S2",
+                                  "__VCHART_STACK_END": 25,
+                                  "__VCHART_STACK_START": 10,
+                                  "__VCHART_STACK_KEY": "A"
+                                },
+                                "id": "vrender-component-label-5"
+                              },
+                              {
+                                "visible": true,
+                                "x": 0,
+                                "y": 0,
+                                "angle": 0,
+                                "textAlign": "center",
+                                "lineWidth": 2,
+                                "textConfig": [],
+                                "fontSize": 11,
+                                "fontWeight": "normal",
+                                "fillOpacity": 1,
+                                "lineJoin": "bevel",
+                                "stroke": "#ffffff",
+                                "fill": "#fff",
+                                "text": 25,
+                                "textType": "text",
+                                "data": {
+                                  "category": "B",
+                                  "series": "S2",
+                                  "value": 25,
+                                  "__VCHART_DEFAULT_DATA_INDEX": 6,
+                                  "__VCHART_DEFAULT_DATA_KEY": "B_S2",
+                                  "__VCHART_STACK_END": 45,
+                                  "__VCHART_STACK_START": 20,
+                                  "__VCHART_STACK_KEY": "B"
+                                },
+                                "id": "vrender-component-label-6"
+                              },
+                              {
+                                "visible": true,
+                                "x": 0,
+                                "y": 0,
+                                "angle": 0,
+                                "textAlign": "center",
+                                "lineWidth": 2,
+                                "textConfig": [],
+                                "fontSize": 11,
+                                "fontWeight": "normal",
+                                "fillOpacity": 1,
+                                "lineJoin": "bevel",
+                                "stroke": "#ffffff",
+                                "fill": "#fff",
+                                "text": 35,
+                                "textType": "text",
+                                "data": {
+                                  "category": "C",
+                                  "series": "S2",
+                                  "value": 35,
+                                  "__VCHART_DEFAULT_DATA_INDEX": 7,
+                                  "__VCHART_DEFAULT_DATA_KEY": "C_S2",
+                                  "__VCHART_STACK_END": 65,
+                                  "__VCHART_STACK_START": 30,
+                                  "__VCHART_STACK_KEY": "C"
+                                },
+                                "id": "vrender-component-label-7"
+                              },
+                              {
+                                "visible": true,
+                                "x": 0,
+                                "y": 0,
+                                "angle": 0,
+                                "textAlign": "center",
+                                "lineWidth": 2,
+                                "textConfig": [],
+                                "fontSize": 11,
+                                "fontWeight": "normal",
+                                "fillOpacity": 1,
+                                "lineJoin": "bevel",
+                                "stroke": "#ffffff",
+                                "fill": "#fff",
+                                "text": 20,
+                                "textType": "text",
+                                "data": {
+                                  "category": "D",
+                                  "series": "S2",
+                                  "value": 20,
+                                  "__VCHART_DEFAULT_DATA_INDEX": 8,
+                                  "__VCHART_DEFAULT_DATA_KEY": "D_S2",
+                                  "__VCHART_STACK_END": 35,
+                                  "__VCHART_STACK_START": 15,
+                                  "__VCHART_STACK_KEY": "D"
+                                },
+                                "id": "vrender-component-label-8"
+                              },
+                              {
+                                "visible": true,
+                                "x": 0,
+                                "y": 0,
+                                "angle": 0,
+                                "textAlign": "center",
+                                "lineWidth": 2,
+                                "textConfig": [],
+                                "fontSize": 11,
+                                "fontWeight": "normal",
+                                "fillOpacity": 1,
+                                "lineJoin": "bevel",
+                                "stroke": "#ffffff",
+                                "fill": "#fff",
+                                "text": 22,
+                                "textType": "text",
+                                "data": {
+                                  "category": "E",
+                                  "series": "S2",
+                                  "value": 22,
+                                  "__VCHART_DEFAULT_DATA_INDEX": 9,
+                                  "__VCHART_DEFAULT_DATA_KEY": "E_S2",
+                                  "__VCHART_STACK_END": 47,
+                                  "__VCHART_STACK_START": 25,
+                                  "__VCHART_STACK_KEY": "E"
+                                },
+                                "id": "vrender-component-label-9"
+                              }
+                            ],
+                            "textStyle": {
+                              "fontSize": 11,
+                              "textAlign": "center",
+                              "textBaseline": "middle",
+                              "boundsPadding": [-2, -1, -2, -1],
+                              "fill": "#fff",
+                              "pickable": false,
+                              "fontWeight": "normal",
+                              "fillOpacity": 1,
+                              "lineJoin": "bevel",
+                              "lineWidth": 2,
+                              "stroke": "#ffffff"
+                            },
+                            "offset": 5,
+                            "pickable": false,
+                            "smartInvert": true,
+                            "baseMarkGroupName": "bar_140",
+                            "overlap": {
+                              "avoidMarks": [],
+                              "strategy": [
+                                {
+                                  "type": "position"
+                                }
+                              ],
+                              "size": {
+                                "width": 233,
+                                "height": 135
+                              }
+                            },
+                            "visible": true,
+                            "animation": true,
+                            "animationUpdate": true,
+                            "animationEnter": true,
+                            "animationExit": true,
+                            "hover": false,
+                            "select": false,
+                            "centerOffset": 0,
+                            "type": "rect"
+                          },
+                          "_uid": 1340,
+                          "type": "group",
+                          "name": "label",
+                          "children": [
+                            {
+                              "attribute": {
+                                "fontSize": 11,
+                                "fill": "#ffffff",
+                                "fontFamily": "PingFang SC,Helvetica Neue,Microsoft Yahei,system-ui,-apple-system,segoe ui,Roboto,Helvetica,Arial,sans-serif,apple color emoji,segoe ui emoji,segoe ui symbol",
+                                "textAlign": "center",
+                                "textBaseline": "middle",
+                                "boundsPadding": [-2, -1, -2, -1],
+                                "pickable": false,
+                                "fontWeight": "normal",
+                                "fillOpacity": 1,
+                                "lineJoin": "bevel",
+                                "lineWidth": 2,
+                                "stroke": "#1664FF",
+                                "visible": true,
+                                "x": 31.772727272727256,
+                                "y": 126.5625,
+                                "angle": 0,
+                                "textConfig": [],
+                                "text": 10,
+                                "textType": "text",
+                                "data": {
+                                  "category": "A",
+                                  "series": "S1",
+                                  "value": 10,
+                                  "__VCHART_DEFAULT_DATA_INDEX": 0,
+                                  "__VCHART_DEFAULT_DATA_KEY": "A_S1",
+                                  "__VCHART_STACK_END": 10,
+                                  "__VCHART_STACK_START": 0,
+                                  "__VCHART_STACK_KEY": "A"
+                                },
+                                "id": "vrender-component-label-0",
+                                "opacity": 1,
+                                "strokeOpacity": 1
+                              },
+                              "_uid": 1341,
+                              "type": "text",
+                              "children": []
+                            },
+                            {
+                              "attribute": {
+                                "fontSize": 11,
+                                "fill": "#ffffff",
+                                "fontFamily": "PingFang SC,Helvetica Neue,Microsoft Yahei,system-ui,-apple-system,segoe ui,Roboto,Helvetica,Arial,sans-serif,apple color emoji,segoe ui emoji,segoe ui symbol",
+                                "textAlign": "center",
+                                "textBaseline": "middle",
+                                "boundsPadding": [-2, -1, -2, -1],
+                                "pickable": false,
+                                "fontWeight": "normal",
+                                "fillOpacity": 1,
+                                "lineJoin": "bevel",
+                                "lineWidth": 2,
+                                "stroke": "#1664FF",
+                                "visible": true,
+                                "x": 74.13636363636363,
+                                "y": 118.125,
+                                "angle": 0,
+                                "textConfig": [],
+                                "text": 20,
+                                "textType": "text",
+                                "data": {
+                                  "category": "B",
+                                  "series": "S1",
+                                  "value": 20,
+                                  "__VCHART_DEFAULT_DATA_INDEX": 1,
+                                  "__VCHART_DEFAULT_DATA_KEY": "B_S1",
+                                  "__VCHART_STACK_END": 20,
+                                  "__VCHART_STACK_START": 0,
+                                  "__VCHART_STACK_KEY": "B"
+                                },
+                                "id": "vrender-component-label-1",
+                                "opacity": 1,
+                                "strokeOpacity": 1
+                              },
+                              "_uid": 1342,
+                              "type": "text",
+                              "children": []
+                            },
+                            {
+                              "attribute": {
+                                "fontSize": 11,
+                                "fill": "#ffffff",
+                                "fontFamily": "PingFang SC,Helvetica Neue,Microsoft Yahei,system-ui,-apple-system,segoe ui,Roboto,Helvetica,Arial,sans-serif,apple color emoji,segoe ui emoji,segoe ui symbol",
+                                "textAlign": "center",
+                                "textBaseline": "middle",
+                                "boundsPadding": [-2, -1, -2, -1],
+                                "pickable": false,
+                                "fontWeight": "normal",
+                                "fillOpacity": 1,
+                                "lineJoin": "bevel",
+                                "lineWidth": 2,
+                                "stroke": "#1664FF",
+                                "visible": true,
+                                "x": 116.5,
+                                "y": 109.6875,
+                                "angle": 0,
+                                "textConfig": [],
+                                "text": 30,
+                                "textType": "text",
+                                "data": {
+                                  "category": "C",
+                                  "series": "S1",
+                                  "value": 30,
+                                  "__VCHART_DEFAULT_DATA_INDEX": 2,
+                                  "__VCHART_DEFAULT_DATA_KEY": "C_S1",
+                                  "__VCHART_STACK_END": 30,
+                                  "__VCHART_STACK_START": 0,
+                                  "__VCHART_STACK_KEY": "C"
+                                },
+                                "id": "vrender-component-label-2",
+                                "opacity": 1,
+                                "strokeOpacity": 1
+                              },
+                              "_uid": 1343,
+                              "type": "text",
+                              "children": []
+                            },
+                            {
+                              "attribute": {
+                                "fontSize": 11,
+                                "fill": "#ffffff",
+                                "fontFamily": "PingFang SC,Helvetica Neue,Microsoft Yahei,system-ui,-apple-system,segoe ui,Roboto,Helvetica,Arial,sans-serif,apple color emoji,segoe ui emoji,segoe ui symbol",
+                                "textAlign": "center",
+                                "textBaseline": "middle",
+                                "boundsPadding": [-2, -1, -2, -1],
+                                "pickable": false,
+                                "fontWeight": "normal",
+                                "fillOpacity": 1,
+                                "lineJoin": "bevel",
+                                "lineWidth": 2,
+                                "stroke": "#1664FF",
+                                "visible": true,
+                                "x": 158.86363636363635,
+                                "y": 122.34375,
+                                "angle": 0,
+                                "textConfig": [],
+                                "text": 15,
+                                "textType": "text",
+                                "data": {
+                                  "category": "D",
+                                  "series": "S1",
+                                  "value": 15,
+                                  "__VCHART_DEFAULT_DATA_INDEX": 3,
+                                  "__VCHART_DEFAULT_DATA_KEY": "D_S1",
+                                  "__VCHART_STACK_END": 15,
+                                  "__VCHART_STACK_START": 0,
+                                  "__VCHART_STACK_KEY": "D"
+                                },
+                                "id": "vrender-component-label-3",
+                                "opacity": 1,
+                                "strokeOpacity": 1
+                              },
+                              "_uid": 1344,
+                              "type": "text",
+                              "children": []
+                            },
+                            {
+                              "attribute": {
+                                "fontSize": 11,
+                                "fill": "#ffffff",
+                                "fontFamily": "PingFang SC,Helvetica Neue,Microsoft Yahei,system-ui,-apple-system,segoe ui,Roboto,Helvetica,Arial,sans-serif,apple color emoji,segoe ui emoji,segoe ui symbol",
+                                "textAlign": "center",
+                                "textBaseline": "middle",
+                                "boundsPadding": [-2, -1, -2, -1],
+                                "pickable": false,
+                                "fontWeight": "normal",
+                                "fillOpacity": 1,
+                                "lineJoin": "bevel",
+                                "lineWidth": 2,
+                                "stroke": "#1664FF",
+                                "visible": true,
+                                "x": 201.22727272727272,
+                                "y": 113.90625,
+                                "angle": 0,
+                                "textConfig": [],
+                                "text": 25,
+                                "textType": "text",
+                                "data": {
+                                  "category": "E",
+                                  "series": "S1",
+                                  "value": 25,
+                                  "__VCHART_DEFAULT_DATA_INDEX": 4,
+                                  "__VCHART_DEFAULT_DATA_KEY": "E_S1",
+                                  "__VCHART_STACK_END": 25,
+                                  "__VCHART_STACK_START": 0,
+                                  "__VCHART_STACK_KEY": "E"
+                                },
+                                "id": "vrender-component-label-4",
+                                "opacity": 1,
+                                "strokeOpacity": 1
+                              },
+                              "_uid": 1345,
+                              "type": "text",
+                              "children": []
+                            },
+                            {
+                              "attribute": {
+                                "fontSize": 11,
+                                "fill": "#000000",
+                                "fontFamily": "PingFang SC,Helvetica Neue,Microsoft Yahei,system-ui,-apple-system,segoe ui,Roboto,Helvetica,Arial,sans-serif,apple color emoji,segoe ui emoji,segoe ui symbol",
+                                "textAlign": "center",
+                                "textBaseline": "middle",
+                                "boundsPadding": [-2, -1, -2, -1],
+                                "pickable": false,
+                                "fontWeight": "normal",
+                                "fillOpacity": 1,
+                                "lineJoin": "bevel",
+                                "lineWidth": 2,
+                                "stroke": "#1AC6FF",
+                                "visible": true,
+                                "x": 31.772727272727256,
+                                "y": 105.46875,
+                                "angle": 0,
+                                "textConfig": [],
+                                "text": 15,
+                                "textType": "text",
+                                "data": {
+                                  "category": "A",
+                                  "series": "S2",
+                                  "value": 15,
+                                  "__VCHART_DEFAULT_DATA_INDEX": 5,
+                                  "__VCHART_DEFAULT_DATA_KEY": "A_S2",
+                                  "__VCHART_STACK_END": 25,
+                                  "__VCHART_STACK_START": 10,
+                                  "__VCHART_STACK_KEY": "A"
+                                },
+                                "id": "vrender-component-label-5",
+                                "opacity": 1,
+                                "strokeOpacity": 1
+                              },
+                              "_uid": 1346,
+                              "type": "text",
+                              "children": []
+                            },
+                            {
+                              "attribute": {
+                                "fontSize": 11,
+                                "fill": "#000000",
+                                "fontFamily": "PingFang SC,Helvetica Neue,Microsoft Yahei,system-ui,-apple-system,segoe ui,Roboto,Helvetica,Arial,sans-serif,apple color emoji,segoe ui emoji,segoe ui symbol",
+                                "textAlign": "center",
+                                "textBaseline": "middle",
+                                "boundsPadding": [-2, -1, -2, -1],
+                                "pickable": false,
+                                "fontWeight": "normal",
+                                "fillOpacity": 1,
+                                "lineJoin": "bevel",
+                                "lineWidth": 2,
+                                "stroke": "#1AC6FF",
+                                "visible": true,
+                                "x": 74.13636363636363,
+                                "y": 80.15625,
+                                "angle": 0,
+                                "textConfig": [],
+                                "text": 25,
+                                "textType": "text",
+                                "data": {
+                                  "category": "B",
+                                  "series": "S2",
+                                  "value": 25,
+                                  "__VCHART_DEFAULT_DATA_INDEX": 6,
+                                  "__VCHART_DEFAULT_DATA_KEY": "B_S2",
+                                  "__VCHART_STACK_END": 45,
+                                  "__VCHART_STACK_START": 20,
+                                  "__VCHART_STACK_KEY": "B"
+                                },
+                                "id": "vrender-component-label-6",
+                                "opacity": 1,
+                                "strokeOpacity": 1
+                              },
+                              "_uid": 1347,
+                              "type": "text",
+                              "children": []
+                            },
+                            {
+                              "attribute": {
+                                "fontSize": 11,
+                                "fill": "#000000",
+                                "fontFamily": "PingFang SC,Helvetica Neue,Microsoft Yahei,system-ui,-apple-system,segoe ui,Roboto,Helvetica,Arial,sans-serif,apple color emoji,segoe ui emoji,segoe ui symbol",
+                                "textAlign": "center",
+                                "textBaseline": "middle",
+                                "boundsPadding": [-2, -1, -2, -1],
+                                "pickable": false,
+                                "fontWeight": "normal",
+                                "fillOpacity": 1,
+                                "lineJoin": "bevel",
+                                "lineWidth": 2,
+                                "stroke": "#1AC6FF",
+                                "visible": true,
+                                "x": 116.5,
+                                "y": 54.84375,
+                                "angle": 0,
+                                "textConfig": [],
+                                "text": 35,
+                                "textType": "text",
+                                "data": {
+                                  "category": "C",
+                                  "series": "S2",
+                                  "value": 35,
+                                  "__VCHART_DEFAULT_DATA_INDEX": 7,
+                                  "__VCHART_DEFAULT_DATA_KEY": "C_S2",
+                                  "__VCHART_STACK_END": 65,
+                                  "__VCHART_STACK_START": 30,
+                                  "__VCHART_STACK_KEY": "C"
+                                },
+                                "id": "vrender-component-label-7",
+                                "opacity": 1,
+                                "strokeOpacity": 1
+                              },
+                              "_uid": 1348,
+                              "type": "text",
+                              "children": []
+                            },
+                            {
+                              "attribute": {
+                                "fontSize": 11,
+                                "fill": "#000000",
+                                "fontFamily": "PingFang SC,Helvetica Neue,Microsoft Yahei,system-ui,-apple-system,segoe ui,Roboto,Helvetica,Arial,sans-serif,apple color emoji,segoe ui emoji,segoe ui symbol",
+                                "textAlign": "center",
+                                "textBaseline": "middle",
+                                "boundsPadding": [-2, -1, -2, -1],
+                                "pickable": false,
+                                "fontWeight": "normal",
+                                "fillOpacity": 1,
+                                "lineJoin": "bevel",
+                                "lineWidth": 2,
+                                "stroke": "#1AC6FF",
+                                "visible": true,
+                                "x": 158.86363636363635,
+                                "y": 92.8125,
+                                "angle": 0,
+                                "textConfig": [],
+                                "text": 20,
+                                "textType": "text",
+                                "data": {
+                                  "category": "D",
+                                  "series": "S2",
+                                  "value": 20,
+                                  "__VCHART_DEFAULT_DATA_INDEX": 8,
+                                  "__VCHART_DEFAULT_DATA_KEY": "D_S2",
+                                  "__VCHART_STACK_END": 35,
+                                  "__VCHART_STACK_START": 15,
+                                  "__VCHART_STACK_KEY": "D"
+                                },
+                                "id": "vrender-component-label-8",
+                                "opacity": 1,
+                                "strokeOpacity": 1
+                              },
+                              "_uid": 1349,
+                              "type": "text",
+                              "children": []
+                            },
+                            {
+                              "attribute": {
+                                "fontSize": 11,
+                                "fill": "#000000",
+                                "fontFamily": "PingFang SC,Helvetica Neue,Microsoft Yahei,system-ui,-apple-system,segoe ui,Roboto,Helvetica,Arial,sans-serif,apple color emoji,segoe ui emoji,segoe ui symbol",
+                                "textAlign": "center",
+                                "textBaseline": "middle",
+                                "boundsPadding": [-2, -1, -2, -1],
+                                "pickable": false,
+                                "fontWeight": "normal",
+                                "fillOpacity": 1,
+                                "lineJoin": "bevel",
+                                "lineWidth": 2,
+                                "stroke": "#1AC6FF",
+                                "visible": true,
+                                "x": 201.22727272727272,
+                                "y": 74.25,
+                                "angle": 0,
+                                "textConfig": [],
+                                "text": 22,
+                                "textType": "text",
+                                "data": {
+                                  "category": "E",
+                                  "series": "S2",
+                                  "value": 22,
+                                  "__VCHART_DEFAULT_DATA_INDEX": 9,
+                                  "__VCHART_DEFAULT_DATA_KEY": "E_S2",
+                                  "__VCHART_STACK_END": 47,
+                                  "__VCHART_STACK_START": 25,
+                                  "__VCHART_STACK_KEY": "E"
+                                },
+                                "id": "vrender-component-label-9",
+                                "opacity": 1,
+                                "strokeOpacity": 1
+                              },
+                              "_uid": 1350,
+                              "type": "text",
+                              "children": []
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "attribute": {
+                "visible": true,
+                "x": 47,
+                "y": 121,
+                "width": 233,
+                "height": 135,
+                "clip": false,
+                "zIndex": 700,
+                "pickable": false
+              },
+              "_uid": 1221,
+              "type": "group",
+              "name": "region_interaction",
+              "children": []
+            },
+            {
+              "attribute": {
+                "pickable": false,
+                "zIndex": 100
+              },
+              "_uid": 1222,
+              "type": "group",
+              "name": "axis-bottom_144",
+              "children": [
+                {
+                  "attribute": {
+                    "zIndex": 100,
+                    "pickable": true,
+                    "scale": {
+                      "_rangeFactorStart": null,
+                      "_rangeFactorEnd": null,
+                      "type": "band",
+                      "_index": {},
+                      "_domain": ["A", "B", "C", "D", "E"],
+                      "_ordinalRange": [],
+                      "_range": [0, 233],
+                      "_step": 42.36363636363637,
+                      "_bandwidth": 38.12727272727273,
+                      "_isFixed": false,
+                      "_round": false,
+                      "_paddingInner": 0.1,
+                      "_paddingOuter": 0.3,
+                      "_align": 0.5,
+                      "_userBandwidth": "auto",
+                      "_wholeRange": null,
+                      "_bandRangeState": {
+                        "reverse": false,
+                        "start": 12.70909090909089,
+                        "min": 0,
+                        "max": 233,
+                        "count": 5
+                      },
+                      "_fishEyeTransform": null
+                    },
+                    "x": 47,
+                    "y": 256,
+                    "orient": "bottom",
+                    "line": {
+                      "visible": true,
+                      "style": {
+                        "lineWidth": 1,
+                        "stroke": "#d9dde4",
+                        "strokeOpacity": 1
+                      },
+                      "startSymbol": {},
+                      "endSymbol": {}
+                    },
+                    "label": {
+                      "visible": true,
+                      "inside": false,
+                      "space": 8,
+                      "style": {
+                        "fontSize": 12,
+                        "fill": "#89909d",
+                        "fontWeight": "normal",
+                        "fillOpacity": 1
+                      },
+                      "formatMethod": null
+                    },
+                    "tick": {
+                      "visible": true,
+                      "length": 4,
+                      "inside": false,
+                      "alignWithLabel": true,
+                      "style": {
+                        "lineWidth": 1,
+                        "stroke": "#d9dde4",
+                        "strokeOpacity": 1
+                      }
+                    },
+                    "subTick": {
+                      "visible": false
+                    },
+                    "title": {
+                      "visible": false,
+                      "text": "category",
+                      "maxWidth": null
+                    },
+                    "panel": {
+                      "visible": false
+                    },
+                    "verticalFactor": 1,
+                    "start": {
+                      "x": 0,
+                      "y": 0
+                    },
+                    "end": {
+                      "x": 233,
+                      "y": 0
+                    },
+                    "items": [
+                      [
+                        {
+                          "id": "A",
+                          "label": "A",
+                          "value": 0.1363636363636363,
+                          "rawValue": "A"
+                        },
+                        {
+                          "id": "B",
+                          "label": "B",
+                          "value": 0.3181818181818181,
+                          "rawValue": "B"
+                        },
+                        {
+                          "id": "C",
+                          "label": "C",
+                          "value": 0.49999999999999994,
+                          "rawValue": "C"
+                        },
+                        {
+                          "id": "D",
+                          "label": "D",
+                          "value": 0.6818181818181818,
+                          "rawValue": "D"
+                        },
+                        {
+                          "id": "E",
+                          "label": "E",
+                          "value": 0.8636363636363636,
+                          "rawValue": "E"
+                        }
+                      ]
+                    ],
+                    "verticalLimitSize": 90,
+                    "verticalMinSize": null
+                  },
+                  "_uid": 1226,
+                  "type": "group",
+                  "name": "axis",
+                  "children": [
+                    {
+                      "attribute": {
+                        "x": 0,
+                        "y": 0,
+                        "pickable": false
+                      },
+                      "_uid": 1307,
+                      "type": "group",
+                      "children": [
+                        {
+                          "attribute": {
+                            "x": 0,
+                            "y": 0,
+                            "zIndex": 1,
+                            "pickable": false
+                          },
+                          "_uid": 1308,
+                          "type": "group",
+                          "name": "axis-container",
+                          "children": [
+                            {
+                              "attribute": {
+                                "visible": true,
+                                "lineStyle": {
+                                  "lineWidth": 1,
+                                  "stroke": "#d9dde4",
+                                  "strokeOpacity": 1
+                                },
+                                "startSymbol": {
+                                  "visible": false,
+                                  "autoRotate": true,
+                                  "symbolType": "triangle",
+                                  "size": 12,
+                                  "refX": 0,
+                                  "refY": 0,
+                                  "refAngle": 0,
+                                  "style": {
+                                    "fill": "#000",
+                                    "zIndex": 1
+                                  }
+                                },
+                                "endSymbol": {
+                                  "visible": false,
+                                  "autoRotate": true,
+                                  "symbolType": "triangle",
+                                  "size": 12,
+                                  "refX": 0,
+                                  "refY": 0,
+                                  "refAngle": 0,
+                                  "style": {
+                                    "fill": "#000",
+                                    "zIndex": 1
+                                  }
+                                },
+                                "points": [
+                                  {
+                                    "x": 0,
+                                    "y": 0
+                                  },
+                                  {
+                                    "x": 233,
+                                    "y": 0
+                                  }
+                                ]
+                              },
+                              "_uid": 1309,
+                              "type": "group",
+                              "name": "axis-line",
+                              "children": [
+                                {
+                                  "attribute": {
+                                    "points": [
+                                      {
+                                        "x": 0,
+                                        "y": 0
+                                      },
+                                      {
+                                        "x": 233,
+                                        "y": 0
+                                      }
+                                    ],
+                                    "lineWidth": 1,
+                                    "stroke": "#d9dde4",
+                                    "strokeOpacity": 1,
+                                    "fill": false,
+                                    "closePath": false
+                                  },
+                                  "_uid": 1310,
+                                  "type": "line",
+                                  "name": "axis-line-line",
+                                  "children": []
+                                }
+                              ]
+                            },
+                            {
+                              "attribute": {
+                                "x": 0,
+                                "y": 0,
+                                "pickable": false
+                              },
+                              "_uid": 1311,
+                              "type": "group",
+                              "name": "axis-tick-container",
+                              "children": [
+                                {
+                                  "attribute": {
+                                    "points": [
+                                      {
+                                        "x": 31.77272727272726,
+                                        "y": 0
+                                      },
+                                      {
+                                        "x": 31.77272727272726,
+                                        "y": 4
+                                      }
+                                    ],
+                                    "lineWidth": 1,
+                                    "stroke": "#d9dde4",
+                                    "strokeOpacity": 1
+                                  },
+                                  "_uid": 1312,
+                                  "type": "line",
+                                  "name": "axis-tick",
+                                  "children": []
+                                },
+                                {
+                                  "attribute": {
+                                    "points": [
+                                      {
+                                        "x": 74.13636363636363,
+                                        "y": 0
+                                      },
+                                      {
+                                        "x": 74.13636363636363,
+                                        "y": 4
+                                      }
+                                    ],
+                                    "lineWidth": 1,
+                                    "stroke": "#d9dde4",
+                                    "strokeOpacity": 1
+                                  },
+                                  "_uid": 1313,
+                                  "type": "line",
+                                  "name": "axis-tick",
+                                  "children": []
+                                },
+                                {
+                                  "attribute": {
+                                    "points": [
+                                      {
+                                        "x": 116.49999999999999,
+                                        "y": 0
+                                      },
+                                      {
+                                        "x": 116.49999999999999,
+                                        "y": 4
+                                      }
+                                    ],
+                                    "lineWidth": 1,
+                                    "stroke": "#d9dde4",
+                                    "strokeOpacity": 1
+                                  },
+                                  "_uid": 1314,
+                                  "type": "line",
+                                  "name": "axis-tick",
+                                  "children": []
+                                },
+                                {
+                                  "attribute": {
+                                    "points": [
+                                      {
+                                        "x": 158.86363636363635,
+                                        "y": 0
+                                      },
+                                      {
+                                        "x": 158.86363636363635,
+                                        "y": 4
+                                      }
+                                    ],
+                                    "lineWidth": 1,
+                                    "stroke": "#d9dde4",
+                                    "strokeOpacity": 1
+                                  },
+                                  "_uid": 1315,
+                                  "type": "line",
+                                  "name": "axis-tick",
+                                  "children": []
+                                },
+                                {
+                                  "attribute": {
+                                    "points": [
+                                      {
+                                        "x": 201.22727272727272,
+                                        "y": 0
+                                      },
+                                      {
+                                        "x": 201.22727272727272,
+                                        "y": 4
+                                      }
+                                    ],
+                                    "lineWidth": 1,
+                                    "stroke": "#d9dde4",
+                                    "strokeOpacity": 1
+                                  },
+                                  "_uid": 1316,
+                                  "type": "line",
+                                  "name": "axis-tick",
+                                  "children": []
+                                }
+                              ]
+                            },
+                            {
+                              "attribute": {
+                                "x": 0,
+                                "y": 0,
+                                "pickable": false
+                              },
+                              "_uid": 1317,
+                              "type": "group",
+                              "name": "axis-label-container",
+                              "children": [
+                                {
+                                  "attribute": {
+                                    "x": 0,
+                                    "y": 0,
+                                    "pickable": false
+                                  },
+                                  "_uid": 1318,
+                                  "type": "group",
+                                  "name": "axis-label-container-layer-0",
+                                  "children": [
+                                    {
+                                      "attribute": {
+                                        "x": 31.77272727272726,
+                                        "y": 12,
+                                        "text": "A",
+                                        "_originText": "A",
+                                        "lineHeight": 12,
+                                        "type": "text",
+                                        "textAlign": "center",
+                                        "textBaseline": "top",
+                                        "fontSize": 12,
+                                        "fill": "#89909d",
+                                        "fontWeight": "normal",
+                                        "fillOpacity": 1
+                                      },
+                                      "_uid": 1319,
+                                      "type": "text",
+                                      "name": "axis-label",
+                                      "children": []
+                                    },
+                                    {
+                                      "attribute": {
+                                        "x": 74.13636363636363,
+                                        "y": 12,
+                                        "text": "B",
+                                        "_originText": "B",
+                                        "lineHeight": 12,
+                                        "type": "text",
+                                        "textAlign": "center",
+                                        "textBaseline": "top",
+                                        "fontSize": 12,
+                                        "fill": "#89909d",
+                                        "fontWeight": "normal",
+                                        "fillOpacity": 1
+                                      },
+                                      "_uid": 1320,
+                                      "type": "text",
+                                      "name": "axis-label",
+                                      "children": []
+                                    },
+                                    {
+                                      "attribute": {
+                                        "x": 116.49999999999999,
+                                        "y": 12,
+                                        "text": "C",
+                                        "_originText": "C",
+                                        "lineHeight": 12,
+                                        "type": "text",
+                                        "textAlign": "center",
+                                        "textBaseline": "top",
+                                        "fontSize": 12,
+                                        "fill": "#89909d",
+                                        "fontWeight": "normal",
+                                        "fillOpacity": 1
+                                      },
+                                      "_uid": 1321,
+                                      "type": "text",
+                                      "name": "axis-label",
+                                      "children": []
+                                    },
+                                    {
+                                      "attribute": {
+                                        "x": 158.86363636363635,
+                                        "y": 12,
+                                        "text": "D",
+                                        "_originText": "D",
+                                        "lineHeight": 12,
+                                        "type": "text",
+                                        "textAlign": "center",
+                                        "textBaseline": "top",
+                                        "fontSize": 12,
+                                        "fill": "#89909d",
+                                        "fontWeight": "normal",
+                                        "fillOpacity": 1
+                                      },
+                                      "_uid": 1322,
+                                      "type": "text",
+                                      "name": "axis-label",
+                                      "children": []
+                                    },
+                                    {
+                                      "attribute": {
+                                        "x": 201.22727272727272,
+                                        "y": 12,
+                                        "text": "E",
+                                        "_originText": "E",
+                                        "lineHeight": 12,
+                                        "type": "text",
+                                        "textAlign": "center",
+                                        "textBaseline": "top",
+                                        "fontSize": 12,
+                                        "fill": "#89909d",
+                                        "fontWeight": "normal",
+                                        "fillOpacity": 1
+                                      },
+                                      "_uid": 1323,
+                                      "type": "text",
+                                      "name": "axis-label",
+                                      "children": []
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "attribute": {
+                "pickable": false,
+                "zIndex": 100
+              },
+              "_uid": 1223,
+              "type": "group",
+              "name": "axis-left_148",
+              "children": [
+                {
+                  "attribute": {
+                    "zIndex": 100,
+                    "pickable": true,
+                    "scale": {
+                      "_rangeFactorStart": null,
+                      "_rangeFactorEnd": null,
+                      "_forceAlign": true,
+                      "_domain": [0, 65],
+                      "_range": [135, 0],
+                      "type": "linear",
+                      "_domainValidator": null,
+                      "_niceType": "all",
+                      "_niceDomain": [0, 80],
+                      "_autoClamp": false,
+                      "_input": null,
+                      "_output": null,
+                      "_wholeRange": null,
+                      "_fishEyeTransform": null
+                    },
+                    "x": 47,
+                    "y": 121,
+                    "orient": "left",
+                    "line": {
+                      "visible": false
+                    },
+                    "label": {
+                      "visible": true,
+                      "inside": false,
+                      "space": 12,
+                      "autoLimit": true,
+                      "style": {
+                        "fontSize": 12,
+                        "fill": "#89909d",
+                        "fontWeight": "normal",
+                        "fillOpacity": 1
+                      },
+                      "formatMethod": null
+                    },
+                    "tick": {
+                      "visible": false
+                    },
+                    "subTick": {
+                      "visible": false
+                    },
+                    "title": {
+                      "visible": false,
+                      "text": "value",
+                      "maxWidth": null
+                    },
+                    "panel": {
+                      "visible": false
+                    },
+                    "verticalFactor": 1,
+                    "start": {
+                      "x": 0,
+                      "y": 0
+                    },
+                    "end": {
+                      "x": 0,
+                      "y": 135
+                    },
+                    "items": [
+                      [
+                        {
+                          "id": 0,
+                          "label": 0,
+                          "value": 1,
+                          "rawValue": 0
+                        },
+                        {
+                          "id": 20,
+                          "label": 20,
+                          "value": 0.75,
+                          "rawValue": 20
+                        },
+                        {
+                          "id": 40,
+                          "label": 40,
+                          "value": 0.5,
+                          "rawValue": 40
+                        },
+                        {
+                          "id": 60,
+                          "label": 60,
+                          "value": 0.25,
+                          "rawValue": 60
+                        },
+                        {
+                          "id": 80,
+                          "label": 80,
+                          "value": 0,
+                          "rawValue": 80
+                        }
+                      ]
+                    ],
+                    "verticalLimitSize": 90,
+                    "verticalMinSize": null
+                  },
+                  "_uid": 1229,
+                  "type": "group",
+                  "name": "axis",
+                  "children": [
+                    {
+                      "attribute": {
+                        "x": 0,
+                        "y": 0,
+                        "pickable": false
+                      },
+                      "_uid": 1324,
+                      "type": "group",
+                      "children": [
+                        {
+                          "attribute": {
+                            "x": 0,
+                            "y": 0,
+                            "zIndex": 1,
+                            "pickable": false
+                          },
+                          "_uid": 1325,
+                          "type": "group",
+                          "name": "axis-container",
+                          "children": [
+                            {
+                              "attribute": {
+                                "x": 0,
+                                "y": 0,
+                                "pickable": false
+                              },
+                              "_uid": 1326,
+                              "type": "group",
+                              "name": "axis-label-container",
+                              "children": [
+                                {
+                                  "attribute": {
+                                    "x": 0,
+                                    "y": 0,
+                                    "pickable": false
+                                  },
+                                  "_uid": 1327,
+                                  "type": "group",
+                                  "name": "axis-label-container-layer-0",
+                                  "children": [
+                                    {
+                                      "attribute": {
+                                        "x": -12,
+                                        "y": 135,
+                                        "text": 0,
+                                        "_originText": 0,
+                                        "lineHeight": 12,
+                                        "type": "text",
+                                        "textAlign": "right",
+                                        "textBaseline": "middle",
+                                        "fontSize": 12,
+                                        "fill": "#89909d",
+                                        "fontWeight": "normal",
+                                        "fillOpacity": 1
+                                      },
+                                      "_uid": 1328,
+                                      "type": "text",
+                                      "name": "axis-label",
+                                      "children": []
+                                    },
+                                    {
+                                      "attribute": {
+                                        "x": -12,
+                                        "y": 101.25,
+                                        "text": 20,
+                                        "_originText": 20,
+                                        "lineHeight": 12,
+                                        "type": "text",
+                                        "textAlign": "right",
+                                        "textBaseline": "middle",
+                                        "fontSize": 12,
+                                        "fill": "#89909d",
+                                        "fontWeight": "normal",
+                                        "fillOpacity": 1
+                                      },
+                                      "_uid": 1329,
+                                      "type": "text",
+                                      "name": "axis-label",
+                                      "children": []
+                                    },
+                                    {
+                                      "attribute": {
+                                        "x": -12,
+                                        "y": 67.5,
+                                        "text": 40,
+                                        "_originText": 40,
+                                        "lineHeight": 12,
+                                        "type": "text",
+                                        "textAlign": "right",
+                                        "textBaseline": "middle",
+                                        "fontSize": 12,
+                                        "fill": "#89909d",
+                                        "fontWeight": "normal",
+                                        "fillOpacity": 1
+                                      },
+                                      "_uid": 1330,
+                                      "type": "text",
+                                      "name": "axis-label",
+                                      "children": []
+                                    },
+                                    {
+                                      "attribute": {
+                                        "x": -12,
+                                        "y": 33.75,
+                                        "text": 60,
+                                        "_originText": 60,
+                                        "lineHeight": 12,
+                                        "type": "text",
+                                        "textAlign": "right",
+                                        "textBaseline": "middle",
+                                        "fontSize": 12,
+                                        "fill": "#89909d",
+                                        "fontWeight": "normal",
+                                        "fillOpacity": 1
+                                      },
+                                      "_uid": 1331,
+                                      "type": "text",
+                                      "name": "axis-label",
+                                      "children": []
+                                    },
+                                    {
+                                      "attribute": {
+                                        "x": -12,
+                                        "y": 0,
+                                        "text": 80,
+                                        "_originText": 80,
+                                        "lineHeight": 12,
+                                        "type": "text",
+                                        "textAlign": "right",
+                                        "textBaseline": "middle",
+                                        "fontSize": 12,
+                                        "fill": "#89909d",
+                                        "fontWeight": "normal",
+                                        "fillOpacity": 1
+                                      },
+                                      "_uid": 1332,
+                                      "type": "text",
+                                      "name": "axis-label",
+                                      "children": []
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "attribute": {
+                "pickable": false,
+                "zIndex": 50
+              },
+              "_uid": 1224,
+              "type": "group",
+              "name": "axis-left-grid_149",
+              "children": [
+                {
+                  "attribute": {
+                    "zIndex": 50,
+                    "pickable": false,
+                    "x": 47,
+                    "y": 121,
+                    "style": {
+                      "lineWidth": 1,
+                      "stroke": "#f1f2f5",
+                      "strokeOpacity": 1,
+                      "lineDash": []
+                    },
+                    "subGrid": {
+                      "visible": false
+                    },
+                    "type": "line",
+                    "start": {
+                      "x": 0,
+                      "y": 0
+                    },
+                    "end": {
+                      "x": 0,
+                      "y": 135
+                    },
+                    "items": [
+                      {
+                        "id": 0,
+                        "label": 0,
+                        "value": 1,
+                        "rawValue": 0
+                      },
+                      {
+                        "id": 20,
+                        "label": 20,
+                        "value": 0.75,
+                        "rawValue": 20
+                      },
+                      {
+                        "id": 40,
+                        "label": 40,
+                        "value": 0.5,
+                        "rawValue": 40
+                      },
+                      {
+                        "id": 60,
+                        "label": 60,
+                        "value": 0.25,
+                        "rawValue": 60
+                      },
+                      {
+                        "id": 80,
+                        "label": 80,
+                        "value": 0,
+                        "rawValue": 80
+                      }
+                    ],
+                    "verticalFactor": 1,
+                    "length": 233
+                  },
+                  "_uid": 1232,
+                  "type": "group",
+                  "name": "axis-grid",
+                  "children": [
+                    {
+                      "attribute": {
+                        "x": 0,
+                        "y": 0,
+                        "pickable": false
+                      },
+                      "_uid": 1333,
+                      "type": "group",
+                      "children": [
+                        {
+                          "attribute": {
+                            "path": "M0,135L233,135",
+                            "z": 0,
+                            "lineWidth": 1,
+                            "stroke": "#f1f2f5",
+                            "strokeOpacity": 1,
+                            "lineDash": []
+                          },
+                          "_uid": 1334,
+                          "type": "path",
+                          "name": "axis-grid-line",
+                          "children": []
+                        },
+                        {
+                          "attribute": {
+                            "path": "M0,101.25L233,101.25",
+                            "z": 0,
+                            "lineWidth": 1,
+                            "stroke": "#f1f2f5",
+                            "strokeOpacity": 1,
+                            "lineDash": []
+                          },
+                          "_uid": 1335,
+                          "type": "path",
+                          "name": "axis-grid-line",
+                          "children": []
+                        },
+                        {
+                          "attribute": {
+                            "path": "M0,67.5L233,67.5",
+                            "z": 0,
+                            "lineWidth": 1,
+                            "stroke": "#f1f2f5",
+                            "strokeOpacity": 1,
+                            "lineDash": []
+                          },
+                          "_uid": 1336,
+                          "type": "path",
+                          "name": "axis-grid-line",
+                          "children": []
+                        },
+                        {
+                          "attribute": {
+                            "path": "M0,33.75L233,33.75",
+                            "z": 0,
+                            "lineWidth": 1,
+                            "stroke": "#f1f2f5",
+                            "strokeOpacity": 1,
+                            "lineDash": []
+                          },
+                          "_uid": 1337,
+                          "type": "path",
+                          "name": "axis-grid-line",
+                          "children": []
+                        },
+                        {
+                          "attribute": {
+                            "path": "M0,0L233,0",
+                            "z": 0,
+                            "lineWidth": 1,
+                            "stroke": "#f1f2f5",
+                            "strokeOpacity": 1,
+                            "lineDash": []
+                          },
+                          "_uid": 1338,
+                          "type": "path",
+                          "name": "axis-grid-line",
+                          "children": []
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "attribute": {
+                "textStyle": {
+                  "ellipsis": "...",
+                  "fill": "#000",
+                  "fontSize": 26,
+                  "fontWeight": "bold",
+                  "textAlign": "left",
+                  "textBaseline": "top",
+                  "width": 260,
+                  "maxLineWidth": 260,
+                  "lineHeight": "150%"
+                },
+                "subtextStyle": {
+                  "ellipsis": "...",
+                  "fill": "#89909d",
+                  "fontSize": 14,
+                  "fontWeight": "normal",
+                  "textAlign": "left",
+                  "textBaseline": "top",
+                  "maxLineWidth": 260,
+                  "lineHeight": "150%"
+                },
+                "visible": true,
+                "text": "示例图表111333",
+                "orient": "top",
+                "align": "center",
+                "verticalAlign": "top",
+                "textType": "text",
+                "subtextType": "text",
+                "subtext": "",
+                "x": 20,
+                "y": 20,
+                "maxWidth": 260
+              },
+              "_uid": 1234,
+              "type": "group",
+              "name": "title",
+              "children": [
+                {
+                  "attribute": {
+                    "x": 0,
+                    "y": 0,
+                    "zIndex": 1,
+                    "width": 182.77993774414062,
+                    "height": 39,
+                    "boundsPadding": [0, 0, 0, 0]
+                  },
+                  "_uid": 1235,
+                  "type": "group",
+                  "name": "title-container",
+                  "children": [
+                    {
+                      "attribute": {
+                        "text": ["示例图表111333"],
+                        "whiteSpace": "normal",
+                        "ellipsis": "...",
+                        "fill": "#000",
+                        "fontSize": 26,
+                        "fontWeight": "bold",
+                        "textAlign": "center",
+                        "textBaseline": "top",
+                        "width": 260,
+                        "maxLineWidth": 260,
+                        "lineHeight": "150%",
+                        "x": 130,
+                        "y": 0
+                      },
+                      "_uid": 1236,
+                      "type": "text",
+                      "name": "mainTitle",
+                      "children": []
+                    },
+                    {
+                      "attribute": {
+                        "text": [""],
+                        "whiteSpace": "normal",
+                        "ellipsis": "...",
+                        "fill": "#89909d",
+                        "fontSize": 14,
+                        "fontWeight": "normal",
+                        "textAlign": "center",
+                        "textBaseline": "top",
+                        "maxLineWidth": 260,
+                        "lineHeight": "150%",
+                        "heightLimit": null,
+                        "x": 130,
+                        "y": 39
+                      },
+                      "_uid": 1237,
+                      "type": "text",
+                      "name": "subTitle",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "attribute": {
+                "layout": "horizontal",
+                "title": {
+                  "align": "start",
+                  "space": 12,
+                  "textStyle": {
+                    "fontSize": 12,
+                    "fontWeight": "bold",
+                    "fill": "#2C3542"
+                  },
+                  "visible": false
+                },
+                "item": {
+                  "spaceCol": 10,
+                  "spaceRow": 6,
+                  "shape": {
+                    "space": 6,
+                    "style": {
+                      "size": 10,
+                      "cursor": "pointer",
+                      "lineWidth": 0,
+                      "fillOpacity": 1,
+                      "opacity": 1
+                    },
+                    "state": {
+                      "selectedHover": {
+                        "opacity": 0.85
+                      },
+                      "unSelected": {
+                        "opacity": 1,
+                        "fillOpacity": 0.2
+                      }
+                    }
+                  },
+                  "label": {
+                    "space": 6,
+                    "style": {
+                      "fontSize": 12,
+                      "fill": "#606773",
+                      "cursor": "pointer",
+                      "lineHeight": "130%",
+                      "opacity": 1
+                    },
+                    "state": {
+                      "selectedHover": {
+                        "opacity": 0.85
+                      },
+                      "unSelected": {
+                        "fill": "#bcc1cb",
+                        "opacity": 1
+                      }
+                    }
+                  },
+                  "value": {
+                    "alignRight": false,
+                    "style": {
+                      "fontSize": 12,
+                      "fill": "#ccc",
+                      "cursor": "pointer"
+                    },
+                    "state": {
+                      "selectedHover": {
+                        "opacity": 0.85
+                      },
+                      "unSelected": {
+                        "fill": "#D8D8D8"
+                      }
+                    }
+                  },
+                  "background": {
+                    "style": {
+                      "cursor": "pointer"
+                    },
+                    "state": {
+                      "selectedHover": {
+                        "fill": "#f1f2f5"
+                      },
+                      "unSelectedHover": {
+                        "fill": "#f1f2f5"
+                      }
+                    }
+                  },
+                  "focus": false,
+                  "focusIconStyle": {
+                    "size": 10,
+                    "symbolType": "M8 1C11.866 1 15 4.13401 15 8C15 11.866 11.866 15 8 15C4.13401 15 1 11.866 1 8C1 4.13401 4.13401 1 8 1ZM8.75044 2.55077L8.75 3.75H7.25L7.25006 2.5507C4.81247 2.88304 2.88304 4.81247 2.5507 7.25006L3.75 7.25V8.75L2.55077 8.75044C2.8833 11.1878 4.81264 13.117 7.25006 13.4493L7.25 12.25H8.75L8.75044 13.4492C11.1876 13.1167 13.1167 11.1876 13.4492 8.75044L12.25 8.75V7.25L13.4493 7.25006C13.117 4.81264 11.1878 2.8833 8.75044 2.55077ZM8 5.5C9.38071 5.5 10.5 6.61929 10.5 8C10.5 9.38071 9.38071 10.5 8 10.5C6.61929 10.5 5.5 9.38071 5.5 8C5.5 6.61929 6.61929 5.5 8 5.5ZM8 7C7.44772 7 7 7.44772 7 8C7 8.55228 7.44772 9 8 9C8.55228 9 9 8.55228 9 8C9 7.44772 8.55228 7 8 7Z",
+                    "fill": "#333",
+                    "cursor": "pointer"
+                  },
+                  "visible": true,
+                  "padding": 2
+                },
+                "autoPage": true,
+                "pager": {
+                  "space": 12,
+                  "handler": {
+                    "style": {
+                      "size": 10,
+                      "fill": "rgb(47, 69, 84)"
+                    },
+                    "space": 4,
+                    "state": {
+                      "disable": {
+                        "fill": "rgb(170, 170, 170)"
+                      }
+                    }
+                  },
+                  "textStyle": {
+                    "fill": "rgb(51, 51, 51)"
+                  }
+                },
+                "hover": true,
+                "select": true,
+                "selectMode": "multiple",
+                "allowAllCanceled": false,
+                "items": [
+                  {
+                    "label": "S1",
+                    "shape": {
+                      "symbolType": "square",
+                      "fillOpacity": 1,
+                      "strokeOpacity": 1,
+                      "opacity": 1,
+                      "texturePadding": null,
+                      "textureSize": null,
+                      "fill": "#1664FF",
+                      "stroke": "#1664FF",
+                      "lineWidth": 0
+                    },
+                    "id": "S1",
+                    "index": 0
+                  },
+                  {
+                    "label": "S2",
+                    "shape": {
+                      "symbolType": "square",
+                      "fillOpacity": 1,
+                      "strokeOpacity": 1,
+                      "opacity": 1,
+                      "texturePadding": null,
+                      "textureSize": null,
+                      "fill": "#1AC6FF",
+                      "stroke": "#1AC6FF",
+                      "lineWidth": 0
+                    },
+                    "id": "S2",
+                    "index": 1
+                  }
+                ],
+                "zIndex": 500,
+                "maxWidth": 212,
+                "maxHeight": 185,
+                "disableTriggerEvent": false,
+                "defaultSelected": ["S1", "S2"],
+                "width": 77.17999267578125,
+                "height": 19.6,
+                "dx": 67.41000366210938,
+                "dy": 0,
+                "x": 44,
+                "y": 79
+              },
+              "_uid": 1238,
+              "type": "group",
+              "name": "legend",
+              "children": [
+                {
+                  "attribute": {
+                    "x": 0,
+                    "y": 0,
+                    "pickable": true,
+                    "childrenPickable": true
+                  },
+                  "_uid": 1239,
+                  "type": "group",
+                  "name": "innerView",
+                  "children": [
+                    {
+                      "attribute": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "_uid": 1240,
+                      "type": "group",
+                      "children": [
+                        {
+                          "attribute": {
+                            "x": 0,
+                            "y": 0,
+                            "cursor": "pointer",
+                            "width": 32.39599609375,
+                            "height": 19.6
+                          },
+                          "_uid": 1241,
+                          "type": "group",
+                          "name": "legendItem",
+                          "children": [
+                            {
+                              "attribute": {
+                                "x": 7,
+                                "y": 9.8,
+                                "pickable": false
+                              },
+                              "_uid": 1242,
+                              "type": "group",
+                              "children": [
+                                {
+                                  "attribute": {
+                                    "x": 0,
+                                    "y": 0,
+                                    "symbolType": "square",
+                                    "strokeBoundsBuffer": 0,
+                                    "fillOpacity": 1,
+                                    "strokeOpacity": 1,
+                                    "opacity": 1,
+                                    "texturePadding": null,
+                                    "textureSize": null,
+                                    "fill": "#1664FF",
+                                    "stroke": "#1664FF",
+                                    "lineWidth": 0,
+                                    "size": 10,
+                                    "cursor": "pointer"
+                                  },
+                                  "_uid": 1243,
+                                  "type": "symbol",
+                                  "name": "legendItemShape",
+                                  "children": []
+                                },
+                                {
+                                  "attribute": {
+                                    "x": 11,
+                                    "y": 0,
+                                    "textAlign": "start",
+                                    "textBaseline": "middle",
+                                    "lineHeight": "130%",
+                                    "fontSize": 12,
+                                    "fill": "#606773",
+                                    "cursor": "pointer",
+                                    "opacity": 1,
+                                    "text": "S1"
+                                  },
+                                  "_uid": 1244,
+                                  "type": "text",
+                                  "name": "legendItemLabel",
+                                  "children": []
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "attribute": {
+                            "x": 42.39599609375,
+                            "y": 0,
+                            "cursor": "pointer",
+                            "width": 34.78399658203125,
+                            "height": 19.6
+                          },
+                          "_uid": 1245,
+                          "type": "group",
+                          "name": "legendItem",
+                          "children": [
+                            {
+                              "attribute": {
+                                "x": 7,
+                                "y": 9.8,
+                                "pickable": false
+                              },
+                              "_uid": 1246,
+                              "type": "group",
+                              "children": [
+                                {
+                                  "attribute": {
+                                    "x": 0,
+                                    "y": 0,
+                                    "symbolType": "square",
+                                    "strokeBoundsBuffer": 0,
+                                    "fillOpacity": 1,
+                                    "strokeOpacity": 1,
+                                    "opacity": 1,
+                                    "texturePadding": null,
+                                    "textureSize": null,
+                                    "fill": "#1AC6FF",
+                                    "stroke": "#1AC6FF",
+                                    "lineWidth": 0,
+                                    "size": 10,
+                                    "cursor": "pointer"
+                                  },
+                                  "_uid": 1247,
+                                  "type": "symbol",
+                                  "name": "legendItemShape",
+                                  "children": []
+                                },
+                                {
+                                  "attribute": {
+                                    "x": 11,
+                                    "y": 0,
+                                    "textAlign": "start",
+                                    "textBaseline": "middle",
+                                    "lineHeight": "130%",
+                                    "fontSize": 12,
+                                    "fill": "#606773",
+                                    "cursor": "pointer",
+                                    "opacity": 1,
+                                    "text": "S2"
+                                  },
+                                  "_uid": 1248,
+                                  "type": "text",
+                                  "name": "legendItemLabel",
+                                  "children": []
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

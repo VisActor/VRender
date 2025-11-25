@@ -95,7 +95,7 @@ export const DefaultTextStyle: Required<ITextAttribute> = {
   textBaseline: 'alphabetic',
   fontSize: 16,
   // @ts-ignore
-  fontFamily: `PingFang SC,Microsoft Yahei,system-ui,-apple-system,segoe ui,
+  fontFamily: `PingFang SC,Microsoft Yahei,system-ui,'-apple-system',segoe ui,
     Roboto,Helvetica,Arial,sans-serif, apple color emoji,segoe ui emoji,segoe ui symbol`,
   fontWeight: '',
   ellipsis: '…',

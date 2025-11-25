@@ -2,6 +2,24 @@
   "name": "@visactor/vrender",
   "entries": [
     {
+      "version": "1.0.27",
+      "tag": "@visactor/vrender_v1.0.27",
+      "date": "Fri, 21 Nov 2025 03:42:54 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix bug of polar angle tick data loop\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.0.26",
+      "tag": "@visactor/vrender_v1.0.26",
+      "date": "Tue, 18 Nov 2025 10:53:20 GMT",
+      "comments": {}
+    },
+    {
       "version": "1.0.25",
       "tag": "@visactor/vrender_v1.0.25",
       "date": "Mon, 17 Nov 2025 06:46:18 GMT",

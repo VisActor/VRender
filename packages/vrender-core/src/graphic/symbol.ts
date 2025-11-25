@@ -122,6 +122,9 @@ export class Symbol extends Graphic<ISymbolGraphicAttribute> implements ISymbol 
     const { size = symbolTheme.size } = attribute;
 
     const symbolClass = this.getParsedPath();
+    if (!symbolClass) {
+      return aabbBounds;
+    }
     symbolClass.bounds(size, aabbBounds);
 
     return aabbBounds;
@@ -136,6 +139,9 @@ export class Symbol extends Graphic<ISymbolGraphicAttribute> implements ISymbol 
 
   toCustomPath() {
     const symbolInstance = this.getParsedPath();
+    if (!symbolInstance) {
+      return null;
+    }
     const size = this.attribute.size;
     const x = 0;
     const y = 0;

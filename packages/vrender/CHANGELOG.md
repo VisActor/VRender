@@ -1,6 +1,20 @@
 # Change Log - @visactor/vrender
 
-This log was last generated on Mon, 17 Nov 2025 06:46:18 GMT and should not be manually modified.
+This log was last generated on Fri, 21 Nov 2025 03:42:54 GMT and should not be manually modified.
+
+## 1.0.27
+Fri, 21 Nov 2025 03:42:54 GMT
+
+### Updates
+
+- fix: fix bug of polar angle tick data loop
+
+
+
+## 1.0.26
+Tue, 18 Nov 2025 10:53:20 GMT
+
+_Version update only_
 
 ## 1.0.25
 Mon, 17 Nov 2025 06:46:18 GMT

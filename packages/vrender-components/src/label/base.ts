@@ -862,7 +862,8 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
     const relatedGraphic = this.getRelatedGraphic(text.attribute);
     const { enter } = this._animationConfig;
 
-    [text, labelLine].filter(Boolean).forEach(item =>
+    [text, labelLine].filter(Boolean).forEach(item => {
+      item.setFinalAttributes?.(item.attribute);
       item.applyAnimationState(
         ['enter'],
         [
@@ -884,8 +885,8 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
             }
           }
         ]
-      )
-    );
+      );
+    });
   }
 
   protected _runUpdateAnimation(prevLabel: LabelContent, currentLabel: LabelContent) {

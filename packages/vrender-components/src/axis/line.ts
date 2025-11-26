@@ -15,19 +15,33 @@ import {
   mixin,
   last as peek
 } from '@visactor/vutils';
-import { diff, graphicCreator } from '@visactor/vrender-core';
+import { graphicCreator } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
-import type { TextAlignType, IGroup, INode, IText, TextBaselineType, IGraphic } from '@visactor/vrender-core';
+import type {
+  TextAlignType,
+  IGroup,
+  INode,
+  IText,
+  TextBaselineType,
+  ITextGraphicAttribute
+} from '@visactor/vrender-core';
 import type { SegmentAttributes } from '../segment';
 // eslint-disable-next-line no-duplicate-imports
 import { Segment } from '../segment';
 import { angleTo } from '../util/matrix';
-import type { TagAttributes } from '../tag';
-import type { LineAttributes, LineAxisAttributes, TitleAttributes, AxisItem, TransformedAxisBreak } from './type';
+import { Tag, type TagAttributes } from '../tag';
+import type {
+  LineAttributes,
+  LineAxisAttributes,
+  TitleAttributes,
+  AxisItem,
+  TransformedAxisBreak,
+  LabelHoverOnAxisAttributes
+} from './type';
 import { AxisBase } from './base';
 import { DEFAULT_AXIS_THEME } from './config';
 import { AXIS_ELEMENT_NAME, DEFAULT_STATES, TopZIndex } from './constant';
-import { measureTextSize, traverseGroup } from '../util';
+import { measureTextSize } from '../util';
 import { autoHide as autoHideFunc } from './overlap/auto-hide';
 import { autoRotate as autoRotateFunc, getXAxisLabelAlign, getYAxisLabelAlign } from './overlap/auto-rotate';
 import { autoLimit as autoLimitFunc } from './overlap/auto-limit';
@@ -46,12 +60,32 @@ export interface LineAxis
 
 export class LineAxis extends AxisBase<LineAxisAttributes> {
   static defaultAttributes = DEFAULT_AXIS_THEME;
-
+  private _breaks: TransformedAxisBreak[];
+  private labelHoverOnAxisGroup: Tag | null = null;
   constructor(attributes: LineAxisAttributes, options?: ComponentOptions) {
+    if (attributes.labelHoverOnAxis) {
+      attributes.labelHoverOnAxis.textStyle = Object.assign(
+        {},
+        attributes.label.style,
+        attributes.labelHoverOnAxis.textStyle
+      );
+      if (attributes.labelHoverOnAxis.space === undefined) {
+        const { padding = 2 } = attributes.labelHoverOnAxis;
+        const parsedPadding = normalizePadding(padding as any);
+        const toDiffPadding =
+          attributes.orient === 'bottom'
+            ? parsedPadding[0]
+            : attributes.orient === 'left'
+            ? parsedPadding[1]
+            : attributes.orient === 'top'
+            ? parsedPadding[2]
+            : parsedPadding[3];
+        const space = (attributes.label.space ?? LineAxis.defaultAttributes.label.space) - toDiffPadding;
+        attributes.labelHoverOnAxis.space = space;
+      }
+    }
     super(options?.skipDefault ? attributes : merge({}, LineAxis.defaultAttributes, attributes), options);
   }
-
-  private _breaks: TransformedAxisBreak[];
 
   protected _renderInner(container: IGroup) {
     this._breaks = null; // 置空，防止轴更新时缓存了旧值
@@ -126,6 +160,21 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
       bgRect.states = merge({}, DEFAULT_STATES, panel.state ?? {});
       axisContainer.insertBefore(bgRect, axisContainer.firstChild);
     }
+    const { labelHoverOnAxis } = this.attribute;
+    if (labelHoverOnAxis && labelHoverOnAxis.visible) {
+      this.renderLabelHoverOnAxis();
+    }
+  }
+  protected renderLabelHoverOnAxis() {
+    const hoverOnLabelAttributes = this.getLabelHoverOnAxisAttribute();
+    const hoverOnLabel = new Tag({
+      ...hoverOnLabelAttributes
+    });
+    hoverOnLabel.name = AXIS_ELEMENT_NAME.title;
+    hoverOnLabel.id = this._getNodeId('hover-on-label');
+    this.labelHoverOnAxisGroup = hoverOnLabel;
+    // hoverOnLabel.setAttributes({ globalZIndex: 1 });
+    this.axisContainer.add(hoverOnLabel as unknown as INode);
   }
 
   protected renderLine(container: IGroup): void {
@@ -241,8 +290,8 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
                   ? Math.min(bounds.x2 - baseX, bounds.width())
                   : 0
                 : bounds.x1 < baseX
-                  ? Math.min(baseX - bounds.x1, bounds.width())
-                  : 0) +
+                ? Math.min(baseX - bounds.x1, bounds.width())
+                : 0) +
               (layerCount - 1) * space;
           } else {
             labelLength = 0;
@@ -355,6 +404,121 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
     if (background && background.visible) {
       attrs.panel = {
         visible: true,
+        ...background.style
+      };
+    }
+
+    return attrs;
+  }
+
+  protected getLabelHoverOnAxisAttribute() {
+    const { orient } = this.attribute;
+    const {
+      position = 0,
+      space = 4,
+      autoRotate = true,
+      textStyle = {},
+      background = {},
+      formatMethod,
+      text: textContent = '' as string,
+      maxWidth,
+      ...restAttrs
+    } = this.attribute.labelHoverOnAxis as LabelHoverOnAxisAttributes;
+    const point = this.getTickCoord(0);
+    /** 指定的位置position与轴的方位有关系 */
+    if (orient === 'bottom' || orient === 'top') {
+      point.x = position;
+    } else {
+      point.y = position;
+    }
+
+    // HACK;
+
+    // 计算悬浮标签的偏移量（距离轴线的距离）
+    let tickLength = 0;
+    if (this.attribute.tick?.visible && this.attribute.tick.inside === false) {
+      tickLength = this.attribute.tick.length || 4;
+    }
+    if (this.attribute.subTick?.visible && this.attribute.subTick.inside === false) {
+      tickLength = Math.max(tickLength, this.attribute.subTick.length || 2);
+    }
+    const labelLength = 0;
+    const offset = tickLength + labelLength + space;
+    const labelPoint = this.getVerticalCoord(point, offset, false);
+    const vector = this.getVerticalVector(offset, false, { x: 0, y: 0 });
+
+    let { angle } = restAttrs; // 用户设置的是角度
+    let textAlign = 'center';
+
+    let textBaseline;
+    if (isNil(angle) && autoRotate) {
+      const axisVector = this.getRelativeVector();
+      const v1: [number, number] = [1, 0]; // 水平方向的向量
+      const radian = angleTo(axisVector, v1, true);
+      angle = radian;
+      const { verticalFactor = 1 } = this.attribute;
+      const factor = -1 * verticalFactor;
+      if (factor === 1) {
+        textBaseline = 'bottom';
+      } else {
+        textBaseline = 'top';
+      }
+    } else {
+      const { textAlign: textAlign2, textBaseline: textBaseline2 } = this.getLabelAlign(
+        vector,
+        false,
+        (textStyle as ITextGraphicAttribute).angle
+      );
+      textAlign = textAlign2;
+      textBaseline = textBaseline2;
+      // textBaseline = this.getTextBaseline(vector as number[], false);
+    }
+
+    // 计算悬浮标签的缩略
+    const maxTagWidth = maxWidth; // maxWidth;
+    // if (isNil(maxTagWidth)) {
+    //   const { verticalLimitSize, verticalMinSize, orient } = this.attribute;
+    //   const limitSize = Math.min(verticalLimitSize || Infinity, verticalMinSize || Infinity);
+    //   if (isValidNumber(limitSize)) {
+    //     const isX = orient === 'bottom' || orient === 'top';
+    //     if (isX) {
+    //       if (angle !== Math.PI / 2) {
+    //         const cosValue = Math.abs(Math.cos(angle ?? 0));
+    //         maxTagWidth = cosValue < 1e-6 ? Infinity : this.attribute.end.x / cosValue;
+    //       } else {
+    //         maxTagWidth = limitSize - offset;
+    //       }
+    //     } else {
+    //       if (angle && angle !== 0) {
+    //         const sinValue = Math.abs(Math.sin(angle));
+    //         maxTagWidth = sinValue < 1e-6 ? Infinity : this.attribute.end.y / sinValue;
+    //       } else {
+    //         maxTagWidth = limitSize - offset;
+    //       }
+    //     }
+    //   }
+    // }
+    const text = formatMethod ? formatMethod(textContent as string) : (textContent as string);
+    const attrs: TagAttributes = {
+      ...labelPoint,
+      ...restAttrs,
+      maxWidth: maxTagWidth,
+      textStyle: {
+        // @ts-ignore
+        textAlign,
+        // @ts-ignore
+        textBaseline,
+
+        ...textStyle
+      },
+      text
+    };
+    attrs.angle = angle;
+
+    if (background && background.visible) {
+      attrs.panel = {
+        visible: true,
+        ...(restAttrs as any).panel,
         ...background.style
       };
     }
@@ -552,8 +716,8 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
         const verticalLimitLength = isVertical
           ? axisLength / labelShapes.length
           : !autoHide && !autoRotate
-            ? axisLength / labelShapes.length
-            : Infinity;
+          ? axisLength / labelShapes.length
+          : Infinity;
 
         autoLimitFunc(labelShapes, {
           limitLength,
@@ -646,8 +810,8 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
     let limitLength = limitSize;
     let titleHeight = 0;
     let titleSpacing = 0;
-    const axisLineWidth = line && line.visible ? (line.style.lineWidth ?? 1) : 0;
-    const tickLength = tick && tick.visible ? (tick.length ?? 4) : 0;
+    const axisLineWidth = line && line.visible ? line.style.lineWidth ?? 1 : 0;
+    const tickLength = tick && tick.visible ? tick.length ?? 4 : 0;
     if (title && title.visible && typeof title.text === 'string') {
       titleHeight = measureTextSize(title.text, title.textStyle, this.stage?.getTheme()?.text).height;
       const padding = normalizePadding(title.padding);
@@ -658,7 +822,70 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
     }
     return limitLength;
   }
-
+  /** 显示交互中的悬浮标签 */
+  showLabelHoverOnAxis(position: number, text: string, adjustPosition: boolean = true) {
+    if (this.attribute.labelHoverOnAxis) {
+      const preContainerBounds = this.axisContainer.AABBBounds;
+      const preWidth = preContainerBounds.width();
+      const preHeight = preContainerBounds.height();
+      const preX1 = preContainerBounds.x1;
+      const preY1 = preContainerBounds.y1;
+      const preX2 = preContainerBounds.x2;
+      const preY2 = preContainerBounds.y2;
+      if (this.labelHoverOnAxisGroup) {
+        const { formatMethod } = this.attribute.labelHoverOnAxis as LabelHoverOnAxisAttributes;
+        const textStr = formatMethod ? formatMethod(text) : text;
+        this.labelHoverOnAxisGroup.setAttribute('text', textStr);
+        this.labelHoverOnAxisGroup.setAttribute('visible', true);
+        this.labelHoverOnAxisGroup.setAttribute('visibleAll', true);
+        if (this.attribute.orient === 'left' || this.attribute.orient === 'right') {
+          this.labelHoverOnAxisGroup.setAttributes({
+            y: position
+          });
+        } else {
+          this.labelHoverOnAxisGroup.setAttributes({
+            x: position
+          });
+        }
+      } else {
+        this.attribute.labelHoverOnAxis.visible = true;
+        this.attribute.labelHoverOnAxis.position = position;
+        this.attribute.labelHoverOnAxis.text = text;
+        this.renderLabelHoverOnAxis();
+      }
+      if (adjustPosition) {
+        //防止死循环
+        const afterContainerBounds = this.axisContainer.AABBBounds;
+        const afterWidth = afterContainerBounds.width();
+        const afterHeight = afterContainerBounds.height();
+        const diffWidth = afterWidth - preWidth;
+        const diffHeight = afterHeight - preHeight;
+        if (diffWidth > 0 && (this.attribute.orient === 'top' || this.attribute.orient === 'bottom')) {
+          if (afterContainerBounds.x1 < preX1) {
+            this.showLabelHoverOnAxis(position + diffWidth, text, false);
+          } else if (afterContainerBounds.x2 > preX2) {
+            this.showLabelHoverOnAxis(position - diffWidth, text, false);
+          }
+        }
+        if (diffHeight > 0 && (this.attribute.orient === 'left' || this.attribute.orient === 'right')) {
+          if (afterContainerBounds.y1 < preY1) {
+            this.showLabelHoverOnAxis(position + diffHeight, text, false);
+          } else if (afterContainerBounds.y2 > preY2) {
+            this.showLabelHoverOnAxis(position - diffHeight, text, false);
+          }
+        }
+      }
+    }
+  }
+  /** 隐藏交互中的悬浮标签 */
+  hideLabelHoverOnAxis() {
+    if (this.attribute.labelHoverOnAxis && this.labelHoverOnAxisGroup) {
+      this.labelHoverOnAxisGroup.setAttributes({
+        visible: false,
+        visibleAll: false
+      });
+    }
+  }
   release(): void {
     super.release();
     this._breaks = null;

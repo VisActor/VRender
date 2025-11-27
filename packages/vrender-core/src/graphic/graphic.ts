@@ -259,29 +259,29 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   declare y1WithoutTransform?: number;
 
   // aabbBounds，所有图形都需要有，所以初始化即赋值
-  declare protected _AABBBounds: IAABBBounds;
+  protected declare _AABBBounds: IAABBBounds;
   get AABBBounds(): IAABBBounds {
     return this.tryUpdateAABBBounds();
   }
   // 具有旋转的包围盒，部分图元需要，动态初始化
-  declare protected _OBBBounds?: IOBBBounds;
+  protected declare _OBBBounds?: IOBBBounds;
   get OBBBounds(): IOBBBounds {
     return this.tryUpdateOBBBounds();
   }
-  declare protected _globalAABBBounds: IAABBBounds;
+  protected declare _globalAABBBounds: IAABBBounds;
   // 全局包围盒，部分图元需要，动态初始化，建议使用AABBBounds
   get globalAABBBounds(): IAABBBounds {
     return this.tryUpdateGlobalAABBBounds();
   }
-  declare protected _transMatrix: Matrix;
+  protected declare _transMatrix: Matrix;
   get transMatrix(): Matrix {
     return this.tryUpdateLocalTransMatrix(true);
   }
-  declare protected _globalTransMatrix: Matrix;
+  protected declare _globalTransMatrix: Matrix;
   get globalTransMatrix(): Matrix {
     return this.tryUpdateGlobalTransMatrix(true);
   }
-  declare protected _updateTag: number;
+  protected declare _updateTag: number;
 
   // 上次更新的stamp
   declare stamp?: number;
@@ -1046,7 +1046,10 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       // (animate as any).stateNames = stateNames;
       // animate.to(animateAttrs, stateAnimateConfig.duration, stateAnimateConfig.easing);
       noAnimateAttrs && this.setAttributesAndPreventAnimate(noAnimateAttrs, false, { type: AttributeUpdateType.STATE });
-      // Object.assign((this as any).finalAttribute, attrs);
+      // 应用状态的时候要更新 finalAttribute 也就是目标属性
+      if ((this as any).finalAttribute) {
+        Object.assign((this as any).finalAttribute, attrs);
+      }
     } else {
       this.stopStateAnimates();
       this.setAttributesAndPreventAnimate(attrs, false, { type: AttributeUpdateType.STATE });
@@ -1095,7 +1098,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   private getNormalAttribute(key: string) {
     const value = (this.attribute as any)[key];
 
-    if (this.animates) {
+    if (this.animates && this.animates.size) {
       // this.animates.forEach(animate => {
       //   if ((animate as any).stateNames) {
       //     const endProps = animate.getEndProps();

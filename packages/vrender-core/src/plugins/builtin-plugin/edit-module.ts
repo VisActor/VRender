@@ -420,8 +420,11 @@ export class EditModule {
     this.textAreaDom.removeEventListener('input', this.handleInput);
     this.textAreaDom.removeEventListener('compositionstart', this.handleCompositionStart);
     this.textAreaDom.removeEventListener('compositionend', this.handleCompositionEnd);
-    this.textAreaDom.addEventListener('focusin', this.handleFocusOut);
-    this.textAreaDom.addEventListener('focusout', this.handleFocusOut);
+    this.textAreaDom.removeEventListener('focusin', this.handleFocusOut);
+    this.textAreaDom.removeEventListener('focusout', this.handleFocusOut);
     application.global.removeEventListener('keydown', this.handleKeyDown);
+
+    this.textAreaDom.parentElement?.removeChild(this.textAreaDom);
+    this.textAreaDom = null;
   }
 }

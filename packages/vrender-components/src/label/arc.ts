@@ -169,7 +169,7 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
 
   protected _layout(texts: (IText | IRichText)[]) {
     if (!texts || !texts.length) {
-      return;
+      return [];
     }
 
     const labels = super._layout(texts);

@@ -2,6 +2,18 @@
   "name": "@visactor/vrender-core",
   "entries": [
     {
+      "version": "1.0.30",
+      "tag": "@visactor/vrender-core_v1.0.30",
+      "date": "Thu, 27 Nov 2025 06:05:45 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix issue of animation state\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.0.29",
       "tag": "@visactor/vrender-core_v1.0.29",
       "date": "Tue, 25 Nov 2025 11:41:43 GMT",

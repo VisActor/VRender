@@ -483,7 +483,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
     for (let i = 0; i < texts.length; i++) {
       const text = texts[i];
       if (!text) {
-        return;
+        return [];
       }
       const textData = text.attribute as LabelItem;
       const baseMark = this.getRelatedGraphic(textData);

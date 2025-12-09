@@ -215,7 +215,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
 
     const filteredLabels: (IText | IRichText)[] = [];
     const overlapLabels: (IText | IRichText)[] = labels;
-    if (!isBoolean(overlap) && isFunction(overlap.filterBeforeOverlap)) {
+    if (!isBoolean(overlap) && isFunction(overlap?.filterBeforeOverlap)) {
       const getRelatedGraphic = this.getRelatedGraphic.bind(this);
       labels.forEach(label => {
         if (overlap.filterBeforeOverlap(label, getRelatedGraphic, this)) {

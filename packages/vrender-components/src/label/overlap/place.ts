@@ -78,6 +78,9 @@ export function canPlaceInside(textBound: IBoundsLike, shapeBound: IAABBBounds) 
   return shapeBound.encloses(textBound);
 }
 
+/**
+ * 通过预先获取一次文本的 AABB 边界，按候选坐标计算平移后的边界进行碰撞判定，避免反复更新文本属性。
+ */
 export function placeToCandidates(
   $: BitmapTool,
   bitmap: Bitmap,
@@ -88,19 +91,40 @@ export function placeToCandidates(
   changePosition = false
 ): PointLocationCfg | false {
   const validCandidates = candidates.filter(candidate => isValid(candidate));
-  for (let i = 0; i < validCandidates.length; i++) {
-    let measureText;
-    if (changePosition) {
-      measureText = text;
-    } else {
-      measureText = text.clone();
-    }
-    measureText.setAttributes(validCandidates[i]);
 
-    if (canPlace($, bitmap, measureText.AABBBounds, clampForce, pad)) {
-      bitmap.setRange(boundToRange($, measureText.AABBBounds, true));
-      return validCandidates[i];
+  const curX = (text.attribute.x as number) ?? 0;
+  const curY = (text.attribute.y as number) ?? 0;
+  const base = text.AABBBounds;
+  const candidateBounds = {
+    x1: base.x1,
+    x2: base.x2,
+    y1: base.y1,
+    y2: base.y2
+  };
+
+  let lastCandidate: PointLocationCfg | undefined;
+  for (let i = 0; i < validCandidates.length; i++) {
+    const c = validCandidates[i];
+    lastCandidate = c;
+    const nx = (c.x as number) ?? curX;
+    const ny = (c.y as number) ?? curY;
+    const dx = nx - curX;
+    const dy = ny - curY;
+
+    candidateBounds.x1 = base.x1 + dx;
+    candidateBounds.x2 = base.x2 + dx;
+    candidateBounds.y1 = base.y1 + dy;
+    candidateBounds.y2 = base.y2 + dy;
+
+    if (canPlace($, bitmap, candidateBounds, clampForce, pad)) {
+      bitmap.setRange(boundToRange($, candidateBounds, true));
+      // 成功时外部会设置位置，不需要在这里设置
+      return c;
     }
+  }
+
+  if (changePosition && lastCandidate) {
+    text.setAttributes(lastCandidate);
   }
   return false;
 }

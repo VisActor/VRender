@@ -28,12 +28,28 @@ export function autoRotate(items: IText[], rotateConfig: RotateConfig) {
 
   let i = 0;
   let n = 0;
-  if (labelRotateAngle && labelRotateAngle.length > 0) {
-    n = labelRotateAngle.length;
+
+  let testAngle = labelRotateAngle;
+  if (items.length > 2) {
+    // 大量数据下性能优化
+    // 标签过多时无论如何旋转都无法展示全部标签，通过逻辑减少尝试次数
+    if (orient === 'bottom' || orient === 'top') {
+      if (Math.abs(items[1].attribute.x - items[0].attribute.x) < items[0].attribute.fontSize / 2) {
+        testAngle = [labelRotateAngle[labelRotateAngle.length - 1]];
+      }
+    } else {
+      if (Math.abs(items[1].attribute.y - items[0].attribute.y) < items[0].attribute.fontSize / 2) {
+        testAngle = [labelRotateAngle[labelRotateAngle.length - 1]];
+      }
+    }
+  }
+
+  if (testAngle && testAngle.length > 0) {
+    n = testAngle.length;
   }
 
   while (i < n) {
-    const angle = labelRotateAngle[i++];
+    const angle = testAngle[i++];
     items.forEach(item => {
       // item.angle = angle;
       item.attribute.angle = degreeToRadian(angle);

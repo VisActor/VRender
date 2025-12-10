@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - 'release/[0-9]+.[0-9]+.[0-9]+'
+      - 'hotfix/[0-9]+.[0-9]+.[0-9]+'
+      - 'pre-release/[0-9]+.[0-9]+.[0-9]+-alpha.[0-9]+'
+      - 'pre-release/[0-9]+.[0-9]+.[0-9]+-beta.[0-9]+'
+      - 'pre-release/[0-9]+.[0-9]+.[0-9]+-rc.[0-9]+'
 
 jobs:
   build:
@@ -11,10 +15,11 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+      id-token: write
 
     strategy:
       matrix:
-        node-version: [18.x]
+        node-version: [20.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
@@ -24,16 +29,47 @@ jobs:
           git config user.email ${{ github.actor }}@users.noreply.github.com
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
           cache-dependency-path: './common/config/rush/pnpm-lock.yaml'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Ensure npm >= 11.5.1 (conditional)
+        run: |
+          set -e
+          NPMV=$(npm -v)
+          echo "Current npm version: $NPMV"
+          REQ_MAJOR=11
+          REQ_MINOR=5
+          REQ_PATCH=1
+          MAJOR=${NPMV%%.*}
+          REST=${NPMV#*.}
+          MINOR=${REST%%.*}
+          PATCH=${REST#*.}
+          needs_upgrade=false
+          if [ "$MAJOR" -lt "$REQ_MAJOR" ]; then
+            needs_upgrade=true
+          elif [ "$MAJOR" -eq "$REQ_MAJOR" ]; then
+            if [ "$MINOR" -lt "$REQ_MINOR" ]; then
+              needs_upgrade=true
+            elif [ "$MINOR" -eq "$REQ_MINOR" ] && [ "$PATCH" -lt "$REQ_PATCH" ]; then
+              needs_upgrade=true
+            fi
+          fi
+          if [ "$needs_upgrade" = true ]; then
+            echo "npm < 11.5.1 detected, installing pinned npm@11.5.1 for Trusted Publishing"
+            npm install -g npm@11.5.1
+            echo "npm upgraded to: $(npm -v)"
+          else
+            echo "npm version satisfies requirement (>= 11.5.1)"
+          fi
 
       - name: Print All Github Environment Variables
-        run:
-          env
-          # Install rush
+        run: env
+
+      # Install rush
       - name: Install native deps for node-canvas (macOS)
         if: runner.os == 'macOS'
         run: |
@@ -47,36 +83,73 @@ jobs:
       - name: Install rush
         run: node common/scripts/install-run-rush.js install --bypass-policy
 
-      - name: Parse semver version from branch name
-        id: semver_parser
+      - name: Parse semver for release
+        if: startsWith(github.ref_name, 'release/')
+        id: semver_release
         uses: xile611/read-package-version-action@main
         with:
           path: packages/vrender
           semver_string: ${{ github.ref_name }}
-          semver_pattern: '^release/(.*)$' # ^v?(.*)$ by default
+          semver_pattern: '^release/(.*)$'
 
-      - name: update nextBump of version policies
+      - name: Parse semver for hotfix
+        if: startsWith(github.ref_name, 'hotfix/')
+        id: semver_hotfix
+        uses: xile611/read-package-version-action@main
+        with:
+          path: packages/vrender
+          semver_string: ${{ github.ref_name }}
+          semver_pattern: '^hotfix/(.*)$'
+
+      - name: Parse semver for pre-release
+        if: startsWith(github.ref_name, 'pre-release/')
+        id: semver_prerelease
+        uses: xile611/read-package-version-action@main
+        with:
+          path: packages/vrender
+          semver_string: ${{ github.ref_name }}
+          semver_pattern: '^pre-release/(.*)$'
+
+      - name: update nextBump of version policies (release)
+        if: startsWith(github.ref_name, 'release/')
         uses: xile611/set-next-bump-of-rush@main
         with:
-          release_version: ${{ steps.semver_parser.outputs.full }}
+          release_version: ${{ steps.semver_release.outputs.full }}
+          write_next_bump: true
+
+      - name: update nextBump of version policies (hotfix)
+        if: startsWith(github.ref_name, 'hotfix/')
+        uses: xile611/set-next-bump-of-rush@main
+        with:
+          release_version: ${{ steps.semver_hotfix.outputs.full }}
           write_next_bump: true
 
       - name: Update version
+        if: startsWith(github.ref_name, 'release/') || startsWith(github.ref_name, 'hotfix/')
         run: node common/scripts/install-run-rush.js version --bump
 
       - name: Build vrender-core
+        if: startsWith(github.ref_name, 'release/') || startsWith(github.ref_name, 'hotfix/')
         run: node common/scripts/install-run-rush.js build --only @visactor/vrender-core
 
       - name: Build vrender-kits
+        if: startsWith(github.ref_name, 'release/') || startsWith(github.ref_name, 'hotfix/')
         run: node common/scripts/install-run-rush.js build --only @visactor/vrender-kits
 
-      - name: Build vrender
-        run: node common/scripts/install-run-rush.js build --only @visactor/vrender
+      - name: Build vrender-animate
+        if: startsWith(github.ref_name, 'release/') || startsWith(github.ref_name, 'hotfix/')
+        run: node common/scripts/install-run-rush.js build --only @visactor/vrender-animate
 
       - name: Build vrender-components
+        if: startsWith(github.ref_name, 'release/') || startsWith(github.ref_name, 'hotfix/')
         run: node common/scripts/install-run-rush.js build --only @visactor/vrender-components
 
+      - name: Build vrender
+        if: startsWith(github.ref_name, 'release/') || startsWith(github.ref_name, 'hotfix/')
+        run: node common/scripts/install-run-rush.js build --only @visactor/vrender
+
       - name: Build bugserver
+        if: startsWith(github.ref_name, 'release/') || startsWith(github.ref_name, 'hotfix/')
         run: node common/scripts/install-run-rush.js build --only @internal/bugserver-trigger
 
       # - name: Run CI
@@ -86,40 +159,86 @@ jobs:
       #   run: node ../../common/scripts/install-run-rushx.js ci -t @internal/bugserver-trigger
 
       - name: Build react-vrender
+        if: startsWith(github.ref_name, 'release/') || startsWith(github.ref_name, 'hotfix/')
         run: node common/scripts/install-run-rush.js build --only @visactor/react-vrender
 
       - name: Build react-vrender-utils
+        if: startsWith(github.ref_name, 'release/') || startsWith(github.ref_name, 'hotfix/')
         run: node common/scripts/install-run-rush.js build --only @visactor/react-vrender-utils
 
-      - name: Publish to npm
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
-          NPM_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
-        run: node common/scripts/install-run-rush.js publish --publish --include-all
+      - name: Apply prereleaseName
+        if: startsWith(github.ref_name, 'pre-release/')
+        run: node common/scripts/apply-prerelease-version.js ${{ steps.semver_prerelease.outputs.pre_release_name }} ${{ steps.semver_prerelease.outputs.main }}
+
+      - name: Build packages (pre-release)
+        if: startsWith(github.ref_name, 'pre-release/')
+        run: node common/scripts/install-run-rush.js build --only tag:package
+
+      - name: Publish to npm (release)
+        if: startsWith(github.ref_name, 'release/')
+        run: node common/scripts/install-run-rush.js publish --publish --include-all --tag latest
+
+      - name: Publish to npm (hotfix)
+        if: startsWith(github.ref_name, 'hotfix/')
+        run: node common/scripts/install-run-rush.js publish --publish --include-all --tag hotfix
+
+      - name: Publish to npm (pre-release)
+        if: startsWith(github.ref_name, 'pre-release/')
+        run: node common/scripts/install-run-rush.js publish --publish --include-all --tag ${{ steps.semver_prerelease.outputs.pre_release_type }}
 
       - name: Update shrinkwrap
         run: node common/scripts/install-run-rush.js update
 
-      - name: Get npm version
+      - name: Get npm version (release/hotfix)
+        if: startsWith(github.ref_name, 'release/') || startsWith(github.ref_name, 'hotfix/')
         id: package-version
         uses: xile611/read-package-version-action@v2.1
         with:
           path: packages/vrender
 
-      - name: Commit & Push changes
+      - name: Get npm version (pre-release)
+        if: startsWith(github.ref_name, 'pre-release/')
+        id: package-version-pre
+        uses: xile611/read-package-version-action@main
+        with:
+          path: packages/vrender
+
+      - name: Disable git hooks for CI (release/hotfix)
+        if: startsWith(github.ref_name, 'release/') || startsWith(github.ref_name, 'hotfix/')
+        run: git config core.hooksPath /dev/null
+      - name: Commit & Push changes (release/hotfix)
+        if: startsWith(github.ref_name, 'release/') || startsWith(github.ref_name, 'hotfix/')
         uses: actions-js/push@master
+        env:
+          HUSKY: 0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           message: 'build: prelease version ${{ steps.package-version.outputs.current_version }}'
           branch: ${{ github.ref_name }}
 
+      - name: Disable git hooks for CI (pre-release)
+        if: startsWith(github.ref_name, 'pre-release/')
+        run: git config core.hooksPath /dev/null
+      - name: Commit & Push changes (pre-release)
+        if: startsWith(github.ref_name, 'pre-release/')
+        uses: actions-js/push@master
+        env:
+          HUSKY: 0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          message: 'build: prelease version ${{ steps.package-version-pre.outputs.current_version }}'
+          branch: ${{ github.ref_name }}
+          author_name: ${{ github.actor }}
+
       - name: Collect changelog of rush
+        if: startsWith(github.ref_name, 'release/') || startsWith(github.ref_name, 'hotfix/')
         uses: xile611/collect-rush-changlog@main
         id: changelog
         with:
           version: ${{ steps.package-version.outputs.current_version }}
 
-      - name: Create Release for Tag
+      - name: Create Release for Tag (release)
+        if: startsWith(github.ref_name, 'release/')
         id: release_tag
         uses: ncipollo/release-action@v1.12.0
         env:
@@ -130,16 +249,31 @@ jobs:
           prerelease: false
           body: |
             ${{ steps.changelog.outputs.markdown }}
-          draft: true #
+          draft: true
+
+      - name: Create Release for Tag (hotfix)
+        if: startsWith(github.ref_name, 'hotfix/')
+        id: release_tag_hotfix
+        uses: ncipollo/release-action@v1.12.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag: v${{ steps.package-version.outputs.current_version }}
+          commit: ${{ github.ref_name }}
+          prerelease: false
+          body: |
+            ${{ steps.changelog.outputs.markdown }}
+          draft: true
 
       - name: Create Pull Request
+        if: startsWith(github.ref_name, 'release/')
         uses: dustinirving/create-pr@v1.0.2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           title: '[Auto release] release ${{ steps.package-version.outputs.current_version }}'
           base: main
           head: ${{ github.ref_name }}
-          labels: release # default labels, the action will throw error if not specified
-          reviewers: xile611 # default reviewers, the action will throw error if not specified
+          labels: release
+          reviewers: xile611
           body: |
             ${{ steps.changelog.outputs.markdown }}

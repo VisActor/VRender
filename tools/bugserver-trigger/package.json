@@ -8,11 +8,11 @@
     "ci": "ts-node --transpileOnly --skipProject ./scripts/trigger-test.ts"
   },
   "dependencies": {
-    "@visactor/vrender": "workspace:1.0.31",
-    "@visactor/vrender-core": "workspace:1.0.31",
-    "@visactor/vrender-kits": "workspace:1.0.31",
-    "@visactor/vrender-components": "workspace:1.0.31",
-    "@visactor/vrender-animate": "workspace:1.0.31"
+    "@visactor/vrender": "workspace:1.0.32",
+    "@visactor/vrender-core": "workspace:1.0.32",
+    "@visactor/vrender-kits": "workspace:1.0.32",
+    "@visactor/vrender-components": "workspace:1.0.32",
+    "@visactor/vrender-animate": "workspace:1.0.32"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "~1.1.4",

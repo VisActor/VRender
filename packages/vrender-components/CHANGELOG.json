@@ -2,6 +2,18 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "1.0.32",
+      "tag": "@visactor/vrender-components_v1.0.32",
+      "date": "Wed, 10 Dec 2025 11:19:35 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: optimiza label overlap\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.0.31",
       "tag": "@visactor/vrender-components_v1.0.31",
       "date": "Wed, 03 Dec 2025 09:12:47 GMT",

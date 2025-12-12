@@ -280,6 +280,15 @@ export interface CircleAxisAttributes extends AxisBaseAttributes {
    * @since 0.19.24
    */
   sides?: number;
+
+  /**
+   * 坐标轴可用布局区域的大小
+   */
+  layoutRect?: { x: number; y: number; width: number; height: number };
+  /**
+   * 是否自动调整标签宽度以适应布局区域
+   */
+  autoLabelMaxWidth?: boolean;
 }
 
 // 坐标轴标题配置

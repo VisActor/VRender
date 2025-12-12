@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "chore: verify change-all",
+      "type": "none",
+      "packageName": "@visactor/vrender-core"
+    }
+  ],
+  "packageName": "@visactor/vrender-core",
+  "email": "lixuef1313@163.com"
+}

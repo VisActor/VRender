@@ -92,7 +92,7 @@
     {
       "name": "change-all",
       "commandKind": "global",
-      "autoinstallerName": "run-script",
+      "autoinstallerName": "lint",
       "summary": "Run rush change width lint",
       "description": "Run this command to start VRender development server",
       "safeForSimultaneousRushProcesses": true,

@@ -136,10 +136,6 @@ jobs:
         if: startsWith(github.ref_name, 'release/') || startsWith(github.ref_name, 'hotfix/')
         run: node common/scripts/install-run-rush.js build --only @visactor/vrender-kits
 
-      - name: Build vrender-animate
-        if: startsWith(github.ref_name, 'release/') || startsWith(github.ref_name, 'hotfix/')
-        run: node common/scripts/install-run-rush.js build --only @visactor/vrender-animate
-
       - name: Build vrender-components
         if: startsWith(github.ref_name, 'release/') || startsWith(github.ref_name, 'hotfix/')
         run: node common/scripts/install-run-rush.js build --only @visactor/vrender-components

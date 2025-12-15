@@ -139,6 +139,25 @@ jobs:
         if: startsWith(github.ref_name, 'release/') || startsWith(github.ref_name, 'hotfix/')
         run: node common/scripts/install-run-rush.js version --bump
 
+      - name: Verify version bumped
+        if: startsWith(github.ref_name, 'release/') || startsWith(github.ref_name, 'hotfix/')
+        run: |
+          echo "Checking local package version after bump"
+          node -e "const v=require('./packages/vrender/package.json').version; console.log('vrender version:', v); if(!/^\\d+\\.\\d+\\.\\d+$/.test(v)){ console.error('Invalid semver after bump'); process.exit(1) }"
+
+      - name: Check npm version availability
+        if: startsWith(github.ref_name, 'release/') || startsWith(github.ref_name, 'hotfix/')
+        run: |
+          set -e
+          PKG_VER=$(node -p "require('./packages/vrender/package.json').version")
+          echo "Local version: ${PKG_VER}"
+          NPM_VER=$(npm view @visactor/vrender version 2>/dev/null || echo "")
+          echo "NPM latest version: ${NPM_VER}"
+          if [ "${PKG_VER}" = "${NPM_VER}" ]; then
+            echo "Version ${PKG_VER} is already published. Failing early."
+            exit 1
+          fi
+
       - name: Build vrender-core
         if: startsWith(github.ref_name, 'release/') || startsWith(github.ref_name, 'hotfix/')
         run: node common/scripts/install-run-rush.js build --only @visactor/vrender-core

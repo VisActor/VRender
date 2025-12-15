@@ -371,10 +371,11 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
 
   protected combindShadowAABBBounds(bounds: IAABBBounds) {
     // 合并shadowRoot的Bounds
-    if (this.shadowRoot) {
-      const b = this.shadowRoot.AABBBounds.clone();
-      bounds.union(b);
+    if (!this.shadowRoot) {
+      return;
     }
+    const b = this.shadowRoot.AABBBounds.clone();
+    bounds.union(b);
   }
 
   abstract getGraphicTheme(): T;

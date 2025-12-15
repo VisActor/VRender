@@ -24,6 +24,13 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Fetch default branch for merge base
+        run: |
+          git fetch origin main --tags
+          git branch -r
       - run: |
           git config user.name ${{ github.actor }}
           git config user.email ${{ github.actor }}@users.noreply.github.com

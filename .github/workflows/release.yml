@@ -124,6 +124,10 @@ jobs:
           release_version: ${{ steps.semver_hotfix.outputs.full }}
           write_next_bump: true
 
+      - name: Generate change files for all packages
+        if: startsWith(github.ref_name, 'release/') || startsWith(github.ref_name, 'hotfix/')
+        run: "node common/scripts/install-run-rush.js change-all --type patch --message 'chore: update version for release/hotfix' --not-commit"
+
       - name: Update version
         if: startsWith(github.ref_name, 'release/') || startsWith(github.ref_name, 'hotfix/')
         run: node common/scripts/install-run-rush.js version --bump
@@ -172,15 +176,15 @@ jobs:
 
       - name: Publish to npm (release)
         if: startsWith(github.ref_name, 'release/')
-        run: node common/scripts/install-run-rush.js publish --publish --include-all --tag latest
+        run: node common/scripts/install-run-rush.js publish --publish --include-all --version-policy vrenderMain --tag latest
 
       - name: Publish to npm (hotfix)
         if: startsWith(github.ref_name, 'hotfix/')
-        run: node common/scripts/install-run-rush.js publish --publish --include-all --tag hotfix
+        run: node common/scripts/install-run-rush.js publish --publish --include-all --version-policy vrenderMain --tag hotfix
 
       - name: Publish to npm (pre-release)
         if: startsWith(github.ref_name, 'pre-release/')
-        run: node common/scripts/install-run-rush.js publish --publish --include-all --tag ${{ steps.semver_prerelease.outputs.pre_release_type }}
+        run: node common/scripts/install-run-rush.js publish --publish --include-all --version-policy vrenderMain --tag ${{ steps.semver_prerelease.outputs.pre_release_type }}
 
       - name: Update shrinkwrap
         run: node common/scripts/install-run-rush.js update

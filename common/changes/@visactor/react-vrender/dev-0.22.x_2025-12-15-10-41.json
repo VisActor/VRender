@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "feat: fix bug of workflow\n\n",
+      "type": "none",
+      "packageName": "@visactor/react-vrender"
+    }
+  ],
+  "packageName": "@visactor/react-vrender",
+  "email": "lixuef1313@163.com"
+}

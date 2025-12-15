@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "feat: fix bug of workflow\n\n",
+      "type": "none",
+      "packageName": "@visactor/vrender-kits"
+    }
+  ],
+  "packageName": "@visactor/vrender-kits",
+  "email": "lixuef1313@163.com"
+}

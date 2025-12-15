@@ -2,6 +2,18 @@
   "name": "@visactor/vrender-core",
   "entries": [
     {
+      "version": "0.22.19",
+      "tag": "@visactor/vrender-core_v0.22.19",
+      "date": "Mon, 15 Dec 2025 10:45:44 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: fix bug of workflow\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.22.18",
       "tag": "@visactor/vrender-core_v0.22.18",
       "date": "Mon, 15 Dec 2025 08:11:04 GMT",

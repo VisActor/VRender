@@ -1,6 +1,15 @@
 # Change Log - @visactor/react-vrender-utils
 
-This log was last generated on Mon, 15 Dec 2025 08:11:04 GMT and should not be manually modified.
+This log was last generated on Mon, 15 Dec 2025 10:45:44 GMT and should not be manually modified.
+
+## 0.22.19
+Mon, 15 Dec 2025 10:45:43 GMT
+
+### Updates
+
+- feat: fix bug of workflow
+
+
 
 ## 0.22.18
 Mon, 15 Dec 2025 08:11:04 GMT

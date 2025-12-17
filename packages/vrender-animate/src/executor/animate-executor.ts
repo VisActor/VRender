@@ -12,6 +12,7 @@ import type {
   IAnimationChannelInterpolator
 } from './executor';
 import { cloneDeep, isArray, isFunction } from '@visactor/vutils';
+import { getCustomType } from './utils';
 
 interface IAnimateExecutor {
   execute: (params: IAnimationConfig) => void;
@@ -171,8 +172,7 @@ export class AnimateExecutor implements IAnimateExecutor {
           duration: (slice.duration as number) * scale,
           effects: effects.map(effect => {
             const custom = effect.custom ?? AnimateExecutor.builtInAnimateMap[(effect.type as any) ?? 'fromTo'];
-            const customType =
-              custom && isFunction(custom) ? (/^class\s/.test(Function.prototype.toString.call(custom)) ? 1 : 2) : 0;
+            const customType = getCustomType(custom);
             return {
               ...effect,
               custom,
@@ -198,12 +198,7 @@ export class AnimateExecutor implements IAnimateExecutor {
         (params as IAnimationTypeConfig).custom ??
         AnimateExecutor.builtInAnimateMap[(params as IAnimationTypeConfig).type ?? 'fromTo'];
 
-      const customType =
-        parsedParams.custom && isFunction(parsedParams.custom)
-          ? /^class\s/.test(Function.prototype.toString.call(parsedParams.custom))
-            ? 1
-            : 2
-          : 0;
+      const customType = getCustomType(parsedParams.custom);
       parsedParams.customType = customType;
 
       if (totalTime) {
@@ -565,7 +560,7 @@ export class AnimateExecutor implements IAnimateExecutor {
         from = parsedFromProps.from;
       }
       const custom = effect.custom ?? AnimateExecutor.builtInAnimateMap[type];
-      const customType = (effect as any).customType;
+      const customType = effect.custom ? (effect as any).customType : getCustomType(custom);
       this._handleRunAnimate(
         animate,
         custom,

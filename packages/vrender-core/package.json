@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vrender-core",
-  "version": "1.0.32",
+  "version": "1.0.33-alpha.0",
   "description": "",
   "sideEffects": [
     "./src/modules.ts",

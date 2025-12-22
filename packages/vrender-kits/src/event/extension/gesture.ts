@@ -433,20 +433,22 @@ export class Gesture extends EventEmitter {
       return;
     }
     const events = (this.element as unknown as any)._events;
-    let listeners = events[WILDCARD];
-    if (events[type]) {
-      listeners = listeners.concat(events[type]);
-    }
-    if (listeners) {
-      if ('fn' in listeners) {
-        listeners.fn.call(listeners.context, e, type);
-      } else {
-        for (let i = 0, j = listeners.length; i < j && !e.propagationImmediatelyStopped; i++) {
-          listeners[i].fn.call(listeners[i].context, e, type);
-        }
-      }
-    }
+    this._callListeners(type, e, events[WILDCARD]);
+    this._callListeners(type, e, events[type]);
 
     this.emit(type, e);
+  }
+
+  private _callListeners(type: string, e: GestureEvent, listeners: any) {
+    if (!listeners) {
+      return;
+    }
+    if ('fn' in listeners) {
+      listeners.fn.call(listeners.context, e, type);
+    } else {
+      for (let i = 0, j = listeners.length; i < j && !e.propagationImmediatelyStopped; i++) {
+        listeners[i].fn.call(listeners[i].context, e, type);
+      }
+    }
   }
 }

@@ -257,6 +257,43 @@ export class CircleAxis extends AxisBase<CircleAxisAttributes> {
     layer: number,
     layerCount: number
   ): void {
+    /**
+     * 基于布局矩形与文本对齐方式设置标签最大行宽：
+     * - left：可用宽度为到矩形右边界的水平距离（rectRight - x）
+     * - right：可用宽度为到矩形左边界的水平距离（x - rectLeft）
+     * - center：取左右两侧最小距离的两倍（2 * min(x - rectLeft, rectRight - x)）
+     */
+    const { layoutRect, autoLabelMaxWidth } = this.attribute as CircleAxisAttributes;
+    if (!autoLabelMaxWidth || !layoutRect || !labelShapes || labelShapes.length === 0) {
+      return;
+    }
+
+    const rectLeft = 0;
+    const rectRight = 0 + layoutRect.width;
+
+    for (let i = 0; i < labelShapes.length; i++) {
+      const label = labelShapes[i];
+      const x = label.attribute.x;
+      const align = (label.attribute.textAlign as TextAlignType) ?? 'center';
+
+      let maxWidth = 0;
+      if (align === 'left') {
+        maxWidth = rectRight - x;
+      } else if (align === 'right') {
+        maxWidth = x - rectLeft;
+      } else {
+        const leftDist = x - rectLeft;
+        const rightDist = rectRight - x;
+        maxWidth = 2 * Math.max(0, Math.min(leftDist, rightDist));
+      }
+
+      if (maxWidth > 0) {
+        label.setAttributes({ maxLineWidth: maxWidth });
+      } else {
+        label.setAttributes({ maxLineWidth: 0 });
+      }
+    }
+
     return;
   }
 

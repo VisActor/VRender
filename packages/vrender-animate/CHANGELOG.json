@@ -2,6 +2,18 @@
   "name": "@visactor/vrender-animate",
   "entries": [
     {
+      "version": "1.0.33",
+      "tag": "@visactor/vrender-animate_v1.0.33",
+      "date": "Wed, 17 Dec 2025 07:56:54 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix issue of custom type\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.0.32",
       "tag": "@visactor/vrender-animate_v1.0.32",
       "date": "Wed, 10 Dec 2025 11:19:35 GMT",

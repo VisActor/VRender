@@ -419,6 +419,7 @@ export class AnimateExecutor implements IAnimateExecutor {
   ) {
     // 处理自定义动画
     if (custom && customType) {
+      customType = getCustomType(custom);
       const _customParameters = this.resolveValue(customParameters, graphic);
       let customParams = _customParameters;
       if (typeof customParams === 'function') {

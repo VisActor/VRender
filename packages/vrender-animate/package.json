@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vrender-animate",
-  "version": "1.0.33",
+  "version": "1.0.34",
   "description": "",
   "sideEffects": false,
   "main": "cjs/index.js",
@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "@visactor/vutils": "~1.0.12",
-    "@visactor/vrender-core": "workspace:1.0.33"
+    "@visactor/vrender-core": "workspace:1.0.34"
   },
   "devDependencies": {
     "@internal/bundler": "workspace:*",

@@ -433,7 +433,10 @@ export class Gesture extends EventEmitter {
       return;
     }
     const events = (this.element as unknown as any)._events;
-    const listeners = events[WILDCARD];
+    let listeners = events[WILDCARD];
+    if (events[type]) {
+      listeners = listeners.concat(events[type]);
+    }
     if (listeners) {
       if ('fn' in listeners) {
         listeners.fn.call(listeners.context, e, type);

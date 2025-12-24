@@ -8,6 +8,19 @@ export class ResourceLoader {
   private static toLoadAueue: { url: string; marks: ImagePayload[] }[] = [];
   private static onLoadSuccessCb: (() => void)[] = [];
 
+  static GetImageFromCache(url: string, mark: ImagePayload) {
+    const data = ResourceLoader.cache.get(url);
+    if (data) {
+      return data;
+    }
+    if (url.startsWith('<svg')) {
+      ResourceLoader.GetSvg(url, mark);
+    } else {
+      ResourceLoader.GetImage(url, mark);
+    }
+    return null;
+  }
+
   static GetImage(url: string, mark: ImagePayload) {
     const data = ResourceLoader.cache.get(url);
     if (data) {

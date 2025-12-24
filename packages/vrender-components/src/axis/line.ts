@@ -315,8 +315,9 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
     }
 
     const offset = tickLength + labelLength + space;
-    const titlePoint = this.getVerticalCoord(point, offset, false); // 标题的点
-    const vector = this.getVerticalVector(offset, false, { x: 0, y: 0 });
+    const actualOffset = this.getActualOffset(offset);
+    const titlePoint = this.getVerticalCoord(point, actualOffset, false); // 标题的点
+    const vector = this.getVerticalVector(actualOffset, false, { x: 0, y: 0 });
 
     let { angle } = restAttrs; // 用户设置的是角度
     let textAlign;
@@ -359,14 +360,14 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
             const cosValue = Math.abs(Math.cos(angle ?? 0));
             maxTagWidth = cosValue < 1e-6 ? Infinity : this.attribute.end.x / cosValue;
           } else {
-            maxTagWidth = limitSize - offset;
+            maxTagWidth = limitSize - actualOffset;
           }
         } else {
           if (angle && angle !== 0) {
             const sinValue = Math.abs(Math.sin(angle));
             maxTagWidth = sinValue < 1e-6 ? Infinity : this.attribute.end.y / sinValue;
           } else {
-            maxTagWidth = limitSize - offset;
+            maxTagWidth = limitSize - actualOffset;
           }
         }
       }
@@ -886,6 +887,26 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
       });
     }
   }
+
+  getActualOffset(offset: number): number {
+    const orient = this.attribute.orient;
+    const isVertical = orient === 'left' || orient === 'right';
+    if (!isVertical) {
+      return offset;
+    }
+
+    if (this.attribute.width) {
+      return this.attribute.width;
+    }
+    if (this.attribute.maxWidth) {
+      offset = Math.min(offset, this.attribute.maxWidth);
+    }
+    if (this.attribute.minWidth) {
+      offset = Math.max(offset, this.attribute.minWidth);
+    }
+    return offset;
+  }
+
   release(): void {
     super.release();
     this._breaks = null;

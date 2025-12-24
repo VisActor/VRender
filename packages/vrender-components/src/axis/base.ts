@@ -15,10 +15,9 @@ import type {
 } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
 import { graphicCreator, diff } from '@visactor/vrender-core';
-import type { Dict, IBounds } from '@visactor/vutils';
+import type { Dict } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports
-import { abs, cloneDeep, get, isArray, isEmpty, isEqual, isFunction, merge, pi } from '@visactor/vutils';
-import { AbstractComponent } from '../core/base';
+import { abs, cloneDeep, get, isEmpty, isFunction, merge, pi } from '@visactor/vutils';
 import type { Point } from '../core/type';
 import type { TagAttributes } from '../tag';
 import { createTextGraphicByType, traverseGroup } from '../util';

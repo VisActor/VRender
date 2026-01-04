@@ -1,4 +1,9 @@
-import type { GraphicEventType, IGroupGraphicAttribute, IPolygonGraphicAttribute } from '@visactor/vrender-core';
+import type {
+  FederatedPointerEvent,
+  GraphicEventType,
+  IGroupGraphicAttribute,
+  IPolygonGraphicAttribute
+} from '@visactor/vrender-core';
 import type { IDelayType } from '../interface';
 
 export interface BrushAttributes extends IGroupGraphicAttribute {
@@ -82,6 +87,10 @@ export interface BrushAttributes extends IGroupGraphicAttribute {
    * @default false
    */
   disableTriggerEvent?: boolean;
+  /**
+   * 框选前触发事件
+   */
+  beforeBrushChange?: (e: FederatedPointerEvent) => void | boolean;
 }
 
 export type IBrushType = 'x' | 'y' | 'rect' | 'polygon';

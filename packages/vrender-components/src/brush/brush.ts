@@ -72,6 +72,9 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
    * 3. 如果是绘制状态: 标记绘制状态 & 标记正在绘制的mask & 清除之前的mask & 添加新的mask
    */
   private _onBrushStart = (e: FederatedPointerEvent) => {
+    if (this._beforeBrushEvent(e) === false) {
+      return;
+    }
     const {
       updateTrigger = DEFAULT_BRUSH_ATTRIBUTES.updateTrigger,
       endTrigger = DEFAULT_BRUSH_ATTRIBUTES.endTrigger,
@@ -95,6 +98,9 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
    * 2. 如果是移动状态: 标记移动状态 & 计算位移量 & 给被移动的mask偏移属性
    */
   private _onBrushing = (e: FederatedPointerEvent) => {
+    if (this._beforeBrushEvent(e) === false) {
+      return;
+    }
     if (this._outOfInteractiveRange(e)) {
       return;
     }
@@ -129,6 +135,9 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
   };
 
   private _onBrushClear = (e: FederatedPointerEvent) => {
+    if (this._beforeBrushEvent(e) === false) {
+      return;
+    }
     e.preventDefault();
     if (!this._isEmptyMask()) {
       this._clearMask();
@@ -440,6 +449,14 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
       return true;
     }
     return false;
+  }
+
+  /**
+   * 触发框选前事件
+   * @returns 返回 false 表示中断后续逻辑，返回 true 或 undefined 表示继续执行
+   */
+  private _beforeBrushEvent(e: FederatedPointerEvent): void | boolean {
+    return this.attribute.beforeBrushChange?.(e);
   }
 
   /**

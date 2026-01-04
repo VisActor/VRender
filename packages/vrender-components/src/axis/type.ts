@@ -243,6 +243,13 @@ export interface LineAxisAttributes extends Omit<AxisBaseAttributes, 'label'> {
    * @since 0.20.3
    */
   breaks?: AxisBreakProps[];
+
+  /**
+   * 最大宽度，用于自动调整标签宽度以适应布局区域
+   */
+  maxWidth?: number;
+  minWidth?: number;
+  width?: number;
 }
 
 export interface CircleAxisAttributes extends AxisBaseAttributes {

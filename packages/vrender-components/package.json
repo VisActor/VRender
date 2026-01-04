@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vrender-components",
-  "version": "1.0.34",
+  "version": "1.0.36",
   "description": "components library for dp visualization",
   "sideEffects": false,
   "main": "cjs/index.js",
@@ -27,9 +27,9 @@
   "dependencies": {
     "@visactor/vutils": "~1.0.12",
     "@visactor/vscale": "~1.0.12",
-    "@visactor/vrender-core": "workspace:1.0.34",
-    "@visactor/vrender-kits": "workspace:1.0.34",
-    "@visactor/vrender-animate": "workspace:1.0.34"
+    "@visactor/vrender-core": "workspace:1.0.36",
+    "@visactor/vrender-kits": "workspace:1.0.36",
+    "@visactor/vrender-animate": "workspace:1.0.36"
   },
   "devDependencies": {
     "@internal/bundler": "workspace:*",

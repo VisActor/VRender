@@ -7,6 +7,7 @@ export function run() {
 
   const guiObject = {
     name: 'Brush',
+    interactive: true,
     brushMode: 'single',
     brushType: 'rect',
     brushMoved: true,
@@ -58,7 +59,8 @@ export function run() {
       stroke: '#B0C8F9',
       strokeWidth: 2
     },
-    delayTime: 0
+    delayTime: 0,
+    interactive: true
   });
 
   const brush2 = new Brush({
@@ -100,6 +102,10 @@ export function run() {
 
   const gui = new GUI();
   gui.add(guiObject, 'name');
+  gui.add(guiObject, 'interactive').onChange(value => {
+    brush.setAttribute('interactive', value);
+  });
+
   gui.add(guiObject, 'brushMode', ['single', 'multiple']).onChange(value => {
     brush.setAttribute('brushMode', value);
   });

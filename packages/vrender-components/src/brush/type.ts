@@ -8,6 +8,10 @@ import type { IDelayType } from '../interface';
 
 export interface BrushAttributes extends IGroupGraphicAttribute {
   /**
+   * 是否禁止交互，默认为 true
+   */
+  interactive?: boolean;
+  /**
    * 触发框选的事件名称
    */
   trigger?: GraphicEventType | GraphicEventType[];

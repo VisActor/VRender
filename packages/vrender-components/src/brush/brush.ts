@@ -72,6 +72,9 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
    * 3. 如果是绘制状态: 标记绘制状态 & 标记正在绘制的mask & 清除之前的mask & 添加新的mask
    */
   private _onBrushStart = (e: FederatedPointerEvent) => {
+    if (this.attribute.interactive === false) {
+      return;
+    }
     if (this._beforeBrushEvent(e) === false) {
       return;
     }
@@ -98,9 +101,13 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
    * 2. 如果是移动状态: 标记移动状态 & 计算位移量 & 给被移动的mask偏移属性
    */
   private _onBrushing = (e: FederatedPointerEvent) => {
+    if (this.attribute.interactive === false) {
+      return;
+    }
     if (this._beforeBrushEvent(e) === false) {
       return;
     }
+
     if (this._outOfInteractiveRange(e)) {
       return;
     }
@@ -125,6 +132,9 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
    * @description 取消绘制 和 移动 状态
    */
   private _onBrushEnd = (e: FederatedPointerEvent) => {
+    if (this.attribute.interactive === false) {
+      return;
+    }
     this._releaseBrushUpdateEvents();
     e.preventDefault();
     this._activeDrawState && this._drawEnd(e);
@@ -135,6 +145,9 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
   };
 
   private _onBrushClear = (e: FederatedPointerEvent) => {
+    if (this.attribute.interactive === false) {
+      return;
+    }
     if (this._beforeBrushEvent(e) === false) {
       return;
     }
@@ -152,6 +165,9 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
    * @description 清除之前的mask & 添加新的mask
    */
   private _initDraw(e: FederatedPointerEvent) {
+    if (this.attribute.interactive === false) {
+      return;
+    }
     const { brushMode } = this.attribute as BrushAttributes;
     const pos = this.eventPosToStagePos(e);
 
@@ -167,6 +183,9 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
    * @description 初始化mask的dx和dy
    */
   private _initMove(e: FederatedPointerEvent) {
+    if (this.attribute.interactive === false) {
+      return;
+    }
     this._cacheMovePoint = this.eventPosToStagePos(e);
 
     this._operatingMaskMoveDx = this._operatingMask.attribute.dx ?? 0;
@@ -194,6 +213,9 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
    * @description 更新_cacheDrawPoints 和 mask的points属性
    */
   private _drawing(e: FederatedPointerEvent) {
+    if (this.attribute.interactive === false) {
+      return;
+    }
     const pos = this.eventPosToStagePos(e);
     const { brushType, sizeThreshold = DEFAULT_SIZE_THRESHOLD } = this.attribute as BrushAttributes;
 
@@ -236,6 +258,9 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
    * @description 标记移动状态 & 计算位移量 & 给被移动的mask偏移属性
    */
   private _moving(e: FederatedPointerEvent) {
+    if (this.attribute.interactive === false) {
+      return;
+    }
     const startPos = this._cacheMovePoint;
     const pos = this.eventPosToStagePos(e);
     // 如果当前点的位置和上一次点的位置一致，则无需更新
@@ -261,6 +286,9 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
   }
 
   private _drawEnd(e: FederatedPointerEvent) {
+    if (this.attribute.interactive === false) {
+      return;
+    }
     const { removeOnClick = true, sizeThreshold = DEFAULT_SIZE_THRESHOLD } = this.attribute as BrushAttributes;
     if (this._outOfInteractiveRange(e)) {
       if (!this._isEmptyMask()) {
@@ -299,6 +327,9 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
   }
 
   private _moveEnd(e: FederatedPointerEvent) {
+    if (this.attribute.interactive === false) {
+      return;
+    }
     if (this._operatingMask) {
       this._operatingMask.setAttribute('pickable', false);
     }

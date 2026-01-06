@@ -2,6 +2,18 @@
   "name": "@visactor/vrender-animate",
   "entries": [
     {
+      "version": "1.0.37",
+      "tag": "@visactor/vrender-animate_v1.0.37",
+      "date": "Tue, 06 Jan 2026 10:04:10 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix issue about animation params support function\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.0.36",
       "tag": "@visactor/vrender-animate_v1.0.36",
       "date": "Wed, 24 Dec 2025 06:30:43 GMT",

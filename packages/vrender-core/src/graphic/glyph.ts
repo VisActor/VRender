@@ -205,6 +205,9 @@ export class Glyph extends Graphic<IGlyphGraphicAttribute> implements IGlyph {
 
     this.stopStateAnimates();
 
+    if (this.stateSort) {
+      states = states.sort(this.stateSort);
+    }
     const stateAttrs = {};
     const subAttrs = this.subGraphic.map(() => ({}));
     states.forEach(stateName => {

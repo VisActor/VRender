@@ -13,6 +13,7 @@ import type {
   IThemeAttribute
 } from '../../../../interface';
 import { pi2 } from '@visactor/vutils';
+import { ResourceLoader } from '../../../../resource-loader/loader';
 
 function formatRatio(ratio: number) {
   if (ratio <= 0.5) {
@@ -81,7 +82,7 @@ export class DefaultBaseTextureRenderContribution implements IBaseRenderContribu
     cb: (r: number, targetContext: IContext2d) => void
   ) {
     const r = (size - padding * 2) / 2;
-    const dpr = targetContext.dpr;
+    const dpr = targetContext.dpr * 2;
     const canvas = canvasAllocate.allocate({ width: size, height: size, dpr });
     const ctx = canvas.getContext('2d');
     if (!ctx) {
@@ -247,36 +248,6 @@ export class DefaultBaseTextureRenderContribution implements IBaseRenderContribu
     texturePadding: number
   ) {
     const { textureRatio = graphicAttribute.textureRatio, textureOptions = null } = graphic.attribute;
-    let pattern: CanvasPattern = this.textureMap.get(texture);
-
-    if (!pattern) {
-      switch (texture) {
-        case 'circle':
-          pattern = this.createCirclePattern(textureSize, texturePadding, textureColor, context);
-          break;
-        case 'diamond':
-          pattern = this.createDiamondPattern(textureSize, texturePadding, textureColor, context);
-          break;
-        case 'rect':
-          pattern = this.createRectPattern(textureSize, texturePadding, textureColor, context);
-          break;
-        case 'vertical-line':
-          pattern = this.createVerticalLinePattern(textureSize, texturePadding, textureColor, context);
-          break;
-        case 'horizontal-line':
-          pattern = this.createHorizontalLinePattern(textureSize, texturePadding, textureColor, context);
-          break;
-        case 'bias-lr':
-          pattern = this.createBiasLRLinePattern(textureSize, texturePadding, textureColor, context);
-          break;
-        case 'bias-rl':
-          pattern = this.createBiasRLLinePattern(textureSize, texturePadding, textureColor, context);
-          break;
-        case 'grid':
-          pattern = this.createGridPattern(textureSize, texturePadding, textureColor, context);
-          break;
-      }
-    }
 
     if (textureOptions && textureOptions.dynamicTexture) {
       // 动态纹理
@@ -373,12 +344,8 @@ export class DefaultBaseTextureRenderContribution implements IBaseRenderContribu
       }
 
       originalContext.restore();
-    } else if (pattern) {
-      context.highPerformanceSave();
-      context.setCommonStyle(graphic, graphic.attribute, x, y, graphicAttribute);
-      context.fillStyle = pattern;
-      context.fill();
-      context.highPerformanceRestore();
+
+      return;
     } else if (texture === 'wave') {
       context.save();
       context.setCommonStyle(graphic, graphic.attribute, x, y, graphicAttribute);
@@ -394,6 +361,86 @@ export class DefaultBaseTextureRenderContribution implements IBaseRenderContribu
         y + b.y1 - y
       );
       context.restore();
+      return;
+    }
+
+    let pattern: CanvasPattern = this.textureMap.get(texture);
+
+    if (!pattern) {
+      switch (texture) {
+        case 'circle':
+          pattern = this.createCirclePattern(textureSize, texturePadding, textureColor, context);
+          break;
+        case 'diamond':
+          pattern = this.createDiamondPattern(textureSize, texturePadding, textureColor, context);
+          break;
+        case 'rect':
+          pattern = this.createRectPattern(textureSize, texturePadding, textureColor, context);
+          break;
+        case 'vertical-line':
+          pattern = this.createVerticalLinePattern(textureSize, texturePadding, textureColor, context);
+          break;
+        case 'horizontal-line':
+          pattern = this.createHorizontalLinePattern(textureSize, texturePadding, textureColor, context);
+          break;
+        case 'bias-lr':
+          pattern = this.createBiasLRLinePattern(textureSize, texturePadding, textureColor, context);
+          break;
+        case 'bias-rl':
+          pattern = this.createBiasRLLinePattern(textureSize, texturePadding, textureColor, context);
+          break;
+        case 'grid':
+          pattern = this.createGridPattern(textureSize, texturePadding, textureColor, context);
+          break;
+      }
+      if (!pattern && graphic.textureImg) {
+        const res = (graphic as any).resources?.get(texture);
+        if (res && res.state === 'success' && res.data) {
+          const image = res.data as HTMLImageElement;
+
+          // 创建临时canvas来处理textureSize和texturePadding
+          const dpr = context.dpr * 2;
+          const canvas = canvasAllocate.allocate({ width: textureSize, height: textureSize, dpr });
+          const ctx = canvas.getContext('2d');
+          if (!ctx) {
+            return;
+          }
+          ctx.inuse = true;
+          ctx.clearMatrix();
+          ctx.setTransformForCurrent(true);
+          ctx.clearRect(0, 0, textureSize, textureSize);
+
+          // 计算图片绘制区域（考虑padding）
+          const imageSize = textureSize - texturePadding * 2;
+          const imageX = texturePadding;
+          const imageY = texturePadding;
+
+          // 在临时canvas上绘制调整大小的图片
+          ctx.drawImage(image, imageX, imageY, imageSize, imageSize);
+
+          // 使用临时canvas创建pattern
+          pattern = context.createPattern(canvas.nativeCanvas, 'repeat');
+          if (pattern && pattern.setTransform) {
+            pattern.setTransform(new DOMMatrix([1 / dpr, 0, 0, 1 / dpr, 0, 0]));
+          }
+
+          // 释放临时canvas
+          canvasAllocate.free(canvas);
+
+          // 缓存创建的pattern以提高性能
+          if (pattern) {
+            this.textureMap.set(texture, pattern);
+          }
+        }
+      }
+    }
+
+    if (pattern) {
+      context.highPerformanceSave();
+      context.setCommonStyle(graphic, graphic.attribute, x, y, graphicAttribute);
+      context.fillStyle = pattern;
+      context.fill();
+      context.highPerformanceRestore();
     }
   }
 }

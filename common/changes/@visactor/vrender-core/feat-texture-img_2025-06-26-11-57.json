@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "feat: texture support image, make texture clear",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

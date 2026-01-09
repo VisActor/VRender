@@ -1,6 +1,15 @@
 # Change Log - @visactor/vrender-animate
 
-This log was last generated on Wed, 24 Dec 2025 06:30:43 GMT and should not be manually modified.
+This log was last generated on Tue, 06 Jan 2026 10:04:10 GMT and should not be manually modified.
+
+## 1.0.37
+Tue, 06 Jan 2026 10:04:10 GMT
+
+### Updates
+
+- fix: fix issue about animation params support function
+
+
 
 ## 1.0.36
 Wed, 24 Dec 2025 06:30:43 GMT

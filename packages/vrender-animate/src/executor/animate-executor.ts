@@ -11,7 +11,7 @@ import type {
   IAnimationCustomConstructor,
   IAnimationChannelInterpolator
 } from './executor';
-import { cloneDeep, isArray, isFunction } from '@visactor/vutils';
+import { cloneDeep, isArray, isFunction, isValidNumber } from '@visactor/vutils';
 import { getCustomType } from './utils';
 
 interface IAnimateExecutor {
@@ -115,8 +115,8 @@ export class AnimateExecutor implements IAnimateExecutor {
   }
 
   parseParams(params: IAnimationConfig, isTimeline: boolean, child?: IGraphic): IAnimationConfig {
-    const totalTime = this.resolveValue(params.totalTime, undefined, undefined);
-    const startTime = this.resolveValue(params.startTime, undefined, 0);
+    const totalTime = this.resolveValue(params.totalTime, child, undefined);
+    const startTime = this.resolveValue(params.startTime, child, 0);
 
     // execute只在mark层面调用，所以性能影响可以忽略
     // TODO 存在性能问题，如果后续调用频繁，需要重新修改
@@ -201,15 +201,14 @@ export class AnimateExecutor implements IAnimateExecutor {
       const customType = getCustomType(parsedParams.custom);
       parsedParams.customType = customType;
 
-      if (totalTime) {
-        const _totalTime = delay + delayAfter + duration + oneByOneDelay * (this._target.count - 2);
-        const scale = totalTime ? totalTime / _totalTime : 1;
-        parsedParams.delay = delay * scale;
-        parsedParams.delayAfter = delayAfter * scale;
-        parsedParams.duration = duration * scale;
-        parsedParams.oneByOneDelay = oneByOneDelay * scale;
-        (parsedParams as IAnimationTypeConfig).startTime = startTime;
-      }
+      const _totalTime = delay + delayAfter + duration + oneByOneDelay * (this._target.count - 2);
+      const scale = isValidNumber(totalTime) ? totalTime / _totalTime : 1;
+
+      parsedParams.delay = delay * scale;
+      parsedParams.delayAfter = delayAfter * scale;
+      parsedParams.duration = duration * scale;
+      parsedParams.oneByOneDelay = oneByOneDelay * scale;
+      (parsedParams as IAnimationTypeConfig).startTime = startTime;
     }
 
     return parsedParams;

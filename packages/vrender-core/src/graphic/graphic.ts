@@ -320,6 +320,9 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   // 外部设置，用于选择所使用的textMeasureId
   declare textMeasureId?: string;
 
+  // state 排序方法
+  protected stateSort?: (stateA: string, stateB: string) => number;
+
   constructor(params: T = {} as T) {
     super();
     this._AABBBounds = new AABBBounds();
@@ -1177,7 +1180,11 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       return;
     }
 
+    if (this.stateSort) {
+      states = states.sort(this.stateSort);
+    }
     const stateAttrs = {};
+    // sort state
     states.forEach(stateName => {
       const attrs = this.stateProxy ? this.stateProxy(stateName, states) : this.states?.[stateName];
 

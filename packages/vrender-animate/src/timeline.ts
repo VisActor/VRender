@@ -14,7 +14,7 @@ export class DefaultTimeline extends EventEmitter implements ITimeline {
   protected tail: AnimateNode | null = null;
   protected animateMap: Map<IAnimate, AnimateNode> = new Map();
   protected _animateCount: number = 0;
-  declare protected paused: boolean;
+  protected declare paused: boolean;
 
   // 添加必要的属性
   protected _playSpeed: number = 1;

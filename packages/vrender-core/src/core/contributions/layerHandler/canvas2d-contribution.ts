@@ -14,7 +14,7 @@ import type {
   LayerMode
 } from '../../../interface';
 import type { IBounds } from '@visactor/vutils';
-import { application } from '../../../application';
+import { vglobal } from '../../../modules';
 
 export class CanvasLayerHandlerContribution implements ILayerHandlerContribution {
   layer: ILayer;
@@ -30,7 +30,7 @@ export class CanvasLayerHandlerContribution implements ILayerHandlerContribution
 
   constructor() {
     this.offscreen = false;
-    this.global = application.global;
+    this.global = vglobal;
   }
 
   setDpr(dpr: number) {

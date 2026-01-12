@@ -2,7 +2,7 @@ import type { IAABBBounds, IPointLike } from '@visactor/vutils';
 import { max, PointService } from '@visactor/vutils';
 import type { GraphicType, IPyramid3d, IPyramid3dGraphicAttribute } from '../interface';
 import type { IFace3d } from '../interface/graphic/face3d';
-import { application } from '../application';
+import { vglobal, graphicService } from '../modules';
 import { Polygon } from './polygon';
 import { PYRAMID3D_NUMBER_TYPE } from './constants';
 import { NOWORK_ANIMATE_ATTR } from './graphic';
@@ -35,8 +35,8 @@ export class Pyramid3d extends Polygon implements IPyramid3d {
       const y = v[1];
       aabbBounds.add(x, y);
     });
-    application.graphicService.updateTempAABBBounds(aabbBounds);
-    application.graphicService.transformAABBBounds(attribute, aabbBounds, polygonTheme, false, this);
+    graphicService.updateTempAABBBounds(aabbBounds);
+    graphicService.transformAABBBounds(attribute, aabbBounds, polygonTheme, false, this);
     return aabbBounds;
   }
 

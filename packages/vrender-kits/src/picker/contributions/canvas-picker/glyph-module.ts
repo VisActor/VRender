@@ -1,4 +1,4 @@
-import { application } from '@visactor/vrender-core';
+import { contributionRegistry } from '@visactor/vrender-core';
 import { CanvasPickerContribution } from '../constants';
 import { DefaultCanvasGlyphPicker } from './glyph-picker';
 
@@ -8,5 +8,5 @@ export function registerCanvasGlyphPicker() {
     return;
   }
   _registeredGlyph = true;
-  application.contributions.register(CanvasPickerContribution, new DefaultCanvasGlyphPicker());
+  contributionRegistry.register(CanvasPickerContribution, new DefaultCanvasGlyphPicker());
 }

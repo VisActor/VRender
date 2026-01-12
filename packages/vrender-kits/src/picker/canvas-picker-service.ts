@@ -2,6 +2,7 @@ import type { IMatrix, IPointLike } from '@visactor/vutils';
 import {
   DefaultPickService,
   canvasAllocate,
+  contributionRegistry,
   type ICanvas,
   type IContext2d,
   type IGraphic,
@@ -11,8 +12,7 @@ import {
   type IPickerService,
   type IContributionProvider,
   type IPickParams,
-  type PickResult,
-  application
+  type PickResult
 } from '@visactor/vrender-core';
 import { CanvasPickerContribution } from './contributions/constants';
 
@@ -31,7 +31,7 @@ export class DefaultCanvasPickerService extends DefaultPickService implements IP
     super();
     // Use registry-only provider for canvas pickers
     this.contributions = {
-      getContributions: () => application.contributions.get<IGraphicPicker>(CanvasPickerContribution)
+      getContributions: () => contributionRegistry.get<IGraphicPicker>(CanvasPickerContribution)
     } as IContributionProvider<IGraphicPicker>;
 
     this.global.hooks.onSetEnv.tap('canvas-picker-service', (_, env, global) => {

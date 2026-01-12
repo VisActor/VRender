@@ -1,4 +1,4 @@
-import { application } from '@visactor/vrender-core';
+import { contributionRegistry } from '@visactor/vrender-core';
 import { CanvasPickerContribution, CanvasTextPicker } from '../constants';
 import { DefaultCanvasTextPicker } from './text-picker';
 
@@ -9,5 +9,5 @@ export function registerCanvasTextPicker() {
   }
   _registeredText = true;
   // Register picker implementation in contribution registry
-  application.contributions.register(CanvasPickerContribution, new DefaultCanvasTextPicker());
+  contributionRegistry.register(CanvasPickerContribution, new DefaultCanvasTextPicker());
 }

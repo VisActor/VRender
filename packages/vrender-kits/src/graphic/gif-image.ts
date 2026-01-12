@@ -1,5 +1,5 @@
 import type { IImageGraphicAttribute, ISetAttributeContext } from '@visactor/vrender-core';
-import { application, Image, ResourceLoader } from '@visactor/vrender-core';
+import { Image, ResourceLoader, vglobal } from '@visactor/vrender-core';
 import type { ITimeline } from '@visactor/vrender-core';
 import { isString } from '@visactor/vutils';
 import type { ParsedFrame } from 'gifuct-js';
@@ -50,12 +50,12 @@ export class GifImage extends Image implements IGifImage {
     this.frameIndex = 0;
 
     if (!this.tempCanvas) {
-      this.tempCanvas = application.global.createCanvas({});
+      this.tempCanvas = vglobal.createCanvas({});
       this.tempCtx = this.tempCanvas.getContext('2d');
     }
 
     if (!this.gifCanvas) {
-      this.gifCanvas = application.global.createCanvas({});
+      this.gifCanvas = vglobal.createCanvas({});
       this.gifCtx = this.gifCanvas.getContext('2d');
     }
 

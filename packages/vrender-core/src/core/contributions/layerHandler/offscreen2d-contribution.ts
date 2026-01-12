@@ -13,7 +13,7 @@ import type {
   LayerMode
 } from '../../../interface';
 import type { IBoundsLike } from '@visactor/vutils';
-import { application } from '../../../application';
+import { vglobal } from '../../../modules';
 
 export class OffscreenLayerHandlerContribution implements ILayerHandlerContribution {
   declare layer: ILayer;
@@ -28,7 +28,7 @@ export class OffscreenLayerHandlerContribution implements ILayerHandlerContribut
   constructor() {
     this.offscreen = true;
     this.type = 'dynamic';
-    this.global = application.global;
+    this.global = vglobal;
   }
 
   setDpr(dpr: number) {

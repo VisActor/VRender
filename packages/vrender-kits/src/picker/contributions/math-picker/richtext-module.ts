@@ -1,4 +1,4 @@
-import { application } from '@visactor/vrender-core';
+import { contributionRegistry } from '@visactor/vrender-core';
 import { MathPickerContribution } from '../constants';
 import { DefaultMathRichTextPicker } from './richtext-picker';
 
@@ -8,5 +8,5 @@ export function registerMathRichTextPicker() {
     return;
   }
   _registered = true;
-  application.contributions.register(MathPickerContribution, new DefaultMathRichTextPicker());
+  contributionRegistry.register(MathPickerContribution, new DefaultMathRichTextPicker());
 }

@@ -1,4 +1,4 @@
-import { Generator, BaseWindowHandlerContribution, application } from '@visactor/vrender-core';
+import { Generator, BaseWindowHandlerContribution, vglobal } from '@visactor/vrender-core';
 import type { IBoundsLike } from '@visactor/vutils';
 import type {
   EnvType,
@@ -24,7 +24,7 @@ export class NodeWindowHandlerContribution extends BaseWindowHandlerContribution
 
   constructor() {
     super();
-    this.global = application.global;
+    this.global = vglobal;
   }
 
   getTitle(): string {

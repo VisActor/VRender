@@ -5,7 +5,7 @@ import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_ATTR } from './graphic'
 import { CustomPath2D } from '../common/custom-path2d';
 import { circleBounds } from '../common/utils';
 import { getTheme } from './theme';
-import { application } from '../application';
+import { vglobal, graphicService } from '../modules';
 import type { GraphicType } from '../interface';
 import { ARC_NUMBER_TYPE } from './constants';
 import { updateBoundsOfCommonOuterBorder } from './graphic-service/common-outer-boder-bounds';
@@ -268,7 +268,7 @@ export class Arc extends Graphic<IArcGraphicAttribute> implements IArc {
         : this.updateArcAABBBoundsAccurate(attribute, arcTheme, aabbBounds);
     }
 
-    const { tb1, tb2 } = application.graphicService.updateTempAABBBounds(aabbBounds);
+    const { tb1, tb2 } = graphicService.updateTempAABBBounds(aabbBounds);
 
     updateBoundsOfCommonOuterBorder(attribute, arcTheme, tb1);
     aabbBounds.union(tb1);
@@ -277,7 +277,7 @@ export class Arc extends Graphic<IArcGraphicAttribute> implements IArc {
     this.setWidthHeightWithoutTransform(aabbBounds);
 
     const { lineJoin = arcTheme.lineJoin } = attribute;
-    application.graphicService.transformAABBBounds(attribute, aabbBounds, arcTheme, lineJoin === 'miter', this);
+    graphicService.transformAABBBounds(attribute, aabbBounds, arcTheme, lineJoin === 'miter', this);
 
     return aabbBounds;
   }

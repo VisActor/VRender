@@ -1,4 +1,4 @@
-import { application } from '@visactor/vrender-core';
+import { contributionRegistry } from '@visactor/vrender-core';
 import { CanvasPickerContribution } from '../constants';
 import { DefaultCanvasCirclePicker } from './circle-picker';
 
@@ -8,5 +8,5 @@ export function registerCanvasCirclePicker() {
     return;
   }
   _registeredCircle = true;
-  application.contributions.register(CanvasPickerContribution, new DefaultCanvasCirclePicker());
+  contributionRegistry.register(CanvasPickerContribution, new DefaultCanvasCirclePicker());
 }

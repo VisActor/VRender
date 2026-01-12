@@ -1,4 +1,4 @@
-import { application } from '@visactor/vrender-core';
+import { contributionRegistry } from '@visactor/vrender-core';
 import { CanvasAreaPicker, CanvasPickerContribution } from '../constants';
 import { DefaultCanvasAreaPicker } from './area-picker';
 
@@ -9,5 +9,5 @@ export function registerCanvasAreaPicker() {
   }
   loadAreaPick = true;
   // area picker
-  application.contributions.register(CanvasPickerContribution, new DefaultCanvasAreaPicker());
+  contributionRegistry.register(CanvasPickerContribution, new DefaultCanvasAreaPicker());
 }

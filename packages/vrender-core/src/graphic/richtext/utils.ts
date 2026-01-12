@@ -1,5 +1,5 @@
 import type { IBoundsLike } from '@visactor/vutils';
-import { application } from '../../application';
+import { vglobal, graphicUtil } from '../../modules';
 import { createColor } from '../../common/canvas-utils';
 import type { IContext2d, ITextStyleParams, IRichTextParagraphCharacter } from '../../interface';
 import { DEFAULT_TEXT_FONT_FAMILY } from '../../constants';
@@ -167,7 +167,7 @@ export function getStrByWithCanvas(
   if (!width || width <= 0) {
     return 0;
   }
-  const textMeasure = application.graphicUtil.textMeasure;
+  const textMeasure = graphicUtil.textMeasure;
   // const measurement = textMeasure.measureText(text, character);
 
   // 测量从头到当前位置宽度以及从头到下一个字符位置宽度
@@ -355,7 +355,7 @@ export function measureTextCanvas(
       width: 0
     };
   }
-  const textMeasure = application.graphicUtil.textMeasure;
+  const textMeasure = graphicUtil.textMeasure;
   const measurement = textMeasure.measureText(text, character as any) as TextMetrics;
   const result: { ascent: number; height: number; descent: number; width: number } = {
     ascent: 0,

@@ -1,4 +1,4 @@
-import { application, Arc3dRender, ARC3D_NUMBER_TYPE } from '@visactor/vrender-core';
+import { serviceRegistry, contributionRegistry, Arc3dRender, ARC3D_NUMBER_TYPE } from '@visactor/vrender-core';
 import type { IArc3d, IGraphicPicker, IGraphicRender } from '@visactor/vrender-core';
 import { Base3dPicker } from '../common/base-3d-picker';
 
@@ -10,9 +10,9 @@ export class DefaultCanvasArc3dPicker extends Base3dPicker<IArc3d> implements IG
   constructor() {
     super();
     try {
-      this.canvasRenderer = application.services.get(Arc3dRender) as IGraphicRender;
+      this.canvasRenderer = serviceRegistry.get(Arc3dRender) as IGraphicRender;
     } catch (_) {
-      this.canvasRenderer = application.contributions.get<IGraphicRender>(Arc3dRender)[0];
+      this.canvasRenderer = contributionRegistry.get<IGraphicRender>(Arc3dRender)[0];
     }
   }
 }

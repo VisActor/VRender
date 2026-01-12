@@ -16,7 +16,8 @@ import {
   BaseRender,
   getTheme,
   CustomPath2D,
-  application
+  serviceRegistry,
+  contributionRegistry
 } from '@visactor/vrender-core';
 import rough from 'roughjs';
 import { defaultRouthThemeSpec } from './config';
@@ -31,9 +32,9 @@ export class RoughCanvasSymbolRender extends RoughBaseRender implements IGraphic
   constructor() {
     super();
     try {
-      this.canvasRenderer = application.services.get(DefaultCanvasSymbolRender) as IGraphicRender;
+      this.canvasRenderer = serviceRegistry.get(DefaultCanvasSymbolRender) as IGraphicRender;
     } catch (_) {
-      this.canvasRenderer = application.contributions.get<IGraphicRender>(DefaultCanvasSymbolRender)[0];
+      this.canvasRenderer = contributionRegistry.get<IGraphicRender>(DefaultCanvasSymbolRender)[0];
     }
     this.type = 'symbol';
     this.numberType = SYMBOL_NUMBER_TYPE;

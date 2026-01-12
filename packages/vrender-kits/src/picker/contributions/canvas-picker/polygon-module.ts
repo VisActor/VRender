@@ -1,4 +1,4 @@
-import { application } from '@visactor/vrender-core';
+import { contributionRegistry } from '@visactor/vrender-core';
 import { CanvasPickerContribution } from '../constants';
 import { DefaultCanvasPolygonPicker } from './polygon-picker';
 
@@ -8,5 +8,5 @@ export function registerCanvasPolygonPicker() {
     return;
   }
   _registeredPolygon = true;
-  application.contributions.register(CanvasPickerContribution, new DefaultCanvasPolygonPicker());
+  contributionRegistry.register(CanvasPickerContribution, new DefaultCanvasPolygonPicker());
 }

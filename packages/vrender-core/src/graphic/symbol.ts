@@ -3,7 +3,7 @@ import { isArray } from '@visactor/vutils';
 import type { ISymbol, ISymbolClass, ISymbolGraphicAttribute } from '../interface';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_ATTR } from './graphic';
 import { getTheme } from './theme';
-import { application } from '../application';
+import { vglobal, graphicService } from '../modules';
 import { CustomPath2D } from '../common/custom-path2d';
 import { SYMBOL_NUMBER_TYPE } from './constants';
 import { updateBoundsOfSymbolOuterBorder } from './graphic-service/symbol-outer-border-bounds';
@@ -79,7 +79,7 @@ export class Symbol extends Graphic<ISymbolGraphicAttribute> implements ISymbol 
         : this.updateSymbolAABBBoundsAccurate(attribute, symbolTheme, aabbBounds);
     }
 
-    const { tb1, tb2 } = application.graphicService.updateTempAABBBounds(aabbBounds);
+    const { tb1, tb2 } = graphicService.updateTempAABBBounds(aabbBounds);
 
     updateBoundsOfSymbolOuterBorder(attribute, symbolTheme, tb1);
     aabbBounds.union(tb1);
@@ -91,7 +91,7 @@ export class Symbol extends Graphic<ISymbolGraphicAttribute> implements ISymbol 
     this.y1WithoutTransform = aabbBounds.y1;
 
     const { lineJoin = symbolTheme.lineJoin } = attribute;
-    application.graphicService.transformAABBBounds(attribute, aabbBounds, symbolTheme, lineJoin === 'miter', this);
+    graphicService.transformAABBBounds(attribute, aabbBounds, symbolTheme, lineJoin === 'miter', this);
     return aabbBounds;
   }
 

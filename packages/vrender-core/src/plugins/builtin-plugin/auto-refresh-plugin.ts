@@ -1,5 +1,5 @@
 import { Generator } from '../../common/generator';
-import { application } from '../../application';
+import { vglobal } from '../../modules';
 import type { IGraphic, IPlugin, IPluginService } from '../../interface';
 
 export class AutoRefreshPlugin implements IPlugin {
@@ -23,7 +23,7 @@ export class AutoRefreshPlugin implements IPlugin {
 
   activate(context: IPluginService): void {
     this.pluginService = context;
-    this.dpr = application.global.devicePixelRatio;
+    this.dpr = vglobal.devicePixelRatio;
     this.refresh();
   }
 
@@ -33,10 +33,10 @@ export class AutoRefreshPlugin implements IPlugin {
     }
   }
   protected _refreshByRaf() {
-    const raf = application.global.getRequestAnimationFrame();
+    const raf = vglobal.getRequestAnimationFrame();
     this.rafId = raf(() => {
-      if (application.global.devicePixelRatio !== this.dpr) {
-        this.dpr = application.global.devicePixelRatio;
+      if (vglobal.devicePixelRatio !== this.dpr) {
+        this.dpr = vglobal.devicePixelRatio;
         this.pluginService.stage.setDpr(this.dpr, true);
       }
       this.refresh();
@@ -66,7 +66,7 @@ export class AutoRefreshPlugin implements IPlugin {
     return true;
   }
   deactivate(context: IPluginService): void {
-    const craf = application.global.getCancelAnimationFrame();
+    const craf = vglobal.getCancelAnimationFrame();
     craf && this.rafId && craf(this.rafId);
     this.autoRefreshCbs?.forEach(cb => {
       cb();

@@ -11,7 +11,7 @@ import type {
   IRect,
   IRectAttribute
 } from '@visactor/vrender-core';
-import { application, AttributeUpdateType, CustomPath2D, divideCubic } from '@visactor/vrender-core';
+import { AttributeUpdateType, CustomPath2D, divideCubic, graphicService } from '@visactor/vrender-core';
 import { ACustomAnimate } from './custom-animate';
 import type { IPoint } from '@visactor/vutils';
 import { PointService } from '@visactor/vutils';
@@ -52,7 +52,7 @@ export class StreamLight extends ACustomAnimate<any> {
 
   onStartLineOrArea(type: 'line' | 'area') {
     const root = this.target.attachShadow();
-    const line = application.graphicService.creator[type]({
+    const line = graphicService.creator[type]({
       ...this.params?.attribute
     });
     this[type] = line;
@@ -69,7 +69,7 @@ export class StreamLight extends ACustomAnimate<any> {
     const size = this.target.AABBBounds[sizeAttr]();
     const y = isHorizontal ? 0 : this.target.AABBBounds.y1;
 
-    const rect = application.graphicService.creator.rect({
+    const rect = graphicService.creator.rect({
       [sizeAttr]: size,
       fill: '#bcdeff',
       shadowBlur: 30,

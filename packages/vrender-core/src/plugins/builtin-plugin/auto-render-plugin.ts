@@ -1,5 +1,5 @@
 import { Generator } from '../../common/generator';
-import { application } from '../../application';
+import { vglobal } from '../../modules';
 import type { FullTap, IGraphic, IPlugin, IPluginService } from '../../interface';
 
 export class AutoRenderPlugin implements IPlugin {

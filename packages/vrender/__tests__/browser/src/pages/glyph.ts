@@ -6,16 +6,11 @@ import {
   createSymbol,
   createGroup,
   FederatedEvent,
-  initBrowserEnv,
-  initAllEnv,
-  initFeishuEnv
+  initAllEnv
 } from '@visactor/vrender';
 import { addShapesToStage, colorPools } from '../utils';
 
 // container.load(roughModule);
-initBrowserEnv();
-initFeishuEnv();
-initAllEnv();
 
 export const page = () => {
   const shapes = [];

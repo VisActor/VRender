@@ -1,4 +1,4 @@
-import { PolygonRender, POLYGON_NUMBER_TYPE, application } from '@visactor/vrender-core';
+import { serviceRegistry, PolygonRender, POLYGON_NUMBER_TYPE, contributionRegistry } from '@visactor/vrender-core';
 import type { IGraphicPicker, IGraphicRender } from '@visactor/vrender-core';
 import { PickerBase } from '../common/base';
 
@@ -9,9 +9,9 @@ export class DefaultCanvasPolygonPicker extends PickerBase implements IGraphicPi
   constructor() {
     super();
     try {
-      this.canvasRenderer = application.services.get(PolygonRender);
+      this.canvasRenderer = serviceRegistry.get(PolygonRender);
     } catch (_) {
-      this.canvasRenderer = application.contributions.get<IGraphicRender>(PolygonRender)[0];
+      this.canvasRenderer = contributionRegistry.get<IGraphicRender>(PolygonRender)[0];
     }
   }
 }

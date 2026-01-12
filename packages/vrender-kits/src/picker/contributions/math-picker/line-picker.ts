@@ -1,4 +1,4 @@
-import { LineRender, LINE_NUMBER_TYPE, application } from '@visactor/vrender-core';
+import { serviceRegistry, LineRender, LINE_NUMBER_TYPE, contributionRegistry } from '@visactor/vrender-core';
 import type { IGraphicPicker, IGraphicRender } from '@visactor/vrender-core';
 import { PickerBase } from '../common/base';
 export class DefaultMathLinePicker extends PickerBase implements IGraphicPicker {
@@ -9,10 +9,10 @@ export class DefaultMathLinePicker extends PickerBase implements IGraphicPicker 
     super();
     // Acquire renderer via services (no inversify)
     try {
-      this.canvasRenderer = application.services.get(LineRender) as IGraphicRender;
+      this.canvasRenderer = serviceRegistry.get(LineRender) as IGraphicRender;
     } catch (_) {
       // fallback to contributions if services not registered yet
-      this.canvasRenderer = application.contributions.get<IGraphicRender>(LineRender)[0];
+      this.canvasRenderer = contributionRegistry.get<IGraphicRender>(LineRender)[0];
     }
   }
   // numberType?: number = LINE_NUMBER_TYPE;

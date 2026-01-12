@@ -19,7 +19,7 @@ import { getTheme } from '../graphic/theme';
 import { DefaultAttribute } from '../graphic/config';
 import { mat3Tomat4, multiplyMat4Mat4 } from '../common/matrix';
 import { mat4Allocate, matrixAllocate } from '../allocator/matrix-allocate';
-import { application } from '../application';
+import { vglobal } from '../modules';
 import { PickItemInterceptor, PickServiceInterceptor } from './constants';
 import { contributionRegistry } from '../common/registry';
 
@@ -48,7 +48,7 @@ export abstract class DefaultPickService implements IPickerService {
       ({
         getContributions: () => contributionRegistry.get<IPickServiceInterceptorContribution>(PickServiceInterceptor)
       } as IContributionProvider<IPickServiceInterceptorContribution>);
-    this.global = application.global;
+    this.global = vglobal;
   }
 
   reInit() {

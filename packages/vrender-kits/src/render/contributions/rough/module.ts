@@ -1,4 +1,4 @@
-import { application, GraphicRender } from '@visactor/vrender-core';
+import { contributionRegistry, GraphicRender } from '@visactor/vrender-core';
 import { RoughCanvasArcRender } from './rough-arc';
 import { RoughCanvasAreaRender } from './rough-area';
 import { RoughCanvasCircleRender } from './rough-circle';
@@ -23,6 +23,6 @@ export function registerRoughCanvasRenders() {
     new RoughCanvasArcRender()
   ];
   for (const render of renders) {
-    application.contributions.register(GraphicRender, render);
+    contributionRegistry.register(GraphicRender, render);
   }
 }

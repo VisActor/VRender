@@ -2,7 +2,7 @@ import type { IAABBBounds, IPointLike } from '@visactor/vutils';
 import type { ILine, ILineGraphicAttribute } from '../interface';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_ATTR } from './graphic';
 import { getTheme } from './theme';
-import { application } from '../application';
+import { vglobal, graphicService } from '../modules';
 import { pointsInterpolation } from '../common/utils';
 import { CustomPath2D } from '../common/custom-path2d';
 import { LINE_NUMBER_TYPE } from './constants';
@@ -66,13 +66,13 @@ export class Line extends Graphic<ILineGraphicAttribute> implements ILine {
         : this.updateLineAABBBoundsByPoints(attribute, lineTheme, aabbBounds);
     }
 
-    application.graphicService.updateTempAABBBounds(aabbBounds);
+    graphicService.updateTempAABBBounds(aabbBounds);
 
     this.widthWithoutTransform = aabbBounds.x2 - aabbBounds.x1;
     this.heightWithoutTransform = aabbBounds.y2 - aabbBounds.y1;
 
     const { lineJoin = lineTheme.lineJoin } = attribute;
-    application.graphicService.transformAABBBounds(attribute, aabbBounds, lineTheme, lineJoin === 'miter', this);
+    graphicService.transformAABBBounds(attribute, aabbBounds, lineTheme, lineJoin === 'miter', this);
     return aabbBounds;
   }
 

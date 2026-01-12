@@ -1,4 +1,4 @@
-import { application } from '@visactor/vrender-core';
+import { contributionRegistry } from '@visactor/vrender-core';
 import { MathPickerContribution } from '../constants';
 import { DefaultMathRectPicker } from './rect-picker';
 
@@ -8,5 +8,5 @@ export function registerMathRectPicker() {
     return;
   }
   _registered = true;
-  application.contributions.register(MathPickerContribution, new DefaultMathRectPicker());
+  contributionRegistry.register(MathPickerContribution, new DefaultMathRectPicker());
 }

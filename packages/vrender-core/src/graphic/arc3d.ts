@@ -1,7 +1,7 @@
 import type { IAABBBounds } from '@visactor/vutils';
 import type { GraphicType, IArc3d, IArc3dGraphicAttribute } from '../interface';
 import { Arc } from './arc';
-import { application } from '../application';
+import { vglobal, graphicService } from '../modules';
 import { ARC3D_NUMBER_TYPE } from './constants';
 import { NOWORK_ANIMATE_ATTR } from './graphic';
 
@@ -57,8 +57,8 @@ export class Arc3d extends Arc implements IArc3d {
     //   }
     //   aabbBounds.add(x, y);
     // });
-    application.graphicService.updateTempAABBBounds(aabbBounds);
-    application.graphicService.transformAABBBounds(attribute, aabbBounds, arcTheme, false, this);
+    graphicService.updateTempAABBBounds(aabbBounds);
+    graphicService.transformAABBBounds(attribute, aabbBounds, arcTheme, false, this);
     return aabbBounds;
   }
 

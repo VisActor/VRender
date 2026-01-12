@@ -1,4 +1,4 @@
-import { application } from '@visactor/vrender-core';
+import { contributionRegistry } from '@visactor/vrender-core';
 import { CanvasPathPicker, CanvasPickerContribution } from '../constants';
 import { DefaultCanvasPathPicker } from './path-picker';
 
@@ -8,5 +8,5 @@ export function registerCanvasPathPicker() {
     return;
   }
   loadPathPick = true;
-  application.contributions.register(CanvasPickerContribution, new DefaultCanvasPathPicker());
+  contributionRegistry.register(CanvasPickerContribution, new DefaultCanvasPathPicker());
 }

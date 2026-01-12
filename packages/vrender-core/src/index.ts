@@ -1,5 +1,8 @@
 // import 'core-js/proposals/reflect-metadata';
 
+// 必须在所有其他导出之前加载，确保服务注册表被初始化
+import './modules';
+
 export * from './core/global';
 export * from './graphic';
 export * from './create';
@@ -53,8 +56,9 @@ export * from './allocator/graphic-allocate';
 export { wrapCanvas, wrapContext } from './canvas/util';
 export * from './common/xml';
 export * from './constants';
-export * from './application';
 export * from './env-check';
+export * from './common/registry'; // 导出 registry
+export { vglobal, graphicService, graphicUtil, transformUtil, layerService } from './modules'; // 导出全局服务
 
 export * from './register/register-arc';
 export * from './register/register-arc3d';

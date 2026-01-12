@@ -23,7 +23,7 @@ import { GROUP_NUMBER_TYPE } from '../../../graphic/constants';
 import { BaseRenderContributionTime } from '../../../common/enums';
 import { defaultGroupBackgroundRenderContribution } from './contributions';
 import { multiplyMat4Mat4 } from '../../../common/matrix';
-import { application } from '../../../application';
+import { vglobal } from '../../../modules';
 import { contributionRegistry } from '../../../common/registry';
 
 export class DefaultCanvasGroupRender implements IGraphicRender {
@@ -241,7 +241,7 @@ export class DefaultCanvasGroupRender implements IGraphicRender {
       const { x, y, width, height } = group.attribute;
       // 绘制到新的Canvas上，然后再绘制回来
       const canvas = context.canvas;
-      const newCanvas = application.global.createCanvas({ width: canvas.width, height: canvas.height, dpr: 1 });
+      const newCanvas = vglobal.createCanvas({ width: canvas.width, height: canvas.height, dpr: 1 });
       const newContext = newCanvas.getContext('2d');
       const transform = context.nativeContext.getTransform();
       // 首先应用transform

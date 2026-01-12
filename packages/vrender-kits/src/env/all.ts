@@ -1,4 +1,4 @@
-import { application } from '@visactor/vrender-core';
+import { contributionRegistry, vglobal } from '@visactor/vrender-core';
 import { registerBrowserEnvRegistry } from './browser';
 import { registerFeishuEnvRegistry } from './feishu';
 import { registerLynxEnvRegistry } from './lynx';
@@ -23,7 +23,7 @@ export function loadAllModule() {
     registerTaroEnvRegistry();
     registerWxEnvRegistry();
     registerCanvasPickerService();
-    application.global.hooks.onSetEnv.tap('registerMathPickerService', (lastEnv, env) => {
+    vglobal.hooks.onSetEnv.tap('registerMathPickerService', (lastEnv, env) => {
       env !== 'browser' && registerMathPickerService();
     });
   }

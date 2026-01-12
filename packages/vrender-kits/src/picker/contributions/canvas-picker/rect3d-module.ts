@@ -1,4 +1,4 @@
-import { application } from '@visactor/vrender-core';
+import { contributionRegistry } from '@visactor/vrender-core';
 import { CanvasPickerContribution } from '../constants';
 import { DefaultCanvasRect3dPicker } from './rect3d-picker';
 
@@ -8,5 +8,5 @@ export function registerCanvasRect3dPicker() {
     return;
   }
   _registeredRect3d = true;
-  application.contributions.register(CanvasPickerContribution, new DefaultCanvasRect3dPicker());
+  contributionRegistry.register(CanvasPickerContribution, new DefaultCanvasRect3dPicker());
 }

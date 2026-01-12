@@ -1,6 +1,7 @@
 import type { IMatrix, IPointLike } from '@visactor/vutils';
 import {
   DefaultPickService,
+  contributionRegistry,
   EmptyContext2d,
   type ICanvas,
   type IContext2d,
@@ -11,8 +12,7 @@ import {
   type IPickerService,
   type IContributionProvider,
   type IPickParams,
-  type PickResult,
-  application
+  type PickResult
 } from '@visactor/vrender-core';
 import { MathPickerContribution } from './contributions/constants';
 
@@ -30,7 +30,7 @@ export class DefaultMathPickerService extends DefaultPickService implements IPic
   constructor() {
     super();
     this.contributions = {
-      getContributions: () => application.contributions.get<IGraphicPicker>(MathPickerContribution)
+      getContributions: () => contributionRegistry.get<IGraphicPicker>(MathPickerContribution)
     } as IContributionProvider<IGraphicPicker>;
 
     this.global.hooks.onSetEnv.tap('math-picker-service', (lastEnv, env, global) => {

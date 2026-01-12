@@ -6,7 +6,8 @@ import {
   type IGraphicRenderDrawParams,
   RECT_NUMBER_TYPE,
   DefaultCanvasRectRender,
-  application,
+  serviceRegistry,
+  contributionRegistry,
   CustomPath2D
 } from '@visactor/vrender-core';
 
@@ -23,9 +24,9 @@ export class RoughCanvasRectRender extends RoughBaseRender implements IGraphicRe
   constructor() {
     super();
     try {
-      this.canvasRenderer = application.services.get(DefaultCanvasRectRender) as IGraphicRender;
+      this.canvasRenderer = serviceRegistry.get(DefaultCanvasRectRender) as IGraphicRender;
     } catch (_) {
-      this.canvasRenderer = application.contributions.get<IGraphicRender>(DefaultCanvasRectRender)[0];
+      this.canvasRenderer = contributionRegistry.get<IGraphicRender>(DefaultCanvasRectRender)[0];
     }
     this.type = 'rect';
     this.numberType = RECT_NUMBER_TYPE;

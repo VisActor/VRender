@@ -1,5 +1,5 @@
 import type { IArcGraphicAttribute, IGraphic, IGroup, IRectGraphicAttribute } from '@visactor/vrender-core';
-import { application, AttributeUpdateType, type EasingType } from '@visactor/vrender-core';
+import { AttributeUpdateType, type EasingType, graphicService } from '@visactor/vrender-core';
 import { ACustomAnimate } from './custom-animate';
 
 export class ClipGraphicAnimate extends ACustomAnimate<any> {
@@ -102,7 +102,7 @@ export class ClipAngleAnimate extends ClipGraphicAnimate {
       arcStartAngle = startAngle;
       arcEndAngle = animationType === 'out' ? startAngle + Math.PI * 2 : startAngle;
     }
-    const arc = application.graphicService.creator.arc({
+    const arc = graphicService.creator.arc({
       x: params?.center?.x ?? width / 2,
       y: params?.center?.y ?? height / 2,
       outerRadius: params?.radius ?? (width + height) / 2,
@@ -152,7 +152,7 @@ export class ClipRadiusAnimate extends ClipGraphicAnimate {
     const startRadius = params?.startRadius ?? 0;
     const endRadius = params?.endRadius ?? Math.sqrt((width / 2) ** 2 + (height / 2) ** 2);
 
-    const arc = application.graphicService.creator.arc({
+    const arc = graphicService.creator.arc({
       x: params?.center?.x ?? width / 2,
       y: params?.center?.y ?? height / 2,
       outerRadius: animationType === 'out' ? endRadius : startRadius,
@@ -196,7 +196,7 @@ export class ClipDirectionAnimate extends ClipGraphicAnimate {
     const direction = params?.direction ?? 'x';
     const orient = params?.orient ?? 'positive';
 
-    const rect = application.graphicService.creator.rect({
+    const rect = graphicService.creator.rect({
       x: 0,
       y: 0,
       width: animationType === 'in' && direction === 'x' ? 0 : width,

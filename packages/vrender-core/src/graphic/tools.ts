@@ -1,4 +1,4 @@
-import { application } from '../application';
+import { vglobal } from '../modules';
 import { isXML } from '../common/xml/parser';
 import type { IGraphic, IGroup, ILayer, IRichTextCharacter, IRichTextImageCharacter, IStage } from '../interface';
 import { isArray, type IAABBBounds } from '@visactor/vutils';
@@ -16,7 +16,7 @@ export async function waitForAllSubLayers(stage: IStage) {
   const promiseList: Promise<any>[] = [];
   const layers = stage.getChildren() as ILayer[];
   await new Promise(resolve => {
-    application.global.getRequestAnimationFrame()(() => {
+    vglobal.getRequestAnimationFrame()(() => {
       resolve(null);
     });
   });

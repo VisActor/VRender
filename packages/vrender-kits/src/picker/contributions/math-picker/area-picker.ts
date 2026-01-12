@@ -1,4 +1,4 @@
-import { application, AreaRender, AREA_NUMBER_TYPE } from '@visactor/vrender-core';
+import { serviceRegistry, contributionRegistry, AreaRender, AREA_NUMBER_TYPE } from '@visactor/vrender-core';
 
 import type { IGraphicPicker, IGraphicRender } from '@visactor/vrender-core';
 import { PickerBase } from '../common/base';
@@ -10,9 +10,9 @@ export class DefaultMathAreaPicker extends PickerBase implements IGraphicPicker 
   constructor() {
     super();
     try {
-      this.canvasRenderer = application.services.get(AreaRender) as IGraphicRender;
+      this.canvasRenderer = serviceRegistry.get(AreaRender) as IGraphicRender;
     } catch (_) {
-      this.canvasRenderer = application.contributions.get<IGraphicRender>(AreaRender)[0];
+      this.canvasRenderer = contributionRegistry.get<IGraphicRender>(AreaRender)[0];
     }
   }
 }

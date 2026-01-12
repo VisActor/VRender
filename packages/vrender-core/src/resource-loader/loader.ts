@@ -1,5 +1,5 @@
 import type { IImage, ImagePayload, ResourceData } from '../interface';
-import { application } from '../application';
+import { vglobal } from '../modules';
 
 const PARALLEL_NUMBER = 10;
 export class ResourceLoader {
@@ -14,7 +14,7 @@ export class ResourceLoader {
       // 存在缓存
       if (data.loadState === 'fail') {
         // 资源请求失败，修改mark状态
-        application.global.getRequestAnimationFrame()(() => {
+        vglobal.getRequestAnimationFrame()(() => {
           mark.imageLoadFail(url);
         });
       } else if (data.loadState === 'init' || data.loadState === 'loading') {
@@ -28,7 +28,7 @@ export class ResourceLoader {
       // data = { type: 'image', loadState: 'init' };
       // ResourceLoader.cache.set(url, data);
 
-      // data.dataPromise = application.global.loadImage(url);
+      // data.dataPromise = vglobal.loadImage(url);
       // if (!data.dataPromise) {
       //   // 无法获取资源，修改缓存和mark状态
       //   data.loadState = 'fail';
@@ -62,7 +62,7 @@ export class ResourceLoader {
       // 存在缓存
       if (data.loadState === 'fail') {
         // 资源请求失败，修改mark状态
-        application.global.getRequestAnimationFrame()(() => {
+        vglobal.getRequestAnimationFrame()(() => {
           mark.imageLoadFail(svgStr);
         });
       } else if (data.loadState === 'init' || data.loadState === 'loading') {
@@ -75,7 +75,7 @@ export class ResourceLoader {
       data = { type: 'image', loadState: 'init' };
       ResourceLoader.cache.set(svgStr, data);
 
-      data.dataPromise = application.global.loadSvg(svgStr);
+      data.dataPromise = vglobal.loadSvg(svgStr);
       if (!data.dataPromise) {
         // 无法获取资源，修改缓存和mark状态
         data.loadState = 'fail';
@@ -119,11 +119,11 @@ export class ResourceLoader {
     ResourceLoader.cache.set(url, data);
 
     if (type === 'arrayBuffer') {
-      data.dataPromise = application.global.loadArrayBuffer(url);
+      data.dataPromise = vglobal.loadArrayBuffer(url);
     } else if (type === 'blob') {
-      data.dataPromise = application.global.loadBlob(url);
+      data.dataPromise = vglobal.loadBlob(url);
     } else if (type === 'json') {
-      data.dataPromise = application.global.loadJson(url);
+      data.dataPromise = vglobal.loadJson(url);
     }
 
     return data.dataPromise.then(data => data.data);
@@ -140,7 +140,7 @@ export class ResourceLoader {
           const data: ResourceData = { type: 'image', loadState: 'init' };
           ResourceLoader.cache.set(url, data);
 
-          data.dataPromise = application.global.loadImage(url);
+          data.dataPromise = vglobal.loadImage(url);
           if (!data.dataPromise) {
             // 无法获取资源，修改缓存和mark状态
             data.loadState = 'fail';

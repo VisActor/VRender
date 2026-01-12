@@ -1,4 +1,4 @@
-import { application } from '@visactor/vrender-core';
+import { contributionRegistry } from '@visactor/vrender-core';
 import { MathPickerContribution } from '../constants';
 import { DefaultMathAreaPicker } from './area-picker';
 
@@ -8,5 +8,5 @@ export function registerMathAreaPicker() {
     return;
   }
   _registered = true;
-  application.contributions.register(MathPickerContribution, new DefaultMathAreaPicker());
+  contributionRegistry.register(MathPickerContribution, new DefaultMathAreaPicker());
 }

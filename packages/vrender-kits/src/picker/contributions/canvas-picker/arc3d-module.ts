@@ -1,4 +1,4 @@
-import { application } from '@visactor/vrender-core';
+import { contributionRegistry } from '@visactor/vrender-core';
 import { CanvasPickerContribution } from '../constants';
 import { DefaultCanvasArc3dPicker } from './arc3d-picker';
 
@@ -8,5 +8,5 @@ export function registerCanvasArc3dPicker() {
     return;
   }
   _registeredArc3d = true;
-  application.contributions.register(CanvasPickerContribution, new DefaultCanvasArc3dPicker());
+  contributionRegistry.register(CanvasPickerContribution, new DefaultCanvasArc3dPicker());
 }

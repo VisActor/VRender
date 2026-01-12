@@ -1,4 +1,4 @@
-import { application } from '@visactor/vrender-core';
+import { contributionRegistry } from '@visactor/vrender-core';
 import { MathPickerContribution } from '../constants';
 import { DefaultMathPathPicker } from './path-picker';
 
@@ -8,5 +8,5 @@ export function registerMathPathPicker() {
     return;
   }
   _registered = true;
-  application.contributions.register(MathPickerContribution, new DefaultMathPathPicker());
+  contributionRegistry.register(MathPickerContribution, new DefaultMathPathPicker());
 }

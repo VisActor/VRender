@@ -1,5 +1,5 @@
 // 参考konva
-import { createColor, getScaledStroke, application } from '@visactor/vrender-core';
+import { createColor, getScaledStroke, vglobal } from '@visactor/vrender-core';
 import type {
   IContext2d,
   EnvType,
@@ -77,11 +77,8 @@ export class HarmonyContext2d extends BrowserContext2d implements IContext2d {
     }
   }
 
-  measureText(
-    text: string,
-    method: 'native' | 'simple' | 'quick' = application.global.measureTextMethod
-  ): { width: number } {
-    this.setTransform(1, 0, 0, 1, 0, 0, true, application.global.devicePixelRatio);
+  measureText(text: string, method: 'native' | 'simple' | 'quick' = vglobal.measureTextMethod): { width: number } {
+    this.setTransform(1, 0, 0, 1, 0, 0, true, vglobal.devicePixelRatio);
     const data = super.measureText(text, method);
     return data;
   }

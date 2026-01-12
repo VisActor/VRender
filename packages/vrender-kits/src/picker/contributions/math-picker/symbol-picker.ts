@@ -1,4 +1,4 @@
-import { application, SymbolRender, SYMBOL_NUMBER_TYPE } from '@visactor/vrender-core';
+import { serviceRegistry, contributionRegistry, SymbolRender, SYMBOL_NUMBER_TYPE } from '@visactor/vrender-core';
 
 import type { IGraphicPicker, IGraphicRender } from '@visactor/vrender-core';
 import { PickerBase } from '../common/base';
@@ -10,9 +10,9 @@ export class DefaultMathSymbolPicker extends PickerBase implements IGraphicPicke
   constructor() {
     super();
     try {
-      this.canvasRenderer = application.services.get(SymbolRender) as IGraphicRender;
+      this.canvasRenderer = serviceRegistry.get(SymbolRender) as IGraphicRender;
     } catch (_) {
-      this.canvasRenderer = application.contributions.get<IGraphicRender>(SymbolRender)[0];
+      this.canvasRenderer = contributionRegistry.get<IGraphicRender>(SymbolRender)[0];
     }
   }
 }

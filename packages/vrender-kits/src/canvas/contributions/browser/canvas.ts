@@ -1,5 +1,5 @@
-import { application, BaseCanvas } from '@visactor/vrender-core';
-import type { CanvasConfigType, ICanvas, EnvType } from '@visactor/vrender-core';
+import { BaseCanvas, serviceRegistry, VGlobal } from '@visactor/vrender-core';
+import type { CanvasConfigType, ICanvas, EnvType, IGlobal } from '@visactor/vrender-core';
 import { BrowserContext2d } from './context';
 
 export class BrowserCanvas extends BaseCanvas implements ICanvas {
@@ -16,7 +16,8 @@ export class BrowserCanvas extends BaseCanvas implements ICanvas {
   init(params: CanvasConfigType) {
     const { container } = params;
     if (typeof container === 'string') {
-      const _c = application.global.getElementById(container);
+      const global = serviceRegistry.get(VGlobal) as IGlobal;
+      const _c = global.getElementById(container);
       if (_c) {
         this._container = _c;
       }

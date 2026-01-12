@@ -2,13 +2,15 @@ import type { IPointLike, vec2 } from '@visactor/vutils';
 import { isPointInLine, pi, pi2 } from '@visactor/vutils';
 import { enumCommandMap as CMD } from '../common/path-svg';
 import type { CommandType, IContext2d } from '../interface';
-import { application } from '../application';
+import { contributionRegistry } from '../common/registry/contribution-registry';
+import { serviceRegistry } from '../common/registry/service-registry';
+import { VGlobal } from '../constants';
+import type { IGlobal } from '../interface/global';
 import { CanvasFactory, Context2dFactory } from './constants';
 import type { CanvasConfigType, ICanvas, ICanvasFactory, IContext2dFactory } from '../interface';
 
-export function wrapCanvas(params: CanvasConfigType) {
-  const factories = application.contributions.get<ICanvasFactory>(CanvasFactory);
-  const factory = factories.find((f: any) => (f as any).env === application.global.env) ?? factories[0];
+export function wrapCanvas(params: CanvasConfigType): ICanvas {
+  const factory = serviceRegistry.getFactory(CanvasFactory) as ICanvasFactory;
   if (!factory) {
     throw new Error('No CanvasFactory registered');
   }
@@ -16,8 +18,7 @@ export function wrapCanvas(params: CanvasConfigType) {
 }
 
 export function wrapContext(canvas: ICanvas, dpr: number) {
-  const factories = application.contributions.get<IContext2dFactory>(Context2dFactory);
-  const factory = factories.find((f: any) => (f as any).env === application.global.env) ?? factories[0];
+  const factory = serviceRegistry.getFactory(Context2dFactory) as IContext2dFactory;
   if (!factory) {
     throw new Error('No Context2dFactory registered');
   }

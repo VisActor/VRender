@@ -1,4 +1,4 @@
-import { application } from '@visactor/vrender-core';
+import { contributionRegistry } from '@visactor/vrender-core';
 import { CanvasPickerContribution } from '../constants';
 import { DefaultCanvasLottiePicker } from './lottie-picker';
 
@@ -8,5 +8,5 @@ export function registerCanvasLottiePicker() {
     return;
   }
   _registeredLottie = true;
-  application.contributions.register(CanvasPickerContribution, new DefaultCanvasLottiePicker());
+  contributionRegistry.register(CanvasPickerContribution, new DefaultCanvasLottiePicker());
 }

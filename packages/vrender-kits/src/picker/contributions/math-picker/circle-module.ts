@@ -1,4 +1,4 @@
-import { application } from '@visactor/vrender-core';
+import { contributionRegistry } from '@visactor/vrender-core';
 import { MathPickerContribution } from '../constants';
 import { DefaultMathCirclePicker } from './circle-picker';
 
@@ -8,5 +8,5 @@ export function registerMathCirclePicker() {
     return;
   }
   _registered = true;
-  application.contributions.register(MathPickerContribution, new DefaultMathCirclePicker());
+  contributionRegistry.register(MathPickerContribution, new DefaultMathCirclePicker());
 }

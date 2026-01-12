@@ -1,4 +1,4 @@
-import { application } from '@visactor/vrender-core';
+import { contributionRegistry } from '@visactor/vrender-core';
 import { DefaultMathArcPicker } from './arc-picker';
 import { MathPickerContribution } from '../constants';
 
@@ -8,5 +8,5 @@ export function registerMathArcPicker() {
     return;
   }
   _registered = true;
-  application.contributions.register(MathPickerContribution, new DefaultMathArcPicker());
+  contributionRegistry.register(MathPickerContribution, new DefaultMathArcPicker());
 }

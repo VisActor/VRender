@@ -1,7 +1,7 @@
 import { isArray } from '@visactor/vutils';
 import { CanvasTextLayout } from '../core/contributions/textMeasure/layout';
 import type { IText, ITextGraphicAttribute, IWrapTextGraphicAttribute, LayoutItemType } from '../interface';
-import { application } from '../application';
+import { vglobal, graphicUtil } from '../modules';
 import { Text } from './text';
 import { getTheme } from './theme';
 import { calculateLineHeight } from '../common/utils';
@@ -65,7 +65,7 @@ export class WrapText extends Text {
       return this._AABBBounds;
     }
 
-    const textMeasure = application.graphicUtil.getTextMeasureInstance(this.textMeasureId || this.stage?.textMeasureId);
+    const textMeasure = graphicUtil.getTextMeasureInstance(this.textMeasureId || this.stage?.textMeasureId);
     const layoutObj = new CanvasTextLayout(fontFamily, { fontSize, fontWeight, fontFamily }, textMeasure as any) as any;
 
     // layoutObj内逻辑

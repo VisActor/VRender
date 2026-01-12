@@ -3,45 +3,87 @@
  *
  * 这个文件将所有服务注册到 serviceRegistry 和 contributionRegistry
  */
-declare let require: any;
 import { serviceRegistry, contributionRegistry } from './common/registry';
-import { VGlobal, EnvContribution } from './constants';
-import { GraphicUtil, LayerService, TransformUtil } from './core/constants';
-import { VWindow } from './core/window';
+import { VGlobal } from './constants';
+import {
+  GraphicUtil,
+  LayerService,
+  TransformUtil,
+  StaticLayerHandlerContribution,
+  DynamicLayerHandlerContribution,
+  VirtualLayerHandlerContribution
+} from './core/constants';
+import { DefaultWindow, VWindow } from './core/window';
 import { GraphicService, GraphicCreator } from './graphic/constants';
 import { RenderService } from './render/constants';
+import type { IDrawContribution } from './interface/render';
 import {
   DrawContribution,
   GraphicRender,
   IncrementalDrawContribution,
   GroupRender
 } from './render/contributions/render/symbol';
-import { DrawItemInterceptor } from './render/contributions/render/draw-interceptor';
+import {
+  CommonDrawItemInterceptorContribution,
+  DrawItemInterceptor
+} from './render/contributions/render/draw-interceptor';
 import { PickerService, GlobalPickerService, PickItemInterceptor, PickServiceInterceptor } from './picker/constants';
-import { PluginService, AutoEnablePlugins } from './plugins/constants';
+import { PluginService } from './plugins/constants';
+import { DefaultGlobal } from './core/global';
+import { DefaultGraphicUtil, DefaultTransformUtil } from './core/graphic-utils';
+import { DefaultLayerService } from './core/layer-service';
+import { DefaultGraphicService } from './graphic/graphic-service/graphic-service';
+import { graphicCreator } from './graphic/graphic-creator';
+import { DefaultDrawContribution } from './render/contributions/render/draw-contribution';
+import { DefaultIncrementalDrawContribution } from './render/contributions/render/incremental-draw-contribution';
+import { DefaultRenderService } from './render/render-service';
+import { DefaultCanvasGroupRender } from './render/contributions/render/group-render';
+import { DefaultCanvasRectRender } from './render/contributions/render/rect-render';
+import { DefaultCanvasArcRender } from './render/contributions/render/arc-render';
+import { DefaultCanvasCircleRender } from './render/contributions/render/circle-render';
+import { DefaultCanvasLineRender } from './render/contributions/render/line-render';
+import { DefaultCanvasAreaRender } from './render/contributions/render/area-render';
+import { DefaultCanvasPathRender } from './render/contributions/render/path-render';
+import { DefaultCanvasTextRender } from './render/contributions/render/text-render';
+import { DefaultCanvasSymbolRender } from './render/contributions/render/symbol-render';
+import { DefaultCanvasPolygonRender } from './render/contributions/render/polygon-render';
+import { DefaultCanvasImageRender } from './render/contributions/render/image-render';
 import {
-  DynamicLayerHandlerContribution,
-  StaticLayerHandlerContribution,
-  VirtualLayerHandlerContribution
-} from './core/constants';
+  DefaultBaseBackgroundRenderContribution,
+  DefaultBaseInteractiveRenderContribution
+} from './render/contributions/render/contributions/base-contribution-render';
+import { DefaultBaseTextureRenderContribution } from './render/contributions/render/contributions/base-texture-contribution-render';
+import { DefaultGlobalPickerService } from './picker/global-picker-service';
 import {
-  GroupRenderContribution,
-  InteractiveSubRenderContribution
-} from './render/contributions/render/contributions/constants';
+  Canvas3DPickItemInterceptor,
+  InteractivePickItemInterceptorContribution,
+  ShadowRootPickItemInterceptorContribution
+} from './picker/pick-interceptor';
+import { DefaultPluginService } from './plugins/plugin-service';
+import { CanvasLayerHandlerContribution } from './core/contributions/layerHandler/canvas2d-contribution';
+import { OffscreenLayerHandlerContribution } from './core/contributions/layerHandler/offscreen2d-contribution';
+import { EmptyLayerHandlerContribution } from './core/contributions/layerHandler/empty-contribution';
+import {
+  TextMeasureContribution,
+  DefaultTextMeasureContribution
+} from './core/contributions/textMeasure/textMeasure-contribution';
 
 // ============ Core 模块注册 ============
 
 export function registerCoreModule() {
-  const { DefaultGlobal } = require('./core/global');
-  const { DefaultGraphicUtil, DefaultTransformUtil } = require('./core/graphic-utils');
-  const { DefaultLayerService } = require('./core/layer-service');
-  const { DefaultWindow } = require('./core/window');
-
   // 单例服务
   serviceRegistry.registerSingletonFactory(VGlobal, () => new DefaultGlobal());
   serviceRegistry.registerSingletonFactory(GraphicUtil, () => new DefaultGraphicUtil());
   serviceRegistry.registerSingletonFactory(TransformUtil, () => new DefaultTransformUtil());
   serviceRegistry.registerSingletonFactory(LayerService, () => new DefaultLayerService());
+
+  // LayerHandler 工厂 - 每个 Layer 一个实例
+  serviceRegistry.registerFactory(StaticLayerHandlerContribution, () => new CanvasLayerHandlerContribution());
+  serviceRegistry.registerFactory(DynamicLayerHandlerContribution, () => new OffscreenLayerHandlerContribution());
+  serviceRegistry.registerFactory(VirtualLayerHandlerContribution, () => new EmptyLayerHandlerContribution());
+
+  // TextMeasure 贡献
+  contributionRegistry.register(TextMeasureContribution, new DefaultTextMeasureContribution());
 
   // 工厂服务 - Window 每次创建新实例
   serviceRegistry.registerFactory(VWindow, () => new DefaultWindow());
@@ -50,9 +92,6 @@ export function registerCoreModule() {
 // ============ Graphic 模块注册 ============
 
 export function registerGraphicModule() {
-  const { DefaultGraphicService } = require('./graphic/graphic-service/graphic-service');
-  const { graphicCreator } = require('./graphic/graphic-creator');
-
   serviceRegistry.registerSingletonFactory(GraphicService, () => new DefaultGraphicService());
   serviceRegistry.registerSingleton(GraphicCreator, graphicCreator);
 }
@@ -60,10 +99,6 @@ export function registerGraphicModule() {
 // ============ Render 模块注册 ============
 
 export function registerRenderModule() {
-  const { DefaultRenderService } = require('./render/render-service');
-  const { DefaultDrawContribution } = require('./render/contributions/render/draw-contribution');
-  const { DefaultIncrementalDrawContribution } = require('./render/contributions/render/incremental-draw-contribution');
-
   // DrawContribution 单例
   serviceRegistry.registerSingletonFactory(DrawContribution, () => new DefaultDrawContribution());
 
@@ -72,7 +107,7 @@ export function registerRenderModule() {
 
   // RenderService 工厂 - 每个 Stage 一个实例
   serviceRegistry.registerFactory(RenderService, () => {
-    const drawContribution = serviceRegistry.get(DrawContribution);
+    const drawContribution = serviceRegistry.get(DrawContribution) as IDrawContribution;
     return new DefaultRenderService(drawContribution);
   });
 }
@@ -80,18 +115,22 @@ export function registerRenderModule() {
 // ============ Render Contributions 注册 ============
 
 export function registerRenderContributions() {
-  const { DefaultCanvasGroupRender } = require('./render/contributions/render/group-render');
-  const { CommonDrawItemInterceptorContribution } = require('./render/contributions/render/draw-interceptor');
-  const {
-    DefaultBaseBackgroundRenderContribution,
-    DefaultBaseInteractiveRenderContribution,
-    DefaultBaseTextureRenderContribution
-  } = require('./render/contributions/render/contributions');
-
   // Group 渲染器
   const groupRender = new DefaultCanvasGroupRender();
   serviceRegistry.registerSingleton(GroupRender, groupRender);
   contributionRegistry.register(GraphicRender, groupRender);
+
+  // 基础图形渲染器
+  contributionRegistry.register(GraphicRender, new DefaultCanvasRectRender());
+  contributionRegistry.register(GraphicRender, new DefaultCanvasCircleRender());
+  contributionRegistry.register(GraphicRender, new DefaultCanvasArcRender());
+  contributionRegistry.register(GraphicRender, new DefaultCanvasLineRender());
+  contributionRegistry.register(GraphicRender, new DefaultCanvasAreaRender());
+  contributionRegistry.register(GraphicRender, new DefaultCanvasPathRender());
+  contributionRegistry.register(GraphicRender, new DefaultCanvasTextRender());
+  contributionRegistry.register(GraphicRender, new DefaultCanvasSymbolRender());
+  contributionRegistry.register(GraphicRender, new DefaultCanvasPolygonRender());
+  contributionRegistry.register(GraphicRender, new DefaultCanvasImageRender());
 
   // DrawItemInterceptor
   const commonInterceptor = new CommonDrawItemInterceptorContribution();
@@ -112,14 +151,6 @@ export function registerRenderContributions() {
 // ============ Picker 模块注册 ============
 
 export function registerPickerModule() {
-  const { DefaultGlobalPickerService } = require('./picker/global-picker-service');
-  const {
-    Canvas3DPickItemInterceptor,
-    InteractivePickItemInterceptorContribution,
-    ShadowPickServiceInterceptorContribution,
-    ShadowRootPickItemInterceptorContribution
-  } = require('./picker/pick-interceptor');
-
   // GlobalPickerService 单例
   serviceRegistry.registerSingletonFactory(GlobalPickerService, () => new DefaultGlobalPickerService());
   serviceRegistry.registerSingletonFactory(PickerService, () => serviceRegistry.get(GlobalPickerService));
@@ -130,14 +161,12 @@ export function registerPickerModule() {
   contributionRegistry.register(PickItemInterceptor, new InteractivePickItemInterceptorContribution());
 
   // PickServiceInterceptor 贡献
-  contributionRegistry.register(PickServiceInterceptor, new ShadowPickServiceInterceptorContribution());
+  contributionRegistry.register(PickServiceInterceptor, new ShadowRootPickItemInterceptorContribution());
 }
 
 // ============ Plugin 模块注册 ============
 
 export function registerPluginModule() {
-  const { DefaultPluginService } = require('./plugins/plugin-service');
-
   // PluginService 工厂 - 每个 Stage 一个实例
   serviceRegistry.registerFactory(PluginService, () => new DefaultPluginService());
 }

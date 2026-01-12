@@ -5,7 +5,13 @@ import type {
   IDrawContext,
   IGraphicRenderDrawParams
 } from '@visactor/vrender-core';
-import { PATH_NUMBER_TYPE, DefaultCanvasPathRender, getTheme, application } from '@visactor/vrender-core';
+import {
+  PATH_NUMBER_TYPE,
+  DefaultCanvasPathRender,
+  getTheme,
+  serviceRegistry,
+  contributionRegistry
+} from '@visactor/vrender-core';
 import rough from 'roughjs';
 import { defaultRouthThemeSpec } from './config';
 import { RoughBaseRender } from './base-render';
@@ -18,9 +24,9 @@ export class RoughCanvasPathRender extends RoughBaseRender implements IGraphicRe
   constructor() {
     super();
     try {
-      this.canvasRenderer = application.services.get(DefaultCanvasPathRender) as IGraphicRender;
+      this.canvasRenderer = serviceRegistry.get(DefaultCanvasPathRender) as IGraphicRender;
     } catch (_) {
-      this.canvasRenderer = application.contributions.get<IGraphicRender>(DefaultCanvasPathRender)[0];
+      this.canvasRenderer = contributionRegistry.get<IGraphicRender>(DefaultCanvasPathRender)[0];
     }
     this.type = 'path';
     this.numberType = PATH_NUMBER_TYPE;

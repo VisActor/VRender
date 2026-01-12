@@ -5,7 +5,7 @@ import {
   textLayoutOffsetY,
   mat4Allocate,
   TEXT_NUMBER_TYPE,
-  application
+  contributionRegistry
 } from '@visactor/vrender-core';
 import type { IPoint } from '@visactor/vutils';
 import type {
@@ -29,7 +29,7 @@ export class DefaultCanvasTextPicker extends Base3dPicker<IText> implements IGra
     // text picker depends on TextRender via registry
     // TextRender is a token exported by core
     // Select first registered contribution
-    const render = application.contributions.get<IGraphicRender>(TextRender)[0];
+    const render = contributionRegistry.get<IGraphicRender>(TextRender)[0];
     this.canvasRenderer = render;
   }
 

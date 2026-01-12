@@ -124,8 +124,8 @@ export abstract class BaseCanvas implements ICanvas {
     this._displayHeight = height;
     this._dpr = dpr;
     this._nativeCanvas = nativeCanvas;
-    this._id = nativeCanvas.id ?? id;
-    if (id) {
+    this._id = nativeCanvas?.id ?? id;
+    if (nativeCanvas && id) {
       nativeCanvas.id = id;
     }
 

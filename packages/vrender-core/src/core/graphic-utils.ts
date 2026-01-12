@@ -17,7 +17,7 @@ import type { IMatrix, IPointLike, ITextMeasureOption } from '@visactor/vutils';
 import { Matrix, TextMeasure } from '@visactor/vutils';
 import type { IGraphicUtil, ITransformUtil, TransformType } from '../interface/core';
 import { canvasAllocate } from '../allocator/canvas-allocate';
-import { application } from '../application';
+import { VGlobal } from '../constants';
 import { VWindow } from './window';
 import { contributionRegistry, serviceRegistry } from '../common/registry';
 
@@ -47,7 +47,7 @@ export class DefaultGraphicUtil implements IGraphicUtil {
         getContributions: () => contributionRegistry.get<ITextMeasure>(TextMeasureContribution)
       } as IContributionProvider<ITextMeasure>);
     this.configured = false;
-    this.global = application.global;
+    this.global = serviceRegistry.get(VGlobal) as IGlobal;
     this._textMeasureMap = new Map();
     this.global.hooks.onSetEnv.tap('graphic-util', (lastEnv, env, global) => {
       this.configured = false;

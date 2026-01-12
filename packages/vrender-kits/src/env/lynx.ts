@@ -1,4 +1,4 @@
-import { EnvContribution, application, WindowHandlerContribution } from '@visactor/vrender-core';
+import { EnvContribution, contributionRegistry, WindowHandlerContribution } from '@visactor/vrender-core';
 import { LynxWindowHandlerContribution } from '../window/contributions/lynx-contribution';
 import { LynxEnvContribution } from './contributions/lynx-contribution';
 // import { lynxEnvModule } from './contributions/module';
@@ -7,6 +7,6 @@ import { LynxEnvContribution } from './contributions/lynx-contribution';
 
 /** Registry-based registration for lynx env/window */
 export function registerLynxEnvRegistry() {
-  application.contributions.register(EnvContribution, new LynxEnvContribution());
-  application.contributions.register(WindowHandlerContribution, new LynxWindowHandlerContribution());
+  contributionRegistry.register(EnvContribution, new LynxEnvContribution());
+  contributionRegistry.register(WindowHandlerContribution, new LynxWindowHandlerContribution());
 }

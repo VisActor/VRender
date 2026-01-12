@@ -3,7 +3,7 @@ import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_ATTR } from './graphic'
 import type { GraphicType, ICustomPath2D, IRect, IRectGraphicAttribute } from '../interface';
 import { CustomPath2D } from '../common/custom-path2d';
 import { getTheme } from './theme';
-import { application } from '../application';
+import { vglobal, graphicService } from '../modules';
 import { RECT_NUMBER_TYPE } from './constants';
 import { normalizeRectAttributes } from '../common/rect-utils';
 import { updateBoundsOfCommonOuterBorder } from './graphic-service/common-outer-boder-bounds';
@@ -50,7 +50,7 @@ export class Rect extends Graphic<IRectGraphicAttribute> implements IRect {
       }
     }
 
-    const { tb1, tb2 } = application.graphicService.updateTempAABBBounds(aabbBounds);
+    const { tb1, tb2 } = graphicService.updateTempAABBBounds(aabbBounds);
 
     updateBoundsOfCommonOuterBorder(attribute, rectTheme, tb1);
     aabbBounds.union(tb1);
@@ -59,7 +59,7 @@ export class Rect extends Graphic<IRectGraphicAttribute> implements IRect {
     this.widthWithoutTransform = aabbBounds.x2 - aabbBounds.x1;
     this.heightWithoutTransform = aabbBounds.y2 - aabbBounds.y1;
 
-    application.graphicService.transformAABBBounds(attribute, aabbBounds, rectTheme, false, this);
+    graphicService.transformAABBBounds(attribute, aabbBounds, rectTheme, false, this);
     return aabbBounds;
   }
 

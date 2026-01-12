@@ -1,4 +1,4 @@
-import { application } from '@visactor/vrender-core';
+import { contributionRegistry } from '@visactor/vrender-core';
 import { CanvasPickerContribution } from '../constants';
 import { DefaultCanvasLinePicker } from './line-picker';
 
@@ -8,5 +8,5 @@ export function registerCanvasLinePicker() {
     return;
   }
   _registered = true;
-  application.contributions.register(CanvasPickerContribution, new DefaultCanvasLinePicker());
+  contributionRegistry.register(CanvasPickerContribution, new DefaultCanvasLinePicker());
 }

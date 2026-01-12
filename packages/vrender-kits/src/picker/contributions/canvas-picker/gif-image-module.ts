@@ -1,4 +1,4 @@
-import { application } from '@visactor/vrender-core';
+import { contributionRegistry } from '@visactor/vrender-core';
 import { CanvasPickerContribution } from '../constants';
 import { DefaultCanvasGifImagePicker } from './gif-image-picker';
 
@@ -8,5 +8,5 @@ export function registerCanvasGifImagePicker() {
     return;
   }
   _registeredGifImage = true;
-  application.contributions.register(CanvasPickerContribution, new DefaultCanvasGifImagePicker());
+  contributionRegistry.register(CanvasPickerContribution, new DefaultCanvasGifImagePicker());
 }

@@ -1,4 +1,11 @@
-import { SymbolRender, mat4Allocate, getScaledStroke, SYMBOL_NUMBER_TYPE, application } from '@visactor/vrender-core';
+import {
+  serviceRegistry,
+  SymbolRender,
+  mat4Allocate,
+  getScaledStroke,
+  SYMBOL_NUMBER_TYPE,
+  contributionRegistry
+} from '@visactor/vrender-core';
 import type { IPoint } from '@visactor/vutils';
 import type {
   IGraphicAttribute,
@@ -19,9 +26,9 @@ export class DefaultCanvasSymbolPicker extends Base3dPicker<ISymbol> implements 
   constructor() {
     super();
     try {
-      this.canvasRenderer = application.services.get(SymbolRender);
+      this.canvasRenderer = serviceRegistry.get(SymbolRender);
     } catch (_) {
-      this.canvasRenderer = application.contributions.get<IGraphicRender>(SymbolRender)[0];
+      this.canvasRenderer = contributionRegistry.get<IGraphicRender>(SymbolRender)[0];
     }
   }
 

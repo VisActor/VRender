@@ -1,5 +1,5 @@
-import { application } from '@visactor/vrender-core';
-import { CanvasImagePicker, CanvasPickerContribution } from '../constants';
+import { contributionRegistry } from '@visactor/vrender-core';
+import { CanvasPickerContribution } from '../constants';
 import { DefaultCanvasImagePicker } from './image-picker';
 
 let _registered = false;
@@ -8,5 +8,5 @@ export function registerCanvasImagePicker() {
     return;
   }
   _registered = true;
-  application.contributions.register(CanvasPickerContribution, new DefaultCanvasImagePicker());
+  contributionRegistry.register(CanvasPickerContribution, new DefaultCanvasImagePicker());
 }

@@ -1,4 +1,4 @@
-import { application, PickerService } from '@visactor/vrender-core';
+import { serviceRegistry, PickerService } from '@visactor/vrender-core';
 import { DefaultCanvasPickerService } from './canvas-picker-service';
 import { registerCanvasGroupPicker } from './contributions/canvas-picker/module';
 
@@ -8,7 +8,7 @@ export function registerCanvasPickerService() {
   }
   (registerCanvasPickerService as any).__loaded = true;
   // Override PickerService to use canvas-based service
-  application.services.registerSingletonFactory(PickerService, () => new DefaultCanvasPickerService());
+  serviceRegistry.registerSingletonFactory(PickerService, () => new DefaultCanvasPickerService());
   // Ensure group picker is registered
   registerCanvasGroupPicker();
 }

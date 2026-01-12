@@ -1,4 +1,4 @@
-import { Generator, BaseWindowHandlerContribution, application } from '@visactor/vrender-core';
+import { Generator, BaseWindowHandlerContribution, vglobal } from '@visactor/vrender-core';
 import type {
   EnvType,
   IGlobal,
@@ -57,7 +57,7 @@ export class FeishuWindowHandlerContribution
 
   constructor() {
     super();
-    this.global = application.global;
+    this.global = vglobal;
   }
 
   getTitle(): string {

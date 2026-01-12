@@ -1,5 +1,5 @@
 import type { IPoint } from '@visactor/vutils';
-import { application, RICHTEXT_NUMBER_TYPE, RichTextRender } from '@visactor/vrender-core';
+import { serviceRegistry, contributionRegistry, RICHTEXT_NUMBER_TYPE, RichTextRender } from '@visactor/vrender-core';
 import type { IGraphicPicker, IGraphicRender, IPickParams, IRichText } from '@visactor/vrender-core';
 export class DefaultCanvasRichTextPicker implements IGraphicPicker {
   type: string = 'richtext';
@@ -7,9 +7,9 @@ export class DefaultCanvasRichTextPicker implements IGraphicPicker {
 
   constructor() {
     try {
-      (this as any).canvasRenderer = application.services.get(RichTextRender) as IGraphicRender;
+      (this as any).canvasRenderer = serviceRegistry.get(RichTextRender) as IGraphicRender;
     } catch (_) {
-      (this as any).canvasRenderer = application.contributions.get<IGraphicRender>(RichTextRender)[0];
+      (this as any).canvasRenderer = contributionRegistry.get<IGraphicRender>(RichTextRender)[0];
     }
   }
 

@@ -1,4 +1,4 @@
-import { application } from '@visactor/vrender-core';
+import { contributionRegistry } from '@visactor/vrender-core';
 import { CanvasPickerContribution, CanvasSymbolPicker } from '../constants';
 import { DefaultCanvasSymbolPicker } from './symbol-picker';
 
@@ -8,5 +8,5 @@ export function registerCanvasSymbolPicker() {
     return;
   }
   loadSymbolPick = true;
-  application.contributions.register(CanvasPickerContribution, new DefaultCanvasSymbolPicker());
+  contributionRegistry.register(CanvasPickerContribution, new DefaultCanvasSymbolPicker());
 }

@@ -1,4 +1,4 @@
-import { application } from '@visactor/vrender-core';
+import { contributionRegistry } from '@visactor/vrender-core';
 import { MathPickerContribution } from '../constants';
 import { DefaultMathSymbolPicker } from './symbol-picker';
 
@@ -8,5 +8,5 @@ export function registerMathSymbolPicker() {
     return;
   }
   _registered = true;
-  application.contributions.register(MathPickerContribution, new DefaultMathSymbolPicker());
+  contributionRegistry.register(MathPickerContribution, new DefaultMathSymbolPicker());
 }

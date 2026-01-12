@@ -2,7 +2,7 @@ import type { IAABBBounds, IPointLike } from '@visactor/vutils';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_ATTR } from './graphic';
 import type { IStar, IStarGraphicAttribute } from '../interface/graphic/star';
 import { getTheme } from './theme';
-import { application } from '../application';
+import { vglobal, graphicService } from '../modules';
 import type { GraphicType } from '../interface';
 import { CustomPath2D } from '../common/custom-path2d';
 import { STAR_NUMBER_TYPE } from './constants';
@@ -50,7 +50,7 @@ export class Star extends Graphic<IStarGraphicAttribute> implements IStar {
       }
     }
 
-    const { tb1, tb2 } = application.graphicService.updateTempAABBBounds(aabbBounds);
+    const { tb1, tb2 } = graphicService.updateTempAABBBounds(aabbBounds);
 
     aabbBounds.union(tb1);
     tb1.setValue(tb2.x1, tb2.y1, tb2.x2, tb2.y2);
@@ -58,7 +58,7 @@ export class Star extends Graphic<IStarGraphicAttribute> implements IStar {
     this.widthWithoutTransform = aabbBounds.x2 - aabbBounds.x1;
     this.heightWithoutTransform = aabbBounds.y2 - aabbBounds.y1;
 
-    application.graphicService.transformAABBBounds(attribute, aabbBounds, rectTheme, false, this);
+    graphicService.transformAABBBounds(attribute, aabbBounds, rectTheme, false, this);
     return aabbBounds;
   }
 

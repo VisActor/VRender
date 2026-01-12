@@ -1,4 +1,4 @@
-import { vglobal } from '@visactor/vrender-core';
+import { VGlobal, vglobal } from '@visactor/vrender-core';
 
 /**
  * 图像处理工具类，公共的图像处理逻辑

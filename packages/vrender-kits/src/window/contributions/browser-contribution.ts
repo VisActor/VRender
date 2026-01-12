@@ -1,4 +1,4 @@
-import { Generator, BaseWindowHandlerContribution, application } from '@visactor/vrender-core';
+import { Generator, BaseWindowHandlerContribution, vglobal } from '@visactor/vrender-core';
 import type {
   IContext2d,
   ICanvas,
@@ -43,7 +43,7 @@ export class BrowserWindowHandlerContribution
   constructor() {
     super();
     this._canvasIsIntersecting = true;
-    this.global = application.global;
+    this.global = vglobal;
     this.viewBox = new AABBBounds();
     this.modelMatrix = new Matrix(1, 0, 0, 1, 0, 0);
   }

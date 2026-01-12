@@ -1,4 +1,4 @@
-import { application, Pyramid3dRender, PYRAMID3D_NUMBER_TYPE } from '@visactor/vrender-core';
+import { serviceRegistry, contributionRegistry, Pyramid3dRender, PYRAMID3D_NUMBER_TYPE } from '@visactor/vrender-core';
 import type { IPyramid3d, IGraphicRender, IGraphicPicker } from '@visactor/vrender-core';
 import { Base3dPicker } from '../common/base-3d-picker';
 
@@ -11,9 +11,9 @@ export class DefaultCanvasPyramid3dPicker extends Base3dPicker<IPyramid3d> imple
   constructor() {
     super();
     try {
-      this.canvasRenderer = application.services.get(Pyramid3dRender) as IGraphicRender;
+      this.canvasRenderer = serviceRegistry.get(Pyramid3dRender) as IGraphicRender;
     } catch (_) {
-      this.canvasRenderer = application.contributions.get<IGraphicRender>(Pyramid3dRender)[0];
+      this.canvasRenderer = contributionRegistry.get<IGraphicRender>(Pyramid3dRender)[0];
     }
   }
 }

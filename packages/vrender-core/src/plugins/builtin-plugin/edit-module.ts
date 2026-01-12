@@ -1,4 +1,4 @@
-import { application } from '../../application';
+import { vglobal } from '../../modules';
 import type {
   IRichText,
   IRichTextCharacter,
@@ -196,7 +196,7 @@ export class EditModule {
     // 监听焦点
     textAreaDom.addEventListener('focusin', this.handleFocusIn);
     textAreaDom.addEventListener('focusout', this.handleFocusOut);
-    application.global.addEventListener('keydown', this.handleKeyDown);
+    vglobal.addEventListener('keydown', this.handleKeyDown);
   }
 
   handleFocusIn = () => {
@@ -422,7 +422,7 @@ export class EditModule {
     this.textAreaDom.removeEventListener('compositionend', this.handleCompositionEnd);
     this.textAreaDom.removeEventListener('focusin', this.handleFocusOut);
     this.textAreaDom.removeEventListener('focusout', this.handleFocusOut);
-    application.global.removeEventListener('keydown', this.handleKeyDown);
+    vglobal.removeEventListener('keydown', this.handleKeyDown);
 
     this.textAreaDom.parentElement?.removeChild(this.textAreaDom);
     this.textAreaDom = null;

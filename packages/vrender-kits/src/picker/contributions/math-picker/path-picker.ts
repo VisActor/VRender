@@ -1,4 +1,4 @@
-import { application, PathRender, PATH_NUMBER_TYPE } from '@visactor/vrender-core';
+import { serviceRegistry, contributionRegistry, PathRender, PATH_NUMBER_TYPE } from '@visactor/vrender-core';
 import type { IGraphicPicker, IGraphicRender } from '@visactor/vrender-core';
 import { PickerBase } from '../common/base';
 
@@ -9,9 +9,9 @@ export class DefaultMathPathPicker extends PickerBase implements IGraphicPicker 
   constructor() {
     super();
     try {
-      this.canvasRenderer = application.services.get(PathRender) as IGraphicRender;
+      this.canvasRenderer = serviceRegistry.get(PathRender) as IGraphicRender;
     } catch (_) {
-      this.canvasRenderer = application.contributions.get<IGraphicRender>(PathRender)[0];
+      this.canvasRenderer = contributionRegistry.get<IGraphicRender>(PathRender)[0];
     }
   }
 }

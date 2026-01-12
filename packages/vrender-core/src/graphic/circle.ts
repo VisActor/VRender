@@ -4,7 +4,7 @@ import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_ATTR } from './graphic'
 import { CustomPath2D } from '../common/custom-path2d';
 import { circleBounds } from '../common/utils';
 import { getTheme } from './theme';
-import { application } from '../application';
+import { vglobal, graphicService } from '../modules';
 import { CIRCLE_NUMBER_TYPE } from './constants';
 import { updateBoundsOfCommonOuterBorder } from './graphic-service/common-outer-boder-bounds';
 
@@ -48,7 +48,7 @@ export class Circle extends Graphic<ICircleGraphicAttribute> implements ICircle 
         : this.updateCircleAABBBoundsAccurate(attribute, circleTheme, aabbBounds);
     }
 
-    const { tb1, tb2 } = application.graphicService.updateTempAABBBounds(aabbBounds);
+    const { tb1, tb2 } = graphicService.updateTempAABBBounds(aabbBounds);
 
     updateBoundsOfCommonOuterBorder(attribute, circleTheme, tb1);
     aabbBounds.union(tb1);
@@ -57,7 +57,7 @@ export class Circle extends Graphic<ICircleGraphicAttribute> implements ICircle 
     this.widthWithoutTransform = aabbBounds.x2 - aabbBounds.x1;
     this.heightWithoutTransform = aabbBounds.y2 - aabbBounds.y1;
 
-    application.graphicService.transformAABBBounds(attribute, aabbBounds, circleTheme, false, this);
+    graphicService.transformAABBBounds(attribute, aabbBounds, circleTheme, false, this);
 
     return aabbBounds;
   }

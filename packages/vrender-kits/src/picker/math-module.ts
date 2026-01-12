@@ -1,4 +1,4 @@
-import { application, PickerService } from '@visactor/vrender-core';
+import { serviceRegistry, PickerService } from '@visactor/vrender-core';
 import { DefaultMathPickerService } from './math-picker-service';
 
 export function registerMathPickerService() {
@@ -7,5 +7,5 @@ export function registerMathPickerService() {
   }
   (registerMathPickerService as any).__loaded = true;
   // Override PickerService to use math-based service (no canvas)
-  application.services.registerSingletonFactory(PickerService, () => new DefaultMathPickerService());
+  serviceRegistry.registerSingletonFactory(PickerService, () => new DefaultMathPickerService());
 }

@@ -1,4 +1,4 @@
-import { application } from '@visactor/vrender-core';
+import { contributionRegistry } from '@visactor/vrender-core';
 import { MathPickerContribution } from '../constants';
 import { DefaultMathImagePicker } from './image-picker';
 
@@ -8,5 +8,5 @@ export function registerMathImagePicker() {
     return;
   }
   _registered = true;
-  application.contributions.register(MathPickerContribution, new DefaultMathImagePicker());
+  contributionRegistry.register(MathPickerContribution, new DefaultMathImagePicker());
 }

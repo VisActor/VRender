@@ -11,7 +11,8 @@ import type {
   IWindowParams
 } from '../interface';
 import { SyncHook } from '../tapable';
-import { application } from '../application';
+import { vglobal } from '../modules';
+import { contributionRegistry } from '../common/registry';
 import { EventListenerManager } from '../common/event-listener-manager';
 
 export const VWindow = Symbol.for('VWindow');
@@ -76,7 +77,7 @@ export class DefaultWindow extends EventListenerManager implements IWindow {
   constructor() {
     super();
     this._uid = Generator.GenAutoIncrementId();
-    this.global = application.global;
+    this.global = vglobal;
     this.postInit();
   }
 
@@ -113,7 +114,7 @@ export class DefaultWindow extends EventListenerManager implements IWindow {
     if (!global.env || this.actived) {
       return;
     }
-    const contributions = application.contributions.get<IWindowHandlerContribution>(WindowHandlerContribution);
+    const contributions = contributionRegistry.get<IWindowHandlerContribution>(WindowHandlerContribution);
     const handler = contributions.find(c => (c as any).type === global.env) || contributions[0];
     if (!handler) {
       throw new Error(`No WindowHandlerContribution registered for env: ${global.env}`);

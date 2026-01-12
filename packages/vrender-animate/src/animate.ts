@@ -263,17 +263,9 @@ export class Animate implements IAnimate {
     // 创建新的step
     const step = new Step(AnimateStepType.from, props, duration, easing);
 
-    // 如果是第一个step
-    if (!this._firstStep) {
-      this._firstStep = step;
-      this._lastStep = step;
-    } else {
-      // 添加到链表末尾
-      this._lastStep.append(step);
-      this._lastStep = step;
-    }
+    step.bind(this.target, this);
 
-    this.updateDuration();
+    this.updateStepAfterAppend(step);
 
     return this;
   }

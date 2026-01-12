@@ -31,7 +31,9 @@ import {
   DefaultTextStyle,
   createColor,
   getScaledStroke,
-  application,
+  serviceRegistry,
+  VGlobal,
+  GraphicUtil,
   matrixAllocate,
   transformMat4,
   createConicalGradient
@@ -48,7 +50,9 @@ import type {
   ITextStyleParams,
   mat4,
   EnvType,
-  vec3
+  vec3,
+  IGlobal,
+  IGraphicUtil
 } from '@visactor/vrender-core';
 
 const outP: [number, number, number] = [0, 0, 0];
@@ -856,13 +860,14 @@ export class BrowserContext2d implements IContext2d {
 
   measureText(
     text: string,
-    method: 'native' | 'simple' | 'quick' = application.global.measureTextMethod
+    method: 'native' | 'simple' | 'quick' = (serviceRegistry.get(VGlobal) as any).measureTextMethod
   ): { width: number } {
     if (!method || method === 'native') {
       return this.nativeContext.measureText(text);
     }
     if (!this.mathTextMeasure) {
-      this.mathTextMeasure = application.graphicUtil.createTextMeasureInstance({}, {}, () => this.canvas.nativeCanvas);
+      const graphicUtil = serviceRegistry.get(GraphicUtil) as IGraphicUtil;
+      this.mathTextMeasure = graphicUtil.createTextMeasureInstance({}, {}, () => this.canvas.nativeCanvas);
     }
 
     const fontFamily = this.fontFamily ?? DefaultTextStyle.fontFamily;

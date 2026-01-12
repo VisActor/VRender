@@ -6,7 +6,7 @@ import {
   StaticLayerHandlerContribution,
   VirtualLayerHandlerContribution
 } from './constants';
-import { application } from '../application';
+import { vglobal } from '../modules';
 import { serviceRegistry } from '../common/registry';
 
 export class DefaultLayerService implements ILayerService {
@@ -24,7 +24,7 @@ export class DefaultLayerService implements ILayerService {
 
   constructor() {
     this.layerMap = new Map();
-    this.global = application.global;
+    this.global = vglobal;
   }
 
   tryInit() {
@@ -55,11 +55,11 @@ export class DefaultLayerService implements ILayerService {
   getLayerHandler(layerMode: LayerMode) {
     let layerHandler: ILayerHandlerContribution;
     if (layerMode === 'static') {
-      layerHandler = serviceRegistry.get<ILayerHandlerContribution>(StaticLayerHandlerContribution);
+      layerHandler = serviceRegistry.createInstance<ILayerHandlerContribution>(StaticLayerHandlerContribution);
     } else if (layerMode === 'dynamic') {
-      layerHandler = serviceRegistry.get<ILayerHandlerContribution>(DynamicLayerHandlerContribution);
+      layerHandler = serviceRegistry.createInstance<ILayerHandlerContribution>(DynamicLayerHandlerContribution);
     } else {
-      layerHandler = serviceRegistry.get<ILayerHandlerContribution>(VirtualLayerHandlerContribution);
+      layerHandler = serviceRegistry.createInstance<ILayerHandlerContribution>(VirtualLayerHandlerContribution);
     }
     return layerHandler;
   }

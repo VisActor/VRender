@@ -1,4 +1,4 @@
-import { application } from '@visactor/vrender-core';
+import { contributionRegistry } from '@visactor/vrender-core';
 import { CanvasPickerContribution } from '../constants';
 import { DefaultCanvasPyramid3dPicker } from './pyramid3d-picker';
 
@@ -8,5 +8,5 @@ export function registerCanvasPyramid3dPicker() {
     return;
   }
   _registeredPyramid3d = true;
-  application.contributions.register(CanvasPickerContribution, new DefaultCanvasPyramid3dPicker());
+  contributionRegistry.register(CanvasPickerContribution, new DefaultCanvasPyramid3dPicker());
 }

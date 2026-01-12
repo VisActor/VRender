@@ -1,4 +1,4 @@
-import { application } from '@visactor/vrender-core';
+import { contributionRegistry } from '@visactor/vrender-core';
 import { MathPickerContribution } from '../constants';
 import { DefaultMathLinePicker } from './line-picker';
 
@@ -8,5 +8,5 @@ export function registerMathLinePicker() {
     return;
   }
   _registered = true;
-  application.contributions.register(MathPickerContribution, new DefaultMathLinePicker());
+  contributionRegistry.register(MathPickerContribution, new DefaultMathLinePicker());
 }

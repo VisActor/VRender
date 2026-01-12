@@ -1,4 +1,4 @@
-import { application } from '@visactor/vrender-core';
+import { contributionRegistry } from '@visactor/vrender-core';
 import { CanvasPickerContribution, CanvasRichTextPicker } from '../constants';
 import { DefaultCanvasRichTextPicker } from './richtext-picker';
 
@@ -8,5 +8,5 @@ export function registerCanvasRichtextPicker() {
     return;
   }
   loadRichtextPick = true;
-  application.contributions.register(CanvasPickerContribution, new DefaultCanvasRichTextPicker());
+  contributionRegistry.register(CanvasPickerContribution, new DefaultCanvasRichTextPicker());
 }

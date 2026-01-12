@@ -1,4 +1,4 @@
-import { application } from '@visactor/vrender-core';
+import { contributionRegistry } from '@visactor/vrender-core';
 import { CanvasPickerContribution, CanvasStarPicker } from '../constants';
 import { DefaultCanvasStarPicker } from './star-picker';
 
@@ -8,5 +8,5 @@ export function registerCanvasStarPicker() {
     return;
   }
   loadStarPick = true;
-  application.contributions.register(CanvasPickerContribution, new DefaultCanvasStarPicker());
+  contributionRegistry.register(CanvasPickerContribution, new DefaultCanvasStarPicker());
 }

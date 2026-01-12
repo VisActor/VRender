@@ -1,6 +1,6 @@
 import { EventEmitter } from '@visactor/vutils';
 import type { IStage, ITimeline } from '@visactor/vrender-core';
-import { application, PerformanceRAF, type ITickHandler, type ITicker, STATUS } from '@visactor/vrender-core';
+import { PerformanceRAF, type ITickHandler, type ITicker, STATUS, vglobal } from '@visactor/vrender-core';
 
 const performanceRAF = new PerformanceRAF();
 
@@ -70,10 +70,10 @@ export class DefaultTicker extends EventEmitter implements ITicker {
   init(): void {
     this.interval = 16;
     this.status = STATUS.INITIAL;
-    application.global.hooks.onSetEnv.tap('graph-ticker', () => {
+    vglobal.hooks.onSetEnv.tap('graph-ticker', () => {
       this.initHandler(false);
     });
-    if (application.global.env) {
+    if (vglobal.env) {
       this.initHandler(false);
     }
   }

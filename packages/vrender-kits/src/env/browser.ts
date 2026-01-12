@@ -1,8 +1,9 @@
-import { EnvContribution, application } from '@visactor/vrender-core';
+import { EnvContribution, contributionRegistry } from '@visactor/vrender-core';
 // import { browserEnvModule } from './contributions/module';
 import { BrowserEnvContribution } from './contributions/browser-contribution';
 import { BrowserWindowHandlerContribution } from '../window/contributions/browser-contribution';
 import { WindowHandlerContribution } from '@visactor/vrender-core';
+import { registerBrowserCanvasFactories } from '../canvas/contributions/browser/modules';
 
 // Legacy ContainerModule and loaders removed (registry-only)
 
@@ -10,8 +11,9 @@ import { WindowHandlerContribution } from '@visactor/vrender-core';
  * Registry-based registration for browser env/window
  */
 export function registerBrowserEnvRegistry() {
+  registerBrowserCanvasFactories();
   // Env contribution
-  application.contributions.register(EnvContribution, new BrowserEnvContribution());
+  contributionRegistry.register(EnvContribution, new BrowserEnvContribution());
   // Window handler contribution
-  application.contributions.register(WindowHandlerContribution, new BrowserWindowHandlerContribution());
+  contributionRegistry.register(WindowHandlerContribution, new BrowserWindowHandlerContribution());
 }

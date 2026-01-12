@@ -16,7 +16,8 @@ import {
   getTheme,
   CustomPath2D,
   drawArcPath,
-  application
+  serviceRegistry,
+  contributionRegistry
 } from '@visactor/vrender-core';
 import rough from 'roughjs';
 import { defaultRouthThemeSpec } from './config';
@@ -30,9 +31,9 @@ export class RoughCanvasArcRender extends RoughBaseRender implements IGraphicRen
   constructor() {
     super();
     try {
-      this.canvasRenderer = application.services.get(DefaultCanvasArcRender) as IGraphicRender;
+      this.canvasRenderer = serviceRegistry.get(DefaultCanvasArcRender) as IGraphicRender;
     } catch (_) {
-      this.canvasRenderer = application.contributions.get<IGraphicRender>(DefaultCanvasArcRender)[0];
+      this.canvasRenderer = contributionRegistry.get<IGraphicRender>(DefaultCanvasArcRender)[0];
     }
     this.type = 'arc';
     this.numberType = ARC_NUMBER_TYPE;

@@ -1,4 +1,4 @@
-import { StarRender, STAR_NUMBER_TYPE, application } from '@visactor/vrender-core';
+import { serviceRegistry, StarRender, STAR_NUMBER_TYPE, contributionRegistry } from '@visactor/vrender-core';
 import type { IGraphicPicker, IGraphicRender } from '@visactor/vrender-core';
 import { PickerBase } from '../common/base';
 
@@ -9,9 +9,9 @@ export class DefaultCanvasStarPicker extends PickerBase implements IGraphicPicke
   constructor() {
     super();
     try {
-      this.canvasRenderer = application.services.get(StarRender);
+      this.canvasRenderer = serviceRegistry.get(StarRender);
     } catch (_) {
-      this.canvasRenderer = application.contributions.get<IGraphicRender>(StarRender)[0];
+      this.canvasRenderer = contributionRegistry.get<IGraphicRender>(StarRender)[0];
     }
   }
 }

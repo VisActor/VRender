@@ -1,4 +1,4 @@
-import { EnvContribution, application, WindowHandlerContribution } from '@visactor/vrender-core';
+import { EnvContribution, contributionRegistry, WindowHandlerContribution } from '@visactor/vrender-core';
 import { TaroWindowHandlerContribution } from '../window/contributions/taro-contribution';
 import { TaroEnvContribution } from './contributions/taro-contribution';
 
@@ -6,6 +6,6 @@ import { TaroEnvContribution } from './contributions/taro-contribution';
 
 /** Registry-based registration for taro env/window */
 export function registerTaroEnvRegistry() {
-  application.contributions.register(EnvContribution, new TaroEnvContribution());
-  application.contributions.register(WindowHandlerContribution, new TaroWindowHandlerContribution());
+  contributionRegistry.register(EnvContribution, new TaroEnvContribution());
+  contributionRegistry.register(WindowHandlerContribution, new TaroWindowHandlerContribution());
 }

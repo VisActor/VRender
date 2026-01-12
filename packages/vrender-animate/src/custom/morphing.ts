@@ -7,7 +7,7 @@ import {
   splitArea,
   splitPath,
   CustomPath2D,
-  application,
+  graphicService,
   interpolateColor,
   ColorStore,
   ColorType,
@@ -377,7 +377,7 @@ export const oneToMultiMorph = (
   }
 
   const childGraphics: IGraphic[] = (
-    animationConfig?.splitPath === 'clone' ? cloneGraphic : (animationConfig?.splitPath ?? splitGraphic)
+    animationConfig?.splitPath === 'clone' ? cloneGraphic : animationConfig?.splitPath ?? splitGraphic
   )(fromGraphic, validateToGraphics.length, false);
 
   const oldOnEnd = animationConfig?.onEnd;
@@ -541,7 +541,7 @@ const appendShadowChildrenToGraphic = (graphic: IGraphic, children: IGraphic[], 
       rect: childAttrs
     });
     new Array(count).fill(0).forEach(el => {
-      const child = application.graphicService.creator.rect({
+      const child = graphicService.creator.rect({
         x: 0,
         y: 0,
         width,
@@ -571,9 +571,7 @@ export const cloneGraphic = (graphic: IGraphic, count: number, needAppend?: bool
       path: new CustomPath2D().fromCustomPath2D(path)
     };
 
-    children.push(
-      application.graphicService.creator.path(needAppend ? element : Object.assign({}, childAttrs, element))
-    );
+    children.push(graphicService.creator.path(needAppend ? element : Object.assign({}, childAttrs, element)));
   }
 
   if (needAppend) {
@@ -597,23 +595,17 @@ export const splitGraphic = (graphic: IGraphic, count: number, needAppend?: bool
   if (graphic.type === 'rect') {
     const childrenAttrs = splitRect(graphic as IRect, count);
     childrenAttrs.forEach(element => {
-      children.push(
-        application.graphicService.creator.rect(needAppend ? element : Object.assign({}, childAttrs, element))
-      );
+      children.push(graphicService.creator.rect(needAppend ? element : Object.assign({}, childAttrs, element)));
     });
   } else if (graphic.type === 'arc') {
     const childrenAttrs = splitArc(graphic as IArc, count);
     childrenAttrs.forEach(element => {
-      children.push(
-        application.graphicService.creator.arc(needAppend ? element : Object.assign({}, childAttrs, element))
-      );
+      children.push(graphicService.creator.arc(needAppend ? element : Object.assign({}, childAttrs, element)));
     });
   } else if (graphic.type === 'circle') {
     const childrenAttrs = splitCircle(graphic as ICircle, count);
     childrenAttrs.forEach(element => {
-      children.push(
-        application.graphicService.creator.arc(needAppend ? element : Object.assign({}, childAttrs, element))
-      );
+      children.push(graphicService.creator.arc(needAppend ? element : Object.assign({}, childAttrs, element)));
     });
   } else if (graphic.type === 'line') {
     const childrenAttrs = splitLine(graphic as ILine, count);
@@ -621,7 +613,7 @@ export const splitGraphic = (graphic: IGraphic, count: number, needAppend?: bool
 
     childrenAttrs.forEach(element => {
       children.push(
-        application.graphicService.creator.symbol(
+        graphicService.creator.symbol(
           needAppend ? Object.assign({}, element, defaultSymbol) : Object.assign({}, childAttrs, element, defaultSymbol)
         )
       );
@@ -629,28 +621,20 @@ export const splitGraphic = (graphic: IGraphic, count: number, needAppend?: bool
   } else if (graphic.type === 'polygon') {
     const childrenAttrs = splitPolygon(graphic as IPolygon, count);
     childrenAttrs.forEach(element => {
-      children.push(
-        application.graphicService.creator.polygon(needAppend ? element : Object.assign({}, childAttrs, element))
-      );
+      children.push(graphicService.creator.polygon(needAppend ? element : Object.assign({}, childAttrs, element)));
     });
   } else if (graphic.type === 'area') {
     const childrenAttrs = splitArea(graphic as IArea, count);
     childrenAttrs.forEach(element => {
-      children.push(
-        application.graphicService.creator.polygon(needAppend ? element : Object.assign({}, childAttrs, element))
-      );
+      children.push(graphicService.creator.polygon(needAppend ? element : Object.assign({}, childAttrs, element)));
     });
   } else if (graphic.type === 'path') {
     const childrenAttrs = splitPath(graphic as IPath, count);
     childrenAttrs.forEach(element => {
       if ('path' in element) {
-        children.push(
-          application.graphicService.creator.path(needAppend ? element : Object.assign({}, childAttrs, element))
-        );
+        children.push(graphicService.creator.path(needAppend ? element : Object.assign({}, childAttrs, element)));
       } else {
-        children.push(
-          application.graphicService.creator.polygon(needAppend ? element : Object.assign({}, childAttrs, element))
-        );
+        children.push(graphicService.creator.polygon(needAppend ? element : Object.assign({}, childAttrs, element)));
       }
     });
   }
@@ -687,7 +671,7 @@ export const multiToOneMorph = (
   }
 
   const childGraphics: IGraphic[] = (
-    animationConfig?.splitPath === 'clone' ? cloneGraphic : (animationConfig?.splitPath ?? splitGraphic)
+    animationConfig?.splitPath === 'clone' ? cloneGraphic : animationConfig?.splitPath ?? splitGraphic
   )(toGraphic, validateFromGraphics.length, true);
 
   const toAttrs = toGraphic.attribute;

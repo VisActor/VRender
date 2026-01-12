@@ -42,11 +42,11 @@ import { IncrementalAutoRenderPlugin } from '../plugins/builtin-plugin/increment
 import { DirtyBoundsPlugin } from '../plugins/builtin-plugin/dirty-bounds-plugin';
 import { SyncHook } from '../tapable';
 import { LayerService } from './constants';
-import { application } from '../application';
 import { isBrowserEnv } from '../env-check';
 import { Factory } from '../factory';
-import { Graphic, GraphicService } from '../graphic';
+import { GraphicService } from '../graphic';
 import { serviceRegistry } from '../common/registry';
+import { VGlobal } from '../constants';
 
 const DefaultConfig = {
   WIDTH: 500,
@@ -241,7 +241,7 @@ export class Stage extends Group implements IStage {
       afterClearScreen: new SyncHook(['stage']),
       afterClearRect: new SyncHook(['stage'])
     };
-    this.global = application.global;
+    this.global = serviceRegistry.get<IGlobal>(VGlobal);
     if (!this.global.env && isBrowserEnv()) {
       // 如果是浏览器环境，默认设置env
       this.global.setEnv('browser');

@@ -1,4 +1,4 @@
-import { application, clock, WILDCARD } from '@visactor/vrender-core';
+import { clock, WILDCARD, vglobal } from '@visactor/vrender-core';
 import type { IEventTarget, IFederatedPointerEvent, FederatedPointerEvent, INode } from '@visactor/vrender-core';
 import type { IPointLike } from '@visactor/vutils';
 import { EventEmitter } from '@visactor/vutils';
@@ -394,8 +394,8 @@ export class Gesture extends EventEmitter {
       return;
     }
 
-    this.throttleTimer = application.global.getRequestAnimationFrame()(() => {
-      application.global.getCancelAnimationFrame()(this.throttleTimer);
+    this.throttleTimer = vglobal.getRequestAnimationFrame()(() => {
+      vglobal.getCancelAnimationFrame()(this.throttleTimer);
       this.throttleTimer = null;
 
       for (let i = 0, len = emitThrottles.length; i < len; i++) {

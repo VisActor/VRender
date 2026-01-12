@@ -1,4 +1,4 @@
-import { CircleRender, CIRCLE_NUMBER_TYPE, application } from '@visactor/vrender-core';
+import { serviceRegistry, CircleRender, CIRCLE_NUMBER_TYPE, contributionRegistry } from '@visactor/vrender-core';
 import type { IGraphicPicker, IGraphicRender } from '@visactor/vrender-core';
 import { PickerBase } from '../common/base';
 
@@ -9,9 +9,9 @@ export class DefaultCanvasCirclePicker extends PickerBase implements IGraphicPic
   constructor() {
     super();
     try {
-      this.canvasRenderer = application.services.get(CircleRender);
+      this.canvasRenderer = serviceRegistry.get(CircleRender);
     } catch (_) {
-      this.canvasRenderer = application.contributions.get<IGraphicRender>(CircleRender)[0];
+      this.canvasRenderer = contributionRegistry.get<IGraphicRender>(CircleRender)[0];
     }
   }
 }

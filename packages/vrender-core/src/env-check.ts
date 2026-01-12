@@ -1,4 +1,4 @@
-import { application } from './application';
+import { vglobal } from './modules';
 
 let _isBrowserEnv: boolean | undefined;
 
@@ -34,13 +34,13 @@ function initIsBrowserEnv() {
 
 export function isBrowserEnv(): boolean {
   initIsBrowserEnv();
-  const env = application.global && application.global.env;
+  const env = vglobal && vglobal.env;
   return env ? env === 'browser' : _isBrowserEnv;
 }
 
 export function isNodeEnv() {
   initIsBrowserEnv();
-  const env = application.global && application.global.env;
+  const env = vglobal && vglobal.env;
   return env ? env === 'node' : !_isBrowserEnv;
 }
 

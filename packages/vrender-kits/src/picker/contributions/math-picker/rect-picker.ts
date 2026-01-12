@@ -1,4 +1,4 @@
-import { application, RectRender } from '@visactor/vrender-core';
+import { serviceRegistry, contributionRegistry, RectRender } from '@visactor/vrender-core';
 import type { IGraphicPicker, IGraphicRender } from '@visactor/vrender-core';
 import { RectPickerBase } from '../common/rect-picker-base';
 
@@ -6,9 +6,9 @@ export class DefaultMathRectPicker extends RectPickerBase implements IGraphicPic
   constructor() {
     super();
     try {
-      this.canvasRenderer = application.services.get(RectRender) as IGraphicRender;
+      this.canvasRenderer = serviceRegistry.get(RectRender) as IGraphicRender;
     } catch (_) {
-      this.canvasRenderer = application.contributions.get<IGraphicRender>(RectRender)[0];
+      this.canvasRenderer = contributionRegistry.get<IGraphicRender>(RectRender)[0];
     }
   }
 }

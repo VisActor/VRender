@@ -1,4 +1,4 @@
-import { application } from '@visactor/vrender-core';
+import { contributionRegistry } from '@visactor/vrender-core';
 import { MathPickerContribution } from '../constants';
 import { DefaultMathPolygonPicker } from './polygon-picker';
 
@@ -8,5 +8,5 @@ export function registerMathPolygonPicker() {
     return;
   }
   _registered = true;
-  application.contributions.register(MathPickerContribution, new DefaultMathPolygonPicker());
+  contributionRegistry.register(MathPickerContribution, new DefaultMathPolygonPicker());
 }

@@ -1,6 +1,6 @@
 import type { IPoint } from '@visactor/vutils';
-import { IMAGE_NUMBER_TYPE, ImageRender, application } from '@visactor/vrender-core';
-import type { IGraphicPicker, IGraphicRender, IImage, IPickParams } from '@visactor/vrender-core';
+import { contributionRegistry, IMAGE_NUMBER_TYPE, ImageRender } from '@visactor/vrender-core';
+import type { IGraphicPicker, IGraphicRender } from '@visactor/vrender-core';
 import { PickerBase } from '../common/base';
 
 export class DefaultCanvasImagePicker extends PickerBase implements IGraphicPicker {
@@ -9,7 +9,7 @@ export class DefaultCanvasImagePicker extends PickerBase implements IGraphicPick
 
   constructor() {
     super();
-    const render = application.contributions.get<IGraphicRender>(ImageRender)[0];
+    const render = contributionRegistry.get<IGraphicRender>(ImageRender)[0];
     this.canvasRenderer = render;
   }
 }

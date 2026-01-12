@@ -4,7 +4,7 @@ import type { IPolygon, IPolygonGraphicAttribute } from '../interface/graphic/po
 import { getTheme } from './theme';
 import { pointsInterpolation } from '../common/utils';
 import { CustomPath2D } from '../common/custom-path2d';
-import { application } from '../application';
+import { vglobal, graphicService } from '../modules';
 import type { GraphicType } from '../interface';
 import { POLYGON_NUMBER_TYPE } from './constants';
 
@@ -40,13 +40,13 @@ export class Polygon extends Graphic<IPolygonGraphicAttribute> implements IPolyg
     if (!this.updatePathProxyAABBBounds(aabbBounds)) {
       this.updatePolygonAABBBoundsImprecise(attribute, polygonTheme, aabbBounds);
     }
-    application.graphicService.updateTempAABBBounds(aabbBounds);
+    graphicService.updateTempAABBBounds(aabbBounds);
 
     this.widthWithoutTransform = aabbBounds.x2 - aabbBounds.x1;
     this.heightWithoutTransform = aabbBounds.y2 - aabbBounds.y1;
 
     const { lineJoin = polygonTheme.lineJoin } = attribute;
-    application.graphicService.transformAABBBounds(attribute, aabbBounds, polygonTheme, lineJoin === 'miter', this);
+    graphicService.transformAABBBounds(attribute, aabbBounds, polygonTheme, lineJoin === 'miter', this);
     return aabbBounds;
   }
 

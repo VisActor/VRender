@@ -380,7 +380,7 @@ export class DefaultGraphicService implements IGraphicService {
     const { visible = theme.visible } = attribute;
 
     if (!(graphic.valid && visible)) {
-      // application.graphicService.beforeUpdateAABBBounds(graphic, graphic.stage, true, aabbBounds);
+      // graphicService.beforeUpdateAABBBounds(graphic, graphic.stage, true, aabbBounds);
       if (!aabbBounds.empty()) {
         graphic.parent && aabbBounds.transformWithMatrix((graphic.parent as IGroup).globalTransMatrix);
         this.clearAABBBounds(graphic, graphic.stage, aabbBounds);

@@ -1,6 +1,7 @@
-import { application } from '../application';
-import type { ICanvas, Releaseable, IAllocate } from '../interface';
+import type { ICanvas, Releaseable, IAllocate, IGlobal } from '../interface';
 import { wrapCanvas } from '../canvas/util';
+import { serviceRegistry } from '../common/registry/service-registry';
+import { VGlobal } from '../constants';
 
 export class DefaultCanvasAllocate implements IAllocate<ICanvas>, Releaseable {
   protected pools: ICanvas[] = [];
@@ -21,10 +22,9 @@ export class DefaultCanvasAllocate implements IAllocate<ICanvas>, Releaseable {
   }
   allocate(data: { width: number; height: number; dpr: number }): ICanvas {
     if (!this.pools.length) {
-      const c = wrapCanvas({
-        nativeCanvas: application.global.createCanvas(data),
-        ...data
-      });
+      const global = serviceRegistry.get(VGlobal) as IGlobal;
+      const nativeCanvas = global.createCanvas(data);
+      const c = wrapCanvas({ nativeCanvas, ...data });
       this.allocatedCanvas.push(c);
       return c;
     }
@@ -40,10 +40,9 @@ export class DefaultCanvasAllocate implements IAllocate<ICanvas>, Releaseable {
         height: canvas.height / canvas.dpr,
         dpr: canvas.dpr
       };
-      const c = wrapCanvas({
-        nativeCanvas: application.global.createCanvas(data),
-        ...data
-      });
+      const global = serviceRegistry.get(VGlobal) as IGlobal;
+      const nativeCanvas = global.createCanvas(data);
+      const c = wrapCanvas({ nativeCanvas, ...data });
       this.allocatedCanvas.push(c);
       return c;
     }

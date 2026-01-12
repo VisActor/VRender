@@ -22,7 +22,7 @@ import { createColor } from '../../../common/canvas-utils';
 import type { ILayerService } from '../../../interface/core';
 import { boundsAllocate } from '../../../allocator/bounds-allocate';
 import { matrixAllocate } from '../../../allocator/matrix-allocate';
-import { application } from '../../../application';
+import { vglobal, layerService } from '../../../modules';
 import { contributionRegistry, serviceRegistry } from '../../../common/registry';
 
 /**
@@ -64,8 +64,8 @@ export class DefaultDrawContribution implements IDrawContribution {
     this.styleRenderMap = new Map();
     this.dirtyBounds = new Bounds();
     this.backupDirtyBounds = new Bounds();
-    this.global = application.global;
-    this.layerService = application.layerService;
+    this.global = vglobal;
+    this.layerService = layerService;
     if (!isArray(this.contributions)) {
       (this as any).contributions = [this.contributions];
     }

@@ -1,14 +1,12 @@
-import { ContainerModule } from '@visactor/vrender-core';
-import { CanvasPickerContribution, CanvasPyramid3dPicker } from '../constants';
+import { application } from '@visactor/vrender-core';
+import { CanvasPickerContribution } from '../constants';
 import { DefaultCanvasPyramid3dPicker } from './pyramid3d-picker';
 
-let loadPyramid3dPick = false;
-export const pyramid3dCanvasPickModule = new ContainerModule((bind, unbind, isBound, rebind) => {
-  if (loadPyramid3dPick) {
+let _registeredPyramid3d = false;
+export function registerCanvasPyramid3dPicker() {
+  if (_registeredPyramid3d) {
     return;
   }
-  loadPyramid3dPick = true;
-  // pyramid3d picker
-  bind(CanvasPyramid3dPicker).to(DefaultCanvasPyramid3dPicker).inSingletonScope();
-  bind(CanvasPickerContribution).toService(CanvasPyramid3dPicker);
-});
+  _registeredPyramid3d = true;
+  application.contributions.register(CanvasPickerContribution, new DefaultCanvasPyramid3dPicker());
+}

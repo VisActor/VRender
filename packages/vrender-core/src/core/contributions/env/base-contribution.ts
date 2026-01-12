@@ -1,4 +1,3 @@
-import { injectable } from '../../../common/inversify-lite';
 import type {
   ICanvasLike,
   EnvType,
@@ -10,7 +9,6 @@ import type {
 import type { IBoundsLike } from '@visactor/vutils';
 import { AABBBounds } from '@visactor/vutils';
 
-@injectable()
 export abstract class BaseEnvContribution implements IEnvContribution {
   type: EnvType;
 

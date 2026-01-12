@@ -1,7 +1,7 @@
-import { container, pathModule, registerPathGraphic } from '@visactor/vrender-core';
+import { registerPathGraphic } from '@visactor/vrender-core';
 import { browser } from './env';
-import { pathCanvasPickModule } from '../picker/contributions/canvas-picker/path-module';
-import { pathMathPickModule } from '../picker/contributions/math-picker/path-module';
+import { registerCanvasPathPicker } from '../picker/contributions/canvas-picker/path-module';
+import { registerMathPathPicker } from '../picker/contributions/math-picker/path-module';
 
 function _registerPath() {
   if (_registerPath.__loaded) {
@@ -9,8 +9,12 @@ function _registerPath() {
   }
   _registerPath.__loaded = true;
   registerPathGraphic();
-  container.load(pathModule);
-  container.load(browser ? pathCanvasPickModule : pathMathPickModule);
+  // path renderer registered via core; no container usage
+  if (browser) {
+    registerCanvasPathPicker();
+  } else {
+    registerMathPathPicker();
+  }
 }
 
 _registerPath.__loaded = false;

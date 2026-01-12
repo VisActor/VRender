@@ -1,7 +1,7 @@
-import { circleModule, container, registerCircleGraphic } from '@visactor/vrender-core';
+import { registerCircleGraphic } from '@visactor/vrender-core';
 import { browser } from './env';
-import { circleCanvasPickModule } from '../picker/contributions/canvas-picker/circle-module';
-import { circleMathPickModule } from '../picker/contributions/math-picker/circle-module';
+import { registerCanvasCirclePicker } from '../picker/contributions/canvas-picker/circle-module';
+import { registerMathCirclePicker } from '../picker/contributions/math-picker/circle-module';
 
 function _registerCircle() {
   if (_registerCircle.__loaded) {
@@ -9,8 +9,12 @@ function _registerCircle() {
   }
   _registerCircle.__loaded = true;
   registerCircleGraphic();
-  container.load(circleModule);
-  container.load(browser ? circleCanvasPickModule : circleMathPickModule);
+  // circle renderer registered via core; no container usage
+  if (browser) {
+    registerCanvasCirclePicker();
+  } else {
+    registerMathCirclePicker();
+  }
 }
 
 _registerCircle.__loaded = false;

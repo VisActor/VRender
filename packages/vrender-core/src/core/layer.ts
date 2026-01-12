@@ -1,6 +1,5 @@
 import type { AABBBounds, IBoundsLike } from '@visactor/vutils';
 import { application } from '../application';
-import { container } from '../container';
 import type {
   IDrawToParams,
   IGraphic,

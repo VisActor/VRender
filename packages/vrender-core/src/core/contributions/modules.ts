@@ -1,10 +1,7 @@
-import type { Container } from '../../common/inversify-lite';
-import envModules from './env/modules';
-import textMeasureModules from './textMeasure/modules';
-import layerHandlerModules from './layerHandler/modules';
+// Registry-only stub; legacy container loader removed
+// Legacy loader removed; no-op imports removed
 
-export default function load(container: Container) {
-  container.load(envModules);
-  container.load(textMeasureModules);
-  container.load(layerHandlerModules);
+// Legacy loader removed; no-op
+export default function load() {
+  return;
 }

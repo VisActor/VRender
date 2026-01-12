@@ -1,14 +1,12 @@
-import { ContainerModule } from '@visactor/vrender-core';
+import { application } from '@visactor/vrender-core';
 import { CanvasPickerContribution, CanvasRichTextPicker } from '../constants';
 import { DefaultCanvasRichTextPicker } from './richtext-picker';
 
 let loadRichtextPick = false;
-export const richtextCanvasPickModule = new ContainerModule((bind, unbind, isBound, rebind) => {
+export function registerCanvasRichtextPicker() {
   if (loadRichtextPick) {
     return;
   }
   loadRichtextPick = true;
-  // richtext picker
-  bind(CanvasRichTextPicker).to(DefaultCanvasRichTextPicker).inSingletonScope();
-  bind(CanvasPickerContribution).toService(CanvasRichTextPicker);
-});
+  application.contributions.register(CanvasPickerContribution, new DefaultCanvasRichTextPicker());
+}

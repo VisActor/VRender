@@ -1,5 +1,7 @@
 import { LynxCanvas } from './canvas';
 import { LynxContext2d } from './context';
-import { createModule } from '../create-canvas-module';
+import { registerCanvasFactories } from '../create-canvas-module';
 
-export const lynxCanvasModule = createModule(LynxCanvas, LynxContext2d);
+export function registerLynxCanvasFactories() {
+  registerCanvasFactories(LynxCanvas, LynxContext2d);
+}

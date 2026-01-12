@@ -1,4 +1,3 @@
-import { injectable } from '../../../common/inversify-lite';
 import { getTheme } from '../../../graphic/theme';
 import { GLYPH_NUMBER_TYPE } from '../../../graphic/constants';
 import type {
@@ -13,7 +12,6 @@ import type {
   IGraphicRenderDrawParams
 } from '../../../interface';
 
-@injectable()
 export class DefaultCanvasGlyphRender implements IGraphicRender {
   type: 'glyph';
   numberType: number = GLYPH_NUMBER_TYPE;

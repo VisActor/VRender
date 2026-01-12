@@ -1,5 +1,7 @@
 import { NodeCanvas } from './canvas';
 import { NodeContext2d } from './context';
-import { createModule } from '../create-canvas-module';
+import { registerCanvasFactories } from '../create-canvas-module';
 
-export const nodeCanvasModule = createModule(NodeCanvas, NodeContext2d);
+export function registerNodeCanvasFactories() {
+  registerCanvasFactories(NodeCanvas, NodeContext2d);
+}

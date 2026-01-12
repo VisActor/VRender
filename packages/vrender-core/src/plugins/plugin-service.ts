@@ -1,21 +1,22 @@
-import { injectable, inject, named } from '../common/inversify-lite';
 import type { IContributionProvider, IPlugin, IPluginService, IStage } from '../interface';
-import { ContributionProvider } from '../common/contribution-provider';
 import { AutoEnablePlugins } from './constants';
-import { container } from '../container';
+import { contributionRegistry } from '../common/registry';
 
-@injectable()
 export class DefaultPluginService implements IPluginService {
   declare onStartupFinishedPlugin: IPlugin[];
   declare onRegisterPlugin: IPlugin[];
   declare stage: IStage;
   declare actived: boolean;
 
-  constructor(
-    @inject(ContributionProvider)
-    @named(AutoEnablePlugins)
-    protected readonly autoEnablePlugins: IContributionProvider<IPlugin>
-  ) {
+  protected readonly autoEnablePlugins: IContributionProvider<IPlugin>;
+
+  constructor(autoEnablePlugins?: IContributionProvider<IPlugin>) {
+    // 如果没有传入，则使用 registry 获取
+    this.autoEnablePlugins =
+      autoEnablePlugins ||
+      ({
+        getContributions: () => contributionRegistry.get<IPlugin>(AutoEnablePlugins)
+      } as IContributionProvider<IPlugin>);
     this.onStartupFinishedPlugin = [];
     this.onRegisterPlugin = [];
     this.actived = false;
@@ -27,7 +28,7 @@ export class DefaultPluginService implements IPluginService {
 
     // 启动插件
     const { pluginList } = params;
-    if (pluginList && container.isBound(AutoEnablePlugins)) {
+    if (pluginList && contributionRegistry.has(AutoEnablePlugins)) {
       this.autoEnablePlugins.getContributions().forEach(p => {
         if (pluginList.includes(p.name)) {
           this.register(p);

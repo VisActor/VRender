@@ -1,12 +1,4 @@
-import {
-  inject,
-  injectable,
-  Generator,
-  BaseWindowHandlerContribution,
-  VGlobal,
-  ContainerModule,
-  WindowHandlerContribution
-} from '@visactor/vrender-core';
+import { Generator, BaseWindowHandlerContribution, application } from '@visactor/vrender-core';
 import type { IBoundsLike } from '@visactor/vutils';
 import type {
   EnvType,
@@ -19,7 +11,6 @@ import type {
 } from '@visactor/vrender-core';
 import { NodeCanvas } from '../../canvas/contributions/node';
 
-@injectable()
 export class NodeWindowHandlerContribution extends BaseWindowHandlerContribution implements IWindowHandlerContribution {
   static env: EnvType = 'node';
   type: EnvType = 'node';
@@ -29,8 +20,11 @@ export class NodeWindowHandlerContribution extends BaseWindowHandlerContribution
     return null;
   }
 
-  constructor(@inject(VGlobal) private readonly global: IGlobal) {
+  private readonly global: IGlobal;
+
+  constructor() {
     super();
+    this.global = application.global;
   }
 
   getTitle(): string {
@@ -164,10 +158,4 @@ export class NodeWindowHandlerContribution extends BaseWindowHandlerContribution
   }
 }
 
-export const nodeWindowModule = new ContainerModule(bind => {
-  // node
-  bind(NodeWindowHandlerContribution).toSelf();
-  bind(WindowHandlerContribution)
-    .toDynamicValue(ctx => ctx.container.get(NodeWindowHandlerContribution))
-    .whenTargetNamed(NodeWindowHandlerContribution.env);
-});
+// Legacy ContainerModule removed (registry-only)

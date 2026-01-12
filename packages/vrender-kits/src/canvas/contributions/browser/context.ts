@@ -26,7 +26,6 @@
 import type { IPointLike, TextMeasure, ITextMeasureSpec, IMatrix } from '@visactor/vutils';
 import { Matrix, pi, pi2, Logger, getContextFont } from '@visactor/vutils';
 import {
-  injectable,
   DefaultFillStyle,
   DefaultStrokeStyle,
   DefaultTextStyle,
@@ -104,7 +103,6 @@ const addArcToBezierPath = (
   }
 };
 
-@injectable()
 export class BrowserContext2d implements IContext2d {
   static env: EnvType = 'browser';
   baseGlobalAlpha: number;

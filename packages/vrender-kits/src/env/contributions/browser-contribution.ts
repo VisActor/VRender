@@ -1,4 +1,4 @@
-import { injectable, Generator, BaseEnvContribution, application } from '@visactor/vrender-core';
+import { Generator, BaseEnvContribution, application } from '@visactor/vrender-core';
 import type {
   ICanvasLike,
   EnvType,
@@ -60,7 +60,6 @@ export function createImageElement(src: string, isSvg: boolean = false): Promise
   return promise;
 }
 
-@injectable()
 export class BrowserEnvContribution extends BaseEnvContribution implements IEnvContribution {
   type: EnvType = 'browser';
   supportEvent: boolean = true;

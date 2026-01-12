@@ -1,16 +1,14 @@
-import { inject, injectable } from '../common/inversify-lite';
 import type { ILayer, IStage, IGlobal, ILayerParams, LayerMode, ILayerHandlerContribution } from '../interface';
 import { Layer } from './layer';
 import type { ILayerService } from '../interface/core';
-import { container } from '../container';
 import {
   DynamicLayerHandlerContribution,
   StaticLayerHandlerContribution,
   VirtualLayerHandlerContribution
 } from './constants';
 import { application } from '../application';
+import { serviceRegistry } from '../common/registry';
 
-@injectable()
 export class DefaultLayerService implements ILayerService {
   declare layerMap: Map<IStage, ILayer[]>;
   declare staticLayerCountInEnv: number;
@@ -57,11 +55,11 @@ export class DefaultLayerService implements ILayerService {
   getLayerHandler(layerMode: LayerMode) {
     let layerHandler: ILayerHandlerContribution;
     if (layerMode === 'static') {
-      layerHandler = container.get<ILayerHandlerContribution>(StaticLayerHandlerContribution);
+      layerHandler = serviceRegistry.get<ILayerHandlerContribution>(StaticLayerHandlerContribution);
     } else if (layerMode === 'dynamic') {
-      layerHandler = container.get<ILayerHandlerContribution>(DynamicLayerHandlerContribution);
+      layerHandler = serviceRegistry.get<ILayerHandlerContribution>(DynamicLayerHandlerContribution);
     } else {
-      layerHandler = container.get<ILayerHandlerContribution>(VirtualLayerHandlerContribution);
+      layerHandler = serviceRegistry.get<ILayerHandlerContribution>(VirtualLayerHandlerContribution);
     }
     return layerHandler;
   }

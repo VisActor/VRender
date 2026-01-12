@@ -12,22 +12,23 @@ import type {
   IGraphicRenderDrawParams,
   IRenderService
 } from '@visactor/vrender-core';
-import { DefaultCanvasLineRender, injectable, inject, LINE_NUMBER_TYPE } from '@visactor/vrender-core';
+import { DefaultCanvasLineRender, LINE_NUMBER_TYPE, application } from '@visactor/vrender-core';
 import { RoughBaseRender } from './base-render';
 
-@injectable()
 export class RoughCanvasLineRender extends RoughBaseRender implements IGraphicRender {
   declare type: 'line';
   declare numberType: number;
   style: 'rough' = 'rough';
 
-  constructor(
-    @inject(DefaultCanvasLineRender)
-    public readonly canvasRenderer: IGraphicRender
-  ) {
+  constructor() {
     super();
     this.type = 'line';
     this.numberType = LINE_NUMBER_TYPE;
+    try {
+      this.canvasRenderer = application.services.get(DefaultCanvasLineRender) as IGraphicRender;
+    } catch (_) {
+      this.canvasRenderer = application.contributions.get<IGraphicRender>(DefaultCanvasLineRender)[0];
+    }
   }
 
   draw(line: ILine, renderService: IRenderService, drawContext: IDrawContext, params?: IGraphicRenderDrawParams) {

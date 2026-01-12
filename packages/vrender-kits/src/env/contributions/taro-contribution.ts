@@ -1,4 +1,4 @@
-import { injectable, BaseEnvContribution } from '@visactor/vrender-core';
+import { BaseEnvContribution } from '@visactor/vrender-core';
 import type {
   ICanvasLike,
   EnvType,
@@ -55,7 +55,6 @@ interface IConfigureParams {
   pixelRatio: number; // taro需要小程序自己处理pixelRatio
 }
 
-@injectable()
 export class TaroEnvContribution extends BaseEnvContribution implements IEnvContribution {
   type: EnvType = 'taro';
   supportEvent: boolean = true;

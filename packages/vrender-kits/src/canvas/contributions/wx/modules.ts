@@ -1,5 +1,7 @@
 import { WxCanvas } from './canvas';
 import { WxContext2d } from './context';
-import { createModule } from '../create-canvas-module';
+import { registerCanvasFactories } from '../create-canvas-module';
 
-export const wxCanvasModule = createModule(WxCanvas, WxContext2d);
+export function registerWxCanvasFactories() {
+  registerCanvasFactories(WxCanvas, WxContext2d);
+}

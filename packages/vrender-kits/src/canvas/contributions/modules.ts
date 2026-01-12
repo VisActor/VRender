@@ -1,46 +1,45 @@
-import type { Container } from '@visactor/vrender-core';
-import { browserCanvasModule } from './browser/modules';
-import { feishuCanvasModule } from './feishu/modules';
-import { lynxCanvasModule } from './lynx/modules';
-import { nodeCanvasModule } from './node/modules';
-import { taroCanvasModule } from './taro/modules';
-import { ttCanvasModule } from './tt/modules';
-import { wxCanvasModule } from './wx/modules';
+import { registerBrowserCanvasFactories } from './browser/modules';
+import { registerFeishuCanvasFactories } from './feishu/modules';
+import { registerLynxCanvasFactories } from './lynx/modules';
+import { registerNodeCanvasFactories } from './node/modules';
+import { registerTaroCanvasFactories } from './taro/modules';
+import { registerTTCanvasFactories } from './tt/modules';
+import { registerWxCanvasFactories } from './wx/modules';
 
-export function loadAllCavnvas(container: Container) {
-  container.load(browserCanvasModule);
-  container.load(feishuCanvasModule);
-  container.load(lynxCanvasModule);
-  container.load(nodeCanvasModule);
-  container.load(taroCanvasModule);
-  container.load(ttCanvasModule);
-  container.load(wxCanvasModule);
+export function loadAllCavnvas() {
+  registerBrowserCanvasFactories();
+  registerFeishuCanvasFactories();
+  registerLynxCanvasFactories();
+  registerNodeCanvasFactories();
+  registerTaroCanvasFactories();
+  registerTTCanvasFactories();
+  registerWxCanvasFactories();
 }
 
-export function loadBrowserCanvas(container: Container) {
-  container.load(browserCanvasModule);
+export function loadBrowserCanvas() {
+  registerBrowserCanvasFactories();
 }
 
-export function loadFeishuCanvas(container: Container) {
-  container.load(feishuCanvasModule);
+export function loadFeishuCanvas() {
+  registerFeishuCanvasFactories();
 }
 
-export function loadLynxCanvas(container: Container) {
-  container.load(lynxCanvasModule);
+export function loadLynxCanvas() {
+  registerLynxCanvasFactories();
 }
 
-export function loadNodeCanvas(container: Container) {
-  container.load(nodeCanvasModule);
+export function loadNodeCanvas() {
+  registerNodeCanvasFactories();
 }
 
-export function loadTaroCanvas(container: Container) {
-  container.load(taroCanvasModule);
+export function loadTaroCanvas() {
+  registerTaroCanvasFactories();
 }
 
-export function loadTTCanvas(container: Container) {
-  container.load(ttCanvasModule);
+export function loadTTCanvas() {
+  registerTTCanvasFactories();
 }
 
-export function loadWxCanvas(container: Container) {
-  container.load(wxCanvasModule);
+export function loadWxCanvas() {
+  registerWxCanvasFactories();
 }

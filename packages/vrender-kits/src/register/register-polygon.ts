@@ -1,7 +1,7 @@
-import { container, polygonModule, registerPolygonGraphic } from '@visactor/vrender-core';
+import { registerPolygonGraphic } from '@visactor/vrender-core';
 import { browser } from './env';
-import { polygonCanvasPickModule } from '../picker/contributions/canvas-picker/polygon-module';
-import { polygonMathPickModule } from '../picker/contributions/math-picker/polygon-module';
+import { registerCanvasPolygonPicker } from '../picker/contributions/canvas-picker/polygon-module';
+import { registerMathPolygonPicker } from '../picker/contributions/math-picker/polygon-module';
 
 function _registerPolygon() {
   if (_registerPolygon.__loaded) {
@@ -9,8 +9,12 @@ function _registerPolygon() {
   }
   _registerPolygon.__loaded = true;
   registerPolygonGraphic();
-  container.load(polygonModule);
-  container.load(browser ? polygonCanvasPickModule : polygonMathPickModule);
+  // polygon renderer registered via core; no container usage
+  if (browser) {
+    registerCanvasPolygonPicker();
+  } else {
+    registerMathPolygonPicker();
+  }
 }
 
 _registerPolygon.__loaded = false;

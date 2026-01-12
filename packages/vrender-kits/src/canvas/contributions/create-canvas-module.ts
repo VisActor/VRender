@@ -1,18 +1,15 @@
-import { ContainerModule, CanvasFactory, Context2dFactory } from '@visactor/vrender-core';
+import { application, CanvasFactory, Context2dFactory } from '@visactor/vrender-core';
 import type { CanvasConfigType, ICanvas } from '@visactor/vrender-core';
 
-export function createModule(CanvasConstructor: any, ContextConstructor: any) {
-  return new ContainerModule(bind => {
-    bind(CanvasFactory)
-      .toDynamicValue(() => {
-        return (params: CanvasConfigType) => new CanvasConstructor(params);
-      })
-      .whenTargetNamed(CanvasConstructor.env);
+// Register canvas/context factories via application.services (no inversify)
+export function registerCanvasFactories(CanvasConstructor: any, ContextConstructor: any) {
+  // Canvas factory
+  application.services.registerFactory(CanvasFactory, () => {
+    return (params: CanvasConfigType) => new CanvasConstructor(params);
+  });
 
-    bind(Context2dFactory)
-      .toDynamicValue(() => {
-        return (params: ICanvas, dpr: number) => new ContextConstructor(params, dpr);
-      })
-      .whenTargetNamed(ContextConstructor.env);
+  // Context2d factory
+  application.services.registerFactory(Context2dFactory, () => {
+    return (canvas: ICanvas, dpr: number) => new ContextConstructor(canvas, dpr);
   });
 }

@@ -1,6 +1,6 @@
-import _roughModule from './render/contributions/rough/module';
+import { registerRoughCanvasRenders as _registerRoughCanvasRenders } from './render/contributions/rough/module';
 // import _canvasModuleLoader from './canvas/contributions/canvas-module';
 
-export const roughModule = _roughModule;
+export const registerRoughCanvasRenders = _registerRoughCanvasRenders;
 // export const canvasModuleLoader = _canvasModuleLoader;
 // export { nodeLoader } from './node-bind';

@@ -1,5 +1,7 @@
 import { FeishuCanvas } from './canvas';
 import { FeishuContext2d } from './context';
-import { createModule } from '../create-canvas-module';
+import { registerCanvasFactories } from '../create-canvas-module';
 
-export const feishuCanvasModule = createModule(FeishuCanvas, FeishuContext2d);
+export function registerFeishuCanvasFactories() {
+  registerCanvasFactories(FeishuCanvas, FeishuContext2d);
+}

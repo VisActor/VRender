@@ -1,14 +1,12 @@
-import { ContainerModule } from '@visactor/vrender-core';
-import { MathPickerContribution, MathSymbolPicker } from '../constants';
+import { application } from '@visactor/vrender-core';
+import { MathPickerContribution } from '../constants';
 import { DefaultMathSymbolPicker } from './symbol-picker';
 
-let loadSymbolPick = false;
-export const symbolMathPickModule = new ContainerModule((bind, unbind, isBound, rebind) => {
-  if (loadSymbolPick) {
+let _registered = false;
+export function registerMathSymbolPicker() {
+  if (_registered) {
     return;
   }
-  loadSymbolPick = true;
-  // symbol picker
-  bind(MathSymbolPicker).to(DefaultMathSymbolPicker).inSingletonScope();
-  bind(MathPickerContribution).toService(MathSymbolPicker);
-});
+  _registered = true;
+  application.contributions.register(MathPickerContribution, new DefaultMathSymbolPicker());
+}

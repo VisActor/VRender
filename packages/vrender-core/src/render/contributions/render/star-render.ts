@@ -1,5 +1,4 @@
 import { isArray } from '@visactor/vutils';
-import { inject, injectable, named } from '../../../common/inversify-lite';
 import { getTheme } from '../../../graphic/theme';
 import { STAR_NUMBER_TYPE } from '../../../graphic/constants';
 import type {
@@ -16,24 +15,25 @@ import type {
   IStarRenderContribution
 } from '../../../interface';
 import { StarRenderContribution } from './contributions/constants';
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { ContributionProvider } from '../../../common/contribution-provider';
 import { BaseRender } from './base-render';
 import { defaultStarBackgroundRenderContribution, defaultStarTextureRenderContribution } from './contributions';
+import { contributionRegistry } from '../../../common/registry';
 
-@injectable()
 export class DefaultCanvasStarRender extends BaseRender<IStar> implements IGraphicRender {
   type: 'star';
   numberType: number = STAR_NUMBER_TYPE;
 
-  constructor(
-    @inject(ContributionProvider)
-    @named(StarRenderContribution)
-    protected readonly starRenderContribitions: IContributionProvider<IStarRenderContribution>
-  ) {
+  protected readonly starRenderContribitions: IContributionProvider<IStarRenderContribution>;
+
+  constructor(starRenderContribitions?: IContributionProvider<IStarRenderContribution>) {
     super();
+    this.starRenderContribitions =
+      starRenderContribitions ||
+      ({
+        getContributions: () => contributionRegistry.get<IStarRenderContribution>(StarRenderContribution)
+      } as IContributionProvider<IStarRenderContribution>);
     this.builtinContributions = [defaultStarBackgroundRenderContribution, defaultStarTextureRenderContribution];
-    this.init(starRenderContribitions);
+    this.init(this.starRenderContribitions);
   }
 
   drawShape(

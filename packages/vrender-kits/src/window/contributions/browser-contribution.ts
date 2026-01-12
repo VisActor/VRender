@@ -1,12 +1,4 @@
-import {
-  inject,
-  injectable,
-  Generator,
-  BaseWindowHandlerContribution,
-  ContainerModule,
-  WindowHandlerContribution,
-  application
-} from '@visactor/vrender-core';
+import { Generator, BaseWindowHandlerContribution, application } from '@visactor/vrender-core';
 import type {
   IContext2d,
   ICanvas,
@@ -20,7 +12,6 @@ import type { IBoundsLike, IMatrix, IBounds } from '@visactor/vutils';
 import { Matrix, AABBBounds } from '@visactor/vutils';
 import { BrowserCanvas } from '../../canvas/contributions/browser';
 
-@injectable()
 export class BrowserWindowHandlerContribution
   extends BaseWindowHandlerContribution
   implements IWindowHandlerContribution
@@ -328,10 +319,4 @@ export class BrowserWindowHandlerContribution
   }
 }
 
-export const browserWindowModule = new ContainerModule(bind => {
-  // browser
-  bind(BrowserWindowHandlerContribution).toSelf();
-  bind(WindowHandlerContribution)
-    .toDynamicValue(ctx => ctx.container.get(BrowserWindowHandlerContribution))
-    .whenTargetNamed(BrowserWindowHandlerContribution.env);
-});
+// Legacy ContainerModule removed (registry-only)

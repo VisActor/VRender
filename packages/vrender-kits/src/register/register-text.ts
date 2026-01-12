@@ -1,15 +1,19 @@
-import { container, registerTextGraphic, textModule } from '@visactor/vrender-core';
+import { registerTextGraphic } from '@visactor/vrender-core';
 import { browser } from './env';
-import { textCanvasPickModule } from '../picker/contributions/canvas-picker/text-module';
-import { textMathPickModule } from '../picker/contributions/math-picker/text-module';
+import { registerCanvasTextPicker } from '../picker/contributions/canvas-picker/text-module';
+import { registerMathTextPicker } from '../picker/contributions/math-picker/text-module';
 function _registerText() {
   if (_registerText.__loaded) {
     return;
   }
   _registerText.__loaded = true;
   registerTextGraphic();
-  container.load(textModule);
-  container.load(browser ? textCanvasPickModule : textMathPickModule);
+  // text renderer registered via core; no container usage
+  if (browser) {
+    registerCanvasTextPicker();
+  } else {
+    registerMathTextPicker();
+  }
 }
 
 _registerText.__loaded = false;

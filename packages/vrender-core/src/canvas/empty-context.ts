@@ -1,6 +1,5 @@
 import type { IMatrix } from '@visactor/vutils';
 import { Matrix } from '@visactor/vutils';
-import { injectable } from '../common/inversify-lite';
 import type {
   ICanvas,
   ICommonStyleParams,
@@ -45,13 +44,12 @@ import { matrixAllocate } from '../allocator/matrix-allocate';
 const initMatrix = new Matrix(1, 0, 0, 1, 0, 0);
 const globalPoint = { x: 0, y: 0 };
 
-@injectable()
 export class EmptyContext2d implements IContext2d {
   declare path: CustomPath2D;
   declare canvas: null;
   declare stack: Matrix[];
-  declare protected matrix: Matrix;
-  declare protected applyedMatrix?: Matrix; // 被应用的matrix
+  protected declare matrix: Matrix;
+  protected declare applyedMatrix?: Matrix; // 被应用的matrix
   // 属性代理
   declare fillStyle: string | CanvasGradient | CanvasPattern;
   /**

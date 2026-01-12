@@ -1,14 +1,12 @@
-import { ContainerModule } from '@visactor/vrender-core';
-import { MathPickerContribution, MathRectPicker } from '../constants';
+import { application } from '@visactor/vrender-core';
+import { MathPickerContribution } from '../constants';
 import { DefaultMathRectPicker } from './rect-picker';
 
-let loadRectPick = false;
-export const rectMathPickModule = new ContainerModule((bind, unbind, isBound, rebind) => {
-  if (loadRectPick) {
+let _registered = false;
+export function registerMathRectPicker() {
+  if (_registered) {
     return;
   }
-  loadRectPick = true;
-  // rect picker
-  bind(MathRectPicker).to(DefaultMathRectPicker).inSingletonScope();
-  bind(MathPickerContribution).toService(MathRectPicker);
-});
+  _registered = true;
+  application.contributions.register(MathPickerContribution, new DefaultMathRectPicker());
+}

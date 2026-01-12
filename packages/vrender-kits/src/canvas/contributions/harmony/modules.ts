@@ -1,5 +1,7 @@
 import { HarmonyCanvas } from './canvas';
 import { HarmonyContext2d } from './context';
-import { createModule } from '../create-canvas-module';
+import { registerCanvasFactories } from '../create-canvas-module';
 
-export const harmonyCanvasModule = createModule(HarmonyCanvas, HarmonyContext2d);
+export function registerHarmonyCanvasFactories() {
+  registerCanvasFactories(HarmonyCanvas, HarmonyContext2d);
+}

@@ -1,12 +1,4 @@
-import {
-  inject,
-  injectable,
-  Generator,
-  BaseWindowHandlerContribution,
-  VGlobal,
-  ContainerModule,
-  WindowHandlerContribution
-} from '@visactor/vrender-core';
+import { Generator, BaseWindowHandlerContribution, application } from '@visactor/vrender-core';
 import type {
   EnvType,
   IGlobal,
@@ -47,7 +39,6 @@ class MiniAppEventManager {
   cache: Record<string, { listener: EventListenerOrEventListenerObject[] }> = {};
 }
 
-@injectable()
 export class WxWindowHandlerContribution extends BaseWindowHandlerContribution implements IWindowHandlerContribution {
   static env: EnvType = 'wx';
   type: EnvType = 'wx';
@@ -59,8 +50,11 @@ export class WxWindowHandlerContribution extends BaseWindowHandlerContribution i
     return null;
   }
 
-  constructor(@inject(VGlobal) private readonly global: IGlobal) {
+  private readonly global: IGlobal;
+
+  constructor() {
     super();
+    this.global = application.global;
   }
 
   getTitle(): string {
@@ -238,10 +232,4 @@ export class WxWindowHandlerContribution extends BaseWindowHandlerContribution i
   }
 }
 
-export const wxWindowModule = new ContainerModule(bind => {
-  // wx
-  bind(WxWindowHandlerContribution).toSelf();
-  bind(WindowHandlerContribution)
-    .toDynamicValue(ctx => ctx.container.get(WxWindowHandlerContribution))
-    .whenTargetNamed(WxWindowHandlerContribution.env);
-});
+// Legacy ContainerModule removed (registry-only)

@@ -1,5 +1,7 @@
 import { TTCanvas } from './canvas';
 import { TTContext2d } from './context';
-import { createModule } from '../create-canvas-module';
+import { registerCanvasFactories } from '../create-canvas-module';
 
-export const ttCanvasModule = createModule(TTCanvas, TTContext2d);
+export function registerTTCanvasFactories() {
+  registerCanvasFactories(TTCanvas, TTContext2d);
+}

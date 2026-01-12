@@ -1,7 +1,7 @@
-import { container, lineModule, registerLineGraphic } from '@visactor/vrender-core';
+import { registerLineGraphic } from '@visactor/vrender-core';
 import { browser } from './env';
-import { lineCanvasPickModule } from '../picker/contributions/canvas-picker/line-module';
-import { lineMathPickModule } from '../picker/contributions/math-picker/line-module';
+import { registerCanvasLinePicker } from '../picker/contributions/canvas-picker/line-module';
+import { registerMathLinePicker } from '../picker/contributions/math-picker/line-module';
 
 function _registerLine() {
   if (_registerLine.__loaded) {
@@ -9,8 +9,11 @@ function _registerLine() {
   }
   _registerLine.__loaded = true;
   registerLineGraphic();
-  container.load(lineModule);
-  container.load(browser ? lineCanvasPickModule : lineMathPickModule);
+  if (browser) {
+    registerCanvasLinePicker();
+  } else {
+    registerMathLinePicker();
+  }
 }
 
 _registerLine.__loaded = false;

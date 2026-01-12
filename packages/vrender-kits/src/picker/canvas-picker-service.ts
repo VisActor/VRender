@@ -1,74 +1,39 @@
 import type { IMatrix, IPointLike } from '@visactor/vutils';
-// eslint-disable-next-line
 import {
-  ContributionProvider,
-  inject,
-  injectable,
-  named,
   DefaultPickService,
-  DrawContribution,
-  PickItemInterceptor,
   canvasAllocate,
-  application,
-  PickServiceInterceptor
+  type ICanvas,
+  type IContext2d,
+  type IGraphic,
+  type EnvType,
+  type IGlobal,
+  type IGraphicPicker,
+  type IPickerService,
+  type IContributionProvider,
+  type IPickParams,
+  type PickResult,
+  application
 } from '@visactor/vrender-core';
-import type {
-  ICanvas,
-  IContext2d,
-  IGraphic,
-  EnvType,
-  IGlobal,
-  IGraphicPicker,
-  IPickerService,
-  IDrawContribution,
-  IContributionProvider,
-  IPickItemInterceptorContribution,
-  IPickParams,
-  PickResult,
-  IPickServiceInterceptorContribution
-} from '@visactor/vrender-core';
-import {
-  CanvasArcPicker,
-  CanvasAreaPicker,
-  CanvasCirclePicker,
-  CanvasImagePicker,
-  CanvasLinePicker,
-  CanvasPathPicker,
-  CanvasPickerContribution,
-  CanvasPolygonPicker,
-  CanvasRectPicker,
-  CanvasSymbolPicker,
-  CanvasTextPicker,
-  CanvasRichTextPicker
-} from './contributions/constants';
+import { CanvasPickerContribution } from './contributions/constants';
 
 // 默认的pick-service，提供基本的最优选中策略，尽量不需要用户自己实现contribution
 // 用户可以写plugin
-@injectable()
 export class DefaultCanvasPickerService extends DefaultPickService implements IPickerService {
   declare type: 'default';
-  // pcik canvas
+  // pick canvas
   declare pickCanvas: ICanvas;
   declare pickContext: IContext2d;
   declare pickerMap: Map<number, IGraphicPicker>;
 
-  constructor(
-    @inject(ContributionProvider)
-    @named(CanvasPickerContribution)
-    protected readonly contributions: IContributionProvider<IGraphicPicker>,
+  protected readonly contributions: IContributionProvider<IGraphicPicker>;
 
-    @inject(DrawContribution)
-    public readonly drawContribution: IDrawContribution,
-    // 拦截器
-    @inject(ContributionProvider)
-    @named(PickItemInterceptor)
-    protected readonly pickItemInterceptorContributions: IContributionProvider<IPickItemInterceptorContribution>,
+  constructor() {
+    super();
+    // Use registry-only provider for canvas pickers
+    this.contributions = {
+      getContributions: () => application.contributions.get<IGraphicPicker>(CanvasPickerContribution)
+    } as IContributionProvider<IGraphicPicker>;
 
-    @inject(ContributionProvider)
-    @named(PickServiceInterceptor)
-    protected readonly pickServiceInterceptorContributions: IContributionProvider<IPickServiceInterceptorContribution>
-  ) {
-    super(pickItemInterceptorContributions, pickServiceInterceptorContributions);
     this.global.hooks.onSetEnv.tap('canvas-picker-service', (_, env, global) => {
       this.configure(global, env);
     });
@@ -85,11 +50,6 @@ export class DefaultCanvasPickerService extends DefaultPickService implements IP
   }
 
   configure(global: IGlobal, env: EnvType) {
-    // if (!this.global.env) return;
-    // this.contributions.getContributions().forEach(handlerContribution => {
-    //   handlerContribution.configure(this, this.global);
-    // });
-
     // 创建pick canvas
     this.pickCanvas = canvasAllocate.shareCanvas();
     this.pickContext = this.pickCanvas.getContext('2d');

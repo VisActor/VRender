@@ -1,6 +1,3 @@
-import { inject, injectable, named } from '../../../common/inversify-lite';
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { ContributionProvider } from '../../../common/contribution-provider';
 import { getTheme } from '../../../graphic/theme';
 import type {
   IGraphicAttribute,
@@ -24,22 +21,25 @@ import { createRectPath } from '../../../common/shape/rect';
 import { BaseRender } from './base-render';
 import { defaultImageBackgroundRenderContribution, defaultImageRenderContribution } from './contributions';
 import { ResourceLoader } from '../../../resource-loader/loader';
+import { contributionRegistry } from '../../../common/registry';
 
 const repeatStr = ['', 'repeat-x', 'repeat-y', 'repeat'];
 
-@injectable()
 export class DefaultCanvasImageRender extends BaseRender<IImage> implements IGraphicRender {
   type: 'image';
   numberType: number = IMAGE_NUMBER_TYPE;
 
-  constructor(
-    @inject(ContributionProvider)
-    @named(ImageRenderContribution)
-    protected readonly graphicRenderContributions: IContributionProvider<IImageRenderContribution>
-  ) {
+  protected readonly graphicRenderContributions: IContributionProvider<IImageRenderContribution>;
+
+  constructor(graphicRenderContributions?: IContributionProvider<IImageRenderContribution>) {
     super();
+    this.graphicRenderContributions =
+      graphicRenderContributions ||
+      ({
+        getContributions: () => contributionRegistry.get<IImageRenderContribution>(ImageRenderContribution)
+      } as IContributionProvider<IImageRenderContribution>);
     this.builtinContributions = [defaultImageRenderContribution, defaultImageBackgroundRenderContribution];
-    this.init(graphicRenderContributions);
+    this.init(this.graphicRenderContributions);
   }
 
   drawShape(

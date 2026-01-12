@@ -1,9 +1,6 @@
 import { abs, atan2, cos, epsilon, min, sin, pi2, isBoolean } from '@visactor/vutils';
-import { inject, injectable, named } from '../../../common/inversify-lite';
 import { getTheme } from '../../../graphic/theme';
 import { parseStroke } from '../../../common/utils';
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { ContributionProvider } from '../../../common/contribution-provider';
 import { calculateArcCornerRadius } from '../render/utils';
 import type {
   IContext2d,
@@ -32,6 +29,7 @@ import {
   defaultArcRenderContribution,
   defaultArcTextureRenderContribution
 } from './contributions';
+import { contributionRegistry } from '../../../common/registry';
 /**
  * 部分源码参考 https://github.com/d3/d3-shape/
  * Copyright 2010-2022 Mike Bostock
@@ -49,23 +47,25 @@ import {
   THIS SOFTWARE.
  */
 
-@injectable()
 export class DefaultCanvasArcRender extends BaseRender<IArc> implements IGraphicRender {
   type: 'arc';
   numberType: number = ARC_NUMBER_TYPE;
 
-  constructor(
-    @inject(ContributionProvider)
-    @named(ArcRenderContribution)
-    protected readonly graphicRenderContributions: IContributionProvider<IArcRenderContribution>
-  ) {
+  protected readonly graphicRenderContributions: IContributionProvider<IArcRenderContribution>;
+
+  constructor(graphicRenderContributions?: IContributionProvider<IArcRenderContribution>) {
     super();
+    this.graphicRenderContributions =
+      graphicRenderContributions ||
+      ({
+        getContributions: () => contributionRegistry.get<IArcRenderContribution>(ArcRenderContribution)
+      } as IContributionProvider<IArcRenderContribution>);
     this.builtinContributions = [
       defaultArcRenderContribution,
       defaultArcBackgroundRenderContribution,
       defaultArcTextureRenderContribution
     ];
-    this.init(graphicRenderContributions);
+    this.init(this.graphicRenderContributions);
   }
 
   // 绘制尾部cap

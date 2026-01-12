@@ -1,4 +1,4 @@
-import { injectable, BaseEnvContribution, RafBasedSTO } from '@visactor/vrender-core';
+import { BaseEnvContribution, RafBasedSTO } from '@visactor/vrender-core';
 // import { loadFeishuContributions } from '../../../kits';
 import type {
   ICanvasLike,
@@ -34,7 +34,6 @@ function createCanvas(width: number, height: number, id?: string) {
   return new CanvasWrapDisableWH(nativeCanvas, context, 1, width, height, id);
 }
 
-@injectable()
 export class HarmonyEnvContribution extends BaseEnvContribution implements IEnvContribution {
   type: EnvType = 'harmony';
   supportEvent: boolean = true;

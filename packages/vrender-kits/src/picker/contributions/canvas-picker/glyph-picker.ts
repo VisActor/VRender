@@ -1,10 +1,14 @@
-import { inject, injectable, GlyphRender } from '@visactor/vrender-core';
+import { GlyphRender, application } from '@visactor/vrender-core';
 import type { IGraphicPicker, IGraphicRender } from '@visactor/vrender-core';
 import { GlyphPickerBase } from '../common/glyph-picker-base';
 
-@injectable()
 export class DefaultCanvasGlyphPicker extends GlyphPickerBase implements IGraphicPicker {
-  constructor(@inject(GlyphRender) public readonly canvasRenderer: IGraphicRender) {
+  constructor() {
     super();
+    try {
+      this.canvasRenderer = application.services.get(GlyphRender) as IGraphicRender;
+    } catch (_) {
+      this.canvasRenderer = application.contributions.get<IGraphicRender>(GlyphRender)[0];
+    }
   }
 }

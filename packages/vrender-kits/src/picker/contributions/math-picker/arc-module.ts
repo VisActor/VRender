@@ -1,14 +1,12 @@
-import { ContainerModule } from '@visactor/vrender-core';
+import { application } from '@visactor/vrender-core';
 import { DefaultMathArcPicker } from './arc-picker';
-import { MathArcPicker, MathPickerContribution } from '../constants';
+import { MathPickerContribution } from '../constants';
 
-let loadArcPick = false;
-export const arcMathPickModule = new ContainerModule((bind, unbind, isBound, rebind) => {
-  if (loadArcPick) {
+let _registered = false;
+export function registerMathArcPicker() {
+  if (_registered) {
     return;
   }
-  loadArcPick = true;
-  // arc picker
-  bind(MathArcPicker).to(DefaultMathArcPicker).inSingletonScope();
-  bind(MathPickerContribution).toService(MathArcPicker);
-});
+  _registered = true;
+  application.contributions.register(MathPickerContribution, new DefaultMathArcPicker());
+}

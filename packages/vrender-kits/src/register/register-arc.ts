@@ -1,7 +1,7 @@
-import { arcModule, container, registerArcGraphic } from '@visactor/vrender-core';
+import { registerArcGraphic } from '@visactor/vrender-core';
 import { browser } from './env';
-import { arcCanvasPickModule } from '../picker/contributions/canvas-picker/arc-module';
-import { arcMathPickModule } from '../picker/contributions/math-picker/arc-module';
+import { registerCanvasArcPicker } from '../picker/contributions/canvas-picker/arc-module';
+import { registerMathArcPicker } from '../picker/contributions/math-picker/arc-module';
 
 export function _registerArc() {
   if (_registerArc.__loaded) {
@@ -9,8 +9,11 @@ export function _registerArc() {
   }
   _registerArc.__loaded = true;
   registerArcGraphic();
-  container.load(arcModule);
-  container.load(browser ? arcCanvasPickModule : arcMathPickModule);
+  if (browser) {
+    registerCanvasArcPicker();
+  } else {
+    registerMathArcPicker();
+  }
 }
 
 _registerArc.__loaded = false;

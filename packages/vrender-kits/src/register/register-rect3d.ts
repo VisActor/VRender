@@ -1,6 +1,6 @@
-import { container, rect3dModule, registerRect3dGraphic } from '@visactor/vrender-core';
+import { registerRect3dGraphic } from '@visactor/vrender-core';
 import { browser } from './env';
-import { rect3dCanvasPickModule } from '../picker/contributions/canvas-picker/rect3d-module';
+import { registerCanvasRect3dPicker } from '../picker/contributions/canvas-picker/rect3d-module';
 
 function _registerRect3d() {
   if (_registerRect3d.__loaded) {
@@ -8,8 +8,10 @@ function _registerRect3d() {
   }
   _registerRect3d.__loaded = true;
   registerRect3dGraphic();
-  container.load(rect3dModule);
-  container.load(browser ? rect3dCanvasPickModule : rect3dCanvasPickModule);
+  // rect3d renderer registered via core; no /* removed container */ usage
+  if (browser) {
+    registerCanvasRect3dPicker();
+  }
 }
 
 _registerRect3d.__loaded = false;

@@ -1,30 +1,30 @@
-import { container, vglobal, type Container } from '@visactor/vrender-core';
-import { loadBrowserEnv } from './browser';
-import { loadFeishuEnv } from './feishu';
-import { loadLynxEnv } from './lynx';
-import { loadNodeEnv } from './node';
-import { loadTaroEnv } from './taro';
-import { loadWxEnv } from './wx';
-import { loadCanvasPicker } from '../picker/canvas-module';
-import { loadMathPicker } from '../picker/math-module';
+import { application } from '@visactor/vrender-core';
+import { registerBrowserEnvRegistry } from './browser';
+import { registerFeishuEnvRegistry } from './feishu';
+import { registerLynxEnvRegistry } from './lynx';
+import { registerNodeEnvRegistry } from './node';
+import { registerTaroEnvRegistry } from './taro';
+import { registerWxEnvRegistry } from './wx';
+import { registerCanvasPickerService } from '../picker/canvas-module';
+import { registerMathPickerService } from '../picker/math-module';
 // import { loadMathPicker } from '../picker';
 
-export function loadAllEnv(container: Container) {
-  loadAllModule(container);
+export function loadAllEnv() {
+  loadAllModule();
 }
 
-export function loadAllModule(container: Container) {
+export function loadAllModule() {
   if (!loadAllModule.__loaded) {
     loadAllModule.__loaded = true;
-    loadBrowserEnv(container, false);
-    loadFeishuEnv(container, false);
-    loadLynxEnv(container, false);
-    loadNodeEnv(container, false);
-    loadTaroEnv(container, false);
-    loadWxEnv(container, false);
-    loadCanvasPicker(container);
-    vglobal.hooks.onSetEnv.tap('loadMathPicker', (lastEnv, env) => {
-      env !== 'browser' && loadMathPicker(container);
+    registerBrowserEnvRegistry();
+    registerFeishuEnvRegistry();
+    registerLynxEnvRegistry();
+    registerNodeEnvRegistry();
+    registerTaroEnvRegistry();
+    registerWxEnvRegistry();
+    registerCanvasPickerService();
+    application.global.hooks.onSetEnv.tap('registerMathPickerService', (lastEnv, env) => {
+      env !== 'browser' && registerMathPickerService();
     });
   }
 }
@@ -32,5 +32,5 @@ export function loadAllModule(container: Container) {
 loadAllModule.__loaded = false;
 
 export function initAllEnv() {
-  loadAllEnv(container);
+  loadAllEnv();
 }

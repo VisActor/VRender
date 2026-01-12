@@ -1,4 +1,3 @@
-import { injectable } from '../../../common/inversify-lite';
 import { AABBBounds } from '@visactor/vutils';
 import { mat3Tomat4, multiplyMat4Mat4 } from '../../../common/matrix';
 import { graphicCreator } from '../../../graphic/graphic-creator';
@@ -168,7 +167,6 @@ export class DebugDrawItemInterceptorContribution implements IDrawItemIntercepto
   }
 }
 
-@injectable()
 export class CommonDrawItemInterceptorContribution implements IDrawItemInterceptorContribution {
   order: number = 1;
   interceptors: IDrawItemInterceptorContribution[];

@@ -1,4 +1,3 @@
-import { injectable } from '../../../common/inversify-lite';
 import type { IGraphicUtil } from '../../../interface/core';
 import type { ICanvas, IContext2d, EnvType } from '../../../interface';
 import { MeasureModeEnum } from '../../../interface';
@@ -7,7 +6,6 @@ import { DefaultTextAttribute, DefaultTextStyle } from '../../../graphic/config'
 import { testLetter } from '../../../graphic/richtext/utils';
 import { Logger } from '@visactor/vutils';
 
-@injectable()
 export class ATextMeasure implements ITextMeasure {
   id: string = 'ATextMeasure';
   release: (...params: any) => void;

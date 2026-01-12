@@ -1,7 +1,7 @@
-import { container, registerRichtextGraphic, richtextModule } from '@visactor/vrender-core';
+import { registerRichtextGraphic } from '@visactor/vrender-core';
 import { browser } from './env';
-import { richtextCanvasPickModule } from '../picker/contributions/canvas-picker/richtext-module';
-import { richTextMathPickModule } from '../picker/contributions/math-picker/richtext-module';
+import { registerCanvasRichtextPicker } from '../picker/contributions/canvas-picker/richtext-module';
+import { registerMathRichTextPicker } from '../picker/contributions/math-picker/richtext-module';
 
 function _registerRichtext() {
   if (_registerRichtext.__loaded) {
@@ -9,8 +9,12 @@ function _registerRichtext() {
   }
   _registerRichtext.__loaded = true;
   registerRichtextGraphic();
-  container.load(richtextModule);
-  container.load(browser ? richtextCanvasPickModule : richTextMathPickModule);
+  // richtext renderer registered via core; no container usage
+  if (browser) {
+    registerCanvasRichtextPicker();
+  } else {
+    registerMathRichTextPicker();
+  }
 }
 
 _registerRichtext.__loaded = false;

@@ -1,4 +1,3 @@
-import { injectable, inject, named, multiInject } from '../../../common/inversify-lite';
 import type {
   IContext2d,
   MaybePromise,
@@ -14,12 +13,9 @@ import type {
   IGlobal
 } from '../../../interface';
 import { findNextGraphic, foreach } from '../../../common/sort';
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { ContributionProvider } from '../../../common/contribution-provider';
 import { DefaultAttribute } from '../../../graphic/config';
 import type { IAABBBounds, IBounds, IMatrix } from '@visactor/vutils';
 import { Bounds, Logger, getRectIntersect, isArray, isRectIntersect } from '@visactor/vutils';
-import { container } from '../../../container';
 import { GraphicRender, IncrementalDrawContribution } from './symbol';
 import { DrawItemInterceptor } from './draw-interceptor';
 import { createColor } from '../../../common/canvas-utils';
@@ -27,11 +23,11 @@ import type { ILayerService } from '../../../interface/core';
 import { boundsAllocate } from '../../../allocator/bounds-allocate';
 import { matrixAllocate } from '../../../allocator/matrix-allocate';
 import { application } from '../../../application';
+import { contributionRegistry, serviceRegistry } from '../../../common/registry';
 
 /**
  * 默认的渲染contribution，基于树状结构针对图元的渲染
  */
-@injectable()
 export class DefaultDrawContribution implements IDrawContribution {
   declare currentRenderMap: Map<number, IGraphicRender>;
   declare defaultRenderMap: Map<number, IGraphicRender>;
@@ -48,17 +44,21 @@ export class DefaultDrawContribution implements IDrawContribution {
 
   declare scrollMatrix?: IMatrix;
 
+  protected readonly contributions: IGraphicRender[];
+  protected readonly drawItemInterceptorContributions: IContributionProvider<IDrawItemInterceptorContribution>;
+
   constructor(
-    // @inject(ContributionProvider)
-    // @named(GraphicRender)
-    // protected readonly contributions: ContributionProvider<IGraphicRender>,
-    @multiInject(GraphicRender) protected readonly contributions: IGraphicRender[],
-    // @inject(RenderSelector) protected readonly renderSelector: IRenderSelector, // 根据图元类型选择对应的renderItem进行渲染
-    // 拦截器
-    @inject(ContributionProvider)
-    @named(DrawItemInterceptor)
-    protected readonly drawItemInterceptorContributions: IContributionProvider<IDrawItemInterceptorContribution>
+    contributions?: IGraphicRender[],
+    drawItemInterceptorContributions?: IContributionProvider<IDrawItemInterceptorContribution>
   ) {
+    // 如果没有传入，则使用 registry 获取
+    this.contributions = contributions || contributionRegistry.get<IGraphicRender>(GraphicRender);
+    this.drawItemInterceptorContributions =
+      drawItemInterceptorContributions ||
+      ({
+        getContributions: () => contributionRegistry.get<IDrawItemInterceptorContribution>(DrawItemInterceptor)
+      } as IContributionProvider<IDrawItemInterceptorContribution>);
+
     this.currentRenderMap = new Map();
     this.defaultRenderMap = new Map();
     this.styleRenderMap = new Map();
@@ -67,7 +67,7 @@ export class DefaultDrawContribution implements IDrawContribution {
     this.global = application.global;
     this.layerService = application.layerService;
     if (!isArray(this.contributions)) {
-      this.contributions = [this.contributions];
+      (this as any).contributions = [this.contributions];
     }
     this.init();
   }
@@ -303,7 +303,7 @@ export class DefaultDrawContribution implements IDrawContribution {
     }
     // 渲染
     const incrementalContext = incrementalLayer.layer.getNativeHandler().getContext();
-    const idc = incrementalLayer.drawContribution || container.get(IncrementalDrawContribution);
+    const idc = incrementalLayer.drawContribution || serviceRegistry.get(IncrementalDrawContribution);
     idc.dirtyBounds.setValue(-Infinity, -Infinity, Infinity, Infinity);
     idc.backupDirtyBounds.setValue(-Infinity, -Infinity, Infinity, Infinity);
     (idc as any).draw(this.currentRenderService, {

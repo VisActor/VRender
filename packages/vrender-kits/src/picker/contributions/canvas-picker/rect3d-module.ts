@@ -1,16 +1,12 @@
-import { ContainerModule } from '@visactor/vrender-core';
-import { DefaultCanvasArcPicker } from './arc-picker';
-import { CanvasArcPicker, CanvasPickerContribution, CanvasRect3dPicker, CanvasRectPicker } from '../constants';
-import { DefaultCanvasRectPicker } from './rect-picker';
+import { application } from '@visactor/vrender-core';
+import { CanvasPickerContribution } from '../constants';
 import { DefaultCanvasRect3dPicker } from './rect3d-picker';
 
-let loadRect3dPick = false;
-export const rect3dCanvasPickModule = new ContainerModule((bind, unbind, isBound, rebind) => {
-  if (loadRect3dPick) {
+let _registeredRect3d = false;
+export function registerCanvasRect3dPicker() {
+  if (_registeredRect3d) {
     return;
   }
-  loadRect3dPick = true;
-  // reat3d picker
-  bind(CanvasRect3dPicker).to(DefaultCanvasRect3dPicker).inSingletonScope();
-  bind(CanvasPickerContribution).toService(CanvasRect3dPicker);
-});
+  _registeredRect3d = true;
+  application.contributions.register(CanvasPickerContribution, new DefaultCanvasRect3dPicker());
+}

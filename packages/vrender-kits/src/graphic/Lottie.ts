@@ -1,7 +1,7 @@
 import { min } from '@visactor/vutils';
 import { LOTTIE_NUMBER_TYPE } from './constants';
 import type { IRectGraphicAttribute } from '@visactor/vrender-core';
-import { getTheme, GraphicType, IContext2d, NOWORK_ANIMATE_ATTR, Rect, vglobal } from '@visactor/vrender-core';
+import { getTheme, GraphicType, IContext2d, NOWORK_ANIMATE_ATTR, Rect, application } from '@visactor/vrender-core';
 import type { ILottie, ILottieGraphicAttribute } from './interface/lottie';
 import type { AnimationItem } from 'lottie-web';
 import bodymovin from 'lottie-web';
@@ -40,7 +40,7 @@ export class Lottie extends Rect implements ILottie {
 
   initLottieWeb(data: string) {
     // 必须是浏览器环境才行
-    if (vglobal.env !== 'browser') {
+    if (application.global.env !== 'browser') {
       return;
     }
     if (this.lottieInstance) {
@@ -48,7 +48,7 @@ export class Lottie extends Rect implements ILottie {
     }
     const theme = this.getGraphicTheme();
     const { width = theme.width, height = theme.height } = this.attribute;
-    const canvas = vglobal.createCanvas({ width, height, dpr: vglobal.devicePixelRatio });
+    const canvas = application.global.createCanvas({ width, height, dpr: application.global.devicePixelRatio });
     const params: any = {
       // wrapper: svgContainer,
       rendererSettings: {

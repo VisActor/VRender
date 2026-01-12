@@ -11,7 +11,9 @@ import {
   registerDirectionalLight,
   registerOrthoCamera
 } from '@visactor/vrender-core';
-import { loadBrowserEnv, loadNodeEnv, registerStar } from '@visactor/vrender-kits';
+import { registerStar } from '@visactor/vrender-kits';
+import { registerBrowserEnvRegistry } from '@visactor/vrender-kits/esm/env/browser';
+import { registerNodeEnvRegistry } from '@visactor/vrender-kits/esm/env/node';
 import {
   registerArc,
   registerArc3d,
@@ -38,11 +40,13 @@ export const version = __VERSION__;
 
 preLoadAllModule();
 
+// Registry-based registration only (drop legacy ContainerModule loaders)
 if (isBrowserEnv()) {
-  loadBrowserEnv(container);
+  registerBrowserEnvRegistry();
 } else if (isNodeEnv()) {
-  loadNodeEnv(container);
+  registerNodeEnvRegistry();
 }
+
 registerArc();
 registerArc3d();
 registerArea();

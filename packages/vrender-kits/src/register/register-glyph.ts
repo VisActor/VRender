@@ -1,7 +1,7 @@
-import { container, glyphModule, registerGlyphGraphic } from '@visactor/vrender-core';
+import { registerGlyphGraphic } from '@visactor/vrender-core';
 import { browser } from './env';
-import { glyphCanvasPickModule } from '../picker/contributions/canvas-picker/glyph-module';
-import { glyphMathPickModule } from '../picker/contributions/math-picker/glyph-module';
+import { registerCanvasGlyphPicker } from '../picker/contributions/canvas-picker/glyph-module';
+import { registerMathGlyphPicker } from '../picker/contributions/math-picker/glyph-module';
 
 function _registerGlyph() {
   if (_registerGlyph.__loaded) {
@@ -9,8 +9,12 @@ function _registerGlyph() {
   }
   _registerGlyph.__loaded = true;
   registerGlyphGraphic();
-  container.load(glyphModule);
-  container.load(browser ? glyphCanvasPickModule : glyphMathPickModule);
+  // glyph renderer registered via core; no container usage
+  if (browser) {
+    registerCanvasGlyphPicker();
+  } else {
+    registerMathGlyphPicker();
+  }
 }
 
 _registerGlyph.__loaded = false;

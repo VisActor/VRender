@@ -2,17 +2,26 @@ import type { IPointLike, vec2 } from '@visactor/vutils';
 import { isPointInLine, pi, pi2 } from '@visactor/vutils';
 import { enumCommandMap as CMD } from '../common/path-svg';
 import type { CommandType, IContext2d } from '../interface';
-import { container } from '../container';
 import { application } from '../application';
 import { CanvasFactory, Context2dFactory } from './constants';
 import type { CanvasConfigType, ICanvas, ICanvasFactory, IContext2dFactory } from '../interface';
 
 export function wrapCanvas(params: CanvasConfigType) {
-  return container.getNamed<ICanvasFactory>(CanvasFactory, application.global.env)(params);
+  const factories = application.contributions.get<ICanvasFactory>(CanvasFactory);
+  const factory = factories.find((f: any) => (f as any).env === application.global.env) ?? factories[0];
+  if (!factory) {
+    throw new Error('No CanvasFactory registered');
+  }
+  return factory(params);
 }
 
 export function wrapContext(canvas: ICanvas, dpr: number) {
-  return container.getNamed<IContext2dFactory>(Context2dFactory, application.global.env)(canvas, dpr);
+  const factories = application.contributions.get<IContext2dFactory>(Context2dFactory);
+  const factory = factories.find((f: any) => (f as any).env === application.global.env) ?? factories[0];
+  if (!factory) {
+    throw new Error('No Context2dFactory registered');
+  }
+  return factory(canvas, dpr);
 }
 // 源码参考 http://pomax.github.io/bezierinfo/#projections
 /**

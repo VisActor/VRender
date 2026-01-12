@@ -1,12 +1,6 @@
-import {
-  arc3dModule,
-  container,
-  registerArc3dGraphic,
-  registerDirectionalLight,
-  registerOrthoCamera
-} from '@visactor/vrender-core';
+import { registerArc3dGraphic, registerDirectionalLight, registerOrthoCamera } from '@visactor/vrender-core';
 import { browser } from './env';
-import { arc3dCanvasPickModule } from '../picker/contributions/canvas-picker/arc3d-module';
+import { registerCanvasArc3dPicker } from '../picker/contributions/canvas-picker/arc3d-module';
 
 function _registerArc3d() {
   if (_registerArc3d.__loaded) {
@@ -16,8 +10,10 @@ function _registerArc3d() {
   registerArc3dGraphic();
   registerDirectionalLight();
   registerOrthoCamera();
-  container.load(arc3dModule);
-  container.load(browser ? arc3dCanvasPickModule : arc3dCanvasPickModule);
+  // arc3d renderer registered via core; no /* removed container */ usage
+  if (browser) {
+    registerCanvasArc3dPicker();
+  }
 }
 
 _registerArc3d.__loaded = false;

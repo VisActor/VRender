@@ -9,11 +9,10 @@ import type {
   IAreaGraphicAttribute,
   IDrawContext
 } from '@visactor/vrender-core';
-import { drawAreaSegments, DefaultCanvasAreaRender, CustomPath2D, injectable } from '@visactor/vrender-core';
+import { drawAreaSegments, DefaultCanvasAreaRender, CustomPath2D } from '@visactor/vrender-core';
 import rough from 'roughjs';
 import { defaultRouthThemeSpec } from './config';
 
-@injectable()
 export class RoughCanvasAreaRender extends DefaultCanvasAreaRender implements IGraphicRender {
   declare type: 'area';
   declare numberType: number;

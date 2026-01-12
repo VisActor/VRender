@@ -1,4 +1,3 @@
-import { inject, injectable, named } from '../../../common/inversify-lite';
 import type {
   IGraphicAttribute,
   IContext2d,
@@ -16,8 +15,6 @@ import type {
 import { getTheme } from '../../../graphic/theme';
 import { getModelMatrix } from '../../../graphic/graphic-service/graphic-service';
 import { isArray } from '@visactor/vutils';
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { ContributionProvider } from '../../../common/contribution-provider';
 import { createRectPath } from '../../../common/shape/rect';
 import { rectFillVisible, rectStrokeVisible, runFill, runStroke } from './utils';
 import { GroupRenderContribution } from './contributions/constants';
@@ -27,19 +24,23 @@ import { BaseRenderContributionTime } from '../../../common/enums';
 import { defaultGroupBackgroundRenderContribution } from './contributions';
 import { multiplyMat4Mat4 } from '../../../common/matrix';
 import { application } from '../../../application';
+import { contributionRegistry } from '../../../common/registry';
 
-@injectable()
 export class DefaultCanvasGroupRender implements IGraphicRender {
   type: 'group';
   numberType: number = GROUP_NUMBER_TYPE;
 
   _groupRenderContribitions: IGroupRenderContribution[];
+  protected readonly groupRenderContribitions: IContributionProvider<IGroupRenderContribution>;
 
-  constructor(
-    @inject(ContributionProvider)
-    @named(GroupRenderContribution)
-    protected readonly groupRenderContribitions: IContributionProvider<IGroupRenderContribution>
-  ) {}
+  constructor(groupRenderContribitions?: IContributionProvider<IGroupRenderContribution>) {
+    // 如果没有传入，则使用 registry 获取
+    this.groupRenderContribitions =
+      groupRenderContribitions ||
+      ({
+        getContributions: () => contributionRegistry.get<IGroupRenderContribution>(GroupRenderContribution)
+      } as IContributionProvider<IGroupRenderContribution>);
+  }
 
   reInit() {
     this._groupRenderContribitions = this.groupRenderContribitions.getContributions() || [];

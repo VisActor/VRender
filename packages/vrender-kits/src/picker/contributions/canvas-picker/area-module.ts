@@ -1,14 +1,13 @@
-import { ContainerModule } from '@visactor/vrender-core';
+import { application } from '@visactor/vrender-core';
 import { CanvasAreaPicker, CanvasPickerContribution } from '../constants';
 import { DefaultCanvasAreaPicker } from './area-picker';
 
 let loadAreaPick = false;
-export const areaCanvasPickModule = new ContainerModule((bind, unbind, isBound, rebind) => {
+export function registerCanvasAreaPicker() {
   if (loadAreaPick) {
     return;
   }
   loadAreaPick = true;
   // area picker
-  bind(CanvasAreaPicker).to(DefaultCanvasAreaPicker).inSingletonScope();
-  bind(CanvasPickerContribution).toService(CanvasAreaPicker);
-});
+  application.contributions.register(CanvasPickerContribution, new DefaultCanvasAreaPicker());
+}

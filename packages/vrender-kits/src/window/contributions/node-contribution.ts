@@ -9,7 +9,7 @@ import type {
   IWindowHandlerContribution,
   IWindowParams
 } from '@visactor/vrender-core';
-import { NodeCanvas } from '../../canvas/contributions/node';
+import { NodeCanvas } from '../../canvas/node';
 
 export class NodeWindowHandlerContribution extends BaseWindowHandlerContribution implements IWindowHandlerContribution {
   static env: EnvType = 'node';

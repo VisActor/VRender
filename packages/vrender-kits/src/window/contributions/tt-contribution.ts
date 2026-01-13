@@ -9,7 +9,7 @@ import type {
   IWindowParams
 } from '@visactor/vrender-core';
 import type { IBoundsLike } from '@visactor/vutils';
-import { TTCanvas } from '../../canvas/contributions/tt';
+import { TTCanvas } from '../../canvas/tt';
 
 class MiniAppEventManager {
   addEventListener(type: string, func: EventListenerOrEventListenerObject) {

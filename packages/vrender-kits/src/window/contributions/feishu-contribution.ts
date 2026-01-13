@@ -9,7 +9,7 @@ import type {
   IWindowParams
 } from '@visactor/vrender-core';
 import type { IBoundsLike } from '@visactor/vutils';
-import { FeishuCanvas } from '../../canvas/contributions/feishu';
+import { FeishuCanvas } from '../../canvas/feishu';
 
 class MiniAppEventManager {
   addEventListener(type: string, func: EventListenerOrEventListenerObject) {

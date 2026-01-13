@@ -1,6 +1,6 @@
 // 参考konva
 import type { IContext2d, EnvType } from '@visactor/vrender-core';
-import { BrowserContext2d } from '../browser';
+import { BrowserContext2d } from '../browser/context';
 
 declare const tt: {
   canvasGetImageData: (d: any) => any;

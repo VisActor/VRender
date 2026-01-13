@@ -9,7 +9,7 @@ import type {
   IWindowHandlerContribution
 } from '@visactor/vrender-core';
 import type { IBoundsLike } from '@visactor/vutils';
-import { TaroCanvas } from '../../canvas/contributions/taro';
+import { TaroCanvas } from '../../canvas/taro';
 
 class MiniAppEventManager {
   addEventListener(type: string, func: EventListenerOrEventListenerObject) {

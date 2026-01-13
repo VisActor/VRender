@@ -5,3 +5,5 @@ import { registerCanvasFactories } from '../create-canvas-module';
 export function registerWxCanvasFactories() {
   registerCanvasFactories(WxCanvas, WxContext2d);
 }
+
+export { WxCanvas, WxContext2d };

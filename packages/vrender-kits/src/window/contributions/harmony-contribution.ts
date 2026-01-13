@@ -8,7 +8,7 @@ import type {
   IWindowParams,
   IWindowHandlerContribution
 } from '@visactor/vrender-core';
-import { HarmonyCanvas } from '../../canvas/contributions/harmony';
+import { HarmonyCanvas } from '../../canvas/harmony';
 
 class MiniAppEventManager {
   addEventListener(type: string, func: EventListenerOrEventListenerObject) {

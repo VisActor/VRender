@@ -1,10 +1,10 @@
 import { contributionRegistry, vglobal } from '@visactor/vrender-core';
-import { registerBrowserEnvRegistry } from './browser';
-import { registerFeishuEnvRegistry } from './feishu';
-import { registerLynxEnvRegistry } from './lynx';
-import { registerNodeEnvRegistry } from './node';
-import { registerTaroEnvRegistry } from './taro';
-import { registerWxEnvRegistry } from './wx';
+import { loadBrowserEnv } from './browser';
+import { loadFeishuEnv } from './feishu';
+import { loadLynxEnv } from './lynx';
+import { loadNodeEnv } from './node';
+import { loadTaroEnv } from './taro';
+import { loadWxEnv } from './wx';
 import { registerCanvasPickerService } from '../picker/canvas-module';
 import { registerMathPickerService } from '../picker/math-module';
 // import { loadMathPicker } from '../picker';
@@ -16,12 +16,12 @@ export function loadAllEnv() {
 export function loadAllModule() {
   if (!loadAllModule.__loaded) {
     loadAllModule.__loaded = true;
-    registerBrowserEnvRegistry();
-    registerFeishuEnvRegistry();
-    registerLynxEnvRegistry();
-    registerNodeEnvRegistry();
-    registerTaroEnvRegistry();
-    registerWxEnvRegistry();
+    loadBrowserEnv();
+    loadFeishuEnv();
+    loadLynxEnv();
+    loadNodeEnv();
+    loadTaroEnv();
+    loadWxEnv();
     registerCanvasPickerService();
     vglobal.hooks.onSetEnv.tap('registerMathPickerService', (lastEnv, env) => {
       env !== 'browser' && registerMathPickerService();

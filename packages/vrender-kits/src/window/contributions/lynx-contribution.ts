@@ -9,7 +9,7 @@ import type {
   IWindowHandlerContribution
 } from '@visactor/vrender-core';
 import type { IBoundsLike } from '@visactor/vutils';
-import { LynxCanvas } from '../../canvas/contributions/lynx';
+import { LynxCanvas } from '../../canvas/lynx';
 
 class MiniAppEventManager {
   addEventListener(type: string, func: EventListenerOrEventListenerObject) {

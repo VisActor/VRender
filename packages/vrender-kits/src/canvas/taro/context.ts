@@ -10,7 +10,7 @@ import type {
   IConicalGradientData,
   EnvType
 } from '@visactor/vrender-core';
-import { BrowserContext2d } from '../browser';
+import { BrowserContext2d } from '../browser/context';
 import { getContextFont } from '@visactor/vutils';
 
 // 考虑taro-feishu等环境

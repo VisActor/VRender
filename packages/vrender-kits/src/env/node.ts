@@ -4,13 +4,15 @@ import { EnvContribution, contributionRegistry } from '@visactor/vrender-core';
 import { NodeEnvContribution } from './contributions/node-contribution';
 import { NodeWindowHandlerContribution } from '../window/contributions/node-contribution';
 import { WindowHandlerContribution } from '@visactor/vrender-core';
+import { registerNodeCanvasFactories } from '../canvas';
 
 // Legacy ContainerModule and loaders removed (registry-only)
 
 /**
  * Registry-based registration for node env/window
  */
-export function registerNodeEnvRegistry() {
+export function loadNodeEnv() {
+  registerNodeCanvasFactories;
   // Env contribution
   contributionRegistry.register(EnvContribution, new NodeEnvContribution());
   // Window handler contribution

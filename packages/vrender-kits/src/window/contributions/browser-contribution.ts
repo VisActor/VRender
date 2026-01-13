@@ -10,7 +10,7 @@ import type {
 } from '@visactor/vrender-core';
 import type { IBoundsLike, IMatrix, IBounds } from '@visactor/vutils';
 import { Matrix, AABBBounds } from '@visactor/vutils';
-import { BrowserCanvas } from '../../canvas/contributions/browser';
+import { BrowserCanvas } from '../../canvas/browser';
 
 export class BrowserWindowHandlerContribution
   extends BaseWindowHandlerContribution

@@ -5,3 +5,5 @@ import { registerCanvasFactories } from '../create-canvas-module';
 export function registerNodeCanvasFactories() {
   registerCanvasFactories(NodeCanvas, NodeContext2d);
 }
+
+export { NodeCanvas, NodeContext2d };

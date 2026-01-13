@@ -1,7 +1,7 @@
 // 参考konva
 import { Matrix } from '@visactor/vutils';
 import type { IContext2d, EnvType, ICanvas } from '@visactor/vrender-core';
-import { BrowserContext2d } from '../browser';
+import { BrowserContext2d } from '../browser/context';
 
 export class NodeContext2d extends BrowserContext2d implements IContext2d {
   static env: EnvType = 'node';

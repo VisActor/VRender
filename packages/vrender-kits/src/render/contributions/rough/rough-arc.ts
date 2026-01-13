@@ -2,11 +2,6 @@ import type {
   IGraphicRender,
   IRenderService,
   IArc,
-  IGraphicAttribute,
-  IContext2d,
-  IGraphic,
-  IMarkAttribute,
-  IThemeAttribute,
   IDrawContext,
   IGraphicRenderDrawParams
 } from '@visactor/vrender-core';

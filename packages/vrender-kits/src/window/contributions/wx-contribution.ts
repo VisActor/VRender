@@ -8,8 +8,7 @@ import type {
   IWindowHandlerContribution,
   IWindowParams
 } from '@visactor/vrender-core';
-import type { IBoundsLike } from '@visactor/vutils';
-import { WxCanvas } from '../../canvas/contributions/wx';
+import { WxCanvas } from '../../canvas/wx';
 
 class MiniAppEventManager {
   addEventListener(type: string, func: EventListenerOrEventListenerObject) {

@@ -1,4 +1,9 @@
-import { registerPolygonGraphic } from '@visactor/vrender-core';
+import {
+  contributionRegistry,
+  DefaultCanvasPolygonRender,
+  GraphicRender,
+  registerPolygonGraphic
+} from '@visactor/vrender-core';
 import { browser } from './env';
 import { registerCanvasPolygonPicker } from '../picker/contributions/canvas-picker/polygon-module';
 import { registerMathPolygonPicker } from '../picker/contributions/math-picker/polygon-module';
@@ -9,12 +14,13 @@ function _registerPolygon() {
   }
   _registerPolygon.__loaded = true;
   registerPolygonGraphic();
-  // polygon renderer registered via core; no container usage
   if (browser) {
     registerCanvasPolygonPicker();
   } else {
     registerMathPolygonPicker();
   }
+
+  contributionRegistry.register(GraphicRender, new DefaultCanvasPolygonRender());
 }
 
 _registerPolygon.__loaded = false;

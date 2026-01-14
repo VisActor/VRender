@@ -1,4 +1,9 @@
-import { registerSymbolGraphic } from '@visactor/vrender-core';
+import {
+  contributionRegistry,
+  DefaultCanvasSymbolRender,
+  GraphicRender,
+  registerSymbolGraphic
+} from '@visactor/vrender-core';
 import { browser } from './env';
 import { registerCanvasSymbolPicker } from '../picker/contributions/canvas-picker/symbol-module';
 import { registerMathSymbolPicker } from '../picker/contributions/math-picker/symbol-module';
@@ -9,12 +14,13 @@ function _registerSymbol() {
   }
   _registerSymbol.__loaded = true;
   registerSymbolGraphic();
-  // symbol renderer registered via core; no container usage
   if (browser) {
     registerCanvasSymbolPicker();
   } else {
     registerMathSymbolPicker();
   }
+
+  contributionRegistry.register(GraphicRender, new DefaultCanvasSymbolRender());
 }
 
 _registerSymbol.__loaded = false;

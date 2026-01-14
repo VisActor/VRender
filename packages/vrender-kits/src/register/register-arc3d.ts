@@ -1,4 +1,11 @@
-import { registerArc3dGraphic, registerDirectionalLight, registerOrthoCamera } from '@visactor/vrender-core';
+import {
+  contributionRegistry,
+  DefaultCanvasArc3DRender,
+  GraphicRender,
+  registerArc3dGraphic,
+  registerDirectionalLight,
+  registerOrthoCamera
+} from '@visactor/vrender-core';
 import { browser } from './env';
 import { registerCanvasArc3dPicker } from '../picker/contributions/canvas-picker/arc3d-module';
 
@@ -10,10 +17,11 @@ function _registerArc3d() {
   registerArc3dGraphic();
   registerDirectionalLight();
   registerOrthoCamera();
-  // arc3d renderer registered via core; no /* removed container */ usage
   if (browser) {
     registerCanvasArc3dPicker();
   }
+
+  contributionRegistry.register(GraphicRender, new DefaultCanvasArc3DRender());
 }
 
 _registerArc3d.__loaded = false;

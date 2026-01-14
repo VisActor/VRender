@@ -1,4 +1,9 @@
-import { registerRectGraphic } from '@visactor/vrender-core';
+import {
+  contributionRegistry,
+  DefaultCanvasRectRender,
+  GraphicRender,
+  registerRectGraphic
+} from '@visactor/vrender-core';
 import { browser } from './env';
 import { registerCanvasRectPicker } from '../picker/contributions/canvas-picker/rect-module';
 import { registerMathRectPicker } from '../picker/contributions/math-picker/rect-module';
@@ -9,12 +14,13 @@ function _registerRect() {
   }
   _registerRect.__loaded = true;
   registerRectGraphic();
-  // rect renderer registered via core; no container usage
   if (browser) {
     registerCanvasRectPicker();
   } else {
     registerMathRectPicker();
   }
+
+  contributionRegistry.register(GraphicRender, new DefaultCanvasRectRender());
 }
 
 _registerRect.__loaded = false;

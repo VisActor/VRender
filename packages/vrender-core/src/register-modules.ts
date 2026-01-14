@@ -120,18 +120,6 @@ export function registerRenderContributions() {
   serviceRegistry.registerSingleton(GroupRender, groupRender);
   contributionRegistry.register(GraphicRender, groupRender);
 
-  // 基础图形渲染器
-  contributionRegistry.register(GraphicRender, new DefaultCanvasRectRender());
-  contributionRegistry.register(GraphicRender, new DefaultCanvasCircleRender());
-  contributionRegistry.register(GraphicRender, new DefaultCanvasArcRender());
-  contributionRegistry.register(GraphicRender, new DefaultCanvasLineRender());
-  contributionRegistry.register(GraphicRender, new DefaultCanvasAreaRender());
-  contributionRegistry.register(GraphicRender, new DefaultCanvasPathRender());
-  contributionRegistry.register(GraphicRender, new DefaultCanvasTextRender());
-  contributionRegistry.register(GraphicRender, new DefaultCanvasSymbolRender());
-  contributionRegistry.register(GraphicRender, new DefaultCanvasPolygonRender());
-  contributionRegistry.register(GraphicRender, new DefaultCanvasImageRender());
-
   // DrawItemInterceptor
   const commonInterceptor = new CommonDrawItemInterceptorContribution();
   contributionRegistry.register(DrawItemInterceptor, commonInterceptor);

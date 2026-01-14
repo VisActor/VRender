@@ -1,4 +1,11 @@
-import { registerDirectionalLight, registerOrthoCamera, registerPyramid3dGraphic } from '@visactor/vrender-core';
+import {
+  contributionRegistry,
+  DefaultCanvasPyramid3dRender,
+  GraphicRender,
+  registerDirectionalLight,
+  registerOrthoCamera,
+  registerPyramid3dGraphic
+} from '@visactor/vrender-core';
 import { browser } from './env';
 import { registerCanvasPyramid3dPicker } from '../picker/contributions/canvas-picker/pyramid3d-module';
 
@@ -10,10 +17,11 @@ function _registerPyramid3d() {
   registerPyramid3dGraphic();
   registerDirectionalLight();
   registerOrthoCamera();
-  // pyramid3d renderer registered via core; no /* removed container */ usage
   if (browser) {
     registerCanvasPyramid3dPicker();
   }
+
+  contributionRegistry.register(GraphicRender, new DefaultCanvasPyramid3dRender());
 }
 
 _registerPyramid3d.__loaded = false;

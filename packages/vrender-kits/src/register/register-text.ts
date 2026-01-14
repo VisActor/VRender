@@ -1,4 +1,9 @@
-import { registerTextGraphic } from '@visactor/vrender-core';
+import {
+  contributionRegistry,
+  DefaultCanvasTextRender,
+  GraphicRender,
+  registerTextGraphic
+} from '@visactor/vrender-core';
 import { browser } from './env';
 import { registerCanvasTextPicker } from '../picker/contributions/canvas-picker/text-module';
 import { registerMathTextPicker } from '../picker/contributions/math-picker/text-module';
@@ -8,12 +13,13 @@ function _registerText() {
   }
   _registerText.__loaded = true;
   registerTextGraphic();
-  // text renderer registered via core; no container usage
   if (browser) {
     registerCanvasTextPicker();
   } else {
     registerMathTextPicker();
   }
+
+  contributionRegistry.register(GraphicRender, new DefaultCanvasTextRender());
 }
 
 _registerText.__loaded = false;

@@ -59,6 +59,7 @@ export * from './constants';
 export * from './env-check';
 export * from './common/registry'; // 导出 registry
 export { vglobal, graphicService, graphicUtil, transformUtil, layerService } from './modules'; // 导出全局服务
+export { serviceRegistry, contributionRegistry } from './common/registry'; // 导出注册表以供测试使用
 
 export * from './register/register-arc';
 export * from './register/register-arc3d';

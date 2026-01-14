@@ -4,8 +4,8 @@ import type { Tag, Segment } from '../../../src';
 import { createCanvas } from '../../util/dom';
 import { createStage } from '../../util/vrender';
 import { MarkLine } from '../../../src/marker/line';
-import { initBrowserEnv } from '@visactor/vrender-kits';
-initBrowserEnv();
+import { loadBrowserEnv } from '@visactor/vrender-kits';
+loadBrowserEnv();
 
 describe('Marker', () => {
   let stage: Stage;

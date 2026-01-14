@@ -3,8 +3,8 @@ import type { Tag } from '../../../src';
 import { MarkArcArea } from '../../../src';
 import { createCanvas } from '../../util/dom';
 import { createStage } from '../../util/vrender';
-import { initBrowserEnv } from '@visactor/vrender-kits';
-initBrowserEnv();
+import { loadBrowserEnv } from '@visactor/vrender-kits';
+loadBrowserEnv();
 
 describe('Marker', () => {
   let stage: Stage;

@@ -2,8 +2,8 @@ import type { IGraphic, Stage, ISymbol } from '@visactor/vrender-core';
 import { Pager } from '../../src';
 import { createCanvas } from '../util/dom';
 import { createStage } from '../util/vrender';
-import { initBrowserEnv } from '@visactor/vrender-kits';
-initBrowserEnv();
+import { loadBrowserEnv } from '@visactor/vrender-kits';
+loadBrowserEnv();
 
 describe('Pager', () => {
   let stage: Stage;

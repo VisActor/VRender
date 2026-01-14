@@ -3,9 +3,9 @@ import type { IGraphic, IStageParams } from '@visactor/vrender-core';
 import { Group, Line, Text, createStage, Symbol, Rect, Path, Arc, Area, Circle, Polygon } from '@visactor/vrender-core';
 
 import { array } from '@visactor/vutils';
-import { initBrowserEnv } from '@visactor/vrender-kits';
+import { loadBrowserEnv } from '@visactor/vrender-kits';
 import { loadScrollbar } from '../../src';
-initBrowserEnv();
+loadBrowserEnv();
 
 loadScrollbar();
 

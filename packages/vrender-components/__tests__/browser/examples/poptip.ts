@@ -8,8 +8,8 @@ import { registerAnimate, registerCustomAnimate } from '@visactor/vrender-animat
 registerAnimate();
 registerCustomAnimate();
 
-// import { initBrowserEnv } from '@visactor/vrender-kits';
-// initBrowserEnv();
+// import { loadBrowserEnv } from '@visactor/vrender-kits';
+// loadBrowserEnv();
 loadPoptip();
 
 export function run() {

@@ -1,6 +1,6 @@
 import { createStage } from '@visactor/vrender-core';
-import { initBrowserEnv } from '@visactor/vrender-kits';
-initBrowserEnv();
+import { loadBrowserEnv } from '@visactor/vrender-kits';
+loadBrowserEnv();
 import { PointScale } from '@visactor/vscale';
 import { LineAxis } from '../../../src';
 

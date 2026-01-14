@@ -2,8 +2,8 @@ import type { IGraphic, ISymbol, Stage } from '@visactor/vrender-core';
 import { DiscreteLegend, LEGEND_ELEMENT_NAME } from '../../../src';
 import { createCanvas } from '../../util/dom';
 import { createStage } from '../../util/vrender';
-import { initBrowserEnv } from '@visactor/vrender-kits';
-initBrowserEnv();
+import { loadBrowserEnv } from '@visactor/vrender-kits';
+loadBrowserEnv();
 
 describe('Legend focus layout', () => {
   let stage: Stage;

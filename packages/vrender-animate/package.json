@@ -28,7 +28,6 @@
     "@internal/eslint-config": "workspace:*",
     "@internal/ts-config": "workspace:*",
     "@rushstack/eslint-patch": "~1.1.4",
-    "canvas": "2.11.2",
     "node-fetch": "2.6.6",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",

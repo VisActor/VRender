@@ -19,7 +19,6 @@
     "stats.js": "^0.17.0",
     "typescript": "4.9.5",
     "vite": "3.2.6",
-    "canvas": "2.11.2",
     "rollup-plugin-typescript2": "^0.33.0",
     "@esbuild-plugins/node-globals-polyfill": "0.1.1",
     "@esbuild-plugins/node-modules-polyfill": "0.1.4",

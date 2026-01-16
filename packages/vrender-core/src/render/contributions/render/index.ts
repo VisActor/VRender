@@ -20,3 +20,5 @@ export * from './symbol';
 export * from './contributions';
 export * from './utils';
 export * from './draw-interceptor';
+export * from './incremental-line-render';
+export * from './incremental-area-render';

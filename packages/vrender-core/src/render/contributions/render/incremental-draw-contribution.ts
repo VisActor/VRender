@@ -11,12 +11,10 @@ import type {
 import { DefaultAttribute } from '../../../graphic/config';
 import { DefaultDrawContribution } from './draw-contribution';
 import { SyncHook } from '../../../tapable';
-import { GraphicRender } from './symbol';
-import { DefaultIncrementalCanvasLineRender } from './incremental-line-render';
-import { DefaultIncrementalCanvasAreaRender } from './incremental-area-render';
+import { AreaIncrementalDrawContribution, GraphicRender, LineIncrementalDrawContribution } from './symbol';
 import { DrawItemInterceptor } from './draw-interceptor';
 import { foreachAsync } from '../../../common/sort';
-import { contributionRegistry } from '../../../common/registry';
+import { contributionRegistry, serviceRegistry } from '../../../common/registry';
 
 enum STATUS {
   NORMAL = 0,
@@ -56,8 +54,8 @@ export class DefaultIncrementalDrawContribution extends DefaultDrawContribution 
         getContributions: () => contributionRegistry.get<IDrawItemInterceptorContribution>(DrawItemInterceptor)
       } as IContributionProvider<IDrawItemInterceptorContribution>);
     super(defaultContributions, defaultDrawItemInterceptor);
-    this.lineRender = lineRender || new DefaultIncrementalCanvasLineRender();
-    this.areaRender = areaRender || new DefaultIncrementalCanvasAreaRender();
+    this.lineRender = lineRender || serviceRegistry.get(LineIncrementalDrawContribution);
+    this.areaRender = areaRender || serviceRegistry.get(AreaIncrementalDrawContribution);
     this.defaultRenderMap.set(this.lineRender.numberType, this.lineRender);
     this.defaultRenderMap.set(this.areaRender.numberType, this.areaRender);
   }

@@ -1,8 +1,11 @@
 import {
   contributionRegistry,
+  DefaultBaseInteractiveRenderContribution,
   DefaultCanvasTextRender,
   GraphicRender,
-  registerTextGraphic
+  registerTextGraphic,
+  serviceRegistry,
+  TextRenderContribution
 } from '@visactor/vrender-core';
 import { browser } from './env';
 import { registerCanvasTextPicker } from '../picker/contributions/canvas-picker/text-module';
@@ -18,7 +21,7 @@ function _registerText() {
   } else {
     registerMathTextPicker();
   }
-
+  contributionRegistry.register(TextRenderContribution, serviceRegistry.get(DefaultBaseInteractiveRenderContribution));
   contributionRegistry.register(GraphicRender, new DefaultCanvasTextRender());
 }
 

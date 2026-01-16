@@ -1,8 +1,11 @@
 import {
+  CircleRenderContribution,
   contributionRegistry,
+  DefaultBaseInteractiveRenderContribution,
   DefaultCanvasCircleRender,
   GraphicRender,
-  registerCircleGraphic
+  registerCircleGraphic,
+  serviceRegistry
 } from '@visactor/vrender-core';
 import { browser } from './env';
 import { registerCanvasCirclePicker } from '../picker/contributions/canvas-picker/circle-module';
@@ -20,6 +23,10 @@ function _registerCircle() {
     registerMathCirclePicker();
   }
 
+  contributionRegistry.register(
+    CircleRenderContribution,
+    serviceRegistry.get(DefaultBaseInteractiveRenderContribution)
+  );
   contributionRegistry.register(GraphicRender, new DefaultCanvasCircleRender());
 }
 

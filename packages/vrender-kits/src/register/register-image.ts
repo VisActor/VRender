@@ -1,8 +1,11 @@
 import {
   contributionRegistry,
+  DefaultBaseInteractiveRenderContribution,
   DefaultCanvasImageRender,
   GraphicRender,
-  registerImageGraphic
+  ImageRenderContribution,
+  registerImageGraphic,
+  serviceRegistry
 } from '@visactor/vrender-core';
 import { browser } from './env';
 import { registerCanvasImagePicker } from '../picker/contributions/canvas-picker/image-module';
@@ -19,7 +22,7 @@ function _registerImage() {
   } else {
     registerMathImagePicker();
   }
-
+  contributionRegistry.register(ImageRenderContribution, serviceRegistry.get(DefaultBaseInteractiveRenderContribution));
   contributionRegistry.register(GraphicRender, new DefaultCanvasImageRender());
 }
 

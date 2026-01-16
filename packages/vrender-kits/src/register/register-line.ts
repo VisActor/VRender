@@ -1,8 +1,11 @@
 import {
+  DefaultIncrementalCanvasLineRender,
   contributionRegistry,
   DefaultCanvasLineRender,
   GraphicRender,
-  registerLineGraphic
+  LineIncrementalDrawContribution,
+  registerLineGraphic,
+  serviceRegistry
 } from '@visactor/vrender-core';
 import { browser } from './env';
 import { registerCanvasLinePicker } from '../picker/contributions/canvas-picker/line-module';
@@ -19,6 +22,11 @@ function _registerLine() {
   } else {
     registerMathLinePicker();
   }
+
+  serviceRegistry.registerSingletonFactory(
+    LineIncrementalDrawContribution,
+    () => new DefaultIncrementalCanvasLineRender()
+  );
 
   contributionRegistry.register(GraphicRender, new DefaultCanvasLineRender());
 }

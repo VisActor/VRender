@@ -1,8 +1,11 @@
 import {
   contributionRegistry,
+  DefaultBaseInteractiveRenderContribution,
   DefaultCanvasPathRender,
   GraphicRender,
-  registerPathGraphic
+  PathRenderContribution,
+  registerPathGraphic,
+  serviceRegistry
 } from '@visactor/vrender-core';
 import { browser } from './env';
 import { registerCanvasPathPicker } from '../picker/contributions/canvas-picker/path-module';
@@ -20,6 +23,7 @@ function _registerPath() {
     registerMathPathPicker();
   }
 
+  contributionRegistry.register(PathRenderContribution, serviceRegistry.get(DefaultBaseInteractiveRenderContribution));
   contributionRegistry.register(GraphicRender, new DefaultCanvasPathRender());
 }
 

@@ -1,8 +1,13 @@
 import {
   contributionRegistry,
+  DefaultBaseInteractiveRenderContribution,
   DefaultCanvasRectRender,
   GraphicRender,
-  registerRectGraphic
+  RectRenderContribution,
+  registerRectGraphic,
+  serviceRegistry,
+  SplitRectAfterRenderContribution,
+  SplitRectBeforeRenderContribution
 } from '@visactor/vrender-core';
 import { browser } from './env';
 import { registerCanvasRectPicker } from '../picker/contributions/canvas-picker/rect-module';
@@ -19,6 +24,9 @@ function _registerRect() {
   } else {
     registerMathRectPicker();
   }
+  contributionRegistry.register(RectRenderContribution, new SplitRectAfterRenderContribution());
+  contributionRegistry.register(RectRenderContribution, new SplitRectBeforeRenderContribution());
+  contributionRegistry.register(RectRenderContribution, serviceRegistry.get(DefaultBaseInteractiveRenderContribution));
 
   contributionRegistry.register(GraphicRender, new DefaultCanvasRectRender());
 }

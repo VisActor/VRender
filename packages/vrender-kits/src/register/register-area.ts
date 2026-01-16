@@ -1,8 +1,13 @@
 import {
+  AreaIncrementalDrawContribution,
+  AreaRenderContribution,
   contributionRegistry,
+  DefaultBaseInteractiveRenderContribution,
   DefaultCanvasAreaRender,
+  DefaultIncrementalCanvasAreaRender,
   GraphicRender,
-  registerAreaGraphic
+  registerAreaGraphic,
+  serviceRegistry
 } from '@visactor/vrender-core';
 import { browser } from './env';
 import { registerCanvasAreaPicker } from '../picker/contributions/canvas-picker/area-module';
@@ -19,7 +24,12 @@ function _registerArea() {
   } else {
     registerMathAreaPicker();
   }
+  serviceRegistry.registerSingletonFactory(
+    AreaIncrementalDrawContribution,
+    () => new DefaultIncrementalCanvasAreaRender()
+  );
 
+  contributionRegistry.register(AreaRenderContribution, serviceRegistry.get(DefaultBaseInteractiveRenderContribution));
   contributionRegistry.register(GraphicRender, new DefaultCanvasAreaRender());
 }
 

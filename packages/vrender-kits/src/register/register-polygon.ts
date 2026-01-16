@@ -1,8 +1,11 @@
 import {
   contributionRegistry,
+  DefaultBaseInteractiveRenderContribution,
   DefaultCanvasPolygonRender,
   GraphicRender,
-  registerPolygonGraphic
+  PolygonRenderContribution,
+  registerPolygonGraphic,
+  serviceRegistry
 } from '@visactor/vrender-core';
 import { browser } from './env';
 import { registerCanvasPolygonPicker } from '../picker/contributions/canvas-picker/polygon-module';
@@ -19,6 +22,11 @@ function _registerPolygon() {
   } else {
     registerMathPolygonPicker();
   }
+
+  contributionRegistry.register(
+    PolygonRenderContribution,
+    serviceRegistry.get(DefaultBaseInteractiveRenderContribution)
+  );
 
   contributionRegistry.register(GraphicRender, new DefaultCanvasPolygonRender());
 }

@@ -38,16 +38,6 @@ import { DefaultDrawContribution } from './render/contributions/render/draw-cont
 import { DefaultIncrementalDrawContribution } from './render/contributions/render/incremental-draw-contribution';
 import { DefaultRenderService } from './render/render-service';
 import { DefaultCanvasGroupRender } from './render/contributions/render/group-render';
-import { DefaultCanvasRectRender } from './render/contributions/render/rect-render';
-import { DefaultCanvasArcRender } from './render/contributions/render/arc-render';
-import { DefaultCanvasCircleRender } from './render/contributions/render/circle-render';
-import { DefaultCanvasLineRender } from './render/contributions/render/line-render';
-import { DefaultCanvasAreaRender } from './render/contributions/render/area-render';
-import { DefaultCanvasPathRender } from './render/contributions/render/path-render';
-import { DefaultCanvasTextRender } from './render/contributions/render/text-render';
-import { DefaultCanvasSymbolRender } from './render/contributions/render/symbol-render';
-import { DefaultCanvasPolygonRender } from './render/contributions/render/polygon-render';
-import { DefaultCanvasImageRender } from './render/contributions/render/image-render';
 import {
   DefaultBaseBackgroundRenderContribution,
   DefaultBaseInteractiveRenderContribution

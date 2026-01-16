@@ -1,8 +1,11 @@
 import {
+  AreaRenderContribution,
   contributionRegistry,
+  DefaultBaseInteractiveRenderContribution,
   DefaultCanvasArcRender,
   GraphicRender,
-  registerArcGraphic
+  registerArcGraphic,
+  serviceRegistry
 } from '@visactor/vrender-core';
 import { browser } from './env';
 import { registerCanvasArcPicker } from '../picker/contributions/canvas-picker/arc-module';
@@ -21,6 +24,7 @@ export function _registerArc() {
     registerMathArcPicker();
   }
 
+  contributionRegistry.register(AreaRenderContribution, serviceRegistry.get(DefaultBaseInteractiveRenderContribution));
   contributionRegistry.register(GraphicRender, new DefaultCanvasArcRender());
 }
 

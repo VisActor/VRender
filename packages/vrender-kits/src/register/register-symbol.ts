@@ -1,8 +1,11 @@
 import {
   contributionRegistry,
+  DefaultBaseInteractiveRenderContribution,
   DefaultCanvasSymbolRender,
   GraphicRender,
-  registerSymbolGraphic
+  registerSymbolGraphic,
+  serviceRegistry,
+  SymbolRenderContribution
 } from '@visactor/vrender-core';
 import { browser } from './env';
 import { registerCanvasSymbolPicker } from '../picker/contributions/canvas-picker/symbol-module';
@@ -19,7 +22,10 @@ function _registerSymbol() {
   } else {
     registerMathSymbolPicker();
   }
-
+  contributionRegistry.register(
+    SymbolRenderContribution,
+    serviceRegistry.get(DefaultBaseInteractiveRenderContribution)
+  );
   contributionRegistry.register(GraphicRender, new DefaultCanvasSymbolRender());
 }
 

@@ -1,13 +1,10 @@
-import { injectable, inject } from '../common/inversify-lite';
 import type { IAABBBounds, IBounds } from '@visactor/vutils';
 import type { IGroup, IGraphic, IRenderService, IRenderServiceDrawParams, IDrawContribution } from '../interface';
-import { DrawContribution } from './contributions/render';
 
 /**
  * 渲染用的service，通常和stage一一绑定，
  * 并不是单例模式，所以会绑定此次渲染的一些数据
  */
-@injectable()
 export class DefaultRenderService implements IRenderService {
   // 每次render都会变的数据
   dirtyBounds: IBounds;
@@ -15,10 +12,7 @@ export class DefaultRenderService implements IRenderService {
   renderLists: IGraphic[];
   drawParams: IRenderServiceDrawParams;
 
-  constructor(
-    @inject(DrawContribution)
-    public readonly drawContribution: IDrawContribution
-  ) {}
+  constructor(public readonly drawContribution: IDrawContribution) {}
 
   // 渲染前准备工作，计算bounds等逻辑
   prepare(updateBounds: boolean): void {

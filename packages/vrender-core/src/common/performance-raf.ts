@@ -1,4 +1,4 @@
-import { application } from '../application';
+import { vglobal } from '../modules';
 
 let idx = 0;
 
@@ -40,6 +40,6 @@ export class PerformanceRAF {
     if (this._rafHandle !== null || this.nextAnimationFrameCbs.size === 0) {
       return;
     }
-    this._rafHandle = application.global.getRequestAnimationFrame()(this.runAnimationFrame);
+    this._rafHandle = vglobal.getRequestAnimationFrame()(this.runAnimationFrame);
   };
 }

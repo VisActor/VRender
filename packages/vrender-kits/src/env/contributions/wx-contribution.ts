@@ -1,4 +1,4 @@
-import { injectable, BaseEnvContribution, rafBasedSto } from '@visactor/vrender-core';
+import { BaseEnvContribution, rafBasedSto } from '@visactor/vrender-core';
 // import { loadFeishuContributions } from '../../../kits';
 import type {
   ICanvasLike,
@@ -111,7 +111,6 @@ async function makeUpCanvas(
   // });
 }
 
-@injectable()
 export class WxEnvContribution extends BaseEnvContribution implements IEnvContribution {
   type: EnvType = 'wx';
   supportEvent: boolean = true;

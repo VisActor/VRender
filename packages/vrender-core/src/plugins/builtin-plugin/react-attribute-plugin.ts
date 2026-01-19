@@ -1,6 +1,6 @@
 import { Generator } from '../../common/generator';
 import type { IGraphic, IPlugin, IPluginService } from '../../interface';
-import { application } from '../../application';
+import { vglobal } from '../../modules';
 import { HtmlAttributePlugin } from './html-attribute-plugin';
 import { isNil } from '@visactor/vutils';
 import { Factory } from '../../factory';
@@ -32,7 +32,7 @@ export class ReactAttributePlugin extends HtmlAttributePlugin implements IPlugin
     const { root, wrapContainer, unmount } = this.htmlMap[id];
 
     if (root) {
-      const raf = application.global.getRequestAnimationFrame();
+      const raf = vglobal.getRequestAnimationFrame();
       raf(() => {
         root.unmount();
       });
@@ -40,7 +40,7 @@ export class ReactAttributePlugin extends HtmlAttributePlugin implements IPlugin
       unmount();
     }
 
-    wrapContainer && application.global.removeDom(wrapContainer);
+    wrapContainer && vglobal.removeDom(wrapContainer);
 
     this.htmlMap[id] = null;
   }

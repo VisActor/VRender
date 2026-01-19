@@ -1,5 +1,5 @@
 import type { EasingType } from '@visactor/vrender-core';
-import { vglobal } from '@visactor/vrender-core';
+import { VGlobal, vglobal } from '@visactor/vrender-core';
 import { AStageAnimate } from '../custom-animate';
 
 // 模糊效果配置接口

@@ -1,6 +1,3 @@
-import { inject, injectable, named } from '../../../common/inversify-lite';
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { ContributionProvider } from '../../../common/contribution-provider';
 import { renderCommandList } from '../../../common/render-command-list';
 import type {
   IPath,
@@ -25,21 +22,24 @@ import {
   defaultPathBackgroundRenderContribution,
   defaultPathTextureRenderContribution
 } from './contributions/path-contribution-render';
+import { contributionRegistry } from '../../../common/registry';
 
-@injectable()
 export class DefaultCanvasPathRender extends BaseRender<IPath> implements IGraphicRender {
   type: 'path';
   numberType: number = PATH_NUMBER_TYPE;
   tempTheme: Required<IPathGraphicAttribute>;
 
-  constructor(
-    @inject(ContributionProvider)
-    @named(PathRenderContribution)
-    protected readonly graphicRenderContributions: IContributionProvider<IPathRenderContribution>
-  ) {
+  protected readonly graphicRenderContributions: IContributionProvider<IPathRenderContribution>;
+
+  constructor(graphicRenderContributions?: IContributionProvider<IPathRenderContribution>) {
     super();
+    this.graphicRenderContributions =
+      graphicRenderContributions ||
+      ({
+        getContributions: () => contributionRegistry.get<IPathRenderContribution>(PathRenderContribution)
+      } as IContributionProvider<IPathRenderContribution>);
     this.builtinContributions = [defaultPathBackgroundRenderContribution, defaultPathTextureRenderContribution];
-    this.init(graphicRenderContributions);
+    this.init(this.graphicRenderContributions);
   }
 
   drawShape(

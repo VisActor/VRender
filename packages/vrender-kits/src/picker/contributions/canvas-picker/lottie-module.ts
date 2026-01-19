@@ -1,13 +1,12 @@
-import { ContainerModule } from '@visactor/vrender-core';
-import { CanvasLottiePicker, CanvasPickerContribution } from '../constants';
+import { contributionRegistry } from '@visactor/vrender-core';
+import { CanvasPickerContribution } from '../constants';
 import { DefaultCanvasLottiePicker } from './lottie-picker';
 
-let loadLottiePick = false;
-export const lottieCanvasPickModule = new ContainerModule((bind, unbind, isBound, rebind) => {
-  if (loadLottiePick) {
+let _registeredLottie = false;
+export function registerCanvasLottiePicker() {
+  if (_registeredLottie) {
     return;
   }
-  loadLottiePick = true;
-  bind(CanvasLottiePicker).to(DefaultCanvasLottiePicker).inSingletonScope();
-  bind(CanvasPickerContribution).toService(CanvasLottiePicker);
-});
+  _registeredLottie = true;
+  contributionRegistry.register(CanvasPickerContribution, new DefaultCanvasLottiePicker());
+}

@@ -1,54 +1,38 @@
 import type { IMatrix, IPointLike } from '@visactor/vutils';
-// eslint-disable-next-line
 import {
-  ContributionProvider,
-  inject,
-  injectable,
-  named,
   DefaultPickService,
+  contributionRegistry,
   EmptyContext2d,
-  PickItemInterceptor,
-  PickServiceInterceptor
-} from '@visactor/vrender-core';
-import type {
-  ICanvas,
-  IContext2d,
-  IGraphic,
-  EnvType,
-  IGlobal,
-  IGraphicPicker,
-  IPickerService,
-  IContributionProvider,
-  IPickItemInterceptorContribution,
-  IPickParams,
-  PickResult,
-  IPickServiceInterceptorContribution
+  type ICanvas,
+  type IContext2d,
+  type IGraphic,
+  type EnvType,
+  type IGlobal,
+  type IGraphicPicker,
+  type IPickerService,
+  type IContributionProvider,
+  type IPickParams,
+  type PickResult
 } from '@visactor/vrender-core';
 import { MathPickerContribution } from './contributions/constants';
 
 // 默认的pick-service，提供基本的最优选中策略，尽量不需要用户自己实现contribution
 // 用户可以写plugin
-@injectable()
 export class DefaultMathPickerService extends DefaultPickService implements IPickerService {
   declare type: 'default';
-  // pcik canvas
+  // pick canvas
   declare pickCanvas: ICanvas;
   declare pickContext: IContext2d;
   declare pickerMap: Map<number, IGraphicPicker>;
 
-  constructor(
-    @inject(ContributionProvider)
-    @named(MathPickerContribution)
-    protected readonly contributions: IContributionProvider<IGraphicPicker>,
-    // 拦截器
-    @inject(ContributionProvider)
-    @named(PickItemInterceptor)
-    protected readonly pickItemInterceptorContributions: IContributionProvider<IPickItemInterceptorContribution>,
-    @inject(ContributionProvider)
-    @named(PickServiceInterceptor)
-    protected readonly pickServiceInterceptorContributions: IContributionProvider<IPickServiceInterceptorContribution>
-  ) {
-    super(pickItemInterceptorContributions, pickServiceInterceptorContributions);
+  protected readonly contributions: IContributionProvider<IGraphicPicker>;
+
+  constructor() {
+    super();
+    this.contributions = {
+      getContributions: () => contributionRegistry.get<IGraphicPicker>(MathPickerContribution)
+    } as IContributionProvider<IGraphicPicker>;
+
     this.global.hooks.onSetEnv.tap('math-picker-service', (lastEnv, env, global) => {
       this.configure(global, env);
     });

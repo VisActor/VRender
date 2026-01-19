@@ -44,6 +44,8 @@ report.html
 coverage/
 
 *.local.ts
+*.local.md
+*.local.json
 
 # Dependency directories
 node_modules/

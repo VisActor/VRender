@@ -1,12 +1,13 @@
 import {
-  container,
-  pyramid3dModule,
+  contributionRegistry,
+  DefaultCanvasPyramid3dRender,
+  GraphicRender,
   registerDirectionalLight,
   registerOrthoCamera,
   registerPyramid3dGraphic
 } from '@visactor/vrender-core';
 import { browser } from './env';
-import { pyramid3dCanvasPickModule } from '../picker/contributions/canvas-picker/pyramid3d-module';
+import { registerCanvasPyramid3dPicker } from '../picker/contributions/canvas-picker/pyramid3d-module';
 
 function _registerPyramid3d() {
   if (_registerPyramid3d.__loaded) {
@@ -16,8 +17,11 @@ function _registerPyramid3d() {
   registerPyramid3dGraphic();
   registerDirectionalLight();
   registerOrthoCamera();
-  container.load(pyramid3dModule);
-  container.load(browser ? pyramid3dCanvasPickModule : pyramid3dCanvasPickModule);
+  if (browser) {
+    registerCanvasPyramid3dPicker();
+  }
+
+  contributionRegistry.register(GraphicRender, new DefaultCanvasPyramid3dRender());
 }
 
 _registerPyramid3d.__loaded = false;

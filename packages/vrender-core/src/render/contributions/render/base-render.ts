@@ -29,7 +29,7 @@ export abstract class BaseRender<T extends IGraphic> {
   declare z: number;
 
   builtinContributions: IBaseRenderContribution<T, T['attribute']>[];
-  declare protected graphicRenderContributions: IContributionProvider<IBaseRenderContribution<T, T['attribute']>>;
+  protected declare graphicRenderContributions: IContributionProvider<IBaseRenderContribution<T, T['attribute']>>;
 
   // declare renderContribitions: IContributionProvider<IBaseRenderContribution<T, T['attribute']>> | null;
 
@@ -40,7 +40,7 @@ export abstract class BaseRender<T extends IGraphic> {
   init(contributions?: IContributionProvider<IBaseRenderContribution<T, T['attribute']>>) {
     if (contributions) {
       // this.renderContribitions = contributions;
-      this._renderContribitions = contributions.getContributions();
+      this._renderContribitions = (contributions?.getContributions && contributions.getContributions()) || [];
     }
     if (!this._renderContribitions) {
       this._renderContribitions = [];

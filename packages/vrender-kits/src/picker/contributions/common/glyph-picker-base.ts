@@ -1,8 +1,10 @@
 import type { IPoint } from '@visactor/vutils';
 import { GLYPH_NUMBER_TYPE } from '@visactor/vrender-core';
+import type { IGraphicRender } from '@visactor/vrender-core';
 import type { IGlyph, IPickParams } from '@visactor/vrender-core';
 
 export class GlyphPickerBase {
+  protected canvasRenderer!: IGraphicRender;
   type: string = 'glyph';
   numberType: number = GLYPH_NUMBER_TYPE;
 

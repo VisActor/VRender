@@ -23,7 +23,7 @@
  * SOFTWARE.
  */
 import { pi2, LRU } from '@visactor/vutils';
-import { application } from '../application';
+import { vglobal } from '../modules';
 import type { IConicalGradient, IContext2d } from '../interface';
 import { interpolateColor } from '../color-string';
 
@@ -34,7 +34,7 @@ class ConicalCanvas {
   static GetCanvas() {
     try {
       if (!ConicalCanvas.canvas) {
-        ConicalCanvas.canvas = application.global.createCanvas({});
+        ConicalCanvas.canvas = vglobal.createCanvas({});
       }
       return ConicalCanvas.canvas;
     } catch (err) {

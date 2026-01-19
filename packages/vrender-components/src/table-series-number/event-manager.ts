@@ -1,5 +1,5 @@
 import type { TableSeriesNumber } from './table-series-number';
-import { vglobal, type FederatedPointerEvent, type Group, type IGroup, type IText } from '@visactor/vrender-core';
+import { type FederatedPointerEvent, type Group, type IGroup, type IText, vglobal } from '@visactor/vrender-core';
 import { SeriesNumberCellStateValue, SeriesNumberEvent } from './type';
 
 export class TableSeriesNumberEventManager {

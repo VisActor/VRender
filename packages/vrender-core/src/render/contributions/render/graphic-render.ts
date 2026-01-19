@@ -1,7 +1,5 @@
-import { injectable } from '../../../common/inversify-lite';
 import type { IGraphic, IGraphicRender, IRenderService } from '../../../interface';
 
-@injectable()
 export abstract class AbstractGraphicRender implements IGraphicRender {
   type: string; // 图元类型
   numberType: number;

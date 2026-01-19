@@ -9,7 +9,7 @@ import type {
   ISetAttributeContext
 } from '../interface';
 import { getTheme } from './theme';
-import { application } from '../application';
+import { vglobal } from '../modules';
 import { GLYPH_NUMBER_TYPE } from './constants';
 
 export class Glyph extends Graphic<IGlyphGraphicAttribute> implements IGlyph {

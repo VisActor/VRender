@@ -12,7 +12,7 @@ import type {
   IText,
   ILayer
 } from '../../interface';
-import { application } from '../../application';
+import { vglobal } from '../../modules';
 import { getTheme } from '../../graphic/theme';
 import { DefaultAttribute } from '../../graphic/config';
 import { textAttributesToStyle } from '../../common/text';
@@ -52,8 +52,8 @@ export class HtmlAttributePlugin implements IPlugin {
     context.stage.hooks.afterRender.taps = context.stage.hooks.afterRender.taps.filter(item => {
       return item.name !== this.key;
     });
-    // application.graphicService.hooks.onRemove.unTap(this.key);
-    // application.graphicService.hooks.onRelease.unTap(this.key);
+    // graphicService.hooks.onRemove.unTap(this.key);
+    // graphicService.hooks.onRelease.unTap(this.key);
     this.release();
   }
 
@@ -61,7 +61,7 @@ export class HtmlAttributePlugin implements IPlugin {
     let nativeContainer;
     if (userContainer) {
       if (typeof userContainer === 'string') {
-        nativeContainer = application.global.getElementById(userContainer);
+        nativeContainer = vglobal.getElementById(userContainer);
       } else {
         nativeContainer = userContainer;
       }
@@ -70,7 +70,7 @@ export class HtmlAttributePlugin implements IPlugin {
     }
     // 创建wrapGroup
     return {
-      wrapContainer: application.global.createDom({ tagName: 'div', parent: nativeContainer, ...domParams }),
+      wrapContainer: vglobal.createDom({ tagName: 'div', parent: nativeContainer, ...domParams }),
       nativeContainer
     };
   }
@@ -184,8 +184,8 @@ export class HtmlAttributePlugin implements IPlugin {
     }
 
     // 查看wrapGroup的位置
-    // const wrapGroupTL = application.global.getElementTopLeft(wrapGroup, false);
-    const containerTL = application.global.getElementTopLeft(nativeContainer, false);
+    // const wrapGroupTL = vglobal.getElementTopLeft(wrapGroup, false);
+    const containerTL = vglobal.getElementTopLeft(nativeContainer, false);
     const windowTL = stage.window.getTopLeft(false);
     const viewBox = stage.viewBox;
     const offsetX = left + windowTL.left - containerTL.left + viewBox.x1;
@@ -218,7 +218,7 @@ export class HtmlAttributePlugin implements IPlugin {
     }
 
     // 更新样式
-    application.global.updateDom(wrapContainer, {
+    vglobal.updateDom(wrapContainer, {
       width: options.width,
       height: options.height,
       style: calculateStyle
@@ -238,7 +238,7 @@ export class HtmlAttributePlugin implements IPlugin {
   }
 
   protected drawHTML(layers: ILayer[]) {
-    if (application.global.env === 'browser') {
+    if (vglobal.env === 'browser') {
       layers
         .sort((a, b) => {
           return (a.attribute.zIndex ?? DefaultAttribute.zIndex) - (b.attribute.zIndex ?? DefaultAttribute.zIndex);
@@ -269,7 +269,7 @@ export class HtmlAttributePlugin implements IPlugin {
 
     const { wrapContainer } = this.htmlMap[id];
     if (wrapContainer) {
-      application.global.removeDom(wrapContainer);
+      vglobal.removeDom(wrapContainer);
     }
 
     this.htmlMap[id] = null;
@@ -339,7 +339,7 @@ export class HtmlAttributePlugin implements IPlugin {
   }
 
   release() {
-    if (application.global.env === 'browser') {
+    if (vglobal.env === 'browser') {
       this.removeAllDom(this.pluginService.stage.defaultLayer);
     }
   }

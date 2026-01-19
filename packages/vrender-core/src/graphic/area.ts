@@ -4,7 +4,7 @@ import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_ATTR } from './graphic'
 import { CustomPath2D } from '../common/custom-path2d';
 import { pointsInterpolation } from '../common/utils';
 import { getTheme } from './theme';
-import { application } from '../application';
+import { vglobal, graphicService } from '../modules';
 import { AREA_NUMBER_TYPE } from './constants';
 
 const AREA_UPDATE_TAG_KEY = ['segments', 'points', 'curveType', 'curveTension', ...GRAPHIC_UPDATE_TAG_KEY];
@@ -61,7 +61,7 @@ export class Area extends Graphic<IAreaGraphicAttribute> implements IArea {
         ? this.updateAreaAABBBoundsBySegments(attribute, areaTheme, aabbBounds)
         : this.updateAreaAABBBoundsByPoints(attribute, areaTheme, aabbBounds);
     }
-    application.graphicService.updateTempAABBBounds(aabbBounds);
+    graphicService.updateTempAABBBounds(aabbBounds);
     // if (!this._rectBoundsContribitions) {
     //   this._rectBoundsContribitions = this.rectBoundsContribitions.getContributions() || [];
     // }
@@ -75,7 +75,7 @@ export class Area extends Graphic<IAreaGraphicAttribute> implements IArea {
     this.setWidthHeightWithoutTransform(aabbBounds);
 
     const { lineJoin = areaTheme.lineJoin } = attribute;
-    application.graphicService.transformAABBBounds(attribute, aabbBounds, areaTheme, lineJoin === 'miter', this);
+    graphicService.transformAABBBounds(attribute, aabbBounds, areaTheme, lineJoin === 'miter', this);
     return aabbBounds;
   }
 

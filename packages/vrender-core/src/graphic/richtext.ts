@@ -25,7 +25,7 @@ import Wrapper from './richtext/wrapper';
 import { getTheme } from './theme';
 import { RichTextIcon } from './richtext/icon';
 import type { FederatedMouseEvent } from '../event';
-import { application } from '../application';
+import { vglobal, graphicService } from '../modules';
 import { RICHTEXT_NUMBER_TYPE } from './constants';
 
 let supportIntl = false;
@@ -319,15 +319,15 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
     }
     aabbBounds.translate(deltaX, deltaY);
 
-    application.graphicService.updateTempAABBBounds(aabbBounds);
+    graphicService.updateTempAABBBounds(aabbBounds);
 
     if (attribute.forceBoundsHeight != null || attribute.forceBoundsWidth != null) {
-      application.graphicService.updateHTMLTextAABBBounds(attribute, richtextTheme, aabbBounds);
+      graphicService.updateHTMLTextAABBBounds(attribute, richtextTheme, aabbBounds);
     }
     this.widthWithoutTransform = aabbBounds.x2 - aabbBounds.x1;
     this.heightWithoutTransform = aabbBounds.y2 - aabbBounds.y1;
 
-    application.graphicService.transformAABBBounds(attribute, aabbBounds, richtextTheme, false, this);
+    graphicService.transformAABBBounds(attribute, aabbBounds, richtextTheme, false, this);
     // 都为0的话，就直接clear
     if (aabbBounds.width() === 0 && aabbBounds.height() === 0) {
       aabbBounds.clear();

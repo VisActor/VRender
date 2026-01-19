@@ -3,7 +3,7 @@ import type { IImage, IImageGraphicAttribute, IRepeatType, ISetAttributeContext 
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_ATTR } from './graphic';
 import { DefaultImageAttribute } from './config';
 import { getTheme } from './theme';
-import { application } from '../application';
+import { vglobal, graphicService } from '../modules';
 import { IMAGE_NUMBER_TYPE } from './constants';
 import { updateBoundsOfCommonOuterBorder } from './graphic-service/common-outer-boder-bounds';
 
@@ -174,7 +174,7 @@ export class Image extends Graphic<IImageGraphicAttribute> implements IImage {
       aabbBounds.set(0, 0, width, height);
     }
 
-    const { tb1, tb2 } = application.graphicService.updateTempAABBBounds(aabbBounds);
+    const { tb1, tb2 } = graphicService.updateTempAABBBounds(aabbBounds);
 
     updateBoundsOfCommonOuterBorder(attribute, imageTheme, tb1);
     aabbBounds.union(tb1);
@@ -183,7 +183,7 @@ export class Image extends Graphic<IImageGraphicAttribute> implements IImage {
     this.widthWithoutTransform = aabbBounds.x2 - aabbBounds.x1;
     this.heightWithoutTransform = aabbBounds.y2 - aabbBounds.y1;
 
-    application.graphicService.transformAABBBounds(attribute, aabbBounds, imageTheme, false, this);
+    graphicService.transformAABBBounds(attribute, aabbBounds, imageTheme, false, this);
     return aabbBounds;
   }
 

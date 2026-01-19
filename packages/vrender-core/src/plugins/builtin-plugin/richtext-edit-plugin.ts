@@ -29,7 +29,7 @@ import type {
   ITimeline
 } from '../../interface';
 import { EditModule, findConfigIndexByCursorIdx, getDefaultCharacterConfig } from './edit-module';
-import { application } from '../../application';
+import { vglobal } from '../../modules';
 import { getWordStartEndIdx } from '../../graphic/richtext/utils';
 // import { testLetter, testLetter2 } from '../../graphic/richtext/utils';
 
@@ -117,7 +117,7 @@ class Selection {
     }
     for (let i = Math.ceil(minCursorIdx); i <= Math.floor(maxCursorIdx); i++) {
       const val = supportOutAttr
-        ? (this._getFormat(key, i) ?? (this.rt?.attribute as any)[key])
+        ? this._getFormat(key, i) ?? (this.rt?.attribute as any)[key]
         : this._getFormat(key, i);
       val && valSet.add(val);
     }
@@ -166,8 +166,8 @@ export class RichTextEditPlugin implements IPlugin {
   protected updateCbs: Array<(type: UpdateType, p: RichTextEditPlugin, params?: any) => void>;
 
   // 富文本外部有align或者baseline的时候，需要对光标做偏移
-  declare protected deltaX: number;
-  declare protected deltaY: number;
+  protected declare deltaX: number;
+  protected declare deltaY: number;
 
   // static splitText(text: string) {
   //   // 😁这种emoji长度算两个，所以得处理一下
@@ -303,7 +303,7 @@ export class RichTextEditPlugin implements IPlugin {
     context.stage.on('pointerup', this.handlePointerUp, { capture: true });
     context.stage.on('pointerleave', this.handlePointerUp, { capture: true });
     context.stage.on('dblclick', this.handleDBLClick, { capture: true });
-    application.global.addEventListener('keydown', this.handleKeyDown);
+    vglobal.addEventListener('keydown', this.handleKeyDown);
 
     this.editModule.onInput(this.handleInput);
     this.editModule.onChange(this.handleChange);
@@ -314,13 +314,10 @@ export class RichTextEditPlugin implements IPlugin {
   }
 
   copyToClipboard(e: KeyboardEvent): boolean {
-    if (
-      (application.global.isMacOS() && e.metaKey && e.key === 'c') ||
-      (!application.global.isMacOS() && e.ctrlKey && e.key === 'c')
-    ) {
+    if ((vglobal.isMacOS() && e.metaKey && e.key === 'c') || (!vglobal.isMacOS() && e.ctrlKey && e.key === 'c')) {
       const selection = this.getSelection();
       const text = selection.getSelectionPureText();
-      application.global.copyToClipBoard(text);
+      vglobal.copyToClipBoard(text);
       e.preventDefault();
       return true;
     }
@@ -383,10 +380,7 @@ export class RichTextEditPlugin implements IPlugin {
   }
 
   protected fullSelectionKeyHandler(e: KeyboardEvent) {
-    if (
-      (application.global.isMacOS() && e.metaKey && e.key === 'a') ||
-      (!application.global.isMacOS() && e.ctrlKey && e.key === 'a')
-    ) {
+    if ((vglobal.isMacOS() && e.metaKey && e.key === 'a') || (!vglobal.isMacOS() && e.ctrlKey && e.key === 'a')) {
       this.fullSelection();
       e.preventDefault();
       return true;
@@ -693,7 +687,7 @@ export class RichTextEditPlugin implements IPlugin {
     context.stage.off('pointerleave', this.handlePointerUp, { capture: true });
     context.stage.off('dblclick', this.handleDBLClick, { capture: true });
 
-    application.global.addEventListener('keydown', this.handleKeyDown);
+    vglobal.addEventListener('keydown', this.handleKeyDown);
   }
 
   handleMove = (e: PointerEvent) => {

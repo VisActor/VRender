@@ -1,10 +1,10 @@
 import type { IGraphic, Stage } from '@visactor/vrender-core';
 import { createCanvas } from '../../util/dom';
 import { createStage } from '../../util/vrender';
-import { initBrowserEnv } from '@visactor/vrender-kits';
+import { loadBrowserEnv } from '@visactor/vrender-kits';
 import { Controller } from '../../../src/player/controller';
 import { ControllerEventEnum, ControllerTypeEnum } from '../../../src/player/controller/constant';
-initBrowserEnv();
+loadBrowserEnv();
 
 describe('PlayerController', () => {
   let stage: Stage;

@@ -1,5 +1,5 @@
 import type { IGroup, IPlugin, IPluginService, IDrawContext } from '../../interface';
-import { application } from '../../application';
+import { vglobal } from '../../modules';
 import { Generator } from '../../common/generator';
 
 export class IncrementalAutoRenderPlugin implements IPlugin {
@@ -54,7 +54,7 @@ export class IncrementalAutoRenderPlugin implements IPlugin {
     this.nextFrameRenderGroupSet.add(group);
     if (!this.willNextFrameRender) {
       this.willNextFrameRender = true;
-      application.global.getRequestAnimationFrame()(() => {
+      vglobal.getRequestAnimationFrame()(() => {
         this._doRenderInThisFrame();
         this.willNextFrameRender = false;
       });

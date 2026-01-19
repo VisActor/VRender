@@ -1,4 +1,3 @@
-import { inject, injectable } from '../common/inversify-lite';
 import type { IPointLike } from '@visactor/vutils';
 import { Matrix, type IBoundsLike, type IMatrix, IBounds, Point, isEqual, isNumberClose } from '@visactor/vutils';
 import { Generator } from '../common/generator';
@@ -11,9 +10,9 @@ import type {
   IWindowHandlerContribution,
   IWindowParams
 } from '../interface';
-import { container } from '../container';
 import { SyncHook } from '../tapable';
-import { application } from '../application';
+import { vglobal } from '../modules';
+import { contributionRegistry } from '../common/registry';
 import { EventListenerManager } from '../common/event-listener-manager';
 
 export const VWindow = Symbol.for('VWindow');
@@ -25,7 +24,6 @@ export const WindowHandlerContribution = Symbol.for('WindowHandlerContribution')
  * 对于浏览器，就是管理某个Stage影响的Canvas
  * 对于原生，就是管理这个系统窗口
  */
-@injectable()
 export class DefaultWindow extends EventListenerManager implements IWindow {
   protected _width: number;
   protected _height: number;
@@ -79,7 +77,7 @@ export class DefaultWindow extends EventListenerManager implements IWindow {
   constructor() {
     super();
     this._uid = Generator.GenAutoIncrementId();
-    this.global = application.global;
+    this.global = vglobal;
     this.postInit();
   }
 
@@ -116,7 +114,11 @@ export class DefaultWindow extends EventListenerManager implements IWindow {
     if (!global.env || this.actived) {
       return;
     }
-    const handler = container.getNamed<IWindowHandlerContribution>(WindowHandlerContribution, global.env);
+    const contributions = contributionRegistry.get<IWindowHandlerContribution>(WindowHandlerContribution);
+    const handler = contributions.find(c => (c as any).type === global.env) || contributions[0];
+    if (!handler) {
+      throw new Error(`No WindowHandlerContribution registered for env: ${global.env}`);
+    }
     handler.configure(this, global);
     // this.contributions.getContributions().forEach((handlerContribution) => {
     //   handlerContribution.configure(this, this.global);

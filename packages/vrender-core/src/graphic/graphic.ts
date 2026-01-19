@@ -39,7 +39,9 @@ import type {
 } from '../interface';
 import { EventTarget, CustomEvent } from '../event';
 import { DefaultTransform } from './config';
-import { application } from '../application';
+import { vglobal, graphicService, transformUtil } from '../modules';
+import { serviceRegistry } from '../common/registry';
+import { RenderService } from '../render/constants';
 import { interpolateColor } from '../color-string/interpolate';
 import { CustomPath2D } from '../common/custom-path2d';
 import { ResourceLoader } from '../resource-loader/loader';
@@ -339,7 +341,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   }
 
   getGraphicService() {
-    return this.stage?.graphicService ?? application.graphicService;
+    return this.stage?.graphicService ?? graphicService;
   }
 
   getAttributes(): T {
@@ -817,7 +819,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       attribute.x = (attribute.x ?? DefaultTransform.x) + x;
       attribute.y = (attribute.y ?? DefaultTransform.y) + y;
     } else {
-      application.transformUtil.fromMatrix(postMatrix, postMatrix).translate(x, y);
+      transformUtil.fromMatrix(postMatrix, postMatrix).translate(x, y);
     }
 
     this.addUpdatePositionTag();
@@ -878,7 +880,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
         postMatrix = new Matrix();
         attribute.postMatrix = postMatrix;
       }
-      application.transformUtil.fromMatrix(postMatrix, postMatrix).scale(scaleX, scaleY, scaleCenter);
+      transformUtil.fromMatrix(postMatrix, postMatrix).scale(scaleX, scaleY, scaleCenter);
     }
     this.addUpdatePositionTag();
     this.addUpdateBoundTag();
@@ -933,7 +935,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
         postMatrix = new Matrix();
         attribute.postMatrix = postMatrix;
       }
-      application.transformUtil.fromMatrix(postMatrix, postMatrix).rotate(angle, rotateCenter);
+      transformUtil.fromMatrix(postMatrix, postMatrix).rotate(angle, rotateCenter);
     }
     this.addUpdatePositionTag();
     this.addUpdateBoundTag();
@@ -1339,7 +1341,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       // m.translate(scaleCenter[0] * scaleX, scaleCenter[1] * scaleY);
       // 计算bounds
       _anchor = this.getAnchor(scaleCenter, params, true);
-      application.transformUtil.fromMatrix(m, m).scale(scaleX, scaleY, { x: _anchor[0], y: _anchor[1] });
+      transformUtil.fromMatrix(m, m).scale(scaleX, scaleY, { x: _anchor[0], y: _anchor[1] });
       // m.translate(-scaleCenter[0], -scaleCenter[1]);
     } else {
       normalTransform(this._transMatrix, this._transMatrix.reset(), x, y, scaleX, scaleY, angle, anchor && _anchor);
@@ -1442,7 +1444,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       shadowRoot.shadowHost = this;
     }
 
-    this.shadowRoot = shadowRoot ?? application.graphicService.creator.shadowRoot(this);
+    this.shadowRoot = shadowRoot ?? graphicService.creator.shadowRoot(this);
     this.addUpdateBoundTag();
     this.shadowRoot.setStage(this.stage, this.layer);
     return this.shadowRoot;
@@ -1581,7 +1583,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   release(): void {
     this.releaseStatus = 'released';
     this.stopAnimates();
-    application.graphicService.onRelease(this);
+    graphicService.onRelease(this);
   }
 
   protected _emitCustomEvent(type: string, context?: any) {
@@ -1600,9 +1602,9 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
 
   toCustomPath(): ICustomPath2D {
     // throw new Error('暂不支持');
-    const renderer = (this.stage?.renderService || application.renderService)?.drawContribution?.getRenderContribution(
-      this
-    );
+    const renderer = (
+      this.stage?.renderService || serviceRegistry.createInstance(RenderService)
+    )?.drawContribution?.getRenderContribution(this);
     if (renderer) {
       const context = new EmptyContext2d(null, 1);
       renderer.drawShape(this, context, 0, 0, {} as any, {});

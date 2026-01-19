@@ -1,12 +1,4 @@
-import {
-  inject,
-  injectable,
-  Generator,
-  BaseWindowHandlerContribution,
-  VGlobal,
-  ContainerModule,
-  WindowHandlerContribution
-} from '@visactor/vrender-core';
+import { Generator, BaseWindowHandlerContribution, vglobal } from '@visactor/vrender-core';
 import type {
   EnvType,
   IGlobal,
@@ -17,7 +9,7 @@ import type {
   IWindowHandlerContribution
 } from '@visactor/vrender-core';
 import type { IBoundsLike } from '@visactor/vutils';
-import { TaroCanvas } from '../../canvas/contributions/taro';
+import { TaroCanvas } from '../../canvas/taro';
 
 class MiniAppEventManager {
   addEventListener(type: string, func: EventListenerOrEventListenerObject) {
@@ -47,7 +39,6 @@ class MiniAppEventManager {
   cache: Record<string, { listener: EventListenerOrEventListenerObject[] }> = {};
 }
 
-@injectable()
 export class TaroWindowHandlerContribution extends BaseWindowHandlerContribution implements IWindowHandlerContribution {
   static env: EnvType = 'taro';
   type: EnvType = 'taro';
@@ -59,8 +50,11 @@ export class TaroWindowHandlerContribution extends BaseWindowHandlerContribution
     return null;
   }
 
-  constructor(@inject(VGlobal) private readonly global: IGlobal) {
+  private readonly global: IGlobal;
+
+  constructor() {
     super();
+    this.global = vglobal;
   }
 
   getTitle(): string {
@@ -255,10 +249,4 @@ export class TaroWindowHandlerContribution extends BaseWindowHandlerContribution
   }
 }
 
-export const taroWindowModule = new ContainerModule(bind => {
-  // taro
-  bind(TaroWindowHandlerContribution).toSelf();
-  bind(WindowHandlerContribution)
-    .toDynamicValue(ctx => ctx.container.get(TaroWindowHandlerContribution))
-    .whenTargetNamed(TaroWindowHandlerContribution.env);
-});
+// Legacy ContainerModule removed (registry-only)

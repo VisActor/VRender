@@ -1,6 +1,3 @@
-import { inject, injectable, named } from '../../../common/inversify-lite';
-// eslint-disable-next-line
-import { ContributionProvider } from '../../../common/contribution-provider';
 import { getTheme } from '../../../graphic/theme';
 import { SYMBOL_NUMBER_TYPE } from '../../../graphic/constants';
 import type {
@@ -28,25 +25,28 @@ import {
   defaultSymbolRenderContribution,
   defaultSymbolTextureRenderContribution
 } from './contributions';
+import { contributionRegistry } from '../../../common/registry';
 
-@injectable()
 export class DefaultCanvasSymbolRender extends BaseRender<ISymbol> implements IGraphicRender {
   type: 'symbol';
   numberType: number = SYMBOL_NUMBER_TYPE;
 
-  constructor(
-    @inject(ContributionProvider)
-    @named(SymbolRenderContribution)
-    protected readonly graphicRenderContributions: IContributionProvider<ISymbolRenderContribution>
-  ) {
+  protected readonly graphicRenderContributions: IContributionProvider<ISymbolRenderContribution>;
+
+  constructor(graphicRenderContributions?: IContributionProvider<ISymbolRenderContribution>) {
     super();
+    this.graphicRenderContributions =
+      graphicRenderContributions ||
+      ({
+        getContributions: () => contributionRegistry.get<ISymbolRenderContribution>(SymbolRenderContribution)
+      } as IContributionProvider<ISymbolRenderContribution>);
     this.builtinContributions = [
       defaultSymbolRenderContribution,
       defaultSymbolBackgroundRenderContribution,
       defaultSymbolTextureRenderContribution,
       defaultSymbolClipRangeStrokeRenderContribution
     ];
-    this.init(graphicRenderContributions);
+    this.init(this.graphicRenderContributions);
   }
 
   drawShape(

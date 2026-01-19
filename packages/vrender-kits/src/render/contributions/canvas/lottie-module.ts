@@ -1,13 +1,13 @@
-import { ContainerModule, GraphicRender } from '@visactor/vrender-core';
+import { serviceRegistry, contributionRegistry, GraphicRender } from '@visactor/vrender-core';
 import { DefaultCanvasLottieRender } from './lottie-render';
 
-let loadLottieModule = false;
-export const lottieModule = new ContainerModule(bind => {
-  if (loadLottieModule) {
+let _registered = false;
+export function registerCanvasLottieRender() {
+  if (_registered) {
     return;
   }
-  loadLottieModule = true;
-  // lottie渲染器
-  bind(DefaultCanvasLottieRender).toSelf().inSingletonScope();
-  bind(GraphicRender).toService(DefaultCanvasLottieRender);
-});
+  _registered = true;
+  const render = new DefaultCanvasLottieRender();
+  serviceRegistry.registerSingleton(GraphicRender, render);
+  contributionRegistry.register(GraphicRender, render);
+}

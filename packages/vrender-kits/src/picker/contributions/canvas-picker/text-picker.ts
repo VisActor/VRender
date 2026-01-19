@@ -1,12 +1,11 @@
 import {
-  inject,
-  injectable,
   getTheme,
   TextRender,
   textDrawOffsetX,
   textLayoutOffsetY,
   mat4Allocate,
-  TEXT_NUMBER_TYPE
+  TEXT_NUMBER_TYPE,
+  contributionRegistry
 } from '@visactor/vrender-core';
 import type { IPoint } from '@visactor/vutils';
 import type {
@@ -21,13 +20,17 @@ import type {
 } from '@visactor/vrender-core';
 import { Base3dPicker } from '../common/base-3d-picker';
 
-@injectable()
 export class DefaultCanvasTextPicker extends Base3dPicker<IText> implements IGraphicPicker {
   type: string = 'text';
   numberType: number = TEXT_NUMBER_TYPE;
 
-  constructor(@inject(TextRender) public readonly canvasRenderer: IGraphicRender) {
+  constructor() {
     super();
+    // text picker depends on TextRender via registry
+    // TextRender is a token exported by core
+    // Select first registered contribution
+    const render = contributionRegistry.get<IGraphicRender>(TextRender)[0];
+    this.canvasRenderer = render;
   }
 
   contains(text: IText, point: IPoint, params?: IPickParams): boolean {

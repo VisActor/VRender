@@ -5,8 +5,8 @@ import { createCanvas } from '../../util/dom';
 import { createStage } from '../../util/vrender';
 import type { Tag } from '../../../src/tag/tag';
 import { AXIS_ELEMENT_NAME } from '../../../src/axis/constant';
-import { initBrowserEnv } from '@visactor/vrender-kits';
-initBrowserEnv();
+import { loadBrowserEnv } from '@visactor/vrender-kits';
+loadBrowserEnv();
 
 describe('Circle Axis', () => {
   let stage: Stage;

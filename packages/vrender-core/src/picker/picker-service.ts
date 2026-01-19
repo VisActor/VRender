@@ -1,9 +1,6 @@
 import type { IMatrix, IPoint, IPointLike } from '@visactor/vutils';
 import { AABBBounds, Matrix, Point } from '@visactor/vutils';
-import { inject, injectable, named } from '../common/inversify-lite';
 import { foreach } from '../common/sort';
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { ContributionProvider } from '../common/contribution-provider';
 import type {
   IContext2d,
   IGraphic,
@@ -22,10 +19,10 @@ import { getTheme } from '../graphic/theme';
 import { DefaultAttribute } from '../graphic/config';
 import { mat3Tomat4, multiplyMat4Mat4 } from '../common/matrix';
 import { mat4Allocate, matrixAllocate } from '../allocator/matrix-allocate';
-import { application } from '../application';
+import { vglobal } from '../modules';
 import { PickItemInterceptor, PickServiceInterceptor } from './constants';
+import { contributionRegistry } from '../common/registry';
 
-@injectable()
 export abstract class DefaultPickService implements IPickerService {
   type: string = 'default';
   declare pickerMap: Map<number, IGraphicPicker>;
@@ -34,18 +31,24 @@ export abstract class DefaultPickService implements IPickerService {
   declare pickerServiceInterceptorContributions: IPickServiceInterceptorContribution[];
   declare global: IGlobal;
 
+  protected readonly pickItemInterceptorContributions: IContributionProvider<IPickItemInterceptorContribution>;
+  protected readonly pickServiceInterceptorContributions: IContributionProvider<IPickServiceInterceptorContribution>;
+
   constructor(
-    // 拦截器
-    // @ts-ignore
-    @inject(ContributionProvider)
-    @named(PickItemInterceptor)
-    protected readonly pickItemInterceptorContributions: IContributionProvider<IPickItemInterceptorContribution>,
-    // @ts-ignore
-    @inject(ContributionProvider)
-    @named(PickServiceInterceptor)
-    protected readonly pickServiceInterceptorContributions: IContributionProvider<IPickServiceInterceptorContribution>
+    pickItemInterceptorContributions?: IContributionProvider<IPickItemInterceptorContribution>,
+    pickServiceInterceptorContributions?: IContributionProvider<IPickServiceInterceptorContribution>
   ) {
-    this.global = application.global;
+    this.pickItemInterceptorContributions =
+      pickItemInterceptorContributions ||
+      ({
+        getContributions: () => contributionRegistry.get<IPickItemInterceptorContribution>(PickItemInterceptor)
+      } as IContributionProvider<IPickItemInterceptorContribution>);
+    this.pickServiceInterceptorContributions =
+      pickServiceInterceptorContributions ||
+      ({
+        getContributions: () => contributionRegistry.get<IPickServiceInterceptorContribution>(PickServiceInterceptor)
+      } as IContributionProvider<IPickServiceInterceptorContribution>);
+    this.global = vglobal;
   }
 
   reInit() {

@@ -4,8 +4,8 @@ import type { Tag } from '../../src';
 import { DataZoom } from '../../src';
 import { createCanvas } from '../util/dom';
 import { createStage } from '../util/vrender';
-import { initBrowserEnv } from '@visactor/vrender-kits';
-initBrowserEnv();
+import { loadBrowserEnv } from '@visactor/vrender-kits';
+loadBrowserEnv();
 
 describe('DataZoom component test', () => {
   let stage: Stage;

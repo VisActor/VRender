@@ -1,14 +1,12 @@
-import { ContainerModule } from '@visactor/vrender-core';
-import { MathGlyphPicker } from '../constants';
+import { contributionRegistry } from '@visactor/vrender-core';
+import { MathPickerContribution } from '../constants';
 import { DefaultMathGlyphPicker } from './glyph-picker';
 
-let loadGlyphPick = false;
-export const glyphMathPickModule = new ContainerModule((bind, unbind, isBound, rebind) => {
-  if (loadGlyphPick) {
+let _registered = false;
+export function registerMathGlyphPicker() {
+  if (_registered) {
     return;
   }
-  loadGlyphPick = true;
-  // glyph picker
-  bind(MathGlyphPicker).to(DefaultMathGlyphPicker).inSingletonScope();
-  bind(DefaultMathGlyphPicker).toService(MathGlyphPicker);
-});
+  _registered = true;
+  contributionRegistry.register(MathPickerContribution, new DefaultMathGlyphPicker());
+}

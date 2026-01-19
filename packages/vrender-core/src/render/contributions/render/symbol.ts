@@ -1,3 +1,5 @@
+export const AreaIncrementalDrawContribution = Symbol.for('AreaIncrementalDrawContribution');
+export const LineIncrementalDrawContribution = Symbol.for('LineIncrementalDrawContribution');
 export const IncrementalDrawContribution = Symbol.for('IncrementalDrawContribution');
 export const ArcRender = Symbol.for('ArcRender');
 export const Arc3dRender = Symbol.for('Arc3dRender');

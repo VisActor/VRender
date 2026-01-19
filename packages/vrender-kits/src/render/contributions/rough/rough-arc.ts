@@ -2,11 +2,6 @@ import type {
   IGraphicRender,
   IRenderService,
   IArc,
-  IGraphicAttribute,
-  IContext2d,
-  IGraphic,
-  IMarkAttribute,
-  IThemeAttribute,
   IDrawContext,
   IGraphicRenderDrawParams
 } from '@visactor/vrender-core';
@@ -16,24 +11,25 @@ import {
   getTheme,
   CustomPath2D,
   drawArcPath,
-  inject,
-  injectable
+  serviceRegistry,
+  contributionRegistry
 } from '@visactor/vrender-core';
 import rough from 'roughjs';
 import { defaultRouthThemeSpec } from './config';
 import { RoughBaseRender } from './base-render';
 
-@injectable()
 export class RoughCanvasArcRender extends RoughBaseRender implements IGraphicRender {
   type: 'arc';
   numberType: number;
   style: 'rough' = 'rough';
 
-  constructor(
-    @inject(DefaultCanvasArcRender)
-    public readonly canvasRenderer: IGraphicRender
-  ) {
+  constructor() {
     super();
+    try {
+      this.canvasRenderer = serviceRegistry.get(DefaultCanvasArcRender) as IGraphicRender;
+    } catch (_) {
+      this.canvasRenderer = contributionRegistry.get<IGraphicRender>(DefaultCanvasArcRender)[0];
+    }
     this.type = 'arc';
     this.numberType = ARC_NUMBER_TYPE;
   }

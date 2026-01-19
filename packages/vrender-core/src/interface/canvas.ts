@@ -12,7 +12,7 @@ export type CanvasConfigType = {
   y?: number;
   container?: HTMLElement | string;
   visiable?: boolean;
-  nativeCanvas: HTMLCanvasElement | any;
+  nativeCanvas?: HTMLCanvasElement | any;
   canvasControled?: boolean;
   id?: string;
 };

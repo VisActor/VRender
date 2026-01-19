@@ -1,6 +1,11 @@
-import { container, starModule, registerStarGraphic } from '@visactor/vrender-core';
+import {
+  contributionRegistry,
+  DefaultCanvasStarRender,
+  GraphicRender,
+  registerStarGraphic
+} from '@visactor/vrender-core';
 import { browser } from './env';
-import { starCanvasPickModule } from '../picker/contributions/canvas-picker/star-module';
+import { registerCanvasStarPicker } from '../picker/contributions/canvas-picker/star-module';
 
 function _registerStar() {
   if (_registerStar.__loaded) {
@@ -8,8 +13,9 @@ function _registerStar() {
   }
   _registerStar.__loaded = true;
   registerStarGraphic();
-  container.load(starModule);
-  container.load(browser ? starCanvasPickModule : starCanvasPickModule);
+  registerCanvasStarPicker();
+
+  contributionRegistry.register(GraphicRender, new DefaultCanvasStarRender());
 }
 
 _registerStar.__loaded = false;

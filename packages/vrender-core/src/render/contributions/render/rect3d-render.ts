@@ -1,4 +1,3 @@
-import { injectable } from '../../../common/inversify-lite';
 import { getTheme } from '../../../graphic/theme';
 import type {
   IGraphicAttribute,
@@ -15,7 +14,7 @@ import type {
 import { rectFillVisible, rectStrokeVisible, runFill, runStroke } from './utils';
 import { RECT3D_NUMBER_TYPE } from '../../../graphic/constants';
 import { Base3dRender } from './base-3d-render';
-@injectable()
+
 export class DefaultCanvasRect3dRender extends Base3dRender<IRect3d> implements IGraphicRender {
   type = 'rect3d';
   numberType: number = RECT3D_NUMBER_TYPE;

@@ -1,4 +1,3 @@
-import { inject, injectable } from '../../../common/inversify-lite';
 import type {
   IGlobal,
   IDrawToParams,
@@ -12,9 +11,8 @@ import type {
   LayerMode
 } from '../../../interface';
 import type { IBounds } from '@visactor/vutils';
-import { application } from '../../../application';
+import { vglobal } from '../../../modules';
 
-@injectable()
 export class EmptyLayerHandlerContribution implements ILayerHandlerContribution {
   declare layer: ILayer;
   declare canvas: null;
@@ -30,7 +28,7 @@ export class EmptyLayerHandlerContribution implements ILayerHandlerContribution 
   constructor() {
     this.offscreen = false;
     this.type = 'virtual';
-    this.global = application.global;
+    this.global = vglobal;
   }
 
   setDpr(dpr: number) {

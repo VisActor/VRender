@@ -1,7 +1,17 @@
-import { container, rectModule, registerRectGraphic } from '@visactor/vrender-core';
+import {
+  contributionRegistry,
+  DefaultBaseInteractiveRenderContribution,
+  DefaultCanvasRectRender,
+  GraphicRender,
+  RectRenderContribution,
+  registerRectGraphic,
+  serviceRegistry,
+  SplitRectAfterRenderContribution,
+  SplitRectBeforeRenderContribution
+} from '@visactor/vrender-core';
 import { browser } from './env';
-import { rectCanvasPickModule } from '../picker/contributions/canvas-picker/rect-module';
-import { rectMathPickModule } from '../picker/contributions/math-picker/rect-module';
+import { registerCanvasRectPicker } from '../picker/contributions/canvas-picker/rect-module';
+import { registerMathRectPicker } from '../picker/contributions/math-picker/rect-module';
 
 function _registerRect() {
   if (_registerRect.__loaded) {
@@ -9,8 +19,16 @@ function _registerRect() {
   }
   _registerRect.__loaded = true;
   registerRectGraphic();
-  container.load(rectModule);
-  container.load(browser ? rectCanvasPickModule : rectMathPickModule);
+  if (browser) {
+    registerCanvasRectPicker();
+  } else {
+    registerMathRectPicker();
+  }
+  contributionRegistry.register(RectRenderContribution, new SplitRectAfterRenderContribution());
+  contributionRegistry.register(RectRenderContribution, new SplitRectBeforeRenderContribution());
+  contributionRegistry.register(RectRenderContribution, serviceRegistry.get(DefaultBaseInteractiveRenderContribution));
+
+  contributionRegistry.register(GraphicRender, new DefaultCanvasRectRender());
 }
 
 _registerRect.__loaded = false;

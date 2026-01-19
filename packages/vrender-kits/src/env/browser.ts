@@ -1,33 +1,16 @@
-import { container, ContainerModule, type Container, EnvContribution } from '@visactor/vrender-core';
-// import { browserEnvModule } from './contributions/module';
-import { browserCanvasModule } from '../canvas/contributions/browser/modules';
-import { loadCanvasPicker } from '../picker/canvas-module';
-import { browserWindowModule } from '../window/contributions/browser-contribution';
+import { EnvContribution, contributionRegistry } from '@visactor/vrender-core';
 import { BrowserEnvContribution } from './contributions/browser-contribution';
+import { BrowserWindowHandlerContribution } from '../window/contributions/browser-contribution';
+import { WindowHandlerContribution } from '@visactor/vrender-core';
+import { registerBrowserCanvasFactories } from '../canvas/browser/';
 
-export const browserEnvModule = new ContainerModule(bind => {
-  // browser
-  if (!(browserEnvModule as any).isBrowserBound) {
-    (browserEnvModule as any).isBrowserBound = true;
-    bind(BrowserEnvContribution).toSelf().inSingletonScope();
-    bind(EnvContribution).toService(BrowserEnvContribution);
-  }
-});
-
-(browserEnvModule as any).isBrowserBound = false;
-
-export function loadBrowserEnv(container: Container, loadPicker: boolean = true) {
-  if (!loadBrowserEnv.__loaded) {
-    loadBrowserEnv.__loaded = true;
-    container.load(browserEnvModule);
-    container.load(browserCanvasModule);
-    container.load(browserWindowModule);
-    loadPicker && loadCanvasPicker(container);
-  }
-}
-
-loadBrowserEnv.__loaded = false;
-
-export function initBrowserEnv() {
-  loadBrowserEnv(container);
+/**
+ * Registry-based registration for browser env/window
+ */
+export function loadBrowserEnv() {
+  registerBrowserCanvasFactories();
+  // Env contribution
+  contributionRegistry.register(EnvContribution, new BrowserEnvContribution());
+  // Window handler contribution
+  contributionRegistry.register(WindowHandlerContribution, new BrowserWindowHandlerContribution());
 }

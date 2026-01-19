@@ -1,14 +1,12 @@
-import { ContainerModule } from '@visactor/vrender-core';
-import { CanvasArc3dPicker, CanvasPickerContribution } from '../constants';
+import { contributionRegistry } from '@visactor/vrender-core';
+import { CanvasPickerContribution } from '../constants';
 import { DefaultCanvasArc3dPicker } from './arc3d-picker';
 
-let loadArc3dPick = false;
-export const arc3dCanvasPickModule = new ContainerModule((bind, unbind, isBound, rebind) => {
-  if (loadArc3dPick) {
+let _registeredArc3d = false;
+export function registerCanvasArc3dPicker() {
+  if (_registeredArc3d) {
     return;
   }
-  loadArc3dPick = true;
-  // arc3d picker
-  bind(CanvasArc3dPicker).to(DefaultCanvasArc3dPicker).inSingletonScope();
-  bind(CanvasPickerContribution).toService(CanvasArc3dPicker);
-});
+  _registeredArc3d = true;
+  contributionRegistry.register(CanvasPickerContribution, new DefaultCanvasArc3dPicker());
+}

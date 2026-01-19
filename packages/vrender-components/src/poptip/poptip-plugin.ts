@@ -1,5 +1,5 @@
 import type { FederatedPointerEvent, IGraphic, IPlugin, IPluginService } from '@visactor/vrender-core';
-import { Generator, injectable } from '@visactor/vrender-core';
+import { Generator } from '@visactor/vrender-core';
 
 // _showPoptip: 0-没有，1-添加，2-删除
 
@@ -36,12 +36,12 @@ export abstract class PopTipPluginBase {
     }
     if (this.needShow(graphic)) {
       graphic.setAttributes({});
-      graphic._showPoptip = 1;
+      (graphic as any)._showPoptip = 1;
     }
 
     if (this.activeGraphic) {
       this.activeGraphic.setAttributes({});
-      this.activeGraphic._showPoptip = 2;
+      (this.activeGraphic as any)._showPoptip = 2;
     }
     // console.log(graphic)
     this.setActiveGraphic(graphic, true);
@@ -52,7 +52,7 @@ export abstract class PopTipPluginBase {
       return;
     }
     this.activeGraphic.setAttributes({});
-    this.activeGraphic._showPoptip = 2;
+    (this.activeGraphic as any)._showPoptip = 2;
     this.setActiveGraphic(null, true);
   };
 
@@ -68,13 +68,11 @@ export abstract class PopTipPluginBase {
   }
 }
 
-@injectable()
 export class PopTipPlugin extends PopTipPluginBase implements IPlugin {
   name: 'poptip' = 'poptip';
   key: string = this.name + this._uid;
 }
 
-@injectable()
 export class PopTipForClipedTextPlugin extends PopTipPluginBase implements IPlugin {
   name: 'poptipForText' = 'poptipForText';
   key: string = this.name + this._uid;

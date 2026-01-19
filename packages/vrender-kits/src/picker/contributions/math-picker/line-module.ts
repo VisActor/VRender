@@ -1,14 +1,12 @@
-import { ContainerModule } from '@visactor/vrender-core';
-import { MathLinePicker, MathPickerContribution } from '../constants';
+import { contributionRegistry } from '@visactor/vrender-core';
+import { MathPickerContribution } from '../constants';
 import { DefaultMathLinePicker } from './line-picker';
 
-let loadLinePick = false;
-export const lineMathPickModule = new ContainerModule((bind, unbind, isBound, rebind) => {
-  if (loadLinePick) {
+let _registered = false;
+export function registerMathLinePicker() {
+  if (_registered) {
     return;
   }
-  loadLinePick = true;
-  // line picker
-  bind(MathLinePicker).to(DefaultMathLinePicker).inSingletonScope();
-  bind(MathPickerContribution).toService(MathLinePicker);
-});
+  _registered = true;
+  contributionRegistry.register(MathPickerContribution, new DefaultMathLinePicker());
+}

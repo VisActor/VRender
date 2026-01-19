@@ -4,7 +4,7 @@ import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_ATTR } from './graphic'
 import type { ICustomPath2D, IPath, IPathGraphicAttribute } from '../interface';
 import { CustomPath2D } from '../common/custom-path2d';
 import { getTheme } from './theme';
-import { application } from '../application';
+import { vglobal, graphicService } from '../modules';
 import { PATH_NUMBER_TYPE } from './constants';
 import { updateBoundsOfCommonOuterBorder } from './graphic-service/common-outer-boder-bounds';
 
@@ -72,7 +72,7 @@ export class Path extends Graphic<IPathGraphicAttribute> implements IPath {
       aabbBounds.union(pathShape.getBounds());
     }
 
-    const { tb1, tb2 } = application.graphicService.updateTempAABBBounds(aabbBounds);
+    const { tb1, tb2 } = graphicService.updateTempAABBBounds(aabbBounds);
 
     updateBoundsOfCommonOuterBorder(attribute, pathTheme, tb1);
     aabbBounds.union(tb1);
@@ -82,7 +82,7 @@ export class Path extends Graphic<IPathGraphicAttribute> implements IPath {
     this.heightWithoutTransform = aabbBounds.y2 - aabbBounds.y1;
 
     const { lineJoin = pathTheme.lineJoin } = attribute;
-    application.graphicService.transformAABBBounds(attribute, aabbBounds, pathTheme, lineJoin === 'miter', this);
+    graphicService.transformAABBBounds(attribute, aabbBounds, pathTheme, lineJoin === 'miter', this);
     return aabbBounds;
   }
 

@@ -1,7 +1,15 @@
-import { container, pathModule, registerPathGraphic } from '@visactor/vrender-core';
+import {
+  contributionRegistry,
+  DefaultBaseInteractiveRenderContribution,
+  DefaultCanvasPathRender,
+  GraphicRender,
+  PathRenderContribution,
+  registerPathGraphic,
+  serviceRegistry
+} from '@visactor/vrender-core';
 import { browser } from './env';
-import { pathCanvasPickModule } from '../picker/contributions/canvas-picker/path-module';
-import { pathMathPickModule } from '../picker/contributions/math-picker/path-module';
+import { registerCanvasPathPicker } from '../picker/contributions/canvas-picker/path-module';
+import { registerMathPathPicker } from '../picker/contributions/math-picker/path-module';
 
 function _registerPath() {
   if (_registerPath.__loaded) {
@@ -9,8 +17,14 @@ function _registerPath() {
   }
   _registerPath.__loaded = true;
   registerPathGraphic();
-  container.load(pathModule);
-  container.load(browser ? pathCanvasPickModule : pathMathPickModule);
+  if (browser) {
+    registerCanvasPathPicker();
+  } else {
+    registerMathPathPicker();
+  }
+
+  contributionRegistry.register(PathRenderContribution, serviceRegistry.get(DefaultBaseInteractiveRenderContribution));
+  contributionRegistry.register(GraphicRender, new DefaultCanvasPathRender());
 }
 
 _registerPath.__loaded = false;

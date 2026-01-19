@@ -1,14 +1,12 @@
-import { ContainerModule } from '@visactor/vrender-core';
-import { CanvasGlyphPicker, CanvasPickerContribution } from '../constants';
+import { contributionRegistry } from '@visactor/vrender-core';
+import { CanvasPickerContribution } from '../constants';
 import { DefaultCanvasGlyphPicker } from './glyph-picker';
 
-let loadGlyphPick = false;
-export const glyphCanvasPickModule = new ContainerModule((bind, unbind, isBound, rebind) => {
-  if (loadGlyphPick) {
+let _registeredGlyph = false;
+export function registerCanvasGlyphPicker() {
+  if (_registeredGlyph) {
     return;
   }
-  loadGlyphPick = true;
-  // glyph picker
-  bind(CanvasGlyphPicker).to(DefaultCanvasGlyphPicker).inSingletonScope();
-  bind(CanvasPickerContribution).toService(CanvasGlyphPicker);
-});
+  _registeredGlyph = true;
+  contributionRegistry.register(CanvasPickerContribution, new DefaultCanvasGlyphPicker());
+}

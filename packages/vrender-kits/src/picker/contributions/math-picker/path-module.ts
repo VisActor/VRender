@@ -1,16 +1,12 @@
-import { ContainerModule } from '@visactor/vrender-core';
-import { MathCirclePicker, MathPathPicker, MathPickerContribution, MathPolygonPicker } from '../constants';
-import { DefaultMathCirclePicker } from './circle-picker';
-import { DefaultMathPolygonPicker } from './polygon-picker';
+import { contributionRegistry } from '@visactor/vrender-core';
+import { MathPickerContribution } from '../constants';
 import { DefaultMathPathPicker } from './path-picker';
 
-let loadPathPick = false;
-export const pathMathPickModule = new ContainerModule((bind, unbind, isBound, rebind) => {
-  if (loadPathPick) {
+let _registered = false;
+export function registerMathPathPicker() {
+  if (_registered) {
     return;
   }
-  loadPathPick = true;
-  // path picker
-  bind(MathPathPicker).to(DefaultMathPathPicker).inSingletonScope();
-  bind(MathPickerContribution).toService(MathPathPicker);
-});
+  _registered = true;
+  contributionRegistry.register(MathPickerContribution, new DefaultMathPathPicker());
+}

@@ -15,7 +15,6 @@ import {
   createStage,
   createSymbol,
   IGraphic,
-  vglobal,
   createCircle,
   createText,
   createGroup,

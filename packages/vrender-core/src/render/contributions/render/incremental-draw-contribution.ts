@@ -1,4 +1,3 @@
-import { injectable, inject, named, multiInject } from '../../../common/inversify-lite';
 import type {
   IGraphic,
   IGroup,
@@ -12,13 +11,10 @@ import type {
 import { DefaultAttribute } from '../../../graphic/config';
 import { DefaultDrawContribution } from './draw-contribution';
 import { SyncHook } from '../../../tapable';
-import { GraphicRender } from './symbol';
-import { DefaultIncrementalCanvasLineRender } from './incremental-line-render';
-import { DefaultIncrementalCanvasAreaRender } from './incremental-area-render';
+import { AreaIncrementalDrawContribution, GraphicRender, LineIncrementalDrawContribution } from './symbol';
 import { DrawItemInterceptor } from './draw-interceptor';
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { ContributionProvider } from '../../../common/contribution-provider';
 import { foreachAsync } from '../../../common/sort';
+import { contributionRegistry, serviceRegistry } from '../../../common/registry';
 
 enum STATUS {
   NORMAL = 0,
@@ -29,7 +25,6 @@ enum STATUS {
  * 增量渲染的contribution，基于树状结构针对图元的渲染
  * 不是单例模式
  */
-@injectable()
 export class DefaultIncrementalDrawContribution extends DefaultDrawContribution implements IDrawContribution {
   rendering: boolean = false;
   protected currFrameStartAt: number = 0;
@@ -43,20 +38,24 @@ export class DefaultIncrementalDrawContribution extends DefaultDrawContribution 
   protected lastDrawContext: IDrawContext;
   protected count: number;
 
+  protected readonly lineRender: IGraphicRender;
+  protected readonly areaRender: IGraphicRender;
+
   constructor(
-    // @inject(ContributionProvider)
-    // @named(GraphicRender)
-    // protected readonly contributions: ContributionProvider<IGraphicRender>,
-    @multiInject(GraphicRender) protected readonly contributions: IGraphicRender[],
-    // @inject(RenderSelector) protected readonly renderSelector: IRenderSelector, // 根据图元类型选择对应的renderItem进行渲染
-    @inject(DefaultIncrementalCanvasLineRender) protected readonly lineRender: IGraphicRender, // 默认的lineRender
-    @inject(DefaultIncrementalCanvasAreaRender) protected readonly areaRender: IGraphicRender, // 默认的lineRender
-    // 拦截器
-    @inject(ContributionProvider)
-    @named(DrawItemInterceptor)
-    protected readonly drawItemInterceptorContributions: IContributionProvider<IDrawItemInterceptorContribution>
+    contributions?: IGraphicRender[],
+    lineRender?: IGraphicRender,
+    areaRender?: IGraphicRender,
+    drawItemInterceptorContributions?: IContributionProvider<IDrawItemInterceptorContribution>
   ) {
-    super(contributions, drawItemInterceptorContributions);
+    const defaultContributions = contributions || contributionRegistry.get<IGraphicRender>(GraphicRender);
+    const defaultDrawItemInterceptor =
+      drawItemInterceptorContributions ||
+      ({
+        getContributions: () => contributionRegistry.get<IDrawItemInterceptorContribution>(DrawItemInterceptor)
+      } as IContributionProvider<IDrawItemInterceptorContribution>);
+    super(defaultContributions, defaultDrawItemInterceptor);
+    this.lineRender = lineRender || serviceRegistry.get(LineIncrementalDrawContribution);
+    this.areaRender = areaRender || serviceRegistry.get(AreaIncrementalDrawContribution);
     this.defaultRenderMap.set(this.lineRender.numberType, this.lineRender);
     this.defaultRenderMap.set(this.areaRender.numberType, this.areaRender);
   }

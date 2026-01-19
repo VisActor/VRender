@@ -1,4 +1,3 @@
-import { inject, injectable } from '../../../common/inversify-lite';
 import { wrapCanvas } from '../../../canvas/util';
 import type {
   IGlobal,
@@ -14,9 +13,8 @@ import type {
   LayerMode
 } from '../../../interface';
 import type { IBoundsLike } from '@visactor/vutils';
-import { application } from '../../../application';
+import { vglobal } from '../../../modules';
 
-@injectable()
 export class OffscreenLayerHandlerContribution implements ILayerHandlerContribution {
   declare layer: ILayer;
   declare canvas: ICanvas;
@@ -30,7 +28,7 @@ export class OffscreenLayerHandlerContribution implements ILayerHandlerContribut
   constructor() {
     this.offscreen = true;
     this.type = 'dynamic';
-    this.global = application.global;
+    this.global = vglobal;
   }
 
   setDpr(dpr: number) {

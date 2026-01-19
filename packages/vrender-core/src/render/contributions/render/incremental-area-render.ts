@@ -1,4 +1,3 @@
-import { injectable } from '../../../common/inversify-lite';
 import type {
   IArea,
   IAreaGraphicAttribute,
@@ -21,7 +20,6 @@ import { drawIncrementalAreaSegments } from '../../../common/render-curve';
  * 默认的基于canvas的line渲染器
  * 单例
  */
-@injectable()
 export class DefaultIncrementalCanvasAreaRender extends DefaultCanvasAreaRender implements IGraphicRender {
   declare type: 'area';
   numberType: number = AREA_NUMBER_TYPE;

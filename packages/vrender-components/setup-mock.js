@@ -18,53 +18,8 @@ const {
   Pyramid3d,
   WrapText,
   graphicCreator,
-  arcModule,
-  container,
-  rectModule,
-  lineModule,
-  areaModule,
-  symbolModule,
-  textModule,
-  circleModule,
-  pathModule,
-  richtextModule,
-  polygonModule,
-  isBrowserEnv,
-  imageModule,
-  glyphModule,
-  rect3dModule,
-  arc3dModule,
-  pyramid3dModule
+  isBrowserEnv
 } = require('@visactor/vrender-core');
-const {
-  arc3dCanvasPickModule,
-  arcCanvasPickModule,
-  arcMathPickModule,
-  areaCanvasPickModule,
-  areaMathPickModule,
-  circleCanvasPickModule,
-  circleMathPickModule,
-  glyphCanvasPickModule,
-  glyphMathPickModule,
-  imageCanvasPickModule,
-  imageMathPickModule,
-  lineCanvasPickModule,
-  lineMathPickModule,
-  pathCanvasPickModule,
-  pathMathPickModule,
-  polygonCanvasPickModule,
-  polygonMathPickModule,
-  pyramid3dCanvasPickModule,
-  rect3dCanvasPickModule,
-  rectCanvasPickModule,
-  rectMathPickModule,
-  richTextMathPickModule,
-  richtextCanvasPickModule,
-  symbolCanvasPickModule,
-  symbolMathPickModule,
-  textCanvasPickModule,
-  textMathPickModule
-} = require('@visactor/vrender-kits');
 
 global.__DEV__ = true;
 global.__VERSION__ = true;
@@ -147,50 +102,3 @@ const obj = {
 Object.keys(obj).forEach(k => {
   graphicCreator.RegisterGraphicCreator(k, obj[k]);
 });
-
-const browser = isBrowserEnv();
-
-container.load(arcModule);
-container.load(browser ? arcCanvasPickModule : arcMathPickModule);
-
-container.load(rectModule);
-container.load(browser ? rectCanvasPickModule : rectMathPickModule);
-
-container.load(lineModule);
-container.load(browser ? lineCanvasPickModule : lineMathPickModule);
-
-container.load(areaModule);
-container.load(browser ? areaCanvasPickModule : areaMathPickModule);
-
-container.load(symbolModule);
-container.load(browser ? symbolCanvasPickModule : symbolMathPickModule);
-
-container.load(textModule);
-container.load(browser ? textCanvasPickModule : textMathPickModule);
-
-container.load(circleModule);
-container.load(browser ? circleCanvasPickModule : circleMathPickModule);
-
-container.load(pathModule);
-container.load(browser ? pathCanvasPickModule : pathMathPickModule);
-
-container.load(richtextModule);
-container.load(browser ? richtextCanvasPickModule : richTextMathPickModule);
-
-container.load(polygonModule);
-container.load(browser ? polygonCanvasPickModule : polygonMathPickModule);
-
-container.load(imageModule);
-container.load(browser ? imageCanvasPickModule : imageMathPickModule);
-
-container.load(glyphModule);
-container.load(browser ? glyphCanvasPickModule : glyphMathPickModule);
-
-container.load(rect3dModule);
-container.load(browser ? rect3dCanvasPickModule : rect3dCanvasPickModule);
-
-container.load(arc3dModule);
-container.load(browser ? arc3dCanvasPickModule : arc3dCanvasPickModule);
-
-container.load(pyramid3dModule);
-container.load(browser ? pyramid3dCanvasPickModule : pyramid3dCanvasPickModule);

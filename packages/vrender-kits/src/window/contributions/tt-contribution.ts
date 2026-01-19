@@ -1,12 +1,4 @@
-import {
-  inject,
-  injectable,
-  Generator,
-  BaseWindowHandlerContribution,
-  VGlobal,
-  ContainerModule,
-  WindowHandlerContribution
-} from '@visactor/vrender-core';
+import { Generator, BaseWindowHandlerContribution, vglobal } from '@visactor/vrender-core';
 import type {
   EnvType,
   IGlobal,
@@ -17,7 +9,7 @@ import type {
   IWindowParams
 } from '@visactor/vrender-core';
 import type { IBoundsLike } from '@visactor/vutils';
-import { TTCanvas } from '../../canvas/contributions/tt';
+import { TTCanvas } from '../../canvas/tt';
 
 class MiniAppEventManager {
   addEventListener(type: string, func: EventListenerOrEventListenerObject) {
@@ -47,7 +39,6 @@ class MiniAppEventManager {
   cache: Record<string, { listener: EventListenerOrEventListenerObject[] }> = {};
 }
 
-@injectable()
 export class TTWindowHandlerContribution extends BaseWindowHandlerContribution implements IWindowHandlerContribution {
   static env: EnvType = 'tt';
   type: EnvType = 'tt';
@@ -59,8 +50,11 @@ export class TTWindowHandlerContribution extends BaseWindowHandlerContribution i
     return null;
   }
 
-  constructor(@inject(VGlobal) private readonly global: IGlobal) {
+  private readonly global: IGlobal;
+
+  constructor() {
     super();
+    this.global = vglobal;
   }
 
   getTitle(): string {
@@ -238,10 +232,4 @@ export class TTWindowHandlerContribution extends BaseWindowHandlerContribution i
   }
 }
 
-export const ttWindowModule = new ContainerModule(bind => {
-  // tt
-  bind(TTWindowHandlerContribution).toSelf();
-  bind(WindowHandlerContribution)
-    .toDynamicValue(ctx => ctx.container.get(TTWindowHandlerContribution))
-    .whenTargetNamed(TTWindowHandlerContribution.env);
-});
+// Legacy ContainerModule removed (registry-only)

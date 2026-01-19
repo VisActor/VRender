@@ -1,7 +1,7 @@
-import _roughModule from './render/contributions/rough/module';
+import { registerRoughCanvasRenders as _registerRoughCanvasRenders } from './render/contributions/rough/module';
 // import _canvasModuleLoader from './canvas/contributions/canvas-module';
 
-export const roughModule = _roughModule;
+export const registerRoughCanvasRenders = _registerRoughCanvasRenders;
 export * from './picker/contributions/constants';
 
 export * from './jsx';

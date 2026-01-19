@@ -1,14 +1,4 @@
-import {
-  loadFeishuContributions,
-  createStage,
-  Stage,
-  createCircle,
-  createGroup,
-  createText,
-  createRect
-} from '@visactor/vrender';
-
-loadFeishuContributions();
+import { createStage, Stage, createCircle, createGroup, createText, createRect } from '@visactor/vrender';
 
 export const page = () => {
   const div = document.createElement('div');

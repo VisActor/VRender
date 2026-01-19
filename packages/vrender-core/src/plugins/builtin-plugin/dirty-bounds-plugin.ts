@@ -2,7 +2,7 @@ import type { IAABBBounds } from '@visactor/vutils';
 import { AABBBounds } from '@visactor/vutils';
 import { Generator } from '../../common/generator';
 import type { IGraphic, IStage, IPlugin, IPluginService } from '../../interface';
-import { application } from '../../application';
+import { vglobal } from '../../modules';
 
 const globalBounds = new AABBBounds();
 

@@ -1,33 +1,16 @@
-import { container, ContainerModule, type Container, EnvContribution } from '@visactor/vrender-core';
-import { loadMathPicker } from '../picker/math-module';
+import { EnvContribution, contributionRegistry, WindowHandlerContribution } from '@visactor/vrender-core';
+// import { loadMathPicker } from '../picker/math-module';
 // import { wxEnvModule } from './contributions/module';
-import { wxCanvasModule } from '../canvas/contributions/wx/modules';
-import { wxWindowModule } from '../window/contributions/wx-contribution';
+import { registerWxCanvasFactories } from '../canvas/wx';
+import { WxWindowHandlerContribution } from '../window/contributions/wx-contribution';
 import { WxEnvContribution } from './contributions/wx-contribution';
 
-export const wxEnvModule = new ContainerModule(bind => {
-  // wx
-  if (!(wxEnvModule as any)._isWxBound) {
-    (wxEnvModule as any)._isWxBound = true;
-    bind(WxEnvContribution).toSelf().inSingletonScope();
-    bind(EnvContribution).toService(WxEnvContribution);
-  }
-});
+// Legacy ContainerModule and loaders removed (registry-only)
 
-(wxEnvModule as any)._isWxBound = false;
-
-export function loadWxEnv(container: Container, loadPicker: boolean = true) {
-  if (!loadWxEnv.__loaded) {
-    loadWxEnv.__loaded = true;
-    container.load(wxEnvModule);
-    container.load(wxCanvasModule);
-    container.load(wxWindowModule);
-    loadPicker && loadMathPicker(container);
-  }
-}
-
-loadWxEnv.__loaded = false;
-
-export function initWxEnv() {
-  loadWxEnv(container);
+/** Registry-based registration for wx env/window */
+export function loadWxEnv() {
+  contributionRegistry.register(EnvContribution, new WxEnvContribution());
+  // ensure canvas factories for wx are registered
+  registerWxCanvasFactories();
+  contributionRegistry.register(WindowHandlerContribution, new WxWindowHandlerContribution());
 }

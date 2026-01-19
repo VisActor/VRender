@@ -1,9 +1,7 @@
 import '@visactor/vrender-core';
 import {
-  container,
   isBrowserEnv,
   isNodeEnv,
-  preLoadAllModule,
   registerFlexLayoutPlugin,
   registerViewTransform3dPlugin,
   registerHtmlAttributePlugin,
@@ -11,7 +9,7 @@ import {
   registerDirectionalLight,
   registerOrthoCamera
 } from '@visactor/vrender-core';
-import { loadBrowserEnv, loadNodeEnv, registerStar } from '@visactor/vrender-kits';
+import { registerStar, loadBrowserEnv, loadNodeEnv } from '@visactor/vrender-kits';
 import {
   registerArc,
   registerArc3d,
@@ -36,13 +34,15 @@ import { registerCustomAnimate, registerAnimate } from '@visactor/vrender-animat
 // 导出版本号
 export const version = __VERSION__;
 
-preLoadAllModule();
+// Core is initialized via side-effects and per-package register functions
 
+// Registry-based registration only (drop legacy ContainerModule loaders)
 if (isBrowserEnv()) {
-  loadBrowserEnv(container);
+  loadBrowserEnv();
 } else if (isNodeEnv()) {
-  loadNodeEnv(container);
+  loadNodeEnv();
 }
+
 registerArc();
 registerArc3d();
 registerArea();

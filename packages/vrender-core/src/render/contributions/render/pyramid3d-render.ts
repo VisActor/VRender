@@ -1,4 +1,3 @@
-import { injectable } from '../../../common/inversify-lite';
 import { getTheme } from '../../../graphic/theme';
 import { PYRAMID3D_NUMBER_TYPE } from '../../../graphic/constants';
 import type {
@@ -14,7 +13,6 @@ import type {
 } from '../../../interface';
 import { Base3dRender } from './base-3d-render';
 
-@injectable()
 export class DefaultCanvasPyramid3dRender extends Base3dRender<IPyramid3d> implements IGraphicRender {
   type = 'pyramid3d';
   numberType: number = PYRAMID3D_NUMBER_TYPE;

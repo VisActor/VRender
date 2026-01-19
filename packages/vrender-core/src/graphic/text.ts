@@ -2,7 +2,7 @@ import type { IAABBBounds, IOBBBounds } from '@visactor/vutils';
 import { max, isArray, getContextFont, transformBoundsWithMatrix, rotatePoint } from '@visactor/vutils';
 import { textDrawOffsetX, textLayoutOffsetY } from '../common/text';
 import { CanvasTextLayout } from '../core/contributions/textMeasure/layout';
-import { application } from '../application';
+import { vglobal, graphicService, graphicUtil } from '../modules';
 import type { IText, ITextCache, ITextGraphicAttribute, LayoutItemType, LayoutType } from '../interface';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_ATTR } from './graphic';
 import { getTheme } from './theme';
@@ -181,7 +181,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       this.updateSingallineAABBBounds(text as number | string);
     }
 
-    const { tb1 } = application.graphicService.updateTempAABBBounds(aabbBounds);
+    const { tb1 } = graphicService.updateTempAABBBounds(aabbBounds);
 
     const {
       scaleX = textTheme.scaleX,
@@ -195,10 +195,10 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       aabbBounds.union(tb1);
     }
     // 合并shadowRoot的bounds
-    application.graphicService.combindShadowAABBBounds(aabbBounds, this);
+    graphicService.combindShadowAABBBounds(aabbBounds, this);
 
     if (attribute.forceBoundsHeight != null || attribute.forceBoundsWidth != null) {
-      application.graphicService.updateHTMLTextAABBBounds(attribute, textTheme, aabbBounds);
+      graphicService.updateHTMLTextAABBBounds(attribute, textTheme, aabbBounds);
     }
 
     this.widthWithoutTransform = aabbBounds.x2 - aabbBounds.x1;
@@ -288,7 +288,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       }
       return this._AABBBounds;
     }
-    const textMeasure = application.graphicUtil.getTextMeasureInstance(this.textMeasureId || this.stage?.textMeasureId);
+    const textMeasure = graphicUtil.getTextMeasureInstance(this.textMeasureId || this.stage?.textMeasureId);
     const layoutObj = new CanvasTextLayout(fontFamily, { fontSize, fontWeight, fontFamily, lineHeight }, textMeasure);
     const layoutData = layoutObj.GetLayoutByLines(
       text,
@@ -356,7 +356,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       return this._AABBBounds;
     }
 
-    const textMeasure = application.graphicUtil.getTextMeasureInstance(this.textMeasureId || this.stage?.textMeasureId);
+    const textMeasure = graphicUtil.getTextMeasureInstance(this.textMeasureId || this.stage?.textMeasureId);
     const textOptions = { fontSize, fontWeight, fontFamily, lineHeight };
     const layoutObj = new CanvasTextLayout(fontFamily, textOptions, textMeasure as any);
 
@@ -529,7 +529,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
    */
   updateVerticalMultilineAABBBounds(text: (number | string)[]): IAABBBounds {
     const textTheme = this.getGraphicTheme();
-    const textMeasure = application.graphicUtil.getTextMeasureInstance(this.textMeasureId || this.stage?.textMeasureId);
+    const textMeasure = graphicUtil.getTextMeasureInstance(this.textMeasureId || this.stage?.textMeasureId);
     let width: number;
     const attribute = this.attribute;
     const {

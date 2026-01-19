@@ -1,4 +1,3 @@
-import { injectable } from '../../../common/inversify-lite';
 import type {
   IContext2d,
   ILine,
@@ -21,7 +20,6 @@ import { drawIncrementalSegments } from '../../../common/render-curve';
  * 默认的基于canvas的line渲染器
  * 单例
  */
-@injectable()
 export class DefaultIncrementalCanvasLineRender extends DefaultCanvasLineRender implements IGraphicRender {
   declare type: 'line';
   numberType: number = LINE_NUMBER_TYPE;

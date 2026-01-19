@@ -20,7 +20,7 @@ import type {
   ITextGraphicAttribute,
   Releaseable
 } from '../interface';
-import { application } from '../application';
+import { vglobal, graphicService } from '../modules';
 
 export abstract class DefaultGraphicAllocate<T extends IGraphic, IGraphicAttribute>
   implements IAllocate<T>, Releaseable
@@ -42,7 +42,7 @@ export abstract class DefaultGraphicAllocate<T extends IGraphic, IGraphicAttribu
 export class DefaultRectAllocate extends DefaultGraphicAllocate<IRect, IRectGraphicAttribute> {
   allocate(attribute: IRectGraphicAttribute): IRect {
     if (!this.pools.length) {
-      return application.graphicService.creator.rect(attribute);
+      return graphicService.creator.rect(attribute);
     }
     const g = this.pools.pop();
     g.initAttributes(attribute);
@@ -51,7 +51,7 @@ export class DefaultRectAllocate extends DefaultGraphicAllocate<IRect, IRectGrap
 
   allocateByObj(rect: IRect): IRect {
     if (!this.pools.length) {
-      return application.graphicService.creator.rect(rect.attribute);
+      return graphicService.creator.rect(rect.attribute);
     }
     const g = this.pools.pop();
     g.initAttributes(rect.attribute);
@@ -63,7 +63,7 @@ export const defaultRectAllocate = new DefaultRectAllocate();
 export class DefaultArcAllocate extends DefaultGraphicAllocate<IArc, IArcGraphicAttribute> {
   allocate(attribute: IArcGraphicAttribute): IArc {
     if (!this.pools.length) {
-      return application.graphicService.creator.arc(attribute);
+      return graphicService.creator.arc(attribute);
     }
     const g = this.pools.pop();
     g.initAttributes(attribute);
@@ -72,7 +72,7 @@ export class DefaultArcAllocate extends DefaultGraphicAllocate<IArc, IArcGraphic
 
   allocateByObj(arc: IArc): IArc {
     if (!this.pools.length) {
-      return application.graphicService.creator.arc(arc.attribute);
+      return graphicService.creator.arc(arc.attribute);
     }
     const g = this.pools.pop();
     g.initAttributes(arc.attribute);
@@ -85,7 +85,7 @@ export const defaultArcAllocate = new DefaultArcAllocate();
 export class DefaultAreaAllocate extends DefaultGraphicAllocate<IArea, IAreaGraphicAttribute> {
   allocate(attribute: IAreaGraphicAttribute): IArea {
     if (!this.pools.length) {
-      return application.graphicService.creator.area(attribute);
+      return graphicService.creator.area(attribute);
     }
     const g = this.pools.pop();
     g.initAttributes(attribute);
@@ -94,7 +94,7 @@ export class DefaultAreaAllocate extends DefaultGraphicAllocate<IArea, IAreaGrap
 
   allocateByObj(area: IArea): IArea {
     if (!this.pools.length) {
-      return application.graphicService.creator.area(area.attribute);
+      return graphicService.creator.area(area.attribute);
     }
     const g = this.pools.pop();
     g.initAttributes(area.attribute);
@@ -107,7 +107,7 @@ export const defaultAreaAllocate = new DefaultAreaAllocate();
 export class DefaultCircleAllocate extends DefaultGraphicAllocate<ICircle, ICircleGraphicAttribute> {
   allocate(attribute: ICircleGraphicAttribute): ICircle {
     if (!this.pools.length) {
-      return application.graphicService.creator.circle(attribute);
+      return graphicService.creator.circle(attribute);
     }
     const g = this.pools.pop();
     g.initAttributes(attribute);
@@ -116,7 +116,7 @@ export class DefaultCircleAllocate extends DefaultGraphicAllocate<ICircle, ICirc
 
   allocateByObj(area: ICircle): ICircle {
     if (!this.pools.length) {
-      return application.graphicService.creator.circle(area.attribute);
+      return graphicService.creator.circle(area.attribute);
     }
     const g = this.pools.pop();
     g.initAttributes(area.attribute);
@@ -129,7 +129,7 @@ export const defaultCircleAllocate = new DefaultCircleAllocate();
 export class DefaultLineAllocate extends DefaultGraphicAllocate<ILine, ILineGraphicAttribute> {
   allocate(attribute: ILineGraphicAttribute): ILine {
     if (!this.pools.length) {
-      return application.graphicService.creator.line(attribute);
+      return graphicService.creator.line(attribute);
     }
     const g = this.pools.pop();
     g.initAttributes(attribute);
@@ -138,7 +138,7 @@ export class DefaultLineAllocate extends DefaultGraphicAllocate<ILine, ILineGrap
 
   allocateByObj(line: ILine): ILine {
     if (!this.pools.length) {
-      return application.graphicService.creator.line(line.attribute);
+      return graphicService.creator.line(line.attribute);
     }
     const g = this.pools.pop();
     g.initAttributes(line.attribute);
@@ -151,7 +151,7 @@ export const defaultLineAllocate = new DefaultLineAllocate();
 export class DefaultPathAllocate extends DefaultGraphicAllocate<IPath, IPathGraphicAttribute> {
   allocate(attribute: IPathGraphicAttribute): IPath {
     if (!this.pools.length) {
-      return application.graphicService.creator.path(attribute);
+      return graphicService.creator.path(attribute);
     }
     const g = this.pools.pop();
     g.initAttributes(attribute);
@@ -160,7 +160,7 @@ export class DefaultPathAllocate extends DefaultGraphicAllocate<IPath, IPathGrap
 
   allocateByObj(path: IPath): IPath {
     if (!this.pools.length) {
-      return application.graphicService.creator.path(path.attribute);
+      return graphicService.creator.path(path.attribute);
     }
     const g = this.pools.pop();
     g.initAttributes(path.attribute);
@@ -173,7 +173,7 @@ export const defaultPathAllocate = new DefaultPathAllocate();
 export class DefaultSymbolAllocate extends DefaultGraphicAllocate<ISymbol, ISymbolGraphicAttribute> {
   allocate(attribute: ISymbolGraphicAttribute): ISymbol {
     if (!this.pools.length) {
-      return application.graphicService.creator.symbol(attribute);
+      return graphicService.creator.symbol(attribute);
     }
     const g = this.pools.pop();
     g.initAttributes(attribute);
@@ -182,7 +182,7 @@ export class DefaultSymbolAllocate extends DefaultGraphicAllocate<ISymbol, ISymb
 
   allocateByObj(symbol: ISymbol): ISymbol {
     if (!this.pools.length) {
-      return application.graphicService.creator.symbol(symbol.attribute);
+      return graphicService.creator.symbol(symbol.attribute);
     }
     const g = this.pools.pop();
     g.initAttributes(symbol.attribute);
@@ -195,7 +195,7 @@ export const defaultSymbolAllocate = new DefaultSymbolAllocate();
 export class DefaultTextAllocate extends DefaultGraphicAllocate<IText, ITextGraphicAttribute> {
   allocate(attribute: ITextGraphicAttribute): IText {
     if (!this.pools.length) {
-      return application.graphicService.creator.text(attribute);
+      return graphicService.creator.text(attribute);
     }
     const g = this.pools.pop();
     g.initAttributes(attribute);
@@ -204,7 +204,7 @@ export class DefaultTextAllocate extends DefaultGraphicAllocate<IText, ITextGrap
 
   allocateByObj(text: IText): IText {
     if (!this.pools.length) {
-      return application.graphicService.creator.text(text.attribute);
+      return graphicService.creator.text(text.attribute);
     }
     const g = this.pools.pop();
     g.initAttributes(text.attribute);

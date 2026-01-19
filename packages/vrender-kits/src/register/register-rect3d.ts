@@ -1,6 +1,11 @@
-import { container, rect3dModule, registerRect3dGraphic } from '@visactor/vrender-core';
+import {
+  contributionRegistry,
+  DefaultCanvasRect3dRender,
+  GraphicRender,
+  registerRect3dGraphic
+} from '@visactor/vrender-core';
 import { browser } from './env';
-import { rect3dCanvasPickModule } from '../picker/contributions/canvas-picker/rect3d-module';
+import { registerCanvasRect3dPicker } from '../picker/contributions/canvas-picker/rect3d-module';
 
 function _registerRect3d() {
   if (_registerRect3d.__loaded) {
@@ -8,8 +13,11 @@ function _registerRect3d() {
   }
   _registerRect3d.__loaded = true;
   registerRect3dGraphic();
-  container.load(rect3dModule);
-  container.load(browser ? rect3dCanvasPickModule : rect3dCanvasPickModule);
+  if (browser) {
+    registerCanvasRect3dPicker();
+  }
+
+  contributionRegistry.register(GraphicRender, new DefaultCanvasRect3dRender());
 }
 
 _registerRect3d.__loaded = false;

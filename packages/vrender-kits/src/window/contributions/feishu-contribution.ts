@@ -1,12 +1,4 @@
-import {
-  inject,
-  injectable,
-  Generator,
-  BaseWindowHandlerContribution,
-  VGlobal,
-  ContainerModule,
-  WindowHandlerContribution
-} from '@visactor/vrender-core';
+import { Generator, BaseWindowHandlerContribution, vglobal } from '@visactor/vrender-core';
 import type {
   EnvType,
   IGlobal,
@@ -17,7 +9,7 @@ import type {
   IWindowParams
 } from '@visactor/vrender-core';
 import type { IBoundsLike } from '@visactor/vutils';
-import { FeishuCanvas } from '../../canvas/contributions/feishu';
+import { FeishuCanvas } from '../../canvas/feishu';
 
 class MiniAppEventManager {
   addEventListener(type: string, func: EventListenerOrEventListenerObject) {
@@ -47,7 +39,6 @@ class MiniAppEventManager {
   cache: Record<string, { listener: EventListenerOrEventListenerObject[] }> = {};
 }
 
-@injectable()
 export class FeishuWindowHandlerContribution
   extends BaseWindowHandlerContribution
   implements IWindowHandlerContribution
@@ -62,8 +53,11 @@ export class FeishuWindowHandlerContribution
     return null;
   }
 
-  constructor(@inject(VGlobal) private readonly global: IGlobal) {
+  private readonly global: IGlobal;
+
+  constructor() {
     super();
+    this.global = vglobal;
   }
 
   getTitle(): string {
@@ -241,10 +235,4 @@ export class FeishuWindowHandlerContribution
   }
 }
 
-export const feishuWindowModule = new ContainerModule(bind => {
-  // feishu
-  bind(FeishuWindowHandlerContribution).toSelf();
-  bind(WindowHandlerContribution)
-    .toDynamicValue(ctx => ctx.container.get(FeishuWindowHandlerContribution))
-    .whenTargetNamed(FeishuWindowHandlerContribution.env);
-});
+// Legacy ContainerModule removed (registry-only)

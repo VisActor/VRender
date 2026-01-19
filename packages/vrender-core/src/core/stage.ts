@@ -31,7 +31,6 @@ import type {
 import { VWindow } from './window';
 import type { Layer } from './layer';
 import { EventSystem } from '../event';
-import { container } from '../container';
 import { RenderService } from '../render/constants';
 import { Group } from '../graphic/group';
 import { Theme } from '../graphic/theme';
@@ -43,10 +42,11 @@ import { IncrementalAutoRenderPlugin } from '../plugins/builtin-plugin/increment
 import { DirtyBoundsPlugin } from '../plugins/builtin-plugin/dirty-bounds-plugin';
 import { SyncHook } from '../tapable';
 import { LayerService } from './constants';
-import { application } from '../application';
 import { isBrowserEnv } from '../env-check';
 import { Factory } from '../factory';
-import { Graphic, GraphicService } from '../graphic';
+import { GraphicService } from '../graphic';
+import { serviceRegistry } from '../common/registry';
+import { VGlobal } from '../constants';
 
 const DefaultConfig = {
   WIDTH: 500,
@@ -241,16 +241,16 @@ export class Stage extends Group implements IStage {
       afterClearScreen: new SyncHook(['stage']),
       afterClearRect: new SyncHook(['stage'])
     };
-    this.global = application.global;
+    this.global = serviceRegistry.get<IGlobal>(VGlobal);
     if (!this.global.env && isBrowserEnv()) {
       // 如果是浏览器环境，默认设置env
       this.global.setEnv('browser');
     }
-    this.window = container.get<IWindow>(VWindow);
-    this.renderService = container.get<IRenderService>(RenderService);
-    this.pluginService = container.get<IPluginService>(PluginService);
-    this.layerService = container.get<ILayerService>(LayerService);
-    this.graphicService = container.get<IGraphicService>(GraphicService);
+    this.window = serviceRegistry.createInstance<IWindow>(VWindow);
+    this.renderService = serviceRegistry.createInstance<IRenderService>(RenderService);
+    this.pluginService = serviceRegistry.createInstance<IPluginService>(PluginService);
+    this.layerService = serviceRegistry.get<ILayerService>(LayerService);
+    this.graphicService = serviceRegistry.get<IGraphicService>(GraphicService);
     this.pluginService.active(this, params);
     this._beforeRenderList = [];
     this._afterRenderList = [];
@@ -1105,7 +1105,7 @@ export class Stage extends Group implements IStage {
     if (this.releaseStatus === 'released') {
       return;
     }
-    const window = container.get<IWindow>(VWindow);
+    const window = serviceRegistry.createInstance<IWindow>(VWindow);
     const x1 = viewBox ? -viewBox.x1 : 0;
     const y1 = viewBox ? -viewBox.y1 : 0;
     const x2 = viewBox ? viewBox.x2 : this.viewWidth;
@@ -1174,7 +1174,7 @@ export class Stage extends Group implements IStage {
 
   getPickerService() {
     if (!this.pickerService) {
-      this.pickerService = container.get<IPickerService>(PickerService);
+      this.pickerService = serviceRegistry.get<IPickerService>(PickerService);
     }
     return this.pickerService;
   }

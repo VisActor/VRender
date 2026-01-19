@@ -1,14 +1,12 @@
-import { ContainerModule } from '@visactor/vrender-core';
-import { MathImagePicker } from '../constants';
-import { DefaultMathImagePicker } from './image-picker';
+import { contributionRegistry } from '@visactor/vrender-core';
+import { MathPickerContribution } from '../constants';
+import { DefaultMathRichTextPicker } from './richtext-picker';
 
-let loadRichTextPick = false;
-export const richTextMathPickModule = new ContainerModule((bind, unbind, isBound, rebind) => {
-  if (loadRichTextPick) {
+let _registered = false;
+export function registerMathRichTextPicker() {
+  if (_registered) {
     return;
   }
-  loadRichTextPick = true;
-  // glyph picker
-  bind(MathImagePicker).to(DefaultMathImagePicker).inSingletonScope();
-  bind(DefaultMathImagePicker).toService(MathImagePicker);
-});
+  _registered = true;
+  contributionRegistry.register(MathPickerContribution, new DefaultMathRichTextPicker());
+}

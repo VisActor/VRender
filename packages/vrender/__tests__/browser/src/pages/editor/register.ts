@@ -1,11 +1,9 @@
-import { container, AutoEnablePlugins, ContainerModule } from '@visactor/vrender';
+import { application, AutoEnablePlugins } from '@visactor/vrender';
 import { DraggablePlugin } from './draggable-plugin';
 
-export const editableModule = new ContainerModule(bind => {
-  bind(DraggablePlugin).toSelf().inSingletonScope();
-  bind(AutoEnablePlugins).toService(DraggablePlugin);
-});
-
+let _registered = false;
 export function loadEditable() {
-  container.load(editableModule);
+  if (_registered) return;
+  _registered = true;
+  application.contributions.register(AutoEnablePlugins, new DraggablePlugin());
 }

@@ -1,6 +1,5 @@
 import type { AABBBounds, IBoundsLike } from '@visactor/vutils';
-import { application } from '../application';
-import { container } from '../container';
+import { vglobal, layerService } from '../modules';
 import type {
   IDrawToParams,
   IGraphic,
@@ -139,7 +138,7 @@ export class Layer extends Group implements ILayer {
     }
     subLayers.forEach(l => {
       // l.layer.release();
-      application.layerService.releaseLayer(this.stage, l.layer);
+      layerService.releaseLayer(this.stage, l.layer);
     });
     this.subLayers.clear();
   }
@@ -231,7 +230,7 @@ export class Layer extends Group implements ILayer {
     if (this.subLayers) {
       this.subLayers.forEach(l => {
         // l.layer.release();
-        application.layerService.releaseLayer(this.stage, l.layer);
+        layerService.releaseLayer(this.stage, l.layer);
       });
     }
   }

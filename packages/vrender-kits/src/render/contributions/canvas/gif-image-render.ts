@@ -1,6 +1,5 @@
 import type {
   IContext2d,
-  IContributionProvider,
   IDrawContext,
   IGraphicAttribute,
   IGraphicRender,
@@ -12,32 +11,21 @@ import type {
 } from '@visactor/vrender-core';
 import {
   BaseRenderContributionTime,
-  ContributionProvider,
   DefaultCanvasImageRender,
   DefaultRectRenderContribution,
-  getTheme,
-  ImageRenderContribution,
-  inject,
-  injectable,
-  named
+  getTheme
 } from '@visactor/vrender-core';
 import { GIFIMAGE_NUMBER_TYPE } from '../../../graphic/constants';
 import type { IGifImage } from '../../../interface/gif-image';
 
-@injectable()
 export class DefaultCanvasGifImageRender extends DefaultCanvasImageRender implements IGraphicRender {
   type: 'image';
   numberType: number = GIFIMAGE_NUMBER_TYPE;
 
-  constructor(
-    @inject(ContributionProvider)
-    @named(ImageRenderContribution)
-    protected readonly imageRenderContribitions: IContributionProvider<IImageRenderContribution>
-  ) {
-    super(imageRenderContribitions);
+  constructor() {
+    super();
     this._renderContribitions = undefined;
     this.builtinContributions = [defaultGifImageRenderContribution];
-    this.init(imageRenderContribitions);
   }
 
   drawShape(
@@ -58,7 +46,6 @@ export class DefaultCanvasGifImageRender extends DefaultCanvasImageRender implem
       themeAttribute: IThemeAttribute
     ) => boolean
   ) {
-    // const imageAttribute = graphicService.themeService.getCurrentTheme().imageAttribute;
     const imageAttribute = getTheme(image).image;
     const {
       x: originX = imageAttribute.x,
@@ -72,7 +59,6 @@ export class DefaultCanvasGifImageRender extends DefaultCanvasImageRender implem
     }
     const { fVisible, sVisible, doFill, doStroke } = data;
 
-    // deal with cornerRadius
     const needRestore = true;
 
     const _runFill = () => {

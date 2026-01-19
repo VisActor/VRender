@@ -1,7 +1,7 @@
 import type { IAABBBounds, Matrix } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports
 import { Point } from '@visactor/vutils';
-import { application } from '../application';
+import { vglobal, graphicService } from '../modules';
 import type {
   IStage,
   GraphicAttributeMap,
@@ -206,9 +206,9 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
       const { scrollX = 0, scrollY = 0 } = attribute;
       aabbBounds.translate(scrollX, scrollY);
     }
-    application.graphicService.updateTempAABBBounds(aabbBounds);
+    graphicService.updateTempAABBBounds(aabbBounds);
 
-    application.graphicService.transformAABBBounds(attribute, aabbBounds, groupTheme, false, this);
+    graphicService.transformAABBBounds(attribute, aabbBounds, groupTheme, false, this);
 
     originalAABBBounds.copy(aabbBounds);
     return originalAABBBounds;
@@ -399,7 +399,7 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
     if (graphic) {
       graphic.setAttributes(attributes);
     } else {
-      graphic = application.graphicService.creator[graphicType](attributes as any);
+      graphic = graphicService.creator[graphicType](attributes as any);
       graphic.name = graphicName;
       this.add(graphic);
     }

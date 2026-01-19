@@ -1,13 +1,12 @@
-import { ContainerModule } from '@visactor/vrender-core';
-import { CanvasLinePicker, CanvasPickerContribution } from '../constants';
+import { contributionRegistry } from '@visactor/vrender-core';
+import { CanvasPickerContribution } from '../constants';
 import { DefaultCanvasLinePicker } from './line-picker';
 
-let loadLinePick = false;
-export const lineCanvasPickModule = new ContainerModule((bind, unbind, isBound, rebind) => {
-  if (loadLinePick) {
+let _registered = false;
+export function registerCanvasLinePicker() {
+  if (_registered) {
     return;
   }
-  loadLinePick = true;
-  bind(CanvasLinePicker).to(DefaultCanvasLinePicker).inSingletonScope();
-  bind(CanvasPickerContribution).toService(CanvasLinePicker);
-});
+  _registered = true;
+  contributionRegistry.register(CanvasPickerContribution, new DefaultCanvasLinePicker());
+}

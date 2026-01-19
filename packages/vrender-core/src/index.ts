@@ -1,10 +1,10 @@
 // import 'core-js/proposals/reflect-metadata';
+
+// 必须在所有其他导出之前加载，确保服务注册表被初始化
 import './modules';
 
-export * from './container';
 export * from './core/global';
 export * from './graphic';
-export * from './modules';
 export * from './create';
 export * from './event';
 export * from './interface';
@@ -28,7 +28,6 @@ export * from './common/seg-context';
 export * from './common/custom-path2d';
 export * from './common/segment';
 export * from './common/canvas-utils';
-export * from './common/contribution-provider';
 export * from './common/generator';
 export * from './common/utils';
 export * from './common/shape/arc';
@@ -53,31 +52,14 @@ export * from './plugins/builtin-plugin/richtext-edit-plugin';
 export * from './allocator/matrix-allocate';
 export * from './allocator/canvas-allocate';
 export * from './allocator/graphic-allocate';
-export * from './common/contribution-provider';
 
 export { wrapCanvas, wrapContext } from './canvas/util';
 export * from './common/xml';
-export * from './common/inversify-lite';
 export * from './constants';
-export * from './application';
 export * from './env-check';
-
-export * from './render/contributions/render/arc-module';
-export * from './render/contributions/render/rect-module';
-export * from './render/contributions/render/line-module';
-export * from './render/contributions/render/area-module';
-export * from './render/contributions/render/symbol-module';
-export * from './render/contributions/render/circle-module';
-export * from './render/contributions/render/text-module';
-export * from './render/contributions/render/path-module';
-export * from './render/contributions/render/polygon-module';
-export * from './render/contributions/render/star-module';
-export * from './render/contributions/render/glyph-module';
-export * from './render/contributions/render/richtext-module';
-export * from './render/contributions/render/image-module';
-export * from './render/contributions/render/rect3d-module';
-export * from './render/contributions/render/arc3d-module';
-export * from './render/contributions/render/pyramid3d-module';
+export * from './common/registry'; // 导出 registry
+export { vglobal, graphicService, graphicUtil, transformUtil, layerService } from './modules'; // 导出全局服务
+export { serviceRegistry, contributionRegistry } from './common/registry'; // 导出注册表以供测试使用
 
 export * from './register/register-arc';
 export * from './register/register-arc3d';
@@ -106,11 +88,3 @@ export * from './plugins/builtin-plugin/3dview-transform-plugin';
 export * from './plugins/builtin-plugin/flex-layout-plugin';
 
 export * from './plugins/builtin-plugin/edit-module';
-
-// export const morphPath = {};
-// export const multiToOneMorph = {};
-// export const oneToMultiMorph = {};
-// export class ACustomAnimate {}
-// export const AnimateGroup = {};
-// export const Animate = {};
-// export const defaultTicker = {};

@@ -1,10 +1,10 @@
 import {
-  inject,
-  injectable,
+  serviceRegistry,
   SymbolRender,
   mat4Allocate,
   getScaledStroke,
-  SYMBOL_NUMBER_TYPE
+  SYMBOL_NUMBER_TYPE,
+  contributionRegistry
 } from '@visactor/vrender-core';
 import type { IPoint } from '@visactor/vutils';
 import type {
@@ -19,13 +19,17 @@ import type {
 } from '@visactor/vrender-core';
 import { Base3dPicker } from '../common/base-3d-picker';
 
-@injectable()
 export class DefaultCanvasSymbolPicker extends Base3dPicker<ISymbol> implements IGraphicPicker {
   type: string = 'symbol';
   numberType: number = SYMBOL_NUMBER_TYPE;
 
-  constructor(@inject(SymbolRender) public readonly canvasRenderer: IGraphicRender) {
+  constructor() {
     super();
+    try {
+      this.canvasRenderer = serviceRegistry.get(SymbolRender);
+    } catch (_) {
+      this.canvasRenderer = contributionRegistry.get<IGraphicRender>(SymbolRender)[0];
+    }
   }
 
   contains(symbol: ISymbol, point: IPoint, params?: IPickParams): boolean {

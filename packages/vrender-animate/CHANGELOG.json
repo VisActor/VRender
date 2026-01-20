@@ -2,6 +2,18 @@
   "name": "@visactor/vrender-animate",
   "entries": [
     {
+      "version": "1.0.38",
+      "tag": "@visactor/vrender-animate_v1.0.38",
+      "date": "Tue, 20 Jan 2026 06:20:16 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix issue of textMeasure\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.0.37",
       "tag": "@visactor/vrender-animate_v1.0.37",
       "date": "Tue, 06 Jan 2026 10:04:10 GMT",

@@ -237,6 +237,7 @@ export class BrowserContext2d implements IContext2d {
       this.reset();
     } else {
       this.nativeContext.restore();
+      this._font = '';
     }
   }
 

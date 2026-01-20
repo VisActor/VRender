@@ -1,5 +1,11 @@
 import type { ComponentAnimator } from '../component';
-import type { EasingType, IAnimateStepType, ICustomAnimate, Stage } from '@visactor/vrender-core';
+import {
+  AnimateStatus,
+  type EasingType,
+  type IAnimateStepType,
+  type ICustomAnimate,
+  type Stage
+} from '@visactor/vrender-core';
 import { Step } from '../step';
 
 export abstract class ACustomAnimate<T> extends Step implements ICustomAnimate {
@@ -56,6 +62,7 @@ export abstract class AComponentAnimate<T> extends ACustomAnimate<T> {
 export abstract class AStageAnimate<T> extends ACustomAnimate<T> {
   willCallBeforeStageRender: boolean = true;
   willCallAfterStageRender: boolean = true;
+  checkStatusAfterRender: boolean = true;
   constructor(customFrom: T, customTo: T, duration: number, easing: EasingType, params?: any) {
     super(customFrom, customTo, duration, easing, params);
     this.props = {} as T;
@@ -113,6 +120,10 @@ export abstract class AStageAnimate<T> extends ACustomAnimate<T> {
     const outputCanvas = this.afterStageRender(stage, canvas);
     if (outputCanvas) {
       this.renderToStage(stage, outputCanvas);
+    }
+    // 检查是否需要移除动画
+    if (this.checkStatusAfterRender && this.animate.status === AnimateStatus.END) {
+      this.animate.timeline.removeAnimate(this.animate);
     }
   };
 

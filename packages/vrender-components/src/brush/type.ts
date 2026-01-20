@@ -1,7 +1,16 @@
-import type { GraphicEventType, IGroupGraphicAttribute, IPolygonGraphicAttribute } from '@visactor/vrender-core';
+import type {
+  FederatedPointerEvent,
+  GraphicEventType,
+  IGroupGraphicAttribute,
+  IPolygonGraphicAttribute
+} from '@visactor/vrender-core';
 import type { IDelayType } from '../interface';
 
 export interface BrushAttributes extends IGroupGraphicAttribute {
+  /**
+   * 是否禁止交互，默认为 true
+   */
+  interactive?: boolean;
   /**
    * 触发框选的事件名称
    */
@@ -82,6 +91,10 @@ export interface BrushAttributes extends IGroupGraphicAttribute {
    * @default false
    */
   disableTriggerEvent?: boolean;
+  /**
+   * 框选前触发事件
+   */
+  beforeBrushChange?: (e: FederatedPointerEvent) => void | boolean;
 }
 
 export type IBrushType = 'x' | 'y' | 'rect' | 'polygon';

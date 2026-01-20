@@ -3,7 +3,7 @@
   "version": "1.0.37",
   "description": "",
   "sideEffects": false,
-  "main": "cjs/index.js",
+  "main": "cjs/index-node.js",
   "module": "es/index.js",
   "types": "es/index.d.ts",
   "files": [
@@ -70,7 +70,7 @@
   "exports": {
     ".": {
       "import": "./es/index.js",
-      "require": "./cjs/index.js"
+      "require": "./cjs/index-node.js"
     }
   }
 }

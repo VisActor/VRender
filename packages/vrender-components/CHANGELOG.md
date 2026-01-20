@@ -1,6 +1,17 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Tue, 06 Jan 2026 10:04:10 GMT and should not be manually modified.
+This log was last generated on Tue, 20 Jan 2026 06:20:16 GMT and should not be manually modified.
+
+## 1.0.38
+Tue, 20 Jan 2026 06:20:16 GMT
+
+### Updates
+
+- feat: add before change api for brush
+- feat: add interactive config
+- fix: fix issue of textMeasure
+
+
 
 ## 1.0.37
 Tue, 06 Jan 2026 10:04:10 GMT

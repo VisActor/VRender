@@ -2,6 +2,18 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "1.0.39",
+      "tag": "@visactor/vrender-components_v1.0.39",
+      "date": "Wed, 21 Jan 2026 11:25:01 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: support minSliderSize in scrollBar\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.0.38",
       "tag": "@visactor/vrender-components_v1.0.38",
       "date": "Tue, 20 Jan 2026 06:20:16 GMT",

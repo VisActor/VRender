@@ -27,6 +27,10 @@ export interface ScrollBarAttributes extends IGroupGraphicAttribute {
    * 滚动条内边距，影响滑轨的实际可用空间 [top, right, bottom, left]
    */
   padding?: Padding;
+  /**
+   * 滑块最小展示尺寸，单位像素。仅影响视觉大小，不改变 range 表示的内容比例。
+   */
+  minSliderSize?: number;
   /** 滑块当前的可视范围，数值为 0 - 1 */
   range: [number, number];
   /**

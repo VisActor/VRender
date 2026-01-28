@@ -36,6 +36,7 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
     direction: 'horizontal',
     round: true,
     sliderSize: 20,
+    minSliderSize: 0,
     sliderStyle: {
       fill: 'rgba(0, 0, 0, .5)'
     },
@@ -267,15 +268,23 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
     return 0;
   }
 
-  // 计算滑块在轨道的位置
+  /**
+   * 计算滑块在轨道的位置（像素），应用最小展示尺寸但不改变 range 语义
+   */
   private _getSliderPos(range: [number, number]) {
-    const { direction } = this.attribute as ScrollBarAttributes;
+    const { direction, minSliderSize = 0 } = this.attribute as ScrollBarAttributes;
     const { width, height, x1, y1 } = this.getSliderRenderBounds();
-
-    if (direction === 'horizontal') {
-      return [width * range[0] + x1, width * range[1] + x1];
-    }
-    return [height * range[0] + y1, height * range[1] + y1];
+    const track = direction === 'horizontal' ? width : height;
+    const origin = direction === 'horizontal' ? x1 : y1;
+    const start = clamp(range[0], 0, 1);
+    const end = clamp(range[1], 0, 1);
+    const ratio = clamp(end - start, 0, 1);
+    const L = Math.max(ratio * track, minSliderSize);
+    const T = Math.max(track - L, 0);
+    const denom = Math.max(1 - ratio, 1e-12);
+    const pStart = origin + (start / denom) * T;
+    const pEnd = pStart + L;
+    return [pStart, pEnd];
   }
 
   private _getScrollRange() {
@@ -349,24 +358,37 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
     });
   };
 
+  /**
+   * 将拖拽像素位移映射为逻辑 range 增量，保证最小尺寸下仍覆盖 [0,1]
+   */
   private _computeScrollValue = (e: any) => {
     const { direction } = this.attribute as ScrollBarAttributes;
     const { x, y } = this.stage.eventPointTransform(e);
 
-    let currentScrollValue;
+    let currentScrollValue = 0;
     let currentPos;
     let delta = 0;
 
     const { width, height } = this.getSliderRenderBounds();
+    const track = direction === 'vertical' ? height : width;
+    const travel = Math.max(track - this._sliderSize, 0);
+    const { range } = this.attribute as ScrollBarAttributes;
+    const ratio = clamp(range[1] - range[0], 0, 1);
+
     if (direction === 'vertical') {
       currentPos = y;
       delta = currentPos - this._prePos;
-      currentScrollValue = delta / height;
     } else {
       currentPos = x;
       delta = currentPos - this._prePos;
-      currentScrollValue = delta / width;
     }
+
+    if (travel > 0 && ratio < 1) {
+      currentScrollValue = (delta / travel) * (1 - ratio);
+    } else {
+      currentScrollValue = 0;
+    }
+
     return [currentPos, currentScrollValue];
   };
 

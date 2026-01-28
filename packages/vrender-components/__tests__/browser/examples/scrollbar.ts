@@ -13,10 +13,11 @@ export function run() {
     height: 12,
     padding: [2, 0],
     realTime: false,
+    minSliderSize: 20,
     railStyle: {
       fill: 'rgba(0, 0, 0, .1)'
     },
-    range: [0, 0.05],
+    range: [0, 0.0001],
     delayTime: 0
     // scrollRange: [0.4, 0.8]
   });
@@ -30,6 +31,7 @@ export function run() {
     height: 500,
     padding: [0, 2],
     delayTime: 0,
+    // minSliderSize: 20,
     railStyle: {
       fill: 'rgba(0, 0, 0, .1)'
       //
@@ -49,7 +51,7 @@ export function run() {
   });
 
   for (let j = 0; j < 10; j++) {
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 1000; i++) {
       let fill = 'green';
       if (i > 6) {
         fill = 'orange';
@@ -73,32 +75,32 @@ export function run() {
     }
   }
 
-  const stage = render([group], 'main');
+  const stage = render([group, hScrollBar, vScrollBar], 'main');
   window.stage = stage;
-  hScrollBar.addEventListener('mouseenter', e => {
-    console.log('abc');
-    hScrollBar.setAttributes({ visible: true });
-    hScrollBar.showAll();
-  });
-  hScrollBar.addEventListener('mouseleave', e => {
-    console.log('def');
-    hScrollBar.setAttributes({ visibleAll: false });
-    hScrollBar.hideAll();
-  });
+  // hScrollBar.addEventListener('mouseenter', e => {
+  //   console.log('abc');
+  //   hScrollBar.setAttributes({ visible: true });
+  //   hScrollBar.showAll();
+  // });
+  // hScrollBar.addEventListener('mouseleave', e => {
+  //   console.log('def');
+  //   hScrollBar.setAttributes({ visibleAll: false });
+  //   hScrollBar.hideAll();
+  // });
 
-  hScrollBar.addEventListener('scrollDown', e => {
-    console.log('hScrollBar', e.detail);
-  });
+  // hScrollBar.addEventListener('scrollDown', e => {
+  //   console.log('hScrollBar', e.detail);
+  // });
 
-  vScrollBar.addEventListener('scrollDown', e => {
-    console.log('vScrollBar', e.detail);
-  });
+  // vScrollBar.addEventListener('scrollDown', e => {
+  //   console.log('vScrollBar', e.detail);
+  // });
 
-  hScrollBar.addEventListener('scroll', e => {
-    console.log('hScrollBar', e.detail.value);
-  });
+  // hScrollBar.addEventListener('scroll', e => {
+  //   console.log('hScrollBar', e.detail.value);
+  // });
 
-  vScrollBar.addEventListener('scroll', e => {
-    console.log('vScrollBar', e.detail.value);
-  });
+  // vScrollBar.addEventListener('scroll', e => {
+  //   console.log('vScrollBar', e.detail.value);
+  // });
 }

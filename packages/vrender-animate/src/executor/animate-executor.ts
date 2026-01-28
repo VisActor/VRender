@@ -358,6 +358,9 @@ export class AnimateExecutor implements IAnimateExecutor {
       }
       from = parsedFromProps.from;
     }
+    if (parsedFromProps.attrOutChannel) {
+      graphic.setAttributes(parsedFromProps.attrOutChannel);
+    }
 
     this._handleRunAnimate(
       animate,
@@ -559,6 +562,9 @@ export class AnimateExecutor implements IAnimateExecutor {
         }
         from = parsedFromProps.from;
       }
+      if (parsedFromProps.attrOutChannel) {
+        graphic.setAttributes(parsedFromProps.attrOutChannel);
+      }
       const custom = effect.custom ?? AnimateExecutor.builtInAnimateMap[type];
       const customType = effect.custom ? (effect as any).customType : getCustomType(custom);
       this._handleRunAnimate(
@@ -645,51 +651,73 @@ export class AnimateExecutor implements IAnimateExecutor {
   private createPropsFromChannel(
     channel: IAnimationChannelAttrs | IAnimationChannelAttributes | undefined,
     graphic: IGraphic
-  ): { from: Record<string, any> | null; props: Record<string, any> } {
+  ): {
+    from: Record<string, any> | null;
+    props: Record<string, any>;
+    attrOutChannel: Record<string, any> | null;
+  } {
     const props: Record<string, any> = {};
     let from: Record<string, any> | null = null;
-
     if (!channel) {
       return {
         from,
-        props
+        props,
+        attrOutChannel: null
       };
     }
 
-    if (!Array.isArray(channel)) {
-      // 如果是对象，解析 from/to 配置
-      Object.keys(channel).forEach(key => {
-        const config = channel[key];
-        if (config.to !== undefined) {
-          if (typeof config.to === 'function') {
-            props[key] = config.to((graphic.context as any)?.data?.[0], graphic, {});
-          } else {
-            props[key] = config.to;
-          }
+    const attrOutChannel: Record<string, any> | null = {};
+    let hasAttrs = false;
+    const diffAttrs = graphic.context?.diffAttrs;
+    if (Array.isArray(channel)) {
+      channel = channel.reduce((res, key) => {
+        if (diffAttrs[key] === undefined) {
+          return res;
         }
-        if (config.from !== undefined) {
-          if (!from) {
-            from = {};
-          }
-          if (typeof config.from === 'function') {
-            from[key] = config.from((graphic.context as any)?.data?.[0], graphic, {});
-          } else {
-            from[key] = config.from;
-          }
+        res[key] = { to: diffAttrs[key] };
+        return res;
+      }, {} as Record<string, any>);
+    }
+
+    // 对象，解析 from/to 配置
+    Object.keys(channel).forEach(key => {
+      const config = channel[key];
+      if (config.to !== undefined) {
+        if (typeof config.to === 'function') {
+          props[key] = config.to((graphic.context as any)?.data?.[0], graphic, {});
+        } else {
+          props[key] = config.to;
         }
-      });
-    } else {
-      channel.forEach(key => {
-        const value = graphic.context?.diffAttrs?.[key];
-        if (value !== undefined) {
-          props[key] = value;
+      }
+      if (config.from !== undefined) {
+        if (!from) {
+          from = {};
         }
-      });
+        if (typeof config.from === 'function') {
+          from[key] = config.from((graphic.context as any)?.data?.[0], graphic, {});
+        } else {
+          from[key] = config.from;
+        }
+      }
+    });
+
+    if (diffAttrs) {
+      for (const key in diffAttrs) {
+        const value = (diffAttrs as any)[key];
+        if (value === undefined) {
+          continue;
+        }
+        if (!props.hasOwnProperty(key)) {
+          attrOutChannel[key] = value;
+          hasAttrs = true;
+        }
+      }
     }
 
     return {
       from,
-      props
+      props,
+      attrOutChannel: hasAttrs ? attrOutChannel : null
     };
   }
 

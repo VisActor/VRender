@@ -106,43 +106,11 @@ jobs:
         if: startsWith(github.ref_name, 'release/') || startsWith(github.ref_name, 'hotfix/')
         run: node common/scripts/install-run-rush.js version --bump
 
-      - name: Build vrender-core
-        if: startsWith(github.ref_name, 'release/') || startsWith(github.ref_name, 'hotfix/')
-        run: node common/scripts/install-run-rush.js build --only @visactor/vrender-core
-
-      - name: Build vrender-kits
-        if: startsWith(github.ref_name, 'release/') || startsWith(github.ref_name, 'hotfix/')
-        run: node common/scripts/install-run-rush.js build --only @visactor/vrender-kits
-
-      - name: Build vrender-animate
-        if: startsWith(github.ref_name, 'release/') || startsWith(github.ref_name, 'hotfix/')
-        run: node common/scripts/install-run-rush.js build --only @visactor/vrender-animate
-
-      - name: Build vrender-components
-        if: startsWith(github.ref_name, 'release/') || startsWith(github.ref_name, 'hotfix/')
-        run: node common/scripts/install-run-rush.js build --only @visactor/vrender-components
-
-      - name: Build vrender
-        if: startsWith(github.ref_name, 'release/') || startsWith(github.ref_name, 'hotfix/')
-        run: node common/scripts/install-run-rush.js build --only @visactor/vrender
-
-      - name: Build bugserver
-        if: startsWith(github.ref_name, 'release/') || startsWith(github.ref_name, 'hotfix/')
-        run: node common/scripts/install-run-rush.js build --only @internal/bugserver-trigger
-
       # - name: Run CI
       #   working-directory: ./tools/bugserver-trigger
       #   env:
       #     BUG_SERVER_TOKEN: ${{ secrets.BUG_SERVER_TOKEN }}
       #   run: node ../../common/scripts/install-run-rushx.js ci -t @internal/bugserver-trigger
-
-      - name: Build react-vrender
-        if: startsWith(github.ref_name, 'release/') || startsWith(github.ref_name, 'hotfix/')
-        run: node common/scripts/install-run-rush.js build --only @visactor/react-vrender
-
-      - name: Build react-vrender-utils
-        if: startsWith(github.ref_name, 'release/') || startsWith(github.ref_name, 'hotfix/')
-        run: node common/scripts/install-run-rush.js build --only @visactor/react-vrender-utils
 
       - name: Apply prereleaseName
         if: startsWith(github.ref_name, 'pre-release/')

@@ -39,6 +39,14 @@ jobs:
       - name: Print All Github Environment Variables
         run: env
 
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Set PYTHON env
+        run: echo "PYTHON=$(which python3)" >> $GITHUB_ENV
+
       # Install rush
       - name: Install native deps for node-canvas (macOS)
         if: runner.os == 'macOS'

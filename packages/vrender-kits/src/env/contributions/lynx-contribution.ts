@@ -6,9 +6,11 @@ import type {
   ICreateCanvasParams,
   IEnvContribution,
   IGlobal,
-  ILynxCanvas
+  ILynxCanvas,
+  CreateDOMParamsType
 } from '@visactor/vrender-core';
 import { CanvasWrapEnableWH } from './canvas-wrap';
+import { isString } from '@visactor/vutils';
 
 declare const lynx: {
   getSystemInfoSync: () => { pixelRatio: number };
@@ -16,6 +18,7 @@ declare const lynx: {
   createCanvasNG: (id: string) => any;
   createImage: (id: string) => any;
   createOffscreenCanvas: () => any;
+  getElementById: (id: string) => HTMLElement | null;
 };
 declare const SystemInfo: {
   pixelRatio: number;
@@ -155,6 +158,22 @@ export class LynxEnvContribution extends BaseEnvContribution implements IEnvCont
    */
   getStaticCanvasCount(): number {
     return 9999;
+  }
+
+  createDom(params: CreateDOMParamsType): HTMLElement | null {
+    const { tagName = 'div', parent } = params;
+    const element = document.createElement(tagName);
+
+    this.updateDom(element, params);
+
+    if (parent) {
+      const pd = isString(parent) ? lynx.getElementById(parent) : parent;
+      if (pd && pd.appendChild) {
+        pd.appendChild(element);
+      }
+    }
+
+    return element;
   }
 
   loadImage(url: string): Promise<{

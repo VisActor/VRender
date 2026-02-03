@@ -36,38 +36,16 @@ jobs:
           cache-dependency-path: './common/config/rush/pnpm-lock.yaml'
           registry-url: 'https://registry.npmjs.org'
 
-      - name: Ensure npm >= 11.5.1 (conditional)
-        run: |
-          set -e
-          NPMV=$(npm -v)
-          echo "Current npm version: $NPMV"
-          REQ_MAJOR=11
-          REQ_MINOR=5
-          REQ_PATCH=1
-          MAJOR=${NPMV%%.*}
-          REST=${NPMV#*.}
-          MINOR=${REST%%.*}
-          PATCH=${REST#*.}
-          needs_upgrade=false
-          if [ "$MAJOR" -lt "$REQ_MAJOR" ]; then
-            needs_upgrade=true
-          elif [ "$MAJOR" -eq "$REQ_MAJOR" ]; then
-            if [ "$MINOR" -lt "$REQ_MINOR" ]; then
-              needs_upgrade=true
-            elif [ "$MINOR" -eq "$REQ_MINOR" ] && [ "$PATCH" -lt "$REQ_PATCH" ]; then
-              needs_upgrade=true
-            fi
-          fi
-          if [ "$needs_upgrade" = true ]; then
-            echo "npm < 11.5.1 detected, installing pinned npm@11.5.1 for Trusted Publishing"
-            npm install -g npm@11.5.1
-            echo "npm upgraded to: $(npm -v)"
-          else
-            echo "npm version satisfies requirement (>= 11.5.1)"
-          fi
-
       - name: Print All Github Environment Variables
         run: env
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Set PYTHON env
+        run: echo "PYTHON=$(which python3)" >> $GITHUB_ENV
 
       # Install rush
       - name: Install native deps for node-canvas (macOS)

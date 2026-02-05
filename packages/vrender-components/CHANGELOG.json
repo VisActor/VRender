@@ -2,6 +2,18 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "1.0.40",
+      "tag": "@visactor/vrender-components_v1.0.40",
+      "date": "Wed, 28 Jan 2026 12:34:44 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix issue of animation channel\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.0.39",
       "tag": "@visactor/vrender-components_v1.0.39",
       "date": "Wed, 21 Jan 2026 11:25:01 GMT",

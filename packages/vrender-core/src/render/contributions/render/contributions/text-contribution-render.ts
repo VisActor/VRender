@@ -110,9 +110,10 @@ export class DefaultTextBackgroundRenderContribution
       context.highPerformanceRestore();
       context.setTransformForCurrent();
     } else {
-      const { backgroundCornerRadius } = graphic.attribute;
+      const { backgroundCornerRadius, backgroundOpacity = 1 } = graphic.attribute;
       context.highPerformanceSave();
       context.setCommonStyle(graphic, graphic.attribute, x, y, graphicAttribute);
+      context.globalAlpha = backgroundOpacity;
       context.fillStyle = background as string;
       if (backgroundCornerRadius) {
         // 测试后，cache对于重绘性能提升不大，但是在首屏有一定性能损耗，因此rect不再使用cache

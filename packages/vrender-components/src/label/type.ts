@@ -307,13 +307,14 @@ export interface SmartInvertAttrs {
    */
   outsideEnable?: boolean;
   /**
-   * 当标签和mark相交，但是没有完全在mark内部的时候，支持三种处理方式：
+   * 当标签和mark相交，但是没有完全在mark内部的时候，支持四种处理方式：
    *
    * * none：不做任何处理
    * * stroked：标签存在描边的时候，根据描边进行处理
    * * inside: 和标签完全在mark内部一样处理
+   * * background：关闭标签描边，并将标签背景色设置为 mark 的填充色
    */
-  interactInvertType?: 'none' | 'stroked' | 'inside';
+  interactInvertType?: 'none' | 'stroked' | 'inside' | 'background';
 }
 
 export type ShiftYStrategy = {

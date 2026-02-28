@@ -1102,7 +1102,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
           // 按照标签展示在柱子内部的情况，执行反色逻辑
           const fill = smartInvertStrategy(fillStrategy, backgroundColor, invertColor, similarColor);
           fill && label.setAttributes({ fill });
-          label.setAttributes({ stroke: false, background: backgroundColor, backgroundOpacity });
+          label.setAttributes({ stroke: false, background: backgroundColor as string, backgroundOpacity });
           continue;
         }
         /** 当label无法设置stroke时，不进行反色计算（容易反色为白色与白色背景混合不可见） */

@@ -70,9 +70,7 @@ export class DefaultTicker extends EventEmitter implements ITicker {
   init(): void {
     this.interval = 16;
     this.status = STATUS.INITIAL;
-    application.global.hooks.onSetEnv.tap('graph-ticker', () => {
-      this.initHandler(false);
-    });
+    application.global.hooks.onSetEnv.tap('graph-ticker', this._handleGraphTick);
     if (application.global.env) {
       this.initHandler(false);
     }
@@ -221,6 +219,8 @@ export class DefaultTicker extends EventEmitter implements ITicker {
     this.tickerHandler?.release();
     this.tickerHandler = null;
     this.lastFrameTime = -1;
+
+    application.global.hooks.onSetEnv.unTap('graph-ticker', this._handleGraphTick);
   }
 
   protected checkSkip(delta: number): boolean {
@@ -279,5 +279,9 @@ export class DefaultTicker extends EventEmitter implements ITicker {
     });
 
     this.emit('tick', delta);
+  };
+
+  protected _handleGraphTick = () => {
+    this.initHandler(false);
   };
 }

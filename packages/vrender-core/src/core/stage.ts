@@ -1045,6 +1045,7 @@ export class Stage extends Group implements IStage {
     this.window.release();
     this._ticker?.remTimeline(this?.timeline);
     this._ticker?.removeListener('tick', this.afterTickCb);
+    this._ticker?.release();
     this.renderService.renderTreeRoots = [];
   }
 

@@ -7,9 +7,15 @@ import type { IEventListenerManager } from '../interface/event-listener-manager'
 export class EventListenerManager implements IEventListenerManager {
   /**
    * Map that stores the mapping from original listeners to wrapped listeners
-   * Structure: Map<eventType, Map<originalListener, wrappedListener>>
+   * Structure: Map<eventType, Map<originalListener, Map<capture, wrappedRecord>>>
    */
-  protected _listenerMap: Map<string, Map<EventListenerOrEventListenerObject, EventListener>>;
+  protected _listenerMap: Map<
+    string,
+    Map<
+      EventListenerOrEventListenerObject,
+      Map<boolean, { wrappedListener: EventListener; options?: boolean | AddEventListenerOptions }>
+    >
+  >;
 
   /**
    * Transformer function that transforms the event
@@ -44,6 +50,16 @@ export class EventListenerManager implements IEventListenerManager {
       return;
     }
 
+    const capture = this._resolveCapture(options);
+    const once = this._resolveOnce(options);
+    const listenerTypeMap = this._getOrCreateListenerTypeMap(type);
+    const wrappedMap = this._getOrCreateWrappedMap(listenerTypeMap, listener);
+
+    // Align with native behavior: adding same (type, listener, capture) repeatedly is a no-op.
+    if (wrappedMap.has(capture)) {
+      return;
+    }
+
     // Create a wrapped listener that applies the transformation
     const wrappedListener = (event: Event) => {
       const transformedEvent = this._eventListenerTransformer(event);
@@ -52,13 +68,15 @@ export class EventListenerManager implements IEventListenerManager {
       } else if (listener.handleEvent) {
         listener.handleEvent(transformedEvent);
       }
+
+      // Native once listeners are removed automatically after dispatch, clear the mapping as well.
+      if (once) {
+        this._deleteListenerRecord(type, listener, capture);
+      }
     };
 
     // Store the mapping between original and wrapped listener
-    if (!this._listenerMap.has(type)) {
-      this._listenerMap.set(type, new Map());
-    }
-    this._listenerMap.get(type)!.set(listener, wrappedListener);
+    wrappedMap.set(capture, { wrappedListener, options });
 
     // Add the wrapped listener
     this._nativeAddEventListener(type, wrappedListener, options);
@@ -79,17 +97,12 @@ export class EventListenerManager implements IEventListenerManager {
       return;
     }
 
-    // Get the wrapped listener from our map
-    const wrappedListener = this._listenerMap.get(type)?.get(listener);
-    if (wrappedListener) {
+    const capture = this._resolveCapture(options);
+    const wrappedRecord = this._listenerMap.get(type)?.get(listener)?.get(capture);
+    if (wrappedRecord) {
       // Remove the wrapped listener
-      this._nativeRemoveEventListener(type, wrappedListener, options);
-
-      // Remove from our map
-      this._listenerMap.get(type)!.delete(listener);
-      if (this._listenerMap.get(type)!.size === 0) {
-        this._listenerMap.delete(type);
-      }
+      this._nativeRemoveEventListener(type, wrappedRecord.wrappedListener, capture);
+      this._deleteListenerRecord(type, listener, capture);
     }
   }
 
@@ -105,12 +118,72 @@ export class EventListenerManager implements IEventListenerManager {
    * Clear all event listeners
    */
   clearAllEventListeners(): void {
-    this._listenerMap.forEach((listenersMap, type) => {
-      listenersMap.forEach((wrappedListener, originalListener) => {
-        this._nativeRemoveEventListener(type, wrappedListener, undefined);
+    this._listenerMap.forEach((listenerMap, type) => {
+      listenerMap.forEach(wrappedMap => {
+        wrappedMap.forEach((wrappedRecord, capture) => {
+          this._nativeRemoveEventListener(type, wrappedRecord.wrappedListener, capture);
+        });
       });
     });
     this._listenerMap.clear();
+  }
+
+  protected _resolveCapture(options?: boolean | EventListenerOptions | AddEventListenerOptions): boolean {
+    if (typeof options === 'boolean') {
+      return options;
+    }
+    return !!options?.capture;
+  }
+
+  protected _resolveOnce(options?: boolean | AddEventListenerOptions): boolean {
+    return typeof options === 'object' && !!options?.once;
+  }
+
+  protected _getOrCreateListenerTypeMap(
+    type: string
+  ): Map<
+    EventListenerOrEventListenerObject,
+    Map<boolean, { wrappedListener: EventListener; options?: boolean | AddEventListenerOptions }>
+  > {
+    let listenerTypeMap = this._listenerMap.get(type);
+    if (!listenerTypeMap) {
+      listenerTypeMap = new Map();
+      this._listenerMap.set(type, listenerTypeMap);
+    }
+    return listenerTypeMap;
+  }
+
+  protected _getOrCreateWrappedMap(
+    listenerTypeMap: Map<
+      EventListenerOrEventListenerObject,
+      Map<boolean, { wrappedListener: EventListener; options?: boolean | AddEventListenerOptions }>
+    >,
+    listener: EventListenerOrEventListenerObject
+  ): Map<boolean, { wrappedListener: EventListener; options?: boolean | AddEventListenerOptions }> {
+    let wrappedMap = listenerTypeMap.get(listener);
+    if (!wrappedMap) {
+      wrappedMap = new Map();
+      listenerTypeMap.set(listener, wrappedMap);
+    }
+    return wrappedMap;
+  }
+
+  protected _deleteListenerRecord(type: string, listener: EventListenerOrEventListenerObject, capture: boolean): void {
+    const listenerTypeMap = this._listenerMap.get(type);
+    if (!listenerTypeMap) {
+      return;
+    }
+    const wrappedMap = listenerTypeMap.get(listener);
+    if (!wrappedMap) {
+      return;
+    }
+    wrappedMap.delete(capture);
+    if (wrappedMap.size === 0) {
+      listenerTypeMap.delete(listener);
+    }
+    if (listenerTypeMap.size === 0) {
+      this._listenerMap.delete(type);
+    }
   }
 
   /**

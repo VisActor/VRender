@@ -1121,7 +1121,7 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
      * 浏览器上的事件必须解绑，防止内存泄漏，场景树上的事件会自动解绑
      */
     super.release(all);
-    (vglobal.env === 'browser' ? vglobal : this.stage).addEventListener('touchmove', this._handleTouchMove, {
+    (vglobal.env === 'browser' ? vglobal : this.stage).removeEventListener('touchmove', this._handleTouchMove, {
       passive: false
     });
     this._clearAllDragEvents();

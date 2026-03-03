@@ -1582,6 +1582,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     this.releaseStatus = 'released';
     this.stopAnimates();
     application.graphicService.onRelease(this);
+    super.release();
   }
 
   protected _emitCustomEvent(type: string, context?: any) {

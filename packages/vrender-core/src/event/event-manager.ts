@@ -790,6 +790,13 @@ export class EventManager {
     const constructor = event.constructor;
 
     if (!this.eventPool.has(constructor as any)) {
+      this.eventPool.get(constructor as any).forEach(e => {
+        e.eventPhase = event.NONE;
+        e.currentTarget = null;
+        e.path = [];
+        e.detailPath = [];
+        e.target = null;
+      });
       this.eventPool.set(constructor as any, []);
     }
 

@@ -390,4 +390,11 @@ export abstract class BasePlayer<T> extends AbstractComponent<Required<PlayerAtt
       value: this._data[dataIndex]
     });
   }
+
+  release(all: boolean) {
+    if (!this._sliderVisible) {
+      this._slider.release(all);
+    }
+    super.release(all);
+  }
 }

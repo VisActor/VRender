@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-animate",
+      "comment": "fix: fix memory leak by properly removing listener",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-animate"
+}

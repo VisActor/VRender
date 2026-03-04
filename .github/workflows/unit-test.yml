@@ -26,6 +26,14 @@ jobs:
           cache: 'npm'
           cache-dependency-path: './common/config/rush/pnpm-lock.yaml'
 
+      - name: Install native deps for node-canvas (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          brew install pkg-config cairo pango libpng jpeg giflib librsvg
+          echo "PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:/opt/homebrew/lib/pkgconfig:/usr/local/share/pkgconfig:/opt/homebrew/share/pkgconfig" >> $GITHUB_ENV
+          echo "LDFLAGS=-L/opt/homebrew/lib -L/usr/local/lib" >> $GITHUB_ENV
+          echo "CPPFLAGS=-I/opt/homebrew/include -I/usr/local/include" >> $GITHUB_ENV
+
       # # 查看字体
       # - name: View Fonts
       #   run: |

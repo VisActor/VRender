@@ -11,7 +11,7 @@ jobs:
   if_merged:
     if: github.event.pull_request.merged == true
 
-    runs-on: macos-latest
+    runs-on: macOS-13
 
     permissions:
       contents: write

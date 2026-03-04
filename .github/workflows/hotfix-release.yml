@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: macos-latest # 如果用了electron，记得改成 macOS-latest
+    runs-on: macOS-13 # 如果用了electron，记得改成 macOS-latest
     permissions:
       contents: write
       pull-requests: write
@@ -62,9 +62,6 @@ jobs:
 
       - name: Build vrender-kits
         run: node common/scripts/install-run-rush.js build --only @visactor/vrender-kits
-
-      - name: Build vrender-animate
-        run: node common/scripts/install-run-rush.js build --only @visactor/vrender-animate
 
       - name: Build vrender
         run: node common/scripts/install-run-rush.js build --only @visactor/vrender

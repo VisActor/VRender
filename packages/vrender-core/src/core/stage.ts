@@ -1045,6 +1045,10 @@ export class Stage extends Group implements IStage {
     this.window.release();
     this._ticker?.remTimeline(this?.timeline);
     this._ticker?.removeListener('tick', this.afterTickCb);
+    if (!this.params.ticker) {
+      // release stage创建的ticker，避免release外部的ticker
+      this._ticker?.release();
+    }
     this.renderService.renderTreeRoots = [];
   }
 

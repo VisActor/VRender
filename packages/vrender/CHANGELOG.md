@@ -1,6 +1,11 @@
 # Change Log - @visactor/vrender
 
-This log was last generated on Wed, 28 Jan 2026 12:34:44 GMT and should not be manually modified.
+This log was last generated on Tue, 03 Mar 2026 11:54:26 GMT and should not be manually modified.
+
+## 1.0.41
+Tue, 03 Mar 2026 11:54:26 GMT
+
+_Version update only_
 
 ## 1.0.40
 Wed, 28 Jan 2026 12:34:44 GMT

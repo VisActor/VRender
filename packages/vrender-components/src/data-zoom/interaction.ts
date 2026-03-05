@@ -119,7 +119,7 @@ export class DataZoomInteraction extends EventEmitter {
   }
 
   clearVGlobalEvents() {
-    (vglobal.env === 'browser' ? vglobal : this.stage).addEventListener('touchmove', this._handleTouchMove, {
+    (vglobal.env === 'browser' ? vglobal : this.stage).removeEventListener('touchmove', this._handleTouchMove, {
       passive: false
     });
   }

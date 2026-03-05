@@ -2,6 +2,24 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "1.0.41",
+      "tag": "@visactor/vrender-components_v1.0.41",
+      "date": "Tue, 03 Mar 2026 11:54:26 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix issue of axis label style support react\n\n"
+          },
+          {
+            "comment": "fix: fix memory leak by properly removing listener"
+          },
+          {
+            "comment": "fix: fix memory leaks\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.0.40",
       "tag": "@visactor/vrender-components_v1.0.40",
       "date": "Wed, 28 Jan 2026 12:34:44 GMT",

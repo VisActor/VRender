@@ -1057,6 +1057,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
        * null（不执行智能反色，保持fill设置的颜色）
        * */
       let backgroundColor = baseMark.getAttributes(true).fill as IColor;
+      const backgroundOpacity = baseMark.getAttributes(true).fillOpacity as number;
       let foregroundColor = label.attribute.fill as IColor;
 
       if (isObject(backgroundColor) && backgroundColor.gradient) {
@@ -1089,11 +1090,21 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
         if (label.attribute.lineWidth === 0 || label.attribute.strokeOpacity === 0) {
           continue;
         }
-
-        const stroke = smartInvertStrategy(strokeStrategy, backgroundColor, invertColor, similarColor);
-        stroke && label.setAttributes({ stroke });
+        if (interactInvertType === 'background') {
+          label.setAttributes({ stroke: false });
+        } else {
+          const stroke = smartInvertStrategy(strokeStrategy, backgroundColor, invertColor, similarColor);
+          stroke && label.setAttributes({ stroke });
+        }
       } else if (isIntersect && interactInvertType !== 'none') {
         // 存在相交的情况
+        if (interactInvertType === 'background') {
+          // 按照标签展示在柱子内部的情况，执行反色逻辑
+          const fill = smartInvertStrategy(fillStrategy, backgroundColor, invertColor, similarColor);
+          fill && label.setAttributes({ fill });
+          label.setAttributes({ stroke: false, background: backgroundColor as string, backgroundOpacity });
+          continue;
+        }
         /** 当label无法设置stroke时，不进行反色计算（容易反色为白色与白色背景混合不可见） */
         if (label.attribute.lineWidth === 0 || label.attribute.strokeOpacity === 0) {
           continue;
@@ -1119,6 +1130,9 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
 
         const stroke = smartInvertStrategy(strokeStrategy, backgroundColor, invertColor, similarColor);
         stroke && label.setAttributes({ stroke });
+      }
+      if (isInside === false && interactInvertType === 'background') {
+        label.setAttributes({ background: null });
       }
     }
   }

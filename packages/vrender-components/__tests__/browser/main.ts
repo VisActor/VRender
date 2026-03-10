@@ -147,6 +147,10 @@ const specs = [
     name: '标签智能反色'
   },
   {
+    path: 'label-smart-inverse-background',
+    name: '标签相交背景模式'
+  },
+  {
     path: 'scrollbar',
     name: '滚动条'
   },

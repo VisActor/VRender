@@ -32,13 +32,35 @@ export function run() {
     minSpan: 0.3,
     maxSpan: 0.6,
     delayTime: 0,
-    zoomLock: false
+    zoomLock: false,
+    backgroundChartStyle: {
+      line: {
+        visible: false
+      },
+      area: {
+        visible: false
+      }
+    }
   });
+
   dataZoom.setPreviewData(data);
   dataZoom.setPreviewPointsX(d => d.x);
   dataZoom.setPreviewPointsY(d => d.y);
   dataZoom.setPreviewPointsX1(d => d.x);
   dataZoom.setPreviewPointsY1(d => 265);
+
+  setTimeout(() => {
+    dataZoom.setAttributes({
+      backgroundChartStyle: {
+        line: {
+          visible: true
+        },
+        area: {
+          visible: true
+        }
+      }
+    });
+  }, 2000);
 
   const dataZoomdisableTriggerEvent = new DataZoom({
     start: 0.2,
@@ -66,5 +88,5 @@ export function run() {
     disableTriggerEvent: true
   });
 
-  const stage = render([dataZoom, dataZoomdisableTriggerEvent], 'main');
+  const stage = render([dataZoom], 'main');
 }

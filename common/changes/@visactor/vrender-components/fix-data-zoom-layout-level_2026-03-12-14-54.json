@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix: add datazoom graphic layout level to render right level when update data. fix @VisActor/VChart#4186",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

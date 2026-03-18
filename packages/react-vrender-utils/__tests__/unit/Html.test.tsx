@@ -30,6 +30,8 @@ const stageStub = {
   renderNextFrame: jest.fn()
 };
 
+let stageForRef: any = stageStub;
+
 jest.mock('@visactor/react-vrender', () => {
   const React = require('react') as typeof import('react');
   return {
@@ -38,7 +40,7 @@ jest.mock('@visactor/react-vrender', () => {
         if (ref) {
           ref.current = {
             _uid: 'uid',
-            stage: stageStub,
+            stage: stageForRef,
             shouldUpdateGlobalMatrix: () => true,
             globalTransMatrix: {
               toTransformAttrs: () => ({ x: 1, y: 2, scaleX: 1, scaleY: 1, rotateDeg: 0, skewX: 0, skewY: 0 })
@@ -54,6 +56,11 @@ jest.mock('@visactor/react-vrender', () => {
 import { Html } from '../../src/Html';
 
 describe('react-vrender-utils Html', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    stageForRef = stageStub;
+  });
+
   test('mount appends div and applies transform + divProps', () => {
     const container = document.createElement('div');
     document.body.appendChild(container);
@@ -83,5 +90,103 @@ describe('react-vrender-utils Html', () => {
     });
 
     expect(container.querySelector('#test-div')).toBeFalsy();
+    document.body.removeChild(container);
+    document.body.removeChild(mountPoint);
+  });
+
+  test('transform=false clears transform styles and does not force container position', () => {
+    const container = document.createElement('div');
+    document.body.appendChild(container);
+    stageStub.window.getContainer.mockReturnValue(container);
+
+    const mountPoint = document.createElement('div');
+    document.body.appendChild(mountPoint);
+
+    act(() => {
+      ReactDOM.render(<Html transform={false} divProps={{ id: 'no-transform', style: { color: 'blue' } }} />, mountPoint);
+    });
+
+    const div = container.querySelector('#no-transform') as HTMLDivElement;
+    expect(div).toBeTruthy();
+    expect(div.style.position).toBe('');
+    expect(div.style.color).toBe('blue');
+    expect(container.style.position).toBe('');
+
+    act(() => {
+      ReactDOM.unmountComponentAtNode(mountPoint);
+    });
+
+    document.body.removeChild(container);
+    document.body.removeChild(mountPoint);
+  });
+
+  test('needForceStyle=false keeps container position unchanged', () => {
+    const container = document.createElement('div');
+    container.style.position = 'absolute';
+    document.body.appendChild(container);
+
+    const cssSpy = jest.spyOn(window, 'getComputedStyle').mockReturnValue({ position: 'absolute' } as any);
+
+    stageStub.window.getContainer.mockReturnValue(container);
+
+    const mountPoint = document.createElement('div');
+    document.body.appendChild(mountPoint);
+
+    act(() => {
+      ReactDOM.render(<Html divProps={{ id: 'keep-container' }} />, mountPoint);
+    });
+
+    expect(container.style.position).toBe('absolute');
+
+    act(() => {
+      ReactDOM.unmountComponentAtNode(mountPoint);
+    });
+
+    cssSpy.mockRestore();
+    document.body.removeChild(container);
+    document.body.removeChild(mountPoint);
+  });
+
+  test('early return when getContainer() is null (div not appended)', () => {
+    stageStub.window.getContainer.mockReturnValue(null as any);
+
+    const mountPoint = document.createElement('div');
+    document.body.appendChild(mountPoint);
+
+    act(() => {
+      ReactDOM.render(<Html divProps={{ id: 'no-container' }} />, mountPoint);
+    });
+
+    expect(document.getElementById('no-container')).toBeFalsy();
+
+    act(() => {
+      ReactDOM.unmountComponentAtNode(mountPoint);
+    });
+
+    document.body.removeChild(mountPoint);
+  });
+
+  test('early return when groupRef has no stage (div not appended)', () => {
+    stageForRef = null;
+
+    const container = document.createElement('div');
+    document.body.appendChild(container);
+    stageStub.window.getContainer.mockReturnValue(container);
+
+    const mountPoint = document.createElement('div');
+    document.body.appendChild(mountPoint);
+
+    act(() => {
+      ReactDOM.render(<Html divProps={{ id: 'no-stage' }} />, mountPoint);
+    });
+
+    expect(container.querySelector('#no-stage')).toBeFalsy();
+
+    act(() => {
+      ReactDOM.unmountComponentAtNode(mountPoint);
+    });
+
+    document.body.removeChild(container);
+    document.body.removeChild(mountPoint);
   });
 });

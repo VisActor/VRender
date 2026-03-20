@@ -35,21 +35,18 @@ describe('env-check', () => {
       jest.doMock('../../src/application', () => ({ application: app }));
 
       // make document.createElement throw to hit catch branch
-      const doc = globalThis.document as any;
-      const originalCreateElement = doc.createElement;
-      doc.createElement = () => {
-        throw new Error('boom');
-      };
+      // @ts-ignore
+      globalThis.document = {
+        createElement: () => {
+          throw new Error('boom');
+        }
+      } as any;
 
-      try {
-        const { isBrowserEnv, isNodeEnv, getCurrentEnv } = require('../../src/env-check');
+      const { isBrowserEnv, isNodeEnv, getCurrentEnv } = require('../../src/env-check');
 
-        expect(isBrowserEnv()).toBe(false);
-        expect(isNodeEnv()).toBe(true);
-        expect(getCurrentEnv()).toBe('node');
-      } finally {
-        doc.createElement = originalCreateElement;
-      }
+      expect(isBrowserEnv()).toBe(false);
+      expect(isNodeEnv()).toBe(true);
+      expect(getCurrentEnv()).toBe('node');
     });
   });
 });

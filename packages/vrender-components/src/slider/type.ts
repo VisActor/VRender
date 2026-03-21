@@ -6,6 +6,22 @@ import type {
 } from '@visactor/vrender-core';
 
 type Text = string | number;
+type SliderLayout = 'horizontal' | 'vertical' | string;
+type SliderAlign = 'top' | 'bottom' | 'left' | 'right';
+
+export type HandlerTextStyleContext = {
+  layout?: SliderLayout;
+  align?: SliderAlign;
+  railWidth: number;
+  railHeight: number;
+  handlerSize?: number;
+  slidable?: boolean;
+};
+export type HandlerTextStyleCallback = (
+  value: Text,
+  position: 'start' | 'end',
+  context: HandlerTextStyleContext
+) => Omit<Partial<ITextGraphicAttribute>, 'text'> | undefined;
 
 export type TextAttribute = {
   /** 是否展示 */
@@ -38,7 +54,7 @@ export type HandlerTextAttribute = {
   /**
    * 文本样式
    */
-  style?: Omit<Partial<ITextGraphicAttribute>, 'text'>;
+  style?: Omit<Partial<ITextGraphicAttribute>, 'text'> | HandlerTextStyleCallback;
 };
 
 export type TooltipConfig = {
@@ -100,7 +116,7 @@ export type SliderAttributes = {
    * - 'horizontal' 水平布局
    * - 'vertical' 垂直布局
    */
-  layout?: 'horizontal' | 'vertical' | string;
+  layout?: SliderLayout;
   /**
    * 指定组件中手柄和文字的摆放位置，可选值为：
    * 'left' 手柄和label在滑块左侧，layout 为 vertical 时有效。
@@ -108,7 +124,7 @@ export type SliderAttributes = {
    * 'top' 手柄和label在滑块上侧，layout 为 horizontal 时有效。
    * 'bottom' 手柄和label在滑块下侧，layout 为 horizontal 时有效。
    */
-  align?: 'top' | 'bottom' | 'left' | 'right';
+  align?: SliderAlign;
   /**
    * 双滑块模式，默认为 false，单滑块模式
    */

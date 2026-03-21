@@ -14,7 +14,7 @@ import type {
   FederatedPointerEvent,
   Cursor
 } from '@visactor/vrender-core';
-import { isNil, merge, clamp, isValid, array, isObject, isArray, clampRange, debounce } from '@visactor/vutils';
+import { isNil, merge, clamp, isValid, array, isObject, isArray, clampRange, debounce, isFunction } from '@visactor/vutils';
 import { graphicCreator, vglobal, CustomEvent } from '@visactor/vrender-core';
 import { AbstractComponent } from '../core/base';
 import { SLIDER_ELEMENT_NAME } from './constant';
@@ -475,6 +475,35 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
   }
 
   private _renderHandlerText(value: number, position: 'start' | 'end') {
+    const textShape = graphicCreator.text(this._getHandlerTextAttributes(value, position));
+    return textShape;
+  }
+
+  private _getHandlerTextStyle(value: number, position: 'start' | 'end') {
+    const {
+      align,
+      handlerSize = 14,
+      handlerText = {},
+      railHeight,
+      railWidth,
+      slidable
+    } = this.attribute as SliderAttributes;
+
+    if (isFunction(handlerText.style)) {
+      return handlerText.style(value, position, {
+        layout: this.attribute.layout,
+        align,
+        railWidth,
+        railHeight,
+        handlerSize,
+        slidable
+      });
+    }
+
+    return handlerText.style;
+  }
+
+  private _getHandlerTextAttributes(value: number, position: 'start' | 'end'): ITextGraphicAttribute {
     const {
       align,
       handlerSize = 14,
@@ -485,12 +514,12 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     } = this.attribute as SliderAttributes;
 
     const isHorizontal = this._isHorizontal;
-
     const pos = this.calculatePosByValue(value, position);
     const textSpace = handlerText.space ?? 4;
+    const handlerTextStyle = this._getHandlerTextStyle(value, position);
     const textStyle: ITextGraphicAttribute = {
       text: handlerText.formatter ? handlerText.formatter(value) : value.toFixed(handlerText.precision ?? 0),
-      lineHeight: handlerText.style?.lineHeight,
+      lineHeight: handlerTextStyle?.lineHeight,
       cursor: slidable === false ? 'default' : getDefaultCursor(isHorizontal)
     };
     if (isHorizontal) {
@@ -523,12 +552,10 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
       }
     }
 
-    // 展示 handler 当前所在的数值
-    const textShape = graphicCreator.text({
+    return {
       ...textStyle,
-      ...handlerText.style
-    });
-    return textShape;
+      ...handlerTextStyle
+    };
   }
 
   private _renderTooltip() {
@@ -1016,11 +1043,8 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     const updateHandlerText =
       handler.name === SLIDER_ELEMENT_NAME.startHandler ? this._startHandlerText : this._endHandlerText;
     if (updateHandlerText) {
-      const { handlerText = {} } = this.attribute as SliderAttributes;
-      updateHandlerText.setAttributes({
-        text: handlerText.formatter ? handlerText.formatter(value) : value.toFixed(handlerText.precision ?? 0),
-        [isHorizontal ? 'x' : 'y']: position
-      });
+      const handlerPosition = handler.name === SLIDER_ELEMENT_NAME.startHandler ? 'start' : 'end';
+      updateHandlerText.setAttributes(this._getHandlerTextAttributes(value, handlerPosition));
     }
 
     if (handler.name === SLIDER_ELEMENT_NAME.startHandler) {
@@ -1035,11 +1059,8 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
   // 更新 handler 以及对应 text
   private _updateHandlerText(handlerText: IText, position: number, value: number) {
     const isHorizontal = this._isHorizontal;
-    const { handlerText: handlerTextAttr = {} } = this.attribute as SliderAttributes;
-    handlerText.setAttributes({
-      [isHorizontal ? 'x' : 'y']: position,
-      text: handlerTextAttr.formatter ? handlerTextAttr.formatter(value) : value.toFixed(handlerTextAttr.precision ?? 0)
-    });
+    const handlerPosition = handlerText.name === SLIDER_ELEMENT_NAME.startHandlerText ? 'start' : 'end';
+    handlerText.setAttributes(this._getHandlerTextAttributes(value, handlerPosition));
     const updateHandler =
       handlerText.name === SLIDER_ELEMENT_NAME.startHandlerText ? this._startHandler : this._endHandler;
     if (updateHandler) {

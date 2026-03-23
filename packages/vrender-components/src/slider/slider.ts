@@ -14,7 +14,18 @@ import type {
   FederatedPointerEvent,
   Cursor
 } from '@visactor/vrender-core';
-import { isNil, merge, clamp, isValid, array, isObject, isArray, clampRange, debounce, isFunction } from '@visactor/vutils';
+import {
+  isNil,
+  merge,
+  clamp,
+  isValid,
+  array,
+  isObject,
+  isArray,
+  clampRange,
+  debounce,
+  isFunction
+} from '@visactor/vutils';
 import { graphicCreator, vglobal, CustomEvent } from '@visactor/vrender-core';
 import { AbstractComponent } from '../core/base';
 import { SLIDER_ELEMENT_NAME } from './constant';
@@ -477,6 +488,10 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
   private _renderHandlerText(value: number, position: 'start' | 'end') {
     const textShape = graphicCreator.text(this._getHandlerTextAttributes(value, position));
     return textShape;
+  }
+
+  private _getHandlerPosition(isStart: boolean): 'start' | 'end' {
+    return this.attribute.range ? (isStart ? 'start' : 'end') : 'end';
   }
 
   private _getHandlerTextStyle(value: number, position: 'start' | 'end') {
@@ -1043,7 +1058,7 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     const updateHandlerText =
       handler.name === SLIDER_ELEMENT_NAME.startHandler ? this._startHandlerText : this._endHandlerText;
     if (updateHandlerText) {
-      const handlerPosition = handler.name === SLIDER_ELEMENT_NAME.startHandler ? 'start' : 'end';
+      const handlerPosition = this._getHandlerPosition(handler.name === SLIDER_ELEMENT_NAME.startHandler);
       updateHandlerText.setAttributes(this._getHandlerTextAttributes(value, handlerPosition));
     }
 
@@ -1059,7 +1074,7 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
   // 更新 handler 以及对应 text
   private _updateHandlerText(handlerText: IText, position: number, value: number) {
     const isHorizontal = this._isHorizontal;
-    const handlerPosition = handlerText.name === SLIDER_ELEMENT_NAME.startHandlerText ? 'start' : 'end';
+    const handlerPosition = this._getHandlerPosition(handlerText.name === SLIDER_ELEMENT_NAME.startHandlerText);
     handlerText.setAttributes(this._getHandlerTextAttributes(value, handlerPosition));
     const updateHandler =
       handlerText.name === SLIDER_ELEMENT_NAME.startHandlerText ? this._startHandler : this._endHandler;

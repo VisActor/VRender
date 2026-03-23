@@ -198,7 +198,7 @@ describe('Slider', () => {
       startHandlerText = slider.getElementsByName(SLIDER_ELEMENT_NAME.startHandlerText)[0] as IText;
       expect(style).toHaveBeenLastCalledWith(
         78,
-        'start',
+        'end',
         expect.objectContaining({
           layout: 'horizontal',
           align: 'bottom',
@@ -207,7 +207,7 @@ describe('Slider', () => {
         })
       );
       expect(startHandlerText.attribute.fill).toBe('red');
-      expect(startHandlerText.attribute.dx).toBe(-6);
+      expect(startHandlerText.attribute.dx).toBe(6);
     });
   });
 

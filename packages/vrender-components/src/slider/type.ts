@@ -6,7 +6,7 @@ import type {
 } from '@visactor/vrender-core';
 
 type Text = string | number;
-type SliderLayout = 'horizontal' | 'vertical' | string;
+type SliderLayout = 'horizontal' | 'vertical';
 type SliderAlign = 'top' | 'bottom' | 'left' | 'right';
 
 export type HandlerTextStyleContext = {

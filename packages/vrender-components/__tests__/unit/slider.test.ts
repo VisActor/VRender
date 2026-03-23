@@ -154,6 +154,61 @@ describe('Slider', () => {
       startHandlerText = slider.getElementsByName(SLIDER_ELEMENT_NAME.startHandlerText)[0] as IText;
       expect(startHandlerText.attribute.x).toBe(16);
     });
+
+    it('should evaluate handlerText style callback on render and update', () => {
+      const style = jest.fn((value: number, position: 'start' | 'end') => ({
+        fill: value > 50 ? 'red' : 'blue',
+        dx: position === 'start' ? -6 : 6
+      }));
+      const slider = new Slider({
+        x: 100,
+        y: 100,
+        layout: 'horizontal',
+        align: 'bottom',
+        railWidth: 200,
+        railHeight: 10,
+        min: 0,
+        max: 100,
+        value: 34,
+        handlerText: {
+          visible: true,
+          style
+        }
+      });
+
+      stage.defaultLayer.add(slider as unknown as IGraphic);
+      stage.render();
+
+      let startHandlerText = slider.getElementsByName(SLIDER_ELEMENT_NAME.startHandlerText)[0] as IText;
+      expect(style).toHaveBeenCalledWith(
+        34,
+        'end',
+        expect.objectContaining({
+          layout: 'horizontal',
+          align: 'bottom',
+          railWidth: 200,
+          railHeight: 10
+        })
+      );
+      expect(startHandlerText.attribute.fill).toBe('blue');
+      expect(startHandlerText.attribute.dx).toBe(6);
+
+      slider.setValue(78);
+
+      startHandlerText = slider.getElementsByName(SLIDER_ELEMENT_NAME.startHandlerText)[0] as IText;
+      expect(style).toHaveBeenLastCalledWith(
+        78,
+        'end',
+        expect.objectContaining({
+          layout: 'horizontal',
+          align: 'bottom',
+          railWidth: 200,
+          railHeight: 10
+        })
+      );
+      expect(startHandlerText.attribute.fill).toBe('red');
+      expect(startHandlerText.attribute.dx).toBe(6);
+    });
   });
 
   describe('Slider with two handlers', () => {

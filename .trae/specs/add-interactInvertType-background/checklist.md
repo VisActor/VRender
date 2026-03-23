@@ -1,0 +1,6 @@
+- [x] SmartInvertAttrs.interactInvertType 已包含 'background'
+- [x] 相交且 'background' 时设置 label.stroke=false
+- [x] 相交且 'background' 时设置 label.background=baseMark.fill（有填充时）
+- [x] 其他类型（none/stroked/inside）行为无回归
+- [x] 注释更新为“四种处理方式”并包含 background 描述
+- [x] 示例验证通过（IText 与 IRichText 场景）

@@ -182,7 +182,7 @@ describe('Slider', () => {
       let startHandlerText = slider.getElementsByName(SLIDER_ELEMENT_NAME.startHandlerText)[0] as IText;
       expect(style).toHaveBeenCalledWith(
         34,
-        'start',
+        'end',
         expect.objectContaining({
           layout: 'horizontal',
           align: 'bottom',
@@ -191,7 +191,7 @@ describe('Slider', () => {
         })
       );
       expect(startHandlerText.attribute.fill).toBe('blue');
-      expect(startHandlerText.attribute.dx).toBe(-6);
+      expect(startHandlerText.attribute.dx).toBe(6);
 
       slider.setValue(78);
 

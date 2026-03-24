@@ -1,3 +1,11 @@
+# v1.0.42
+
+2026-03-23
+
+
+
+[更多详情请查看 v1.0.42](https://github.com/VisActor/VRender/releases/tag/v1.0.42)
+
 # v1.0.15
 
 2025-09-02

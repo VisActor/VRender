@@ -120,6 +120,7 @@ export const DEFAULT_HANDLER_ATTR_MAP = {
   }
 };
 
+// 层级
 export const LAYOUT_LEVEL = {
   background: 0, // 背景
   preview: 1, // 背景图表

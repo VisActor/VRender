@@ -830,7 +830,8 @@ export class DataZoomRenderer {
         visible: this._showText,
         pickable: false,
         childrenPickable: false,
-        textStyle: startTextAlignStyle
+        textStyle: startTextAlignStyle,
+        zIndex: LAYOUT_LEVEL.handlerText
       }),
       `data-zoom-start-text`
     );
@@ -843,7 +844,8 @@ export class DataZoomRenderer {
         visible: this._showText,
         pickable: false,
         childrenPickable: false,
-        textStyle: endTextAlignStyle
+        textStyle: endTextAlignStyle,
+        zIndex: LAYOUT_LEVEL.handlerText
       }),
       `data-zoom-end-text`
     );

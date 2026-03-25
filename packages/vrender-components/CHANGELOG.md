@@ -1,6 +1,13 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Wed, 25 Mar 2026 13:14:18 GMT and should not be manually modified.
+This log was last generated on Wed, 25 Mar 2026 16:44:46 GMT and should not be manually modified.
+
+## 1.0.44
+Wed, 25 Mar 2026 16:44:46 GMT
+
+### Updates
+
+- chore: add note to dispatch publish
 
 ## 1.0.43
 Wed, 25 Mar 2026 13:14:18 GMT

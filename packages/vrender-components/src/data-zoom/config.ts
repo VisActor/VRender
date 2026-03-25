@@ -119,3 +119,14 @@ export const DEFAULT_HANDLER_ATTR_MAP = {
     strokeBoundsBuffer: 0
   }
 };
+
+export const LAYOUT_LEVEL = {
+  background: 0, // 背景
+  preview: 1, // 背景图表
+  dragMask: 2, // 背景选框
+  selectedBackground: 3, // 选中背景
+  selectedPreview: 4, // 选中背景图表
+  handler: 5, // 手柄
+  handlerText: 5, // 文字
+  handlerMask: 999 // 热区
+};

@@ -1,6 +1,13 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Mon, 23 Mar 2026 08:08:45 GMT and should not be manually modified.
+This log was last generated on Tue, 24 Mar 2026 13:05:47 GMT and should not be manually modified.
+
+## 1.0.43
+Tue, 24 Mar 2026 13:05:47 GMT
+
+### Updates
+
+- fix: add datazoom graphic layout level to render right level when update data. fix @VisActor/VChart#4186
 
 ## 1.0.42
 Mon, 23 Mar 2026 08:08:45 GMT

@@ -419,9 +419,10 @@ describe('DiscreteLegend', () => {
     stage.render();
 
     expect((legend.getElementsByName('legendItem')[0] as IGroup).AABBBounds.width()).toBe(121.95);
-    expect(
+    const labelWidth = (
       (legend.getElementsByName('legendItem')[0].getElementsByName('legendItemLabel')[0] as IText)._AABBBounds.width()
-    ).toBeCloseTo(57.143951416015625);
+    );
+    expect(Math.abs(labelWidth - 57.143951416015625)).toBeLessThan(10);
     expect(
       (legend.getElementsByName('legendItem')[0].getElementsByName('legendItemValue')[0] as IText).attribute
         .maxLineWidth

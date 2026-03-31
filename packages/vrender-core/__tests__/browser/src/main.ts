@@ -3,19 +3,34 @@ import { pages } from './pages/';
 
 const LOCAL_STORAGE_KEY = 'CANOPUS_DEMOS';
 
-const createSidebar = (node: HTMLDivElement) => {
-  const specsHtml = pages.map(entry => {
-    return `<p class="menu-item" data-path="${entry.path}">${entry.title}</p>`;
-  });
+const buildMenuHtml = (filter?: string) => {
+  const keyword = filter?.toLowerCase() ?? '';
+  return pages
+    .filter(
+      entry => !keyword || entry.title.toLowerCase().includes(keyword) || entry.path.toLowerCase().includes(keyword)
+    )
+    .map(entry => {
+      return `<p class="menu-item" data-path="${entry.path}">${entry.title}</p>`;
+    })
+    .join('');
+};
 
+const createSidebar = (node: HTMLDivElement) => {
   node.innerHTML = `
     <div>
       <p class="sidebar-title">页面列表</p>
+      <input class="sidebar-search" placeholder="搜索..." />
       <div class="menu-list">
-        ${specsHtml.join('')}
+        ${buildMenuHtml()}
       </div>
     </div>
   `;
+
+  const searchInput = node.querySelector<HTMLInputElement>('.sidebar-search')!;
+  searchInput.addEventListener('input', () => {
+    const menuList = node.querySelector<HTMLDivElement>('.menu-list')!;
+    menuList.innerHTML = buildMenuHtml(searchInput.value);
+  });
 };
 
 const ACTIVE_ITEM_CLS = 'menu-item-active';
@@ -35,7 +50,10 @@ const handleClick = (e: { target: any }, isInit?: boolean) => {
   }
 
   if (triggerNode) {
-    const path = triggerNode.dataset.path;
+    const path = triggerNode.dataset?.path;
+    if (!path) {
+      return;
+    }
 
     triggerNode.classList.add(ACTIVE_ITEM_CLS);
     if (!isInit) {

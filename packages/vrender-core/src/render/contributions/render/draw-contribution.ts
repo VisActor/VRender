@@ -27,6 +27,7 @@ import type { ILayerService } from '../../../interface/core';
 import { boundsAllocate } from '../../../allocator/bounds-allocate';
 import { matrixAllocate } from '../../../allocator/matrix-allocate';
 import { application } from '../../../application';
+import { drawBackgroundImage, getBackgroundImage } from './contributions/base-contribution-render';
 
 /**
  * 默认的渲染contribution，基于树状结构针对图元的渲染
@@ -477,14 +478,26 @@ export class DefaultDrawContribution implements IDrawContribution {
       const stage = renderService.drawParams?.stage;
       stage && (context.globalAlpha = (stage as any).attribute.opacity ?? 1);
       if (stage && (stage as any).backgroundImg && (stage as any).resources) {
-        const res = (stage as any).resources.get(clear);
+        const res = (stage as any).resources.get(getBackgroundImage(clear));
         if (res && res.state === 'success' && res.data) {
-          context.drawImage(res.data, x, y, width, height);
+          const backgroundBounds = boundsAllocate.allocate(x, y, x + width, y + height);
+          drawBackgroundImage(context, res.data, backgroundBounds, {
+            backgroundMode: (stage as any).attribute.backgroundMode ?? DefaultAttribute.backgroundMode,
+            backgroundFit: (stage as any).attribute.backgroundFit ?? DefaultAttribute.backgroundFit,
+            backgroundKeepAspectRatio:
+              (stage as any).attribute.backgroundKeepAspectRatio ?? DefaultAttribute.backgroundKeepAspectRatio,
+            backgroundSizing: (stage as any).attribute.backgroundSizing,
+            backgroundScale: (stage as any).attribute.backgroundScale ?? DefaultAttribute.backgroundScale,
+            backgroundOffsetX: (stage as any).attribute.backgroundOffsetX ?? DefaultAttribute.backgroundOffsetX,
+            backgroundOffsetY: (stage as any).attribute.backgroundOffsetY ?? DefaultAttribute.backgroundOffsetY,
+            backgroundPosition: (stage as any).attribute.backgroundPosition ?? DefaultAttribute.backgroundPosition
+          });
+          boundsAllocate.free(backgroundBounds);
         }
       } else {
         context.fillStyle = createColor(
           context,
-          clear,
+          clear as any,
           {
             AABBBounds: { x1: x, y1: y, x2: x + width, y2: y + height }
           },

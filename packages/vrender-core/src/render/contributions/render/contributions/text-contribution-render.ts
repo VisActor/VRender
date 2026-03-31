@@ -35,9 +35,18 @@ export class DefaultTextBackgroundRenderContribution
     strokeCb?: (ctx: IContext2d, markAttribute: Partial<IGraphicAttribute>, themeAttribute: IThemeAttribute) => boolean
   ) {
     const {
+      backgroundOpacity = graphicAttribute.backgroundOpacity,
+      opacity = graphicAttribute.opacity,
       backgroundMode = graphicAttribute.backgroundMode,
       backgroundFit = graphicAttribute.backgroundFit,
-      backgroundKeepAspectRatio = graphicAttribute.backgroundKeepAspectRatio
+      backgroundKeepAspectRatio = graphicAttribute.backgroundKeepAspectRatio,
+      backgroundSizing = graphicAttribute.backgroundSizing,
+      backgroundScale = graphicAttribute.backgroundScale,
+      backgroundOffsetX = graphicAttribute.backgroundOffsetX,
+      backgroundOffsetY = graphicAttribute.backgroundOffsetY,
+      backgroundPosition = graphicAttribute.backgroundPosition,
+      backgroundClip = graphicAttribute.backgroundClip,
+      backgroundCornerRadius = graphicAttribute.backgroundCornerRadius
     } = graphic.attribute;
     let { background } = graphic.attribute;
     if (!background) {
@@ -61,22 +70,22 @@ export class DefaultTextBackgroundRenderContribution
     };
     save();
     let b: IAABBBounds;
-    const shouldReCalBounds = isObject(background) && (background as any).background;
+    const backgroundConfig = isObject(background) && (background as any).background ? (background as any) : null;
     const onlyTranslate = graphic.transMatrix.onlyTranslate();
-    if (shouldReCalBounds) {
+    if (backgroundConfig) {
       const _b = graphic.AABBBounds;
-      const x = ((background as any).x ?? _b.x1) + ((background as any).dx ?? 0);
-      const y = ((background as any).y ?? _b.y1) + ((background as any).dy ?? 0);
-      const w = (background as any).width ?? _b.width();
-      const h = (background as any).height ?? _b.height();
+      const x = (backgroundConfig.x ?? _b.x1) + (backgroundConfig.dx ?? 0);
+      const y = (backgroundConfig.y ?? _b.y1) + (backgroundConfig.dy ?? 0);
+      const w = backgroundConfig.width ?? _b.width();
+      const h = backgroundConfig.height ?? _b.height();
       b = boundsAllocate.allocate(x, y, x + w, y + h);
-      background = (background as any).background;
+      background = backgroundConfig.background;
       if (!onlyTranslate) {
         const w = b.width();
         const h = b.height();
         b.set(
-          ((background as any).x ?? 0) + ((background as any).dx ?? 0),
-          ((background as any).y ?? 0) + ((background as any).dy ?? 0),
+          (backgroundConfig.x ?? 0) + (backgroundConfig.dx ?? 0),
+          (backgroundConfig.y ?? 0) + (backgroundConfig.dy ?? 0),
           w,
           h
         );
@@ -90,7 +99,7 @@ export class DefaultTextBackgroundRenderContribution
 
     if (graphic.backgroundImg && graphic.resources) {
       const res = graphic.resources.get(background as any);
-      if (res.state !== 'success' || !res.data) {
+      if (!res || res.state !== 'success' || !res.data) {
         restore();
         return;
       }
@@ -105,15 +114,32 @@ export class DefaultTextBackgroundRenderContribution
         context.setTransformFromMatrix(graphic.parent.globalTransMatrix, true);
       }
 
-      context.setCommonStyle(graphic, graphic.attribute, x, y, graphicAttribute);
-      this.doDrawImage(context, res.data, b, { backgroundMode, backgroundFit, backgroundKeepAspectRatio });
+      context.globalAlpha = backgroundOpacity * opacity;
+      if (backgroundClip) {
+        context.beginPath();
+        if (backgroundCornerRadius) {
+          createRectPath(context, b.x1, b.y1, b.width(), b.height(), backgroundCornerRadius, true);
+        } else {
+          context.rect(b.x1, b.y1, b.width(), b.height());
+        }
+        context.clip();
+      }
+      this.doDrawImage(context, res.data, b, {
+        backgroundMode,
+        backgroundFit,
+        backgroundKeepAspectRatio,
+        backgroundSizing,
+        backgroundScale,
+        backgroundOffsetX,
+        backgroundOffsetY,
+        backgroundPosition
+      });
       context.highPerformanceRestore();
       context.setTransformForCurrent();
     } else {
-      const { backgroundCornerRadius, backgroundOpacity = 1 } = graphic.attribute;
       context.highPerformanceSave();
       context.setCommonStyle(graphic, graphic.attribute, x, y, graphicAttribute);
-      context.globalAlpha = backgroundOpacity;
+      context.globalAlpha = backgroundOpacity * opacity;
       context.fillStyle = background as string;
       if (backgroundCornerRadius) {
         // 测试后，cache对于重绘性能提升不大，但是在首屏有一定性能损耗，因此rect不再使用cache
@@ -125,7 +151,7 @@ export class DefaultTextBackgroundRenderContribution
       context.highPerformanceRestore();
     }
 
-    if (shouldReCalBounds) {
+    if (backgroundConfig) {
       boundsAllocate.free(b);
     }
     restore();

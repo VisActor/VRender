@@ -1,7 +1,8 @@
 import type { IAABBBounds, IBounds, IBoundsLike, IMatrix } from '@visactor/vutils';
-import { Bounds, Point, isString } from '@visactor/vutils';
+import { Bounds, Point } from '@visactor/vutils';
 import type {
   IGraphic,
+  IGraphicAttribute,
   IExportType,
   IStage,
   IStageParams,
@@ -74,7 +75,7 @@ export class Stage extends Group implements IStage {
 
   declare state: IStageState;
 
-  private _background: string | IColor;
+  private _background: IGraphicAttribute['background'] | IColor;
   protected nextFrameRenderLayerSet: Set<Layer>;
   protected willNextFrameRender: boolean;
   protected _cursor: string;
@@ -157,11 +158,12 @@ export class Stage extends Group implements IStage {
   set dpr(r: number) {
     this.setDpr(r);
   }
-  get background(): string | IColor {
+  get background(): IGraphicAttribute['background'] | IColor {
     return this._background ?? DefaultConfig.BACKGROUND;
   }
-  set background(b: string | IColor) {
+  set background(b: IGraphicAttribute['background'] | IColor) {
     this._background = b;
+    this.loadImage((b as any)?.background ?? b, true);
   }
   get defaultLayer(): ILayer {
     return this.at(0) as unknown as ILayer;
@@ -328,8 +330,8 @@ export class Stage extends Group implements IStage {
     }
     this.optmize(params.optimize);
     // 如果背景是图片，触发加载图片操作
-    if (params.background && isString(this._background) && this._background.includes('/')) {
-      this.setAttributes({ background: this._background });
+    if (params.background) {
+      this.loadImage((this._background as any)?.background ?? this._background, true);
     }
 
     this.initAnimate(params);

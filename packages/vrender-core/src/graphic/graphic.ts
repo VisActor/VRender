@@ -1477,6 +1477,9 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   }
 
   loadImage(image: any, background: boolean = false) {
+    if (background && image?.background) {
+      image = image.background;
+    }
     if (!image || (background && backgroundNotImage(image))) {
       return;
     }

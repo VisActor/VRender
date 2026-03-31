@@ -237,6 +237,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     { state: 'init' | 'loading' | 'success' | 'fail'; data?: HTMLImageElement | HTMLCanvasElement }
   >;
   declare backgroundImg?: boolean;
+  declare textureImg?: boolean;
 
   declare type: GraphicType;
   declare prefixed: string;
@@ -331,9 +332,13 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     this.valid = this.isValid();
     this.updateAABBBoundsStamp = 0;
     if (params.background) {
-      this.loadImage((params.background as any).background ?? params.background, true);
-    } else if (params.shadowGraphic) {
+      this.loadImage((params.background as any).background ?? params.background, 'background');
+    }
+    if (params.shadowGraphic) {
       this.setShadowGraphic(params.shadowGraphic);
+    }
+    if (params.texture) {
+      this.loadImage(params.texture, 'texture');
     }
     // this.attribute = createTrackableObject(this.attribute);
   }
@@ -704,8 +709,12 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       (this.onBeforeAttributeUpdate && this.onBeforeAttributeUpdate(params, this.attribute, null, context)) || params;
 
     if (params.background) {
-      this.loadImage(params.background, true);
-    } else if (params.shadowGraphic) {
+      this.loadImage(params.background, 'background');
+    }
+    if (params.texture) {
+      this.loadImage(params.texture, 'texture');
+    }
+    if (params.shadowGraphic) {
       this.setShadowGraphic(params.shadowGraphic);
     }
     this._setAttributes(params, forceUpdateTag, context);
@@ -752,7 +761,9 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       this._setAttributes(params, forceUpdateTag, context);
     }
     if (key === 'background') {
-      this.loadImage(value, true);
+      this.loadImage(value, 'background');
+    } else if (key === 'texture') {
+      this.loadImage(value, 'texture');
     } else if (key === 'shadowGraphic') {
       this.setShadowGraphic(value);
     }
@@ -785,8 +796,12 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       (this.onBeforeAttributeUpdate && this.onBeforeAttributeUpdate(params, this.attribute, null, context)) || params;
     this.attribute = params;
     if (params.background) {
-      this.loadImage(params.background, true);
-    } else if (params.shadowGraphic) {
+      this.loadImage(params.background, 'background');
+    }
+    if (params.texture) {
+      this.loadImage(params.texture, 'texture');
+    }
+    if (params.shadowGraphic) {
       this.setShadowGraphic(params.shadowGraphic);
     }
     this._updateTag = UpdateTag.INIT;
@@ -1476,7 +1491,9 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     return this.pathProxy;
   }
 
-  loadImage(image: any, background: boolean = false) {
+  loadImage(image: any, type?: 'background' | 'texture') {
+    const background = type === 'background';
+    const texture = type === 'texture';
     if (!image || (background && backgroundNotImage(image))) {
       return;
     }
@@ -1498,13 +1515,16 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
         // TODO 封装isSvg到@visactor/vutils
         ResourceLoader.GetSvg(image, this);
         this.backgroundImg = this.backgroundImg || background;
+        this.textureImg = this.textureImg || texture;
       } else if (isValidUrl(image) || image.includes('/') || isBase64(image)) {
         ResourceLoader.GetImage(image, this);
         this.backgroundImg = this.backgroundImg || background;
+        this.textureImg = this.textureImg || texture;
       }
     } else if (isObject(image)) {
       (cache.state = 'success'), (cache.data = image);
       this.backgroundImg = this.backgroundImg || background;
+      this.textureImg = this.textureImg || texture;
     } else {
       cache.state = 'fail';
     }

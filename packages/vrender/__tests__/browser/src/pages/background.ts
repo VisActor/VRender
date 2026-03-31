@@ -213,7 +213,7 @@ export const page = () => {
     clip: true,
     background: demoImage,
     backgroundSizing: 'contain',
-    backgroundPosition: 'right bottom',
+    backgroundPosition: 'bottom-right',
     backgroundClip: true
   });
   group.add(

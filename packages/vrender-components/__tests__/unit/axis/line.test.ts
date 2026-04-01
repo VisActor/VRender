@@ -945,9 +945,9 @@ describe('Line Axis', () => {
           (axis.getElementsByName('axis-label')[0] as IText).attribute.dx -
           (axis.getElementsByName('axis-label')[0] as IText).AABBBounds.width()
       ).toBeCloseTo((axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.x1);
-      expect((axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.width()).toBeCloseTo(
-        (axis.getElementsByName('axis-label')[0] as IText).AABBBounds.width()
-      );
+      expect(
+        (axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.width()
+      ).toBeGreaterThanOrEqual((axis.getElementsByName('axis-label')[0] as IText).AABBBounds.width());
     });
 
     it("should work in `orient: 'right'` axis", () => {

@@ -1,4 +1,5 @@
 import type { IGraphic, IText, Stage, ISymbol } from '@visactor/vrender-core';
+import { normalizePadding } from '@visactor/vutils';
 import { Pager } from '../../src';
 import { createCanvas } from '../util/dom';
 import { createStage } from '../util/vrender';
@@ -59,8 +60,9 @@ describe('Pager', () => {
       (pager.text as IText).AABBBounds.y2,
       (pager.nextHandler as ISymbol).AABBBounds.y2
     );
-    expect(pager.AABBBounds.width()).toBeCloseTo(maxX - minX);
-    expect(pager.AABBBounds.height()).toBeCloseTo(maxY - minY);
+    const parsedPadding = normalizePadding(pager.attribute.padding ?? 0);
+    expect(pager.AABBBounds.width()).toBeCloseTo(maxX - minX + parsedPadding[1] + parsedPadding[3]);
+    expect(pager.AABBBounds.height()).toBeCloseTo(maxY - minY + parsedPadding[0] + parsedPadding[2]);
   });
 
   it('Pager in vertical should be render correctly', () => {
@@ -99,7 +101,8 @@ describe('Pager', () => {
       (pager.text as IText).AABBBounds.y2,
       (pager.nextHandler as ISymbol).AABBBounds.y2
     );
-    expect(pager.AABBBounds.width()).toBeCloseTo(maxX - minX);
-    expect(pager.AABBBounds.height()).toBeCloseTo(maxY - minY);
+    const parsedPadding = normalizePadding(pager.attribute.padding ?? 0);
+    expect(pager.AABBBounds.width()).toBeCloseTo(maxX - minX + parsedPadding[1] + parsedPadding[3]);
+    expect(pager.AABBBounds.height()).toBeCloseTo(maxY - minY + parsedPadding[0] + parsedPadding[2]);
   });
 });

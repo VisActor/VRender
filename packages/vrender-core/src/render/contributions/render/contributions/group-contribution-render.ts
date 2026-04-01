@@ -6,7 +6,7 @@ import type {
   IGroupRenderContribution,
   IDrawContext
 } from '../../../../interface';
-import { DefaultBaseBackgroundRenderContribution } from './base-contribution-render';
+import { DefaultBaseBackgroundRenderContribution, getBackgroundImage } from './base-contribution-render';
 import { BaseRenderContributionTime } from '../../../../common/enums';
 
 export class DefaultGroupBackgroundRenderContribution
@@ -31,20 +31,25 @@ export class DefaultGroupBackgroundRenderContribution
   ) {
     const {
       background,
+      backgroundOpacity = graphicAttribute.backgroundOpacity,
+      opacity = graphicAttribute.opacity,
       backgroundMode = graphicAttribute.backgroundMode,
       backgroundFit = graphicAttribute.backgroundFit,
       backgroundKeepAspectRatio = graphicAttribute.backgroundKeepAspectRatio,
+      backgroundSizing = graphicAttribute.backgroundSizing,
       backgroundScale = graphicAttribute.backgroundScale,
       backgroundOffsetX = graphicAttribute.backgroundOffsetX,
-      backgroundOffsetY = graphicAttribute.backgroundOffsetY
+      backgroundOffsetY = graphicAttribute.backgroundOffsetY,
+      backgroundClip = graphicAttribute.backgroundClip,
+      backgroundPosition = graphicAttribute.backgroundPosition
     } = graphic.attribute;
     if (!background) {
       return;
     }
 
     if (graphic.backgroundImg && graphic.resources) {
-      const res = graphic.resources.get(background as any);
-      if (res.state !== 'success' || !res.data) {
+      const res = graphic.resources.get(getBackgroundImage(background) as any);
+      if (!res || res.state !== 'success' || !res.data) {
         return;
       }
 
@@ -52,18 +57,23 @@ export class DefaultGroupBackgroundRenderContribution
 
       context.setTransformFromMatrix(graphic.parent.globalTransMatrix, true);
       const b = graphic.AABBBounds;
+      context.globalAlpha = backgroundOpacity * opacity;
+      backgroundClip && context.clip();
       this.doDrawImage(context, res.data, b, {
         backgroundMode,
         backgroundFit,
         backgroundKeepAspectRatio,
+        backgroundSizing,
         backgroundScale,
         backgroundOffsetX,
-        backgroundOffsetY
+        backgroundOffsetY,
+        backgroundPosition
       });
       context.highPerformanceRestore();
       context.setTransformForCurrent();
     } else {
       context.highPerformanceSave();
+      context.globalAlpha = backgroundOpacity * opacity;
       context.fillStyle = background as string;
       context.fill();
       context.highPerformanceRestore();

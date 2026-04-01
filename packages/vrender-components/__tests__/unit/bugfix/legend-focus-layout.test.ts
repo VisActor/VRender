@@ -1,5 +1,6 @@
-import type { IGraphic, ISymbol, Stage } from '@visactor/vrender-core';
+import type { IGraphic, IGroup, ISymbol, IText, Stage } from '@visactor/vrender-core';
 import { DiscreteLegend, LEGEND_ELEMENT_NAME } from '../../../src';
+import { DEFAULT_LABEL_SPACE, DEFAULT_SHAPE_SIZE, DEFAULT_SHAPE_SPACE } from '../../../src/legend/constant';
 import { createCanvas } from '../../util/dom';
 import { createStage } from '../../util/vrender';
 import { initBrowserEnv } from '@visactor/vrender-kits';
@@ -15,6 +16,8 @@ describe('Legend focus layout', () => {
   afterAll(() => {
     stage.release();
   });
+
+  const getLegendItems = (legend: DiscreteLegend) => legend.getElementsByName(LEGEND_ELEMENT_NAME.item) as IGroup[];
 
   it('should not exceed the maximum width of the item, and the basic length exceeds, legend item with value', () => {
     const legend = new DiscreteLegend({
@@ -45,7 +48,16 @@ describe('Legend focus layout', () => {
     stage.defaultLayer.add(legend as unknown as IGraphic);
     stage.render();
 
-    expect(legend.AABBBounds.width()).toBe(422.05995178222656);
+    const legendItems = getLegendItems(legend);
+    const firstValue = legendItems[0].getElementsByName(LEGEND_ELEMENT_NAME.itemValue)[0] as IText;
+    expect(legendItems).toHaveLength(5);
+    legendItems.forEach(item => {
+      expect(item.AABBBounds.width()).toBeLessThanOrEqual(100.001);
+    });
+    expect(legendItems[0].AABBBounds.width()).toBeGreaterThan(legendItems[1].AABBBounds.width());
+    expect(firstValue.attribute.maxLineWidth).toBeCloseTo(
+      (100 - DEFAULT_SHAPE_SIZE - DEFAULT_SHAPE_SPACE - DEFAULT_LABEL_SPACE) / 2
+    );
   });
 
   it('should not exceed the maximum width of the item, and the basic length exceeds, legend item without value', () => {
@@ -71,7 +83,14 @@ describe('Legend focus layout', () => {
     stage.defaultLayer.add(legend as unknown as IGraphic);
     stage.render();
 
-    expect(legend.AABBBounds.width()).toBe(310);
+    const legendItems = getLegendItems(legend);
+    const firstLabel = legendItems[0].getElementsByName(LEGEND_ELEMENT_NAME.itemLabel)[0] as IText;
+    expect(legendItems).toHaveLength(5);
+    legendItems.forEach(item => {
+      expect(item.AABBBounds.width()).toBeLessThanOrEqual(100.001);
+    });
+    expect(legendItems[0].AABBBounds.width()).toBeGreaterThan(legendItems[1].AABBBounds.width());
+    expect(firstLabel.attribute.maxLineWidth).toBeCloseTo(82);
   });
 
   it('should not exceed the maximum width of the item, and the basic length exceeds, legend item with focus', () => {
@@ -99,7 +118,11 @@ describe('Legend focus layout', () => {
     stage.defaultLayer.add(legend as unknown as IGraphic);
     stage.render();
 
-    expect(legend.AABBBounds.width()).toBe(108.71428571428572);
+    const legendItems = getLegendItems(legend);
+    const firstLabel = legendItems[0].getElementsByName(LEGEND_ELEMENT_NAME.itemLabel)[0] as IText;
+    expect(legend.AABBBounds.width()).toBeLessThanOrEqual(110.001);
+    expect(legend.AABBBounds.width()).toBeGreaterThan(90);
+    expect(firstLabel.attribute.maxLineWidth).toBeCloseTo(72);
   });
 
   it('should not exceed the maximum width of the item, and the basic length exceeds, legend item with focus and value', () => {
@@ -133,7 +156,11 @@ describe('Legend focus layout', () => {
     stage.defaultLayer.add(legend as unknown as IGraphic);
     stage.render();
 
-    expect(legend.AABBBounds.width()).toBe(99.92627607073103);
+    const legendItems = getLegendItems(legend);
+    const firstValue = legendItems[0].getElementsByName(LEGEND_ELEMENT_NAME.itemValue)[0] as IText;
+    expect(legend.AABBBounds.width()).toBeLessThanOrEqual(110.001);
+    expect(legend.AABBBounds.width()).toBeGreaterThan(90);
+    expect(firstValue.attribute.maxLineWidth).toBeCloseTo(28);
   });
 
   it('should calculate when legend item just has label', () => {

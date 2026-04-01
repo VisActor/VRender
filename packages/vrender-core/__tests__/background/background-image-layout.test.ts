@@ -262,7 +262,8 @@ describe('background image layout', () => {
       backgroundImg: true,
       resources: new Map([['image-key', { state: 'success', data: createImage(200, 100) }]]),
       attribute: {
-        opacity: 1,
+        opacity: 0.5,
+        backgroundOpacity: 0.2,
         backgroundMode: 'no-repeat',
         backgroundFit: true,
         backgroundKeepAspectRatio: true,
@@ -289,5 +290,6 @@ describe('background image layout', () => {
     );
 
     expect(context.drawImage).toHaveBeenCalledWith(expect.anything(), -50, 0, 200, 100);
+    expect(context.globalAlpha).toBe(0.1);
   });
 });

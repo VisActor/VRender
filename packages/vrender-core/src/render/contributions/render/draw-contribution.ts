@@ -476,7 +476,10 @@ export class DefaultDrawContribution implements IDrawContribution {
         renderService.drawParams.stage.hooks.afterClearRect.call(renderService.drawParams);
       }
       const stage = renderService.drawParams?.stage;
-      stage && (context.globalAlpha = (stage as any).attribute.opacity ?? 1);
+      if (stage) {
+        context.globalAlpha =
+          ((stage as any).attribute.opacity ?? 1) * ((stage as any).attribute.backgroundOpacity ?? 1);
+      }
       if (stage && (stage as any).backgroundImg && (stage as any).resources) {
         const res = (stage as any).resources.get(getBackgroundImage(clear));
         if (res && res.state === 'success' && res.data) {

@@ -1,5 +1,5 @@
 import type { IAABBBounds, IBounds, IBoundsLike, IMatrix } from '@visactor/vutils';
-import { Bounds, Point } from '@visactor/vutils';
+import { Bounds, Point, isBase64, isObject, isValidUrl } from '@visactor/vutils';
 import type {
   IGraphic,
   IGraphicAttribute,
@@ -163,7 +163,7 @@ export class Stage extends Group implements IStage {
   }
   set background(b: IGraphicAttribute['background'] | IColor) {
     this._background = b;
-    this.loadImage((b as any)?.background ?? b, true);
+    this.syncBackgroundImage(b);
   }
   get defaultLayer(): ILayer {
     return this.at(0) as unknown as ILayer;
@@ -224,6 +224,30 @@ export class Stage extends Group implements IStage {
     ticker.addTimeline(this.timeline);
     this._ticker = ticker;
     this._ticker.on('tick', this.afterTickCb);
+  }
+
+  protected syncBackgroundImage(background: IGraphicAttribute['background'] | IColor) {
+    const source = (background as any)?.background ?? background;
+    this.backgroundImg = false;
+    if (this.isImageBackgroundSource(source)) {
+      this.loadImage(source, true);
+    }
+  }
+
+  protected isImageBackgroundSource(source: any): boolean {
+    if (!source) {
+      return false;
+    }
+    if (typeof source === 'string') {
+      return source.startsWith('<svg') || isValidUrl(source) || source.includes('/') || isBase64(source);
+    }
+    if (!isObject(source)) {
+      return false;
+    }
+    if (typeof source.gradient === 'string' && Array.isArray(source.stops)) {
+      return false;
+    }
+    return true;
   }
 
   /**
@@ -331,7 +355,7 @@ export class Stage extends Group implements IStage {
     this.optmize(params.optimize);
     // 如果背景是图片，触发加载图片操作
     if (params.background) {
-      this.loadImage((this._background as any)?.background ?? this._background, true);
+      this.syncBackgroundImage(this._background);
     }
 
     this.initAnimate(params);

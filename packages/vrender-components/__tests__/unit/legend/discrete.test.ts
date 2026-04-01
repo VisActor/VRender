@@ -227,7 +227,10 @@ describe('DiscreteLegend', () => {
     stage.defaultLayer.add(legend as unknown as IGraphic);
     stage.render();
 
-    expect(legend.AABBBounds.width()).toBe(76);
+    const legendItems = legend.getElementsByName('legendItem') as IGroup[];
+    expect(legendItems).toHaveLength(2);
+    expect(legend.AABBBounds.width()).toBeCloseTo(Math.max(...legendItems.map(item => item.AABBBounds.width())));
+    expect(legend.AABBBounds.width()).toBeLessThan(1000);
   });
 
   it("should omit when label's width exceeds item's width", () => {

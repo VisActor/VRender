@@ -2,10 +2,13 @@ const path = require('path');
 
 module.exports = {
   preset: 'ts-jest',
-  runner: 'jest-electron/runner',
-  testEnvironment: 'jest-electron/environment',
+  testEnvironment: path.resolve(__dirname, '../../share/jest-config/jest-environment-jsdom-26.js'),
+  testEnvironmentOptions: {
+    pretendToBeVisual: true
+  },
   testRegex: '/__tests__/.*\\.test\\.(js|ts)$',
   silent: true,
+  useStderr: false,
   globals: {
     'ts-jest': {
       resolveJsonModule: true,
@@ -19,7 +22,7 @@ module.exports = {
   collectCoverage: false,
   collectCoverageFrom: ['src/**/*.ts', '!**/type/**'],
   coverageReporters: ['json-summary', 'lcov', 'text'],
-  setupFiles: ['./setup-mock.js'],
+  setupFiles: [path.resolve(__dirname, '../../share/jest-config/setup-jsdom-canvas.js'), './setup-mock.js'],
   coveragePathIgnorePatterns: ['node_modules', '__tests__', 'interface.ts', '.d.ts', 'typings', 'type.ts'],
   moduleNameMapper: {
     '@visactor/vrender-kits': path.resolve(__dirname, '../vrender-kits/src/index.ts'),

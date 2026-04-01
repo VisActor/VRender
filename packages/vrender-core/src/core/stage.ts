@@ -244,7 +244,8 @@ export class Stage extends Group implements IStage {
     if (!isObject(source)) {
       return false;
     }
-    if (typeof source.gradient === 'string' && Array.isArray(source.stops)) {
+    const gradientSource = source as { gradient?: unknown; stops?: unknown };
+    if (typeof gradientSource.gradient === 'string' && Array.isArray(gradientSource.stops)) {
       return false;
     }
     return true;

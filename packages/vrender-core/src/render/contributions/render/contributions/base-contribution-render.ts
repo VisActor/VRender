@@ -241,6 +241,32 @@ export function resolveBackgroundPosition(
   };
 }
 
+function pickRenderableDimension(...values: any[]): number | null {
+  for (const value of values) {
+    if (typeof value === 'number' && Number.isFinite(value) && value > 0) {
+      return value;
+    }
+  }
+  return null;
+}
+
+export function resolveRenderableImageSize(data: any): { width: number; height: number } | null {
+  if (!data) {
+    return null;
+  }
+
+  // DOM image-like resources may expose intrinsic size on naturalWidth/videoWidth
+  // while width/height stays 0, so prefer intrinsic dimensions when available.
+  const width = pickRenderableDimension(data.naturalWidth, data.videoWidth, data.width);
+  const height = pickRenderableDimension(data.naturalHeight, data.videoHeight, data.height);
+
+  if (width == null || height == null) {
+    return null;
+  }
+
+  return { width, height };
+}
+
 export function drawBackgroundImage(
   context: IContext2d,
   data: any,
@@ -259,10 +285,11 @@ export function drawBackgroundImage(
   } = params;
   const targetW = b.width();
   const targetH = b.height();
+  const sourceSize = resolveRenderableImageSize(data);
   let w = targetW;
   let h = targetH;
 
-  if (!data?.width || !data?.height || targetW <= 0 || targetH <= 0) {
+  if (targetW <= 0 || targetH <= 0) {
     return;
   }
 
@@ -272,16 +299,16 @@ export function drawBackgroundImage(
       backgroundKeepAspectRatio,
       backgroundSizing
     });
-    let drawWidth = data.width;
-    let drawHeight = data.height;
+    let drawWidth = sourceSize?.width ?? targetW;
+    let drawHeight = sourceSize?.height ?? targetH;
 
-    if (sizing === 'cover' || sizing === 'contain') {
+    if ((sizing === 'cover' || sizing === 'contain') && sourceSize) {
       const scale =
         sizing === 'cover'
-          ? Math.max(targetW / data.width, targetH / data.height)
-          : Math.min(targetW / data.width, targetH / data.height);
-      drawWidth = data.width * scale;
-      drawHeight = data.height * scale;
+          ? Math.max(targetW / sourceSize.width, targetH / sourceSize.height)
+          : Math.min(targetW / sourceSize.width, targetH / sourceSize.height);
+      drawWidth = sourceSize.width * scale;
+      drawHeight = sourceSize.height * scale;
     } else if (sizing === 'fill') {
       drawWidth = targetW;
       drawHeight = targetH;
@@ -296,9 +323,9 @@ export function drawBackgroundImage(
   }
 
   // TODO 考虑缓存
-  if (backgroundFit && backgroundMode !== 'repeat' && (data.width || data.height)) {
-    const resW = data.width;
-    const resH = data.height;
+  if (backgroundFit && backgroundMode !== 'repeat' && sourceSize) {
+    const resW = sourceSize.width;
+    const resH = sourceSize.height;
 
     if (backgroundMode === 'repeat-x') {
       // 高度适应

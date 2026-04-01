@@ -4,6 +4,7 @@ import {
   drawImageWithLayout,
   shouldClipImageByLayout
 } from '../../src/render/contributions/render/image-render';
+import { drawBackgroundImage } from '../../src/render/contributions/render/contributions/base-contribution-render';
 
 function createImageData(width: number, height: number) {
   return { width, height };
@@ -72,6 +73,36 @@ describe('image layout', () => {
       repeatY: 'no-repeat',
       imageSizing: 'fill'
     });
+
+    expect(context.drawImage).toHaveBeenCalledWith(expect.anything(), 0, 0, 100, 100);
+  });
+
+  test('uses intrinsic size when image element width and height are zero', () => {
+    const context = createContext();
+
+    drawBackgroundImage(
+      context as any,
+      {
+        width: 0,
+        height: 0,
+        naturalWidth: 200,
+        naturalHeight: 100
+      },
+      {
+        x1: 0,
+        y1: 0,
+        x2: 100,
+        y2: 100,
+        width: () => 100,
+        height: () => 100
+      } as any,
+      {
+        backgroundMode: 'no-repeat',
+        backgroundFit: false,
+        backgroundKeepAspectRatio: false,
+        backgroundSizing: 'fill'
+      }
+    );
 
     expect(context.drawImage).toHaveBeenCalledWith(expect.anything(), 0, 0, 100, 100);
   });

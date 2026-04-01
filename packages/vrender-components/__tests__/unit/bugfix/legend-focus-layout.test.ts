@@ -332,6 +332,9 @@ describe('Legend focus layout', () => {
     stage.defaultLayer.add(legend as unknown as IGraphic);
     stage.render();
     expect(legend.getElementsByName(LEGEND_ELEMENT_NAME.focus).length).toBe(4);
-    expect((legend.getElementsByName(LEGEND_ELEMENT_NAME.focus)[0] as ISymbol).attribute.x).toBe(41);
+    const firstItem = getLegendItems(legend)[0];
+    const firstLabel = firstItem.getElementsByName(LEGEND_ELEMENT_NAME.itemLabel)[0] as IText;
+    const firstFocus = firstItem.getElementsByName(LEGEND_ELEMENT_NAME.focus)[0] as ISymbol;
+    expect(firstFocus.attribute.x - firstLabel.attribute.x).toBeCloseTo(firstLabel.AABBBounds.width() + 6);
   });
 });

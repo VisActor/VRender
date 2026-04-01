@@ -1,6 +1,7 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
+    "sourceMap": true,
     "paths": {
       "@visactor/vrender": ["../vrender/src"],
       "@visactor/vrender-core": ["../vrender-core/src"],

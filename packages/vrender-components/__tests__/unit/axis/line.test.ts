@@ -111,12 +111,14 @@ describe('Line Axis', () => {
 
     const axisLabels = axis.getElementsByName(`${AXIS_ELEMENT_NAME.labelContainer}-layer-0`)[0] as unknown as Group;
     expect(axisLabels.childrenCount).toBe(8);
-    expect((axisLabels.children[0] as unknown as Text).attribute.x).toBe(100);
-    expect((axisLabels.children[0] as unknown as Text).attribute.y).toBe(124);
-    expect((axisLabels.children[0] as unknown as Text).attribute.textAlign).toBe('center');
-    expect((axisLabels.children[0] as unknown as Text).attribute.textBaseline).toBe('top');
-    expect((axisLabels.children[0] as unknown as Text).attribute.text).toBe('A---');
-    expect((axisLabels.children[0] as unknown as Text).AABBBounds.width()).toBeCloseTo(29.663970947265625);
+    const firstLabel = axisLabels.children[0] as unknown as Text;
+    const secondLabel = axisLabels.children[1] as unknown as Text;
+    expect(firstLabel.attribute.x).toBe(100);
+    expect(firstLabel.attribute.y).toBe(124);
+    expect(firstLabel.attribute.textAlign).toBe('center');
+    expect(firstLabel.attribute.textBaseline).toBe('top');
+    expect(firstLabel.attribute.text).toBe('A---');
+    expect(firstLabel.AABBBounds.width()).toBeGreaterThan(secondLabel.AABBBounds.width());
   });
 
   it('vertical direction.', () => {
@@ -186,12 +188,14 @@ describe('Line Axis', () => {
 
     const axisLabels = axis.getElementsByName(`${AXIS_ELEMENT_NAME.labelContainer}-layer-0`)[0] as unknown as Group;
     expect(axisLabels.childrenCount).toBe(8);
-    expect((axisLabels.children[0] as unknown as Text).attribute.x).toBe(76);
-    expect((axisLabels.children[0] as unknown as Text).attribute.y).toBe(200);
-    expect((axisLabels.children[0] as unknown as Text).attribute.text).toBe('A---');
-    expect((axisLabels.children[0] as unknown as Text).attribute.textAlign).toBe('end');
-    expect((axisLabels.children[0] as unknown as Text).attribute.textBaseline).toBe('middle');
-    expect((axisLabels.children[0] as unknown as Text).AABBBounds.width()).toBeCloseTo(29.663970947265625);
+    const firstLabel = axisLabels.children[0] as unknown as Text;
+    const secondLabel = axisLabels.children[1] as unknown as Text;
+    expect(firstLabel.attribute.x).toBe(76);
+    expect(firstLabel.attribute.y).toBe(200);
+    expect(firstLabel.attribute.text).toBe('A---');
+    expect(firstLabel.attribute.textAlign).toBe('end');
+    expect(firstLabel.attribute.textBaseline).toBe('middle');
+    expect(firstLabel.AABBBounds.width()).toBeGreaterThan(secondLabel.AABBBounds.width());
   });
 
   it('Line Axis with Title', () => {

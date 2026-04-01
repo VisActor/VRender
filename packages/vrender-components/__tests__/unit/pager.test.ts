@@ -1,5 +1,6 @@
-import type { IGraphic, Stage, ISymbol } from '@visactor/vrender-core';
+import type { IGraphic, IText, Stage, ISymbol } from '@visactor/vrender-core';
 import { Pager } from '../../src';
+import { measureTextSize } from '../../src/util';
 import { createCanvas } from '../util/dom';
 import { createStage } from '../util/vrender';
 import { initBrowserEnv } from '@visactor/vrender-kits';
@@ -38,8 +39,18 @@ describe('Pager', () => {
 
     expect((pager.preHandler as ISymbol).hasState('disable')).toBeTruthy();
     expect((pager.nextHandler as ISymbol).hasState('disable')).toBeFalsy();
-    expect(pager.AABBBounds.width()).toBeCloseTo(86.39999389648438);
-    expect(pager.AABBBounds.height()).toBeCloseTo(35);
+    const { width: maxTextWidth, height: maxTextHeight } = measureTextSize(
+      '9/9',
+      {
+        textAlign: 'center',
+        textBaseline: 'middle',
+        ...pager.attribute.textStyle
+      },
+      stage.getTheme()?.text
+    );
+    expect((pager.text as IText).attribute.text).toBe('1/9');
+    expect(pager.AABBBounds.width()).toBeCloseTo(maxTextWidth + 66);
+    expect(pager.AABBBounds.height()).toBeCloseTo(Math.max(maxTextHeight, 15) + 20);
   });
 
   it('Pager in vertical should be render correctly', () => {
@@ -57,7 +68,17 @@ describe('Pager', () => {
 
     expect((pager.preHandler as ISymbol).hasState('disable')).toBeFalsy();
     expect((pager.nextHandler as ISymbol).hasState('disable')).toBeFalsy();
-    expect(pager.AABBBounds.width()).toBeCloseTo(20.399993896484375);
-    expect(pager.AABBBounds.height()).toBeCloseTo(58);
+    const { width: maxTextWidth, height: maxTextHeight } = measureTextSize(
+      '9/9',
+      {
+        textAlign: 'center',
+        textBaseline: 'middle',
+        ...pager.attribute.textStyle
+      },
+      stage.getTheme()?.text
+    );
+    expect((pager.text as IText).attribute.text).toBe('3/9');
+    expect(pager.AABBBounds.width()).toBeCloseTo(Math.max(maxTextWidth, 15));
+    expect(pager.AABBBounds.height()).toBeCloseTo(maxTextHeight + 46);
   });
 });

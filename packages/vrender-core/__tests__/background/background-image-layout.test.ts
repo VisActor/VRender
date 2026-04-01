@@ -1,7 +1,8 @@
 import { DefaultAttribute } from '../../src/graphic/config';
 import {
   DefaultBaseBackgroundRenderContribution,
-  drawBackgroundImage
+  drawBackgroundImage,
+  resolveBackgroundDrawMode
 } from '../../src/render/contributions/render/contributions/base-contribution-render';
 import { DefaultGroupBackgroundRenderContribution } from '../../src/render/contributions/render/contributions/group-contribution-render';
 import { DefaultTextBackgroundRenderContribution } from '../../src/render/contributions/render/contributions/text-contribution-render';
@@ -101,14 +102,94 @@ describe('background image layout', () => {
     const context = createContext();
 
     drawBackgroundImage(context as any, createImage(200, 100), createBounds(0, 0, 100, 100) as any, {
-      backgroundMode: 'no-repeat',
+      backgroundMode: 'no-repeat-contain',
       backgroundFit: true,
       backgroundKeepAspectRatio: true,
-      backgroundSizing: 'contain',
       backgroundPosition: 'bottom-right'
     });
 
     expect(context.drawImage).toHaveBeenCalledWith(expect.anything(), 0, 50, 100, 50);
+  });
+
+  test('resolves legacy no-repeat config and sizing shorthands correctly', () => {
+    // Legacy: backgroundFit + backgroundKeepAspectRatio
+    expect(
+      resolveBackgroundDrawMode({
+        backgroundMode: 'no-repeat',
+        backgroundFit: true,
+        backgroundKeepAspectRatio: true
+      })
+    ).toEqual({
+      backgroundRepeatMode: 'no-repeat',
+      backgroundSizing: 'cover'
+    });
+
+    expect(
+      resolveBackgroundDrawMode({
+        backgroundMode: 'no-repeat',
+        backgroundFit: true,
+        backgroundKeepAspectRatio: false
+      })
+    ).toEqual({
+      backgroundRepeatMode: 'no-repeat',
+      backgroundSizing: 'fill'
+    });
+
+    expect(
+      resolveBackgroundDrawMode({
+        backgroundMode: 'no-repeat',
+        backgroundFit: false,
+        backgroundKeepAspectRatio: true
+      })
+    ).toEqual({
+      backgroundRepeatMode: 'no-repeat',
+      backgroundSizing: 'auto'
+    });
+
+    // Shorthands: override backgroundFit/backgroundKeepAspectRatio
+    expect(
+      resolveBackgroundDrawMode({
+        backgroundMode: 'no-repeat-contain',
+        backgroundFit: true,
+        backgroundKeepAspectRatio: false
+      })
+    ).toEqual({
+      backgroundRepeatMode: 'no-repeat',
+      backgroundSizing: 'contain'
+    });
+
+    expect(
+      resolveBackgroundDrawMode({
+        backgroundMode: 'no-repeat-cover',
+        backgroundFit: false,
+        backgroundKeepAspectRatio: false
+      })
+    ).toEqual({
+      backgroundRepeatMode: 'no-repeat',
+      backgroundSizing: 'cover'
+    });
+
+    expect(
+      resolveBackgroundDrawMode({
+        backgroundMode: 'no-repeat-fill',
+        backgroundFit: false,
+        backgroundKeepAspectRatio: true
+      })
+    ).toEqual({
+      backgroundRepeatMode: 'no-repeat',
+      backgroundSizing: 'fill'
+    });
+
+    expect(
+      resolveBackgroundDrawMode({
+        backgroundMode: 'no-repeat-auto',
+        backgroundFit: true,
+        backgroundKeepAspectRatio: true
+      })
+    ).toEqual({
+      backgroundRepeatMode: 'no-repeat',
+      backgroundSizing: 'auto'
+    });
   });
 
   test('supports fill layout with scaling and centered alignment', () => {
@@ -118,7 +199,6 @@ describe('background image layout', () => {
       backgroundMode: 'no-repeat',
       backgroundFit: true,
       backgroundKeepAspectRatio: false,
-      backgroundSizing: 'fill',
       backgroundScale: 0.5,
       backgroundPosition: 'center'
     });
@@ -133,7 +213,6 @@ describe('background image layout', () => {
       backgroundMode: 'no-repeat',
       backgroundFit: false,
       backgroundKeepAspectRatio: true,
-      backgroundSizing: 'auto',
       backgroundPosition: ['50%', '100%']
     });
 
@@ -148,7 +227,7 @@ describe('background image layout', () => {
       {
         attribute: {
           background: { background: 'image-key' },
-          backgroundSizing: 'contain',
+          backgroundMode: 'no-repeat-contain',
           backgroundPosition: 'center',
           backgroundClip: true
         },
@@ -168,7 +247,7 @@ describe('background image layout', () => {
       {} as any
     );
 
-    expect(contribution.capturedParams.backgroundSizing).toBe('contain');
+    expect(contribution.capturedParams.backgroundMode).toBe('no-repeat-contain');
     expect(contribution.capturedParams.backgroundPosition).toBe('center');
     expect(context.clip).toHaveBeenCalled();
   });
@@ -181,7 +260,7 @@ describe('background image layout', () => {
       {
         attribute: {
           background: 'image-key',
-          backgroundSizing: 'contain',
+          backgroundMode: 'no-repeat-contain',
           backgroundPosition: 'bottom-right',
           backgroundClip: true
         },
@@ -202,7 +281,7 @@ describe('background image layout', () => {
       {} as any
     );
 
-    expect(contribution.capturedParams.backgroundSizing).toBe('contain');
+    expect(contribution.capturedParams.backgroundMode).toBe('no-repeat-contain');
     expect(contribution.capturedParams.backgroundPosition).toBe('bottom-right');
     expect(context.clip).toHaveBeenCalled();
   });
@@ -224,7 +303,8 @@ describe('background image layout', () => {
             dx: 5,
             dy: 6
           },
-          backgroundSizing: 'auto',
+          backgroundMode: 'no-repeat',
+          backgroundFit: false,
           backgroundPosition: 'bottom-right',
           backgroundClip: true,
           backgroundCornerRadius: 0
@@ -250,7 +330,8 @@ describe('background image layout', () => {
     expect(contribution.capturedBounds.y1).toBe(26);
     expect(contribution.capturedBounds.width()).toBe(30);
     expect(contribution.capturedBounds.height()).toBe(40);
-    expect(contribution.capturedParams.backgroundSizing).toBe('auto');
+    expect(contribution.capturedParams.backgroundMode).toBe('no-repeat');
+    expect(contribution.capturedParams.backgroundFit).toBe(false);
     expect(contribution.capturedParams.backgroundPosition).toBe('bottom-right');
     expect(context.clip).toHaveBeenCalled();
   });
@@ -267,7 +348,6 @@ describe('background image layout', () => {
         backgroundMode: 'no-repeat',
         backgroundFit: true,
         backgroundKeepAspectRatio: true,
-        backgroundSizing: 'cover',
         backgroundPosition: 'center',
         backgroundScale: 1,
         backgroundOffsetX: 0,

@@ -1,6 +1,7 @@
 import type { BackgroundPosition, BackgroundSizing, IGraphicAttribute, IGraphic } from '../graphic';
 
 export type IRepeatType = 'no-repeat' | 'repeat';
+export type ImageMode = BackgroundSizing;
 
 export type IImageAttribute = {
   /**
@@ -20,13 +21,11 @@ export type IImageAttribute = {
    */
   maxHeight?: number;
   /**
-   * 图像布局方式，仅在设置了 width/height 且不重复平铺时生效。
-   * - 'cover': 等比缩放并裁剪
-   * - 'contain': 等比缩放并留白
-   * - 'fill': 拉伸适配到指定宽高
-   * - 'auto': 保持原始尺寸
+   * 图像绘制模式。
+   * - cover/contain/fill/auto: no-repeat 下的尺寸语义
+   * 仅在 repeatX/repeatY 最终为 no-repeat 时生效。
    */
-  imageSizing: BackgroundSizing;
+  imageMode?: ImageMode;
   /**
    * 图像锚定位置，语义与 backgroundPosition 一致。
    */

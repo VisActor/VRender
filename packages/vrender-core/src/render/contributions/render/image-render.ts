@@ -6,6 +6,8 @@ import type {
   IGraphicAttribute,
   IContext2d,
   IMarkAttribute,
+  BackgroundSizing,
+  BackgroundMode,
   IImage,
   IImageGraphicAttribute,
   IThemeAttribute,
@@ -29,8 +31,43 @@ const repeatStr = ['', 'repeat-x', 'repeat-y', 'repeat'];
 
 export type IImageLayoutDrawParams = Pick<
   IImageGraphicAttribute,
-  'repeatX' | 'repeatY' | 'imageSizing' | 'imageScale' | 'imageOffsetX' | 'imageOffsetY' | 'imagePosition'
+  'repeatX' | 'repeatY' | 'imageMode' | 'imageScale' | 'imageOffsetX' | 'imageOffsetY' | 'imagePosition'
 >;
+
+export function resolveImageMode({
+  repeatX = 'no-repeat',
+  repeatY = 'no-repeat',
+  imageMode
+}: Pick<IImageLayoutDrawParams, 'repeatX' | 'repeatY' | 'imageMode'>): {
+  repeatMode: 'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat';
+  sizingMode: BackgroundSizing;
+} {
+  const repeatMode = resolveImageRepeatMode(repeatX, repeatY);
+
+  return {
+    repeatMode,
+    sizingMode: repeatMode === 'no-repeat' ? imageMode ?? 'fill' : 'fill'
+  };
+}
+
+const IMAGE_MODE_TO_BACKGROUND_MODE: Record<BackgroundSizing, BackgroundMode> = {
+  cover: 'no-repeat-cover',
+  contain: 'no-repeat-contain',
+  fill: 'no-repeat-fill',
+  auto: 'no-repeat-auto'
+};
+
+export function resolveBackgroundParamsByImageSizing(sizingMode: BackgroundSizing): {
+  backgroundMode: BackgroundMode;
+  backgroundFit: boolean;
+  backgroundKeepAspectRatio: boolean;
+} {
+  return {
+    backgroundMode: IMAGE_MODE_TO_BACKGROUND_MODE[sizingMode],
+    backgroundFit: false,
+    backgroundKeepAspectRatio: false
+  };
+}
 
 export function resolveImageRepeatMode(
   repeatX: IImageGraphicAttribute['repeatX'],
@@ -49,19 +86,20 @@ export function resolveImageRepeatMode(
 export function shouldClipImageByLayout({
   repeatX = 'no-repeat',
   repeatY = 'no-repeat',
-  imageSizing = 'fill',
+  imageMode,
   imageScale = 1,
   imageOffsetX = 0,
   imageOffsetY = 0,
   imagePosition = 'top-left'
 }: IImageLayoutDrawParams): boolean {
+  const { repeatMode, sizingMode } = resolveImageMode({
+    repeatX,
+    repeatY,
+    imageMode
+  });
   return (
-    resolveImageRepeatMode(repeatX, repeatY) === 'no-repeat' &&
-    (imageSizing !== 'fill' ||
-      imageScale !== 1 ||
-      imageOffsetX !== 0 ||
-      imageOffsetY !== 0 ||
-      imagePosition !== 'top-left')
+    repeatMode === 'no-repeat' &&
+    (sizingMode === 'cover' || sizingMode === 'auto' || imageScale !== 1 || imageOffsetX !== 0 || imageOffsetY !== 0)
   );
 }
 
@@ -75,13 +113,26 @@ export function drawImageWithLayout(
   {
     repeatX = 'no-repeat',
     repeatY = 'no-repeat',
-    imageSizing = 'fill',
+    imageMode,
     imageScale = 1,
     imageOffsetX = 0,
     imageOffsetY = 0,
     imagePosition = 'top-left'
   }: IImageLayoutDrawParams
 ) {
+  const { repeatMode, sizingMode } = resolveImageMode({
+    repeatX,
+    repeatY,
+    imageMode
+  });
+  const imageBackgroundParams =
+    repeatMode === 'no-repeat'
+      ? resolveBackgroundParamsByImageSizing(sizingMode)
+      : {
+          backgroundMode: repeatMode,
+          backgroundFit: false,
+          backgroundKeepAspectRatio: false
+        };
   drawBackgroundImage(
     context,
     data,
@@ -94,10 +145,9 @@ export function drawImageWithLayout(
       height: () => height
     } as any,
     {
-      backgroundMode: resolveImageRepeatMode(repeatX, repeatY),
-      backgroundFit: false,
-      backgroundKeepAspectRatio: false,
-      backgroundSizing: imageSizing,
+      backgroundMode: imageBackgroundParams.backgroundMode,
+      backgroundFit: imageBackgroundParams.backgroundFit,
+      backgroundKeepAspectRatio: imageBackgroundParams.backgroundKeepAspectRatio,
       backgroundScale: imageScale,
       backgroundOffsetX: imageOffsetX,
       backgroundOffsetY: imageOffsetY,
@@ -149,7 +199,7 @@ export class DefaultCanvasImageRender extends BaseRender<IImage> implements IGra
       cornerRadius = imageAttribute.cornerRadius,
       fillStrokeOrder = imageAttribute.fillStrokeOrder,
       cornerType = imageAttribute.cornerType,
-      imageSizing = imageAttribute.imageSizing,
+      imageMode = imageAttribute.imageMode,
       imageScale = imageAttribute.imageScale,
       imageOffsetX = imageAttribute.imageOffsetX,
       imageOffsetY = imageAttribute.imageOffsetY,
@@ -200,7 +250,7 @@ export class DefaultCanvasImageRender extends BaseRender<IImage> implements IGra
           drawImageWithLayout(context, res.data, x, y, width, height, {
             repeatX,
             repeatY,
-            imageSizing,
+            imageMode,
             imageScale,
             imageOffsetX,
             imageOffsetY,
@@ -224,7 +274,7 @@ export class DefaultCanvasImageRender extends BaseRender<IImage> implements IGra
     const needLayoutClip = shouldClipImageByLayout({
       repeatX,
       repeatY,
-      imageSizing,
+      imageMode,
       imageScale,
       imageOffsetX,
       imageOffsetY,

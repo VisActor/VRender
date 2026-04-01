@@ -2,6 +2,7 @@ import { Image } from '../../src/graphic/image';
 import {
   DefaultCanvasImageRender,
   drawImageWithLayout,
+  resolveImageMode,
   shouldClipImageByLayout
 } from '../../src/render/contributions/render/image-render';
 import { drawBackgroundImage } from '../../src/render/contributions/render/contributions/base-contribution-render';
@@ -43,9 +44,7 @@ describe('image layout', () => {
     const context = createContext();
 
     drawImageWithLayout(context as any, createImageData(200, 100), 0, 0, 100, 100, {
-      repeatX: 'no-repeat',
-      repeatY: 'no-repeat',
-      imageSizing: 'cover',
+      imageMode: 'cover',
       imagePosition: 'center'
     });
 
@@ -56,22 +55,54 @@ describe('image layout', () => {
     const context = createContext();
 
     drawImageWithLayout(context as any, createImageData(200, 100), 0, 0, 100, 100, {
-      repeatX: 'no-repeat',
-      repeatY: 'no-repeat',
-      imageSizing: 'contain',
+      imageMode: 'contain',
       imagePosition: 'center'
     });
 
     expect(context.drawImage).toHaveBeenCalledWith(expect.anything(), 0, 25, 100, 50);
   });
 
+  test('supports sizing shorthand through imageMode', () => {
+    const context = createContext();
+
+    drawImageWithLayout(context as any, createImageData(200, 100), 0, 0, 100, 100, {
+      imageMode: 'contain',
+      imagePosition: 'center'
+    });
+
+    expect(context.drawImage).toHaveBeenCalledWith(expect.anything(), 0, 25, 100, 50);
+  });
+
+  test('imageMode is ignored when repeat mode is enabled', () => {
+    expect(
+      resolveImageMode({
+        repeatX: 'repeat',
+        repeatY: 'repeat',
+        imageMode: 'cover'
+      })
+    ).toEqual({
+      repeatMode: 'repeat',
+      sizingMode: 'fill'
+    });
+  });
+
+  test('defaults to fill when imageMode is undefined', () => {
+    expect(
+      resolveImageMode({
+        repeatX: 'no-repeat',
+        repeatY: 'no-repeat'
+      })
+    ).toEqual({
+      repeatMode: 'no-repeat',
+      sizingMode: 'fill'
+    });
+  });
+
   test('supports fill layout to match target size', () => {
     const context = createContext();
 
     drawImageWithLayout(context as any, createImageData(200, 100), 0, 0, 100, 100, {
-      repeatX: 'no-repeat',
-      repeatY: 'no-repeat',
-      imageSizing: 'fill'
+      imageMode: 'fill'
     });
 
     expect(context.drawImage).toHaveBeenCalledWith(expect.anything(), 0, 0, 100, 100);
@@ -98,9 +129,8 @@ describe('image layout', () => {
       } as any,
       {
         backgroundMode: 'no-repeat',
-        backgroundFit: false,
-        backgroundKeepAspectRatio: false,
-        backgroundSizing: 'fill'
+        backgroundFit: true,
+        backgroundKeepAspectRatio: false
       }
     );
 
@@ -111,9 +141,7 @@ describe('image layout', () => {
     const context = createContext();
 
     drawImageWithLayout(context as any, createImageData(20, 10), 0, 0, 100, 100, {
-      repeatX: 'no-repeat',
-      repeatY: 'no-repeat',
-      imageSizing: 'auto',
+      imageMode: 'auto',
       imagePosition: 'center'
     });
 
@@ -128,7 +156,7 @@ describe('image layout', () => {
         width: 100,
         height: 100,
         image: createImageData(200, 100) as any,
-        imageSizing: 'cover',
+        imageMode: 'cover',
         imagePosition: 'center'
       })
     );
@@ -155,5 +183,33 @@ describe('image layout', () => {
     expect(shouldClipImageByLayout(image.attribute)).toBe(false);
     expect(context.clip).not.toHaveBeenCalled();
     expect(context.drawImage).toHaveBeenCalledWith(expect.anything(), 0, 0, 100, 100);
+  });
+
+  test('does not clip for contain mode at default params', () => {
+    expect(
+      shouldClipImageByLayout({
+        repeatX: 'no-repeat',
+        repeatY: 'no-repeat',
+        imageMode: 'contain',
+        imageScale: 1,
+        imageOffsetX: 0,
+        imageOffsetY: 0,
+        imagePosition: 'center'
+      })
+    ).toBe(false);
+  });
+
+  test('clips for contain mode when scale or offset overflows', () => {
+    expect(
+      shouldClipImageByLayout({
+        repeatX: 'no-repeat',
+        repeatY: 'no-repeat',
+        imageMode: 'contain',
+        imageScale: 2,
+        imageOffsetX: 0,
+        imageOffsetY: 0,
+        imagePosition: 'center'
+      })
+    ).toBe(true);
   });
 });

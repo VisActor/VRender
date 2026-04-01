@@ -1,5 +1,6 @@
 import type {
   IGraphicAttribute,
+  BackgroundSizing,
   IContext2d,
   IGraphic,
   IThemeAttribute,
@@ -44,7 +45,6 @@ export class DefaultBaseBackgroundRenderContribution implements IBaseRenderContr
       backgroundMode = graphicAttribute.backgroundMode,
       backgroundFit = graphicAttribute.backgroundFit,
       backgroundKeepAspectRatio = graphicAttribute.backgroundKeepAspectRatio,
-      backgroundSizing = graphicAttribute.backgroundSizing,
       backgroundScale = graphicAttribute.backgroundScale,
       backgroundOffsetX = graphicAttribute.backgroundOffsetX,
       backgroundOffsetY = graphicAttribute.backgroundOffsetY,
@@ -77,7 +77,6 @@ export class DefaultBaseBackgroundRenderContribution implements IBaseRenderContr
         backgroundMode,
         backgroundFit,
         backgroundKeepAspectRatio,
-        backgroundSizing,
         backgroundScale,
         backgroundOffsetX,
         backgroundOffsetY,
@@ -105,10 +104,9 @@ export class DefaultBaseBackgroundRenderContribution implements IBaseRenderContr
 export const defaultBaseBackgroundRenderContribution = new DefaultBaseBackgroundRenderContribution();
 
 export type IBackgroundImageDrawParams = {
-  backgroundMode: 'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat';
+  backgroundMode: IGraphicAttribute['backgroundMode'];
   backgroundFit: boolean;
   backgroundKeepAspectRatio: boolean;
-  backgroundSizing?: IGraphicAttribute['backgroundSizing'];
   backgroundScale?: number;
   backgroundOffsetX?: number;
   backgroundOffsetY?: number;
@@ -125,18 +123,50 @@ export function getBackgroundImage(background: any) {
 
 export function resolveBackgroundSizing({
   backgroundFit,
-  backgroundKeepAspectRatio,
-  backgroundSizing
-}: Pick<IBackgroundImageDrawParams, 'backgroundFit' | 'backgroundKeepAspectRatio' | 'backgroundSizing'>): NonNullable<
-  IGraphicAttribute['backgroundSizing']
-> {
-  if (backgroundSizing) {
-    return backgroundSizing;
-  }
+  backgroundKeepAspectRatio
+}: Pick<IBackgroundImageDrawParams, 'backgroundFit' | 'backgroundKeepAspectRatio'>): NonNullable<BackgroundSizing> {
   if (backgroundFit) {
     return backgroundKeepAspectRatio ? 'cover' : 'fill';
   }
   return 'auto';
+}
+
+export function isNoRepeatSizingMode(
+  mode: IGraphicAttribute['backgroundMode']
+): mode is Extract<IGraphicAttribute['backgroundMode'], `no-repeat-${string}`> {
+  return typeof mode === 'string' && mode.startsWith('no-repeat-');
+}
+
+const NO_REPEAT_SIZING_MAP: Record<string, BackgroundSizing> = {
+  'no-repeat-cover': 'cover',
+  'no-repeat-contain': 'contain',
+  'no-repeat-fill': 'fill',
+  'no-repeat-auto': 'auto'
+};
+
+export function resolveBackgroundDrawMode({
+  backgroundMode,
+  backgroundFit,
+  backgroundKeepAspectRatio
+}: Pick<IBackgroundImageDrawParams, 'backgroundMode' | 'backgroundFit' | 'backgroundKeepAspectRatio'>): {
+  backgroundRepeatMode: 'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat';
+  backgroundSizing: BackgroundSizing;
+} {
+  const sizing = NO_REPEAT_SIZING_MAP[backgroundMode];
+  if (sizing) {
+    return {
+      backgroundRepeatMode: 'no-repeat',
+      backgroundSizing: sizing
+    };
+  }
+
+  return {
+    backgroundRepeatMode: backgroundMode as 'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat',
+    backgroundSizing: resolveBackgroundSizing({
+      backgroundFit,
+      backgroundKeepAspectRatio
+    })
+  };
 }
 
 function isPercentageValue(value: string): boolean {
@@ -277,7 +307,6 @@ export function drawBackgroundImage(
     backgroundMode,
     backgroundFit,
     backgroundKeepAspectRatio,
-    backgroundSizing,
     backgroundScale = 1,
     backgroundOffsetX = 0,
     backgroundOffsetY = 0,
@@ -286,6 +315,11 @@ export function drawBackgroundImage(
   const targetW = b.width();
   const targetH = b.height();
   const sourceSize = resolveRenderableImageSize(data);
+  const { backgroundRepeatMode, backgroundSizing: resolvedBackgroundSizing } = resolveBackgroundDrawMode({
+    backgroundMode,
+    backgroundFit,
+    backgroundKeepAspectRatio
+  });
   let w = targetW;
   let h = targetH;
 
@@ -293,23 +327,18 @@ export function drawBackgroundImage(
     return;
   }
 
-  if (backgroundMode === 'no-repeat') {
-    const sizing = resolveBackgroundSizing({
-      backgroundFit,
-      backgroundKeepAspectRatio,
-      backgroundSizing
-    });
+  if (backgroundRepeatMode === 'no-repeat') {
     let drawWidth = sourceSize?.width ?? targetW;
     let drawHeight = sourceSize?.height ?? targetH;
 
-    if ((sizing === 'cover' || sizing === 'contain') && sourceSize) {
+    if ((resolvedBackgroundSizing === 'cover' || resolvedBackgroundSizing === 'contain') && sourceSize) {
       const scale =
-        sizing === 'cover'
+        resolvedBackgroundSizing === 'cover'
           ? Math.max(targetW / sourceSize.width, targetH / sourceSize.height)
           : Math.min(targetW / sourceSize.width, targetH / sourceSize.height);
       drawWidth = sourceSize.width * scale;
       drawHeight = sourceSize.height * scale;
-    } else if (sizing === 'fill') {
+    } else if (resolvedBackgroundSizing === 'fill') {
       drawWidth = targetW;
       drawHeight = targetH;
     }
@@ -323,16 +352,16 @@ export function drawBackgroundImage(
   }
 
   // TODO 考虑缓存
-  if (backgroundFit && backgroundMode !== 'repeat' && sourceSize) {
+  if (backgroundFit && backgroundRepeatMode !== 'repeat' && sourceSize) {
     const resW = sourceSize.width;
     const resH = sourceSize.height;
 
-    if (backgroundMode === 'repeat-x') {
+    if (backgroundRepeatMode === 'repeat-x') {
       // 高度适应
       const ratio = targetH / resH;
       w = resW * ratio;
       h = targetH;
-    } else if (backgroundMode === 'repeat-y') {
+    } else if (backgroundRepeatMode === 'repeat-y') {
       // 宽度适应
       const ratio = targetW / resW;
       h = resH * ratio;
@@ -353,7 +382,7 @@ export function drawBackgroundImage(
     canvasAllocate.free(canvas);
   }
   const dpr = context.dpr;
-  const pattern = context.createPattern(data, backgroundMode);
+  const pattern = context.createPattern(data, backgroundRepeatMode);
   pattern.setTransform && pattern.setTransform(new DOMMatrix([1 / dpr, 0, 0, 1 / dpr, 0, 0]));
   context.fillStyle = pattern;
   context.translate(b.x1, b.y1);

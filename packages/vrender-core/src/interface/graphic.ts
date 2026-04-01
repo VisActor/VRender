@@ -314,6 +314,9 @@ export type IBackgroundConfig = {
 };
 
 export type BackgroundSizing = 'cover' | 'contain' | 'fill' | 'auto';
+export type BackgroundRepeatMode = 'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat';
+export type BackgroundSizingShorthand = 'no-repeat-cover' | 'no-repeat-contain' | 'no-repeat-fill' | 'no-repeat-auto';
+export type BackgroundMode = BackgroundRepeatMode | BackgroundSizingShorthand;
 export type BackgroundPositionHorizontalKeyword = 'left' | 'center' | 'right';
 export type BackgroundPositionVerticalKeyword = 'top' | 'center' | 'bottom';
 export type BackgroundPositionKeyword = BackgroundPositionHorizontalKeyword | BackgroundPositionVerticalKeyword;
@@ -424,9 +427,11 @@ export type IGraphicStyle = ILayout &
      */
     shadowGraphic?: IGraphic | undefined;
     /**
-     * 背景填充模式（与具体图元有关）
+     * 背景图绘制模式。
+     * - repeat/repeat-x/repeat-y/no-repeat: 原有平铺语义
+     * - no-repeat-cover/no-repeat-contain/no-repeat-fill/no-repeat-auto: no-repeat 下的尺寸简写
      */
-    backgroundMode: 'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat';
+    backgroundMode: BackgroundMode;
     /**
      * 是否正好填充，只在repeat-x或者repeat-y以及no-repeat的时候生效
      */
@@ -435,11 +440,6 @@ export type IGraphicStyle = ILayout &
      * 是否保持背景图的宽高比
      */
     backgroundKeepAspectRatio: boolean;
-    /**
-     * 背景图布局方式，只在 no-repeat 的图片背景下生效。
-     * 设置后优先级高于 backgroundFit/backgroundKeepAspectRatio。
-     */
-    backgroundSizing?: BackgroundSizing;
     /**
      * 背景图缩放，只在no-repeat的时候生效
      */

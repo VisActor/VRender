@@ -11,7 +11,7 @@ const IMAGE_UPDATE_TAG_KEY = [
   'width',
   'height',
   'image',
-  'imageSizing',
+  'imageMode',
   'imagePosition',
   'imageScale',
   'imageOffsetX',
@@ -33,6 +33,7 @@ export class Image extends Graphic<IImageGraphicAttribute> implements IImage {
 
   static NOWORK_ANIMATE_ATTR = {
     image: 1,
+    imageMode: 1,
     repeatX: 1,
     repeatY: 1,
     ...NOWORK_ANIMATE_ATTR

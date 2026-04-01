@@ -489,7 +489,6 @@ export class DefaultDrawContribution implements IDrawContribution {
             backgroundFit: (stage as any).attribute.backgroundFit ?? DefaultAttribute.backgroundFit,
             backgroundKeepAspectRatio:
               (stage as any).attribute.backgroundKeepAspectRatio ?? DefaultAttribute.backgroundKeepAspectRatio,
-            backgroundSizing: (stage as any).attribute.backgroundSizing,
             backgroundScale: (stage as any).attribute.backgroundScale ?? DefaultAttribute.backgroundScale,
             backgroundOffsetX: (stage as any).attribute.backgroundOffsetX ?? DefaultAttribute.backgroundOffsetX,
             backgroundOffsetY: (stage as any).attribute.backgroundOffsetY ?? DefaultAttribute.backgroundOffsetY,

@@ -50,7 +50,7 @@ const createLayoutCard = (
   description: string,
   x: number,
   y: number,
-  imageSizing: 'cover' | 'contain' | 'fill' | 'auto'
+  imageMode: 'cover' | 'contain' | 'fill' | 'auto'
 ) => {
   const width = 320;
   const height = 220;
@@ -88,7 +88,7 @@ const createLayoutCard = (
       width: frameWidth,
       height: frameHeight,
       image: layoutImage,
-      imageSizing,
+      imageMode,
       imagePosition: 'center',
       cornerRadius: 14
     })
@@ -161,7 +161,7 @@ export const page = () => {
 
   shapes.push(createLabel('Same API on image primitive', 48, 560, 22));
   shapes.push(
-    createHint("set `imageSizing` to 'cover' | 'contain' | 'fill' | 'auto' after width/height is specified", 48, 592)
+    createHint("set `imageMode` to 'cover' | 'contain' | 'fill' | 'auto' after width/height is specified", 48, 592)
   );
 
   const stage = createStage({

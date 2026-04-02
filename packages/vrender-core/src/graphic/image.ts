@@ -7,7 +7,17 @@ import { application } from '../application';
 import { IMAGE_NUMBER_TYPE } from './constants';
 import { updateBoundsOfCommonOuterBorder } from './graphic-service/common-outer-boder-bounds';
 
-const IMAGE_UPDATE_TAG_KEY = ['width', 'height', 'image', ...GRAPHIC_UPDATE_TAG_KEY];
+const IMAGE_UPDATE_TAG_KEY = [
+  'width',
+  'height',
+  'image',
+  'imageMode',
+  'imagePosition',
+  'imageScale',
+  'imageOffsetX',
+  'imageOffsetY',
+  ...GRAPHIC_UPDATE_TAG_KEY
+];
 
 /**
  * TODO image 需要考虑加载问题 等load模块
@@ -23,6 +33,7 @@ export class Image extends Graphic<IImageGraphicAttribute> implements IImage {
 
   static NOWORK_ANIMATE_ATTR = {
     image: 1,
+    imageMode: 1,
     repeatX: 1,
     repeatY: 1,
     ...NOWORK_ANIMATE_ATTR

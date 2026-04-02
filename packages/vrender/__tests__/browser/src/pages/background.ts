@@ -31,7 +31,7 @@ const layoutSpecs: LayoutSpec[] = [
     title: 'cover',
     description: '等比放大并裁剪',
     background: {
-      backgroundSizing: 'cover',
+      backgroundMode: 'no-repeat-cover',
       backgroundPosition: 'center'
     }
   },
@@ -39,7 +39,7 @@ const layoutSpecs: LayoutSpec[] = [
     title: 'contain',
     description: '等比缩放完整包含',
     background: {
-      backgroundSizing: 'contain',
+      backgroundMode: 'no-repeat-contain',
       backgroundPosition: 'center'
     }
   },
@@ -47,7 +47,7 @@ const layoutSpecs: LayoutSpec[] = [
     title: 'fill',
     description: '拉伸填满图元',
     background: {
-      backgroundSizing: 'fill',
+      backgroundMode: 'no-repeat-fill',
       backgroundPosition: 'center'
     }
   },
@@ -55,7 +55,7 @@ const layoutSpecs: LayoutSpec[] = [
     title: 'auto',
     description: '按原始尺寸显示',
     background: {
-      backgroundSizing: 'auto',
+      backgroundMode: 'no-repeat-auto',
       backgroundPosition: 'center'
     }
   }
@@ -160,7 +160,7 @@ export const page = () => {
   });
 
   stage.setAttributes({
-    backgroundSizing: 'cover',
+    backgroundMode: 'no-repeat-cover',
     backgroundPosition: 'center',
     backgroundOpacity: 0.12
   });
@@ -198,7 +198,7 @@ export const page = () => {
     const y = 500;
     graphics.push(
       ...createDemoFrame(x, y, 320, 220, spec.title, {
-        backgroundSizing: 'cover',
+        backgroundMode: 'no-repeat-cover',
         backgroundPosition: spec.position
       })
     );
@@ -212,7 +212,7 @@ export const page = () => {
     cornerRadius: 20,
     clip: true,
     background: demoImage,
-    backgroundSizing: 'contain',
+    backgroundMode: 'no-repeat-contain',
     backgroundPosition: 'bottom-right',
     backgroundClip: true
   });
@@ -268,7 +268,7 @@ export const page = () => {
       width: 280,
       height: 92
     },
-    backgroundSizing: 'cover',
+    backgroundMode: 'no-repeat-cover',
     backgroundPosition: 'center',
     backgroundClip: true
   });

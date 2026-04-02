@@ -1,16 +1,9 @@
 # Change Log - @visactor/react-vrender
 
-<<<<<<< release/1.0.44
-This log was last generated on Wed, 25 Mar 2026 09:15:13 GMT and should not be manually modified.
+This log was last generated on Thu, 02 Apr 2026 03:43:37 GMT and should not be manually modified.
 
 ## 1.0.43
-Wed, 25 Mar 2026 09:15:13 GMT
-=======
-This log was last generated on Tue, 24 Mar 2026 13:05:47 GMT and should not be manually modified.
-
-## 1.0.43
-Tue, 24 Mar 2026 13:05:47 GMT
->>>>>>> main
+Thu, 02 Apr 2026 03:43:37 GMT
 
 _Version update only_
 

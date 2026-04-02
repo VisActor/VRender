@@ -18,7 +18,7 @@
     "build-umd": "cross-env DEBUG='Bundler*' bundle --clean -f umd",
     "dev": "cross-env DEBUG='Bundler*' bundle --clean -f es -w",
     "start": "vite ./__tests__/browser --host",
-    "test": "jest",
+    "test": "jest 2>&1",
     "test-cov": "jest -w 16 --coverage",
     "test-live": "npm run test-watch __tests__/unit/theme/line.test.ts",
     "test-watch": "cross-env DEBUG_MODE=1 jest --watch"

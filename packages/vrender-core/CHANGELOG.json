@@ -4,8 +4,14 @@
     {
       "version": "1.0.43",
       "tag": "@visactor/vrender-core_v1.0.43",
-      "date": "Tue, 24 Mar 2026 13:05:47 GMT",
-      "comments": {}
+      "date": "Thu, 02 Apr 2026 03:43:37 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: enhance background handling in rendering\n\n"
+          }
+        ]
+      }
     },
     {
       "version": "1.0.42",

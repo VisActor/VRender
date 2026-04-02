@@ -38,7 +38,7 @@ export class Layer extends Group implements ILayer {
   // 混合模式，用于多图层混合
   declare blendMode: BlendMode;
 
-  declare background: string;
+  declare background: ILayer['background'];
   declare opacity: number;
 
   declare layer: this;

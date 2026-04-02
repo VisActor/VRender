@@ -313,7 +313,31 @@ export type IBackgroundConfig = {
   expandY?: number;
 };
 
-type IBackgroundType = string | HTMLImageElement | HTMLCanvasElement | IBackgroundConfig;
+export type BackgroundSizing = 'cover' | 'contain' | 'fill' | 'auto';
+export type BackgroundRepeatMode = 'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat';
+export type BackgroundSizingShorthand = 'no-repeat-cover' | 'no-repeat-contain' | 'no-repeat-fill' | 'no-repeat-auto';
+export type BackgroundMode = BackgroundRepeatMode | BackgroundSizingShorthand;
+export type BackgroundPositionHorizontalKeyword = 'left' | 'center' | 'right';
+export type BackgroundPositionVerticalKeyword = 'top' | 'center' | 'bottom';
+export type BackgroundPositionKeyword = BackgroundPositionHorizontalKeyword | BackgroundPositionVerticalKeyword;
+export type BackgroundPositionPercent = `${number}%`;
+export type BackgroundPositionValue = number | BackgroundPositionKeyword | BackgroundPositionPercent;
+export type BackgroundPositionPreset =
+  | 'top-left'
+  | 'top-center'
+  | 'top-right'
+  | 'center-left'
+  | 'center'
+  | 'center-right'
+  | 'bottom-left'
+  | 'bottom-center'
+  | 'bottom-right';
+export type BackgroundPosition =
+  | BackgroundPositionKeyword
+  | BackgroundPositionPreset
+  | [BackgroundPositionValue, BackgroundPositionValue];
+
+export type IBackgroundType = string | HTMLImageElement | HTMLCanvasElement | IBackgroundConfig;
 
 export interface SimpleDomStyleOptions {
   /**
@@ -403,9 +427,11 @@ export type IGraphicStyle = ILayout &
      */
     shadowGraphic?: IGraphic | undefined;
     /**
-     * 背景填充模式（与具体图元有关）
+     * 背景图绘制模式。
+     * - repeat/repeat-x/repeat-y/no-repeat: 原有平铺语义
+     * - no-repeat-cover/no-repeat-contain/no-repeat-fill/no-repeat-auto: no-repeat 下的尺寸简写
      */
-    backgroundMode: 'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat';
+    backgroundMode: BackgroundMode;
     /**
      * 是否正好填充，只在repeat-x或者repeat-y以及no-repeat的时候生效
      */
@@ -426,6 +452,16 @@ export type IGraphicStyle = ILayout &
      * 背景图偏移，只在no-repeat的时候生效
      */
     backgroundOffsetY: number;
+    /**
+     * 背景图锚定位置（类似 CSS background-position），仅在 no-repeat 的图片背景下生效。
+     * 默认值为 'top-left'，当前公开支持以下几类配置：
+     * - 单关键字：'left' | 'center' | 'right' | 'top' | 'bottom'
+     * - 预设位置：'top-left'、'top-center'、'top-right'、'center-left'、'center'、
+     *   'center-right'、'bottom-left'、'bottom-center'、'bottom-right'
+     * - 元组写法：[x, y]，其中 x/y 支持 number、关键字、百分比字符串（如 ['25%', '75%']）
+     * 运行时仍兼容 CSS 风格空格字符串，但不再作为公开类型暴露。
+     */
+    backgroundPosition: BackgroundPosition;
     /**
      * 背景图是否裁切，是否调用clip避免绘制到图元外部
      */

@@ -4,11 +4,13 @@ module.exports = {
   runner: 'jest-electron/runner',
   testEnvironment: 'jest-electron/environment',
   testTimeout: 30000,
+  maxWorkers: 1,
   testRegex: '/__tests__/.*test\\.ts?$',
   moduleFileExtensions: ['ts', 'js', 'json'],
   setupFilesAfterEnv: ['jest-extended/all'],
   preset: 'ts-jest',
   silent: true,
+  useStderr: false,
   globals: {
     'ts-jest': {
       resolveJsonModule: true,

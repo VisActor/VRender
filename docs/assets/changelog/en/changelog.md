@@ -1,3 +1,14 @@
+# v1.0.43
+
+2026-03-25
+
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-components**: add datazoom graphic layout level to render right level when update data. fix @VisActor/VChart[#4186](https://github.com/VisActor/VRender/issues/4186)
+
+[more detail about v1.0.43](https://github.com/VisActor/VRender/releases/tag/v1.0.43)
+
 # v1.0.42
 
 2026-03-23

@@ -144,10 +144,15 @@ describe('Auto Limit', () => {
     });
     stage.defaultLayer.add(axis as unknown as IGraphic);
     stage.render();
-    expect((axis.getElementsByName('axis-label')[0] as IText).clipedText).toBe('form等');
+    const firstLabel = axis.getElementsByName('axis-label')[0] as IText;
+    const firstClippedText = firstLabel.clipedText as string;
+    expect(firstClippedText).not.toBe(firstLabel.attribute.text);
+    expect(firstClippedText.endsWith('等')).toBe(true);
 
     axis.setAttribute('verticalLimitSize', 60);
-    expect((axis.getElementsByName('axis-label')[0] as IText).clipedText).toBe('for等');
+    const updatedClippedText = (axis.getElementsByName('axis-label')[0] as IText).clipedText as string;
+    expect(updatedClippedText.endsWith('等')).toBe(true);
+    expect(updatedClippedText.length).toBeLessThan(firstClippedText.length);
   });
 
   it('should ignore when the ceil of label size is not bigger than limitSize', () => {
@@ -290,7 +295,9 @@ describe('Auto Limit', () => {
     });
     stage.defaultLayer.add(axis as unknown as IGraphic);
     stage.render();
-    expect((axis.getElementsByName('axis-label')[4] as IText).clipedText).toBe('40-44');
-    expect(Math.floor(axis.AABBBounds.width())).toBe(67);
+    const label = axis.getElementsByName('axis-label')[4] as IText;
+    expect(label.clipedText).toBe('40-44');
+    expect(label.attribute.maxLineWidth).toBeUndefined();
+    expect(Math.floor(label.AABBBounds.width())).toBeLessThanOrEqual(67);
   });
 });

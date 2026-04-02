@@ -1,18 +1,15 @@
 # Change Log - @visactor/vrender-core
 
-<<<<<<< release/1.0.44
-This log was last generated on Wed, 25 Mar 2026 09:15:13 GMT and should not be manually modified.
+This log was last generated on Thu, 02 Apr 2026 03:43:37 GMT and should not be manually modified.
 
 ## 1.0.43
-Wed, 25 Mar 2026 09:15:13 GMT
-=======
-This log was last generated on Tue, 24 Mar 2026 13:05:47 GMT and should not be manually modified.
+Thu, 02 Apr 2026 03:43:37 GMT
 
-## 1.0.43
-Tue, 24 Mar 2026 13:05:47 GMT
->>>>>>> main
+### Updates
 
-_Version update only_
+- feat: enhance background handling in rendering
+
+
 
 ## 1.0.42
 Mon, 23 Mar 2026 08:08:45 GMT

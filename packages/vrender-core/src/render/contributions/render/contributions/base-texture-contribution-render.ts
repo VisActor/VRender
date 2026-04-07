@@ -386,6 +386,29 @@ export class DefaultBaseTextureRenderContribution implements IBaseRenderContribu
 
       originalContext.restore();
     } else if (pattern) {
+      if (pattern.setTransform) {
+        const alignToGraphic = !!textureOptions?.alignToGraphic;
+        const alignOffsetX = textureOptions?.alignOffsetX ?? 0;
+        const alignOffsetY = textureOptions?.alignOffsetY ?? 0;
+        let translateX = 0;
+        let translateY = 0;
+        if (alignToGraphic) {
+          // 将 pattern 原点对齐到图形的绘制原点（当前 context 坐标系）
+          const m = context.currentMatrix;
+          const e = m?.e ?? 0;
+          const f = m?.f ?? 0;
+          // 直接在用户坐标系下对齐（包含 context 的平移）
+          const ux = e + x + alignOffsetX;
+          const uy = f + y + alignOffsetY;
+          translateX = ux;
+          translateY = uy;
+        } else if (alignOffsetX || alignOffsetY) {
+          translateX = alignOffsetX;
+          translateY = alignOffsetY;
+        }
+        // pattern 的 transform 使用用户坐标系单位（不再额外乘 dpr）
+        pattern.setTransform(new DOMMatrix([1 / context.dpr, 0, 0, 1 / context.dpr, translateX, translateY]));
+      }
       context.highPerformanceSave();
       context.setCommonStyle(graphic, graphic.attribute, x, y, graphicAttribute);
       context.fillStyle = pattern;

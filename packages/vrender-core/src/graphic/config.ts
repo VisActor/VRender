@@ -132,7 +132,7 @@ export const DefaultStyle: IGraphicStyle = {
   background: null,
   autoAnimateTexture: false,
   textureRatio: 1,
-  textureOptions: null,
+  textureOptions: { alignToGraphic: true },
   backgroundOpacity: 1,
   backgroundCornerRadius: 0,
   texture: null,

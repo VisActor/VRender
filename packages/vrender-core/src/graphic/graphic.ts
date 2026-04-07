@@ -1499,7 +1499,14 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   }
 
   loadImage(image: any, background: boolean = false) {
-    if (!image || (background && backgroundNotImage(image))) {
+    if (background && image?.background) {
+      image = image.background;
+    }
+    if (background && (!image || backgroundNotImage(image))) {
+      this.backgroundImg = false;
+      return;
+    }
+    if (!image) {
       return;
     }
     const url = image;
@@ -1638,7 +1645,13 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
 Graphic.mixin(EventTarget);
 
 function backgroundNotImage(image: any) {
+  if (typeof image === 'string') {
+    return !(image.startsWith('<svg') || isValidUrl(image) || image.includes('/') || isBase64(image));
+  }
   if (image.fill || image.stroke) {
+    return true;
+  }
+  if (typeof image.gradient === 'string' && Array.isArray(image.stops)) {
     return true;
   }
   return false;

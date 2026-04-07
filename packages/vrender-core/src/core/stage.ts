@@ -1,7 +1,8 @@
 import type { IAABBBounds, IBounds, IBoundsLike, IMatrix } from '@visactor/vutils';
-import { Bounds, Point, isString } from '@visactor/vutils';
+import { Bounds, Point, isBase64, isObject, isValidUrl } from '@visactor/vutils';
 import type {
   IGraphic,
+  IGraphicAttribute,
   IExportType,
   IStage,
   IStageParams,
@@ -74,7 +75,7 @@ export class Stage extends Group implements IStage {
 
   declare state: IStageState;
 
-  private _background: string | IColor;
+  private _background: IGraphicAttribute['background'] | IColor;
   protected nextFrameRenderLayerSet: Set<Layer>;
   protected willNextFrameRender: boolean;
   protected _cursor: string;
@@ -157,11 +158,12 @@ export class Stage extends Group implements IStage {
   set dpr(r: number) {
     this.setDpr(r);
   }
-  get background(): string | IColor {
+  get background(): IGraphicAttribute['background'] | IColor {
     return this._background ?? DefaultConfig.BACKGROUND;
   }
-  set background(b: string | IColor) {
+  set background(b: IGraphicAttribute['background'] | IColor) {
     this._background = b;
+    this.syncBackgroundImage(b);
   }
   get defaultLayer(): ILayer {
     return this.at(0) as unknown as ILayer;
@@ -222,6 +224,31 @@ export class Stage extends Group implements IStage {
     ticker.addTimeline(this.timeline);
     this._ticker = ticker;
     this._ticker.on('tick', this.afterTickCb);
+  }
+
+  protected syncBackgroundImage(background: IGraphicAttribute['background'] | IColor) {
+    const source = (background as any)?.background ?? background;
+    this.backgroundImg = false;
+    if (this.isImageBackgroundSource(source)) {
+      this.loadImage(source, true);
+    }
+  }
+
+  protected isImageBackgroundSource(source: any): boolean {
+    if (!source) {
+      return false;
+    }
+    if (typeof source === 'string') {
+      return source.startsWith('<svg') || isValidUrl(source) || source.includes('/') || isBase64(source);
+    }
+    if (!isObject(source)) {
+      return false;
+    }
+    const gradientSource = source as { gradient?: unknown; stops?: unknown };
+    if (typeof gradientSource.gradient === 'string' && Array.isArray(gradientSource.stops)) {
+      return false;
+    }
+    return true;
   }
 
   /**
@@ -328,8 +355,8 @@ export class Stage extends Group implements IStage {
     }
     this.optmize(params.optimize);
     // 如果背景是图片，触发加载图片操作
-    if (params.background && isString(this._background) && this._background.includes('/')) {
-      this.setAttributes({ background: this._background });
+    if (params.background) {
+      this.syncBackgroundImage(this._background);
     }
 
     this.initAnimate(params);

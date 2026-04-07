@@ -67,7 +67,7 @@ describe('Slider', () => {
 
       const endText = slider.getElementsByName(SLIDER_ELEMENT_NAME.endText)[0] as IText;
       expect(endText.attribute.y).toBe(5);
-      expect(endText.attribute.x).toBeCloseTo(239.1479949951172);
+      expect(endText.attribute.x).toBeCloseTo(startText.AABBBounds.width() + 216);
       expect(endText.attribute.textAlign).toBe('start');
       expect(endText.attribute.textBaseline).toBe('middle');
 
@@ -132,7 +132,7 @@ describe('Slider', () => {
       expect(startText.attribute.textBaseline).toBe('top');
 
       const endText = slider.getElementsByName(SLIDER_ELEMENT_NAME.endText)[0] as IText;
-      expect(endText.attribute.y).toBe(228);
+      expect(endText.attribute.y).toBeCloseTo(startText.AABBBounds.height() + 216);
       expect(endText.attribute.x).toBeCloseTo(5);
       expect(endText.attribute.textAlign).toBe('center');
       expect(endText.attribute.textBaseline).toBe('top');

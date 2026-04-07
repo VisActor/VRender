@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vrender-core",
-  "version": "1.0.42",
+  "version": "1.0.45",
   "description": "",
   "sideEffects": [
     "./src/modules.ts",
@@ -22,7 +22,7 @@
     "build-umd": "cross-env DEBUG='Bundler*' bundle --clean -f umd",
     "dev": "cross-env DEBUG='Bundler*' bundle --clean -f es -w",
     "start": "vite ./__tests__/browser",
-    "test": "jest",
+    "test": "jest 2>&1",
     "test-live": "npm run test-watch __tests__/unit/theme/line.test.ts",
     "test-watch": "cross-env DEBUG_MODE=1 jest --watch",
     "test-cov": "jest -w 16 --coverage",

@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vrender",
-  "version": "1.0.42",
+  "version": "1.0.45",
   "description": "",
   "sideEffects": true,
   "main": "cjs/index.js",
@@ -18,16 +18,16 @@
     "build-umd": "cross-env DEBUG='Bundler*' bundle --clean -f umd",
     "dev": "cross-env DEBUG='Bundler*' bundle --clean -f es -w",
     "start": "vite ./__tests__/browser --host",
-    "test": "jest",
+    "test": "jest 2>&1",
     "test-cov": "jest -w 16 --coverage",
     "test-live": "npm run test-watch __tests__/unit/theme/line.test.ts",
     "test-watch": "cross-env DEBUG_MODE=1 jest --watch"
   },
   "dependencies": {
-    "@visactor/vrender-core": "workspace:1.0.42",
-    "@visactor/vrender-kits": "workspace:1.0.42",
-    "@visactor/vrender-animate": "workspace:1.0.42",
-    "@visactor/vrender-components": "workspace:1.0.42"
+    "@visactor/vrender-core": "workspace:1.0.45",
+    "@visactor/vrender-kits": "workspace:1.0.45",
+    "@visactor/vrender-animate": "workspace:1.0.45",
+    "@visactor/vrender-components": "workspace:1.0.45"
   },
   "devDependencies": {
     "@internal/bundler": "workspace:*",

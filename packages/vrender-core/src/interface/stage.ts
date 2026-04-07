@@ -14,6 +14,7 @@ import type { IWindow } from './window';
 import type { ILayerService } from './core';
 import type { IFullThemeSpec } from './graphic/theme';
 import type { IGraphicService } from './graphic-service';
+import type { IGraphicAttribute } from './graphic';
 
 export type IExportType = 'canvas' | 'imageData';
 
@@ -34,7 +35,7 @@ export interface IStageParams {
   height: number;
   dpr: number;
   // stage的背景
-  background: string | IColor;
+  background: IGraphicAttribute['background'] | IColor;
   // 外部的canvas
   canvas: string | HTMLCanvasElement;
   // canvas的container容器，如果不传入canvas，那就会在容器中创建canvas
@@ -176,7 +177,7 @@ export interface IStage extends INode {
   dpr: number;
 
   viewBox: IBoundsLike;
-  background: string | IColor;
+  background: IGraphicAttribute['background'] | IColor;
   ticker: ITicker;
   increaseAutoRender: boolean;
   readonly renderService: IRenderService;

@@ -1,4 +1,5 @@
-import type { IGraphic, Stage, ISymbol } from '@visactor/vrender-core';
+import type { IGraphic, IText, Stage, ISymbol } from '@visactor/vrender-core';
+import { normalizePadding } from '@visactor/vutils';
 import { Pager } from '../../src';
 import { createCanvas } from '../util/dom';
 import { createStage } from '../util/vrender';
@@ -38,8 +39,30 @@ describe('Pager', () => {
 
     expect((pager.preHandler as ISymbol).hasState('disable')).toBeTruthy();
     expect((pager.nextHandler as ISymbol).hasState('disable')).toBeFalsy();
-    expect(pager.AABBBounds.width()).toBeCloseTo(86.39999389648438);
-    expect(pager.AABBBounds.height()).toBeCloseTo(35);
+    expect((pager.text as IText).attribute.text).toBe('1/9');
+    const minX = Math.min(
+      (pager.preHandler as ISymbol).AABBBounds.x1,
+      (pager.text as IText).AABBBounds.x1,
+      (pager.nextHandler as ISymbol).AABBBounds.x1
+    );
+    const maxX = Math.max(
+      (pager.preHandler as ISymbol).AABBBounds.x2,
+      (pager.text as IText).AABBBounds.x2,
+      (pager.nextHandler as ISymbol).AABBBounds.x2
+    );
+    const minY = Math.min(
+      (pager.preHandler as ISymbol).AABBBounds.y1,
+      (pager.text as IText).AABBBounds.y1,
+      (pager.nextHandler as ISymbol).AABBBounds.y1
+    );
+    const maxY = Math.max(
+      (pager.preHandler as ISymbol).AABBBounds.y2,
+      (pager.text as IText).AABBBounds.y2,
+      (pager.nextHandler as ISymbol).AABBBounds.y2
+    );
+    const parsedPadding = normalizePadding(pager.attribute.padding ?? 0);
+    expect(pager.AABBBounds.width()).toBeCloseTo(maxX - minX + parsedPadding[1] + parsedPadding[3]);
+    expect(pager.AABBBounds.height()).toBeCloseTo(maxY - minY + parsedPadding[0] + parsedPadding[2]);
   });
 
   it('Pager in vertical should be render correctly', () => {
@@ -57,7 +80,29 @@ describe('Pager', () => {
 
     expect((pager.preHandler as ISymbol).hasState('disable')).toBeFalsy();
     expect((pager.nextHandler as ISymbol).hasState('disable')).toBeFalsy();
-    expect(pager.AABBBounds.width()).toBeCloseTo(20.399993896484375);
-    expect(pager.AABBBounds.height()).toBeCloseTo(58);
+    expect((pager.text as IText).attribute.text).toBe('3/9');
+    const minX = Math.min(
+      (pager.preHandler as ISymbol).AABBBounds.x1,
+      (pager.text as IText).AABBBounds.x1,
+      (pager.nextHandler as ISymbol).AABBBounds.x1
+    );
+    const maxX = Math.max(
+      (pager.preHandler as ISymbol).AABBBounds.x2,
+      (pager.text as IText).AABBBounds.x2,
+      (pager.nextHandler as ISymbol).AABBBounds.x2
+    );
+    const minY = Math.min(
+      (pager.preHandler as ISymbol).AABBBounds.y1,
+      (pager.text as IText).AABBBounds.y1,
+      (pager.nextHandler as ISymbol).AABBBounds.y1
+    );
+    const maxY = Math.max(
+      (pager.preHandler as ISymbol).AABBBounds.y2,
+      (pager.text as IText).AABBBounds.y2,
+      (pager.nextHandler as ISymbol).AABBBounds.y2
+    );
+    const parsedPadding = normalizePadding(pager.attribute.padding ?? 0);
+    expect(pager.AABBBounds.width()).toBeCloseTo(maxX - minX + parsedPadding[1] + parsedPadding[3]);
+    expect(pager.AABBBounds.height()).toBeCloseTo(maxY - minY + parsedPadding[0] + parsedPadding[2]);
   });
 });

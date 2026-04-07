@@ -8,6 +8,7 @@ import type { Releaseable } from './common';
 import type { IContext2d } from './context';
 import type { IWindow } from './window';
 import { ICanvasLike } from './canvas';
+import type { IGraphicAttribute } from './graphic';
 
 export type LayerMode = 'static' | 'dynamic' | 'virtual';
 export interface ILayerParams {
@@ -20,7 +21,7 @@ export interface ILayerParams {
 
 export interface ILayerDrawParams {
   renderService: IRenderService;
-  background?: string | IColor;
+  background?: IGraphicAttribute['background'] | IColor;
   updateBounds: boolean;
   viewBox: IAABBBounds;
   transMatrix: IMatrix;
@@ -31,7 +32,7 @@ export interface IDrawToParams {
   transMatrix: IMatrix;
   clear?: boolean;
   renderService: IRenderService;
-  background?: string | IColor;
+  background?: IGraphicAttribute['background'] | IColor;
   updateBounds: boolean;
 }
 

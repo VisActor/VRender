@@ -16,7 +16,7 @@ export interface IRenderServiceDrawParams {
   context?: IContext2d;
 
   // 绘制的区域以及是否需要清屏
-  clear?: string | IColor | boolean;
+  clear?: IGraphicAttribute['background'] | IColor | boolean;
   viewBox: IBounds;
   transMatrix?: IMatrixLike;
   stage: IStage;

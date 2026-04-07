@@ -279,7 +279,18 @@ export type IStrokeStyle = {
   stroke: IStrokeType[] | IStrokeType;
 };
 
-type TextureType = 'circle' | 'diamond' | 'rect' | 'vertical-line' | 'horizontal-line' | 'bias-lr' | 'bias-rl' | 'grid';
+type TextureType =
+  | 'circle'
+  | 'diamond'
+  | 'rect'
+  | 'vertical-line'
+  | 'horizontal-line'
+  | 'bias-lr'
+  | 'bias-rl'
+  | 'grid'
+  | 'wave';
+
+type ITextureSource = string | HTMLImageElement | HTMLCanvasElement;
 
 export type IConnectedStyle = {
   /**
@@ -482,7 +493,7 @@ export type IGraphicStyle = ILayout &
     /**
      * 纹理的类型
      */
-    texture: TextureType | string;
+    texture: TextureType | ITextureSource;
     /**
      * 纹理的颜色
      */

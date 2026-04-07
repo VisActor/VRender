@@ -69,7 +69,7 @@ function drawWave(
 export class DefaultBaseTextureRenderContribution implements IBaseRenderContribution<IGraphic, IGraphicAttribute> {
   time: BaseRenderContributionTime = BaseRenderContributionTime.afterFillStroke;
   useStyle: boolean = true;
-  textureMap?: Map<string, CanvasPattern>;
+  textureMap?: Map<string | HTMLImageElement | HTMLCanvasElement, CanvasPattern>;
   order: number = 10;
   _tempSymbolGraphic: ISymbol | null = null;
 
@@ -236,7 +236,7 @@ export class DefaultBaseTextureRenderContribution implements IBaseRenderContribu
   }
 
   protected drawTexture(
-    texture: string,
+    texture: string | HTMLImageElement | HTMLCanvasElement,
     graphic: IGraphic,
     context: IContext2d,
     x: number,
@@ -247,38 +247,50 @@ export class DefaultBaseTextureRenderContribution implements IBaseRenderContribu
     texturePadding: number
   ) {
     const { textureRatio = graphicAttribute.textureRatio, textureOptions = null } = graphic.attribute;
-    let pattern: CanvasPattern = this.textureMap.get(texture);
+    let pattern: CanvasPattern = null;
+    const patternKey = this.getPatternCacheKey(texture, textureSize, texturePadding, textureColor, context.dpr);
+    if (patternKey !== null) {
+      pattern = this.textureMap.get(patternKey);
+    }
 
     if (!pattern) {
-      switch (texture) {
-        case 'circle':
-          pattern = this.createCirclePattern(textureSize, texturePadding, textureColor, context);
-          break;
-        case 'diamond':
-          pattern = this.createDiamondPattern(textureSize, texturePadding, textureColor, context);
-          break;
-        case 'rect':
-          pattern = this.createRectPattern(textureSize, texturePadding, textureColor, context);
-          break;
-        case 'vertical-line':
-          pattern = this.createVerticalLinePattern(textureSize, texturePadding, textureColor, context);
-          break;
-        case 'horizontal-line':
-          pattern = this.createHorizontalLinePattern(textureSize, texturePadding, textureColor, context);
-          break;
-        case 'bias-lr':
-          pattern = this.createBiasLRLinePattern(textureSize, texturePadding, textureColor, context);
-          break;
-        case 'bias-rl':
-          pattern = this.createBiasRLLinePattern(textureSize, texturePadding, textureColor, context);
-          break;
-        case 'grid':
-          pattern = this.createGridPattern(textureSize, texturePadding, textureColor, context);
-          break;
+      if (typeof texture === 'string') {
+        switch (texture) {
+          case 'circle':
+            pattern = this.createCirclePattern(textureSize, texturePadding, textureColor, context);
+            break;
+          case 'diamond':
+            pattern = this.createDiamondPattern(textureSize, texturePadding, textureColor, context);
+            break;
+          case 'rect':
+            pattern = this.createRectPattern(textureSize, texturePadding, textureColor, context);
+            break;
+          case 'vertical-line':
+            pattern = this.createVerticalLinePattern(textureSize, texturePadding, textureColor, context);
+            break;
+          case 'horizontal-line':
+            pattern = this.createHorizontalLinePattern(textureSize, texturePadding, textureColor, context);
+            break;
+          case 'bias-lr':
+            pattern = this.createBiasLRLinePattern(textureSize, texturePadding, textureColor, context);
+            break;
+          case 'bias-rl':
+            pattern = this.createBiasRLLinePattern(textureSize, texturePadding, textureColor, context);
+            break;
+          case 'grid':
+            pattern = this.createGridPattern(textureSize, texturePadding, textureColor, context);
+            break;
+        }
+      }
+      if (!pattern) {
+        pattern = this.createResourcePattern(texture, graphic, context);
+      }
+      if (pattern && patternKey !== null) {
+        this.textureMap.set(patternKey, pattern);
       }
     }
 
-    if (textureOptions && textureOptions.dynamicTexture) {
+    if (typeof texture === 'string' && textureOptions && textureOptions.dynamicTexture) {
       // 动态纹理
       const { gridConfig = {}, useNewCanvas } = textureOptions;
       const b = graphic.AABBBounds;
@@ -395,6 +407,37 @@ export class DefaultBaseTextureRenderContribution implements IBaseRenderContribu
       );
       context.restore();
     }
+  }
+
+  protected getPatternCacheKey(
+    texture: string | HTMLImageElement | HTMLCanvasElement,
+    textureSize: number,
+    texturePadding: number,
+    textureColor: string,
+    dpr: number
+  ) {
+    if (typeof texture !== 'string') {
+      return texture;
+    }
+    if (texture === 'wave') {
+      return null;
+    }
+    return `${texture}-${textureSize}-${texturePadding}-${textureColor}-${dpr}`;
+  }
+
+  protected createResourcePattern(
+    texture: string | HTMLImageElement | HTMLCanvasElement,
+    graphic: IGraphic,
+    context: IContext2d
+  ) {
+    const resource = graphic.resources?.get(texture as any);
+    const data = resource?.state === 'success' ? resource.data : typeof texture === 'object' ? texture : null;
+    if (!data) {
+      return null;
+    }
+    const pattern = context.createPattern(data, 'repeat');
+    pattern?.setTransform && pattern.setTransform(new DOMMatrix([1 / context.dpr, 0, 0, 1 / context.dpr, 0, 0]));
+    return pattern;
   }
 }
 

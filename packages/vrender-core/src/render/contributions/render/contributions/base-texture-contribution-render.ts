@@ -27,10 +27,10 @@ function drawWave(
   boundsWidth: number,
   boundsHeight: number,
   textureOptions: {
-    fill: string;
-    percent: number;
-    frequency: number;
-    amplitude: number;
+    fill?: string;
+    percent?: number;
+    frequency?: number;
+    amplitude?: number;
     opacity?: number;
     phi?: number;
   },

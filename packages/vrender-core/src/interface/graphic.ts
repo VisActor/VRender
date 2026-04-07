@@ -507,9 +507,9 @@ export type IGraphicStyle = ILayout &
        */
       alignOffsetY?: number;
       /**
-       * 是否输出对齐调试信息（仅开发使用）
+       * 图片/SVG 纹理图案本身的圆角半径（用户坐标系）
        */
-      debugAlign?: boolean;
+      radius?: number;
       /**
        * 是否使用动态纹理绘制（由调用方提供绘制回调）
        */

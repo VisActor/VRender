@@ -248,7 +248,15 @@ export class DefaultBaseTextureRenderContribution implements IBaseRenderContribu
   ) {
     const { textureRatio = graphicAttribute.textureRatio, textureOptions = null } = graphic.attribute;
     let pattern: CanvasPattern = null;
-    const patternKey = this.getPatternCacheKey(texture, textureSize, texturePadding, textureColor, context.dpr);
+    const textureRadius = textureOptions?.radius ?? 0;
+    const patternKey = this.getPatternCacheKey(
+      texture,
+      textureSize,
+      texturePadding,
+      textureColor,
+      context.dpr,
+      textureRadius
+    );
     if (patternKey !== null) {
       pattern = this.textureMap.get(patternKey);
     }
@@ -283,7 +291,7 @@ export class DefaultBaseTextureRenderContribution implements IBaseRenderContribu
         }
       }
       if (!pattern) {
-        pattern = this.createResourcePattern(texture, graphic, context);
+        pattern = this.createResourcePattern(texture, graphic, context, texturePadding, textureRadius);
       }
       if (pattern && patternKey !== null) {
         this.textureMap.set(patternKey, pattern);
@@ -437,10 +445,12 @@ export class DefaultBaseTextureRenderContribution implements IBaseRenderContribu
     textureSize: number,
     texturePadding: number,
     textureColor: string,
-    dpr: number
+    dpr: number,
+    textureRadius: number
   ) {
     if (typeof texture !== 'string') {
-      return texture;
+      // 图片纹理在有 padding / 圆角时会生成新的 tile，避免缓存冲突
+      return texturePadding > 0 || textureRadius > 0 ? null : texture;
     }
     if (texture === 'wave') {
       return null;
@@ -451,14 +461,59 @@ export class DefaultBaseTextureRenderContribution implements IBaseRenderContribu
   protected createResourcePattern(
     texture: string | HTMLImageElement | HTMLCanvasElement,
     graphic: IGraphic,
-    context: IContext2d
+    context: IContext2d,
+    texturePadding: number,
+    textureRadius: number
   ) {
     const resource = graphic.resources?.get(texture as any);
     const data = resource?.state === 'success' ? resource.data : typeof texture === 'object' ? texture : null;
     if (!data) {
       return null;
     }
-    const pattern = context.createPattern(data, 'repeat');
+    if (texturePadding > 0 || textureRadius > 0) {
+      const w = (data as HTMLImageElement).naturalWidth || (data as HTMLCanvasElement).width;
+      const h = (data as HTMLImageElement).naturalHeight || (data as HTMLCanvasElement).height;
+      if (w > 0 && h > 0) {
+        const tileW = w + texturePadding * 2;
+        const tileH = h + texturePadding * 2;
+        const canvas = canvasAllocate.allocate({ width: tileW, height: tileH, dpr: context.dpr });
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.inuse = true;
+          ctx.clearMatrix();
+          ctx.setTransformForCurrent(true);
+          ctx.clearRect(0, 0, tileW, tileH);
+          if (textureRadius > 0) {
+            // 先裁剪出图案本身的圆角矩形（不包含四周 padding）
+            const r = Math.max(0, Math.min(textureRadius, Math.min(w, h) / 2));
+            const x0 = texturePadding;
+            const y0 = texturePadding;
+            const x1 = x0 + w;
+            const y1 = y0 + h;
+            ctx.beginPath();
+            ctx.moveTo(x0 + r, y0);
+            ctx.lineTo(x1 - r, y0);
+            ctx.quadraticCurveTo(x1, y0, x1, y0 + r);
+            ctx.lineTo(x1, y1 - r);
+            ctx.quadraticCurveTo(x1, y1, x1 - r, y1);
+            ctx.lineTo(x0 + r, y1);
+            ctx.quadraticCurveTo(x0, y1, x0, y1 - r);
+            ctx.lineTo(x0, y0 + r);
+            ctx.quadraticCurveTo(x0, y0, x0 + r, y0);
+            ctx.closePath();
+            ctx.clip();
+          }
+          // 在四周留出 padding 间隙
+          ctx.drawImage(data as any, texturePadding, texturePadding, w, h);
+          const pattern = context.createPattern(canvas.nativeCanvas as any, 'repeat');
+          pattern?.setTransform && pattern.setTransform(new DOMMatrix([1 / context.dpr, 0, 0, 1 / context.dpr, 0, 0]));
+          canvasAllocate.free(canvas);
+          return pattern;
+        }
+        canvasAllocate.free(canvas);
+      }
+    }
+    const pattern = context.createPattern(data as any, 'repeat');
     pattern?.setTransform && pattern.setTransform(new DOMMatrix([1 / context.dpr, 0, 0, 1 / context.dpr, 0, 0]));
     return pattern;
   }

@@ -65,10 +65,13 @@ export const page = () => {
       fill: '#f3f5f7',
       stroke: '#333',
       lineWidth: 2,
-      texture: 'https://api.iconify.design/mdi/smartwatch.svg?width=59.4&height=59.4&color=%23f472b6',
+      texture:
+        'https://cdn.brandfetch.io/id9KBhU5kJ/w/128/h/128/fallback/lettermark/icon.webp?c=1ax1775654658244bfumLaCV7mpyXDSm5P',
       textureOptions: {
-        alignToGraphic: true
-      }
+        alignToGraphic: true,
+        radius: 200
+      },
+      texturePadding: 10
     })
   );
 

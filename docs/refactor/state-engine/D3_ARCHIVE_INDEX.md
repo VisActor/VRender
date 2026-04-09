@@ -21,6 +21,8 @@
    看对应 Phase 的 execution prompt、implementation log、close-out prompt、acceptance template
 5. 需要知道还有什么没做但不阻塞：
    看 [D3_FOLLOWUPS.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_FOLLOWUPS.md)
+6. 准备交给上层图表库前，要看还必须补哪些验证：
+   看 [D3_PRE_HANDOFF_HARDENING.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_PRE_HANDOFF_HARDENING.md)
 
 ---
 
@@ -51,6 +53,7 @@
 - [D3_FINAL_SUMMARY.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_FINAL_SUMMARY.md)
 - [D3_ARCHIVE_INDEX.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_ARCHIVE_INDEX.md)
 - [D3_FOLLOWUPS.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_FOLLOWUPS.md)
+- [D3_PRE_HANDOFF_HARDENING.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_PRE_HANDOFF_HARDENING.md)
 
 ---
 
@@ -116,6 +119,7 @@
 | Phase 4 deferred 为什么只对 strict paint-only 开放 | `D3_PHASE4_PERFORMANCE_DESIGN.md` |
 | 某阶段有没有真的通过验收 | 对应 Phase 的 `IMPLEMENTATION_LOG` + `ACCEPTANCE_TEMPLATE` |
 | 还有哪些没做但不阻塞 | `D3_FOLLOWUPS.md` |
+| 上层接入前还必须补哪些验证 | `D3_PRE_HANDOFF_HARDENING.md` |
 
 ---
 

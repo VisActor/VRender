@@ -50,7 +50,7 @@ describe('Graphic-state', () => {
     expect(rect.hasState('hover')).toBeFalsy();
     expect(rect.attribute.fillOpacity).toBeUndefined();
     expect(rect.currentStates).toEqual([]);
-    expect(rect.normalAttrs).toBeNull();
+    expect(rect.normalAttrs).toEqual((rect as any).baseAttributes);
   });
 
   it('clearStates', () => {
@@ -69,11 +69,12 @@ describe('Graphic-state', () => {
     rect.useStates(['selected', 'hover']);
 
     expect(rect.hasState()).toBeTruthy();
-    expect(rect.attribute.fill).toEqual(rect.states.hover.fill);
+    expect(rect.attribute.fill).toEqual(rect.states.selected.fill);
     expect(rect.attribute.stroke).toEqual(rect.states.selected.stroke);
     expect(rect.normalAttrs?.fill).toEqual('red');
     expect(rect.normalAttrs?.stroke).toBeUndefined();
     expect(rect.normalAttrs?.fillOpacity).toBeUndefined();
+    expect(rect.normalAttrs).toEqual((rect as any).baseAttributes);
 
     rect.clearStates();
 
@@ -81,7 +82,7 @@ describe('Graphic-state', () => {
     expect(rect.attribute.fill).toEqual('red');
     expect(rect.attribute.stroke).toBeUndefined();
     expect(rect.attribute.fillOpacity).toBeUndefined();
-    expect(rect.normalAttrs).toBeNull();
+    expect(rect.normalAttrs).toEqual((rect as any).baseAttributes);
   });
 
   it('useStates', () => {
@@ -103,6 +104,7 @@ describe('Graphic-state', () => {
     expect(rect.attribute.stroke).toEqual(rect.states.selected.stroke);
     expect(rect.normalAttrs?.fill).toEqual('red');
     expect(rect.normalAttrs?.stroke).toBeUndefined();
+    expect(rect.normalAttrs).toEqual((rect as any).baseAttributes);
   });
 
   it('addState() and keepCurrentStates = true', () => {
@@ -121,10 +123,13 @@ describe('Graphic-state', () => {
     rect.addState('selected', true);
     expect(rect.hasState()).toBeTruthy();
     expect(rect.attribute).toMatchObject(rect.states.selected);
-    expect(rect.normalAttrs).toMatchObject({ fill: 'red', stroke: undefined });
+    expect(rect.normalAttrs?.fill).toEqual('red');
+    expect(rect.normalAttrs).toEqual((rect as any).baseAttributes);
 
     rect.addState('hover', true);
-    expect(rect.attribute).toMatchObject({ ...rect.states.selected, ...rect.states.hover });
+    expect(rect.attribute.fill).toEqual(rect.states.selected.fill);
+    expect(rect.attribute.stroke).toEqual(rect.states.selected.stroke);
+    expect(rect.attribute.fillOpacity).toEqual(rect.states.hover.fillOpacity);
   });
 
   it('addState() and keepCurrentStates = false', () => {
@@ -143,11 +148,13 @@ describe('Graphic-state', () => {
     rect.addState('selected', false);
     expect(rect.hasState()).toBeTruthy();
     expect(rect.attribute).toMatchObject(rect.states.selected);
-    expect(rect.normalAttrs).toMatchObject({ fill: 'red', stroke: undefined });
+    expect(rect.normalAttrs?.fill).toEqual('red');
+    expect(rect.normalAttrs).toEqual((rect as any).baseAttributes);
 
     rect.addState('hover', false);
     expect(rect.attribute).toMatchObject(rect.states.hover);
-    expect(rect.normalAttrs).toMatchObject({ fill: 'red', fillOpacity: undefined });
+    expect(rect.normalAttrs?.fill).toEqual('red');
+    expect(rect.normalAttrs).toEqual((rect as any).baseAttributes);
   });
 
   it('removeState', () => {
@@ -165,9 +172,10 @@ describe('Graphic-state', () => {
     expect(rect.hasState('selected')).toBeTruthy();
     expect(rect.currentStates).toEqual(['selected']);
     expect(rect.attribute.fill).toEqual('red');
-    expect(rect.normalAttrs?.fill).toBeUndefined();
+    expect(rect.normalAttrs?.fill).toEqual('red');
     expect(rect.normalAttrs?.stroke).toBeUndefined();
     expect(rect.normalAttrs?.fillOpacity).toBeUndefined();
+    expect(rect.normalAttrs).toEqual((rect as any).baseAttributes);
 
     rect.removeState('selected');
 
@@ -176,7 +184,7 @@ describe('Graphic-state', () => {
     expect(rect.attribute.fill).toEqual('red');
     expect(rect.attribute.stroke).toBeUndefined();
     expect(rect.attribute.fillOpacity).toBeUndefined();
-    expect(rect.normalAttrs).toBeNull();
+    expect(rect.normalAttrs).toEqual((rect as any).baseAttributes);
   });
 });
 
@@ -192,7 +200,7 @@ describe('glyph-state', () => {
     glyph.addState('hover');
     expect(glyph.hasState()).toBeTruthy();
     expect(glyph.attribute).toMatchObject(glyph.glyphStates.hover.attributes);
-    expect(glyph.normalAttrs).toMatchObject({ fillOpacity: undefined });
+    expect(glyph.normalAttrs).toEqual((glyph as any).baseAttributes);
     expect(glyph.currentStates).toEqual(['hover']);
   });
 
@@ -207,7 +215,7 @@ describe('glyph-state', () => {
     glyph.addState('hover');
     expect(glyph.hasState()).toBeTruthy();
     expect(glyph.attribute).toMatchObject(glyph.glyphStates.hover.attributes);
-    expect(glyph.normalAttrs).toMatchObject({ fillOpacity: undefined });
+    expect(glyph.normalAttrs).toEqual((glyph as any).baseAttributes);
     expect(glyph.currentStates).toEqual(['hover']);
     // expect(glyph.subGraphic[0].attribute).toMatchObject(glyph.glyphStates.hover.subAttributes[0]);
     // expect(glyph.subGraphic[1].attribute).toMatchObject(glyph.glyphStates.hover.subAttributes[1]);

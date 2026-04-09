@@ -1,4 +1,4 @@
-import type { EasingType } from '@visactor/vrender-core';
+import { AttributeUpdateType, type EasingType } from '@visactor/vrender-core';
 import { ACustomAnimate } from './custom-animate';
 
 export class FromTo extends ACustomAnimate<Record<string, number>> {
@@ -9,6 +9,17 @@ export class FromTo extends ACustomAnimate<Record<string, number>> {
   constructor(from: null, to: null, duration: number, easing: EasingType, params?: any) {
     super(from, to, duration, easing, params);
     this.from = from ?? {};
+  }
+
+  protected applyTransientFromAttributes(): void {
+    const target = this.target as any;
+    if (typeof target.applyTransientAttributes === 'function') {
+      target.applyTransientAttributes(this.from, false, { type: AttributeUpdateType.ANIMATE_START });
+      return;
+    }
+
+    Object.assign(target.attribute ?? {}, this.from);
+    target.onAttributeUpdate?.({ type: AttributeUpdateType.ANIMATE_START });
   }
 
   onBind(): void {
@@ -25,8 +36,8 @@ export class FromTo extends ACustomAnimate<Record<string, number>> {
     if (this.target.context?.animationState === 'appear') {
       (this.target as any).applyFinalAttributeToAttribute?.();
     }
-    if (this.params.controlOptions?.immediatelyApply !== false) {
-      this.target.setAttributes(this.from);
+    if (this.params?.controlOptions?.immediatelyApply !== false) {
+      this.applyTransientFromAttributes();
     }
   }
 
@@ -40,7 +51,7 @@ export class FromTo extends ACustomAnimate<Record<string, number>> {
       });
     // TODO：比较hack
     // 如果是入场动画，那么还需要设置属性
-    this.target.setAttributes(this.from);
+    this.applyTransientFromAttributes();
   }
 
   deleteSelfAttr(key: string): void {

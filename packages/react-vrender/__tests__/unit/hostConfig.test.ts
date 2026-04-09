@@ -12,7 +12,12 @@ jest.mock('../../src/processProps', () => {
 });
 
 const rectInstance = { addEventListener: jest.fn() };
-const glyphInstance = { type: 'glyph', addEventListener: jest.fn(), getSubGraphic: jest.fn(() => []), setSubGraphic: jest.fn() };
+const glyphInstance = {
+  type: 'glyph',
+  addEventListener: jest.fn(),
+  getSubGraphic: jest.fn(() => []),
+  setSubGraphic: jest.fn()
+};
 const shadowRootInstance = { type: 'shadowroot', addEventListener: jest.fn() };
 
 jest.mock('@visactor/vrender', () => {
@@ -31,7 +36,7 @@ import { createInstance, render, reconcilor } from '../../src/hostConfig';
 
 describe('react-vrender hostConfig', () => {
   test('createInstance: default graphic branch binds events', () => {
-    const props = { x: 1, onPointerDown: () => {} };
+    const props = { x: 1, onPointerDown: (): void => undefined };
     const inst = createInstance('rect' as any, props as any, null as any);
 
     expect(splitProps).toHaveBeenCalled();
@@ -40,7 +45,7 @@ describe('react-vrender hostConfig', () => {
   });
 
   test('createInstance: glyph and shadowroot branches', () => {
-    const glyph = createInstance('glyph' as any, { onPointerDown: () => {} } as any, null as any);
+    const glyph = createInstance('glyph' as any, { onPointerDown: (): void => undefined } as any, null as any);
     expect(glyph).toBe(glyphInstance);
 
     const sr = createInstance('shadowroot' as any, {} as any, null as any);
@@ -63,8 +68,13 @@ describe('react-vrender hostConfig', () => {
   });
 
   test('render() wires reconciler calls', () => {
-    const createSpy = jest.spyOn(reconcilor, 'createContainer');
-    const updateSpy = jest.spyOn(reconcilor, 'updateContainer');
+    const createSpy = jest.spyOn(reconcilor, 'createContainer').mockReturnValue({ _fiber: true } as any);
+    const updateSpy = jest
+      .spyOn(reconcilor, 'updateContainer')
+      .mockImplementation((_component: any, _container: any, _parent: any, callback?: (() => void) | null) => {
+        callback?.();
+        return undefined as any;
+      });
 
     const component = { type: 'rect' } as any;
     const target = { stage: null } as any;
@@ -74,5 +84,6 @@ describe('react-vrender hostConfig', () => {
 
     expect(createSpy).toHaveBeenCalledTimes(1);
     expect(updateSpy).toHaveBeenCalled();
+    expect(cb).toHaveBeenCalledTimes(1);
   });
 });

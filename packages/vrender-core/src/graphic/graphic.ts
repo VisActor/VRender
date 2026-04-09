@@ -1935,23 +1935,43 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       if (this.hasAnyTrackedAnimate()) {
         const previousTimeline = previousStage?.getTimeline?.();
         const nextTimeline = stage?.getTimeline?.();
+        const detachedStageAnimates: IAnimate[] = [];
         this.visitTrackedAnimates(a => {
-          if (a.timeline.isGlobal) {
-            if (!nextTimeline) {
-              if (previousTimeline && a.timeline === previousTimeline) {
-                previousTimeline.removeAnimate(a, false);
-              }
-              return;
+          const boundToPreviousStage = !!previousTimeline && a.timeline === previousTimeline;
+
+          if (!boundToPreviousStage && !a.timeline.isGlobal) {
+            return;
+          }
+
+          if (!nextTimeline) {
+            if (previousTimeline && a.timeline === previousTimeline) {
+              previousTimeline.removeAnimate(a, false);
+              detachedStageAnimates.push(a);
             }
-            if (a.timeline !== nextTimeline) {
-              if (previousTimeline && a.timeline === previousTimeline) {
-                previousTimeline.removeAnimate(a, false);
-              }
-              a.setTimeline(nextTimeline);
-              nextTimeline.addAnimate(a);
+            return;
+          }
+
+          if (a.timeline !== nextTimeline) {
+            if (previousTimeline && a.timeline === previousTimeline) {
+              previousTimeline.removeAnimate(a, false);
             }
+            a.setTimeline(nextTimeline);
+            nextTimeline.addAnimate(a);
           }
         });
+
+        if (detachedStageAnimates.length) {
+          detachedStageAnimates.forEach(animate => {
+            animate.stop();
+            const untrackAnimate = (this as any).untrackAnimate;
+            if (typeof untrackAnimate === 'function') {
+              untrackAnimate.call(this, animate.id);
+            } else {
+              this.animates?.delete(animate.id);
+            }
+          });
+          this._restoreAttributeFromStaticTruth({ type: AttributeUpdateType.ANIMATE_END });
+        }
       }
       this._onSetStage && this._onSetStage(this, stage, layer);
       graphicService?.onSetStage?.(this, stage);

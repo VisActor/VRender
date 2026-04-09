@@ -290,7 +290,6 @@ export class Step implements IStep {
    * 如果跳帧了就不一定会执行
    */
   onEnd(cb?: (animate: IAnimate, step: IStep) => void): void {
-    this.target.setAttributes(this.props);
     if (cb) {
       this._endCb = cb;
     } else if (this._endCb) {

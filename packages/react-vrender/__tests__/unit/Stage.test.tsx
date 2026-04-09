@@ -9,7 +9,8 @@ jest.mock('@visactor/vrender', () => {
       set3dOptions: jest.fn(),
       setViewBox: jest.fn(),
       setDpr: jest.fn(),
-      resize: jest.fn()
+      resize: jest.fn(),
+      release: jest.fn()
     }))
   };
 });
@@ -68,12 +69,7 @@ describe('react-vrender Stage', () => {
 
     act(() => {
       root.render(
-        <StageAny
-          width={200}
-          height={100}
-          dpr={2}
-          viewBox={{ x1: 0, y1: 0, x2: 10, y2: 20 } as any}
-        >
+        <StageAny width={200} height={100} dpr={2} viewBox={{ x1: 0, y1: 0, x2: 10, y2: 20 } as any}>
           <></>
         </StageAny>
       );
@@ -89,12 +85,7 @@ describe('react-vrender Stage', () => {
 
     act(() => {
       root.render(
-        <StageAny
-          width={300}
-          height={150}
-          dpr={3}
-          viewBox={{ x1: 1, y1: 2, x2: 11, y2: 22 } as any}
-        >
+        <StageAny width={300} height={150} dpr={3} viewBox={{ x1: 1, y1: 2, x2: 11, y2: 22 } as any}>
           <></>
         </StageAny>
       );

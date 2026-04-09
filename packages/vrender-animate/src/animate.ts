@@ -11,6 +11,7 @@ import {
   type ITimeline
 } from '@visactor/vrender-core';
 import { defaultTimeline } from './timeline';
+import { FromTo } from './custom/fromTo';
 
 export class Animate implements IAnimate {
   readonly id: string | number;
@@ -134,6 +135,9 @@ export class Animate implements IAnimate {
     }
     this.onRemove(() => {
       this.stop();
+      if (typeof trackerTarget.restoreStaticAttribute === 'function') {
+        trackerTarget.restoreStaticAttribute();
+      }
       if (typeof trackerTarget.untrackAnimate === 'function') {
         trackerTarget.untrackAnimate(this.id);
       } else {
@@ -268,20 +272,10 @@ export class Animate implements IAnimate {
    * 【注意】这可能会导致动画跳变，请谨慎使用
    */
   from(props: Record<string, any>, duration: number = 300, easing: EasingType = 'linear'): this {
-    // 创建新的step
-    const step = new Step(AnimateStepType.from, props, duration, easing);
+    const step = new FromTo(props as any, {} as any, duration, easing);
 
-    // 如果是第一个step
-    if (!this._firstStep) {
-      this._firstStep = step;
-      this._lastStep = step;
-    } else {
-      // 添加到链表末尾
-      this._lastStep.append(step);
-      this._lastStep = step;
-    }
-
-    this.updateDuration();
+    step.bind(this.target, this);
+    this.updateStepAfterAppend(step);
 
     return this;
   }
@@ -618,6 +612,10 @@ export class Animate implements IAnimate {
       this._lastStep?.onEnd();
       this.onEnd();
       this.status = AnimateStatus.END;
+      const trackerTarget = this.target as any;
+      if (typeof trackerTarget?.restoreStaticAttribute === 'function') {
+        trackerTarget.restoreStaticAttribute();
+      }
       return;
     }
 

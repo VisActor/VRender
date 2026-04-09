@@ -243,3 +243,111 @@
 - 剩余动作/后续项：
   1. `graphic.states` missing-state fallback 告警策略继续作为非阻塞后续项。
   2. `Glyph ownership` 文档拆分方式继续作为非阻塞后续项。
+
+### 2026-04-09 23:42 — Pre-handoff hardening / 动画属性级补测与上层红灯收口（阶段性）
+
+- 背景：
+  D3 Phase 1-4 已关闭，但 `D3_PRE_HANDOFF_HARDENING.md` 明确指出仓库还缺少真实属性级动画测试，且 `packages/vrender rushx test`、`packages/react-vrender rushx test` 已有实跑红灯，不能直接 handoff 给上层图表库。
+- 实现/结论：
+  1. 新增 `packages/vrender-animate/__tests__/unit/animation-runtime-attribute.test.ts`，用 `ManualTicker` 补齐了真实属性级覆盖：
+     - 状态动画 `t=0 / t=mid / t=end`
+     - `animate.to(...) / from(...)`
+     - 状态动画进行中再次切状态
+     - 自驱动画同属性遇到状态切换
+     - `removeChild / removeAllChild / setStage(null) / reparent` 边界
+  2. 动画运行时收口了 4 条直接影响 handoff gate 的问题：
+     - `Step.onEnd()` 不再把 step props 反写入 base
+     - `Animate.advance()` 自然结束时立即走 `restoreStaticAttribute()`
+     - `Animate.from()` 改接 `FromTo`，并把 `from` 起始帧改成 transient 写入，避免污染 `baseAttributes`
+     - `Graphic.setStage()` 对 stage-bound animations 的 `detach / rebind` 逻辑收口，避免旧 timeline 迟到写回
+  3. `packages/vrender/__tests__/graphic/graphic-state.test.ts` 已按 D3 真值模型改写：
+     - `normalAttrs` 只再作为 `baseAttributes` 的 deprecated alias 断言
+     - 旧的 snapshot/restore/null 外观断言已移除
+  4. `packages/react-vrender` 已完成本轮最小适配：
+     - `src/Stage.tsx` 显式收口 `createStage()` 返回类型与 object-ref 赋值
+     - 卸载时显式 `release`
+     - `__tests__/unit/hostConfig.test.ts` 改成同步可收敛的 reconciler mock，消除测试结束后的异步 document 生命周期错误
+- 是否与设计有差异：
+  无原则性差异。本轮修的都是 D3 既有契约下的实现/验证缺口：
+  - 动画结束不得污染静态真值
+  - `from()` 起点不得污染 base
+  - detach/reparent 不得出现旧 timeline 迟到写回
+  - 上层包测试要对齐 D3 真值模型与新生命周期
+- 影响文件：
+  `packages/vrender-animate/__tests__/unit/animation-runtime-attribute.test.ts`
+  `packages/vrender-animate/src/step.ts`
+  `packages/vrender-animate/src/animate.ts`
+  `packages/vrender-animate/src/custom/fromTo.ts`
+  `packages/vrender-core/src/graphic/graphic.ts`
+  `packages/vrender/__tests__/graphic/graphic-state.test.ts`
+  `packages/react-vrender/src/Stage.tsx`
+  `packages/react-vrender/__tests__/unit/Stage.test.tsx`
+  `packages/react-vrender/__tests__/unit/hostConfig.test.ts`
+- 验证：
+  1. `packages/vrender-animate` 定向新测试通过：`8/8` tests
+  2. `packages/vrender` 定向状态测试通过：`9/9` tests
+  3. `packages/react-vrender` 定向 `Stage + hostConfig` 测试通过：`6/6` tests
+- 是否影响完成定义：
+  是。该条目直接影响 handoff gate：
+  - 动画属性级专项测试已从“缺失”变为“具备基线并通过”
+  - `vrender` / `react-vrender` 的已知 P0 红灯已完成定向收口
+  但完整 release gate 还未跑完，因此当前仍不能宣告 handoff ready。
+- 剩余动作/后续项：
+  1. 运行完整 release gate：
+     - `rush compile -t @visactor/vrender-core`
+     - `packages/vrender-core rushx test`
+     - `packages/vrender-animate rushx test`
+     - `packages/vrender rushx test`
+     - `packages/react-vrender rushx test`
+     - 受影响上层包 compile
+  2. gate 全通过后，再补一条最终 hardening 结论。
+  3. `graphic.states` 告警策略与 `Glyph ownership` 继续维持为非阻塞后续项，不在本轮回升为 blocker。
+
+### 2026-04-09 23:58 — Pre-handoff hardening / release gate 全通过，进入 handoff ready
+
+- 背景：
+  上一条阶段性记录已经完成动画属性级补测与 `vrender` / `react-vrender` 已知红灯的定向收口，但 `D3_PRE_HANDOFF_HARDENING.md` 要求必须补跑完整 release gate，全部通过后才能汇报 handoff ready。
+- 实现/结论：
+  1. 完整 release gate 已全部通过，当前仓库满足 handoff 前的 P0 要求：
+     - `rush compile -t @visactor/vrender-core`
+     - `packages/vrender-core rushx test`
+     - `packages/vrender-animate rushx test`
+     - `packages/vrender rushx test`
+     - `packages/react-vrender rushx test`
+     - 受影响上层包 compile（`vrender` / `vrender-kits` / `vrender-components`）
+  2. 动画专项测试已正式进入稳定基线：
+     - `packages/vrender-animate/__tests__/unit/animation-runtime-attribute.test.ts`
+     - 覆盖真实属性级 `t=0 / t=mid / t=end`
+     - 覆盖 `animate.to(...) / from(...)`
+     - 覆盖状态动画/自驱动画冲突
+     - 覆盖 `removeChild / removeAllChild / setStage(null) / reparent`
+  3. `packages/vrender` 与 `packages/react-vrender` 的 P0 红灯已被证实是“测试/绑定层未对齐 D3 新语义”，不是新的 D3 运行时回归；当前均已通过全量测试。
+- 是否与设计有差异：
+  无。该条目不引入新的设计判断，只确认 handoff 前必须补齐的验证与适配已经完成。
+- 影响文件：
+  `packages/vrender-animate/__tests__/unit/animation-runtime-attribute.test.ts`
+  `packages/vrender-animate/src/step.ts`
+  `packages/vrender-animate/src/animate.ts`
+  `packages/vrender-animate/src/custom/fromTo.ts`
+  `packages/vrender-core/src/graphic/graphic.ts`
+  `packages/vrender/__tests__/graphic/graphic-state.test.ts`
+  `packages/react-vrender/src/Stage.tsx`
+  `packages/react-vrender/__tests__/unit/Stage.test.tsx`
+  `packages/react-vrender/__tests__/unit/hostConfig.test.ts`
+  `docs/refactor/state-engine/D3_PHASE4_IMPLEMENTATION_LOG.md`
+- 验证：
+  1. `rush compile -t @visactor/vrender-core`：通过
+  2. `packages/vrender-core rushx test`：`94/94` suites，`478/478` tests
+  3. `packages/vrender-animate rushx test`：`8/8` suites，`30/30` tests
+  4. `packages/vrender rushx test`：`14/14` suites，`48/48` tests，`2 skipped`
+  5. `packages/react-vrender rushx test`：`6/6` suites，`16/16` tests
+  6. `packages/vrender rushx compile`：通过
+  7. `packages/vrender-kits rushx compile`：通过
+  8. `packages/vrender-components rushx compile`：通过
+  9. `packages/react-vrender rushx compile`：通过（额外类型验证）
+- 是否影响完成定义：
+  是。该条目意味着 `D3_PRE_HANDOFF_HARDENING.md` 规定的 release gate 已全部满足，当前可以汇报 `handoff ready`。
+- 剩余动作/后续项：
+  1. `graphic.states` missing-state fallback 的告警策略，继续作为非阻塞 follow-up。
+  2. `Glyph ownership` 文档拆分方式，继续作为非阻塞 follow-up。
+  3. 不重开 D3 Phase 1-4 主设计，不在本轮继续扩围。

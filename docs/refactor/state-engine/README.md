@@ -36,6 +36,7 @@
 | `D3_FINAL_SUMMARY.md` | **D3 最终总结**（项目级收口；归档文档，不是新的规范源） |
 | `D3_ARCHIVE_INDEX.md` | **D3 归档索引**（后续维护者导航入口；归档文档，不是新的规范源） |
 | `D3_FOLLOWUPS.md` | **D3 后续项跟踪**（非阻塞 follow-up 清单；归档文档，不是新的规范源） |
+| `D3_PRE_HANDOFF_HARDENING.md` | **D3 交付前加固方案**（上层图表库接入前的最小验证与 release gate；归档/执行文档，不是新的规范源） |
 
 ## 归档与导航
 
@@ -46,6 +47,7 @@
 | `D3_FINAL_SUMMARY.md` | 项目级最终总结，只写结论，不重复阶段细节 |
 | `D3_ARCHIVE_INDEX.md` | 归档入口，回答“后续维护者先看哪份、每份文档解决什么问题” |
 | `D3_FOLLOWUPS.md` | 非阻塞 follow-up 跟踪清单，不重开已关闭阶段设计 |
+| `D3_PRE_HANDOFF_HARDENING.md` | 上层图表库接入前的最小加固方案，聚焦测试缺口、release gate 与 handoff 门槛 |
 
 ## 历史开发者沟通
 

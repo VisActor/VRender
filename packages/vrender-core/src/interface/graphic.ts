@@ -12,6 +12,13 @@ import type { IContainPointMode } from '../common/enums';
 import type { IFace3d } from './graphic/face3d';
 import type { IPickerService } from './picker';
 import type { ISymbolClass } from './graphic/symbol';
+import type {
+  CompiledStateDefinition,
+  StateDefinition,
+  StateDefinitionsInput
+} from '../graphic/state/state-definition';
+import type { StateMergeMode } from '../graphic/state/state-style-resolver';
+import type { SharedStateScope } from '../graphic/state/shared-state-scope';
 
 type IStrokeSeg = {
   /**
@@ -650,6 +657,7 @@ export type IGraphicAttribute = IDebugType &
 
 export interface IGraphicJson<T extends Partial<IGraphicAttribute> = Partial<IGraphicAttribute>> {
   attribute: Partial<T>;
+  baseAttributes?: Partial<T>;
   _uid: number;
   type: string;
   name: string;
@@ -727,24 +735,41 @@ export interface IGraphic<T extends Partial<IGraphicAttribute> = Partial<IGraphi
   incrementalAt?: number;
 
   /** 记录state对应的图形属性 */
-  states?: Record<string, Partial<T>>;
+  states?: StateDefinitionsInput<T>;
+  effectiveStates?: string[];
+  resolvedStatePatch?: Partial<T>;
   normalAttrs?: Partial<T>;
+  baseAttributes?: Partial<T>;
+  boundSharedStateScope?: SharedStateScope<T>;
+  boundSharedStateRevision?: number;
+  sharedStateDirty?: boolean;
+  registeredActiveScopes?: Set<SharedStateScope<T>>;
+  localFallbackCompiledDefinitions?: Map<string, CompiledStateDefinition<T>>;
+  localFallbackVersion?: number;
   stateProxy?: (stateName: string, targetStates?: string[]) => Partial<T>;
+  stateMergeMode?: StateMergeMode;
   findFace?: () => IFace3d;
   toggleState: (stateName: string, hasAnimation?: boolean) => void;
   removeState: (stateName: string | string[], hasAnimation?: boolean) => void;
   clearStates: (hasAnimation?: boolean) => void;
   useStates: (states: string[], hasAnimation?: boolean) => void;
   addState: (stateName: string, keepCurrentStates?: boolean, hasAnimation?: boolean) => void;
+  invalidateResolver: () => void;
   hasState: (stateName?: string) => boolean;
-  getState: (stateName: string) => Partial<T>;
+  getState: (stateName: string) => Partial<T> | StateDefinition<T>;
   onBeforeAttributeUpdate?: (
     val: any,
     attributes: Partial<T>,
     key: null | string | string[],
     context?: ISetAttributeContext
   ) => T | undefined;
-  applyStateAttrs: (attrs: Partial<T>, stateNames: string[], hasAnimation?: boolean, isClear?: boolean) => void;
+  applyStateAttrs: (
+    attrs: Partial<T>,
+    stateNames: string[],
+    hasAnimation?: boolean,
+    isClear?: boolean,
+    animateConfig?: IAnimateConfig
+  ) => void;
   updateNormalAttrs: (stateAttrs: Partial<T>) => void;
 
   // get
@@ -774,6 +799,7 @@ export interface IGraphic<T extends Partial<IGraphicAttribute> = Partial<IGraphi
   rotateTo: (angle: number) => this;
   skewTo: (b: number, c: number) => this;
   addUpdateBoundTag: () => void;
+  addUpdatePaintTag: () => void;
   addUpdateShapeAndBoundsTag: () => void;
   addUpdateLayoutTag: () => void;
 
@@ -852,6 +878,7 @@ export interface IRoot extends IGraphic {
 export type IAnimateConfig = {
   duration?: number;
   easing?: EasingType;
+  noAnimateAttrs?: string[] | Record<string, boolean | number>;
 };
 
 export type GraphicReleaseStatus = 'released' | 'willRelease';

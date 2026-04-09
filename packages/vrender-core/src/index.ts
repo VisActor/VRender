@@ -1,10 +1,15 @@
 // import 'core-js/proposals/reflect-metadata';
-import './modules';
-
-export * from './container';
 export * from './core/global';
 export * from './graphic';
-export * from './modules';
+export { createGraphic, graphicCreator, registerGraphic } from './graphic/graphic-creator';
+export { graphicUtil, transformUtil, graphicService, layerService } from './modules';
+export {
+  preLoadAllModule,
+  getLegacyBindingContext,
+  type ILegacyBindContext,
+  type ILegacyBindingContext
+} from './legacy/bootstrap';
+export { vglobal } from './global';
 export * from './create';
 export * from './event';
 export * from './interface';
@@ -18,6 +23,8 @@ export * from './picker';
 export * from './resource-loader/loader';
 export * from './color-string';
 export * from './factory';
+export * from './registry';
+export * from './entries';
 
 /* export common */
 export * from './common/text';
@@ -57,7 +64,7 @@ export * from './common/contribution-provider';
 
 export { wrapCanvas, wrapContext } from './canvas/util';
 export * from './common/xml';
-export * from './common/inversify-lite';
+export * from './common/explicit-binding';
 export * from './constants';
 export * from './application';
 export * from './env-check';

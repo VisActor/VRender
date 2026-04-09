@@ -1,4 +1,4 @@
-import { injectable, BaseEnvContribution, rafBasedSto } from '@visactor/vrender-core';
+import { BaseEnvContribution, rafBasedSto } from '@visactor/vrender-core';
 // import { loadTaroContributions } from '../../../kits';
 import type { EnvType, ICreateCanvasParams, IEnvContribution, IGlobal } from '@visactor/vrender-core';
 
@@ -22,7 +22,6 @@ type NodePkg = {
 //   return id;
 // }
 
-@injectable()
 export class NodeEnvContribution extends BaseEnvContribution implements IEnvContribution {
   type: EnvType = 'node';
   pkg: NodePkg;

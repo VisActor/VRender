@@ -4,7 +4,7 @@
 import { array, flattenArray, isArray, isEmpty, isValidNumber, merge } from '@visactor/vutils';
 import type { ILine, ISymbol } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
-import { graphicCreator } from '@visactor/vrender-core';
+import { graphicCreator } from '../util/graphic-creator';
 import { AbstractComponent } from '../core/base';
 import type { ILineGraphicWithCornerRadius, SegmentAttributes, SymbolAttributes } from './type';
 import type { Point } from '../core/type';

@@ -2,4 +2,4 @@ import { BrowserCanvas } from './canvas';
 import { BrowserContext2d } from './context';
 import { createModule } from '../create-canvas-module';
 
-export const browserCanvasModule = createModule(BrowserCanvas, BrowserContext2d);
+export const bindBrowserCanvasModules = createModule(BrowserCanvas, BrowserContext2d);

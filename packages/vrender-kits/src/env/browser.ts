@@ -1,27 +1,27 @@
-import { container, ContainerModule, type Container, EnvContribution } from '@visactor/vrender-core';
+import { EnvContribution, getLegacyBindingContext } from '@visactor/vrender-core';
 // import { browserEnvModule } from './contributions/module';
-import { browserCanvasModule } from '../canvas/contributions/browser/modules';
+import { bindBrowserCanvasModules } from '../canvas/contributions/browser/modules';
 import { loadCanvasPicker } from '../picker/canvas-module';
-import { browserWindowModule } from '../window/contributions/browser-contribution';
+import { bindBrowserWindowContribution } from '../window/contributions/browser-contribution';
 import { BrowserEnvContribution } from './contributions/browser-contribution';
+import type { LegacyBindContainer, LegacyContainer } from '../common/legacy-container';
 
-export const browserEnvModule = new ContainerModule(bind => {
-  // browser
-  if (!(browserEnvModule as any).isBrowserBound) {
-    (browserEnvModule as any).isBrowserBound = true;
-    bind(BrowserEnvContribution).toSelf().inSingletonScope();
-    bind(EnvContribution).toService(BrowserEnvContribution);
+let isBrowserBound = false;
+
+export function bindBrowserEnv(container: LegacyBindContainer) {
+  if (!isBrowserBound) {
+    isBrowserBound = true;
+    container.bind(BrowserEnvContribution).toSelf().inSingletonScope();
+    container.bind(EnvContribution).toService(BrowserEnvContribution);
   }
-});
+}
 
-(browserEnvModule as any).isBrowserBound = false;
-
-export function loadBrowserEnv(container: Container, loadPicker: boolean = true) {
+export function loadBrowserEnv(container: LegacyContainer = getLegacyBindingContext(), loadPicker: boolean = true) {
   if (!loadBrowserEnv.__loaded) {
     loadBrowserEnv.__loaded = true;
-    container.load(browserEnvModule);
-    container.load(browserCanvasModule);
-    container.load(browserWindowModule);
+    bindBrowserEnv(container);
+    bindBrowserCanvasModules(container);
+    bindBrowserWindowContribution(container);
     loadPicker && loadCanvasPicker(container);
   }
 }
@@ -29,5 +29,5 @@ export function loadBrowserEnv(container: Container, loadPicker: boolean = true)
 loadBrowserEnv.__loaded = false;
 
 export function initBrowserEnv() {
-  loadBrowserEnv(container);
+  loadBrowserEnv();
 }

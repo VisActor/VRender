@@ -1,10 +1,9 @@
-import { ContainerModule } from '../../../common/inversify';
 import { DefaultIncrementalCanvasLineRender } from './incremental-line-render';
 import { DefaultCanvasLineRender } from './line-render';
 import { GraphicRender, LineRender } from './symbol';
 
 let loadLineModule = false;
-export const lineModule = new ContainerModule(bind => {
+export function bindLineRenderModule({ bind }: { bind: any }) {
   if (loadLineModule) {
     return;
   }
@@ -14,4 +13,6 @@ export const lineModule = new ContainerModule(bind => {
   bind(DefaultIncrementalCanvasLineRender).toSelf().inSingletonScope();
   bind(LineRender).to(DefaultCanvasLineRender).inSingletonScope();
   bind(GraphicRender).toService(LineRender);
-});
+}
+
+export const lineModule = bindLineRenderModule;

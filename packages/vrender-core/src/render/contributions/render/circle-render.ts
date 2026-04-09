@@ -1,4 +1,3 @@
-import { inject, injectable, named } from '../../../common/inversify-lite';
 import type {
   IGraphicAttribute,
   ICircle,
@@ -15,8 +14,6 @@ import type {
 import { getTheme } from '../../../graphic/theme';
 import { CIRCLE_NUMBER_TYPE } from '../../../graphic/constants';
 import { CircleRenderContribution } from './contributions/constants';
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { ContributionProvider } from '../../../common/contribution-provider';
 import { BaseRender } from './base-render';
 import {
   defaultCircleBackgroundRenderContribution,
@@ -24,16 +21,11 @@ import {
   defaultCircleTextureRenderContribution
 } from './contributions';
 
-@injectable()
 export class DefaultCanvasCircleRender extends BaseRender<ICircle> implements IGraphicRender {
   type: 'circle';
   numberType: number = CIRCLE_NUMBER_TYPE;
 
-  constructor(
-    @inject(ContributionProvider)
-    @named(CircleRenderContribution)
-    protected readonly graphicRenderContributions: IContributionProvider<ICircleRenderContribution>
-  ) {
+  constructor(protected readonly graphicRenderContributions: IContributionProvider<ICircleRenderContribution>) {
     super();
     this.builtinContributions = [
       defaultCircleRenderContribution,

@@ -1,18 +1,43 @@
-import type { IPointLike, vec2 } from '@visactor/vutils';
-import { isPointInLine, pi, pi2 } from '@visactor/vutils';
+import { isPointInLine, pi, pi2, type IPointLike, type vec2 } from '@visactor/vutils';
 import { enumCommandMap as CMD } from '../common/path-svg';
-import type { CommandType, IContext2d } from '../interface';
-import { container } from '../container';
 import { application } from '../application';
-import { CanvasFactory, Context2dFactory } from './constants';
-import type { CanvasConfigType, ICanvas, ICanvasFactory, IContext2dFactory } from '../interface';
+import type {
+  CanvasConfigType,
+  CommandType,
+  ICanvas,
+  ICanvasFactory,
+  IContext2d,
+  IContext2dFactory
+} from '../interface';
+
+function resolveCanvasFactory(): ICanvasFactory {
+  const env = application.global?.env;
+  const factory = env ? application.canvasFactory?.(env) : undefined;
+
+  if (!factory) {
+    throw new Error(`CanvasFactory is not configured for env "${env ?? 'unknown'}"`);
+  }
+
+  return factory;
+}
+
+function resolveContext2dFactory(): IContext2dFactory {
+  const env = application.global?.env;
+  const factory = env ? application.context2dFactory?.(env) : undefined;
+
+  if (!factory) {
+    throw new Error(`Context2dFactory is not configured for env "${env ?? 'unknown'}"`);
+  }
+
+  return factory;
+}
 
 export function wrapCanvas(params: CanvasConfigType) {
-  return container.getNamed<ICanvasFactory>(CanvasFactory, application.global.env)(params);
+  return resolveCanvasFactory()(params);
 }
 
 export function wrapContext(canvas: ICanvas, dpr: number) {
-  return container.getNamed<IContext2dFactory>(Context2dFactory, application.global.env)(canvas, dpr);
+  return resolveContext2dFactory()(canvas, dpr);
 }
 // 源码参考 http://pomax.github.io/bezierinfo/#projections
 /**

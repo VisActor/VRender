@@ -1,4 +1,4 @@
-declare var require: any;
+declare let require: any;
 
 type MockCanvasBundle = {
   nativeCanvas: any;
@@ -108,7 +108,7 @@ function createMockCanvas(width: number, height: number, nativeCanvas?: any): Mo
 describe('smoke: stage & graphic (node stubs)', () => {
   test('createStage + add rect + render does not throw', () => {
     jest.isolateModules(() => {
-      const { container } = require('../../../src/container');
+      const { getLegacyBindingContext } = require('../../../src/legacy/bootstrap');
       const { vglobal } = require('../../../src/modules');
       const { application } = require('../../../src/application');
       const { EnvContribution } = require('../../../src/constants');
@@ -304,7 +304,14 @@ describe('smoke: stage & graphic (node stubs)', () => {
         }
 
         getBoundingClientRect() {
-          return this._canvas?.nativeCanvas?.getBoundingClientRect?.() ?? { left: 0, top: 0, width: this._w, height: this._h };
+          return (
+            this._canvas?.nativeCanvas?.getBoundingClientRect?.() ?? {
+              left: 0,
+              top: 0,
+              width: this._w,
+              height: this._h
+            }
+          );
         }
 
         clearViewBox() {
@@ -360,20 +367,21 @@ describe('smoke: stage & graphic (node stubs)', () => {
       }
 
       // Bind stub contributions & factories
-      container.bind(EnvContribution).toConstantValue(new StubEnvContribution());
-      container
+      const legacyContext = getLegacyBindingContext();
+      legacyContext.bind(EnvContribution).toConstantValue(new StubEnvContribution());
+      legacyContext
         .bind(WindowHandlerContribution)
         .toConstantValue(new StubWindowHandlerContribution())
         .whenTargetNamed(envName);
 
-      container
+      legacyContext
         .bind(CanvasFactory)
         .toDynamicValue(() => {
           return (params: any) => createMockCanvas(params.width, params.height, params.nativeCanvas).canvas;
         })
         .whenTargetNamed(envName);
 
-      container
+      legacyContext
         .bind(Context2dFactory)
         .toDynamicValue(() => {
           return (canvas: any) => canvas.getContext();

@@ -13,9 +13,9 @@ const globalAny = globalThis as any;
 // Make tests runnable in node environment as well.
 if (!globalAny.MouseEvent) {
   globalAny.MouseEvent = class {
-    public type: string;
-    public clientX: number;
-    public clientY: number;
+    type: string;
+    clientX: number;
+    clientY: number;
 
     constructor(type: string, init?: any) {
       this.type = type;
@@ -32,9 +32,9 @@ if (!globalAny.PointerEvent) {
 
 if (!globalAny.TouchEvent) {
   globalAny.TouchEvent = class {
-    public type: string;
-    public touches: any[];
-    public changedTouches: any[];
+    type: string;
+    touches: any[];
+    changedTouches: any[];
 
     constructor(type: string, init?: any) {
       this.type = type;
@@ -43,6 +43,20 @@ if (!globalAny.TouchEvent) {
       Object.assign(this, init);
     }
   };
+}
+
+function createMockTouchEvent(type: string, init?: { touches?: any[]; changedTouches?: any[] }) {
+  try {
+    return new globalAny.TouchEvent(type, init);
+  } catch (error) {
+    const event = Object.create(globalAny.TouchEvent.prototype ?? Object.prototype);
+    Object.defineProperties(event, {
+      type: { value: type, configurable: true },
+      touches: { value: init?.touches ?? [], configurable: true },
+      changedTouches: { value: init?.changedTouches ?? [], configurable: true }
+    });
+    return event;
+  }
 }
 
 describe('event-transformer', () => {
@@ -107,7 +121,7 @@ describe('event-transformer', () => {
 
     const transformer = createEventTransformer({} as any, getMatrix, getRect, transformPoint);
 
-    const event = new globalAny.TouchEvent('touchmove', {
+    const event = createMockTouchEvent('touchmove', {
       touches: [{ clientX: 1, clientY: 2 }],
       changedTouches: [{ clientX: 3, clientY: 4 }]
     });
@@ -178,7 +192,10 @@ describe('event-transformer', () => {
   });
 
   test('mapToCanvasPointForCanvas supports changedTouches and fallback', () => {
-    expect(mapToCanvasPointForCanvas({ changedTouches: [{ _canvasX: 5, _canvasY: 6 }] } as any)).toEqual({ x: 5, y: 6 });
+    expect(mapToCanvasPointForCanvas({ changedTouches: [{ _canvasX: 5, _canvasY: 6 }] } as any)).toEqual({
+      x: 5,
+      y: 6
+    });
     expect(mapToCanvasPointForCanvas({} as any)).toEqual({ x: 0, y: 0 });
   });
 });

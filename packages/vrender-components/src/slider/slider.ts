@@ -15,7 +15,8 @@ import type {
   Cursor
 } from '@visactor/vrender-core';
 import { isNil, merge, clamp, isValid, array, isObject, isArray, clampRange, debounce } from '@visactor/vutils';
-import { graphicCreator, vglobal, CustomEvent } from '@visactor/vrender-core';
+import { vglobal, CustomEvent } from '@visactor/vrender-core';
+import { graphicCreator } from '../util/graphic-creator';
 import { AbstractComponent } from '../core/base';
 import { SLIDER_ELEMENT_NAME } from './constant';
 

@@ -9,3 +9,5 @@ export class Factory {
     return Factory._pluginClasses[pluginKey];
   }
 }
+
+export * from './factory/index';

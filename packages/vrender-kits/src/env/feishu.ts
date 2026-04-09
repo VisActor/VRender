@@ -1,26 +1,26 @@
-import { container, ContainerModule, type Container, EnvContribution } from '@visactor/vrender-core';
-import { feishuCanvasModule } from '../canvas/contributions/feishu/modules';
-import { feishuWindowModule } from '../window/contributions/feishu-contribution';
+import { EnvContribution, getLegacyBindingContext } from '@visactor/vrender-core';
+import { bindFeishuCanvasModules } from '../canvas/contributions/feishu/modules';
+import { bindFeishuWindowContribution } from '../window/contributions/feishu-contribution';
 import { loadMathPicker } from '../picker/math-module';
 import { FeishuEnvContribution } from './contributions/feishu-contribution';
+import type { LegacyBindContainer, LegacyContainer } from '../common/legacy-container';
 
-export const feishuEnvModule = new ContainerModule(bind => {
-  // feishu
-  if (!(feishuEnvModule as any).isFeishuBound) {
-    (feishuEnvModule as any).isFeishuBound = true;
-    bind(FeishuEnvContribution).toSelf().inSingletonScope();
-    bind(EnvContribution).toService(FeishuEnvContribution);
+let isFeishuBound = false;
+
+export function bindFeishuEnv(container: LegacyBindContainer) {
+  if (!isFeishuBound) {
+    isFeishuBound = true;
+    container.bind(FeishuEnvContribution).toSelf().inSingletonScope();
+    container.bind(EnvContribution).toService(FeishuEnvContribution);
   }
-});
+}
 
-(feishuEnvModule as any).isFeishuBound = false;
-
-export function loadFeishuEnv(container: Container, loadPicker: boolean = true) {
+export function loadFeishuEnv(container: LegacyContainer = getLegacyBindingContext(), loadPicker: boolean = true) {
   if (!loadFeishuEnv.__loaded) {
     loadFeishuEnv.__loaded = true;
-    container.load(feishuEnvModule);
-    container.load(feishuCanvasModule);
-    container.load(feishuWindowModule);
+    bindFeishuEnv(container);
+    bindFeishuCanvasModules(container);
+    bindFeishuWindowContribution(container);
     loadPicker && loadMathPicker(container);
   }
 }
@@ -28,5 +28,5 @@ export function loadFeishuEnv(container: Container, loadPicker: boolean = true) 
 loadFeishuEnv.__loaded = false;
 
 export function initFeishuEnv() {
-  loadFeishuEnv(container);
+  loadFeishuEnv();
 }

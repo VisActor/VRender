@@ -1,5 +1,5 @@
 // 参考konva
-import { injectable, createColor, getScaledStroke, application } from '@visactor/vrender-core';
+import { createColor, getScaledStroke, application } from '@visactor/vrender-core';
 import type {
   IContext2d,
   EnvType,
@@ -10,7 +10,6 @@ import type {
 import { BrowserContext2d } from '../browser';
 import { getContextFont } from '@visactor/vutils';
 
-@injectable()
 export class HarmonyContext2d extends BrowserContext2d implements IContext2d {
   static env: EnvType = 'harmony';
 

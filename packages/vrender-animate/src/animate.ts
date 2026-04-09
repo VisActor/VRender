@@ -123,14 +123,22 @@ export class Animate implements IAnimate {
    */
   bind(target: IGraphic): this {
     this.target = target;
-
-    if (!this.target.animates) {
-      this.target.animates = new Map();
+    const trackerTarget = this.target as any;
+    if (typeof trackerTarget.trackAnimate === 'function') {
+      trackerTarget.trackAnimate(this);
+    } else {
+      if (!this.target.animates) {
+        this.target.animates = new Map();
+      }
+      this.target.animates.set(this.id, this);
     }
-    this.target.animates.set(this.id, this);
     this.onRemove(() => {
       this.stop();
-      this.target.animates.delete(this.id);
+      if (typeof trackerTarget.untrackAnimate === 'function') {
+        trackerTarget.untrackAnimate(this.id);
+      } else {
+        this.target.animates.delete(this.id);
+      }
     });
 
     if (this.target.onAnimateBind && !this.slience) {

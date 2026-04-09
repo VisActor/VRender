@@ -1,16 +1,17 @@
-import { container, imageModule, registerImageGraphic } from '@visactor/vrender-core';
+import { getLegacyBindingContext, imageModule, registerImageGraphic } from '@visactor/vrender-core';
 import { browser } from './env';
-import { imageCanvasPickModule } from '../picker/contributions/canvas-picker/image-module';
-import { imageMathPickModule } from '../picker/contributions/math-picker/image-module';
+import { bindImageCanvasPickerContribution } from '../picker/contributions/canvas-picker/image-module';
+import { bindImageMathPickerContribution } from '../picker/contributions/math-picker/image-module';
 
 function _registerImage() {
   if (_registerImage.__loaded) {
     return;
   }
   _registerImage.__loaded = true;
+  const legacyContext = getLegacyBindingContext();
   registerImageGraphic();
-  container.load(imageModule);
-  container.load(browser ? imageCanvasPickModule : imageMathPickModule);
+  (imageModule as any)({ bind: legacyContext.bind });
+  browser ? bindImageCanvasPickerContribution(legacyContext) : bindImageMathPickerContribution(legacyContext);
 }
 
 _registerImage.__loaded = false;

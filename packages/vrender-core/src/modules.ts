@@ -1,56 +1,96 @@
-import coreModule from './core/core-modules';
-import renderModule from './render/render-modules';
-import pickModule from './picker/pick-modules';
+/**
+ * @deprecated Legacy global module bootstrap retained for compatibility.
+ * Prefer `createBrowserApp()`, `createNodeApp()`, or `createMiniappApp()` from `./entries`
+ * instead of relying on the shared global container/module initialization path.
+ */
 // import allocatorModule from './allocator/allocator-modules';
-import graphicModule from './graphic/graphic-service/graphic-module';
-import pluginModule from './plugins/plugin-modules';
-import loadBuiltinContributions from './core/contributions/modules';
-import loadRenderContributions from './render/contributions/modules';
 // import loadPickContributions from './picker/contributions/modules';
 // import loadCanvasContributions from './canvas/contributions/modules';
-import { LayerService } from './core/constants';
 // import { IMat4Allocate, IMatrixAllocate, Mat4Allocate, MatrixAllocate } from './allocator/matrix-allocate';
 // import { GlobalPickerService } from './picker/constants';
-import type { IGlobal, IGraphicService, IPickerService, IRenderService } from './interface';
+import type { IGraphicService, IPluginService, IRenderService, IWindowHandlerContribution } from './interface';
 import { application } from './application';
 import type { IGraphicUtil, ILayerService, ITransformUtil } from './interface/core';
 import { GraphicService } from './graphic/constants';
-import { GraphicUtil, TransformUtil } from './core/constants';
-import { container } from './container';
-import { VGlobal } from './constants';
-
-export function preLoadAllModule() {
-  if (preLoadAllModule.__loaded) {
-    return;
-  }
-  preLoadAllModule.__loaded = true;
-  container.load(coreModule);
-  container.load(graphicModule);
-  container.load(renderModule);
-  container.load(pickModule);
-  // container.load(allocatorModule);
-  container.load(pluginModule);
-  loadBuiltinContributions(container);
-  loadRenderContributions(container);
-}
-
-preLoadAllModule.__loaded = false;
-
-preLoadAllModule();
+import {
+  DynamicLayerHandlerContribution,
+  GraphicUtil,
+  LayerService,
+  StaticLayerHandlerContribution,
+  TransformUtil,
+  VirtualLayerHandlerContribution
+} from './core/constants';
+import { RenderService } from './render/constants';
+import { PluginService } from './plugins/constants';
+import { PickerService } from './picker/constants';
+import { CanvasFactory, Context2dFactory } from './canvas/constants';
+import { IncrementalDrawContribution } from './render/contributions/render/symbol';
+import { DefaultWindow, WindowHandlerContribution } from './core/window';
+import { vglobal } from './global';
+import { createLegacySingletonProxy, resolveLegacyNamed, resolveLegacySingleton } from './legacy/bootstrap';
 // loadPickContributions(container);
 // loadCanvasContributions(container);
 
-// 全局变量
-export const vglobal = container.get<IGlobal>(VGlobal);
-application.global = vglobal;
-export const graphicUtil = container.get<IGraphicUtil>(GraphicUtil);
-application.graphicUtil = graphicUtil;
-export const transformUtil = container.get<ITransformUtil>(TransformUtil);
-application.transformUtil = transformUtil;
-export const graphicService = container.get<IGraphicService>(GraphicService);
-application.graphicService = graphicService;
-// export const renderService = container.get<IRenderService>(RenderService);
-// application.renderService = renderService;
+export { vglobal } from './global';
+export {
+  preLoadAllModule,
+  getLegacyBindingContext,
+  type ILegacyBindContext,
+  type ILegacyBindingContext
+} from './legacy/bootstrap';
+export const graphicUtil = createLegacySingletonProxy<IGraphicUtil>(() =>
+  resolveLegacySingleton<IGraphicUtil>(GraphicUtil)
+);
+export const transformUtil = createLegacySingletonProxy<ITransformUtil>(() =>
+  resolveLegacySingleton<ITransformUtil>(TransformUtil)
+);
+export const graphicService = createLegacySingletonProxy<IGraphicService>(() =>
+  resolveLegacySingleton<IGraphicService>(GraphicService)
+);
+export const layerService = createLegacySingletonProxy<ILayerService>(() =>
+  resolveLegacySingleton<ILayerService>(LayerService)
+);
+
+function resolveLegacyWindowHandler(env: string): IWindowHandlerContribution {
+  const handler = resolveLegacyNamed<IWindowHandlerContribution>(WindowHandlerContribution, env);
+  if (!handler) {
+    throw new Error(`Window handler is not configured for env: ${env}`);
+  }
+  return handler;
+}
+
+export function configureLegacyApplication(): void {
+  application.global = vglobal;
+  application.graphicUtil = graphicUtil;
+  application.transformUtil = transformUtil;
+  application.graphicService = graphicService;
+  application.layerService = layerService;
+  application.canvasFactory = env => resolveLegacyNamed(CanvasFactory, env);
+  application.context2dFactory = env => resolveLegacyNamed(Context2dFactory, env);
+  application.windowFactory = () => new DefaultWindow(application.global);
+  application.windowHandlerFactory = env => resolveLegacyWindowHandler(env);
+  application.renderServiceFactory = () => resolveLegacySingleton<IRenderService>(RenderService);
+  application.renderService = createLegacySingletonProxy<IRenderService>(() =>
+    resolveLegacySingleton<IRenderService>(RenderService)
+  );
+  application.pluginServiceFactory = () => resolveLegacySingleton<IPluginService>(PluginService);
+  application.pluginService = createLegacySingletonProxy<IPluginService>(() =>
+    resolveLegacySingleton<IPluginService>(PluginService)
+  );
+  application.pickerServiceFactory = () => resolveLegacySingleton(PickerService);
+  application.layerHandlerFactory = layerMode => {
+    if (layerMode === 'static') {
+      return resolveLegacySingleton(StaticLayerHandlerContribution);
+    }
+    if (layerMode === 'dynamic') {
+      return resolveLegacySingleton(DynamicLayerHandlerContribution);
+    }
+    return resolveLegacySingleton(VirtualLayerHandlerContribution);
+  };
+  application.incrementalDrawContributionFactory = () => resolveLegacySingleton(IncrementalDrawContribution);
+}
+
+configureLegacyApplication();
 // export const matrixAllocate = container.get<IMatrixAllocate>(MatrixAllocate);
 // export const mat4Allocate = container.get<IMat4Allocate>(Mat4Allocate);
 // export const canvasAllocate = container.get<ICanvasAllocate>(CanvasAllocate);
@@ -63,5 +103,3 @@ application.graphicService = graphicService;
 // export const symbolAllocate = container.get<ISymbolAllocate>(SymbolAllocate);
 // export const textAllocate = container.get<ITextAllocate>(TextAllocate);
 // export const pickerService = container.get<IPickerService>(GlobalPickerService);
-export const layerService = container.get<ILayerService>(LayerService);
-application.layerService = layerService;

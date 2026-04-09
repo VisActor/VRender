@@ -1,9 +1,10 @@
-import { createStage, createLine, container, IGraphic, flatten_simplify } from '@visactor/vrender';
+/** @deprecated Legacy DI browser fixture retained for major-migration tracking. Prefer app-scoped entries/plugins. */
+import { createStage, createLine, getLegacyBindingContext, IGraphic, flatten_simplify } from '@visactor/vrender';
 import { roughModule } from '@visactor/vrender-kits';
 import { addShapesToStage, colorPools } from '../utils';
 import { createSymbol } from '@visactor/vrender';
 
-container.load(roughModule);
+roughModule(getLegacyBindingContext());
 
 const subP1 = [
   [0, 100],

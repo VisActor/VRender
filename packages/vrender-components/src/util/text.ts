@@ -6,7 +6,8 @@ import type {
   TextAlignType
 } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
-import { getTextBounds, graphicCreator } from '@visactor/vrender-core';
+import { getTextBounds } from '@visactor/vrender-core';
+import { graphicCreator } from './graphic-creator';
 import type { ITextMeasureOption } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports
 import { TextMeasure, isObject, isValid } from '@visactor/vutils';

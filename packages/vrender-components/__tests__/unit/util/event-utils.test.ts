@@ -1,3 +1,5 @@
+export {};
+
 declare const require: (id: string) => any;
 
 describe('util/event', () => {

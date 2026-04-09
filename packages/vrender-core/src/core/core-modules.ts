@@ -1,17 +1,27 @@
-import { ContainerModule } from '../common/inversify-lite';
 import { DefaultGlobal } from './global';
 import { DefaultGraphicUtil, DefaultTransformUtil } from './graphic-utils';
 import { DefaultLayerService } from './layer-service';
 import { DefaultWindow, VWindow } from './window';
 import { GraphicUtil, LayerService, TransformUtil } from './constants';
-import { VGlobal } from '../constants';
+import { EnvContribution, VGlobal } from '../constants';
+import { createContributionProvider } from '../common/contribution-provider';
+import { TextMeasureContribution } from './contributions/textMeasure/textMeasure-contribution';
 
-export default new ContainerModule(bind => {
+export function bindCoreModules({ bind }: { bind: any }) {
   // global对象，全局单例模式
-  bind(VGlobal).to(DefaultGlobal).inSingletonScope();
+  bind(VGlobal)
+    .toDynamicValue(
+      ({ container }: { container: any }) => new DefaultGlobal(createContributionProvider(EnvContribution, container))
+    )
+    .inSingletonScope();
 
   bind(VWindow).to(DefaultWindow);
-  bind(GraphicUtil).to(DefaultGraphicUtil).inSingletonScope();
+  bind(GraphicUtil)
+    .toDynamicValue(
+      ({ container }: { container: any }) =>
+        new DefaultGraphicUtil(createContributionProvider(TextMeasureContribution, container))
+    )
+    .inSingletonScope();
   bind(TransformUtil).to(DefaultTransformUtil).inSingletonScope();
   bind(LayerService).to(DefaultLayerService).inSingletonScope();
 
@@ -26,4 +36,6 @@ export default new ContainerModule(bind => {
   //   };
   // });
   // bind(Layer).to(DefaultLayer);
-});
+}
+
+export default bindCoreModules;

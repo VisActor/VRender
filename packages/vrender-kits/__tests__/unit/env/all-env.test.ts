@@ -1,4 +1,4 @@
-declare var require: any;
+import type * as AllEnvModule from '../../../src/env/all';
 
 describe('env/all', () => {
   afterEach(() => {
@@ -15,12 +15,13 @@ describe('env/all', () => {
       const loadWxEnv = jest.fn();
       const loadCanvasPicker = jest.fn();
       const loadMathPicker = jest.fn();
+      const getLegacyBindingContext = jest.fn(() => ({ id: 'legacy' }));
 
       let onSetEnvCb: ((lastEnv: any, env: any) => void) | null = null;
 
       jest.doMock('@visactor/vrender-core', () => {
         return {
-          container: {},
+          getLegacyBindingContext,
           vglobal: {
             hooks: {
               onSetEnv: {
@@ -42,29 +43,34 @@ describe('env/all', () => {
       jest.doMock('../../../src/picker/canvas-module', () => ({ loadCanvasPicker }));
       jest.doMock('../../../src/picker/math-module', () => ({ loadMathPicker }));
 
-      const { loadAllModule, loadAllEnv } = require('../../../src/env/all');
+      const { loadAllModule, loadAllEnv } = jest.requireActual('../../../src/env/all') as typeof AllEnvModule;
 
-      const container = {} as any;
-      loadAllEnv(container);
+      loadAllEnv();
 
-      expect(loadBrowserEnv).toHaveBeenCalledWith(container, false);
-      expect(loadFeishuEnv).toHaveBeenCalledWith(container, false);
-      expect(loadLynxEnv).toHaveBeenCalledWith(container, false);
-      expect(loadNodeEnv).toHaveBeenCalledWith(container, false);
-      expect(loadTaroEnv).toHaveBeenCalledWith(container, false);
-      expect(loadWxEnv).toHaveBeenCalledWith(container, false);
-      expect(loadCanvasPicker).toHaveBeenCalledWith(container);
+      const legacyContext = getLegacyBindingContext.mock.results[0].value;
+      expect(loadBrowserEnv).toHaveBeenCalledWith(legacyContext, false);
+      expect(loadFeishuEnv).toHaveBeenCalledWith(legacyContext, false);
+      expect(loadLynxEnv).toHaveBeenCalledWith(legacyContext, false);
+      expect(loadNodeEnv).toHaveBeenCalledWith(legacyContext, false);
+      expect(loadTaroEnv).toHaveBeenCalledWith(legacyContext, false);
+      expect(loadWxEnv).toHaveBeenCalledWith(legacyContext, false);
+      expect(loadCanvasPicker).toHaveBeenCalledWith(legacyContext);
 
       expect(onSetEnvCb).toBeTruthy();
+      const envCallback = onSetEnvCb;
+      expect(envCallback).toBeTruthy();
+      if (!envCallback) {
+        throw new Error('Expected onSetEnv callback to be registered');
+      }
 
-      onSetEnvCb!('browser', 'browser');
+      envCallback('browser', 'browser');
       expect(loadMathPicker).not.toHaveBeenCalled();
 
-      onSetEnvCb!('browser', 'node');
-      expect(loadMathPicker).toHaveBeenCalledWith(container);
+      envCallback('browser', 'node');
+      expect(loadMathPicker).toHaveBeenCalledWith(legacyContext);
 
       // ensure idempotent
-      loadAllModule(container);
+      loadAllModule();
       expect(loadBrowserEnv).toHaveBeenCalledTimes(1);
     });
   });

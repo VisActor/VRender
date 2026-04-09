@@ -1,8 +1,9 @@
+/** @deprecated Legacy DI browser fixture retained for major-migration tracking. Prefer app-scoped entries/plugins. */
 const CanvasPkg = require('canvas');
 const {
   vglobal,
   createStage,
-  container,
+  getLegacyBindingContext,
   Path,
   Arc,
   Rect,
@@ -40,9 +41,9 @@ const colorPools = [
 ];
 
 // 加载node环境的loader
-// nodeLoader(container);
+// loadNodeEnv(getLegacyBindingContext());
 // 加载rough的module
-container.load(roughModule);
+roughModule(getLegacyBindingContext());
 
 vglobal.setEnv('node', CanvasPkg);
 

@@ -1,4 +1,4 @@
-import { createStage, container, createRect, IGraphic, createGroup, createSymbol } from '@visactor/vrender';
+import { createStage, createRect, IGraphic, createGroup, createSymbol } from '@visactor/vrender';
 import { roughModule } from '@visactor/vrender-kits';
 
 // container.load(roughModule);

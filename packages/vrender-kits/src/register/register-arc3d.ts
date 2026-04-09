@@ -1,23 +1,23 @@
 import {
   arc3dModule,
-  container,
+  getLegacyBindingContext,
   registerArc3dGraphic,
   registerDirectionalLight,
   registerOrthoCamera
 } from '@visactor/vrender-core';
-import { browser } from './env';
-import { arc3dCanvasPickModule } from '../picker/contributions/canvas-picker/arc3d-module';
+import { bindArc3dCanvasPickerContribution } from '../picker/contributions/canvas-picker/arc3d-module';
 
 function _registerArc3d() {
   if (_registerArc3d.__loaded) {
     return;
   }
   _registerArc3d.__loaded = true;
+  const legacyContext = getLegacyBindingContext();
   registerArc3dGraphic();
   registerDirectionalLight();
   registerOrthoCamera();
-  container.load(arc3dModule);
-  container.load(browser ? arc3dCanvasPickModule : arc3dCanvasPickModule);
+  (arc3dModule as any)({ bind: legacyContext.bind });
+  bindArc3dCanvasPickerContribution(legacyContext);
 }
 
 _registerArc3d.__loaded = false;

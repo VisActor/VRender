@@ -1,5 +1,4 @@
 import { bindContributionProvider } from '../../../common/contribution-provider';
-import { ContainerModule } from '../../../common/inversify';
 import { DefaultCanvasCircleRender } from './circle-render';
 import { DefaultBaseInteractiveRenderContribution } from './contributions';
 import { CircleRenderContribution, TextRenderContribution } from './contributions/constants';
@@ -7,7 +6,7 @@ import { CircleRender, GraphicRender, TextRender } from './symbol';
 import { DefaultCanvasTextRender } from './text-render';
 
 let loadTextModule = false;
-export const textModule = new ContainerModule(bind => {
+export function bindTextRenderModule({ bind }: { bind: any }) {
   if (loadTextModule) {
     return;
   }
@@ -18,4 +17,6 @@ export const textModule = new ContainerModule(bind => {
   bind(TextRenderContribution).toService(DefaultBaseInteractiveRenderContribution);
 
   bindContributionProvider(bind, TextRenderContribution);
-});
+}
+
+export const textModule = bindTextRenderModule;

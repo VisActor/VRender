@@ -21,12 +21,9 @@ export class FromTo extends ACustomAnimate<Record<string, number>> {
       }
     });
 
-    const finalAttribute = this.target.getFinalAttribute();
     // 如果入场动画，那么需要设置属性
     if (this.target.context?.animationState === 'appear') {
-      if (finalAttribute) {
-        this.target.setAttributes(finalAttribute);
-      }
+      (this.target as any).applyFinalAttributeToAttribute?.();
     }
     if (this.params.controlOptions?.immediatelyApply !== false) {
       this.target.setAttributes(this.from);
@@ -43,11 +40,6 @@ export class FromTo extends ACustomAnimate<Record<string, number>> {
       });
     // TODO：比较hack
     // 如果是入场动画，那么还需要设置属性
-    // if (this.target.context?.animationState === 'appear') {
-    //   // 用于入场的时候设置属性（因为有动画的时候VChart不会再设置属性了）
-    //   const finalAttribute = this.target.getFinalAttribute();
-    //   this.target.setAttributes(finalAttribute);
-    // }
     this.target.setAttributes(this.from);
   }
 

@@ -1,7 +1,6 @@
 import {
   createStage,
   createArc,
-  container,
   newThemeObj,
   defaultTicker,
   IGraphic,

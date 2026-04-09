@@ -1,59 +1,3 @@
-// import type {
-//   IArc,
-//   IArcGraphicAttribute,
-//   IArea,
-//   IAreaGraphicAttribute,
-//   ICircle,
-//   ICircleGraphicAttribute,
-//   IGroup,
-//   IGroupGraphicAttribute,
-//   IImageGraphicAttribute,
-//   ILine,
-//   ILineGraphicAttribute,
-//   IPath,
-//   IPathGraphicAttribute,
-//   IPolygonGraphicAttribute,
-//   IRect,
-//   IRectGraphicAttribute,
-//   ISymbolGraphicAttribute,
-//   IText,
-//   ITextGraphicAttribute,
-//   ISymbol,
-//   IImage,
-//   IPolygon,
-//   IShadowRoot,
-//   IGraphic,
-//   IRichTextGraphicAttribute,
-//   IRichText,
-//   IGlyph,
-//   IGlyphGraphicAttribute,
-//   IRect3d,
-//   IRect3dGraphicAttribute,
-//   IArc3dGraphicAttribute,
-//   IPyramid3dGraphicAttribute,
-//   IPyramid3d,
-//   IWrapTextGraphicAttribute
-// } from '../interface';
-// import { Arc } from './arc';
-// import { Area } from './area';
-// import { Circle } from './circle';
-// import { Group } from './group';
-// import { Image } from './image';
-// import { Line } from './line';
-// import { Path } from './path';
-// import { Polygon } from './polygon';
-// import { Rect } from './rect';
-// // 这里git会将Symbol强行转成小写symbol，先重命名一下
-// import { Symbol as MarkSymbol } from './symbol';
-// import { ShadowRoot as MarkShadowRoot } from './shadow-root';
-// import { Text } from './text';
-// import { RichText } from './richtext';
-// import { Glyph } from './glyph';
-// import { Rect3d } from './rect3d';
-// import { Arc3d } from './arc3d';
-// import { Pyramid3d } from './pyramid3d';
-// import { WrapText } from './wrap-text';
-
 import type {
   IArc,
   IArcGraphicAttribute,
@@ -84,64 +28,31 @@ import type {
   ITextGraphicAttribute,
   IWrapTextGraphicAttribute
 } from '../interface';
+import { GraphicFactory } from '../factory/graphic-factory';
+import type { IGraphic } from '../interface/graphic';
 
-// export function createArc(attributes: IArcGraphicAttribute): IArc {
-//   return new Arc(attributes);
-// }
-// export function createArc3d(attributes: IArc3dGraphicAttribute): IArc {
-//   return new Arc3d(attributes);
-// }
-// export function createPyramid3d(attributes: IPyramid3dGraphicAttribute): IPyramid3d {
-//   return new Pyramid3d(attributes);
-// }
-// export function createArea(attributes: IAreaGraphicAttribute): IArea {
-//   return new Area(attributes);
-// }
-// export function createCircle(attributes: ICircleGraphicAttribute): ICircle {
-//   return new Circle(attributes);
-// }
-// export function createGroup(attributes: IGroupGraphicAttribute): IGroup {
-//   return new Group(attributes);
-// }
-// export function createLine(attributes: ILineGraphicAttribute): ILine {
-//   return new Line(attributes);
-// }
-// export function createPath(attributes: IPathGraphicAttribute): IPath {
-//   return new Path(attributes);
-// }
-// export function createRect(attributes: IRectGraphicAttribute): IRect {
-//   return new Rect(attributes);
-// }
-// export function createRect3d(attributes: IRect3dGraphicAttribute): IRect3d {
-//   return new Rect3d(attributes);
-// }
-// export function createGlyph(attributes: IGlyphGraphicAttribute): IGlyph {
-//   return new Glyph(attributes);
-// }
-// export function createText(attributes: ITextGraphicAttribute): IText {
-//   return new Text(attributes);
-// }
-// export function createWrapText(attributes: IWrapTextGraphicAttribute): IText {
-//   return new WrapText(attributes);
-// }
-// export function createSymbol(attributes: ISymbolGraphicAttribute): ISymbol {
-//   return new MarkSymbol(attributes);
-// }
-// export function createImage(attributes: IImageGraphicAttribute): IImage {
-//   return new Image(attributes);
-// }
-// export function createPolygon(attributes: IPolygonGraphicAttribute): IPolygon {
-//   return new Polygon(attributes);
-// }
-// export function createShadowRoot(graphic?: IGraphic): IShadowRoot {
-//   return new MarkShadowRoot(graphic);
-// }
-// export function createRichText(attributes: IRichTextGraphicAttribute): IRichText {
-//   return new RichText(attributes);
-// }
+export type IGraphicCreateCallback<TGraphic extends IGraphic = IGraphic, TAttributes = any> = (
+  attributes: TAttributes
+) => TGraphic;
+
+function createGraphicCtor<TGraphic extends IGraphic = IGraphic, TAttributes = any>(
+  creator: IGraphicCreateCallback<TGraphic, TAttributes>
+) {
+  return class RegisteredGraphicCtor {
+    constructor(attributes: TAttributes) {
+      try {
+        return new (creator as any)(attributes);
+      } catch (error) {
+        return creator(attributes);
+      }
+    }
+  } as any;
+}
+
+const sharedGraphicFactory = new GraphicFactory();
 
 class GraphicCreator {
-  declare store: Map<string, any>;
+  declare store: Map<string, IGraphicCreateCallback>;
   declare arc?: (attribute: IArcGraphicAttribute) => IArc;
   declare area?: (attribute: IAreaGraphicAttribute) => IArea;
   declare circle?: (attribute: ICircleGraphicAttribute) => ICircle;
@@ -156,41 +67,50 @@ class GraphicCreator {
   declare richtext?: (attribute: IRichTextGraphicAttribute) => IRichText;
   declare polygon?: (attribute: IPolygonGraphicAttribute) => IPolygon;
   declare shadowRoot?: (attribute: IGroupGraphicAttribute) => IShadowRoot;
-  declare wraptext?: (attribute: IWrapTextGraphicAttribute) => IText;
+  declare wrapText?: (attribute: IWrapTextGraphicAttribute) => IText;
+
   constructor() {
     this.store = new Map();
   }
 
-  RegisterGraphicCreator(name: string, cb: any) {
-    this.store.set(name, cb);
-    (this as any)[name] = cb;
+  registerStore(name: string, creator: IGraphicCreateCallback) {
+    this.store.set(name, creator);
+    (this as any)[name] = creator;
   }
 
-  CreateGraphic(name: string, params: any) {
-    const cb = this.store.get(name);
-    if (!cb) {
+  RegisterGraphicCreator(name: string, creator: IGraphicCreateCallback) {
+    registerGraphic(name, creator);
+  }
+
+  CreateGraphic<TGraphic extends IGraphic = IGraphic, TAttributes = any>(
+    name: string,
+    attributes: TAttributes
+  ): TGraphic | null {
+    if (!this.store.has(name)) {
       return null;
     }
-    return cb(params);
+
+    return createGraphic<TGraphic, TAttributes>(name, attributes);
   }
 }
 
 export const graphicCreator = new GraphicCreator();
 
-// export const graphicCreator = {
-//   arc: createArc,
-//   area: createArea,
-//   circle: createCircle,
-//   group: createGroup,
-//   image: createImage,
-//   line: createLine,
-//   path: createPath,
-//   rect: createRect,
-//   rect3d: createRect3d,
-//   symbol: createSymbol,
-//   text: createText,
-//   richtext: createRichText,
-//   polygon: createPolygon,
-//   shadowRoot: createShadowRoot,
-//   wrapText: createWrapText
-// };
+export function registerGraphic<TGraphic extends IGraphic = IGraphic, TAttributes = any>(
+  name: string,
+  creator: IGraphicCreateCallback<TGraphic, TAttributes>
+) {
+  if (!name) {
+    throw new Error('Graphic registration requires a non-empty graphic type');
+  }
+
+  graphicCreator.registerStore(name, creator as IGraphicCreateCallback);
+  sharedGraphicFactory.register(name, createGraphicCtor(creator));
+}
+
+export function createGraphic<TGraphic extends IGraphic = IGraphic, TAttributes = any>(
+  name: string,
+  attributes: TAttributes
+): TGraphic {
+  return sharedGraphicFactory.create<TGraphic, TAttributes>(name, attributes);
+}

@@ -1,5 +1,4 @@
 import { bindContributionProvider } from '../../../common/contribution-provider';
-import { ContainerModule } from '../../../common/inversify';
 import { DefaultCanvasAreaRender } from './area-render';
 import { DefaultBaseInteractiveRenderContribution } from './contributions';
 import { AreaRenderContribution } from './contributions/constants';
@@ -7,7 +6,7 @@ import { DefaultIncrementalCanvasAreaRender } from './incremental-area-render';
 import { AreaRender, GraphicRender } from './symbol';
 
 let loadAreaModule = false;
-export const areaModule = new ContainerModule(bind => {
+export function bindAreaRenderModule({ bind }: { bind: any }) {
   if (loadAreaModule) {
     return;
   }
@@ -23,4 +22,6 @@ export const areaModule = new ContainerModule(bind => {
 
   // incremental-line渲染器
   bind(DefaultIncrementalCanvasAreaRender).toSelf().inSingletonScope();
-});
+}
+
+export const areaModule = bindAreaRenderModule;

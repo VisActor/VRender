@@ -1,4 +1,4 @@
-import { injectable, BaseEnvContribution, rafBasedSto } from '@visactor/vrender-core';
+import { BaseEnvContribution, rafBasedSto } from '@visactor/vrender-core';
 // import { loadFeishuContributions } from '../../../kits';
 import type {
   ICanvasLike,
@@ -99,7 +99,6 @@ export function createImageElement(src: string, isSvg: boolean = false): Promise
   return promise;
 }
 
-@injectable()
 export class LynxEnvContribution extends BaseEnvContribution implements IEnvContribution {
   type: EnvType = 'lynx';
   supportEvent: boolean = true;

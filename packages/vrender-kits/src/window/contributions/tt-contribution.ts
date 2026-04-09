@@ -1,12 +1,4 @@
-import {
-  inject,
-  injectable,
-  Generator,
-  BaseWindowHandlerContribution,
-  VGlobal,
-  ContainerModule,
-  WindowHandlerContribution
-} from '@visactor/vrender-core';
+import { Generator, BaseWindowHandlerContribution, WindowHandlerContribution } from '@visactor/vrender-core';
 import type {
   EnvType,
   IGlobal,
@@ -18,6 +10,7 @@ import type {
 } from '@visactor/vrender-core';
 import type { IBoundsLike } from '@visactor/vutils';
 import { TTCanvas } from '../../canvas/contributions/tt';
+import { application } from '@visactor/vrender-core';
 
 class MiniAppEventManager {
   addEventListener(type: string, func: EventListenerOrEventListenerObject) {
@@ -47,7 +40,6 @@ class MiniAppEventManager {
   cache: Record<string, { listener: EventListenerOrEventListenerObject[] }> = {};
 }
 
-@injectable()
 export class TTWindowHandlerContribution extends BaseWindowHandlerContribution implements IWindowHandlerContribution {
   static env: EnvType = 'tt';
   type: EnvType = 'tt';
@@ -59,7 +51,7 @@ export class TTWindowHandlerContribution extends BaseWindowHandlerContribution i
     return null;
   }
 
-  constructor(@inject(VGlobal) private readonly global: IGlobal) {
+  constructor(private readonly global: IGlobal = application.global) {
     super();
   }
 
@@ -238,10 +230,16 @@ export class TTWindowHandlerContribution extends BaseWindowHandlerContribution i
   }
 }
 
-export const ttWindowModule = new ContainerModule(bind => {
-  // tt
-  bind(TTWindowHandlerContribution).toSelf();
-  bind(WindowHandlerContribution)
-    .toDynamicValue(ctx => ctx.container.get(TTWindowHandlerContribution))
+let ttWindowContributionBound = false;
+
+export function bindTTWindowContribution(container: any) {
+  if (ttWindowContributionBound) {
+    return;
+  }
+  ttWindowContributionBound = true;
+  container.bind(TTWindowHandlerContribution).toSelf();
+  container
+    .bind(WindowHandlerContribution)
+    .toService(TTWindowHandlerContribution)
     .whenTargetNamed(TTWindowHandlerContribution.env);
-});
+}

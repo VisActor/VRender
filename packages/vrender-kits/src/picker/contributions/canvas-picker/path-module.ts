@@ -1,14 +1,17 @@
-import { ContainerModule } from '@visactor/vrender-core';
+import { PathRender } from '@visactor/vrender-core';
+import { resolveContainerBinding } from '../../../common/explicit-binding';
 import { CanvasPathPicker, CanvasPickerContribution } from '../constants';
 import { DefaultCanvasPathPicker } from './path-picker';
 
 let loadPathPick = false;
-export const pathCanvasPickModule = new ContainerModule((bind, unbind, isBound, rebind) => {
+export function bindPathCanvasPickerContribution(container: any) {
   if (loadPathPick) {
     return;
   }
   loadPathPick = true;
-  // path picker
-  bind(CanvasPathPicker).to(DefaultCanvasPathPicker).inSingletonScope();
-  bind(CanvasPickerContribution).toService(CanvasPathPicker);
-});
+  container
+    .bind(CanvasPathPicker)
+    .toDynamicValue(() => new DefaultCanvasPathPicker(resolveContainerBinding(container, PathRender)))
+    .inSingletonScope();
+  container.bind(CanvasPickerContribution).toService(CanvasPathPicker);
+}

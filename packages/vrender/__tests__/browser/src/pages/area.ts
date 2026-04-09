@@ -1,4 +1,4 @@
-import { createStage, createArea, container, IGraphic, global, createLine } from '@visactor/vrender';
+import { createStage, createArea, IGraphic, global, createLine } from '@visactor/vrender';
 import { addShapesToStage, colorPools } from '../utils';
 
 const subP1 = [

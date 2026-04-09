@@ -1,4 +1,4 @@
-import { Line, container } from '@visactor/vrender';
+import { Line } from '@visactor/vrender';
 import { roughModule } from '@visactor/vrender-kits';
 import { Polyline } from 'zrender';
 import { renderElement } from './utils';

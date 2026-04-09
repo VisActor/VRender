@@ -1,4 +1,3 @@
-import { container } from '@visactor/vrender-core';
 import { merge } from '@visactor/vutils';
 import type { PopTipAttributes } from './type';
 import { DEFAULT_THEME, theme } from './theme';

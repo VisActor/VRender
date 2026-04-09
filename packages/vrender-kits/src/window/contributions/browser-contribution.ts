@@ -1,9 +1,6 @@
 import {
-  inject,
-  injectable,
   Generator,
   BaseWindowHandlerContribution,
-  ContainerModule,
   WindowHandlerContribution,
   application
 } from '@visactor/vrender-core';
@@ -20,7 +17,6 @@ import type { IBoundsLike, IMatrix, IBounds } from '@visactor/vutils';
 import { Matrix, AABBBounds } from '@visactor/vutils';
 import { BrowserCanvas } from '../../canvas/contributions/browser';
 
-@injectable()
 export class BrowserWindowHandlerContribution
   extends BaseWindowHandlerContribution
   implements IWindowHandlerContribution
@@ -328,10 +324,16 @@ export class BrowserWindowHandlerContribution
   }
 }
 
-export const browserWindowModule = new ContainerModule(bind => {
-  // browser
-  bind(BrowserWindowHandlerContribution).toSelf();
-  bind(WindowHandlerContribution)
-    .toDynamicValue(ctx => ctx.container.get(BrowserWindowHandlerContribution))
+let browserWindowContributionBound = false;
+
+export function bindBrowserWindowContribution(container: any) {
+  if (browserWindowContributionBound) {
+    return;
+  }
+  browserWindowContributionBound = true;
+  container.bind(BrowserWindowHandlerContribution).toSelf();
+  container
+    .bind(WindowHandlerContribution)
+    .toService(BrowserWindowHandlerContribution)
     .whenTargetNamed(BrowserWindowHandlerContribution.env);
-});
+}

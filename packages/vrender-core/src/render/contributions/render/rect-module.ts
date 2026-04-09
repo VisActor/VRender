@@ -1,24 +1,27 @@
-import { bindContributionProvider } from '../../../common/contribution-provider';
-import { ContainerModule } from '../../../common/inversify';
-import { DefaultCanvasArcRender } from './arc-render';
+import { bindContributionProvider, createContributionProvider } from '../../../common/contribution-provider';
 import {
   DefaultBaseInteractiveRenderContribution,
   SplitRectAfterRenderContribution,
   SplitRectBeforeRenderContribution
 } from './contributions';
-import { ArcRenderContribution, RectRenderContribution } from './contributions/constants';
+import { RectRenderContribution } from './contributions/constants';
 import { DefaultCanvasRectRender } from './rect-render';
-import { ArcRender, GraphicRender, RectRender } from './symbol';
+import { GraphicRender, RectRender } from './symbol';
 
 let loadRectModule = false;
-export const rectModule = new ContainerModule(bind => {
+export function bindRectRenderModule({ bind }: { bind: any }) {
   if (loadRectModule) {
     return;
   }
   loadRectModule = true;
   // rect 渲染器
-  bind(DefaultCanvasRectRender).toSelf().inSingletonScope();
-  bind(RectRender).to(DefaultCanvasRectRender).inSingletonScope();
+  bind(DefaultCanvasRectRender)
+    .toDynamicValue(
+      ({ container }: { container: any }) =>
+        new DefaultCanvasRectRender(createContributionProvider(RectRenderContribution, container))
+    )
+    .inSingletonScope();
+  bind(RectRender).toService(DefaultCanvasRectRender);
   bind(GraphicRender).toService(RectRender);
   bind(SplitRectAfterRenderContribution).toSelf();
   bind(SplitRectBeforeRenderContribution).toSelf();
@@ -27,4 +30,6 @@ export const rectModule = new ContainerModule(bind => {
   bind(RectRenderContribution).toService(DefaultBaseInteractiveRenderContribution);
   // rect 渲染器注入contributions
   bindContributionProvider(bind, RectRenderContribution);
-});
+}
+
+export const rectModule = bindRectRenderModule;

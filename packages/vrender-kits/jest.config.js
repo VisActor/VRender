@@ -1,27 +1,14 @@
 const path = require('path');
+const { createStablePackageJestConfig } = require('../../share/jest-config/create-package-config');
 
-module.exports = {
-  runner: 'jest-electron/runner',
-  testEnvironment: 'jest-electron/environment',
-  testTimeout: 30000,
+module.exports = createStablePackageJestConfig({
+  environment: 'node',
   testRegex: '/__tests__/.*test\\.ts?$',
   moduleFileExtensions: ['ts', 'js', 'json'],
   setupFilesAfterEnv: ['jest-extended/all'],
-  preset: 'ts-jest',
-  silent: true,
-  globals: {
-    'ts-jest': {
-      resolveJsonModule: true,
-      esModuleInterop: true,
-      experimentalDecorators: true,
-      module: 'ESNext',
-      tsconfig: './tsconfig.test.json'
-    },
-    __DEV__: true
-  },
   setupFiles: ['./setup-mock.js'],
-  verbose: true,
-  coverageReporters: ['json-summary', 'lcov', 'text'],
+  testPathIgnorePatterns: ['__tests__/electron'],
+  tsconfig: './tsconfig.test.json',
   coveragePathIgnorePatterns: ['node_modules', '__tests__', 'interface.ts', '.d.ts', 'typings', 'type.ts'],
   collectCoverageFrom: [
     '**/src/**',
@@ -38,4 +25,4 @@ module.exports = {
     '@visactor/vrender-core': path.resolve(__dirname, '../vrender-core/src/index.ts'),
     '@visactor/vrender-animate': path.resolve(__dirname, '../vrender-animate/src/index.ts')
   }
-};
+});

@@ -10,7 +10,7 @@ import type {
   TextBaselineType
 } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
-import { graphicCreator } from '@visactor/vrender-core';
+import { graphicCreator } from '../util/graphic-creator';
 // eslint-disable-next-line no-duplicate-imports
 import type { Point } from '@visactor/vutils';
 import { isNil, get, merge, isNumberClose, isEmpty, mixin, isValidNumber, isFunction } from '@visactor/vutils';

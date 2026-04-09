@@ -1,4 +1,3 @@
-import { inject, injectable } from '../../../common/inversify-lite';
 import { wrapCanvas } from '../../../canvas/util';
 import type {
   IGlobal,
@@ -17,7 +16,6 @@ import type {
 import type { IBounds } from '@visactor/vutils';
 import { application } from '../../../application';
 
-@injectable()
 export class CanvasLayerHandlerContribution implements ILayerHandlerContribution {
   layer: ILayer;
   canvas: ICanvas;

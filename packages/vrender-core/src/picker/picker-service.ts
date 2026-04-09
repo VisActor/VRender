@@ -1,9 +1,5 @@
-import type { IMatrix, IPoint, IPointLike } from '@visactor/vutils';
-import { AABBBounds, Matrix, Point } from '@visactor/vutils';
-import { inject, injectable, named } from '../common/inversify-lite';
+import { AABBBounds, Matrix, Point, type IMatrix, type IPoint, type IPointLike } from '@visactor/vutils';
 import { foreach } from '../common/sort';
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { ContributionProvider } from '../common/contribution-provider';
 import type {
   IContext2d,
   IGraphic,
@@ -23,9 +19,23 @@ import { DefaultAttribute } from '../graphic/config';
 import { mat3Tomat4, multiplyMat4Mat4 } from '../common/matrix';
 import { mat4Allocate, matrixAllocate } from '../allocator/matrix-allocate';
 import { application } from '../application';
-import { PickItemInterceptor, PickServiceInterceptor } from './constants';
+import type { IPickerRegistry } from '../registry';
 
-@injectable()
+interface IPickerServiceDeps {
+  pickerRegistry?: IPickerRegistry;
+  pickItemInterceptorContributions?: IContributionProvider<IPickItemInterceptorContribution>;
+  pickServiceInterceptorContributions?: IContributionProvider<IPickServiceInterceptorContribution>;
+  global?: IGlobal;
+}
+
+const EMPTY_PICK_ITEM_INTERCEPTOR_PROVIDER: IContributionProvider<IPickItemInterceptorContribution> = {
+  getContributions: () => []
+};
+
+const EMPTY_PICK_SERVICE_INTERCEPTOR_PROVIDER: IContributionProvider<IPickServiceInterceptorContribution> = {
+  getContributions: () => []
+};
+
 export abstract class DefaultPickService implements IPickerService {
   type: string = 'default';
   declare pickerMap: Map<number, IGraphicPicker>;
@@ -33,19 +43,24 @@ export abstract class DefaultPickService implements IPickerService {
   declare InterceptorContributions: IPickItemInterceptorContribution[];
   declare pickerServiceInterceptorContributions: IPickServiceInterceptorContribution[];
   declare global: IGlobal;
+  protected readonly pickerRegistry?: IPickerRegistry;
 
   constructor(
-    // 拦截器
-    // @ts-ignore
-    @inject(ContributionProvider)
-    @named(PickItemInterceptor)
-    protected readonly pickItemInterceptorContributions: IContributionProvider<IPickItemInterceptorContribution>,
-    // @ts-ignore
-    @inject(ContributionProvider)
-    @named(PickServiceInterceptor)
-    protected readonly pickServiceInterceptorContributions: IContributionProvider<IPickServiceInterceptorContribution>
+    protected pickItemInterceptorContributions: IContributionProvider<IPickItemInterceptorContribution> = EMPTY_PICK_ITEM_INTERCEPTOR_PROVIDER,
+    protected pickServiceInterceptorContributions: IContributionProvider<IPickServiceInterceptorContribution> = EMPTY_PICK_SERVICE_INTERCEPTOR_PROVIDER,
+    deps: IPickerServiceDeps = {}
   ) {
-    this.global = application.global;
+    this.global = deps.global ?? application.global;
+    this.pickerRegistry = deps.pickerRegistry;
+    this.pickItemInterceptorContributions =
+      deps.pickItemInterceptorContributions ??
+      this.pickItemInterceptorContributions ??
+      EMPTY_PICK_ITEM_INTERCEPTOR_PROVIDER;
+    this.pickServiceInterceptorContributions =
+      deps.pickServiceInterceptorContributions ??
+      this.pickServiceInterceptorContributions ??
+      EMPTY_PICK_SERVICE_INTERCEPTOR_PROVIDER;
+    this.pickerMap = new Map();
   }
 
   reInit() {
@@ -53,6 +68,12 @@ export abstract class DefaultPickService implements IPickerService {
   }
 
   protected _init() {
+    if (this.pickerRegistry) {
+      this.pickerMap.clear();
+      this.pickerRegistry.getAll().forEach(item => {
+        this.pickerMap.set(item.numberType, item);
+      });
+    }
     this.InterceptorContributions = this.pickItemInterceptorContributions
       .getContributions()
       .sort((a, b) => a.order - b.order);

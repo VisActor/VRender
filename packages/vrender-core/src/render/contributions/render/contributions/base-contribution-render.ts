@@ -5,18 +5,12 @@ import type {
   IThemeAttribute,
   IBaseRenderContribution,
   IContributionProvider,
-  IDrawContext,
-  ISymbol,
-  IPath,
-  ISymbolGraphicAttribute
+  IDrawContext
 } from '../../../../interface';
 import type { IBounds } from '@visactor/vutils';
-import { inject, injectable, named } from '../../../../common/inversify-lite';
 import { getTheme } from '../../../../graphic/theme';
 import { canvasAllocate } from '../../../../allocator/canvas-allocate';
 import { BaseRenderContributionTime } from '../../../../common/enums';
-import { ContributionProvider } from '../../../../common/contribution-provider';
-import { InteractiveSubRenderContribution } from './constants';
 
 export class DefaultBaseBackgroundRenderContribution implements IBaseRenderContribution<IGraphic, IGraphicAttribute> {
   time: BaseRenderContributionTime = BaseRenderContributionTime.beforeFillStroke;
@@ -200,18 +194,13 @@ export interface IInteractiveSubRenderContribution {
   ) => void;
 }
 
-@injectable()
 export class DefaultBaseInteractiveRenderContribution implements IBaseRenderContribution<IGraphic, IGraphicAttribute> {
   time: BaseRenderContributionTime = BaseRenderContributionTime.afterFillStroke;
   useStyle: boolean = true;
   order: number = 0;
 
   _subRenderContribitions?: IInteractiveSubRenderContribution[];
-  constructor(
-    @inject(ContributionProvider)
-    @named(InteractiveSubRenderContribution)
-    protected readonly subRenderContribitions: IContributionProvider<IInteractiveSubRenderContribution>
-  ) {}
+  constructor(protected readonly subRenderContribitions: IContributionProvider<IInteractiveSubRenderContribution>) {}
 
   drawShape(
     graphic: IGraphic,

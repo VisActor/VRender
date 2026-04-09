@@ -1,6 +1,4 @@
-import type { IAABBBounds, Matrix } from '@visactor/vutils';
-// eslint-disable-next-line no-duplicate-imports
-import { Point } from '@visactor/vutils';
+import { Point, type IAABBBounds, type Matrix } from '@visactor/vutils';
 import { application } from '../application';
 import type {
   IStage,
@@ -13,11 +11,20 @@ import type {
   GraphicType
 } from '../interface';
 import type { IGroup, IGroupGraphicAttribute } from '../interface/graphic/group';
+import type { IDeferredStateOwnerConfig } from './state/state-perf-monitor';
 import { Graphic, NOWORK_ANIMATE_ATTR } from './graphic';
 import { getTheme, Theme } from './theme';
 import { UpdateTag, IContainPointMode } from '../common/enums';
 import { GROUP_NUMBER_TYPE } from './constants';
 import { DefaultTransform } from './config';
+import type { StateDefinitionsInput } from './state/state-definition';
+import {
+  type SharedStateScope,
+  createGroupSharedStateScope,
+  setSharedStateScopeLocalDefinitions,
+  setSharedStateScopeParent
+} from './state/shared-state-scope';
+import { markScopeActiveDescendantsDirty } from './state/shared-state-refresh';
 
 // Group更新AABBBounds的策略
 export enum GroupUpdateAABBBoundsMode {
@@ -35,6 +42,9 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
   declare _childUpdateTag: number;
 
   declare theme?: ITheme;
+  protected _sharedStateDefinitions?: StateDefinitionsInput<Record<string, any>>;
+  declare sharedStateScope?: SharedStateScope<Record<string, any>>;
+  declare deferredStateConfig?: IDeferredStateOwnerConfig;
 
   static NOWORK_ANIMATE_ATTR = NOWORK_ANIMATE_ATTR;
 
@@ -43,6 +53,23 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
     this.numberType = GROUP_NUMBER_TYPE;
     this._childUpdateTag = UpdateTag.UPDATE_BOUNDS;
     // this.theme = new Theme();
+  }
+
+  get sharedStateDefinitions(): StateDefinitionsInput<Record<string, any>> | undefined {
+    return this._sharedStateDefinitions;
+  }
+
+  set sharedStateDefinitions(value: StateDefinitionsInput<Record<string, any>> | undefined) {
+    if (this._sharedStateDefinitions === value) {
+      return;
+    }
+
+    this._sharedStateDefinitions = value;
+    this.ensureSharedStateScopeBound();
+    if (this.sharedStateScope) {
+      setSharedStateScopeLocalDefinitions(this.sharedStateScope, value);
+      markScopeActiveDescendantsDirty(this.sharedStateScope, this.stage);
+    }
   }
 
   setMode(mode: '2d' | '3d') {
@@ -254,9 +281,15 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
   /* 场景树结构 */
   incrementalAppendChild(node: INode): INode | null {
     const data = super.appendChild(node);
-    if (this.stage && data) {
-      (data as unknown as this).stage = this.stage;
-      (data as unknown as this).layer = this.layer;
+    if (data) {
+      if (
+        this.stage &&
+        ((data as unknown as this).stage !== this.stage || (data as unknown as this).layer !== this.layer)
+      ) {
+        (data as unknown as this).setStage(this.stage, this.layer);
+      } else if ((data as any).onParentSharedStateTreeChanged) {
+        (data as any).onParentSharedStateTreeChanged(this.stage, this.layer);
+      }
     }
     this.addUpdateBoundTag();
     this.getGraphicService().onAddIncremental(node as unknown as IGraphic, this, this.stage);
@@ -270,8 +303,12 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
   }
 
   protected _updateChildToStage(child: IGraphic) {
-    if (this.stage && child) {
-      child.setStage(this.stage, this.layer);
+    if (child) {
+      if (this.stage && (child.stage !== this.stage || child.layer !== this.layer)) {
+        child.setStage(this.stage, this.layer);
+      } else if ((child as any).onParentSharedStateTreeChanged) {
+        (child as any).onParentSharedStateTreeChanged(this.stage, this.layer);
+      }
     }
     this.addUpdateBoundTag();
     return child;
@@ -279,8 +316,16 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
   // TODO 代码优化
   appendChild(node: INode, addStage: boolean = true): INode | null {
     const data = super.appendChild(node);
-    if (addStage && this.stage && data) {
-      (data as unknown as this).setStage(this.stage, this.layer);
+    if (data) {
+      if (
+        addStage &&
+        this.stage &&
+        ((data as unknown as this).stage !== this.stage || (data as unknown as this).layer !== this.layer)
+      ) {
+        (data as unknown as this).setStage(this.stage, this.layer);
+      } else if ((data as any).onParentSharedStateTreeChanged) {
+        (data as any).onParentSharedStateTreeChanged(this.stage, this.layer);
+      }
     }
     this.addUpdateBoundTag();
     return data;
@@ -298,12 +343,13 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
   removeChild(child: IGraphic): IGraphic {
     const data = super.removeChild(child);
     this.getGraphicService().onRemove(child);
-    child.stage = null;
+    child.setStage(null as any, null as any);
     this.addUpdateBoundTag();
     return data as IGraphic;
   }
 
   removeAllChild(deep: boolean = false): void {
+    const children = this.children.slice() as IGraphic[];
     this.forEachChildren((child: IGraphic) => {
       this.getGraphicService().onRemove(child);
       if (deep && child.isContainer) {
@@ -311,20 +357,38 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
       }
     });
     super.removeAllChild();
+    children.forEach(child => {
+      child.setStage(null as any, null as any);
+    });
     this.addUpdateBoundTag();
   }
 
   setStage(stage?: IStage, layer?: ILayer) {
+    const graphicService = stage?.graphicService ?? this.stage?.graphicService ?? application.graphicService;
     if (this.stage !== stage) {
       this.stage = stage;
       this.layer = layer;
+      this.ensureSharedStateScopeBound();
+      this.syncSharedStateScopeBindingFromTree(!!this.currentStates?.length);
       this.setStageToShadowRoot(stage, layer);
       this._onSetStage && this._onSetStage(this, stage, layer);
-      this.getGraphicService().onSetStage(this, stage);
+      graphicService?.onSetStage?.(this, stage);
       this.forEachChildren(item => {
         (item as any).setStage(stage, this.layer);
       });
+      return;
     }
+
+    if (this.layer !== layer) {
+      this.layer = layer;
+    }
+    this.ensureSharedStateScopeBound();
+    this.syncSharedStateScopeBindingFromTree(!!this.currentStates?.length);
+    this.forEachChildren(item => {
+      if ((item as any).onParentSharedStateTreeChanged) {
+        (item as any).onParentSharedStateTreeChanged(stage, this.layer);
+      }
+    });
   }
   /**
    * 更新位置tag，包括全局tag和局部tag
@@ -422,6 +486,37 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
       });
     }
     super.release();
+  }
+
+  protected ensureSharedStateScopeBound(): void {
+    const parentScope = (this.parent as any)?.sharedStateScope ?? this.stage?.rootSharedStateScope;
+    if (!this.sharedStateScope) {
+      this.sharedStateScope = createGroupSharedStateScope(this, parentScope, this._sharedStateDefinitions);
+      return;
+    }
+
+    this.sharedStateScope.ownerGroup = this;
+    this.sharedStateScope.ownerStage = this.stage;
+    setSharedStateScopeParent(this.sharedStateScope, parentScope);
+
+    if (this.sharedStateScope.localStateDefinitions !== this._sharedStateDefinitions) {
+      setSharedStateScopeLocalDefinitions(this.sharedStateScope, this._sharedStateDefinitions);
+    }
+  }
+
+  onParentSharedStateTreeChanged(stage?: IStage, layer?: ILayer): void {
+    if (this.stage !== stage || this.layer !== layer) {
+      this.setStage(stage, layer);
+      return;
+    }
+
+    this.ensureSharedStateScopeBound();
+    this.syncSharedStateScopeBindingFromTree();
+    this.forEachChildren(item => {
+      if ((item as any).onParentSharedStateTreeChanged) {
+        (item as any).onParentSharedStateTreeChanged(stage, this.layer);
+      }
+    });
   }
 }
 

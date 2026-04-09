@@ -1,8 +1,6 @@
 import type { IPoint } from '@visactor/vutils';
-import { injectable, IMAGE_NUMBER_TYPE } from '@visactor/vrender-core';
-import type { IGraphicPicker, IImage, IPickParams } from '@visactor/vrender-core';
+import { IMAGE_NUMBER_TYPE, type IGraphicPicker, type IImage, type IPickParams } from '@visactor/vrender-core';
 
-@injectable()
 export class DefaultMathImagePicker implements IGraphicPicker {
   type: string = 'image';
   numberType: number = IMAGE_NUMBER_TYPE;

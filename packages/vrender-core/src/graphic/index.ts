@@ -28,3 +28,13 @@ export * from './bounds';
 export * from './theme';
 export * from './tools';
 export * from './constants';
+export { StateEngine } from './state/state-engine';
+export { StateDefinitionCompiler } from './state/state-definition-compiler';
+export type {
+  StateDefinition,
+  CompiledStateDefinition,
+  StateResolveContext,
+  StateDefinitionsInput,
+  StateTransitionResult,
+  IStateEngineOptions
+} from './state/state-definition';

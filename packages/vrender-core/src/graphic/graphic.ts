@@ -1,13 +1,18 @@
 import type { ICustomPath2D } from './../interface/path';
-import type { Dict, IPointLike, IAABBBounds, IOBBBounds } from '@visactor/vutils';
-import { isArray, max, OBBBounds } from '@visactor/vutils';
 import {
   AABBBounds,
+  isArray,
+  isEqual,
+  max,
   Matrix,
+  OBBBounds,
   normalTransform,
   Point,
+  type Dict,
+  type IAABBBounds,
+  type IOBBBounds,
+  type IPointLike,
   isNil,
-  has,
   isString,
   isValidUrl,
   isBase64,
@@ -18,7 +23,6 @@ import type {
   IAnimateConfig,
   IGraphicAttribute,
   IGraphic,
-  IGraphicAnimateParams,
   IGraphicJson,
   ISetAttributeContext,
   ITransform,
@@ -40,7 +44,6 @@ import type {
 import { EventTarget, CustomEvent } from '../event';
 import { DefaultTransform } from './config';
 import { application } from '../application';
-import { interpolateColor } from '../color-string/interpolate';
 import { CustomPath2D } from '../common/custom-path2d';
 import { ResourceLoader } from '../resource-loader/loader';
 import { AttributeUpdateType, IContainPointMode, UpdateTag } from '../common/enums';
@@ -52,8 +55,28 @@ import { isSvg, XMLParser } from '../common/xml';
 import { SVG_PARSE_ATTRIBUTE_MAP, SVG_PARSE_ATTRIBUTE_MAP_KEYS } from './constants';
 import { DefaultStateAnimateConfig } from '../animate/config';
 import { EmptyContext2d } from '../canvas';
+import type { CompiledStateDefinition, StateDefinition, StateDefinitionsInput } from './state/state-definition';
+import { StateDefinitionCompiler } from './state/state-definition-compiler';
+import { StateEngine } from './state/state-engine';
+import { StateModel } from './state/state-model';
+import { UpdateCategory, classifyAttributeDelta } from './state/attribute-update-classifier';
+import { StateStyleResolver, type StateMergeMode } from './state/state-style-resolver';
+import { StateTransitionOrchestrator } from './state/state-transition-orchestrator';
+import {
+  collectSharedStateScopeChain,
+  ensureSharedStateScopeFresh,
+  type SharedStateScope
+} from './state/shared-state-scope';
+import { enqueueGraphicSharedStateRefresh, scheduleStageSharedStateRefresh } from './state/shared-state-refresh';
+import { getStageStatePerfMonitor } from './state/state-perf-monitor';
+
+declare const require: (id: string) => unknown;
 
 const _tempBounds = new AABBBounds();
+type TShadowRootModule = {
+  createShadowRoot: (graphic?: IGraphic) => IShadowRoot;
+};
+const loadShadowRootFactory = () => require('./shadow-root') as TShadowRootModule;
 /**
  * pathProxy参考自zrender
  * BSD 3-Clause License
@@ -88,8 +111,6 @@ const _tempBounds = new AABBBounds();
  */
 
 const tempMatrix = new Matrix();
-const tempBounds = new AABBBounds();
-
 export const PURE_STYLE_KEY = [
   'stroke',
   'opacity',
@@ -120,6 +141,42 @@ const tempConstantScaleXYKey = ['scaleX', 'scaleY'];
 const tempConstantAngleKey = ['angle'];
 
 const point = new Point();
+
+type AttributeDelta = Map<string, { prev: unknown; next: unknown }>;
+
+function isPlainObjectValue(value: unknown): value is Record<string, any> {
+  return value != null && isObject(value) && !isArray(value);
+}
+
+function cloneAttributeValue<T>(value: T): T {
+  if (!isPlainObjectValue(value)) {
+    return value;
+  }
+
+  const clone: Record<string, any> = {};
+  Object.keys(value).forEach(key => {
+    clone[key] = cloneAttributeValue((value as Record<string, any>)[key]);
+  });
+  return clone as T;
+}
+
+function deepMergeAttributeValue(base: Record<string, any>, value: Record<string, any>): Record<string, any> {
+  const result: Record<string, any> = cloneAttributeValue(base) ?? {};
+
+  Object.keys(value).forEach(key => {
+    const nextValue = value[key];
+    const previousValue = result[key];
+
+    if (isPlainObjectValue(previousValue) && isPlainObjectValue(nextValue)) {
+      result[key] = deepMergeAttributeValue(previousValue, nextValue);
+      return;
+    }
+
+    result[key] = cloneAttributeValue(nextValue);
+  });
+
+  return result;
+}
 
 export const NOWORK_ANIMATE_ATTR = {
   strokeSeg: 1,
@@ -287,21 +344,30 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   declare stamp?: number;
 
   declare attribute: T;
+  declare baseAttributes: Partial<T>;
 
   declare shadowRoot?: IShadowRoot;
 
   declare releaseStatus?: GraphicReleaseStatus;
 
   /** 记录state对应的图形属性 */
-  declare states?: Record<string, Partial<T>>;
+  declare states?: StateDefinitionsInput<T>;
   /** 当前state值 */
   declare currentStates?: string[];
+  declare effectiveStates?: string[];
+  declare resolvedStatePatch?: Partial<T>;
+  declare boundSharedStateScope?: SharedStateScope<T>;
+  declare boundSharedStateRevision?: number;
+  declare sharedStateDirty?: boolean;
+  declare registeredActiveScopes?: Set<SharedStateScope<T>>;
+  declare localFallbackCompiledDefinitions?: Map<string, CompiledStateDefinition<T>>;
+  declare localFallbackVersion?: number;
   /** TODO: state更新对应的动画配置 */
   declare stateAnimateConfig?: IAnimateConfig;
-  /** 记录应用state之前，attribute对应的原始图形属性 */
-  declare normalAttrs?: Partial<T>;
   /** 获取state图形属性的方法 */
-  declare stateProxy?: (stateName: string, targetStates?: string[]) => T;
+  declare stateProxy?: (stateName: string, targetStates?: string[]) => Partial<T>;
+  /** 状态样式合并模式，默认浅合并，可选深度合并 */
+  declare stateMergeMode?: StateMergeMode;
   declare animates: Map<string | number, IAnimate>;
 
   declare animate?: () => IAnimate;
@@ -322,12 +388,28 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
 
   // state 排序方法
   protected stateSort?: (stateA: string, stateB: string) => number;
+  protected compiledStateDefinitions?: Map<string, CompiledStateDefinition<T>>;
+  protected compiledStateDefinitionsCacheKey?: string;
+  protected stateEngine?: StateEngine<T>;
+  protected stateEngineCompiledDefinitions?: Map<string, CompiledStateDefinition<T>>;
+  protected stateEngineStateProxy?: (stateName: string, targetStates?: string[]) => Partial<T>;
+  protected stateEngineStateSort?: (stateA: string, stateB: string) => number;
+  protected stateEngineMergeMode?: StateMergeMode;
+  protected stateEngineStateProxyModeKey?: string;
+  protected readonly stateStyleResolver = new StateStyleResolver<T>();
+  protected readonly deepStateStyleResolver = new StateStyleResolver<T>({ mergeMode: 'deep' });
+  protected readonly stateTransitionOrchestrator = new StateTransitionOrchestrator<T>();
+  protected _deprecatedNormalAttrsView?: Partial<T> | null;
+  protected localStateDefinitionsSource?: StateDefinitionsInput<T>;
+  protected resolverEpoch: number = 0;
 
   constructor(params: T = {} as T) {
     super();
     this._AABBBounds = new AABBBounds();
     this._updateTag = UpdateTag.INIT;
-    this.attribute = params;
+    const initialAttributes = cloneAttributeValue(params) as T;
+    this.attribute = initialAttributes;
+    this.baseAttributes = cloneAttributeValue(initialAttributes) as Partial<T>;
     this.valid = this.isValid();
     this.updateAABBBoundsStamp = 0;
     if (params.background) {
@@ -338,12 +420,409 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     // this.attribute = createTrackableObject(this.attribute);
   }
 
+  get normalAttrs(): Partial<T> | undefined {
+    return this.baseAttributes;
+  }
+
+  set normalAttrs(value: Partial<T> | undefined) {
+    this._deprecatedNormalAttrsView = value ?? undefined;
+  }
+
   getGraphicService() {
     return this.stage?.graphicService ?? application.graphicService;
   }
 
   getAttributes(): T {
     return this.attribute;
+  }
+
+  protected resolveBoundSharedStateScope(): SharedStateScope<T> | SharedStateScope<Record<string, any>> | undefined {
+    let parent = this.parent as IGroup | null;
+
+    while (parent) {
+      if ((parent as any).sharedStateScope) {
+        return (parent as any).sharedStateScope;
+      }
+      parent = parent.parent as IGroup | null;
+    }
+
+    return this.stage?.rootSharedStateScope as SharedStateScope<Record<string, any>> | undefined;
+  }
+
+  protected syncSharedStateScopeBindingFromTree(markDirty: boolean = true): boolean {
+    const nextScope = this.resolveBoundSharedStateScope();
+    if (this.boundSharedStateScope === nextScope) {
+      this.syncSharedStateActiveRegistrations();
+      return false;
+    }
+
+    this.boundSharedStateScope = nextScope as SharedStateScope<T> | undefined;
+    this.boundSharedStateRevision = undefined;
+    this.localFallbackCompiledDefinitions = undefined;
+    this.compiledStateDefinitions = undefined;
+    this.compiledStateDefinitionsCacheKey = undefined;
+    this.stateEngine = undefined;
+    this.stateEngineCompiledDefinitions = undefined;
+    this.stateEngineStateProxyModeKey = undefined;
+    this.syncSharedStateActiveRegistrations();
+
+    if (markDirty && this.currentStates?.length) {
+      this.markSharedStateDirty();
+    }
+
+    return true;
+  }
+
+  protected syncSharedStateActiveRegistrations(): void {
+    const nextScopes =
+      this.currentStates?.length && this.boundSharedStateScope
+        ? new Set(collectSharedStateScopeChain(this.boundSharedStateScope))
+        : new Set<SharedStateScope<T>>();
+    const previousScopes = this.registeredActiveScopes ?? new Set<SharedStateScope<T>>();
+
+    previousScopes.forEach(scope => {
+      if (!nextScopes.has(scope)) {
+        scope.subtreeActiveDescendants.delete(this);
+      }
+    });
+
+    nextScopes.forEach(scope => {
+      scope.subtreeActiveDescendants.add(this);
+    });
+
+    this.registeredActiveScopes = nextScopes;
+  }
+
+  protected clearSharedStateActiveRegistrations(): void {
+    const previousScopes = this.registeredActiveScopes;
+    if (previousScopes) {
+      previousScopes.forEach(scope => {
+        scope.subtreeActiveDescendants.delete(this);
+      });
+      previousScopes.clear();
+    }
+    this.registeredActiveScopes = undefined;
+  }
+
+  protected markSharedStateDirty(): void {
+    this.sharedStateDirty = true;
+    enqueueGraphicSharedStateRefresh(this.stage, this);
+    scheduleStageSharedStateRefresh(this.stage);
+  }
+
+  onParentSharedStateTreeChanged(stage?: IStage, layer?: ILayer): void {
+    if (this.stage !== stage || this.layer !== layer) {
+      this.setStage(stage, layer);
+      return;
+    }
+
+    this.syncSharedStateScopeBindingFromTree();
+  }
+
+  refreshSharedStateBeforeRender(): void {
+    if (!this.currentStates?.length) {
+      this.sharedStateDirty = false;
+      return;
+    }
+
+    this.syncSharedStateScopeBindingFromTree(false);
+    if (this.boundSharedStateScope) {
+      ensureSharedStateScopeFresh(this.boundSharedStateScope);
+    }
+
+    this.recomputeCurrentStatePatch();
+    this.stopStateAnimates();
+    this._restoreAttributeFromStaticTruth({ type: AttributeUpdateType.STATE });
+    this._emitCustomEvent('afterStateUpdate', { type: AttributeUpdateType.STATE });
+    this.sharedStateDirty = false;
+  }
+
+  protected getLocalStatesVersion(): number {
+    if (this.localStateDefinitionsSource !== this.states) {
+      this.localStateDefinitionsSource = this.states;
+      this.localFallbackVersion = (this.localFallbackVersion ?? 0) + 1;
+    }
+
+    return this.localFallbackVersion ?? 0;
+  }
+
+  protected resolveEffectiveCompiledDefinitions(): {
+    compiledDefinitions?: Map<string, CompiledStateDefinition<T>>;
+    stateProxyModeKey: string;
+    stateProxyEligibility?: (stateName: string) => boolean;
+  } {
+    this.syncSharedStateScopeBindingFromTree(false);
+    const boundScope = this.boundSharedStateScope;
+    if (boundScope) {
+      ensureSharedStateScopeFresh(boundScope);
+      this.boundSharedStateRevision = boundScope.revision;
+    }
+
+    const hasStates = !!this.states && Object.keys(this.states).length > 0;
+    if (!boundScope) {
+      if (!hasStates) {
+        return {
+          compiledDefinitions: undefined,
+          stateProxyModeKey: 'none'
+        };
+      }
+
+      const localStatesVersion = this.getLocalStatesVersion();
+      const cacheKey = `local:${localStatesVersion}`;
+      if (!this.compiledStateDefinitions || this.compiledStateDefinitionsCacheKey !== cacheKey) {
+        this.compiledStateDefinitions = new StateDefinitionCompiler<T>().compile(this.states);
+        this.compiledStateDefinitionsCacheKey = cacheKey;
+      }
+
+      return {
+        compiledDefinitions: this.compiledStateDefinitions,
+        stateProxyModeKey: this.stateProxy ? 'legacy-all' : 'none'
+      };
+    }
+
+    const sharedCompiledDefinitions = boundScope.effectiveCompiledDefinitions as Map<
+      string,
+      CompiledStateDefinition<T>
+    >;
+    if (!hasStates) {
+      this.localFallbackCompiledDefinitions = undefined;
+      return {
+        compiledDefinitions: sharedCompiledDefinitions,
+        stateProxyModeKey: this.stateProxy ? 'shared-disabled' : 'none',
+        stateProxyEligibility: this.stateProxy ? () => false : undefined
+      };
+    }
+
+    const localStates = this.states as StateDefinitionsInput<T>;
+    const missingLocalStateDefinitions = {} as StateDefinitionsInput<T>;
+    const missingStateNames: string[] = [];
+    Object.keys(localStates).forEach(stateName => {
+      if (sharedCompiledDefinitions.has(stateName)) {
+        return;
+      }
+      missingLocalStateDefinitions[stateName] = localStates[stateName];
+      missingStateNames.push(stateName);
+    });
+
+    if (!missingStateNames.length) {
+      this.localFallbackCompiledDefinitions = undefined;
+      return {
+        compiledDefinitions: sharedCompiledDefinitions,
+        stateProxyModeKey: this.stateProxy ? 'shared-disabled' : 'none',
+        stateProxyEligibility: this.stateProxy ? () => false : undefined
+      };
+    }
+
+    const localStatesVersion = this.getLocalStatesVersion();
+    const stateProxyModeKey = this.stateProxy ? `missing:${missingStateNames.sort().join('|')}` : 'none';
+    const cacheKey = `shared:${boundScope.revision}:fallback:${localStatesVersion}:${stateProxyModeKey}`;
+    if (!this.localFallbackCompiledDefinitions || this.compiledStateDefinitionsCacheKey !== cacheKey) {
+      this.localFallbackCompiledDefinitions = new StateDefinitionCompiler<T>().compile({
+        ...(boundScope.effectiveSourceDefinitions as StateDefinitionsInput<T>),
+        ...missingLocalStateDefinitions
+      });
+      this.compiledStateDefinitionsCacheKey = cacheKey;
+    }
+
+    return {
+      compiledDefinitions: this.localFallbackCompiledDefinitions,
+      stateProxyModeKey,
+      stateProxyEligibility: this.stateProxy
+        ? (stateName: string) => !sharedCompiledDefinitions.has(stateName)
+        : undefined
+    };
+  }
+
+  protected recomputeCurrentStatePatch(): void {
+    if (!this.currentStates?.length) {
+      this.effectiveStates = [];
+      this.resolvedStatePatch = undefined;
+      this.syncSharedStateActiveRegistrations();
+      return;
+    }
+
+    const stateResolveBaseAttrs = (this.baseAttributes ?? this.attribute) as Partial<T>;
+    const stateModel = this.createStateModel();
+    this.stateEngine?.setResolveContext(this, stateResolveBaseAttrs);
+    const transition = stateModel.useStates(this.currentStates);
+    const effectiveStates = transition.effectiveStates ?? transition.states;
+    const resolvedStateAttrs =
+      this.stateEngine && this.compiledStateDefinitions
+        ? { ...(this.stateEngine.resolvedPatch as Partial<T>) }
+        : (this.stateMergeMode === 'deep' ? this.deepStateStyleResolver : this.stateStyleResolver).resolve(
+            stateResolveBaseAttrs,
+            this.states as any,
+            this.stateProxy as any,
+            transition.states,
+            this.stateSort
+          );
+
+    this.currentStates = transition.states;
+    this.effectiveStates = [...effectiveStates];
+    this.resolvedStatePatch = { ...resolvedStateAttrs };
+    this.syncSharedStateActiveRegistrations();
+  }
+
+  protected buildStaticAttributeSnapshot(): Partial<T> {
+    const snapshot = cloneAttributeValue((this.baseAttributes ?? {}) as Partial<T>) as Partial<T>;
+    const resolvedPatch = this.resolvedStatePatch;
+
+    if (!resolvedPatch) {
+      return snapshot;
+    }
+
+    Object.keys(resolvedPatch).forEach(key => {
+      const nextValue = (resolvedPatch as Record<string, any>)[key];
+      const previousValue = (snapshot as Record<string, any>)[key];
+
+      if (this.stateMergeMode === 'deep' && isPlainObjectValue(previousValue) && isPlainObjectValue(nextValue)) {
+        (snapshot as Record<string, any>)[key] = deepMergeAttributeValue(previousValue, nextValue);
+        return;
+      }
+
+      (snapshot as Record<string, any>)[key] = cloneAttributeValue(nextValue);
+    });
+
+    return snapshot;
+  }
+
+  protected syncObjectToSnapshot(target: Record<string, any>, snapshot: Record<string, any>): AttributeDelta {
+    const delta: AttributeDelta = new Map();
+    const keySet = new Set<string>([...Object.keys(target), ...Object.keys(snapshot)]);
+
+    keySet.forEach(key => {
+      const hasNext = Object.prototype.hasOwnProperty.call(snapshot, key);
+      const previousValue = target[key];
+
+      if (!hasNext) {
+        if (Object.prototype.hasOwnProperty.call(target, key)) {
+          delta.set(key, { prev: previousValue, next: undefined });
+          delete target[key];
+        }
+        return;
+      }
+
+      const nextValue = snapshot[key];
+      if (isEqual(previousValue, nextValue)) {
+        return;
+      }
+
+      delta.set(key, { prev: previousValue, next: nextValue });
+      target[key] = cloneAttributeValue(nextValue);
+    });
+
+    return delta;
+  }
+
+  protected _syncAttribute(): AttributeDelta {
+    const snapshot = this.buildStaticAttributeSnapshot() as Record<string, any>;
+    const delta = this.syncObjectToSnapshot(this.attribute as Record<string, any>, snapshot);
+    this.valid = this.isValid();
+    return delta;
+  }
+
+  protected _syncFinalAttributeFromStaticTruth(): void {
+    const target = (this as any).finalAttribute;
+    if (!target) {
+      return;
+    }
+    const snapshot = this.buildStaticAttributeSnapshot() as Record<string, any>;
+    this.syncObjectToSnapshot(target, snapshot);
+  }
+
+  protected submitUpdateByDelta(delta: AttributeDelta, forceUpdateTag: boolean = false): void {
+    if (forceUpdateTag) {
+      this.addUpdateShapeAndBoundsTag();
+      this.addUpdatePositionTag();
+      this.addUpdateLayoutTag();
+      return;
+    }
+
+    let category = UpdateCategory.NONE;
+
+    delta.forEach((entry, key) => {
+      let nextCategory = classifyAttributeDelta(key, entry.prev, entry.next);
+      if (nextCategory & UpdateCategory.PICK) {
+        // Phase 2 keeps PICK invalidation on the existing bounds path instead of adding a dedicated pick tag.
+        nextCategory |= UpdateCategory.BOUNDS;
+      }
+      if (nextCategory === UpdateCategory.PAINT && this.needUpdateTag(key)) {
+        nextCategory = UpdateCategory.SHAPE | UpdateCategory.BOUNDS;
+      }
+      category |= nextCategory;
+    });
+
+    if (category !== UpdateCategory.NONE) {
+      getStageStatePerfMonitor(this.stage)?.recordCategory(category);
+    }
+
+    if (category & UpdateCategory.SHAPE) {
+      this.addUpdateShapeAndBoundsTag();
+    } else if (category & UpdateCategory.BOUNDS) {
+      this.addUpdateBoundTag();
+    }
+
+    if (category & UpdateCategory.PAINT) {
+      this.addUpdatePaintTag();
+    }
+
+    if (category & UpdateCategory.TRANSFORM) {
+      this.addUpdatePositionTag();
+    }
+
+    if (category & UpdateCategory.LAYOUT) {
+      this.addUpdateLayoutTag();
+    }
+  }
+
+  protected commitBaseAttributeMutation(forceUpdateTag: boolean = false, context?: ISetAttributeContext): void {
+    if (this.currentStates?.length) {
+      this.resolverEpoch += 1;
+      this.stateEngine?.invalidateResolverCache();
+      this.recomputeCurrentStatePatch();
+    }
+    const delta = this._syncAttribute();
+    this.submitUpdateByDelta(delta, forceUpdateTag);
+    this.onAttributeUpdate(context);
+  }
+
+  protected applyBaseAttributes(params: Partial<T>) {
+    const keys = Object.keys(params);
+    for (let i = 0; i < keys.length; i++) {
+      const key = keys[i];
+      (this.baseAttributes as any)[key] = cloneAttributeValue((params as any)[key]);
+    }
+  }
+
+  protected applyTransientAttributes(
+    params: Partial<T>,
+    forceUpdateTag: boolean = false,
+    context?: ISetAttributeContext
+  ) {
+    const delta: AttributeDelta = new Map();
+    const keys = Object.keys(params);
+
+    for (let i = 0; i < keys.length; i++) {
+      const key = keys[i];
+      const previousValue = (this.attribute as Record<string, any>)[key];
+      const nextValue = (params as Record<string, any>)[key];
+      if (isEqual(previousValue, nextValue)) {
+        continue;
+      }
+      delta.set(key, { prev: previousValue, next: nextValue });
+      (this.attribute as Record<string, any>)[key] = cloneAttributeValue(nextValue);
+    }
+
+    this.valid = this.isValid();
+    this.submitUpdateByDelta(delta, forceUpdateTag);
+    this.onAttributeUpdate(context);
+  }
+
+  protected _restoreAttributeFromStaticTruth(context?: ISetAttributeContext): void {
+    this._syncFinalAttributeFromStaticTruth();
+    const delta = this._syncAttribute();
+    this.submitUpdateByDelta(delta);
+    this.onAttributeUpdate(context);
   }
 
   setMode(mode: '2d' | '3d') {
@@ -372,6 +851,27 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
 
   onAnimateBind(animate: IAnimate) {
     this._emitCustomEvent('animate-bind', animate);
+  }
+
+  protected visitTrackedAnimates(cb: (animate: IAnimate) => void) {
+    const hook = (this as any).forEachTrackedAnimate;
+    if (typeof hook === 'function') {
+      hook.call(this, cb);
+      return;
+    }
+    this.animates && this.animates.forEach(cb);
+  }
+
+  protected hasAnyTrackedAnimate() {
+    const hook = (this as any).hasTrackedAnimate;
+    if (typeof hook === 'function') {
+      return hook.call(this);
+    }
+    const getTrackedAnimates = (this as any).getTrackedAnimates;
+    if (typeof getTrackedAnimates === 'function') {
+      return getTrackedAnimates.call(this).size > 0;
+    }
+    return !!this.animates?.size;
   }
 
   protected tryUpdateAABBBounds(): IAABBBounds {
@@ -683,17 +1183,16 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     context?: ISetAttributeContext,
     ignorePriority?: boolean
   ) {
-    this.setAttributes(params, forceUpdateTag, context);
-    this.animates &&
-      this.animates.forEach(animate => {
-        // 优先级最高的动画（一般是循环动画），不屏蔽
-        if (animate.priority === Infinity && !ignorePriority) {
-          return;
-        }
-        Object.keys(params).forEach(key => {
-          animate.preventAttr(key);
-        });
+    this.visitTrackedAnimates(animate => {
+      // 优先级最高的动画（一般是循环动画），不屏蔽
+      if (animate.priority === Infinity && !ignorePriority) {
+        return;
+      }
+      Object.keys(params).forEach(key => {
+        animate.preventAttr(key);
       });
+    });
+    this.applyTransientAttributes(params, forceUpdateTag, context);
   }
 
   setAttributes(params: Partial<T>, forceUpdateTag: boolean = false, context?: ISetAttributeContext) {
@@ -712,42 +1211,16 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   }
 
   _setAttributes(params: Partial<T>, forceUpdateTag: boolean = false, context?: ISetAttributeContext) {
-    const keys = Object.keys(params);
-    for (let i = 0; i < keys.length; i++) {
-      const key = keys[i];
-
-      (this.attribute as any)[key] = (params as any)[key];
-    }
-    this.valid = this.isValid();
-    // 没有设置shape&bounds的tag
-    if (!this.updateShapeAndBoundsTagSetted() && (forceUpdateTag || this.needUpdateTags(keys))) {
-      this.addUpdateShapeAndBoundsTag();
-    } else {
-      this.addUpdateBoundTag();
-    }
-    this.addUpdatePositionTag();
-    this.addUpdateLayoutTag();
-    this.onAttributeUpdate(context);
+    this.applyBaseAttributes(params);
+    this.commitBaseAttributeMutation(forceUpdateTag, context);
   }
 
   setAttribute(key: string, value: any, forceUpdateTag?: boolean, context?: ISetAttributeContext) {
     const params =
       this.onBeforeAttributeUpdate && this.onBeforeAttributeUpdate({ [key]: value }, this.attribute, key, context);
     if (!params) {
-      if (!isNil((this.normalAttrs as any)?.[key])) {
-        (this.normalAttrs as any)[key] = value;
-      } else {
-        (this.attribute as any)[key] = value;
-        this.valid = this.isValid();
-        if (!this.updateShapeAndBoundsTagSetted() && (forceUpdateTag || this.needUpdateTag(key))) {
-          this.addUpdateShapeAndBoundsTag();
-        } else {
-          this.addUpdateBoundTag();
-        }
-        this.addUpdatePositionTag();
-        this.addUpdateLayoutTag();
-        this.onAttributeUpdate(context);
-      }
+      this.applyBaseAttributes({ [key]: value } as Partial<T>);
+      this.commitBaseAttributeMutation(!!forceUpdateTag, context);
     } else {
       this._setAttributes(params, forceUpdateTag, context);
     }
@@ -783,7 +1256,12 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     const context = { type: AttributeUpdateType.INIT };
     params =
       (this.onBeforeAttributeUpdate && this.onBeforeAttributeUpdate(params, this.attribute, null, context)) || params;
-    this.attribute = params;
+    this.baseAttributes = cloneAttributeValue(params) as Partial<T>;
+    if (!this.attribute) {
+      this.attribute = {} as T;
+    }
+    this.resolvedStatePatch = undefined;
+    this._syncAttribute();
     if (params.background) {
       this.loadImage(params.background, true);
     } else if (params.shadowGraphic) {
@@ -809,9 +1287,9 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       y = params.y;
       delete params.x;
       delete params.y;
-      this._setAttributes(params);
+      this.applyBaseAttributes(params);
     }
-    const attribute = this.attribute;
+    const attribute = this.baseAttributes as T;
     const postMatrix = attribute.postMatrix;
     if (!postMatrix) {
       attribute.x = (attribute.x ?? DefaultTransform.x) + x;
@@ -820,15 +1298,12 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       application.transformUtil.fromMatrix(postMatrix, postMatrix).translate(x, y);
     }
 
-    this.addUpdatePositionTag();
-    this.addUpdateBoundTag();
-    this.addUpdateLayoutTag();
-    this.onAttributeUpdate(context);
+    this.commitBaseAttributeMutation(false, context);
     return this;
   }
 
   translateTo(x: number, y: number) {
-    const attribute = this.attribute;
+    const attribute = this.baseAttributes as T;
     if (attribute.x === x && attribute.y === y) {
       return this;
     }
@@ -839,15 +1314,13 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       this.onBeforeAttributeUpdate &&
       this.onBeforeAttributeUpdate({ x, y }, this.attribute, tempConstantXYKey, context);
     if (params) {
-      this._setAttributes(params, false, context);
+      this.applyBaseAttributes(params);
+      this.commitBaseAttributeMutation(false, context);
       return this;
     }
     attribute.x = x;
     attribute.y = y;
-    this.addUpdatePositionTag();
-    this.addUpdateBoundTag();
-    this.addUpdateLayoutTag();
-    this.onAttributeUpdate(context);
+    this.commitBaseAttributeMutation(false, context);
     return this;
   }
 
@@ -866,9 +1339,9 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       scaleY = params.scaleY;
       delete params.scaleX;
       delete params.scaleY;
-      this._setAttributes(params);
+      this.applyBaseAttributes(params);
     }
-    const attribute = this.attribute;
+    const attribute = this.baseAttributes as T;
     if (!scaleCenter) {
       attribute.scaleX = (attribute.scaleX ?? DefaultTransform.scaleX) * scaleX;
       attribute.scaleY = (attribute.scaleY ?? DefaultTransform.scaleY) * scaleY;
@@ -880,15 +1353,12 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       }
       application.transformUtil.fromMatrix(postMatrix, postMatrix).scale(scaleX, scaleY, scaleCenter);
     }
-    this.addUpdatePositionTag();
-    this.addUpdateBoundTag();
-    this.addUpdateLayoutTag();
-    this.onAttributeUpdate(context);
+    this.commitBaseAttributeMutation(false, context);
     return this;
   }
 
   scaleTo(scaleX: number, scaleY: number) {
-    const attribute = this.attribute;
+    const attribute = this.baseAttributes as T;
     if (attribute.scaleX === scaleX && attribute.scaleY === scaleY) {
       return this;
     }
@@ -899,15 +1369,13 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       this.onBeforeAttributeUpdate &&
       this.onBeforeAttributeUpdate({ scaleX, scaleY }, this.attribute, tempConstantScaleXYKey, context);
     if (params) {
-      this._setAttributes(params, false, context);
+      this.applyBaseAttributes(params);
+      this.commitBaseAttributeMutation(false, context);
       return this;
     }
     attribute.scaleX = scaleX;
     attribute.scaleY = scaleY;
-    this.addUpdatePositionTag();
-    this.addUpdateBoundTag();
-    this.addUpdateLayoutTag();
-    this.onAttributeUpdate(context);
+    this.commitBaseAttributeMutation(false, context);
     return this;
   }
 
@@ -921,29 +1389,26 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       this.onBeforeAttributeUpdate({ angle, rotateCenter }, this.attribute, tempConstantAngleKey, context);
     if (params) {
       delete params.angle;
-      this._setAttributes(params, false, context);
+      this.applyBaseAttributes(params);
       // return this;
     }
-    const attribute = this.attribute;
+    const attribute = this.baseAttributes as T;
     if (!rotateCenter) {
       attribute.angle = (attribute.angle ?? DefaultTransform.angle) + angle;
     } else {
-      let { postMatrix } = this.attribute;
+      let { postMatrix } = this.baseAttributes as T;
       if (!postMatrix) {
         postMatrix = new Matrix();
-        attribute.postMatrix = postMatrix;
+        (this.baseAttributes as T).postMatrix = postMatrix;
       }
       application.transformUtil.fromMatrix(postMatrix, postMatrix).rotate(angle, rotateCenter);
     }
-    this.addUpdatePositionTag();
-    this.addUpdateBoundTag();
-    this.addUpdateLayoutTag();
-    this.onAttributeUpdate(context);
+    this.commitBaseAttributeMutation(false, context);
     return this;
   }
 
   rotateTo(angle: number) {
-    const attribute = this.attribute;
+    const attribute = this.baseAttributes as T;
     if (attribute.angle === angle) {
       return this;
     }
@@ -954,14 +1419,12 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       this.onBeforeAttributeUpdate &&
       this.onBeforeAttributeUpdate(angle, this.attribute, tempConstantAngleKey, context);
     if (params) {
-      this._setAttributes(params, false, context);
+      this.applyBaseAttributes(params);
+      this.commitBaseAttributeMutation(false, context);
       return this;
     }
     attribute.angle = angle;
-    this.addUpdatePositionTag();
-    this.addUpdateBoundTag();
-    this.addUpdateLayoutTag();
-    this.onAttributeUpdate(context);
+    this.commitBaseAttributeMutation(false, context);
     return this;
   }
 
@@ -1004,104 +1467,108 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
 
     return true;
   }
-  getState(stateName: string) {
+  getState(stateName: string): Partial<T> | StateDefinition<T> | undefined {
     return this.states?.[stateName];
   }
 
-  applyStateAttrs(attrs: Partial<T>, stateNames: string[], hasAnimation?: boolean, isClear?: boolean) {
-    // 应用状态的时候要停掉动画
-    if (hasAnimation) {
-      const keys = Object.keys(attrs);
-      const noWorkAttrs = this.getNoWorkAnimateAttr();
-      const animateAttrs: Partial<T> = {};
-      let noAnimateAttrs: Partial<T> | undefined;
+  protected createStateModel() {
+    const { compiledDefinitions, stateProxyEligibility, stateProxyModeKey } =
+      this.resolveEffectiveCompiledDefinitions();
+    this.compiledStateDefinitions = compiledDefinitions;
 
-      keys.forEach(key => {
-        if (!noWorkAttrs[key]) {
-          (animateAttrs as any)[key] =
-            isClear && (attrs as any)[key] === undefined ? this.getDefaultAttribute(key) : (attrs as any)[key];
-        } else {
-          if (!noAnimateAttrs) {
-            noAnimateAttrs = {};
-          }
-          (noAnimateAttrs as any)[key] = (attrs as any)[key];
-        }
+    if (!compiledDefinitions) {
+      this.stateEngine = undefined;
+      this.stateEngineCompiledDefinitions = undefined;
+      this.stateEngineStateProxyModeKey = undefined;
+    } else if (
+      !this.stateEngine ||
+      this.stateEngineCompiledDefinitions !== compiledDefinitions ||
+      this.stateEngineStateProxy !== this.stateProxy ||
+      this.stateEngineStateSort !== this.stateSort ||
+      this.stateEngineMergeMode !== this.stateMergeMode ||
+      this.stateEngineStateProxyModeKey !== stateProxyModeKey
+    ) {
+      this.stateEngine = new StateEngine<T>({
+        compiledDefinitions,
+        stateSort: this.stateSort,
+        stateProxy: this.stateProxy as any,
+        stateProxyEligibility,
+        states: this.states,
+        mergeMode: this.stateMergeMode
       });
-
-      const stateAnimateConfig =
-        (this.context && this.context.stateAnimateConfig) ?? this.stateAnimateConfig ?? DefaultStateAnimateConfig;
-      // 需要注册动画
-      (this as any).applyAnimationState(
-        ['state'],
-        [
-          {
-            name: 'state',
-            animation: {
-              type: 'state',
-              to: animateAttrs,
-              duration: stateAnimateConfig.duration,
-              easing: stateAnimateConfig.easing
-            }
-          }
-        ]
-      );
-      // const animate = (this.animate as any)({ slience: true });
-      // (animate as any).stateNames = stateNames;
-      // animate.to(animateAttrs, stateAnimateConfig.duration, stateAnimateConfig.easing);
-      noAnimateAttrs && this.setAttributesAndPreventAnimate(noAnimateAttrs, false, { type: AttributeUpdateType.STATE });
-      // 应用状态的时候要更新 finalAttribute 也就是目标属性
-      if ((this as any).finalAttribute) {
-        Object.assign((this as any).finalAttribute, attrs);
-      }
-    } else {
-      this.stopStateAnimates();
-      this.setAttributesAndPreventAnimate(attrs, false, { type: AttributeUpdateType.STATE });
-      if ((this as any).finalAttribute) {
-        Object.assign((this as any).finalAttribute, attrs);
-      }
+      this.stateEngineCompiledDefinitions = compiledDefinitions;
+      this.stateEngineStateProxy = this.stateProxy as any;
+      this.stateEngineStateSort = this.stateSort;
+      this.stateEngineMergeMode = this.stateMergeMode;
+      this.stateEngineStateProxyModeKey = stateProxyModeKey;
     }
 
-    this._emitCustomEvent('afterStateUpdate', { type: AttributeUpdateType.STATE });
+    return new StateModel<T>({
+      states: this.states,
+      currentStates: this.currentStates,
+      stateSort: this.stateSort,
+      stateProxy: this.stateProxy as any,
+      stateEngine: this.stateEngine
+    });
+  }
+
+  protected resolveStateAnimateConfig(animateConfig?: IAnimateConfig) {
+    return animateConfig ?? this.stateAnimateConfig ?? this.context?.stateAnimateConfig ?? DefaultStateAnimateConfig;
+  }
+
+  applyStateAttrs(
+    attrs: Partial<T>,
+    stateNames: string[],
+    hasAnimation?: boolean,
+    isClear?: boolean,
+    animateConfig?: IAnimateConfig
+  ) {
+    const resolvedAnimateConfig = hasAnimation ? this.resolveStateAnimateConfig(animateConfig) : undefined;
+    const transitionOptions = resolvedAnimateConfig ? { animateConfig: resolvedAnimateConfig } : undefined;
+
+    if (isClear) {
+      this.stateTransitionOrchestrator.applyClearTransition(
+        this as any,
+        attrs,
+        hasAnimation,
+        stateNames,
+        transitionOptions
+      );
+      return;
+    }
+
+    const plan = this.stateTransitionOrchestrator.analyzeTransition({}, attrs, stateNames, hasAnimation, {
+      noWorkAnimateAttr: this.getNoWorkAnimateAttr(),
+      animateConfig: resolvedAnimateConfig
+    });
+
+    this.stateTransitionOrchestrator.applyTransition(this as any, plan, hasAnimation, transitionOptions);
   }
 
   updateNormalAttrs(stateAttrs: Partial<T>) {
-    const newNormalAttrs = {};
-    if (this.normalAttrs) {
-      Object.keys(stateAttrs).forEach(key => {
-        if (key in this.normalAttrs) {
-          (newNormalAttrs as any)[key] = (this.normalAttrs as any)[key];
-          delete (this.normalAttrs as any)[key];
-        } else {
-          (newNormalAttrs as any)[key] = this.getNormalAttribute(key);
-        }
-      });
-      Object.keys(this.normalAttrs).forEach(key => {
-        (stateAttrs as any)[key] = (this.normalAttrs as any)[key];
-      });
-    } else {
-      Object.keys(stateAttrs).forEach(key => {
-        (newNormalAttrs as any)[key] = this.getNormalAttribute(key);
-      });
-    }
-
-    this.normalAttrs = newNormalAttrs;
+    this._deprecatedNormalAttrsView = cloneAttributeValue(this.baseAttributes);
   }
 
   protected stopStateAnimates(type: 'start' | 'end' = 'end') {
-    if (this.animates) {
-      this.animates.forEach(animate => {
-        if ((animate as any).stateNames) {
-          animate.stop(type);
-          this.animates.delete(animate.id);
-        }
-      });
+    const stopAnimationState = (this as any).stopAnimationState;
+    if (typeof stopAnimationState === 'function') {
+      stopAnimationState.call(this, 'state', type);
+      return;
     }
+
+    const stateAnimates: IAnimate[] = [];
+    this.visitTrackedAnimates(animate => {
+      if ((animate as any).stateNames) {
+        stateAnimates.push(animate);
+      }
+    });
+    stateAnimates.forEach(animate => animate.stop(type));
   }
 
   private getNormalAttribute(key: string) {
     const value = (this.attribute as any)[key];
 
-    if (this.animates && this.animates.size) {
+    if (this.hasAnyTrackedAnimate()) {
       // this.animates.forEach(animate => {
       //   if ((animate as any).stateNames) {
       //     const endProps = animate.getEndProps();
@@ -1118,52 +1585,65 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   }
 
   clearStates(hasAnimation?: boolean) {
-    if (this.hasState() && this.normalAttrs) {
+    const previousStates = this.currentStates ? this.currentStates.slice() : [];
+    const transition = this.createStateModel().clearStates();
+    if (!transition.changed && previousStates.length === 0) {
       this.currentStates = [];
-      this.applyStateAttrs(this.normalAttrs, this.currentStates, hasAnimation, true);
-    } else {
-      this.currentStates = [];
+      this.effectiveStates = [];
+      this.resolvedStatePatch = undefined;
+      this.sharedStateDirty = false;
+      this.clearSharedStateActiveRegistrations();
+      return;
     }
-    this.normalAttrs = null;
-  }
+    const resolvedStateAttrs = cloneAttributeValue((this.baseAttributes ?? {}) as Partial<T>) as Partial<T>;
 
-  removeState(stateName: string | string[], hasAnimation?: boolean) {
-    if (this.currentStates) {
-      const filter = isArray(stateName) ? (s: string) => !stateName.includes(s) : (s: string) => s !== stateName;
-      const newStates = this.currentStates.filter(filter);
-
-      if (newStates.length !== this.currentStates.length) {
-        this.useStates(newStates, hasAnimation);
-      }
-    }
-  }
-
-  toggleState(stateName: string, hasAnimation?: boolean) {
-    if (this.hasState(stateName)) {
-      this.removeState(stateName, hasAnimation);
-    } else {
-      const index = this.currentStates ? this.currentStates.indexOf(stateName) : -1;
-      if (index < 0) {
-        const nextStates = this.currentStates ? this.currentStates.slice() : [];
-        nextStates.push(stateName);
-        this.useStates(nextStates, hasAnimation);
-      }
-    }
-  }
-
-  addState(stateName: string, keepCurrentStates?: boolean, hasAnimation?: boolean) {
     if (
-      this.currentStates &&
-      this.currentStates.includes(stateName) &&
-      (keepCurrentStates || this.currentStates.length === 1)
+      transition.changed &&
+      !this.beforeStateUpdate(resolvedStateAttrs, previousStates, transition.states, hasAnimation, true)
     ) {
       return;
     }
 
-    const newStates =
-      keepCurrentStates && this.currentStates?.length ? this.currentStates.concat([stateName]) : [stateName];
+    this.currentStates = transition.states;
+    this.effectiveStates = [];
+    this.resolvedStatePatch = undefined;
+    this.sharedStateDirty = false;
+    this.clearSharedStateActiveRegistrations();
+    getStageStatePerfMonitor(this.stage)?.incrementCounter('stateCommits');
+    getStageStatePerfMonitor(this.stage)?.recordEvent('state-commit', {
+      graphicId: this._uid,
+      targetStates: []
+    });
+    if (hasAnimation) {
+      this._syncFinalAttributeFromStaticTruth();
+      this.applyStateAttrs(resolvedStateAttrs, transition.states, hasAnimation, true);
+    } else {
+      this.stopStateAnimates();
+      this._restoreAttributeFromStaticTruth({ type: AttributeUpdateType.STATE });
+      this._emitCustomEvent('afterStateUpdate', { type: AttributeUpdateType.STATE });
+    }
+  }
 
-    this.useStates(newStates, hasAnimation);
+  removeState(stateName: string | string[], hasAnimation?: boolean) {
+    const transition = this.createStateModel().removeState(stateName);
+    if (transition.changed) {
+      this.useStates(transition.states, hasAnimation);
+    }
+  }
+
+  toggleState(stateName: string, hasAnimation?: boolean) {
+    const transition = this.createStateModel().toggleState(stateName);
+    if (transition.changed) {
+      this.useStates(transition.states, hasAnimation);
+    }
+  }
+
+  addState(stateName: string, keepCurrentStates?: boolean, hasAnimation?: boolean) {
+    const transition = this.createStateModel().addState(stateName, keepCurrentStates);
+    if (!transition.changed) {
+      return;
+    }
+    this.useStates(transition.states, hasAnimation);
   }
 
   useStates(states: string[], hasAnimation?: boolean) {
@@ -1172,31 +1652,86 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       return;
     }
 
-    const isChange =
-      this.currentStates?.length !== states.length ||
-      states.some((stateName, index) => this.currentStates[index] !== stateName);
-
-    if (!isChange) {
+    const previousStates = this.currentStates ? this.currentStates.slice() : [];
+    const stateResolveBaseAttrs = (this.baseAttributes ?? this.attribute) as Partial<T>;
+    const stateModel = this.createStateModel();
+    this.stateEngine?.setResolveContext(this, stateResolveBaseAttrs);
+    const transition = stateModel.useStates(states);
+    if (!transition.changed && this.sameStateNames(previousStates, transition.states)) {
       return;
     }
 
-    if (this.stateSort) {
-      states = states.sort(this.stateSort);
+    const resolver = this.stateMergeMode === 'deep' ? this.deepStateStyleResolver : this.stateStyleResolver;
+    const effectiveStates = transition.effectiveStates ?? transition.states;
+    const resolvedStateAttrs =
+      this.stateEngine && this.compiledStateDefinitions
+        ? { ...(this.stateEngine.resolvedPatch as Partial<T>) }
+        : resolver.resolve(
+            stateResolveBaseAttrs,
+            this.states as any,
+            this.stateProxy as any,
+            transition.states,
+            this.stateSort
+          );
+
+    if (!this.beforeStateUpdate(resolvedStateAttrs, previousStates, transition.states, hasAnimation, false)) {
+      return;
     }
-    const stateAttrs = {};
-    // sort state
-    states.forEach(stateName => {
-      const attrs = this.stateProxy ? this.stateProxy(stateName, states) : this.states?.[stateName];
 
-      if (attrs) {
-        Object.assign(stateAttrs, attrs);
-      }
+    this.currentStates = transition.states;
+    this.effectiveStates = [...effectiveStates];
+    this.resolvedStatePatch = { ...resolvedStateAttrs };
+    this.sharedStateDirty = false;
+    this.syncSharedStateActiveRegistrations();
+    getStageStatePerfMonitor(this.stage)?.incrementCounter('stateCommits');
+    getStageStatePerfMonitor(this.stage)?.recordEvent('state-commit', {
+      graphicId: this._uid,
+      targetStates: [...transition.states]
     });
+    if (hasAnimation) {
+      this._syncFinalAttributeFromStaticTruth();
+      this.applyStateAttrs(resolvedStateAttrs, transition.states, hasAnimation);
+    } else {
+      this.stopStateAnimates();
+      this._restoreAttributeFromStaticTruth({ type: AttributeUpdateType.STATE });
+      this._emitCustomEvent('afterStateUpdate', { type: AttributeUpdateType.STATE });
+    }
+  }
 
-    this.updateNormalAttrs(stateAttrs);
+  invalidateResolver() {
+    if (!this.stateEngine || !this.currentStates?.length || !this.compiledStateDefinitions) {
+      return;
+    }
 
-    this.currentStates = states;
-    this.applyStateAttrs(stateAttrs, states, hasAnimation);
+    const stateResolveBaseAttrs = (this.baseAttributes ?? this.attribute) as Partial<T>;
+    this.stateEngine.setResolveContext(this, stateResolveBaseAttrs);
+    this.resolverEpoch += 1;
+    this.stateEngine.invalidateResolverCache();
+    const transition = this.stateEngine.applyStates(this.currentStates);
+    const resolvedStateAttrs = { ...(this.stateEngine.resolvedPatch as Partial<T>) };
+    this.effectiveStates = [...transition.effectiveStates];
+    this.resolvedStatePatch = { ...resolvedStateAttrs };
+    this.sharedStateDirty = false;
+    this.syncSharedStateActiveRegistrations();
+    this.stopStateAnimates();
+    this._restoreAttributeFromStaticTruth({ type: AttributeUpdateType.STATE });
+    this._emitCustomEvent('afterStateUpdate', { type: AttributeUpdateType.STATE });
+  }
+
+  private sameStateNames(left?: readonly string[], right?: readonly string[]): boolean {
+    const normalizedLeft = left ?? [];
+    const normalizedRight = right ?? [];
+    if (normalizedLeft.length !== normalizedRight.length) {
+      return false;
+    }
+
+    for (let index = 0; index < normalizedLeft.length; index++) {
+      if (normalizedLeft[index] !== normalizedRight[index]) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   addUpdateBoundTag() {
@@ -1207,6 +1742,10 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     if (this.glyphHost) {
       this.glyphHost.addUpdateBoundTag();
     }
+  }
+
+  addUpdatePaintTag() {
+    this._updateTag |= UpdateTag.UPDATE_PAINT;
   }
 
   addUpdateShapeTag() {
@@ -1229,6 +1768,10 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
 
   protected clearUpdateBoundTag() {
     this._updateTag &= UpdateTag.CLEAR_BOUNDS;
+  }
+
+  protected clearUpdatePaintTag() {
+    this._updateTag &= UpdateTag.CLEAR_PAINT;
   }
   /**
    * 更新位置tag，包括全局tag和局部tag
@@ -1382,23 +1925,40 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   }
 
   setStage(stage?: IStage, layer?: ILayer) {
-    if (this.stage !== stage) {
+    const graphicService = stage?.graphicService ?? this.stage?.graphicService ?? application.graphicService;
+    const previousStage = this.stage;
+    if (this.stage !== stage || this.layer !== layer) {
       this.stage = stage;
       this.layer = layer;
+      this.syncSharedStateScopeBindingFromTree(!!this.currentStates?.length);
       this.setStageToShadowRoot(stage, layer);
-      if (this.animates && this.animates.size) {
-        // 设置timeline为所属的stage上的timeline，但如果timeline并不是默认的timeline，就不用覆盖
-        const timeline = stage.getTimeline();
-        this.animates.forEach(a => {
+      if (this.hasAnyTrackedAnimate()) {
+        const previousTimeline = previousStage?.getTimeline?.();
+        const nextTimeline = stage?.getTimeline?.();
+        this.visitTrackedAnimates(a => {
           if (a.timeline.isGlobal) {
-            a.setTimeline(timeline);
-            timeline.addAnimate(a);
+            if (!nextTimeline) {
+              if (previousTimeline && a.timeline === previousTimeline) {
+                previousTimeline.removeAnimate(a, false);
+              }
+              return;
+            }
+            if (a.timeline !== nextTimeline) {
+              if (previousTimeline && a.timeline === previousTimeline) {
+                previousTimeline.removeAnimate(a, false);
+              }
+              a.setTimeline(nextTimeline);
+              nextTimeline.addAnimate(a);
+            }
           }
         });
       }
       this._onSetStage && this._onSetStage(this, stage, layer);
-      this.getGraphicService().onSetStage(this, stage);
+      graphicService?.onSetStage?.(this, stage);
+      return;
     }
+
+    this.syncSharedStateScopeBindingFromTree(!!this.currentStates?.length);
   }
 
   setStageToShadowRoot(stage?: IStage, layer?: ILayer) {
@@ -1411,9 +1971,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     return;
   }
   onStop(props?: Partial<T>): void {
-    if (props) {
-      this.setAttributes(props, false, { type: AttributeUpdateType.ANIMATE_END });
-    }
+    this._restoreAttributeFromStaticTruth({ type: AttributeUpdateType.ANIMATE_END });
   }
 
   getDefaultAttribute(name: string) {
@@ -1442,7 +2000,10 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       shadowRoot.shadowHost = this;
     }
 
-    this.shadowRoot = shadowRoot ?? application.graphicService.creator.shadowRoot(this);
+    this.shadowRoot =
+      shadowRoot ??
+      application.graphicService.creator.shadowRoot?.(this) ??
+      (loadShadowRootFactory().createShadowRoot(this) as IShadowRoot);
     this.addUpdateBoundTag();
     this.shadowRoot.setStage(this.stage, this.layer);
     return this.shadowRoot;
@@ -1556,16 +2117,18 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     cb && cb();
   }
 
-  private _stopAnimates(animates: Map<string | number, IAnimate>) {
-    if (animates) {
-      animates.forEach(animate => {
-        animate.stop();
-      });
-    }
+  private _stopAnimates() {
+    const animates: IAnimate[] = [];
+    this.visitTrackedAnimates(animate => {
+      animates.push(animate);
+    });
+    animates.forEach(animate => {
+      animate.stop();
+    });
   }
 
   stopAnimates(stopChildren: boolean = false) {
-    this._stopAnimates(this.animates);
+    this._stopAnimates();
 
     if (this.shadowRoot) {
       // 停止所有影子节点的动画
@@ -1580,19 +2143,48 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
 
   release(): void {
     this.releaseStatus = 'released';
+    this.clearSharedStateActiveRegistrations();
     this.stopAnimates();
-    application.graphicService.onRelease(this);
+    const graphicService = this.stage?.graphicService ?? application.graphicService;
+    graphicService?.onRelease?.(this);
     super.release();
   }
 
-  protected _emitCustomEvent(type: string, context?: any) {
+  protected _dispatchCustomEvent(type: string, context?: any) {
     if (this._events && type in this._events) {
       const changeEvent = new CustomEvent(type, context);
       changeEvent.bubbles = false;
+      const manager = (this.stage as any)?.eventSystem?.manager;
 
-      (changeEvent as any).manager = (this.stage as any)?.eventSystem?.manager;
-      this.dispatchEvent(changeEvent);
+      if (manager) {
+        (changeEvent as any).manager = manager;
+        return this.dispatchEvent(changeEvent);
+      }
+
+      return Node.prototype.dispatchEvent.call(this, changeEvent);
     }
+    return true;
+  }
+
+  protected beforeStateUpdate(
+    attrs: Partial<T>,
+    prevStates: string[],
+    nextStates: string[],
+    hasAnimation?: boolean,
+    isClear?: boolean
+  ) {
+    return this._dispatchCustomEvent('beforeStateUpdate', {
+      type: AttributeUpdateType.STATE,
+      attrs: { ...attrs },
+      prevStates: prevStates.slice(),
+      nextStates: nextStates.slice(),
+      hasAnimation: !!hasAnimation,
+      isClear: !!isClear
+    });
+  }
+
+  protected _emitCustomEvent(type: string, context?: any) {
+    this._dispatchCustomEvent(type, context);
   }
 
   abstract getNoWorkAnimateAttr(): Record<string, number>;

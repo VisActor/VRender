@@ -1,19 +1,19 @@
-import { ContainerModule, bindContributionProvider } from '@visactor/vrender-core';
+import { bindContributionProvider } from '@visactor/vrender-core';
 import { CanvasGroupPicker, CanvasPickerContribution } from '../constants';
 import { DefaultCanvasGroupPicker } from './group-picker';
+import type { LegacyBindContainer } from '../../../common/legacy-container';
 
-const m = new ContainerModule((bind, unbind, isBound, rebind) => {
-  if ((m as any).__vloaded) {
+let loaded = false;
+
+export function bindCanvasPickerContribution(c: LegacyBindContainer) {
+  if (loaded) {
     return;
   }
-  (m as any).__vloaded = true;
-  // group picker
-  bind(CanvasGroupPicker).to(DefaultCanvasGroupPicker).inSingletonScope();
-  bind(CanvasPickerContribution).toService(CanvasGroupPicker);
+  loaded = true;
+  c.bind(CanvasGroupPicker)
+    .toDynamicValue(() => new DefaultCanvasGroupPicker())
+    .inSingletonScope();
+  c.bind(CanvasPickerContribution).toService(CanvasGroupPicker);
 
-  bindContributionProvider(bind, CanvasPickerContribution);
-});
-
-(m as any).__vloaded = false;
-
-export default m;
+  bindContributionProvider(c.bind.bind(c) as any, CanvasPickerContribution);
+}

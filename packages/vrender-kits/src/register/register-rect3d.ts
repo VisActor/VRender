@@ -1,15 +1,15 @@
-import { container, rect3dModule, registerRect3dGraphic } from '@visactor/vrender-core';
-import { browser } from './env';
-import { rect3dCanvasPickModule } from '../picker/contributions/canvas-picker/rect3d-module';
+import { getLegacyBindingContext, rect3dModule, registerRect3dGraphic } from '@visactor/vrender-core';
+import { bindRect3dCanvasPickerContribution } from '../picker/contributions/canvas-picker/rect3d-module';
 
 function _registerRect3d() {
   if (_registerRect3d.__loaded) {
     return;
   }
   _registerRect3d.__loaded = true;
+  const legacyContext = getLegacyBindingContext();
   registerRect3dGraphic();
-  container.load(rect3dModule);
-  container.load(browser ? rect3dCanvasPickModule : rect3dCanvasPickModule);
+  (rect3dModule as any)({ bind: legacyContext.bind });
+  bindRect3dCanvasPickerContribution(legacyContext);
 }
 
 _registerRect3d.__loaded = false;

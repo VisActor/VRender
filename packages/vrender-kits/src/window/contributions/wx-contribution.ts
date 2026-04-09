@@ -1,12 +1,4 @@
-import {
-  inject,
-  injectable,
-  Generator,
-  BaseWindowHandlerContribution,
-  VGlobal,
-  ContainerModule,
-  WindowHandlerContribution
-} from '@visactor/vrender-core';
+import { Generator, BaseWindowHandlerContribution, WindowHandlerContribution } from '@visactor/vrender-core';
 import type {
   EnvType,
   IGlobal,
@@ -18,6 +10,7 @@ import type {
 } from '@visactor/vrender-core';
 import type { IBoundsLike } from '@visactor/vutils';
 import { WxCanvas } from '../../canvas/contributions/wx';
+import { application } from '@visactor/vrender-core';
 
 class MiniAppEventManager {
   addEventListener(type: string, func: EventListenerOrEventListenerObject) {
@@ -47,7 +40,6 @@ class MiniAppEventManager {
   cache: Record<string, { listener: EventListenerOrEventListenerObject[] }> = {};
 }
 
-@injectable()
 export class WxWindowHandlerContribution extends BaseWindowHandlerContribution implements IWindowHandlerContribution {
   static env: EnvType = 'wx';
   type: EnvType = 'wx';
@@ -59,7 +51,7 @@ export class WxWindowHandlerContribution extends BaseWindowHandlerContribution i
     return null;
   }
 
-  constructor(@inject(VGlobal) private readonly global: IGlobal) {
+  constructor(private readonly global: IGlobal = application.global) {
     super();
   }
 
@@ -238,10 +230,16 @@ export class WxWindowHandlerContribution extends BaseWindowHandlerContribution i
   }
 }
 
-export const wxWindowModule = new ContainerModule(bind => {
-  // wx
-  bind(WxWindowHandlerContribution).toSelf();
-  bind(WindowHandlerContribution)
-    .toDynamicValue(ctx => ctx.container.get(WxWindowHandlerContribution))
+let wxWindowContributionBound = false;
+
+export function bindWxWindowContribution(container: any) {
+  if (wxWindowContributionBound) {
+    return;
+  }
+  wxWindowContributionBound = true;
+  container.bind(WxWindowHandlerContribution).toSelf();
+  container
+    .bind(WindowHandlerContribution)
+    .toService(WxWindowHandlerContribution)
     .whenTargetNamed(WxWindowHandlerContribution.env);
-});
+}

@@ -1,12 +1,11 @@
 import { bindContributionProvider } from '../../../common/contribution-provider';
-import { ContainerModule } from '../../../common/inversify';
 import { DefaultBaseInteractiveRenderContribution } from './contributions';
 import { ImageRenderContribution } from './contributions/constants';
 import { DefaultCanvasImageRender } from './image-render';
 import { GraphicRender, ImageRender } from './symbol';
 
 let loadImageModule = false;
-export const imageModule = new ContainerModule(bind => {
+export function bindImageRenderModule({ bind }: { bind: any }) {
   if (loadImageModule) {
     return;
   }
@@ -17,4 +16,6 @@ export const imageModule = new ContainerModule(bind => {
   bind(ImageRenderContribution).toService(DefaultBaseInteractiveRenderContribution);
   // image 渲染器注入contributions
   bindContributionProvider(bind, ImageRenderContribution);
-});
+}
+
+export const imageModule = bindImageRenderModule;

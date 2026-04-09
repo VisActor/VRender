@@ -1,5 +1,4 @@
 import { bindContributionProvider } from '../../../common/contribution-provider';
-import { ContainerModule } from '../../../common/inversify';
 import { DefaultBaseInteractiveRenderContribution } from './contributions';
 import { PathRenderContribution, PolygonRenderContribution } from './contributions/constants';
 import { DefaultCanvasPathRender } from './path-render';
@@ -7,7 +6,7 @@ import { DefaultCanvasPolygonRender } from './polygon-render';
 import { GraphicRender, PathRender, PolygonRender } from './symbol';
 
 let loadPolygonModule = false;
-export const polygonModule = new ContainerModule(bind => {
+export function bindPolygonRenderModule({ bind }: { bind: any }) {
   if (loadPolygonModule) {
     return;
   }
@@ -19,4 +18,6 @@ export const polygonModule = new ContainerModule(bind => {
 
   // polygon 渲染器注入contributions
   bindContributionProvider(bind, PolygonRenderContribution);
-});
+}
+
+export const polygonModule = bindPolygonRenderModule;

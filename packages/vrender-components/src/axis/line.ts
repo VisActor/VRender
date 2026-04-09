@@ -15,7 +15,7 @@ import {
   mixin,
   last as peek
 } from '@visactor/vutils';
-import { graphicCreator } from '@visactor/vrender-core';
+import { graphicCreator } from '../util/graphic-creator';
 // eslint-disable-next-line no-duplicate-imports
 import type {
   TextAlignType,

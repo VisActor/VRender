@@ -1,6 +1,7 @@
 import type { INode } from './node-tree';
 import type { ILayer, LayerMode } from './layer';
 import type { IColor } from './color';
+import type { IGraphic } from './graphic';
 import type { IAABBBounds, IBounds, IBoundsLike, IMatrix } from '@visactor/vutils';
 import type { ICamera } from './camera';
 import type { vec3 } from './matrix';
@@ -14,6 +15,12 @@ import type { IWindow } from './window';
 import type { ILayerService } from './core';
 import type { IFullThemeSpec } from './graphic/theme';
 import type { IGraphicService } from './graphic-service';
+import type { SharedStateScope } from '../graphic/state/shared-state-scope';
+import type {
+  IDeferredStateOwnerConfig,
+  IStatePerfConfig,
+  IStatePerfSnapshot
+} from '../graphic/state/state-perf-monitor';
 
 export type IExportType = 'canvas' | 'imageData';
 
@@ -159,6 +166,8 @@ export interface IStage extends INode {
 
   autoRender: boolean;
   renderCount: number;
+  statePerfConfig?: IStatePerfConfig;
+  deferredStateConfig?: IDeferredStateOwnerConfig;
 
   hooks: {
     beforeRender: ISyncHook<[IStage]>;
@@ -184,6 +193,7 @@ export interface IStage extends INode {
   getPickerService: () => IPickerService;
   readonly pluginService: IPluginService;
   readonly layerService: ILayerService;
+  rootSharedStateScope?: SharedStateScope<Record<string, any>>;
   // 如果传入CanvasId，如果存在相同Id，说明这两个图层使用相同的Canvas绘制
   // 但需要注意的是依然是两个图层（用于解决Table嵌入ChartSpace不影响Table的绘制）
   createLayer: (canvasId?: string, layerMode?: LayerMode) => ILayer;
@@ -201,6 +211,9 @@ export interface IStage extends INode {
    * @returns
    */
   renderNextFrame: (layers?: ILayer[], force?: boolean) => void;
+  scheduleStateBatch: (graphics: IGraphic[], targetStates: string[]) => void;
+  getStatePerfSnapshot: () => IStatePerfSnapshot;
+  resetStatePerfSnapshot: () => void;
   tryInitInteractiveLayer: () => void;
 
   // 画布操作

@@ -13,6 +13,7 @@ import type { IRichTextGraphicAttribute, IRichTextIconGraphicAttribute } from '.
 import type { IStarGraphicAttribute } from './star';
 import type { ISymbolGraphicAttribute } from './symbol';
 import type { ITextGraphicAttribute } from './text';
+import type { StateDefinitionsInput } from '../../graphic/state/state-definition';
 
 export interface IThemeSpec {
   text?: Partial<ITextGraphicAttribute>;
@@ -53,6 +54,8 @@ export interface ITheme {
   combinedTheme?: IFullThemeSpec;
   userTheme?: IThemeSpec;
   nextTheme?: IThemeSpec;
+  stateDefinitions?: StateDefinitionsInput<Record<string, any>>;
+  onStateDefinitionsChange?: (() => void) | undefined;
   applyTheme: (group: IGroup, pt: IThemeSpec, force?: boolean) => IThemeSpec;
   setTheme: (t: IThemeSpec, g: IGroup) => void;
   dirty: boolean;

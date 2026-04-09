@@ -1,7 +1,8 @@
-import { Stage } from './core/stage';
+import { StageFactory } from './factory';
 import type { IStageParams } from './interface/stage';
+import { configureLegacyApplication } from './modules';
 
 export function createStage(params: Partial<IStageParams>) {
-  return new Stage(params);
-  // return container.get<(params: Partial<IStageParams>) => IStage>(StageFactory)(params);
+  configureLegacyApplication();
+  return new StageFactory().create(params);
 }

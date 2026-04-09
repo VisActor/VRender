@@ -3,7 +3,7 @@
  */
 import type { FederatedPointerEvent, IGroup, IPolygon } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
-import { graphicCreator } from '@visactor/vrender-core';
+import { graphicCreator } from '../util/graphic-creator';
 import type { IBounds, IPointLike } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports
 import { array, cloneDeep, debounce, isEmpty, merge, polygonContainPoint, throttle } from '@visactor/vutils';
@@ -438,7 +438,7 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
       cursor: 'move',
       pickable: false,
       ...brushStyle,
-      opacity: hasMask ? (brushStyle.opacity ?? 1) : 0
+      opacity: hasMask ? brushStyle.opacity ?? 1 : 0
     });
     brushMask.name = `brush-${Date.now()}`; // 用Date给mask唯一标记
     this._operatingMask = brushMask;

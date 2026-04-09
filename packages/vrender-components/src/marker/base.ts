@@ -1,6 +1,6 @@
 import type { FederatedPointerEvent, IGraphic, IGroup, IImage, IRichText, ISymbol } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
-import { graphicCreator } from '@visactor/vrender-core';
+import { graphicCreator } from '../util/graphic-creator';
 import { AbstractComponent } from '../core/base';
 import type { Tag } from '../tag';
 import type { MarkerAnimationState, MarkerAttrs, MarkerExitAnimation, MarkerUpdateAnimation } from './type';

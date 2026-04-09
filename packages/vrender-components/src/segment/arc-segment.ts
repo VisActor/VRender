@@ -4,7 +4,7 @@
 import { isEmpty, merge } from '@visactor/vutils';
 import type { IArc } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
-import { graphicCreator } from '@visactor/vrender-core';
+import { graphicCreator } from '../util/graphic-creator';
 import type { ArcSegmentAttributes, SymbolAttributes } from './type';
 import type { Point } from '../core/type';
 import type { ComponentOptions } from '../interface';

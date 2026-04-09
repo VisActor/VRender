@@ -1,4 +1,3 @@
-import { inject, injectable, named } from '../../../common/inversify-lite';
 import type {
   IGraphicAttribute,
   IContext2d,
@@ -16,8 +15,6 @@ import type {
 import { getTheme } from '../../../graphic/theme';
 import { getModelMatrix } from '../../../graphic/graphic-service/graphic-service';
 import { isArray } from '@visactor/vutils';
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { ContributionProvider } from '../../../common/contribution-provider';
 import { createRectPath } from '../../../common/shape/rect';
 import { rectFillVisible, rectStrokeVisible, runFill, runStroke } from './utils';
 import { GroupRenderContribution } from './contributions/constants';
@@ -28,18 +25,13 @@ import { defaultGroupBackgroundRenderContribution } from './contributions';
 import { multiplyMat4Mat4 } from '../../../common/matrix';
 import { application } from '../../../application';
 
-@injectable()
 export class DefaultCanvasGroupRender implements IGraphicRender {
   type: 'group';
   numberType: number = GROUP_NUMBER_TYPE;
 
   _groupRenderContribitions: IGroupRenderContribution[];
 
-  constructor(
-    @inject(ContributionProvider)
-    @named(GroupRenderContribution)
-    protected readonly groupRenderContribitions: IContributionProvider<IGroupRenderContribution>
-  ) {}
+  constructor(protected readonly groupRenderContribitions: IContributionProvider<IGroupRenderContribution>) {}
 
   reInit() {
     this._groupRenderContribitions = this.groupRenderContribitions.getContributions() || [];

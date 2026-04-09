@@ -3,6 +3,7 @@ import type { ICanvasLike } from './canvas';
 import type { IEventElement } from './common';
 import type { IContribution } from './contribution';
 import type { ISyncHook } from './sync-hook';
+import type { PerformanceRAF } from '../common/performance-raf';
 
 export interface ILoader {
   loadImage: (url: string) => HTMLImageElement | ImageData;
@@ -257,6 +258,7 @@ export interface IGlobal extends Omit<IEventElement, 'on' | 'off' | 'once' | 'em
   getCancelAnimationFrame: () => null | ((h: number) => void);
   getSpecifiedRequestAnimationFrame: (id: number) => (callback: FrameRequestCallback) => number;
   getSpecifiedCancelAnimationFrame: (id: number) => (h: number) => void;
+  getSpecifiedPerformanceRAF: (id: number) => PerformanceRAF;
 
   /**
    * 将窗口坐标转换为画布坐标，小程序/小组件环境需要兼容

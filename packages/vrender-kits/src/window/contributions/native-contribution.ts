@@ -8,7 +8,6 @@
 //   loadImage: typeof loadImage;
 // };
 
-// @injectable()
 // export class NodeWindowHandlerContribution extends BaseWindowHandlerContribution implements IWindowHandlerContribution {
 //   type: EnvType = 'native';
 
@@ -26,7 +25,7 @@
 //     return null;
 //   }
 
-//   constructor(@inject(VGlobal) private readonly global: IGlobal) {
+//   constructor(private readonly global: IGlobal) {
 //     super();
 //   }
 

@@ -1,16 +1,17 @@
-import { container, glyphModule, registerGlyphGraphic } from '@visactor/vrender-core';
+import { getLegacyBindingContext, glyphModule, registerGlyphGraphic } from '@visactor/vrender-core';
 import { browser } from './env';
-import { glyphCanvasPickModule } from '../picker/contributions/canvas-picker/glyph-module';
-import { glyphMathPickModule } from '../picker/contributions/math-picker/glyph-module';
+import { bindGlyphCanvasPickerContribution } from '../picker/contributions/canvas-picker/glyph-module';
+import { bindGlyphMathPickerContribution } from '../picker/contributions/math-picker/glyph-module';
 
 function _registerGlyph() {
   if (_registerGlyph.__loaded) {
     return;
   }
   _registerGlyph.__loaded = true;
+  const legacyContext = getLegacyBindingContext();
   registerGlyphGraphic();
-  container.load(glyphModule);
-  container.load(browser ? glyphCanvasPickModule : glyphMathPickModule);
+  (glyphModule as any)({ bind: legacyContext.bind });
+  browser ? bindGlyphCanvasPickerContribution(legacyContext) : bindGlyphMathPickerContribution(legacyContext);
 }
 
 _registerGlyph.__loaded = false;

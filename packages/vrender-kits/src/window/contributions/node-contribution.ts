@@ -1,12 +1,4 @@
-import {
-  inject,
-  injectable,
-  Generator,
-  BaseWindowHandlerContribution,
-  VGlobal,
-  ContainerModule,
-  WindowHandlerContribution
-} from '@visactor/vrender-core';
+import { Generator, BaseWindowHandlerContribution, WindowHandlerContribution } from '@visactor/vrender-core';
 import type { IBoundsLike } from '@visactor/vutils';
 import type {
   EnvType,
@@ -18,8 +10,8 @@ import type {
   IWindowParams
 } from '@visactor/vrender-core';
 import { NodeCanvas } from '../../canvas/contributions/node';
+import { application } from '@visactor/vrender-core';
 
-@injectable()
 export class NodeWindowHandlerContribution extends BaseWindowHandlerContribution implements IWindowHandlerContribution {
   static env: EnvType = 'node';
   type: EnvType = 'node';
@@ -29,7 +21,7 @@ export class NodeWindowHandlerContribution extends BaseWindowHandlerContribution
     return null;
   }
 
-  constructor(@inject(VGlobal) private readonly global: IGlobal) {
+  constructor(private readonly global: IGlobal = application.global) {
     super();
   }
 
@@ -164,10 +156,16 @@ export class NodeWindowHandlerContribution extends BaseWindowHandlerContribution
   }
 }
 
-export const nodeWindowModule = new ContainerModule(bind => {
-  // node
-  bind(NodeWindowHandlerContribution).toSelf();
-  bind(WindowHandlerContribution)
-    .toDynamicValue(ctx => ctx.container.get(NodeWindowHandlerContribution))
+let nodeWindowContributionBound = false;
+
+export function bindNodeWindowContribution(container: any) {
+  if (nodeWindowContributionBound) {
+    return;
+  }
+  nodeWindowContributionBound = true;
+  container.bind(NodeWindowHandlerContribution).toSelf();
+  container
+    .bind(WindowHandlerContribution)
+    .toService(NodeWindowHandlerContribution)
     .whenTargetNamed(NodeWindowHandlerContribution.env);
-});
+}

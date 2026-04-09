@@ -1,13 +1,10 @@
-import { AutoEnablePlugins, ContainerModule, container } from '@visactor/vrender-core';
+import { AutoEnablePlugins, getLegacyBindingContext } from '@visactor/vrender-core';
 import { ScrollBarPlugin } from './scrollbar-plugin';
 
-export const scrollbarModule = new ContainerModule((bind, unbind, isBound, rebind) => {
-  if (!isBound(ScrollBarPlugin)) {
-    bind(ScrollBarPlugin).toSelf();
-    bind(AutoEnablePlugins).toService(ScrollBarPlugin);
-  }
-});
-
 export function loadScrollbar() {
-  container.load(scrollbarModule);
+  const legacyContext = getLegacyBindingContext();
+  if (!legacyContext.isBound(ScrollBarPlugin)) {
+    legacyContext.bind(ScrollBarPlugin).toSelf();
+    legacyContext.bind(AutoEnablePlugins).toService(ScrollBarPlugin);
+  }
 }

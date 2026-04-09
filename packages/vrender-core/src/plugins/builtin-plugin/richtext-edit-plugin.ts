@@ -117,7 +117,7 @@ class Selection {
     }
     for (let i = Math.ceil(minCursorIdx); i <= Math.floor(maxCursorIdx); i++) {
       const val = supportOutAttr
-        ? (this._getFormat(key, i) ?? (this.rt?.attribute as any)[key])
+        ? this._getFormat(key, i) ?? (this.rt?.attribute as any)[key]
         : this._getFormat(key, i);
       val && valSet.add(val);
     }
@@ -166,8 +166,8 @@ export class RichTextEditPlugin implements IPlugin {
   protected updateCbs: Array<(type: UpdateType, p: RichTextEditPlugin, params?: any) => void>;
 
   // 富文本外部有align或者baseline的时候，需要对光标做偏移
-  declare protected deltaX: number;
-  declare protected deltaY: number;
+  protected declare deltaX: number;
+  protected declare deltaY: number;
 
   // static splitText(text: string) {
   //   // 😁这种emoji长度算两个，所以得处理一下
@@ -940,8 +940,10 @@ export class RichTextEditPlugin implements IPlugin {
       return;
     }
     line.setAttributes({ opacity: 1 });
-    line.animates &&
-      line.animates.forEach(animate => {
+    const trackedAnimates =
+      ((line as any).getTrackedAnimates && (line as any).getTrackedAnimates()) || (line as any).animates;
+    trackedAnimates &&
+      trackedAnimates.forEach((animate: any) => {
         animate.stop();
         animate.release();
       });

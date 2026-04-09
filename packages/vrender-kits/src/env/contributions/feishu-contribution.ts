@@ -1,4 +1,4 @@
-import { injectable, BaseEnvContribution, rafBasedSto } from '@visactor/vrender-core';
+import { BaseEnvContribution, rafBasedSto } from '@visactor/vrender-core';
 // import { loadFeishuContributions } from '../../../kits';
 import type {
   ICanvasLike,
@@ -41,7 +41,6 @@ function makeUpCanvas(
   });
 }
 
-@injectable()
 export class FeishuEnvContribution extends BaseEnvContribution implements IEnvContribution {
   type: EnvType = 'feishu';
   supportEvent: boolean = true;

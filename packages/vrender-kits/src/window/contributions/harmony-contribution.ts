@@ -1,12 +1,4 @@
-import {
-  inject,
-  injectable,
-  Generator,
-  BaseWindowHandlerContribution,
-  VGlobal,
-  ContainerModule,
-  WindowHandlerContribution
-} from '@visactor/vrender-core';
+import { Generator, BaseWindowHandlerContribution, WindowHandlerContribution } from '@visactor/vrender-core';
 import type {
   EnvType,
   IGlobal,
@@ -17,6 +9,7 @@ import type {
   IWindowHandlerContribution
 } from '@visactor/vrender-core';
 import { HarmonyCanvas } from '../../canvas/contributions/harmony';
+import { application } from '@visactor/vrender-core';
 
 class MiniAppEventManager {
   addEventListener(type: string, func: EventListenerOrEventListenerObject) {
@@ -46,7 +39,6 @@ class MiniAppEventManager {
   cache: Record<string, { listener: EventListenerOrEventListenerObject[] }> = {};
 }
 
-@injectable()
 export class HarmonyWindowHandlerContribution
   extends BaseWindowHandlerContribution
   implements IWindowHandlerContribution
@@ -61,7 +53,7 @@ export class HarmonyWindowHandlerContribution
     return null;
   }
 
-  constructor(@inject(VGlobal) private readonly global: IGlobal) {
+  constructor(private readonly global: IGlobal = application.global) {
     super();
   }
 
@@ -235,10 +227,16 @@ export class HarmonyWindowHandlerContribution
   }
 }
 
-export const harmonyWindowModule = new ContainerModule(bind => {
-  // harmony
-  bind(HarmonyWindowHandlerContribution).toSelf();
-  bind(WindowHandlerContribution)
-    .toDynamicValue(ctx => ctx.container.get(HarmonyWindowHandlerContribution))
+let harmonyWindowContributionBound = false;
+
+export function bindHarmonyWindowContribution(container: any) {
+  if (harmonyWindowContributionBound) {
+    return;
+  }
+  harmonyWindowContributionBound = true;
+  container.bind(HarmonyWindowHandlerContribution).toSelf();
+  container
+    .bind(WindowHandlerContribution)
+    .toService(HarmonyWindowHandlerContribution)
     .whenTargetNamed(HarmonyWindowHandlerContribution.env);
-});
+}

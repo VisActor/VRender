@@ -1,28 +1,14 @@
-module.exports = {
-  runner: 'jest-electron/runner',
-  testEnvironment: 'jest-electron/environment',
-  testTimeout: 30000,
+const { createStablePackageJestConfig } = require('../../share/jest-config/create-package-config');
+
+module.exports = createStablePackageJestConfig({
+  environment: 'jsdom',
   testRegex: '/__tests__/.*test\\.ts?$',
   moduleFileExtensions: ['ts', 'js', 'json'],
   setupFilesAfterEnv: ['jest-extended/all'],
-  preset: 'ts-jest',
-  silent: true,
-  globals: {
-    'ts-jest': {
-      tsconfig: {
-        resolveJsonModule: true,
-        esModuleInterop: true,
-        experimentalDecorators: true,
-        module: 'ESNext'
-      }
-    },
-    __DEV__: true
-  },
-  setupFiles: ['./setup-mock.js'],
-  verbose: true,
-  coverageReporters: ['json-summary', 'lcov', 'text'],
+  setupFiles: ['../../share/jest-config/browser-globals.js', './setup-mock.js'],
+  tsconfig: './tsconfig.test.json',
   coveragePathIgnorePatterns: ['node_modules', '__tests__', 'interface.ts', '.d.ts', 'typings'],
-  testPathIgnorePatterns: ['__tests__/browser'],
+  testPathIgnorePatterns: ['__tests__/browser', '__tests__/electron'],
   collectCoverageFrom: [
     '**/src/**',
     '!**/cjs/**',
@@ -42,4 +28,4 @@ module.exports = {
       statements: 80
     }
   }
-};
+});

@@ -1,7 +1,8 @@
-import { ContainerModule } from '../common/inversify-lite';
 import { DefaultRenderService } from './render-service';
 import { RenderService } from './constants';
 
-export default new ContainerModule(bind => {
+export function bindRenderServiceModule({ bind }: { bind: any }) {
   bind(RenderService).to(DefaultRenderService);
-});
+}
+
+export default bindRenderServiceModule;

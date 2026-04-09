@@ -4,7 +4,7 @@ import {
   type EasingType,
   type IAnimateStepType,
   type ICustomAnimate,
-  type Stage
+  type IStage
 } from '@visactor/vrender-core';
 import { Step } from '../step';
 
@@ -69,12 +69,12 @@ export abstract class AStageAnimate<T> extends ACustomAnimate<T> {
   }
 
   // 用户重载
-  protected beforeStageRender(stage: Stage, canvas: HTMLCanvasElement): HTMLCanvasElement | void | null | false {
+  protected beforeStageRender(stage: IStage, canvas: HTMLCanvasElement): HTMLCanvasElement | void | null | false {
     return false;
   }
 
   // 用户重载
-  protected afterStageRender(stage: Stage, canvas: HTMLCanvasElement): HTMLCanvasElement | void | null | false {
+  protected afterStageRender(stage: IStage, canvas: HTMLCanvasElement): HTMLCanvasElement | void | null | false {
     return false;
   }
 
@@ -127,7 +127,7 @@ export abstract class AStageAnimate<T> extends ACustomAnimate<T> {
     }
   };
 
-  protected renderToStage(stage: Stage, canvas: HTMLCanvasElement): HTMLCanvasElement | void | null | false {
+  protected renderToStage(stage: IStage, canvas: HTMLCanvasElement): HTMLCanvasElement | void | null | false {
     const stageCanvas = stage.window.getContext().canvas.nativeCanvas;
     const ctx = stageCanvas.getContext('2d');
     if (!ctx) {

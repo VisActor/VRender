@@ -1,4 +1,4 @@
-import { createStage, createCircle, createRect, container } from '@visactor/vrender';
+import { createStage, createCircle, createRect } from '@visactor/vrender';
 import { roughModule } from '@visactor/vrender-kits';
 import { addShapesToStage, colorPools } from '../utils';
 

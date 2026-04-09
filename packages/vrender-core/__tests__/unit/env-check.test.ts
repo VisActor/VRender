@@ -1,12 +1,9 @@
-declare var require: any;
+declare let require: any;
 
 describe('env-check', () => {
-  const originalDocument = globalThis.document;
-
   afterEach(() => {
     jest.resetModules();
-    // @ts-ignore
-    globalThis.document = originalDocument;
+    jest.restoreAllMocks();
   });
 
   test('env override has priority', () => {
@@ -34,13 +31,9 @@ describe('env-check', () => {
       const app = { global: { env: undefined as any } };
       jest.doMock('../../src/application', () => ({ application: app }));
 
-      // make document.createElement throw to hit catch branch
-      // @ts-ignore
-      globalThis.document = {
-        createElement: () => {
-          throw new Error('boom');
-        }
-      } as any;
+      jest.spyOn(document, 'createElement').mockImplementation(() => {
+        throw new Error('boom');
+      });
 
       const { isBrowserEnv, isNodeEnv, getCurrentEnv } = require('../../src/env-check');
 

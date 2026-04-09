@@ -1,26 +1,26 @@
-import { container, ContainerModule, type Container, EnvContribution } from '@visactor/vrender-core';
-import { ttCanvasModule } from '../canvas/contributions/tt/modules';
-import { ttWindowModule } from '../window/contributions/tt-contribution';
+import { EnvContribution, getLegacyBindingContext } from '@visactor/vrender-core';
+import { bindTTCanvasModules } from '../canvas/contributions/tt/modules';
+import { bindTTWindowContribution } from '../window/contributions/tt-contribution';
 import { loadMathPicker } from '../picker/math-module';
 import { TTEnvContribution } from './contributions/tt-contribution';
+import type { LegacyBindContainer, LegacyContainer } from '../common/legacy-container';
 
-export const ttEnvModule = new ContainerModule(bind => {
-  // feishu
-  if (!(ttEnvModule as any).isTTBound) {
-    (ttEnvModule as any).isTTBound = true;
-    bind(TTEnvContribution).toSelf().inSingletonScope();
-    bind(EnvContribution).toService(TTEnvContribution);
+let isTTBound = false;
+
+export function bindTTEnv(container: LegacyBindContainer) {
+  if (!isTTBound) {
+    isTTBound = true;
+    container.bind(TTEnvContribution).toSelf().inSingletonScope();
+    container.bind(EnvContribution).toService(TTEnvContribution);
   }
-});
+}
 
-(ttEnvModule as any).isTTBound = false;
-
-export function loadTTEnv(container: Container, loadPicker: boolean = true) {
+export function loadTTEnv(container: LegacyContainer = getLegacyBindingContext(), loadPicker: boolean = true) {
   if (!loadTTEnv.__loaded) {
     loadTTEnv.__loaded = true;
-    container.load(ttEnvModule);
-    container.load(ttCanvasModule);
-    container.load(ttWindowModule);
+    bindTTEnv(container);
+    bindTTCanvasModules(container);
+    bindTTWindowContribution(container);
     loadPicker && loadMathPicker(container);
   }
 }
@@ -28,5 +28,5 @@ export function loadTTEnv(container: Container, loadPicker: boolean = true) {
 loadTTEnv.__loaded = false;
 
 export function initTTEnv() {
-  loadTTEnv(container);
+  loadTTEnv();
 }

@@ -1,4 +1,4 @@
-import type { IGraphic } from '@visactor/vrender-core';
+import type { IAnimate, IGraphic } from '@visactor/vrender-core';
 import type { IAnimationState } from './types';
 import { AnimationStateManager, AnimationStateStore } from './animation-state';
 import type { IAnimationConfig } from '../executor/executor';
@@ -9,17 +9,38 @@ import type { IAnimationConfig } from '../executor/executor';
 export class GraphicStateExtension {
   _getAnimationStateManager(graphic: IGraphic): AnimationStateManager {
     if (!(graphic as any)._animationStateManager) {
-      // Create the appropriate manager type based on whether this is a group
       (graphic as any)._animationStateManager = new AnimationStateManager(graphic);
     }
     return (graphic as any)._animationStateManager;
   }
   _getAnimationStateStore(graphic: IGraphic): AnimationStateStore {
     if (!(graphic as any)._animationStateStore) {
-      // Create the appropriate manager type based on whether this is a group
       (graphic as any)._animationStateStore = new AnimationStateStore(graphic);
     }
     return (graphic as any)._animationStateStore;
+  }
+
+  trackAnimate(animate: IAnimate): void {
+    this._getAnimationStateManager(this as unknown as IGraphic).trackAnimate(animate);
+  }
+
+  untrackAnimate(animateId: string | number): void {
+    const manager = (this as any)._animationStateManager as AnimationStateManager;
+    manager?.untrackAnimate(animateId);
+  }
+
+  forEachTrackedAnimate(cb: (animate: IAnimate) => void): void {
+    const manager = (this as any)._animationStateManager as AnimationStateManager;
+    manager?.forEachTrackedAnimate(cb);
+  }
+
+  getTrackedAnimates(): Map<string | number, IAnimate> {
+    return this._getAnimationStateManager(this as unknown as IGraphic).getTrackedAnimates();
+  }
+
+  hasTrackedAnimate(): boolean {
+    const manager = (this as any)._animationStateManager as AnimationStateManager;
+    return manager ? manager.hasTrackedAnimate() : false;
   }
 
   /**
@@ -31,7 +52,9 @@ export class GraphicStateExtension {
   }
 
   /**
-   * 应用一个动画状态到图形
+   * 应用一个动画状态到图形。
+   * 这里只负责把已经编排好的动画配置转交给 AnimationStateManager，
+   * 不参与 graphic 状态语义、样式解析或属性分类。
    */
   applyAnimationState(
     state: string[],
@@ -106,7 +129,7 @@ export class GraphicStateExtension {
   }
 
   /**
-   * 清除图形上的所有动画状态
+   * 清除图形上的所有动画执行状态，不修改 graphic.currentStates / normalAttrs。
    */
   clearAnimationStates(): this {
     const stateManager = (this as any)._animationStateManager as AnimationStateManager;
@@ -140,8 +163,6 @@ export class GraphicStateExtension {
    * 继承
    */
   static extend(graphic: IGraphic): IGraphic {
-    const extension = new GraphicStateExtension();
-    extension._getAnimationStateManager(graphic);
     return graphic;
   }
 }

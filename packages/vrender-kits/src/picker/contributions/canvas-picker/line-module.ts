@@ -1,13 +1,17 @@
-import { ContainerModule } from '@visactor/vrender-core';
+import { LineRender } from '@visactor/vrender-core';
+import { resolveContainerBinding } from '../../../common/explicit-binding';
 import { CanvasLinePicker, CanvasPickerContribution } from '../constants';
 import { DefaultCanvasLinePicker } from './line-picker';
 
 let loadLinePick = false;
-export const lineCanvasPickModule = new ContainerModule((bind, unbind, isBound, rebind) => {
+export function bindLineCanvasPickerContribution(container: any) {
   if (loadLinePick) {
     return;
   }
   loadLinePick = true;
-  bind(CanvasLinePicker).to(DefaultCanvasLinePicker).inSingletonScope();
-  bind(CanvasPickerContribution).toService(CanvasLinePicker);
-});
+  container
+    .bind(CanvasLinePicker)
+    .toDynamicValue(() => new DefaultCanvasLinePicker(resolveContainerBinding(container, LineRender)))
+    .inSingletonScope();
+  container.bind(CanvasPickerContribution).toService(CanvasLinePicker);
+}

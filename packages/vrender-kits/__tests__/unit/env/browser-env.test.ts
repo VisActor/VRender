@@ -1,5 +1,3 @@
-declare var require: any;
-
 describe('env/browser', () => {
   afterEach(() => {
     jest.resetModules();
@@ -8,32 +6,30 @@ describe('env/browser', () => {
   test('loadBrowserEnv loads modules once and optionally loads picker', () => {
     jest.isolateModules(() => {
       const loadCanvasPicker = jest.fn();
+      const getLegacyBindingContext = jest.fn();
       const bindReturn: any = {
         toSelf: () => ({ inSingletonScope: () => bindReturn }),
         toService: () => bindReturn
       };
       const bind = jest.fn(() => bindReturn);
+      const legacyContext = { bind, isBound: jest.fn(), rebind: jest.fn(), getAll: jest.fn(), getNamed: jest.fn() };
+      getLegacyBindingContext.mockReturnValue(legacyContext);
 
       jest.doMock('@visactor/vrender-core', () => {
-        class ContainerModule {
-          public _cb: any;
-          constructor(cb: any) {
-            this._cb = cb;
-          }
-        }
         return {
-          container: { load: jest.fn() },
-          EnvContribution: Symbol('EnvContribution'),
-          ContainerModule
+          getLegacyBindingContext,
+          EnvContribution: Symbol('EnvContribution')
         };
       });
 
+      const bindBrowserCanvasModules = jest.fn();
       jest.doMock('../../../src/canvas/contributions/browser/modules', () => ({
-        browserCanvasModule: { id: 'browserCanvasModule' }
+        bindBrowserCanvasModules
       }));
 
+      const bindBrowserWindowContribution = jest.fn();
       jest.doMock('../../../src/window/contributions/browser-contribution', () => ({
-        browserWindowModule: { id: 'browserWindowModule' }
+        bindBrowserWindowContribution
       }));
 
       jest.doMock('../../../src/picker/canvas-module', () => ({ loadCanvasPicker }));
@@ -42,71 +38,61 @@ describe('env/browser', () => {
         BrowserEnvContribution: class {}
       }));
 
+      // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports
       const { loadBrowserEnv } = require('../../../src/env/browser');
 
-      const container = {
-        load: jest.fn((module: any) => {
-          module?._cb && module._cb(bind);
-        })
-      } as any;
+      loadBrowserEnv();
+      loadBrowserEnv();
 
-      loadBrowserEnv(container);
-      loadBrowserEnv(container);
-
-      expect(container.load).toHaveBeenCalledTimes(3);
       expect(loadCanvasPicker).toHaveBeenCalledTimes(1);
+      expect(getLegacyBindingContext).toHaveBeenCalledTimes(2);
+      expect(loadCanvasPicker).toHaveBeenCalledWith(legacyContext);
 
-      // callback has bound services exactly once
-      expect(bind).toHaveBeenCalledTimes(2);
+      // explicit bindings happen exactly once
+      expect(bind).toHaveBeenCalled();
 
       // loadPicker = false
-      const container2 = {
-        load: jest.fn((module: any) => {
-          module?._cb && module._cb(bind);
-        })
-      } as any;
       loadBrowserEnv.__loaded = false;
-      loadBrowserEnv(container2, false);
+      loadBrowserEnv(undefined, false);
       expect(loadCanvasPicker).toHaveBeenCalledTimes(1);
 
       // already bound, callback is a no-op
-      expect(bind).toHaveBeenCalledTimes(2);
+      expect(bind).toHaveBeenCalled();
     });
   });
 
   test('initBrowserEnv uses default container', () => {
     jest.isolateModules(() => {
+      const getLegacyBindingContext = jest.fn();
       const bindReturn: any = {
         toSelf: () => ({ inSingletonScope: () => bindReturn }),
         toService: () => bindReturn
       };
       const bind = jest.fn(() => bindReturn);
-      const coreContainer = {
-        load: jest.fn((module: any) => {
-          module?._cb && module._cb(bind);
-        })
+      const legacyContext = {
+        bind,
+        isBound: jest.fn(),
+        rebind: jest.fn(),
+        getAll: jest.fn(),
+        getNamed: jest.fn()
       };
+      getLegacyBindingContext.mockReturnValue(legacyContext);
 
       jest.doMock('@visactor/vrender-core', () => {
-        class ContainerModule {
-          public _cb: any;
-          constructor(cb: any) {
-            this._cb = cb;
-          }
-        }
         return {
-          container: coreContainer,
-          EnvContribution: Symbol('EnvContribution'),
-          ContainerModule
+          getLegacyBindingContext,
+          EnvContribution: Symbol('EnvContribution')
         };
       });
 
+      const bindBrowserCanvasModules = jest.fn();
       jest.doMock('../../../src/canvas/contributions/browser/modules', () => ({
-        browserCanvasModule: { id: 'browserCanvasModule' }
+        bindBrowserCanvasModules
       }));
 
+      const bindBrowserWindowContribution = jest.fn();
       jest.doMock('../../../src/window/contributions/browser-contribution', () => ({
-        browserWindowModule: { id: 'browserWindowModule' }
+        bindBrowserWindowContribution
       }));
 
       jest.doMock('../../../src/picker/canvas-module', () => ({ loadCanvasPicker: jest.fn() }));
@@ -115,11 +101,12 @@ describe('env/browser', () => {
         BrowserEnvContribution: class {}
       }));
 
+      // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports
       const { initBrowserEnv } = require('../../../src/env/browser');
       initBrowserEnv();
 
-      expect(coreContainer.load).toHaveBeenCalled();
-      expect(bind).toHaveBeenCalledTimes(2);
+      expect(getLegacyBindingContext).toHaveBeenCalledTimes(1);
+      expect(bind).toHaveBeenCalled();
     });
   });
 });

@@ -10,5 +10,5 @@
     "composite": true
   },
   "include": ["src", "__tests__", "examples"],
-  "exclude": ["bugserver-config", "src/common/inversify-lite"]
+  "exclude": ["bugserver-config"]
 }

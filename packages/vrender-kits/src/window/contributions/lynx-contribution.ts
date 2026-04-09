@@ -1,12 +1,4 @@
-import {
-  inject,
-  injectable,
-  Generator,
-  BaseWindowHandlerContribution,
-  VGlobal,
-  ContainerModule,
-  WindowHandlerContribution
-} from '@visactor/vrender-core';
+import { Generator, BaseWindowHandlerContribution, WindowHandlerContribution } from '@visactor/vrender-core';
 import type {
   EnvType,
   IGlobal,
@@ -18,6 +10,7 @@ import type {
 } from '@visactor/vrender-core';
 import type { IBoundsLike } from '@visactor/vutils';
 import { LynxCanvas } from '../../canvas/contributions/lynx';
+import { application } from '@visactor/vrender-core';
 
 class MiniAppEventManager {
   addEventListener(type: string, func: EventListenerOrEventListenerObject) {
@@ -47,7 +40,6 @@ class MiniAppEventManager {
   cache: Record<string, { listener: EventListenerOrEventListenerObject[] }> = {};
 }
 
-@injectable()
 export class LynxWindowHandlerContribution extends BaseWindowHandlerContribution implements IWindowHandlerContribution {
   static env: EnvType = 'lynx';
   type: EnvType = 'lynx';
@@ -59,7 +51,7 @@ export class LynxWindowHandlerContribution extends BaseWindowHandlerContribution
     return null;
   }
 
-  constructor(@inject(VGlobal) private readonly global: IGlobal) {
+  constructor(private readonly global: IGlobal = application.global) {
     super();
   }
 
@@ -238,10 +230,16 @@ export class LynxWindowHandlerContribution extends BaseWindowHandlerContribution
   }
 }
 
-export const lynxWindowModule = new ContainerModule(bind => {
-  // lynx
-  bind(LynxWindowHandlerContribution).toSelf();
-  bind(WindowHandlerContribution)
-    .toDynamicValue(ctx => ctx.container.get(LynxWindowHandlerContribution))
+let lynxWindowContributionBound = false;
+
+export function bindLynxWindowContribution(container: any) {
+  if (lynxWindowContributionBound) {
+    return;
+  }
+  lynxWindowContributionBound = true;
+  container.bind(LynxWindowHandlerContribution).toSelf();
+  container
+    .bind(WindowHandlerContribution)
+    .toService(LynxWindowHandlerContribution)
     .whenTargetNamed(LynxWindowHandlerContribution.env);
-});
+}

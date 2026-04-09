@@ -1,3 +1,4 @@
+/** @deprecated Legacy DI browser fixture retained for major-migration tracking. Prefer app-scoped entries/plugins. */
 import { createPyramid3d } from '@visactor/vrender';
 import {
   createStage,
@@ -12,7 +13,6 @@ import {
   createArea,
   createCircle,
   IArc,
-  container,
   IGroup,
   GroupFadeIn,
   GroupFadeOut,
@@ -1007,7 +1007,7 @@ const json = {
   ]
 };
 
-container.load(roughModule);
+roughModule(getLegacyBindingContext());
 
 let arcList = [];
 function _add(group, json) {

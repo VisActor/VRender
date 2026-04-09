@@ -1,4 +1,5 @@
 import {
+  AttributeUpdateType,
   ColorStore,
   ColorType,
   Generator,
@@ -54,7 +55,7 @@ export class Step implements IStep {
     this.duration = duration;
     // 设置缓动函数
     if (easing) {
-      this.easing = typeof easing === 'function' ? easing : (Easing[easing] ?? Easing.linear);
+      this.easing = typeof easing === 'function' ? easing : Easing[easing] ?? Easing.linear;
     } else {
       this.easing = Easing.linear;
     }
@@ -171,7 +172,9 @@ export class Step implements IStep {
   }
 
   _syncAttributeUpdate = (): void => {
-    this.target.setAttributes(this.target.attribute);
+    (this.target as any).addUpdateShapeAndBoundsTag?.();
+    (this.target as any).addUpdatePositionTag?.();
+    (this.target as any).onAttributeUpdate?.({ type: AttributeUpdateType.ANIMATE_UPDATE });
   };
 
   /**
@@ -207,7 +210,13 @@ export class Step implements IStep {
     // 屏蔽掉之前动画冲突的属性
     const animate = this.animate;
     const target = this.target;
-    target.animates.forEach((a: any) => {
+    const forEachTrackedAnimate =
+      (target as any).forEachTrackedAnimate?.bind(target) ??
+      ((cb: (a: any) => void) => {
+        target.animates?.forEach(cb);
+      });
+
+    forEachTrackedAnimate((a: any) => {
       if (a === animate || a.priority > animate.priority || a.priority === Infinity) {
         return;
       }

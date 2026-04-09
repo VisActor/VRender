@@ -11,7 +11,6 @@ import {
   ManualTicker
 } from '@visactor/vrender-animate';
 import {
-  container,
   createRect,
   createStage,
   createSymbol,
@@ -24,7 +23,7 @@ import {
   createPath
 } from '@visactor/vrender';
 import type { EasingType } from '@visactor/vrender-animate';
-// container.load(roughModule);
+// roughModule(getLegacyBindingContext());
 
 vglobal.setEnv('browser');
 

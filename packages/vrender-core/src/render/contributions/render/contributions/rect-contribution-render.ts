@@ -1,5 +1,4 @@
 import { isArray } from '@visactor/vutils';
-import { injectable } from '../../../../common/inversify-lite';
 import type {
   IGraphicAttribute,
   IContext2d,
@@ -121,7 +120,6 @@ export class DefaultRectRenderContribution implements IRectRenderContribution {
   }
 }
 
-@injectable()
 export class SplitRectBeforeRenderContribution implements IRectRenderContribution {
   time: BaseRenderContributionTime = BaseRenderContributionTime.beforeFillStroke;
   useStyle: boolean = true;
@@ -158,7 +156,6 @@ export class SplitRectBeforeRenderContribution implements IRectRenderContributio
   }
 }
 
-@injectable()
 export class SplitRectAfterRenderContribution implements IRectRenderContribution {
   time: BaseRenderContributionTime = BaseRenderContributionTime.afterFillStroke;
   useStyle: boolean = true;

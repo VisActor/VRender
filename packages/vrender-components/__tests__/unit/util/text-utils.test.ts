@@ -1,3 +1,5 @@
+export {};
+
 declare const require: (id: string) => any;
 
 describe('vrender-components util/text', () => {
@@ -29,7 +31,9 @@ describe('vrender-components util/text', () => {
     const richMock = jest.fn().mockReturnValue({ kind: 'rich' });
 
     jest.doMock('@visactor/vrender-core', () => ({
-      getTextBounds: jest.fn(() => ({ width: () => 10, height: () => 5 })),
+      getTextBounds: jest.fn(() => ({ width: () => 10, height: () => 5 }))
+    }));
+    jest.doMock('../../../src/util/graphic-creator', () => ({
       graphicCreator: {
         text: textMock,
         richtext: richMock

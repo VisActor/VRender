@@ -1,14 +1,17 @@
-import { ContainerModule } from '@visactor/vrender-core';
+import { PolygonRender } from '@visactor/vrender-core';
+import { resolveContainerBinding } from '../../../common/explicit-binding';
 import { CanvasPickerContribution, CanvasPolygonPicker } from '../constants';
 import { DefaultCanvasPolygonPicker } from './polygon-picker';
 
 let loadPolygonPick = false;
-export const polygonCanvasPickModule = new ContainerModule((bind, unbind, isBound, rebind) => {
+export function bindPolygonCanvasPickerContribution(container: any) {
   if (loadPolygonPick) {
     return;
   }
   loadPolygonPick = true;
-  // polygon picker
-  bind(CanvasPolygonPicker).to(DefaultCanvasPolygonPicker).inSingletonScope();
-  bind(CanvasPickerContribution).toService(CanvasPolygonPicker);
-});
+  container
+    .bind(CanvasPolygonPicker)
+    .toDynamicValue(() => new DefaultCanvasPolygonPicker(resolveContainerBinding(container, PolygonRender)))
+    .inSingletonScope();
+  container.bind(CanvasPickerContribution).toService(CanvasPolygonPicker);
+}

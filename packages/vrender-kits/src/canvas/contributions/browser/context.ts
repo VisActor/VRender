@@ -23,10 +23,18 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
   SOFTWARE.
  */
-import type { IPointLike, TextMeasure, ITextMeasureSpec, IMatrix } from '@visactor/vutils';
-import { Matrix, pi, pi2, Logger, getContextFont } from '@visactor/vutils';
 import {
-  injectable,
+  Matrix,
+  pi,
+  pi2,
+  Logger,
+  getContextFont,
+  type IPointLike,
+  type TextMeasure,
+  type ITextMeasureSpec,
+  type IMatrix
+} from '@visactor/vutils';
+import {
   DefaultFillStyle,
   DefaultStrokeStyle,
   DefaultTextStyle,
@@ -35,21 +43,19 @@ import {
   application,
   matrixAllocate,
   transformMat4,
-  createConicalGradient
-} from '@visactor/vrender-core';
-import type {
-  ICamera,
-  ICanvas,
-  ICommonStyleParams,
-  IConicalGradientData,
-  IContext2d,
-  ISetCommonStyleParams,
-  ISetStrokeStyleParams,
-  IStrokeStyleParams,
-  ITextStyleParams,
-  mat4,
-  EnvType,
-  vec3
+  createConicalGradient,
+  type ICamera,
+  type ICanvas,
+  type ICommonStyleParams,
+  type IConicalGradientData,
+  type IContext2d,
+  type ISetCommonStyleParams,
+  type ISetStrokeStyleParams,
+  type IStrokeStyleParams,
+  type ITextStyleParams,
+  type mat4,
+  type EnvType,
+  type vec3
 } from '@visactor/vrender-core';
 
 const outP: [number, number, number] = [0, 0, 0];
@@ -104,7 +110,6 @@ const addArcToBezierPath = (
   }
 };
 
-@injectable()
 export class BrowserContext2d implements IContext2d {
   static env: EnvType = 'browser';
   baseGlobalAlpha: number;

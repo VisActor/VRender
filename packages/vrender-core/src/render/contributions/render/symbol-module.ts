@@ -1,12 +1,11 @@
 import { bindContributionProvider } from '../../../common/contribution-provider';
-import { ContainerModule } from '../../../common/inversify';
 import { DefaultBaseInteractiveRenderContribution } from './contributions';
 import { SymbolRenderContribution } from './contributions/constants';
 import { GraphicRender, SymbolRender } from './symbol';
 import { DefaultCanvasSymbolRender } from './symbol-render';
 
 let loadSymbolModule = false;
-export const symbolModule = new ContainerModule(bind => {
+export function bindSymbolRenderModule({ bind }: { bind: any }) {
   if (loadSymbolModule) {
     return;
   }
@@ -18,4 +17,6 @@ export const symbolModule = new ContainerModule(bind => {
   bind(SymbolRenderContribution).toService(DefaultBaseInteractiveRenderContribution);
   // symbol 渲染器注入contributions
   bindContributionProvider(bind, SymbolRenderContribution);
-});
+}
+
+export const symbolModule = bindSymbolRenderModule;

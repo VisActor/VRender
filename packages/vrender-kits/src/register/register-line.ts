@@ -1,16 +1,17 @@
-import { container, lineModule, registerLineGraphic } from '@visactor/vrender-core';
+import { getLegacyBindingContext, lineModule, registerLineGraphic } from '@visactor/vrender-core';
 import { browser } from './env';
-import { lineCanvasPickModule } from '../picker/contributions/canvas-picker/line-module';
-import { lineMathPickModule } from '../picker/contributions/math-picker/line-module';
+import { bindLineCanvasPickerContribution } from '../picker/contributions/canvas-picker/line-module';
+import { bindLineMathPickerContribution } from '../picker/contributions/math-picker/line-module';
 
 function _registerLine() {
   if (_registerLine.__loaded) {
     return;
   }
   _registerLine.__loaded = true;
+  const legacyContext = getLegacyBindingContext();
   registerLineGraphic();
-  container.load(lineModule);
-  container.load(browser ? lineCanvasPickModule : lineMathPickModule);
+  (lineModule as any)({ bind: legacyContext.bind });
+  browser ? bindLineCanvasPickerContribution(legacyContext) : bindLineMathPickerContribution(legacyContext);
 }
 
 _registerLine.__loaded = false;

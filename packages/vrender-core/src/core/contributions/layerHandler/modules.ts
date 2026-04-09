@@ -1,4 +1,3 @@
-import { ContainerModule } from '../../../common/inversify-lite';
 import {
   // DynamicLayerHandlerContribution,
   StaticLayerHandlerContribution
@@ -8,7 +7,7 @@ import { CanvasLayerHandlerContribution } from './canvas2d-contribution';
 // import { EmptyLayerHandlerContribution } from './empty-contribution';
 // import { OffscreenLayerHandlerContribution } from './offscreen2d-contribution';
 
-export default new ContainerModule(bind => {
+export function bindLayerHandlerModules({ bind }: { bind: any }) {
   bind(CanvasLayerHandlerContribution).toSelf();
   // bind(OffscreenLayerHandlerContribution).toSelf();
   // bind(EmptyLayerHandlerContribution).toSelf();
@@ -22,4 +21,6 @@ export default new ContainerModule(bind => {
   // } catch (err) {
   //   bind(LayerHandlerContribution).toService(CanvasLayerHandlerContribution);
   // }
-});
+}
+
+export default bindLayerHandlerModules;

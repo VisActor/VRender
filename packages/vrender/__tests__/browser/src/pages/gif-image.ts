@@ -1,9 +1,16 @@
-import { createStage, container } from '@visactor/vrender-core';
-import { GifImage, IGifImageGraphicAttribute, gifImageModule, gifImageCanvasPickModule } from '@visactor/vrender-kits';
+/** @deprecated Legacy DI browser fixture retained for major-migration tracking. Prefer app-scoped entries/plugins. */
+import { createStage, getLegacyBindingContext } from '@visactor/vrender-core';
+import {
+  GifImage,
+  IGifImageGraphicAttribute,
+  bindGifImageCanvasPickerContribution,
+  bindGifImageRenderContribution
+} from '@visactor/vrender-kits';
 import { addShapesToStage, colorPools } from '../utils';
 
-container.load(gifImageModule);
-container.load(gifImageCanvasPickModule);
+const legacyContext = getLegacyBindingContext();
+bindGifImageRenderContribution(legacyContext);
+bindGifImageCanvasPickerContribution(legacyContext);
 
 export const page = () => {
   const shapes = [];

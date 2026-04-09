@@ -11,6 +11,8 @@ export enum UpdateTag {
   UPDATE_LOCAL_MATRIX = 0b00010000, // 更新局部matrix
   CLEAR_LOCAL_MATRIX = 0b11101111, // 清除局部matrix
   UPDATE_GLOBAL_LOCAL_MATRIX = 0b00110000, // 更新全局和局部matrix
+  UPDATE_PAINT = 0b01000000, // 仅视觉重绘
+  CLEAR_PAINT = 0b10111111, // 清除paint更新位
   UPDATE_LAYOUT = 0b10000000, // 布局需要更新
   CLEAR_LAYOUT = 0b01111111 // 清楚布局更新
 }

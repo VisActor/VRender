@@ -1,6 +1,3 @@
-import { inject, injectable, named } from '../../../common/inversify-lite';
-// eslint-disable-next-line
-import { ContributionProvider } from '../../../common/contribution-provider';
 import { getTheme } from '../../../graphic/theme';
 import { SYMBOL_NUMBER_TYPE } from '../../../graphic/constants';
 import type {
@@ -29,16 +26,11 @@ import {
   defaultSymbolTextureRenderContribution
 } from './contributions';
 
-@injectable()
 export class DefaultCanvasSymbolRender extends BaseRender<ISymbol> implements IGraphicRender {
   type: 'symbol';
   numberType: number = SYMBOL_NUMBER_TYPE;
 
-  constructor(
-    @inject(ContributionProvider)
-    @named(SymbolRenderContribution)
-    protected readonly graphicRenderContributions: IContributionProvider<ISymbolRenderContribution>
-  ) {
+  constructor(protected readonly graphicRenderContributions: IContributionProvider<ISymbolRenderContribution>) {
     super();
     this.builtinContributions = [
       defaultSymbolRenderContribution,

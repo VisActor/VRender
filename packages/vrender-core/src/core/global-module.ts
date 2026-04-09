@@ -1,5 +1,5 @@
 // import type { IGlobal } from '../interface';
-// import { container } from '../container';
+// legacy container bootstrap has been removed in major cleanup.
 // import { DefaultGlobal } from './global';
 // import envModules from './contributions/env/modules';
 // import { Global } from '../constants';

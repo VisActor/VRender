@@ -1,10 +1,12 @@
-import { createStage, DragNDrop, createCircle, container, vglobal } from '@visactor/vrender';
+/** @deprecated Legacy DI browser fixture retained for major-migration tracking. Prefer app-scoped entries/plugins. */
+import { createStage, DragNDrop, createCircle, getLegacyBindingContext, vglobal } from '@visactor/vrender';
 import { colorPools } from '../utils';
 import { createGroup } from '@visactor/vrender';
-import { createLottie, lottieCanvasPickModule, lottieModule } from '@visactor/vrender-kits';
+import { createLottie, bindLottieCanvasPickerContribution, bindLottieRenderContribution } from '@visactor/vrender-kits';
 
-container.load(lottieModule);
-container.load(lottieCanvasPickModule);
+const legacyContext = getLegacyBindingContext();
+bindLottieRenderContribution(legacyContext);
+bindLottieCanvasPickerContribution(legacyContext);
 export const page = () => {
   const t = performance.now();
   const stage = createStage({

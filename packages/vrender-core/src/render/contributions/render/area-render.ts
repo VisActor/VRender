@@ -1,6 +1,5 @@
 import type { IPointLike } from '@visactor/vutils';
 import { abs, isArray, min } from '@visactor/vutils';
-import { inject, injectable, named } from '../../../common/inversify-lite';
 import type {
   IArea,
   IAreaCacheItem,
@@ -17,8 +16,6 @@ import type {
   IGraphicRenderDrawParams,
   IContributionProvider
 } from '../../../interface';
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { ContributionProvider } from '../../../common/contribution-provider';
 import { calcLineCache } from '../../../common/segment';
 
 import { getTheme } from '../../../graphic/theme';
@@ -33,16 +30,11 @@ import {
   defaultAreaTextureRenderContribution
 } from './contributions/area-contribution-render';
 
-@injectable()
 export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraphicRender {
   type: 'area';
   numberType: number = AREA_NUMBER_TYPE;
 
-  constructor(
-    @inject(ContributionProvider)
-    @named(AreaRenderContribution)
-    protected readonly graphicRenderContributions: IContributionProvider<IAreaRenderContribution>
-  ) {
+  constructor(protected readonly graphicRenderContributions: IContributionProvider<IAreaRenderContribution>) {
     super();
     this.builtinContributions = [defaultAreaTextureRenderContribution, defaultAreaBackgroundRenderContribution];
     this.init(graphicRenderContributions);

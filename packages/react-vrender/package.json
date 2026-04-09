@@ -16,9 +16,10 @@
     "eslint": "eslint --debug --fix src/",
     "build": "cross-env DEBUG='Bundler*' bundle",
     "dev": "cross-env DEBUG='Bundler*' bundle --clean -f es -w",
-    "test": "jest",
-    "test-cov": "jest --coverage",
-    "test-watch": "cross-env DEBUG_MODE=1 jest --watch",
+    "test": "jest -c jest.config.js",
+    "test:electron": "jest -c jest.electron.config.js --runInBand --passWithNoTests --testPathPattern='__tests__/(browser|electron)/'",
+    "test-cov": "jest -c jest.config.js --coverage",
+    "test-watch": "cross-env DEBUG_MODE=1 jest --watch -c jest.config.js",
     "start": "vite ./vite"
   },
   "peerDependencies": {
@@ -43,7 +44,7 @@
     "@vitejs/plugin-react": "3.1.0",
     "@types/jest": "^26.0.0",
     "jest": "^26.0.0",
-    "jest-electron": "^0.1.12",
+    "jest-electron": "npm:@pixi/jest-electron@26.1.0",
     "jest-extended": "^1.2.1",
     "ts-jest": "^26.0.0",
     "eslint": "~8.18.0",

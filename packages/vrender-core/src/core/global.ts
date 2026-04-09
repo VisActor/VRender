@@ -1,6 +1,3 @@
-import { inject, injectable, named } from '../common/inversify-lite';
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { ContributionProvider } from '../common/contribution-provider';
 import type {
   CreateDOMParamsType,
   EnvType,
@@ -12,15 +9,12 @@ import type {
   ISyncHook
 } from '../interface';
 import { SyncHook } from '../tapable';
-import { EnvContribution } from '../constants';
 import type { IAABBBoundsLike } from '@visactor/vutils';
-import { container } from '../container';
 import { Generator } from '../common/generator';
 import { PerformanceRAF } from '../common/performance-raf';
 import { EventListenerManager } from '../common/event-listener-manager';
 
 const defaultEnv: EnvType = 'browser';
-@injectable()
 export class DefaultGlobal extends EventListenerManager implements IGlobal {
   readonly id: number;
   private _env: EnvType;
@@ -132,12 +126,7 @@ export class DefaultGlobal extends EventListenerManager implements IGlobal {
   // 注意返回的Event和原始的Event不是同一个对象，但也不能拷贝，返回的Event和原始Event是同一个Event类的实例（比如MouseEvent、FederatedPointerEvent等，不能直接拷贝或者用CustomEvent）
   eventListenerTransformer: (event: Event) => Event = event => event;
 
-  constructor(
-    // todo: 不需要创建，动态获取就行？
-    @inject(ContributionProvider)
-    @named(EnvContribution)
-    protected readonly contributions: IContributionProvider<IEnvContribution>
-  ) {
+  constructor(protected readonly contributions: IContributionProvider<IEnvContribution>) {
     super();
     this.id = Generator.GenAutoIncrementId();
     this.hooks = {
@@ -298,6 +287,18 @@ export class DefaultGlobal extends EventListenerManager implements IGlobal {
     return (callback: FrameRequestCallback): number => {
       return performanceRAF.addAnimationFrameCb(callback);
     };
+  }
+
+  getSpecifiedPerformanceRAF(id: number) {
+    if (!this._env) {
+      this.setEnv(defaultEnv);
+    }
+
+    if (!this._performanceRAFList[id]) {
+      this._performanceRAFList[id] = new PerformanceRAF();
+    }
+
+    return this._performanceRAFList[id];
   }
 
   /**

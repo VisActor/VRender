@@ -33,7 +33,7 @@ import type {
   IRect
 } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
-import { graphicCreator } from '@visactor/vrender-core';
+import { graphicCreator } from '../../util/graphic-creator';
 import { LegendBase } from '../base';
 import { Pager } from '../../pager';
 import {

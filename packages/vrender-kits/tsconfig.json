@@ -2,6 +2,10 @@
   "extends": "@internal/ts-config/tsconfig.base.json",
   "compilerOptions": {
     "baseUrl": ".",
+    "paths": {
+      "@visactor/vrender-core": ["../vrender-core/src"],
+      "@visactor/vrender-animate": ["../vrender-animate/src"]
+    },
     "outDir": "./es",
     "rootDir": "./src",
     "composite": true,

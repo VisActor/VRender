@@ -1,6 +1,6 @@
 import { createCircle } from '../graphic/circle';
-import { graphicCreator } from '../graphic/graphic-creator';
+import { registerGraphic } from '../graphic/graphic-creator';
 
 export function registerCircleGraphic() {
-  graphicCreator.RegisterGraphicCreator('circle', createCircle);
+  registerGraphic('circle', createCircle);
 }

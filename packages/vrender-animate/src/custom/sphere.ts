@@ -30,10 +30,7 @@ export class RotateBySphereAnimate extends ACustomAnimate<any> {
 
   onFirstRun(): void {
     super.onFirstRun();
-    const finalAttribute = this.target.getFinalAttribute();
-    if (finalAttribute) {
-      this.target.setAttributes(finalAttribute);
-    }
+    (this.target as any).applyFinalAttributeToAttribute?.();
   }
 
   onStart(): void {

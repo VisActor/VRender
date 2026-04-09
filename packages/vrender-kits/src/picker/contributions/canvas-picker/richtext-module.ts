@@ -1,14 +1,17 @@
-import { ContainerModule } from '@visactor/vrender-core';
+import { RichTextRender } from '@visactor/vrender-core';
+import { resolveContainerBinding } from '../../../common/explicit-binding';
 import { CanvasPickerContribution, CanvasRichTextPicker } from '../constants';
 import { DefaultCanvasRichTextPicker } from './richtext-picker';
 
 let loadRichtextPick = false;
-export const richtextCanvasPickModule = new ContainerModule((bind, unbind, isBound, rebind) => {
+export function bindRichtextCanvasPickerContribution(container: any) {
   if (loadRichtextPick) {
     return;
   }
   loadRichtextPick = true;
-  // richtext picker
-  bind(CanvasRichTextPicker).to(DefaultCanvasRichTextPicker).inSingletonScope();
-  bind(CanvasPickerContribution).toService(CanvasRichTextPicker);
-});
+  container
+    .bind(CanvasRichTextPicker)
+    .toDynamicValue(() => new DefaultCanvasRichTextPicker(resolveContainerBinding(container, RichTextRender)))
+    .inSingletonScope();
+  container.bind(CanvasPickerContribution).toService(CanvasRichTextPicker);
+}

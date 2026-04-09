@@ -1,6 +1,3 @@
-import { inject, injectable, named } from '../../../common/inversify-lite';
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { ContributionProvider } from '../../../common/contribution-provider';
 import { renderCommandList } from '../../../common/render-command-list';
 import type {
   IPath,
@@ -26,17 +23,12 @@ import {
   defaultPathTextureRenderContribution
 } from './contributions/path-contribution-render';
 
-@injectable()
 export class DefaultCanvasPathRender extends BaseRender<IPath> implements IGraphicRender {
   type: 'path';
   numberType: number = PATH_NUMBER_TYPE;
   tempTheme: Required<IPathGraphicAttribute>;
 
-  constructor(
-    @inject(ContributionProvider)
-    @named(PathRenderContribution)
-    protected readonly graphicRenderContributions: IContributionProvider<IPathRenderContribution>
-  ) {
+  constructor(protected readonly graphicRenderContributions: IContributionProvider<IPathRenderContribution>) {
     super();
     this.builtinContributions = [defaultPathBackgroundRenderContribution, defaultPathTextureRenderContribution];
     this.init(graphicRenderContributions);

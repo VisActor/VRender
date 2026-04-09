@@ -9,7 +9,6 @@ import type {
   ISetAttributeContext
 } from '../interface';
 import { getTheme } from './theme';
-import { application } from '../application';
 import { GLYPH_NUMBER_TYPE } from './constants';
 
 export class Glyph extends Graphic<IGlyphGraphicAttribute> implements IGlyph {
@@ -195,6 +194,7 @@ export class Glyph extends Graphic<IGlyphGraphicAttribute> implements IGlyph {
       this.clearStates(hasAnimation);
       return;
     }
+    const previousStates = this.currentStates ? this.currentStates.slice() : [];
 
     const isChange =
       this.currentStates?.length !== states.length ||
@@ -229,6 +229,10 @@ export class Glyph extends Graphic<IGlyphGraphicAttribute> implements IGlyph {
     //   graphic.applyStateAttrs(subAttrs[index], states, hasAnimation);
     // });
 
+    if (!this.beforeStateUpdate(stateAttrs, previousStates, states, hasAnimation, false)) {
+      return;
+    }
+
     this.updateNormalAttrs(stateAttrs);
     this.currentStates = states;
     this.applyStateAttrs(stateAttrs, states, hasAnimation);
@@ -236,7 +240,11 @@ export class Glyph extends Graphic<IGlyphGraphicAttribute> implements IGlyph {
 
   clearStates(hasAnimation?: boolean) {
     this.stopStateAnimates();
+    const previousStates = this.currentStates ? this.currentStates.slice() : [];
     if (this.hasState() && this.normalAttrs) {
+      if (!this.beforeStateUpdate(this.normalAttrs, previousStates, [], hasAnimation, true)) {
+        return;
+      }
       this.currentStates = [];
       // this.subGraphic.forEach(graphic => {
       //   graphic.applyStateAttrs(graphic.normalAttrs, this.currentStates, hasAnimation, true);

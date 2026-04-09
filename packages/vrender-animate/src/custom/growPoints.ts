@@ -1,6 +1,5 @@
 import { pointInterpolation, type IGraphic, type IGroup, type EasingType } from '@visactor/vrender-core';
-import type { IPointLike } from '@visactor/vutils';
-import { isValidNumber } from '@visactor/vutils';
+import { isValidNumber, type IPointLike } from '@visactor/vutils';
 import { ACustomAnimate } from './custom-animate';
 
 interface IAnimationParameters {
@@ -119,10 +118,7 @@ export class GrowPointsIn extends GworPointsBase {
       this.to = to;
 
       // 用于入场的时候设置属性（因为有动画的时候VChart不会再设置属性了）
-      const finalAttribute = this.target.getFinalAttribute();
-      if (finalAttribute) {
-        this.target.setAttributes(finalAttribute);
-      }
+      (this.target as any).applyFinalAttributeToAttribute?.();
       if (this.params.controlOptions?.immediatelyApply !== false) {
         this.target.setAttributes(from);
       }
@@ -218,10 +214,7 @@ export class GrowPointsXIn extends GworPointsBase {
       this.to = to;
 
       // 用于入场的时候设置属性（因为有动画的时候VChart不会再设置属性了）
-      const finalAttribute = this.target.getFinalAttribute();
-      if (finalAttribute) {
-        this.target.setAttributes(finalAttribute);
-      }
+      (this.target as any).applyFinalAttributeToAttribute?.();
       if (this.params.controlOptions?.immediatelyApply !== false) {
         this.target.setAttributes(from);
       }
@@ -316,10 +309,7 @@ export class GrowPointsYIn extends GworPointsBase {
       this.to = to;
 
       // 用于入场的时候设置属性（因为有动画的时候VChart不会再设置属性了）
-      const finalAttribute = this.target.getFinalAttribute();
-      if (finalAttribute) {
-        this.target.setAttributes(finalAttribute);
-      }
+      (this.target as any).applyFinalAttributeToAttribute?.();
 
       if (this.params.controlOptions?.immediatelyApply !== false) {
         this.target.setAttributes(from);

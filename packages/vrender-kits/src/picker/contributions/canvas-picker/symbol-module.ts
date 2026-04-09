@@ -1,14 +1,17 @@
-import { ContainerModule } from '@visactor/vrender-core';
+import { SymbolRender } from '@visactor/vrender-core';
+import { resolveContainerBinding } from '../../../common/explicit-binding';
 import { CanvasPickerContribution, CanvasSymbolPicker } from '../constants';
 import { DefaultCanvasSymbolPicker } from './symbol-picker';
 
 let loadSymbolPick = false;
-export const symbolCanvasPickModule = new ContainerModule((bind, unbind, isBound, rebind) => {
+export function bindSymbolCanvasPickerContribution(container: any) {
   if (loadSymbolPick) {
     return;
   }
   loadSymbolPick = true;
-  // symbol picker
-  bind(CanvasSymbolPicker).to(DefaultCanvasSymbolPicker).inSingletonScope();
-  bind(CanvasPickerContribution).toService(CanvasSymbolPicker);
-});
+  container
+    .bind(CanvasSymbolPicker)
+    .toDynamicValue(() => new DefaultCanvasSymbolPicker(resolveContainerBinding(container, SymbolRender)))
+    .inSingletonScope();
+  container.bind(CanvasPickerContribution).toService(CanvasSymbolPicker);
+}

@@ -5,7 +5,7 @@
 // 3. 重载Graphic的getAttributes方法，根据参数getAttributes(final = true)返回finalAttribute = {}; merge(finalAttribute, graphic.attribute, animatedAttribute)，
 // animatedAttribute为所有动画的最终结果（loop为INFINITY的动画不算）
 
-import type { IGraphicAnimateParams, IAnimate } from '@visactor/vrender-core';
+import { AttributeUpdateType, type IGraphicAnimateParams, type IAnimate } from '@visactor/vrender-core';
 import { Animate } from './animate';
 import { DefaultTimeline, defaultTimeline } from './timeline';
 import { DefaultTicker } from './ticker/default-ticker';
@@ -18,6 +18,15 @@ export class AnimateExtension {
   _animateExecutor: AnimateExecutor | null;
 
   declare animates: Map<string | number, IAnimate>;
+
+  protected visitTrackedAnimates(cb: (animate: IAnimate) => void) {
+    const target = this as any;
+    if (typeof target.forEachTrackedAnimate === 'function') {
+      target.forEachTrackedAnimate(cb);
+      return;
+    }
+    target.animates && target.animates.forEach(cb);
+  }
 
   getAttributes(final: boolean = false) {
     if (final && this.finalAttribute) {
@@ -72,6 +81,48 @@ export class AnimateExtension {
     }
   }
 
+  applyFinalAttributeToAttribute(): void {
+    const finalAttribute = this.getFinalAttribute();
+    if (!finalAttribute) {
+      return;
+    }
+
+    const target = this as any;
+    if (typeof target.setAttributesAndPreventAnimate === 'function') {
+      target.setAttributesAndPreventAnimate(finalAttribute, false, { type: AttributeUpdateType.ANIMATE_BIND });
+      return;
+    }
+    console.warn(
+      '[AnimateExtension] applyFinalAttributeToAttribute requires ' +
+        'target.setAttributesAndPreventAnimate() to avoid committing ' +
+        'finalAttribute into base attributes.'
+    );
+  }
+
+  restoreStaticAttribute(): void {
+    const target = this as any;
+    if (typeof target._restoreAttributeFromStaticTruth === 'function') {
+      target._restoreAttributeFromStaticTruth({ type: AttributeUpdateType.ANIMATE_END });
+      return;
+    }
+
+    if (typeof target.onStop === 'function') {
+      console.warn(
+        '[AnimateExtension] restoreStaticAttribute is using deprecated ' +
+          'target.onStop(); implement _restoreAttributeFromStaticTruth() ' +
+          'for explicit transient restore semantics.'
+      );
+      target.onStop();
+      return;
+    }
+
+    console.warn(
+      '[AnimateExtension] restoreStaticAttribute requires ' +
+        'target._restoreAttributeFromStaticTruth() or an equivalent ' +
+        'transient restore path.'
+    );
+  }
+
   /**
    * Apply animation configuration to the component
    * @param config Animation configuration
@@ -109,7 +160,7 @@ export class AnimateExtension {
   }
 
   pauseAnimation(deep: boolean = false) {
-    this.animates && this.animates.forEach(animate => animate.pause());
+    this.visitTrackedAnimates(animate => animate.pause());
     if (deep && (this as any).isContainer) {
       (this as any).forEachChildren((child: any) => {
         child.pauseAnimation(deep);
@@ -118,7 +169,7 @@ export class AnimateExtension {
   }
 
   resumeAnimation(deep: boolean = false) {
-    this.animates && this.animates.forEach(animate => animate.resume());
+    this.visitTrackedAnimates(animate => animate.resume());
     if (deep && (this as any).isContainer) {
       (this as any).forEachChildren((child: any) => {
         child.resumeAnimation(deep);
@@ -127,7 +178,7 @@ export class AnimateExtension {
   }
 
   stopAnimation(deep: boolean = false) {
-    this.animates && this.animates.forEach(animate => animate.stop());
+    this.visitTrackedAnimates(animate => animate.stop());
     if (deep && (this as any).isContainer) {
       (this as any).forEachChildren((child: any) => {
         child.stopAnimation(deep);

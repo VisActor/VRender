@@ -1,14 +1,17 @@
-import { ContainerModule } from '@visactor/vrender-core';
+import { CircleRender } from '@visactor/vrender-core';
+import { resolveContainerBinding } from '../../../common/explicit-binding';
 import { MathCirclePicker, MathPickerContribution } from '../constants';
 import { DefaultMathCirclePicker } from './circle-picker';
 
 let loadCirclePick = false;
-export const circleMathPickModule = new ContainerModule((bind, unbind, isBound, rebind) => {
+export function bindCircleMathPickerContribution(container: any) {
   if (loadCirclePick) {
     return;
   }
   loadCirclePick = true;
-  // circle picker
-  bind(MathCirclePicker).to(DefaultMathCirclePicker).inSingletonScope();
-  bind(MathPickerContribution).toService(MathCirclePicker);
-});
+  container
+    .bind(MathCirclePicker)
+    .toDynamicValue(() => new DefaultMathCirclePicker(resolveContainerBinding(container, CircleRender)))
+    .inSingletonScope();
+  container.bind(MathPickerContribution).toService(MathCirclePicker);
+}

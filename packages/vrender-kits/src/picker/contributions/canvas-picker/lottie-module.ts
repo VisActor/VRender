@@ -1,13 +1,17 @@
-import { ContainerModule } from '@visactor/vrender-core';
+import { RectRender } from '@visactor/vrender-core';
+import { resolveContainerBinding } from '../../../common/explicit-binding';
 import { CanvasLottiePicker, CanvasPickerContribution } from '../constants';
 import { DefaultCanvasLottiePicker } from './lottie-picker';
 
 let loadLottiePick = false;
-export const lottieCanvasPickModule = new ContainerModule((bind, unbind, isBound, rebind) => {
+export function bindLottieCanvasPickerContribution(container: any) {
   if (loadLottiePick) {
     return;
   }
   loadLottiePick = true;
-  bind(CanvasLottiePicker).to(DefaultCanvasLottiePicker).inSingletonScope();
-  bind(CanvasPickerContribution).toService(CanvasLottiePicker);
-});
+  container
+    .bind(CanvasLottiePicker)
+    .toDynamicValue(() => new DefaultCanvasLottiePicker(resolveContainerBinding(container, RectRender)))
+    .inSingletonScope();
+  container.bind(CanvasPickerContribution).toService(CanvasLottiePicker);
+}

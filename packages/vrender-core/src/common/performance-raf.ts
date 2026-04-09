@@ -29,6 +29,12 @@ export class PerformanceRAF {
     return false;
   }
 
+  wait(): Promise<void> {
+    return new Promise(resolve => {
+      this.addAnimationFrameCb(() => resolve());
+    });
+  }
+
   protected runAnimationFrame = (time: number) => {
     this._rafHandle = null;
     const cbs = this.nextAnimationFrameCbs;

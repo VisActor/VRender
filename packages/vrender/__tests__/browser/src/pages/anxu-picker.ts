@@ -1,9 +1,11 @@
-import { createStage, createRect, IGraphic, container } from '@visactor/vrender-core';
+import { createStage, createRect, getLegacyBindingContext, IGraphic } from '@visactor/vrender-core';
 import { loadBrowserEnv, loadMathPicker, registerRect } from '@visactor/vrender-kits';
 
+const legacyContext = getLegacyBindingContext();
+
 registerRect();
-loadBrowserEnv(container);
-loadMathPicker(container);
+loadBrowserEnv(legacyContext);
+loadMathPicker(legacyContext);
 
 // container.load(roughModule);
 export const page = () => {

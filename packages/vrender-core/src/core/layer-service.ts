@@ -1,22 +1,24 @@
-import { inject, injectable } from '../common/inversify-lite';
 import type { ILayer, IStage, IGlobal, ILayerParams, LayerMode, ILayerHandlerContribution } from '../interface';
-import { Layer } from './layer';
 import type { ILayerService } from '../interface/core';
-import { container } from '../container';
-import {
-  DynamicLayerHandlerContribution,
-  StaticLayerHandlerContribution,
-  VirtualLayerHandlerContribution
-} from './constants';
+import { LayerFactory, type ILayerFactory } from '../factory';
 import { application } from '../application';
 
-@injectable()
+type ILayerHandlerFactory = (layerMode: LayerMode) => ILayerHandlerContribution;
+
+function defaultLayerHandlerFactory(layerMode: LayerMode): ILayerHandlerContribution {
+  const handlerFactory = application.layerHandlerFactory;
+  if (!handlerFactory) {
+    throw new Error('Layer handler factory is not configured.');
+  }
+  return handlerFactory(layerMode);
+}
+
 export class DefaultLayerService implements ILayerService {
   declare layerMap: Map<IStage, ILayer[]>;
   declare staticLayerCountInEnv: number;
   declare dynamicLayerCountInEnv: number;
   declare inited: boolean;
-  declare global: IGlobal;
+  readonly global: IGlobal;
   static idprefix: string = 'visactor_layer';
   static prefix_count: number = 0;
 
@@ -24,9 +26,13 @@ export class DefaultLayerService implements ILayerService {
     return `${DefaultLayerService.idprefix}_${DefaultLayerService.prefix_count++}`;
   }
 
-  constructor() {
+  constructor(
+    global: IGlobal = application.global,
+    private readonly layerFactory: ILayerFactory = new LayerFactory(),
+    private readonly layerHandlerFactory: ILayerHandlerFactory = defaultLayerHandlerFactory
+  ) {
     this.layerMap = new Map();
-    this.global = application.global;
+    this.global = global;
   }
 
   tryInit() {
@@ -55,15 +61,7 @@ export class DefaultLayerService implements ILayerService {
   }
 
   getLayerHandler(layerMode: LayerMode) {
-    let layerHandler: ILayerHandlerContribution;
-    if (layerMode === 'static') {
-      layerHandler = container.get<ILayerHandlerContribution>(StaticLayerHandlerContribution);
-    } else if (layerMode === 'dynamic') {
-      layerHandler = container.get<ILayerHandlerContribution>(DynamicLayerHandlerContribution);
-    } else {
-      layerHandler = container.get<ILayerHandlerContribution>(VirtualLayerHandlerContribution);
-    }
-    return layerHandler;
+    return this.layerHandlerFactory(layerMode);
   }
 
   createLayer(stage: IStage, options: Partial<ILayerParams> = { main: false }): ILayer {
@@ -71,12 +69,17 @@ export class DefaultLayerService implements ILayerService {
     let layerMode = this.getRecommendedLayerType(options.layerMode);
     layerMode = options.main ? 'static' : options.canvasId ? 'static' : layerMode;
     const layerHandler = this.getLayerHandler(layerMode);
-    const layer = new Layer(stage, this.global, stage.window, {
-      main: false,
-      ...options,
-      layerMode,
-      canvasId: options.canvasId ?? DefaultLayerService.GenerateLayerId(),
-      layerHandler
+    const layer = this.layerFactory.create({
+      stage,
+      global: this.global,
+      window: stage.window,
+      params: {
+        main: false,
+        ...options,
+        layerMode,
+        canvasId: options.canvasId ?? DefaultLayerService.GenerateLayerId(),
+        layerHandler
+      }
     });
     const stageLayers = this.layerMap.get(stage) || [];
     stageLayers.push(layer);

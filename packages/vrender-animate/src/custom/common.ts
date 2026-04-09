@@ -28,10 +28,7 @@ export class CommonIn extends ACustomAnimate<Record<string, number>> {
     });
 
     // 用于入场的时候设置属性（因为有动画的时候VChart不会再设置属性了）
-    const finalAttribute = this.target.getFinalAttribute();
-    if (finalAttribute) {
-      this.target.setAttributes(finalAttribute);
-    }
+    (this.target as any).applyFinalAttributeToAttribute?.();
 
     this.props = to;
     this.propKeys = this.keys;

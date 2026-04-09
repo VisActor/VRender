@@ -1,4 +1,4 @@
-import { createStage, createGroup, createRect, container, IGraphic, global } from '@visactor/vrender';
+import { createStage, createGroup, createRect, IGraphic, global } from '@visactor/vrender';
 
 export const page = () => {
   // 添加10个rect

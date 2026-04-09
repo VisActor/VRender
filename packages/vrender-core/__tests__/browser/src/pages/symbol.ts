@@ -1,4 +1,4 @@
-import { createStage, createSymbol, container, IGraphic, XMLParser } from '@visactor/vrender';
+import { createStage, createSymbol, IGraphic, XMLParser } from '@visactor/vrender';
 // import { roughModule } from '@visactor/vrender-kits';
 // import { addShapesToStage, colorPools } from '../utils';
 // import { XMLParser, XMLValidator } from 'fast-xml-parser';

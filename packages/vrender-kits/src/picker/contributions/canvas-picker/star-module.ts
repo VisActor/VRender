@@ -1,14 +1,17 @@
-import { ContainerModule } from '@visactor/vrender-core';
+import { StarRender } from '@visactor/vrender-core';
+import { resolveContainerBinding } from '../../../common/explicit-binding';
 import { CanvasPickerContribution, CanvasStarPicker } from '../constants';
 import { DefaultCanvasStarPicker } from './star-picker';
 
 let loadStarPick = false;
-export const starCanvasPickModule = new ContainerModule((bind, unbind, isBound, rebind) => {
+export function bindStarCanvasPickerContribution(container: any) {
   if (loadStarPick) {
     return;
   }
   loadStarPick = true;
-  // star picker
-  bind(CanvasStarPicker).to(DefaultCanvasStarPicker).inSingletonScope();
-  bind(CanvasPickerContribution).toService(CanvasStarPicker);
-});
+  container
+    .bind(CanvasStarPicker)
+    .toDynamicValue(() => new DefaultCanvasStarPicker(resolveContainerBinding(container, StarRender)))
+    .inSingletonScope();
+  container.bind(CanvasPickerContribution).toService(CanvasStarPicker);
+}

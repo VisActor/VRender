@@ -16,7 +16,8 @@ import type {
   IRectGraphicAttribute
 } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
-import { graphicCreator, AttributeUpdateType, IContainPointMode, CustomPath2D } from '@visactor/vrender-core';
+import { AttributeUpdateType, IContainPointMode, CustomPath2D } from '@visactor/vrender-core';
+import { graphicCreator } from '../util/graphic-creator';
 import type { IAABBBounds, IBoundsLike, IPointLike } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports
 import {

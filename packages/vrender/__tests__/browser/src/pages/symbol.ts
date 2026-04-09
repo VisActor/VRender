@@ -1,11 +1,20 @@
-import { createStage, createSymbol, container, IGraphic, XMLParser, createText, vglobal } from '@visactor/vrender';
+/** @deprecated Legacy DI browser fixture retained for major-migration tracking. Prefer app-scoped entries/plugins. */
+import {
+  createStage,
+  createSymbol,
+  getLegacyBindingContext,
+  IGraphic,
+  XMLParser,
+  createText,
+  vglobal
+} from '@visactor/vrender';
 import { roughModule } from '@visactor/vrender-kits';
 import { AStageAnimate } from '@visactor/vrender-animate';
 // import { addShapesToStage, colorPools } from '../utils';
 // import { XMLParser, XMLValidator } from 'fast-xml-parser';
 import { AABBBounds } from '@visactor/vutils';
 
-container.load(roughModule);
+roughModule(getLegacyBindingContext());
 
 class TestStageAnimate extends AStageAnimate<any> {
   protected afterStageRender(stage: any, canvas: HTMLCanvasElement): HTMLCanvasElement | void | null | false {

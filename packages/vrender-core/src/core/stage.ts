@@ -1,5 +1,12 @@
-import type { IAABBBounds, IBounds, IBoundsLike, IMatrix } from '@visactor/vutils';
-import { Bounds, Point, isString } from '@visactor/vutils';
+import {
+  Bounds,
+  Point,
+  isString,
+  type IAABBBounds,
+  type IBounds,
+  type IBoundsLike,
+  type IMatrix
+} from '@visactor/vutils';
 import type {
   IGraphic,
   IExportType,
@@ -28,25 +35,38 @@ import type {
   IGraphicService,
   IRenderServiceDrawParams
 } from '../interface';
-import { VWindow } from './window';
+import { DefaultWindow } from './window';
 import type { Layer } from './layer';
 import { EventSystem } from '../event';
-import { container } from '../container';
-import { RenderService } from '../render/constants';
 import { Group } from '../graphic/group';
 import { Theme } from '../graphic/theme';
-import { PickerService } from '../picker/constants';
-import { PluginService } from '../plugins/constants';
+import { DefaultGlobalPickerService } from '../picker/global-picker-service';
+import { DefaultRenderService } from '../render/render-service';
+import { DefaultPluginService } from '../plugins/plugin-service';
 import { AutoRenderPlugin } from '../plugins/builtin-plugin/auto-render-plugin';
 import { AutoRefreshPlugin } from '../plugins/builtin-plugin/auto-refresh-plugin';
 import { IncrementalAutoRenderPlugin } from '../plugins/builtin-plugin/incremental-auto-render-plugin';
 import { DirtyBoundsPlugin } from '../plugins/builtin-plugin/dirty-bounds-plugin';
 import { SyncHook } from '../tapable';
-import { LayerService } from './constants';
 import { application } from '../application';
 import { isBrowserEnv } from '../env-check';
-import { Factory } from '../factory';
-import { Graphic, GraphicService } from '../graphic';
+import { Factory, type IStageFactoryDeps } from '../factory';
+import { DefaultLayerService } from './layer-service';
+import { DefaultGraphicService } from '../graphic/graphic-service/graphic-service';
+import {
+  createRootSharedStateScope,
+  setRootSharedStateScopeThemeDefinitions,
+  type SharedStateScope
+} from '../graphic/state/shared-state-scope';
+import { flushStageSharedStateRefresh, markScopeActiveDescendantsDirty } from '../graphic/state/shared-state-refresh';
+import type { StateDefinitionsInput } from '../graphic/state/state-definition';
+import { StateBatchScheduler } from '../graphic/state/state-batch-scheduler';
+import {
+  ensureStageStatePerfMonitor,
+  type IDeferredStateOwnerConfig,
+  type IStatePerfConfig,
+  type IStatePerfSnapshot
+} from '../graphic/state/state-perf-monitor';
 
 const DefaultConfig = {
   WIDTH: 500,
@@ -171,6 +191,8 @@ export class Stage extends Group implements IStage {
 
   autoRender: boolean;
   autoRefresh: boolean;
+  declare statePerfConfig?: IStatePerfConfig;
+  declare deferredStateConfig?: IDeferredStateOwnerConfig;
   _enableLayout: boolean;
   htmlAttribute: boolean | string | any;
   reactAttribute: boolean | string | any;
@@ -180,6 +202,8 @@ export class Stage extends Group implements IStage {
   private readonly global: IGlobal;
   readonly renderService: IRenderService;
   protected pickerService?: IPickerService;
+  private readonly windowFactory: () => IWindow;
+  private readonly pickerServiceFactory: () => IPickerService;
   readonly pluginService: IPluginService;
   readonly layerService: ILayerService;
   readonly graphicService: IGraphicService;
@@ -200,6 +224,9 @@ export class Stage extends Group implements IStage {
   protected interactiveLayer?: ILayer;
   protected supportInteractiveLayer: boolean;
   protected timeline: ITimeline;
+  declare rootSharedStateScope?: SharedStateScope<Record<string, any>>;
+  protected _pendingSharedStateRefreshGraphics?: Set<IGraphic>;
+  protected _stateBatchScheduler!: StateBatchScheduler;
 
   declare params: Partial<IStageParams>;
 
@@ -231,7 +258,7 @@ export class Stage extends Group implements IStage {
    * 1. 如果没有传入宽高，那么默认为canvas宽高，如果传入了宽高则stage使用传入宽高作为视口宽高
    * @param params
    */
-  constructor(params: Partial<IStageParams> = {}) {
+  constructor(params: Partial<IStageParams> = {}, deps: IStageFactoryDeps = {}) {
     super({});
     this.params = params;
     this.theme = new Theme();
@@ -241,16 +268,31 @@ export class Stage extends Group implements IStage {
       afterClearScreen: new SyncHook(['stage']),
       afterClearRect: new SyncHook(['stage'])
     };
-    this.global = application.global;
+    this.global = deps.global ?? application.global;
     if (!this.global.env && isBrowserEnv()) {
       // 如果是浏览器环境，默认设置env
       this.global.setEnv('browser');
     }
-    this.window = container.get<IWindow>(VWindow);
-    this.renderService = container.get<IRenderService>(RenderService);
-    this.pluginService = container.get<IPluginService>(PluginService);
-    this.layerService = container.get<ILayerService>(LayerService);
-    this.graphicService = container.get<IGraphicService>(GraphicService);
+    this.windowFactory = deps.windowFactory ?? application.windowFactory ?? (() => new DefaultWindow(this.global));
+    this.pickerServiceFactory =
+      deps.pickerServiceFactory ??
+      (deps.pickerService
+        ? () => deps.pickerService as IPickerService
+        : application.pickerServiceFactory ?? (() => new DefaultGlobalPickerService()));
+    this.window = deps.window ?? this.windowFactory();
+    this.renderService =
+      deps.renderService ??
+      application.renderServiceFactory?.() ??
+      application.renderService ??
+      new DefaultRenderService();
+    this.pluginService =
+      deps.pluginService ??
+      application.pluginServiceFactory?.() ??
+      application.pluginService ??
+      new DefaultPluginService();
+    this.layerService = deps.layerService ?? application.layerService ?? new DefaultLayerService(this.global);
+    this.graphicService = deps.graphicService ?? application.graphicService ?? new DefaultGraphicService();
+    this.pickerService = deps.pickerService;
     this.pluginService.active(this, params);
     this._beforeRenderList = [];
     this._afterRenderList = [];
@@ -279,13 +321,32 @@ export class Stage extends Group implements IStage {
     // 背景色默认为纯白色
     this._background = params.background ?? DefaultConfig.BACKGROUND;
 
+    // Stage is its own owner before any layer is attached so default-layer stage wiring is consistent.
+    this.stage = this;
+
     // 创建一个默认layer图层
     // this.appendChild(new Layer(this, this.global, this.window, { main: true }));
     this.appendChild(this.layerService.createLayer(this, { main: true }));
 
     this.nextFrameRenderLayerSet = new Set();
     this.willNextFrameRender = false;
-    this.stage = this;
+    ensureStageStatePerfMonitor(this);
+    this._stateBatchScheduler = new StateBatchScheduler(this, ensureStageStatePerfMonitor(this));
+    this.rootSharedStateScope = createRootSharedStateScope(
+      this,
+      this.theme?.stateDefinitions as StateDefinitionsInput<Record<string, any>> | undefined
+    );
+    this.theme.onStateDefinitionsChange = () => {
+      if (!this.rootSharedStateScope) {
+        return;
+      }
+
+      setRootSharedStateScopeThemeDefinitions(
+        this.rootSharedStateScope,
+        this.theme?.stateDefinitions as StateDefinitionsInput<Record<string, any>> | undefined
+      );
+      markScopeActiveDescendantsDirty(this.rootSharedStateScope, this);
+    };
     this.renderStyle = params.renderStyle;
 
     // this.autoRender = params.autoRender;
@@ -505,6 +566,7 @@ export class Stage extends Group implements IStage {
   }
 
   protected beforeRender = (stage: IStage) => {
+    flushStageSharedStateRefresh(this);
     this._beforeRenderList.forEach(cb => cb(stage));
   };
   protected afterClearScreen = (drawParams: any) => {
@@ -855,6 +917,18 @@ export class Stage extends Group implements IStage {
     }
   }
 
+  scheduleStateBatch(graphics: IGraphic[], targetStates: string[]): void {
+    this._stateBatchScheduler.schedule(graphics, targetStates);
+  }
+
+  getStatePerfSnapshot(): IStatePerfSnapshot {
+    return ensureStageStatePerfMonitor(this).getSnapshot();
+  }
+
+  resetStatePerfSnapshot(): void {
+    ensureStageStatePerfMonitor(this).reset();
+  }
+
   _doRenderInThisFrame() {
     if (this.releaseStatus === 'released') {
       return;
@@ -1023,6 +1097,7 @@ export class Stage extends Group implements IStage {
   }
 
   release() {
+    this._stateBatchScheduler?.release();
     super.release();
 
     this.hooks.beforeRender.unTap('constructor', this.beforeRender);
@@ -1109,7 +1184,7 @@ export class Stage extends Group implements IStage {
     if (this.releaseStatus === 'released') {
       return;
     }
-    const window = container.get<IWindow>(VWindow);
+    const window = this.windowFactory();
     const x1 = viewBox ? -viewBox.x1 : 0;
     const y1 = viewBox ? -viewBox.y1 : 0;
     const x2 = viewBox ? viewBox.x2 : this.viewWidth;
@@ -1178,7 +1253,7 @@ export class Stage extends Group implements IStage {
 
   getPickerService() {
     if (!this.pickerService) {
-      this.pickerService = container.get<IPickerService>(PickerService);
+      this.pickerService = this.pickerServiceFactory();
     }
     return this.pickerService;
   }

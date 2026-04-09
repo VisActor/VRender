@@ -1,8 +1,7 @@
-import type { IAABBBounds } from '@visactor/vutils';
-import { AABBBounds } from '@visactor/vutils';
+import { AABBBounds, type IAABBBounds } from '@visactor/vutils';
+import { UpdateTag } from '../../common/enums';
 import { Generator } from '../../common/generator';
 import type { IGraphic, IStage, IPlugin, IPluginService } from '../../interface';
-import { application } from '../../application';
 
 const globalBounds = new AABBBounds();
 
@@ -12,6 +11,54 @@ export class DirtyBoundsPlugin implements IPlugin {
   pluginService: IPluginService;
   _uid: number = Generator.GenAutoIncrementId();
   key: string = this.name + this._uid;
+
+  protected ensurePaintDirtyBoundsCache(graphic: IGraphic): IAABBBounds {
+    const owner = graphic as any;
+    const hasLocalBounds =
+      owner._AABBBounds && typeof owner._AABBBounds.empty === 'function' && !owner._AABBBounds.empty();
+    if (!hasLocalBounds && typeof owner.doUpdateAABBBounds === 'function') {
+      owner.doUpdateAABBBounds(owner.attribute?.boundsMode === 'imprecise');
+    }
+
+    const hasGlobalBounds =
+      owner._globalAABBBounds &&
+      typeof owner._globalAABBBounds.empty === 'function' &&
+      !owner._globalAABBBounds.empty();
+    if (!hasGlobalBounds && typeof owner.tryUpdateGlobalAABBBounds === 'function') {
+      owner.tryUpdateGlobalAABBBounds();
+    }
+
+    return owner._globalAABBBounds ?? owner.globalAABBBounds;
+  }
+
+  protected handlePaintOnlyUpdate = (graphic: IGraphic) => {
+    const stage = this.pluginService.stage;
+    if (!(stage && stage === graphic.stage && stage.renderCount)) {
+      return;
+    }
+
+    const owner = (graphic.glyphHost ?? graphic) as any;
+    if (!(owner._updateTag & UpdateTag.UPDATE_PAINT) || owner._updateTag & UpdateTag.UPDATE_BOUNDS) {
+      return;
+    }
+
+    const ownerBounds = this.ensurePaintDirtyBoundsCache(owner);
+    if (ownerBounds && !ownerBounds.empty()) {
+      stage.dirty(ownerBounds);
+    }
+    owner.clearUpdatePaintTag?.();
+
+    const shadowRoot = owner.shadowRoot as IGraphic | undefined;
+    if (!shadowRoot) {
+      return;
+    }
+
+    const shadowBounds = this.ensurePaintDirtyBoundsCache(shadowRoot);
+    if (shadowBounds && !shadowBounds.empty()) {
+      stage.dirty(shadowBounds);
+    }
+    (shadowRoot as any).clearUpdatePaintTag?.();
+  };
 
   activate(context: IPluginService): void {
     this.pluginService = context;
@@ -25,6 +72,7 @@ export class DirtyBoundsPlugin implements IPlugin {
     if (!stage) {
       return;
     }
+    stage.graphicService.hooks.onAttributeUpdate.tap(this.key, this.handlePaintOnlyUpdate);
     stage.graphicService.hooks.beforeUpdateAABBBounds.tap(
       this.key,
       (graphic: IGraphic, stage: IStage, willUpdate: boolean, bounds: IAABBBounds) => {
@@ -89,6 +137,11 @@ export class DirtyBoundsPlugin implements IPlugin {
     if (!stage) {
       return;
     }
+    stage.graphicService.hooks.onAttributeUpdate.taps = stage.graphicService.hooks.onAttributeUpdate.taps.filter(
+      item => {
+        return item.name !== this.key;
+      }
+    );
     stage.graphicService.hooks.beforeUpdateAABBBounds.taps =
       stage.graphicService.hooks.beforeUpdateAABBBounds.taps.filter(item => {
         return item.name !== this.key;

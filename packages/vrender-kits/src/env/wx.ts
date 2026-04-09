@@ -1,27 +1,27 @@
-import { container, ContainerModule, type Container, EnvContribution } from '@visactor/vrender-core';
+import { EnvContribution, getLegacyBindingContext } from '@visactor/vrender-core';
 import { loadMathPicker } from '../picker/math-module';
 // import { wxEnvModule } from './contributions/module';
-import { wxCanvasModule } from '../canvas/contributions/wx/modules';
-import { wxWindowModule } from '../window/contributions/wx-contribution';
+import { bindWxCanvasModules } from '../canvas/contributions/wx/modules';
+import { bindWxWindowContribution } from '../window/contributions/wx-contribution';
 import { WxEnvContribution } from './contributions/wx-contribution';
+import type { LegacyBindContainer, LegacyContainer } from '../common/legacy-container';
 
-export const wxEnvModule = new ContainerModule(bind => {
-  // wx
-  if (!(wxEnvModule as any)._isWxBound) {
-    (wxEnvModule as any)._isWxBound = true;
-    bind(WxEnvContribution).toSelf().inSingletonScope();
-    bind(EnvContribution).toService(WxEnvContribution);
+let isWxBound = false;
+
+export function bindWxEnv(container: LegacyBindContainer) {
+  if (!isWxBound) {
+    isWxBound = true;
+    container.bind(WxEnvContribution).toSelf().inSingletonScope();
+    container.bind(EnvContribution).toService(WxEnvContribution);
   }
-});
+}
 
-(wxEnvModule as any)._isWxBound = false;
-
-export function loadWxEnv(container: Container, loadPicker: boolean = true) {
+export function loadWxEnv(container: LegacyContainer = getLegacyBindingContext(), loadPicker: boolean = true) {
   if (!loadWxEnv.__loaded) {
     loadWxEnv.__loaded = true;
-    container.load(wxEnvModule);
-    container.load(wxCanvasModule);
-    container.load(wxWindowModule);
+    bindWxEnv(container);
+    bindWxCanvasModules(container);
+    bindWxWindowContribution(container);
     loadPicker && loadMathPicker(container);
   }
 }
@@ -29,5 +29,5 @@ export function loadWxEnv(container: Container, loadPicker: boolean = true) {
 loadWxEnv.__loaded = false;
 
 export function initWxEnv() {
-  loadWxEnv(container);
+  loadWxEnv();
 }

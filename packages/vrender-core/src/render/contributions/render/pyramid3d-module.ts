@@ -1,9 +1,8 @@
-import { ContainerModule } from '../../../common/inversify';
 import { DefaultCanvasPyramid3dRender } from './pyramid3d-render';
 import { GraphicRender, Pyramid3dRender, Rect3DRender } from './symbol';
 
 let loadPyramid3dModule = false;
-export const pyramid3dModule = new ContainerModule(bind => {
+export function bindPyramid3dRenderModule({ bind }: { bind: any }) {
   if (loadPyramid3dModule) {
     return;
   }
@@ -11,4 +10,6 @@ export const pyramid3dModule = new ContainerModule(bind => {
   // pyramid3d 渲染器
   bind(Pyramid3dRender).to(DefaultCanvasPyramid3dRender).inSingletonScope();
   bind(GraphicRender).toService(Pyramid3dRender);
-});
+}
+
+export const pyramid3dModule = bindPyramid3dRenderModule;

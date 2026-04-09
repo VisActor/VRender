@@ -1,4 +1,4 @@
-import { createStage, createGroup, createRect, container, IGraphic, DragNDrop, createSymbol } from '@visactor/vrender';
+import { createStage, createGroup, createRect, IGraphic, DragNDrop, createSymbol } from '@visactor/vrender';
 import { loadEditable } from './editor/register';
 import { TranformComponent } from './editor/transform-component';
 import { TranformComponent2 } from './editor/transform-component2';

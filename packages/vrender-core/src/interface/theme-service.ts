@@ -52,13 +52,11 @@
 
 // export const ThemeServce = Symbol.for('ThemeServce');
 
-// @injectable()
 // export class DefaultThemeService implements IThemeService {
 //   protected themeMap: Record<string, ITheme> = {};
 //   protected activeTheme?: ITheme;
 
 //   constructor(
-//     @inject(ContributionProvider)
 //     @named(Theme)
 //     protected readonly contributions: ContributionProvider<ITheme>
 //   ) {}

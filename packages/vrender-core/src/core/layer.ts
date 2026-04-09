@@ -1,6 +1,5 @@
 import type { AABBBounds, IBoundsLike } from '@visactor/vutils';
 import { application } from '../application';
-import { container } from '../container';
 import type {
   IDrawToParams,
   IGraphic,
@@ -105,7 +104,6 @@ export class Layer extends Group implements ILayer {
     this.window = window;
     this.main = params.main;
     this.layerHandler = params.layerHandler;
-    // this.layerHandler = container.get<ILayerHandlerContribution>(LayerHandlerContribution);
     this.layerHandler.init(this, window, {
       main: params.main,
       canvasId: params.canvasId,

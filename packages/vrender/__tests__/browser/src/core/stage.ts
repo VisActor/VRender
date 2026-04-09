@@ -1,7 +1,7 @@
-import { createStage, container } from '@visactor/vrender';
+import { createStage, vglobal } from '@visactor/vrender';
 
 export function createAStage() {
-  console.log(container.get(Symbol.for('VGlobal')));
+  console.log(vglobal);
   const stage = createStage({});
   console.log(stage);
   // const stage = new Stage({

@@ -1,9 +1,8 @@
-import { ContainerModule } from '../../../common/inversify';
 import { DefaultCanvasGlyphRender } from './glyph-render';
 import { GlyphRender, GraphicRender } from './symbol';
 
 let loadGlyphModule = false;
-export const glyphModule = new ContainerModule(bind => {
+export function bindGlyphRenderModule({ bind }: { bind: any }) {
   if (loadGlyphModule) {
     return;
   }
@@ -11,4 +10,6 @@ export const glyphModule = new ContainerModule(bind => {
   // glyph渲染器
   bind(GlyphRender).to(DefaultCanvasGlyphRender).inSingletonScope();
   bind(GraphicRender).toService(GlyphRender);
-});
+}
+
+export const glyphModule = bindGlyphRenderModule;

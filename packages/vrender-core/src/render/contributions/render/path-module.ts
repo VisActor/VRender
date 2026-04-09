@@ -1,12 +1,11 @@
 import { bindContributionProvider } from '../../../common/contribution-provider';
-import { ContainerModule } from '../../../common/inversify';
 import { DefaultBaseInteractiveRenderContribution } from './contributions';
 import { PathRenderContribution } from './contributions/constants';
 import { DefaultCanvasPathRender } from './path-render';
 import { GraphicRender, PathRender } from './symbol';
 
 let loadPathModule = false;
-export const pathModule = new ContainerModule(bind => {
+export function bindPathRenderModule({ bind }: { bind: any }) {
   if (loadPathModule) {
     return;
   }
@@ -19,4 +18,6 @@ export const pathModule = new ContainerModule(bind => {
 
   // path 渲染器注入contributions
   bindContributionProvider(bind, PathRenderContribution);
-});
+}
+
+export const pathModule = bindPathRenderModule;

@@ -1,6 +1,3 @@
-import { inject, injectable, named } from '../../../common/inversify-lite';
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { ContributionProvider } from '../../../common/contribution-provider';
 import { getTheme } from '../../../graphic/theme';
 import type {
   IGraphicAttribute,
@@ -27,16 +24,11 @@ import { ResourceLoader } from '../../../resource-loader/loader';
 
 const repeatStr = ['', 'repeat-x', 'repeat-y', 'repeat'];
 
-@injectable()
 export class DefaultCanvasImageRender extends BaseRender<IImage> implements IGraphicRender {
   type: 'image';
   numberType: number = IMAGE_NUMBER_TYPE;
 
-  constructor(
-    @inject(ContributionProvider)
-    @named(ImageRenderContribution)
-    protected readonly graphicRenderContributions: IContributionProvider<IImageRenderContribution>
-  ) {
+  constructor(protected readonly graphicRenderContributions: IContributionProvider<IImageRenderContribution>) {
     super();
     this.builtinContributions = [defaultImageRenderContribution, defaultImageBackgroundRenderContribution];
     this.init(graphicRenderContributions);

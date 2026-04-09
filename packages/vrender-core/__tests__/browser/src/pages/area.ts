@@ -1,9 +1,10 @@
-import { createStage, createArea, container, IGraphic, createLine } from '@visactor/vrender-core';
+import { createStage, createArea, getLegacyBindingContext, IGraphic, createLine } from '@visactor/vrender-core';
 import { addShapesToStage, colorPools } from '../utils';
 import { loadBrowserEnv, loadCanvasPicker } from '@visactor/vrender-kits';
 
-loadCanvasPicker(container);
-loadBrowserEnv(container);
+const legacyContext = getLegacyBindingContext();
+loadCanvasPicker(legacyContext);
+loadBrowserEnv(legacyContext);
 
 const subP1 = [
   [0, 100],

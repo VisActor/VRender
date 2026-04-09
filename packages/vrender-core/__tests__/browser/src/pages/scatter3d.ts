@@ -5,7 +5,6 @@ import {
   Group,
   Line,
   Text,
-  container,
   Rect3d,
   createGroup,
   IGroup,

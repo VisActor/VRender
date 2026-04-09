@@ -1,7 +1,8 @@
-import { ContainerModule } from '../../../common/inversify-lite';
 import { bindContributionProvider } from '../../../common/contribution-provider';
 import { EnvContribution } from '../../../constants';
 
-export default new ContainerModule(bind => {
+export function bindEnvContributionModules({ bind }: { bind: any }) {
   bindContributionProvider(bind, EnvContribution);
-});
+}
+
+export default bindEnvContributionModules;

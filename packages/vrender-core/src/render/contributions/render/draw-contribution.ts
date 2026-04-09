@@ -1,4 +1,3 @@
-import { injectable, inject, named, multiInject } from '../../../common/inversify-lite';
 import type {
   IContext2d,
   MaybePromise,
@@ -15,23 +14,45 @@ import type {
 } from '../../../interface';
 import { findNextGraphic, foreach } from '../../../common/sort';
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { ContributionProvider } from '../../../common/contribution-provider';
 import { DefaultAttribute } from '../../../graphic/config';
-import type { IAABBBounds, IBounds, IMatrix } from '@visactor/vutils';
-import { Bounds, Logger, getRectIntersect, isArray, isRectIntersect } from '@visactor/vutils';
-import { container } from '../../../container';
-import { GraphicRender, IncrementalDrawContribution } from './symbol';
-import { DrawItemInterceptor } from './draw-interceptor';
+import {
+  Bounds,
+  Logger,
+  getRectIntersect,
+  isArray,
+  isRectIntersect,
+  type IBounds,
+  type IMatrix
+} from '@visactor/vutils';
 import { createColor } from '../../../common/canvas-utils';
 import type { ILayerService } from '../../../interface/core';
 import { boundsAllocate } from '../../../allocator/bounds-allocate';
 import { matrixAllocate } from '../../../allocator/matrix-allocate';
 import { application } from '../../../application';
+import type { IRendererRegistry } from '../../../registry';
+
+interface IDrawContributionDeps {
+  rendererRegistry?: IRendererRegistry;
+  drawItemInterceptorContributions?: IContributionProvider<IDrawItemInterceptorContribution>;
+  global?: IGlobal;
+  layerService?: ILayerService;
+}
+
+const EMPTY_DRAW_ITEM_INTERCEPTOR_PROVIDER: IContributionProvider<IDrawItemInterceptorContribution> = {
+  getContributions: () => []
+};
+
+function getIncrementalDrawContribution(): IDrawContribution {
+  const factory = application.incrementalDrawContributionFactory;
+  if (!factory) {
+    throw new Error('Incremental draw contribution factory is not configured.');
+  }
+  return factory();
+}
 
 /**
  * 默认的渲染contribution，基于树状结构针对图元的渲染
  */
-@injectable()
 export class DefaultDrawContribution implements IDrawContribution {
   declare currentRenderMap: Map<number, IGraphicRender>;
   declare defaultRenderMap: Map<number, IGraphicRender>;
@@ -47,25 +68,28 @@ export class DefaultDrawContribution implements IDrawContribution {
   declare layerService: ILayerService;
 
   declare scrollMatrix?: IMatrix;
+  protected readonly rendererRegistry?: IRendererRegistry;
 
   constructor(
-    // @inject(ContributionProvider)
-    // @named(GraphicRender)
-    // protected readonly contributions: ContributionProvider<IGraphicRender>,
-    @multiInject(GraphicRender) protected readonly contributions: IGraphicRender[],
-    // @inject(RenderSelector) protected readonly renderSelector: IRenderSelector, // 根据图元类型选择对应的renderItem进行渲染
+    protected contributions: IGraphicRender[] = [],
+    // protected readonly renderSelector: IRenderSelector, // 根据图元类型选择对应的renderItem进行渲染
     // 拦截器
-    @inject(ContributionProvider)
-    @named(DrawItemInterceptor)
-    protected readonly drawItemInterceptorContributions: IContributionProvider<IDrawItemInterceptorContribution>
+    protected drawItemInterceptorContributions: IContributionProvider<IDrawItemInterceptorContribution> = EMPTY_DRAW_ITEM_INTERCEPTOR_PROVIDER,
+    deps: IDrawContributionDeps = {}
   ) {
     this.currentRenderMap = new Map();
     this.defaultRenderMap = new Map();
     this.styleRenderMap = new Map();
     this.dirtyBounds = new Bounds();
     this.backupDirtyBounds = new Bounds();
-    this.global = application.global;
-    this.layerService = application.layerService;
+    this.global = deps.global ?? application.global;
+    this.layerService = deps.layerService ?? application.layerService;
+    this.rendererRegistry = deps.rendererRegistry;
+    this.contributions = this.rendererRegistry?.getAll() ?? this.contributions;
+    this.drawItemInterceptorContributions =
+      deps.drawItemInterceptorContributions ??
+      this.drawItemInterceptorContributions ??
+      EMPTY_DRAW_ITEM_INTERCEPTOR_PROVIDER;
     if (!isArray(this.contributions)) {
       this.contributions = [this.contributions];
     }
@@ -73,6 +97,9 @@ export class DefaultDrawContribution implements IDrawContribution {
   }
 
   reInit() {
+    this.defaultRenderMap.clear();
+    this.styleRenderMap.clear();
+    this.currentRenderMap.clear();
     this.init();
     this.contributions.forEach(item => {
       item.reInit();
@@ -80,7 +107,9 @@ export class DefaultDrawContribution implements IDrawContribution {
   }
 
   init() {
-    this.contributions.forEach(item => {
+    const contributions = this.rendererRegistry?.getAll() ?? this.contributions;
+    this.contributions = contributions;
+    contributions.forEach(item => {
       if (item.style) {
         const map = this.styleRenderMap.get(item.style) || new Map();
         map.set(item.numberType, item);
@@ -303,9 +332,9 @@ export class DefaultDrawContribution implements IDrawContribution {
     }
     // 渲染
     const incrementalContext = incrementalLayer.layer.getNativeHandler().getContext();
-    const idc = incrementalLayer.drawContribution || container.get(IncrementalDrawContribution);
-    idc.dirtyBounds.setValue(-Infinity, -Infinity, Infinity, Infinity);
-    idc.backupDirtyBounds.setValue(-Infinity, -Infinity, Infinity, Infinity);
+    const idc: IDrawContribution = incrementalLayer.drawContribution || getIncrementalDrawContribution();
+    (idc as any).dirtyBounds.setValue(-Infinity, -Infinity, Infinity, Infinity);
+    (idc as any).backupDirtyBounds.setValue(-Infinity, -Infinity, Infinity, Infinity);
     (idc as any).draw(this.currentRenderService, {
       ...drawContext,
       drawContribution: idc,

@@ -1,7 +1,8 @@
 import { isValid, merge, normalizePadding } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import type { EmptyTipAttributes } from './type';
-import { Image, Rect, Text, graphicCreator } from '@visactor/vrender-core';
+import { Image, Rect, Text } from '@visactor/vrender-core';
+import { graphicCreator } from '../util/graphic-creator';
 import type { ComponentOptions } from '../interface';
 import { loadEmptyTipComponent } from './register';
 

@@ -1,26 +1,26 @@
-import { container, ContainerModule, type Container, EnvContribution } from '@visactor/vrender-core';
+import { EnvContribution, getLegacyBindingContext } from '@visactor/vrender-core';
 import { loadMathPicker } from '../picker/math-module';
-import { harmonyWindowModule } from '../window/contributions/harmony-contribution';
-import { harmonyCanvasModule } from '../canvas/contributions/harmony/modules';
+import { bindHarmonyWindowContribution } from '../window/contributions/harmony-contribution';
+import { bindHarmonyCanvasModules } from '../canvas/contributions/harmony/modules';
 import { HarmonyEnvContribution } from './contributions/harmony-contribution';
+import type { LegacyBindContainer, LegacyContainer } from '../common/legacy-container';
 
-export const harmonyEnvModule = new ContainerModule(bind => {
-  // harmony
-  if (!(harmonyEnvModule as any).isHarmonyBound) {
-    (harmonyEnvModule as any).isHarmonyBound = true;
-    bind(HarmonyEnvContribution).toSelf().inSingletonScope();
-    bind(EnvContribution).toService(HarmonyEnvContribution);
+let isHarmonyBound = false;
+
+export function bindHarmonyEnv(container: LegacyBindContainer) {
+  if (!isHarmonyBound) {
+    isHarmonyBound = true;
+    container.bind(HarmonyEnvContribution).toSelf().inSingletonScope();
+    container.bind(EnvContribution).toService(HarmonyEnvContribution);
   }
-});
+}
 
-(harmonyEnvModule as any).isHarmonyBound = false;
-
-export function loadHarmonyEnv(container: Container, loadPicker: boolean = true) {
+export function loadHarmonyEnv(container: LegacyContainer = getLegacyBindingContext(), loadPicker: boolean = true) {
   if (!loadHarmonyEnv.__loaded) {
     loadHarmonyEnv.__loaded = true;
-    container.load(harmonyEnvModule);
-    container.load(harmonyCanvasModule);
-    container.load(harmonyWindowModule);
+    bindHarmonyEnv(container);
+    bindHarmonyCanvasModules(container);
+    bindHarmonyWindowContribution(container);
     loadPicker && loadMathPicker(container);
   }
 }
@@ -28,5 +28,5 @@ export function loadHarmonyEnv(container: Container, loadPicker: boolean = true)
 loadHarmonyEnv.__loaded = false;
 
 export function initHarmonyEnv() {
-  loadHarmonyEnv(container);
+  loadHarmonyEnv();
 }

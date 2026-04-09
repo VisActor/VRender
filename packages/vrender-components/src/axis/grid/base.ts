@@ -3,7 +3,7 @@
  */
 import { isFunction, isArray, merge, PointService, abs, pi, isNumberClose } from '@visactor/vutils';
 import type { IGraphic, IGroup, Path } from '@visactor/vrender-core';
-import { graphicCreator } from '@visactor/vrender-core';
+import { graphicCreator } from '../../util/graphic-creator';
 import { AbstractComponent } from '../../core/base';
 import type { Point } from '../../core/type';
 import type { GridItem, CircleGridAttributes, GridBaseAttributes, GridAttributes, LineGridAttributes } from './type';

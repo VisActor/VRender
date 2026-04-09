@@ -1,6 +1,4 @@
-import { inject, injectable } from '../../common/inversify-lite';
-import type { IAABBBounds } from '@visactor/vutils';
-import { AABBBounds, isNumber, transformBoundsWithMatrix } from '@visactor/vutils';
+import { AABBBounds, isNumber, transformBoundsWithMatrix, type IAABBBounds } from '@visactor/vutils';
 import { SyncHook } from '../../tapable';
 import type {
   mat4,
@@ -21,8 +19,8 @@ import { mat4Allocate } from '../../allocator/matrix-allocate';
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { BoundsContext } from '../../common/bounds-context';
 import { renderCommandList } from '../../common/render-command-list';
-import { GraphicCreator } from '../constants';
 import { identityMat4, multiplyMat4Mat4, rotateX, rotateY, rotateZ, scaleMat4, translate } from '../../common/matrix';
+import { graphicCreator } from '../graphic-creator';
 
 export function getExtraModelMatrix(dx: number, dy: number, graphic: IGraphic): mat4 | null {
   const { alpha, beta } = graphic.attribute;
@@ -164,7 +162,6 @@ export function shouldUseMat4(graphic: IGraphic) {
 }
 
 // 管理graphic
-@injectable()
 export class DefaultGraphicService implements IGraphicService {
   declare hooks: {
     onAttributeUpdate: ISyncHook<[IGraphic]>;
@@ -181,7 +178,7 @@ export class DefaultGraphicService implements IGraphicService {
   // 临时bounds，用作缓存
   protected tempAABBBounds1: AABBBounds;
   protected tempAABBBounds2: AABBBounds;
-  constructor(@inject(GraphicCreator) public readonly creator: IGraphicCreator) {
+  constructor(public readonly creator: IGraphicCreator = graphicCreator as unknown as IGraphicCreator) {
     this.hooks = {
       onAttributeUpdate: new SyncHook<[IGraphic]>(['graphic']),
       onSetStage: new SyncHook<[IGraphic, IStage]>(['graphic', 'stage']),

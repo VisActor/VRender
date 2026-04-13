@@ -14,6 +14,18 @@ import type {
 } from '../../../../interface';
 import { pi2 } from '@visactor/vutils';
 
+// 仅这些内置纹理会通过程序绘制 tile，且会受 size/padding/color 影响
+const builtinProceduralTextureTypes = new Set([
+  'circle',
+  'diamond',
+  'rect',
+  'vertical-line',
+  'horizontal-line',
+  'bias-lr',
+  'bias-rl',
+  'grid'
+]);
+
 function formatRatio(ratio: number) {
   if (ratio <= 0.5) {
     return ratio * 4 - 1;
@@ -455,7 +467,13 @@ export class DefaultBaseTextureRenderContribution implements IBaseRenderContribu
     if (texture === 'wave') {
       return null;
     }
-    return `${texture}-${textureSize}-${texturePadding}-${textureColor}-${dpr}`;
+    if (builtinProceduralTextureTypes.has(texture)) {
+      // 内置纹理：纹理参数变化会改变 pattern 内容，使用完整 key
+      return `builtin:${texture}|size:${textureSize}|padding:${texturePadding}|color:${textureColor}|dpr:${dpr}`;
+    }
+    // 资源纹理（url/svg/base64）：size/color 不参与 pattern 生成，避免冗余缓存；
+    // 但 padding/radius 会改变最终 tile，需要保留在 key 中
+    return `resource:${texture}|padding:${texturePadding}|radius:${textureRadius}|dpr:${dpr}`;
   }
 
   protected createResourcePattern(

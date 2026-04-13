@@ -346,7 +346,8 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     }
     if (isExternalTexture(params.texture)) {
       this.loadImage(params.texture, false);
-    } else if (params.shadowGraphic) {
+    }
+    if (params.shadowGraphic) {
       this.setShadowGraphic(params.shadowGraphic);
     }
     // this.attribute = createTrackableObject(this.attribute);
@@ -722,7 +723,8 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     }
     if (isExternalTexture(params.texture)) {
       this.loadImage(params.texture, false);
-    } else if (params.shadowGraphic) {
+    }
+    if (params.shadowGraphic) {
       this.setShadowGraphic(params.shadowGraphic);
     }
     this._setAttributes(params, forceUpdateTag, context);
@@ -808,7 +810,8 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     }
     if (isExternalTexture(params.texture)) {
       this.loadImage(params.texture, false);
-    } else if (params.shadowGraphic) {
+    }
+    if (params.shadowGraphic) {
       this.setShadowGraphic(params.shadowGraphic);
     }
     this._updateTag = UpdateTag.INIT;

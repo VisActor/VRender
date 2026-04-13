@@ -48,6 +48,7 @@ export default class Wrapper {
   direction: 'horizontal' | 'vertical';
   directionKey: { width: string; height: string };
   newLine: boolean; // 空换行符是否新增一行
+  _currentLineIndent: number; // 当前行的hanging indent（用于列表续行）
 
   constructor(frame: Frame) {
     this.frame = frame;
@@ -62,9 +63,15 @@ export default class Wrapper {
     this.maxAscentForBlank = 0;
     this.maxDescentForBlank = 0;
     this.lineBuffer = [];
+    this._currentLineIndent = 0;
 
     this.direction = frame.layoutDirection;
     this.directionKey = DIRECTION_KEY[this.direction];
+  }
+
+  // 获取当前可用宽度（考虑列表缩进）
+  get effectiveWidth() {
+    return this[this.directionKey.width] - this._currentLineIndent;
   }
 
   // 不满一行，存储
@@ -111,8 +118,8 @@ export default class Wrapper {
     const maxAscent = this.maxAscent === 0 ? this.maxAscentForBlank : this.maxAscent;
     const maxDescent = this.maxDescent === 0 ? this.maxDescentForBlank : this.maxDescent;
     const line = new Line(
-      this.frame.left,
-      this[this.directionKey.width],
+      this.frame.left + this._currentLineIndent,
+      this[this.directionKey.width] - this._currentLineIndent,
       this.y + maxAscent,
       maxAscent,
       maxDescent,
@@ -122,6 +129,17 @@ export default class Wrapper {
     );
     this.frame.lines.push(line);
     this.frame.actualHeight += line.height;
+
+    // 注册链接段落到frame.links
+    const lineIndex = this.frame.lines.length - 1;
+    this.lineBuffer.forEach(p => {
+      if (!(p instanceof RichTextIcon) && (p as Paragraph)._linkId) {
+        const linkId = (p as Paragraph)._linkId as string;
+        const regions = this.frame.links.get(linkId) ?? [];
+        regions.push({ paragraph: p as any, line: line as any, lineIndex });
+        this.frame.links.set(linkId, regions);
+      }
+    });
 
     // this.y += maxAscent + maxDescent;
     this.y += line.height;
@@ -141,7 +159,7 @@ export default class Wrapper {
         // width为0时，宽度不设限制，不主动换行
         this.store(paragraph);
       } else {
-        if (this.lineWidth + paragraph[this.directionKey.width] <= this[this.directionKey.width]) {
+        if (this.lineWidth + paragraph[this.directionKey.width] <= this.effectiveWidth) {
           this.store(paragraph);
         } else if (this.lineBuffer.length === 0) {
           this.store(paragraph);
@@ -163,6 +181,8 @@ export default class Wrapper {
     if (paragraph.newLine) {
       // 需要换行前，先完成上一行绘制
       this.send();
+      // 新行开始，普通段落重置缩进，列表续行保留 hanging indent
+      this._currentLineIndent = paragraph._listIndent ?? 0;
     }
 
     if (paragraph.text.length === 0 && !this.newLine) {
@@ -183,9 +203,9 @@ export default class Wrapper {
       // } else {
       //   this.cut(paragraph);
       // }
-      if (this.lineWidth + paragraph[this.directionKey.width] <= this[this.directionKey.width]) {
+      if (this.lineWidth + paragraph[this.directionKey.width] <= this.effectiveWidth) {
         this.store(paragraph);
-      } else if (this.lineWidth === this[this.directionKey.width]) {
+      } else if (this.lineWidth === this.effectiveWidth) {
         this.send();
         this.deal(paragraph);
       } else {
@@ -208,7 +228,7 @@ export default class Wrapper {
     //     this.send();
     //     return;
     // }
-    const availableWidth = this[this.directionKey.width] - this.lineWidth || 0;
+    const availableWidth = this.effectiveWidth - this.lineWidth || 0;
     const guessIndex = Math.ceil((availableWidth / paragraph[this.directionKey.width]) * paragraph.length) || 0;
     // const index = getStrByWith(paragraph.text, availableWidth, paragraph.style, guessIndex, true);
     const index = getStrByWithCanvas(
@@ -229,6 +249,9 @@ export default class Wrapper {
     } else if (this.lineBuffer.length !== 0) {
       // 当前行无法容纳，转下一行处理
       this.send();
+      if (paragraph._listIndent != null) {
+        this._currentLineIndent = paragraph._listIndent;
+      }
       this.deal(paragraph);
     }
     // 宽度过低，无法截断（容不下第一个字符的宽度），不处理

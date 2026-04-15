@@ -2,6 +2,12 @@
   "name": "@visactor/vrender-animate",
   "entries": [
     {
+      "version": "1.0.46",
+      "tag": "@visactor/vrender-animate_v1.0.46",
+      "date": "Wed, 15 Apr 2026 07:05:39 GMT",
+      "comments": {}
+    },
+    {
       "version": "1.0.45",
       "tag": "@visactor/vrender-animate_v1.0.45",
       "date": "Thu, 02 Apr 2026 08:39:39 GMT",

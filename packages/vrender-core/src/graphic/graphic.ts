@@ -118,6 +118,17 @@ export const GRAPHIC_UPDATE_TAG_KEY = [
 const tempConstantXYKey = ['x', 'y'];
 const tempConstantScaleXYKey = ['scaleX', 'scaleY'];
 const tempConstantAngleKey = ['angle'];
+const builtinTextureTypes = new Set([
+  'circle',
+  'diamond',
+  'rect',
+  'vertical-line',
+  'horizontal-line',
+  'bias-lr',
+  'bias-rl',
+  'grid',
+  'wave'
+]);
 
 const point = new Point();
 
@@ -259,29 +270,29 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   declare y1WithoutTransform?: number;
 
   // aabbBounds，所有图形都需要有，所以初始化即赋值
-  protected declare _AABBBounds: IAABBBounds;
+  declare protected _AABBBounds: IAABBBounds;
   get AABBBounds(): IAABBBounds {
     return this.tryUpdateAABBBounds();
   }
   // 具有旋转的包围盒，部分图元需要，动态初始化
-  protected declare _OBBBounds?: IOBBBounds;
+  declare protected _OBBBounds?: IOBBBounds;
   get OBBBounds(): IOBBBounds {
     return this.tryUpdateOBBBounds();
   }
-  protected declare _globalAABBBounds: IAABBBounds;
+  declare protected _globalAABBBounds: IAABBBounds;
   // 全局包围盒，部分图元需要，动态初始化，建议使用AABBBounds
   get globalAABBBounds(): IAABBBounds {
     return this.tryUpdateGlobalAABBBounds();
   }
-  protected declare _transMatrix: Matrix;
+  declare protected _transMatrix: Matrix;
   get transMatrix(): Matrix {
     return this.tryUpdateLocalTransMatrix(true);
   }
-  protected declare _globalTransMatrix: Matrix;
+  declare protected _globalTransMatrix: Matrix;
   get globalTransMatrix(): Matrix {
     return this.tryUpdateGlobalTransMatrix(true);
   }
-  protected declare _updateTag: number;
+  declare protected _updateTag: number;
 
   // 上次更新的stamp
   declare stamp?: number;
@@ -332,7 +343,11 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     this.updateAABBBoundsStamp = 0;
     if (params.background) {
       this.loadImage((params.background as any).background ?? params.background, true);
-    } else if (params.shadowGraphic) {
+    }
+    if (isExternalTexture(params.texture)) {
+      this.loadImage(params.texture, false);
+    }
+    if (params.shadowGraphic) {
       this.setShadowGraphic(params.shadowGraphic);
     }
     // this.attribute = createTrackableObject(this.attribute);
@@ -705,7 +720,11 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
 
     if (params.background) {
       this.loadImage(params.background, true);
-    } else if (params.shadowGraphic) {
+    }
+    if (isExternalTexture(params.texture)) {
+      this.loadImage(params.texture, false);
+    }
+    if (params.shadowGraphic) {
       this.setShadowGraphic(params.shadowGraphic);
     }
     this._setAttributes(params, forceUpdateTag, context);
@@ -753,6 +772,8 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     }
     if (key === 'background') {
       this.loadImage(value, true);
+    } else if (key === 'texture' && isExternalTexture(value)) {
+      this.loadImage(value, false);
     } else if (key === 'shadowGraphic') {
       this.setShadowGraphic(value);
     }
@@ -786,7 +807,11 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     this.attribute = params;
     if (params.background) {
       this.loadImage(params.background, true);
-    } else if (params.shadowGraphic) {
+    }
+    if (isExternalTexture(params.texture)) {
+      this.loadImage(params.texture, false);
+    }
+    if (params.shadowGraphic) {
       this.setShadowGraphic(params.shadowGraphic);
     }
     this._updateTag = UpdateTag.INIT;
@@ -1633,4 +1658,17 @@ function backgroundNotImage(image: any) {
     return true;
   }
   return false;
+}
+
+function isExternalTexture(texture: any) {
+  if (!texture) {
+    return false;
+  }
+  if (typeof texture === 'string') {
+    if (builtinTextureTypes.has(texture)) {
+      return false;
+    }
+    return texture.startsWith('<svg') || isValidUrl(texture) || texture.includes('/') || isBase64(texture);
+  }
+  return isObject(texture);
 }

@@ -1,6 +1,13 @@
 # Change Log - @visactor/vrender
 
-This log was last generated on Thu, 02 Apr 2026 08:39:39 GMT and should not be manually modified.
+This log was last generated on Wed, 15 Apr 2026 07:05:39 GMT and should not be manually modified.
+
+## 1.0.46
+Wed, 15 Apr 2026 07:05:39 GMT
+
+### Updates
+
+- feat: graphic support custom texture
 
 ## 1.0.45
 Thu, 02 Apr 2026 08:39:39 GMT

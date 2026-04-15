@@ -12,6 +12,7 @@ import type { IContainPointMode } from '../common/enums';
 import type { IFace3d } from './graphic/face3d';
 import type { IPickerService } from './picker';
 import type { ISymbolClass } from './graphic/symbol';
+import type { IContext2d } from './context';
 
 type IStrokeSeg = {
   /**
@@ -279,7 +280,18 @@ export type IStrokeStyle = {
   stroke: IStrokeType[] | IStrokeType;
 };
 
-type TextureType = 'circle' | 'diamond' | 'rect' | 'vertical-line' | 'horizontal-line' | 'bias-lr' | 'bias-rl' | 'grid';
+type TextureType =
+  | 'circle'
+  | 'diamond'
+  | 'rect'
+  | 'vertical-line'
+  | 'horizontal-line'
+  | 'bias-lr'
+  | 'bias-rl'
+  | 'grid'
+  | 'wave';
+
+type ITextureSource = string | HTMLImageElement | HTMLCanvasElement;
 
 export type IConnectedStyle = {
   /**
@@ -481,7 +493,69 @@ export type IGraphicStyle = ILayout &
     autoAnimateTexture: boolean;
     // 如果做动画的话，这里代表ratio
     textureRatio: number;
-    textureOptions: any;
+    textureOptions: {
+      /**
+       * 是否将纹理的 pattern 原点对齐到图元的绘制原点
+       */
+      alignToGraphic?: boolean;
+      /**
+       * 纹理在 x 方向的额外偏移量（用户坐标系）
+       */
+      alignOffsetX?: number;
+      /**
+       * 纹理在 y 方向的额外偏移量（用户坐标系）
+       */
+      alignOffsetY?: number;
+      /**
+       * 图片/SVG 纹理图案本身的圆角半径（用户坐标系）
+       */
+      radius?: number;
+      /**
+       * 是否使用动态纹理绘制（由调用方提供绘制回调）
+       */
+      dynamicTexture?: (
+        ctx: IContext2d,
+        row: number,
+        column: number,
+        rowCount: number,
+        columnCount: number,
+        ratio: number,
+        graphic: IGraphic,
+        width?: number,
+        height?: number
+      ) => void;
+      /**
+       * 动态纹理绘制前回调
+       */
+      beforeDynamicTexture?: (
+        ctx: IContext2d,
+        row: number,
+        column: number,
+        rowCount: number,
+        columnCount: number,
+        ratio: number,
+        graphic: IGraphic,
+        width?: number,
+        height?: number
+      ) => void;
+      /**
+       * 动态纹理网格配置
+       */
+      gridConfig?: {
+        columns?: number;
+        rows?: number;
+        gutterColumn?: number;
+        gutterRow?: number;
+      };
+      /**
+       * 是否使用新 canvas 绘制动态纹理
+       */
+      useNewCanvas?: boolean;
+      /**
+       * 其他纹理选项
+       */
+      [key: string]: any;
+    };
     background:
       | IBackgroundType
       | {
@@ -518,7 +592,7 @@ export type IGraphicStyle = ILayout &
     /**
      * 纹理的类型
      */
-    texture: TextureType | string;
+    texture: TextureType | ITextureSource;
     /**
      * 纹理的颜色
      */

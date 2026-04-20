@@ -58,7 +58,9 @@ export function getRollupOptions(
         tsconfig: path.resolve(projectRoot, config.tsconfig),
         compilerOptions: {
           sourceMap: false,
-          declaration: false
+          declaration: false,
+          // Avoid TS6304 with project refs where tsconfig has `composite: true`.
+          composite: false
         }
       }),
       url({

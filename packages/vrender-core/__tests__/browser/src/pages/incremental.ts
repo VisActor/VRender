@@ -1,5 +1,4 @@
 import {
-  createStage,
   createSymbol,
   builtinSymbols,
   IGroup,
@@ -12,6 +11,7 @@ import {
   waitForAllSubLayers
 } from '@visactor/vrender';
 import { addShapesToStage, colorPools } from '../utils';
+import { createBrowserPageStage } from '../page-stage';
 
 const symbolList = builtinSymbols.map(item => item.type);
 
@@ -128,7 +128,7 @@ export const page = () => {
   addSymbol2(200);
   addLine(600);
 
-  const stage = createStage({ canvas: 'main', autoRender: true, disableDirtyBounds: false });
+  const stage = createBrowserPageStage({ canvas: 'main', autoRender: true, disableDirtyBounds: false });
   stage.enableIncrementalAutoRender();
 
   root.add(background as any);

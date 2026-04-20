@@ -1,4 +1,5 @@
-import { createStage, createText, createGroup, createRect, IGraphic, global } from '@visactor/vrender';
+import { createText, createGroup, createRect, IGraphic, global } from '@visactor/vrender';
+import { createBrowserPageStage } from '../page-stage';
 
 // container.load(roughModule);
 
@@ -135,7 +136,7 @@ export const page = () => {
     // alignSelf: 'flex-end'
   });
 
-  const stage = createStage({
+  const stage = createBrowserPageStage({
     canvas: 'main',
     width: 1200,
     height: 600,

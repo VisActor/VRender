@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-nocheck
 import { AABBBounds } from '@visactor/vutils';
-import { createStage, Circle, Rect, EventManager, FederatedPointerEvent, Group } from '../../src/index';
-import { createCanvas, removeDom } from '../util';
+import { Circle, Rect, Group } from '../../src/index';
+import { createBrowserStage, createCanvas, removeDom } from '../util';
 
 describe('Graphic-Bounds', () => {
   // let layer;
@@ -27,7 +27,7 @@ describe('Graphic-Bounds', () => {
     //   system.destroy();
     // });
 
-    stage = createStage({
+    stage = createBrowserStage({
       canvas: canvasDom,
       width: 1000,
       height: 1000,

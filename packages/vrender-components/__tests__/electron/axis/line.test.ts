@@ -2,17 +2,15 @@ import { PointScale, LinearScale } from '@visactor/vscale';
 import type { IGraphic, Stage, Group, ILine, Text, IGroup, IText } from '@visactor/vrender-core';
 import { LineAxis, LineAxisGrid, Segment } from '../../../src';
 import { createCanvas } from '../../util/dom';
-import { createStage } from '../../util/vrender';
+import { createTestStage } from '../../util/vrender';
 import { AXIS_ELEMENT_NAME } from '../../../src/axis/constant';
 import { Tag } from './../../../src/tag/tag';
-import { initBrowserEnv } from '@visactor/vrender-kits';
-initBrowserEnv();
 
 describe('Line Axis', () => {
   let stage: Stage;
   beforeAll(() => {
     createCanvas(document.body, 'main');
-    stage = createStage('main');
+    stage = createTestStage('main');
   });
 
   afterAll(() => {

@@ -1,5 +1,6 @@
-import { createStage, createArea, IGraphic, global, createLine } from '@visactor/vrender';
+import { createArea, IGraphic, global, createLine } from '@visactor/vrender';
 import { addShapesToStage, colorPools } from '../utils';
+import { createBrowserPageStage } from '../page-stage';
 
 const subP1 = [
   [0, 100],
@@ -364,7 +365,7 @@ export const page = () => {
   });
 
   console.time();
-  const stage = createStage({
+  const stage = createBrowserPageStage({
     canvas: document.getElementById('main'),
     width: 500,
     height: 500,

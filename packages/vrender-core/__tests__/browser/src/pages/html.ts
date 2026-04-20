@@ -1,6 +1,7 @@
-import { createStage, createSymbol, IGraphic } from '@visactor/vrender';
+import { createSymbol, IGraphic } from '@visactor/vrender';
 import { roughModule } from '@visactor/vrender-kits';
 import { addShapesToStage, colorPools } from '../utils';
+import { createBrowserPageStage } from '../page-stage';
 
 // container.load(roughModule);
 
@@ -62,7 +63,7 @@ export const page = () => {
     graphics.push(symbol);
   });
 
-  const stage = createStage({
+  const stage = createBrowserPageStage({
     canvas: 'main',
     autoRender: true,
     enableHtmlAttribute: true

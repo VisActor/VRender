@@ -1,12 +1,22 @@
-import { createStage, createGroup, createRect, IGraphic, DragNDrop, createSymbol } from '@visactor/vrender';
+import { createGroup, createRect, IGraphic, DragNDrop, createSymbol } from '@visactor/vrender';
 import { loadEditable } from './editor/register';
 import { TranformComponent } from './editor/transform-component';
 import { TranformComponent2 } from './editor/transform-component2';
+import { createBrowserPageStage } from '../page-stage';
 // container.load(roughModule);
 
 loadEditable();
 
 export const page = () => {
+  const stage = createBrowserPageStage({
+    canvas: 'main',
+    width: 1200,
+    height: 600,
+    enableLayout: true,
+    autoRender: true,
+    pluginList: ['DraggablePlugin']
+  });
+
   const group = createGroup({
     x: 100,
     y: 100,
@@ -51,15 +61,6 @@ export const page = () => {
     }
   });
   c.wrap(circle);
-
-  const stage = createStage({
-    canvas: 'main',
-    width: 1200,
-    height: 600,
-    enableLayout: true,
-    autoRender: true,
-    pluginList: ['DraggablePlugin']
-  });
 
   stage.addEventListener('click', e => {
     console.log('click', e.target);

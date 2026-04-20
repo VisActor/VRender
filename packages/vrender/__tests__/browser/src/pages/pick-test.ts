@@ -1,14 +1,5 @@
-import {
-  loadFeishuContributions,
-  createStage,
-  Stage,
-  createCircle,
-  createGroup,
-  createText,
-  createRect
-} from '@visactor/vrender';
-
-loadFeishuContributions();
+import { Stage, createCircle, createGroup, createText, createRect } from '@visactor/vrender';
+import { createBrowserPageStage } from '../page-stage';
 
 export const page = () => {
   const div = document.createElement('div');
@@ -19,7 +10,7 @@ export const page = () => {
   div.style.left = '200px';
   div.style.border = '4px solid #000';
   document.body.appendChild(div);
-  const stage = createStage({
+  const stage = createBrowserPageStage({
     canvas: 'main',
     width: 1200,
     height: 600,

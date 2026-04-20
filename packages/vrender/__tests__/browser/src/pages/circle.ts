@@ -1,10 +1,11 @@
-import { createStage, DragNDrop, createCircle, IGraphic, vglobal } from '@visactor/vrender';
+import { DragNDrop, createCircle, IGraphic, vglobal } from '@visactor/vrender';
 import { colorPools } from '../utils';
 import { createGroup, generatorPathEasingFunc } from '@visactor/vrender';
+import { createBrowserPageStage } from '../page-stage';
 
 export const page = () => {
   const t = performance.now();
-  const stage = createStage({
+  const stage = createBrowserPageStage({
     canvas: 'main',
     autoRender: true
   });

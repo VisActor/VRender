@@ -1,6 +1,7 @@
-import { createStage, createArea, getLegacyBindingContext, IGraphic, createLine } from '@visactor/vrender-core';
+import { createArea, getLegacyBindingContext, IGraphic, createLine } from '@visactor/vrender-core';
 import { addShapesToStage, colorPools } from '../utils';
 import { loadBrowserEnv, loadCanvasPicker } from '@visactor/vrender-kits';
+import { createBrowserPageStage } from '../page-stage';
 
 const legacyContext = getLegacyBindingContext();
 loadCanvasPicker(legacyContext);
@@ -209,8 +210,8 @@ export const page = () => {
   // });
 
   console.time();
-  const stage = createStage({
-    canvas: document.getElementById('main'),
+  const stage = createBrowserPageStage({
+    canvas: 'main',
     width: 500,
     height: 500,
     renderStyle: 'default',

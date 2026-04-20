@@ -1,6 +1,7 @@
-import { createStage, createCircle, createRect } from '@visactor/vrender';
+import { createCircle, createRect } from '@visactor/vrender';
 import { roughModule } from '@visactor/vrender-kits';
 import { addShapesToStage, colorPools } from '../utils';
+import { createBrowserPageStage } from '../page-stage';
 
 // container.load(roughModule);
 
@@ -211,7 +212,7 @@ export const page = () => {
     })
   );
 
-  const stage = createStage({
+  const stage = createBrowserPageStage({
     canvas: 'main',
     width: 1200,
     height: 600,

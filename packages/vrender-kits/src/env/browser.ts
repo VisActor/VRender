@@ -6,11 +6,8 @@ import { bindBrowserWindowContribution } from '../window/contributions/browser-c
 import { BrowserEnvContribution } from './contributions/browser-contribution';
 import type { LegacyBindContainer, LegacyContainer } from '../common/legacy-container';
 
-let isBrowserBound = false;
-
 export function bindBrowserEnv(container: LegacyBindContainer) {
-  if (!isBrowserBound) {
-    isBrowserBound = true;
+  if (!(container as any).isBound?.(BrowserEnvContribution)) {
     container.bind(BrowserEnvContribution).toSelf().inSingletonScope();
     container.bind(EnvContribution).toService(BrowserEnvContribution);
   }

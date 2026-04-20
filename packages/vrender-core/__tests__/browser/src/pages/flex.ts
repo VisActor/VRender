@@ -1,4 +1,5 @@
-import { createStage, createGroup, createRect, IGraphic, global } from '@visactor/vrender';
+import { createGroup, createRect, IGraphic, global } from '@visactor/vrender';
+import { createBrowserPageStage } from '../page-stage';
 
 export const page = () => {
   // 添加10个rect
@@ -20,7 +21,7 @@ export const page = () => {
     console.log('click', e.clone());
   });
 
-  const stage = createStage({
+  const stage = createBrowserPageStage({
     canvas: 'main',
     width: 1200,
     height: 600,

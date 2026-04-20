@@ -1,15 +1,7 @@
-import {
-  createStage,
-  createArc,
-  IGraphic,
-  createRect,
-  createGlyph,
-  createSymbol,
-  createText,
-  createGroup
-} from '@visactor/vrender';
+import { createArc, IGraphic, createRect, createGlyph, createSymbol, createText, createGroup } from '@visactor/vrender';
 import { addShapesToStage, colorPools } from '../utils';
 import { pi, pi2 } from '@visactor/vutils';
+import { createBrowserPageStage } from '../page-stage';
 
 export const page = () => {
   const graphics: IGraphic[] = [];
@@ -118,7 +110,7 @@ export const page = () => {
     })
   );
 
-  const stage = createStage({
+  const stage = createBrowserPageStage({
     canvas: 'main',
     autoRender: true,
     poptip: true

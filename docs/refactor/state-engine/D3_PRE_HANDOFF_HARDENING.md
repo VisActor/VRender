@@ -2,14 +2,22 @@
 
 > **文档类型**：交付前验证与加固方案
 > **用途**：在 D3 主线已完成并关闭后，收敛“交给上层图表库前还必须补哪些验证”
-> **当前状态**：待执行
+> **当前状态**：历史方案已完成；legacy removal 现已完成，当前总体状态已恢复为 `handoff ready`
 > **重要说明**：本文件不是新的架构设计文档，也不是新的规范源；规范仍以 `graphic-state-animation-refactor-expectation.md`、`D3_ARCH_DESIGN.md` 及各 Phase 主文档为准
 
 ---
 
 ## 1. Current assessment
 
-当前仓库已经具备上层接入基础，但还没有达到“可以无额外加固直接 handoff 给上层图表库”的状态。
+当前仓库已经完成 pre-handoff hardening 主体收口，且在 legacy removal 的 `P2 hygiene cleanup` 收口后，当前总体状态也已恢复到可以直接 handoff 给上层图表库。
+
+补充约束：
+
+1. 当前 handoff 门槛已进一步收紧。
+2. 除测试、smoke 和上层包适配外，legacy path removal 也被纳入 handoff 范围。
+3. `legacy path removal` 的 `P0 + P1 + P2` 现已全部完成，因此可以恢复宣称 `handoff ready`。
+4. 历史上的 “pre-handoff hardening gate 全通过” 仍是阶段性里程碑；最终总体结论仍以下列文档为准：
+   - [D3_LEGACY_PATH_REMOVAL_STATUS.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_LEGACY_PATH_REMOVAL_STATUS.md)
 
 ### 1.1 已经基本收口的部分
 
@@ -45,20 +53,45 @@
 2. 动画进行中的树操作边界断言
 3. 状态动画与自驱动画在同一属性上的真实冲突边界断言
 
-### 1.3 当前已确认的 handoff 前红灯
+### 1.3 规划时已确认的 handoff 前红灯（历史背景）
 
-除动画补测外，当前还有两项已经实跑确认的上层红灯，必须进入 `P0`：
+除动画补测外，本轮加固规划建立时还有两项已经实跑确认的上层红灯，因此被正式纳入 `P0`：
 
-1. `packages/vrender rushx test` 当前失败
+1. `packages/vrender rushx test` 当时为红
    - 主要失败集中在 `packages/vrender/__tests__/graphic/graphic-state.test.ts`
    - 根因更偏“上层测试语义滞后”：仍在断言旧的 `normalAttrs` 语义和旧状态恢复外观，没有对齐 D3 Phase 2/3 之后的新真值模型
-2. `packages/react-vrender rushx test` 当前失败
+2. `packages/react-vrender rushx test` 当时为红
    - 至少包含两类问题：
      - `packages/react-vrender/src/Stage.tsx` 的类型适配问题
      - `packages/react-vrender/__tests__/unit/hostConfig.test.ts` 的异步更新 / 卸载清理不完整，导致 `document` 生命周期错误
    - 根因更偏“绑定层适配 + 测试生命周期收口”
 
-这两项不是推测风险，而是当前已确认的真实失败，因此必须作为 handoff 前门槛处理。
+这两项不是推测风险，而是规划时已确认的真实失败，因此被作为 handoff 前门槛处理。
+
+### 1.4 浏览器 smoke harness 当前也必须纳入 P0
+
+除单测、compile 和 handoff 文档外，`packages/vrender rushx start` 对应的小测试项目也必须正式纳入当前 handoff 范围。
+
+其定位应定义为：
+
+1. 上层业务最小集成 harness
+2. handoff 前 smoke 验证环境
+3. 上层接入问题与迁移经验的真实来源
+
+原因是：
+
+1. `packages/vrender rushx start` 实际启动的是 `vite ./__tests__/browser --host`
+2. browser harness 通过 Vite alias 直接引用 workspace 源码，而不是 dist 构建产物
+3. 它验证的是“当前仓库源码在真实浏览器页面环境里是否还能工作”，这正是上层图表库接入时最接近的运行形态
+
+因此，如果当前 harness 中“大部分页面都无法正常工作”，这不能被视为 demo 问题，也不能只当作开发体验问题。它属于 handoff 前必须收口的集成层风险。
+
+本轮不要求一开始把所有页面修绿，但必须完成：
+
+1. 全量页面 triage
+2. baseline smoke 页面定义
+3. baseline 页修复与可重复验证
+4. 上层迁移经验沉淀
 
 ---
 
@@ -173,6 +206,15 @@
      - 目标包：`packages/vrender`、`packages/vrender-kits`、`packages/vrender-components`
      - 通过标准：编译通过
      - 是否阻塞 handoff：是
+   - `packages/vrender rushx start` smoke harness
+     - 通过标准：server 可启动；baseline smoke 页面全部通过；全量页面 triage 已完成并留档；无未分类的致命失败
+     - 是否阻塞 handoff：是
+
+8. 将 `packages/vrender rushx start` 收口为 handoff smoke harness  
+   目标：
+   - 不把它当作漂亮 demo，而是当作上层接入前的最小浏览器集成验证环境
+   - 先完成页面 triage，再修 baseline，不盲修全量页面
+   - 让结果能反哺上层接入文档、迁移经验总结和当前 P0 handoff gate
 
 ### P1 强烈建议
 
@@ -204,3 +246,23 @@
 3. 不把既有 follow-up 项重新升级为当前 blocker。
 4. 不把这轮任务扩成新的 shared-state / deferred / animation 架构迭代。
 5. 只聚焦“在当前仓库内，把交付给上层图表库前必须补齐的验证做完”。
+
+---
+
+## 5. Additional handoff gate
+
+除上述加固项外，handoff 还必须额外满足：
+
+1. legacy path removal 的 `P0` 完成
+2. legacy path removal 的 `P1` 完成
+3. legacy path removal 的 `P2` 完成
+
+即：
+
+> 当前 handoff gate = 原有 pre-handoff hardening 门槛 + legacy path removal 的 `P0 + P1 + P2`
+
+相关规划见：
+
+- [D3_LEGACY_PATH_REMOVAL_PLAN.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_LEGACY_PATH_REMOVAL_PLAN.md)
+- [D3_LEGACY_PATH_REMOVAL_STATUS.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_LEGACY_PATH_REMOVAL_STATUS.md)
+- [D3_LEGACY_P0_INSTALLER_GUIDE.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_LEGACY_P0_INSTALLER_GUIDE.md)

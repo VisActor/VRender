@@ -7,10 +7,12 @@ export * from './picker/contributions/constants';
 export * from './jsx';
 export * from './react-tree';
 export * from './event/extension';
+export * from './installers/app';
 // export * from './env/browser';
 export * from './env';
 export * from './picker/contributions/canvas-picker/arc-module';
 export * from './picker/contributions/math-picker/arc-module';
+export * from './picker/math-module';
 
 export * from './picker/contributions/canvas-picker/rect-module';
 export * from './picker/contributions/math-picker/rect-module';

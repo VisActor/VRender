@@ -11,7 +11,6 @@ import {
 } from '@visactor/vrender-animate';
 import {
   createRect,
-  createStage,
   createSymbol,
   IGraphic,
   vglobal,
@@ -22,14 +21,91 @@ import {
   createPath
 } from '@visactor/vrender';
 import type { EasingType } from '@visactor/vrender-animate';
+import { isSmokeMode } from '../harness';
+import { createBrowserPageStage } from '../page-stage';
 // roughModule(getLegacyBindingContext());
 
-vglobal.setEnv('browser');
+if (!isSmokeMode()) {
+  vglobal.setEnv('browser');
+}
 
 registerAnimate();
 registerCustomAnimate();
 
 let stage: any;
+
+const renderSmokeAnimationState = () => {
+  stage?.release?.();
+  stage = createBrowserPageStage({
+    canvas: 'main',
+    width: 900,
+    height: 600,
+    background: '#f5f5f5',
+    disableDirtyBounds: false,
+    canvasControled: false,
+    autoRender: true
+  });
+
+  const title = createText({
+    x: 450,
+    y: 64,
+    text: 'Smoke: state-driven animation',
+    fontSize: 20,
+    fontWeight: 'bold',
+    fill: '#111',
+    textAlign: 'center'
+  });
+
+  const rect = createRect({
+    x: 350,
+    y: 200,
+    width: 180,
+    height: 120,
+    fill: '#1664ff',
+    cornerRadius: 16
+  });
+
+  stage.defaultLayer.add(title);
+  stage.defaultLayer.add(rect);
+  stage.render();
+
+  rect.applyAnimationState(
+    ['pulse'],
+    [
+      {
+        name: 'pulse',
+        animation: {
+          timeSlices: [
+            {
+              duration: 500,
+              effects: {
+                type: 'to',
+                channel: {
+                  fill: { to: '#ff7a00' },
+                  scaleX: { to: 1.08 },
+                  scaleY: { to: 1.08 }
+                },
+                easing: 'linear'
+              }
+            },
+            {
+              duration: 500,
+              effects: {
+                type: 'to',
+                channel: {
+                  fill: { to: '#1664ff' },
+                  scaleX: { to: 1 },
+                  scaleY: { to: 1 }
+                },
+                easing: 'linear'
+              }
+            }
+          ]
+        }
+      }
+    ]
+  );
+};
 
 function addCase(name: string, container: HTMLElement, cb: (stage: any) => void) {
   const button = document.createElement('button');
@@ -38,7 +114,7 @@ function addCase(name: string, container: HTMLElement, cb: (stage: any) => void)
   container.appendChild(button);
   button.addEventListener('click', () => {
     stage && stage.release();
-    stage = createStage({
+    stage = createBrowserPageStage({
       canvas: 'main',
       width: 900,
       height: 600,
@@ -52,6 +128,11 @@ function addCase(name: string, container: HTMLElement, cb: (stage: any) => void)
 }
 
 export const page = () => {
+  if (isSmokeMode()) {
+    renderSmokeAnimationState();
+    return;
+  }
+
   const btnContainer = document.createElement('div');
   btnContainer.style.width = '1000px';
   btnContainer.style.background = '#cecece';

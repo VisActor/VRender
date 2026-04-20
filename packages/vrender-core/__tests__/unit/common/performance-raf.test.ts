@@ -1,4 +1,6 @@
-declare var require: any;
+export {};
+
+declare const require: any;
 
 describe('common/performance-raf', () => {
   beforeEach(() => {

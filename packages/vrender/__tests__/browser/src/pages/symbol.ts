@@ -1,15 +1,8 @@
 /** @deprecated Legacy DI browser fixture retained for major-migration tracking. Prefer app-scoped entries/plugins. */
-import {
-  createStage,
-  createSymbol,
-  getLegacyBindingContext,
-  IGraphic,
-  XMLParser,
-  createText,
-  vglobal
-} from '@visactor/vrender';
+import { createSymbol, getLegacyBindingContext, IGraphic, XMLParser, createText, vglobal } from '@visactor/vrender';
 import { roughModule } from '@visactor/vrender-kits';
 import { AStageAnimate } from '@visactor/vrender-animate';
+import { createBrowserPageStage } from '../page-stage';
 // import { addShapesToStage, colorPools } from '../utils';
 // import { XMLParser, XMLValidator } from 'fast-xml-parser';
 import { AABBBounds } from '@visactor/vutils';
@@ -164,7 +157,7 @@ export const page = () => {
     graphics.push(text);
   });
 
-  const stage = createStage({
+  const stage = createBrowserPageStage({
     canvas: 'main',
     autoRender: true
     // background:

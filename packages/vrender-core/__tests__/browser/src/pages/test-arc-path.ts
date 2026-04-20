@@ -1,10 +1,11 @@
-import { createStage, Arc, Rect } from '@visactor/vrender';
+import { Arc, Rect } from '@visactor/vrender';
 import { addShapesToStage, colorPools } from '../utils';
+import { createBrowserPageStage } from '../page-stage';
 
 export const page = () => {
   (window as any).drawArcPathTime = 0;
   (window as any).renderCommandListTime = 0;
-  const stage = createStage({ canvas: 'main', width: 1200, height: 600, viewWidth: 1200, viewHeight: 600 });
+  const stage = createBrowserPageStage({ canvas: 'main', width: 1200, height: 600, viewWidth: 1200, viewHeight: 600 });
 
   for (let i = 0; i < 10000; i++) {
     // const arc = new Arc({

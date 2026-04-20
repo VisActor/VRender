@@ -6,11 +6,8 @@ import { bindNodeWindowContribution } from '../window/contributions/node-contrib
 import { NodeEnvContribution } from './contributions/node-contribution';
 import type { LegacyBindContainer, LegacyContainer } from '../common/legacy-container';
 
-let isNodeBound = false;
-
 export function bindNodeEnv(container: LegacyBindContainer) {
-  if (!isNodeBound) {
-    isNodeBound = true;
+  if (!(container as any).isBound?.(NodeEnvContribution)) {
     container.bind(NodeEnvContribution).toSelf().inSingletonScope();
     container.bind(EnvContribution).toService(NodeEnvContribution);
   }

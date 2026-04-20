@@ -1,14 +1,33 @@
-import type { IStage, IStageParams } from '../interface';
+import type { IContributionProvider, IDrawItemInterceptorContribution, IStage, IStageParams } from '../interface';
 import type { IPlugin, IPluginContext } from '../plugins';
 import { GraphicFactory, LayerFactory, StageFactory } from '../factory';
-import { ContributionRegistry, PickerRegistry, PluginRegistry, RendererRegistry } from '../registry';
+import {
+  ContributionRegistry,
+  type IContributionRegistry,
+  PickerRegistry,
+  PluginRegistry,
+  type RegistryKey,
+  RendererRegistry
+} from '../registry';
 import type { IAppContext, IAppContextFactoryName, IAppContextRegistryName } from './types';
+import { DefaultDrawContribution } from '../render/contributions/render/draw-contribution';
+import { DrawItemInterceptor } from '../render/contributions/render/draw-interceptor';
+import { DefaultRenderService } from '../render/render-service';
 
 interface IReleasableResource {
   release?: () => void;
 }
 
 const APP_CONTEXT_RELEASED_ERROR = 'AppContext has been released';
+
+function createRegistryContributionProvider<T>(
+  registry: IContributionRegistry<T>,
+  key: RegistryKey
+): IContributionProvider<T> {
+  return {
+    getContributions: () => registry.get(key)
+  };
+}
 
 export class AppContext implements IAppContext {
   readonly registry;
@@ -24,7 +43,7 @@ export class AppContext implements IAppContext {
       plugin: context.registry?.plugin ?? new PluginRegistry()
     };
     this.factory = {
-      stage: context.factory?.stage ?? new StageFactory(),
+      stage: context.factory?.stage ?? new StageFactory(undefined, () => this.createStageDeps()),
       layer: context.factory?.layer ?? new LayerFactory(),
       graphic: context.factory?.graphic ?? new GraphicFactory()
     };
@@ -72,7 +91,22 @@ export class AppContext implements IAppContext {
   createStage(params: Partial<IStageParams> = {}): IStage {
     this.assertActive();
     const stage = this.factory.stage.create(params);
-    this.stageResources.add(stage as unknown as IReleasableResource);
+    const releasableStage = stage as unknown as IReleasableResource;
+    const release = releasableStage.release?.bind(stage);
+    let released = false;
+
+    if (release) {
+      releasableStage.release = () => {
+        if (released) {
+          return;
+        }
+        released = true;
+        this.stageResources.delete(releasableStage);
+        release();
+      };
+    }
+
+    this.stageResources.add(releasableStage);
     return stage;
   }
 
@@ -103,5 +137,22 @@ export class AppContext implements IAppContext {
     if (this._released) {
       throw new Error(APP_CONTEXT_RELEASED_ERROR);
     }
+  }
+
+  private createStageDeps() {
+    return {
+      renderService: new DefaultRenderService(
+        new DefaultDrawContribution(
+          [],
+          createRegistryContributionProvider<IDrawItemInterceptorContribution>(
+            this.registry.contribution as IContributionRegistry<IDrawItemInterceptorContribution>,
+            DrawItemInterceptor
+          ),
+          {
+            rendererRegistry: this.registry.renderer
+          }
+        )
+      )
+    };
   }
 }

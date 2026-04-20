@@ -1,5 +1,4 @@
 import {
-  createStage,
   createRect,
   createLine,
   createText,
@@ -24,17 +23,28 @@ import {
   Easing
 } from '@visactor/vrender';
 import { addShapesToStage, colorPools } from '../utils';
+import { createBrowserPageApp } from '../page-stage';
 
 let stage: any;
+let pageApp: ReturnType<typeof createBrowserPageApp> | null = null;
 
 defaultTicker.start();
-function addCase(name: string, container: HTMLElement, cb: (stage: Stage) => void) {
+function addCase(
+  name: string,
+  container: HTMLElement,
+  cb: (stage: Stage, app: ReturnType<typeof createBrowserPageApp>) => void
+) {
   const button = document.createElement('button');
   button.innerText = name;
   container.appendChild(button);
   button.addEventListener('click', () => {
-    stage && stage.release();
-    stage = createStage({
+    if (pageApp) {
+      pageApp.release();
+      pageApp = null;
+      stage = null;
+    }
+    pageApp = createBrowserPageApp();
+    stage = pageApp.createStage({
       canvas: document.getElementById('main') as HTMLCanvasElement,
       width: 900,
       height: 600,
@@ -42,7 +52,7 @@ function addCase(name: string, container: HTMLElement, cb: (stage: Stage) => voi
       canvasControled: false,
       autoRender: true
     });
-    cb(stage);
+    cb(stage, pageApp);
   });
 }
 
@@ -311,7 +321,7 @@ export const page = () => {
     stage.defaultLayer.add(text as any);
   });
 
-  addCase('multi-animate', container, stage => {
+  addCase('multi-animate', container, (stage, app) => {
     const symbol = createSymbol({
       x: 100,
       y: 100,
@@ -320,7 +330,7 @@ export const page = () => {
       fill: 'red'
     });
     symbol.animate().to({ size: 1000 }, 1000, 'linear');
-    const stage2 = createStage({ container: 'container', width: 500, height: 500, autoRender: true });
+    const stage2 = app.createStage({ container: 'container', width: 500, height: 500, autoRender: true });
     stage.defaultLayer.add(symbol);
     console.time();
     new Array(6000000).fill(0).forEach(item => {

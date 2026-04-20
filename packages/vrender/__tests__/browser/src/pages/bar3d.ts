@@ -1,6 +1,6 @@
 import { colorPools } from '../utils';
-
-import { Animate, AnimateMode, createStage, Group, Rect3d, Line, Text } from '@visactor/vrender';
+import { Animate, AnimateMode, Group, Rect3d, Line, Text } from '@visactor/vrender';
+import { createBrowserPageStage } from '../page-stage';
 Animate.mode |= AnimateMode.SET_ATTR_IMMEDIATELY;
 
 const pi = Math.PI;
@@ -14,7 +14,7 @@ for (let i = 0; i < 10; i++) {
 
 function drawChartCanopus() {
   // 创建stage
-  const stage = createStage({ canvas: 'main', autoRender: true });
+  const stage = createBrowserPageStage({ canvas: 'main', autoRender: true });
   stage.set3dOptions({
     alpha: 0.9,
     beta: 0.3,
@@ -344,7 +344,7 @@ export const page = () => {
   // ctx.fillStyle = 'red';
   // ctx.fillRect(-2000, -2000, 8000, 8000);
 
-  // const stage = createStage({
+  // const stage = createBrowserPageStage({
   //   canvas: c as HTMLCanvasElement,
   //   canvasControled: false
   // });

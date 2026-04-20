@@ -1,13 +1,46 @@
-import type { IGraphic, IStageParams } from '@visactor/vrender-core';
-
-import { Group, Line, Text, createStage, Symbol, Rect, Path, Arc, Area, Circle, Polygon } from '@visactor/vrender-core';
+import {
+  Group,
+  Line,
+  Text,
+  Symbol,
+  Rect,
+  Path,
+  Arc,
+  Area,
+  Circle,
+  Polygon,
+  type IGraphic,
+  type IStageParams,
+  type Stage
+} from '@visactor/vrender-core';
+import { createBrowserVRenderApp } from '../../../vrender/src/entries';
 
 import { array } from '@visactor/vutils';
-import { initBrowserEnv } from '@visactor/vrender-kits';
-import { loadScrollbar } from '../../src';
-initBrowserEnv();
+import { installScrollbarToApp } from '../../src';
 
-loadScrollbar();
+type TManagedApp = {
+  createStage: (params: Partial<IStageParams>) => unknown;
+  release: () => void;
+};
+
+function attachAppRelease(stage: Stage, app: TManagedApp): Stage {
+  const originalRelease = stage.release.bind(stage);
+  let released = false;
+
+  stage.release = ((...args: []) => {
+    if (released) {
+      return;
+    }
+    released = true;
+    try {
+      originalRelease(...args);
+    } finally {
+      app.release();
+    }
+  }) as typeof stage.release;
+
+  return stage;
+}
 
 export default function render(component: IGraphic | IGraphic[], canvasId: string, option?: Partial<IStageParams>) {
   // 创建舞台实例
@@ -24,7 +57,10 @@ export default function render(component: IGraphic | IGraphic[], canvasId: strin
 }
 
 export function createRenderer(canvasId: string, option: Partial<IStageParams> = {}) {
-  return createStage({
+  const app = createBrowserVRenderApp() as unknown as TManagedApp;
+  installScrollbarToApp(app as any);
+
+  const stage = app.createStage({
     canvas: canvasId,
     width: 600,
     height: 600,
@@ -41,7 +77,9 @@ export function createRenderer(canvasId: string, option: Partial<IStageParams> =
     pluginList: ['poptipForText', 'scrollbar'],
     enableHtmlAttribute: true,
     ...option
-  });
+  }) as Stage;
+
+  return attachAppRelease(stage, app);
 }
 
 export function _add(group, json) {

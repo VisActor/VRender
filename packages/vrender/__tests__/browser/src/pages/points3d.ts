@@ -1,5 +1,4 @@
 import {
-  createStage,
   createText,
   createRect,
   createCircle,
@@ -17,6 +16,7 @@ import {
 } from '@visactor/vrender';
 import { addShapesToStage, colorPools } from '../utils';
 import { AbstractComponent } from '@visactor/vrender-components';
+import { createBrowserPageStage } from '../page-stage';
 
 type IPoints3dParams = {
   count: number;
@@ -139,7 +139,7 @@ class Points3dComponents extends AbstractComponent<IPoints3dParams> {
 export const page = () => {
   const graphics: IGraphic[] = [];
 
-  const stage = createStage({
+  const stage = createBrowserPageStage({
     canvas: 'main',
     autoRender: true,
     enableLayout: true,

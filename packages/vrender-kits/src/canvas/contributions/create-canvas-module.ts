@@ -2,25 +2,30 @@ import { CanvasFactory, Context2dFactory, type CanvasConfigType, type ICanvas } 
 import type { LegacyBindContainer } from '../../common/legacy-container';
 
 export function createModule(CanvasConstructor: any, ContextConstructor: any) {
-  let loaded = false;
-
-  return (bindingContainer: LegacyBindContainer) => {
-    if (loaded) {
-      return;
+  return (
+    bindingContainer: LegacyBindContainer & {
+      getNamed?: (serviceIdentifier: unknown, name: string) => unknown;
     }
-    loaded = true;
-    bindingContainer
-      .bind(CanvasFactory)
-      .toDynamicValue(() => {
-        return (params: CanvasConfigType) => new CanvasConstructor(params);
-      })
-      .whenTargetNamed(CanvasConstructor.env);
+  ) => {
+    const hasCanvasFactory = !!bindingContainer.getNamed?.(CanvasFactory, CanvasConstructor.env);
+    const hasContextFactory = !!bindingContainer.getNamed?.(Context2dFactory, ContextConstructor.env);
 
-    bindingContainer
-      .bind(Context2dFactory)
-      .toDynamicValue(() => {
-        return (params: ICanvas, dpr: number) => new ContextConstructor(params, dpr);
-      })
-      .whenTargetNamed(ContextConstructor.env);
+    if (!hasCanvasFactory) {
+      bindingContainer
+        .bind(CanvasFactory)
+        .toDynamicValue(() => {
+          return (params: CanvasConfigType) => new CanvasConstructor(params);
+        })
+        .whenTargetNamed(CanvasConstructor.env);
+    }
+
+    if (!hasContextFactory) {
+      bindingContainer
+        .bind(Context2dFactory)
+        .toDynamicValue(() => {
+          return (params: ICanvas, dpr: number) => new ContextConstructor(params, dpr);
+        })
+        .whenTargetNamed(ContextConstructor.env);
+    }
   };
 }

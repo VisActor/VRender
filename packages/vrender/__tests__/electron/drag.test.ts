@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-nocheck
-import { createStage, Circle, Rect, EventSystem, FederatedPointerEvent, EventTarget, DragNDrop } from '../../src/index';
-import { createCanvas, removeDom } from '../util';
+import { Circle, Rect, EventSystem, DragNDrop } from '../../src/index';
+import { createBrowserStage, createCanvas, removeDom } from '../util';
 
 describe('DragNDrop', () => {
-  let layer;
   let stage;
   let target;
   let source;
@@ -27,7 +26,7 @@ describe('DragNDrop', () => {
     // layer._systems.forEach(system => {
     //   system.destroy();
     // });
-    stage = createStage({ canvas: canvasDom, width: 1000, height: 1000, viewWidth: 500, viewHeight: 500 });
+    stage = createBrowserStage({ canvas: canvasDom, width: 1000, height: 1000, viewWidth: 500, viewHeight: 500 });
     stage.eventSystem.release();
 
     // append a rect

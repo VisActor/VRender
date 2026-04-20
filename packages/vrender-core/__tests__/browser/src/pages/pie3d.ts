@@ -1,10 +1,11 @@
-import { createStage, createGroup, createArc3d, IArc, IGraphic } from '@visactor/vrender';
+import { createGroup, createArc3d, IArc, IGraphic } from '@visactor/vrender';
 import { colorPools } from '../utils';
 import { pi2 } from '@visactor/vutils';
+import { createBrowserPageStage } from '../page-stage';
 
 function drawChartCanopus() {
   // 创建stage
-  const stage = createStage({ canvas: 'main', autoRender: true });
+  const stage = createBrowserPageStage({ canvas: 'main', autoRender: true });
   stage.set3dOptions({
     alpha: 0,
     beta: 0,

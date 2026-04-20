@@ -1,5 +1,4 @@
 import {
-  createStage,
   createText,
   createRect,
   createCircle,
@@ -14,6 +13,7 @@ import {
 } from '@visactor/vrender';
 import { addShapesToStage, colorPools } from '../utils';
 import { AbstractComponent } from '@visactor/vrender-components';
+import { createBrowserPageStage } from '../page-stage';
 
 type ITextFlyInParams = {
   title: {
@@ -179,7 +179,7 @@ class TextFlyInComponents extends AbstractComponent<ITextFlyInParams> {
 export const page = () => {
   const graphics: IGraphic[] = [];
 
-  const stage = createStage({
+  const stage = createBrowserPageStage({
     canvas: 'main',
     width: 640,
     height: 360,

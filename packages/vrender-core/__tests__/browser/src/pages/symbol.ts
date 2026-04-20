@@ -1,8 +1,9 @@
-import { createStage, createSymbol, IGraphic, XMLParser } from '@visactor/vrender';
+import { createSymbol, IGraphic, XMLParser } from '@visactor/vrender';
 // import { roughModule } from '@visactor/vrender-kits';
 // import { addShapesToStage, colorPools } from '../utils';
 // import { XMLParser, XMLValidator } from 'fast-xml-parser';
 import { AABBBounds } from '@visactor/vutils';
+import { createBrowserPageStage } from '../page-stage';
 
 // container.load(roughModule);
 
@@ -88,7 +89,7 @@ export const page = () => {
     graphics.push(symbol);
   });
 
-  const stage = createStage({
+  const stage = createBrowserPageStage({
     canvas: 'main',
     autoRender: true
   });

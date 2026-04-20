@@ -1,16 +1,13 @@
-import { degreeToRadian } from '@visactor/vutils';
 import type { IGraphic, Stage, Arc, Path, Rect } from '@visactor/vrender-core';
-import { LineCrosshair, CircleCrosshair, PolygonCrosshair, RectCrosshair, SectorCrosshair, Tag } from '../../src';
+import { LineCrosshair, CircleCrosshair, PolygonCrosshair, RectCrosshair, SectorCrosshair } from '../../src';
 import { createCanvas } from '../util/dom';
-import { createStage } from '../util/vrender';
-import { initBrowserEnv } from '@visactor/vrender-kits';
-initBrowserEnv();
+import { createTestStage } from '../util/vrender';
 
 describe('Crosshair', () => {
   let stage: Stage;
   beforeAll(() => {
     createCanvas(document.body, 'main');
-    stage = createStage('main');
+    stage = createTestStage('main');
   });
 
   afterAll(() => {
@@ -70,7 +67,13 @@ describe('Crosshair', () => {
     expect(crosshair.childrenCount).toBe(1);
 
     expect((crosshair.children[0] as Path).attribute.path).toBe(
-      'M350,250L330.90169943749476,308.7785252292473L280.90169943749476,345.10565162951536L219.09830056250527,345.10565162951536L169.09830056250527,308.7785252292473L150,250L169.09830056250524,191.2214747707527L219.09830056250524,154.89434837048464L280.9016994374947,154.89434837048464L330.9016994374947,191.22147477075265L350,249.99999999999997Z'
+      [
+        'M350,250L330.90169943749476,308.7785252292473L280.90169943749476,345.10565162951536',
+        'L219.09830056250527,345.10565162951536L169.09830056250527,308.7785252292473L150,250',
+        'L169.09830056250524,191.2214747707527L219.09830056250524,154.89434837048464',
+        'L280.9016994374947,154.89434837048464L330.9016994374947,191.22147477075265',
+        'L350,249.99999999999997Z'
+      ].join('')
     );
   });
 

@@ -1,5 +1,6 @@
-import { createStage, createPolygon } from '@visactor/vrender';
+import { createPolygon } from '@visactor/vrender';
 import { addShapesToStage, colorPools } from '../utils';
+import { createBrowserPageStage } from '../page-stage';
 
 // container.load(roughModule);
 
@@ -92,7 +93,7 @@ export const page = () => {
     });
   });
 
-  const stage = createStage({
+  const stage = createBrowserPageStage({
     canvas: 'main',
     width: 1200,
     height: 600,

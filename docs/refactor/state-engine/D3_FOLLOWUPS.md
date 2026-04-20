@@ -43,6 +43,23 @@
 - 是否影响现有 closed 结论：
   否。不影响 Phase 2 / Phase 3 / Phase 4 已 `closed` 的结论。
 
+### F-03 `memory` benchmark 中的 per-graphic 固定构造成本偏高
+
+- 问题：
+  `memory.ts` benchmark 在已经改成“复用单 app、只重建 stage”之后，当前分支相较 `develop` 仍存在显著性能差距。进一步归因后，主因已经收敛到 `Graphic` 在 D3 重构后每实例固定成本上升，而不是 app/stage 重建策略。
+- 当前状态：
+  已从 follow-up 升级为独立性能专项；后续不再在本文件中继续展开。
+- 为什么是非阻塞：
+  这是一个极端构造 benchmark 的性能问题，不等于当前 handoff 主链不可用，也不直接推翻 Phase 1-4 或 legacy removal 的完成结论。
+- 证据入口：
+  看：
+  - [D3_MEMORY_BENCHMARK_PERF_CONTEXT.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_MEMORY_BENCHMARK_PERF_CONTEXT.md)
+  - [D3_MEMORY_BENCHMARK_P2_GUIDE.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_MEMORY_BENCHMARK_P2_GUIDE.md)
+- 建议归属阶段/负责人：
+  已单独开启 `P2` 性能专项，由架构师拍板边界，实施 agent 配合落地。
+- 是否影响现有 closed 结论：
+  否。不影响当前 `legacy removal completed` 和阶段关闭结论。
+
 ---
 
 ## 3. 处理规则

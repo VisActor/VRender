@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-nocheck
-import { createStage, Circle, EventSystem, Rect } from '../../src/index';
-import { createCanvas, removeDom } from '../util';
+import { Circle, EventSystem, Rect } from '../../src/index';
+import { createBrowserStage, createCanvas, removeDom } from '../util';
 
 describe('EventSystem', () => {
   let stage;
@@ -18,7 +18,7 @@ describe('EventSystem', () => {
     canvasElement.style.left = '0px';
     canvasElement.style.top = '0px';
 
-    stage = createStage({ canvas: canvasElement, width: 1000, height: 1000, viewWidth: 500, viewHeight: 500 });
+    stage = createBrowserStage({ canvas: canvasElement, width: 1000, height: 1000, viewWidth: 500, viewHeight: 500 });
 
     // // create a rectangle
     // rect = stage.createRect(50, 50, 100, 100);

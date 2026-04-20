@@ -1,7 +1,6 @@
-import { createStage, createRect, IGraphic, createGroup, createSymbol } from '@visactor/vrender';
-import { roughModule } from '@visactor/vrender-kits';
+import { createRect, IGraphic, createGroup, createSymbol } from '@visactor/vrender';
+import { createBrowserPageStage } from '../page-stage';
 
-// container.load(roughModule);
 export const page = () => {
   const graphics: IGraphic[] = [];
   // graphics.push(
@@ -24,7 +23,6 @@ export const page = () => {
     stroke: '#FF8A00',
     x: 207.40897089999999,
     y: 148.53125,
-    width: NaN,
     x1: 49.113898,
     height: 381.9375
   });
@@ -63,8 +61,7 @@ export const page = () => {
     anchor: ['50%', '50%'],
     // anchor: [400, 200],
     lineDash: [100, 10],
-    lineDashOffset: -100,
-    renderStyle: 'rough'
+    lineDashOffset: -100
   });
   const star = createSymbol({
     x: 300,
@@ -85,8 +82,7 @@ export const page = () => {
     anchor: ['50%', '50%'],
     // anchor: [400, 200],
     lineDash: [100, 10],
-    lineDashOffset: -100,
-    renderStyle: 'rough'
+    lineDashOffset: -100
   });
 
   const group = createGroup({
@@ -119,14 +115,18 @@ export const page = () => {
     })
   );
 
-  const stage = createStage({
+  const stage = createBrowserPageStage({
     canvas: 'main',
+    width: 1600,
+    height: 900,
     autoRender: true
   });
+  (window as any).stage = stage;
   rect.addEventListener('pointerenter', () => console.log('abc'));
   graphics.forEach(g => {
     stage.defaultLayer.add(g);
   });
+  stage.render();
 
   r.animate()
     .to({ angle: Math.PI * 2 }, 10000, 'linear')

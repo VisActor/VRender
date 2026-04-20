@@ -21,7 +21,12 @@ export function bindRenderModules({ bind }: { bind: any }) {
   // bind(RenderSelector).to(DefaultRenderSelector).inSingletonScope();
 
   // group渲染器
-  bind(GroupRender).to(DefaultCanvasGroupRender).inSingletonScope();
+  bind(GroupRender)
+    .toDynamicValue(
+      ({ container }: { container: any }) =>
+        new DefaultCanvasGroupRender(createContributionProvider(GroupRenderContribution, container))
+    )
+    .inSingletonScope();
   bind(GraphicRender).toService(GroupRender);
 
   // group 渲染器注入contributions

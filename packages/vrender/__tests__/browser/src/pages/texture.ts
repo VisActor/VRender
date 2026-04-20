@@ -1,6 +1,7 @@
-import { createStage, createSymbol, createArc } from '@visactor/vrender';
+import { createSymbol, createArc } from '@visactor/vrender';
 import { roughModule } from '@visactor/vrender-kits';
 import { addShapesToStage, colorPools } from '../utils';
+import { createBrowserPageStage } from '../page-stage';
 
 // container.load(roughModule);
 
@@ -67,7 +68,7 @@ export const page = () => {
   //   })
   // );
 
-  const stage = createStage({
+  const stage = createBrowserPageStage({
     canvas: 'main',
     autoRender: true,
     width: 1200,

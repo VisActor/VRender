@@ -324,16 +324,14 @@ export class BrowserWindowHandlerContribution
   }
 }
 
-let browserWindowContributionBound = false;
-
 export function bindBrowserWindowContribution(container: any) {
-  if (browserWindowContributionBound) {
-    return;
+  if (!container.isBound?.(BrowserWindowHandlerContribution)) {
+    container.bind(BrowserWindowHandlerContribution).toSelf();
   }
-  browserWindowContributionBound = true;
-  container.bind(BrowserWindowHandlerContribution).toSelf();
-  container
-    .bind(WindowHandlerContribution)
-    .toService(BrowserWindowHandlerContribution)
-    .whenTargetNamed(BrowserWindowHandlerContribution.env);
+  if (!container.getNamed?.(WindowHandlerContribution, BrowserWindowHandlerContribution.env)) {
+    container
+      .bind(WindowHandlerContribution)
+      .toService(BrowserWindowHandlerContribution)
+      .whenTargetNamed(BrowserWindowHandlerContribution.env);
+  }
 }

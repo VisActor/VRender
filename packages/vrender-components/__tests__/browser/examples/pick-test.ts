@@ -1,4 +1,4 @@
-import { createGroup, createRect, createCircle, createStage, createText, createSymbol } from '@visactor/vrender';
+import { createGroup, createRect, createCircle, createText, createSymbol } from '@visactor/vrender';
 import '@visactor/vrender';
 import render from '../../util/render';
 export function run() {

@@ -2,16 +2,40 @@ import { createArc } from '@visactor/vrender-core';
 
 const font = `"PingFang SC", "Helvetica Neue", "Microsoft Yahei", system-ui, -apple-system, "segoe ui", Roboto, Helvetica, Arial, sans-serif, "apple color emoji", "segoe ui emoji", "segoe ui symbol"`;
 let fontSize = '12px';
-function addTest(name: string, cb: () => void) {
+function addTest(container: HTMLDivElement, name: string, cb: () => void) {
   const button = document.createElement('button');
   button.innerText = name;
-  button.style.margin = '10px';
+  button.style.display = 'inline-flex';
+  button.style.alignItems = 'center';
+  button.style.justifyContent = 'center';
+  button.style.padding = '8px 14px';
+  button.style.fontSize = '14px';
+  button.style.fontWeight = '600';
+  button.style.border = '1px solid #d0d7de';
+  button.style.borderRadius = '6px';
+  button.style.background = '#ffffff';
+  button.style.color = '#24292f';
+  button.style.cursor = 'pointer';
   button.addEventListener('click', cb);
-  document.body.appendChild(button);
+  container.appendChild(button);
 }
 
 export const page = () => {
-  addTest('font', () => {
+  const buttonContainer = document.createElement('div');
+  buttonContainer.style.display = 'flex';
+  buttonContainer.style.flexWrap = 'wrap';
+  buttonContainer.style.gap = '12px';
+  buttonContainer.style.alignItems = 'center';
+  buttonContainer.style.padding = '16px';
+
+  const container = document.querySelector<HTMLDivElement>('#container');
+  if (container) {
+    container.prepend(buttonContainer);
+  } else {
+    document.body.appendChild(buttonContainer);
+  }
+
+  addTest(buttonContainer, 'font', () => {
     const canvas = document.createElement('canvas');
     canvas.width = 1000;
     canvas.height = 1000;
@@ -38,13 +62,10 @@ export const page = () => {
     }
     console.timeEnd('setFont');
   });
-  addTest('state map', () => {
+  addTest(buttonContainer, 'state map', () => {
     class AAA {
       transitions: Map<string, Map<string, any>> = new Map();
-      constructor(
-        public from: string,
-        public to: string
-      ) {}
+      constructor(public from: string, public to: string) {}
       /**
        * 注册默认的转换规则
        */

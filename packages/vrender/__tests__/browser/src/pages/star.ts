@@ -1,5 +1,6 @@
-import { createStage, createStar, IGraphic } from '@visactor/vrender';
+import { createStar, IGraphic } from '@visactor/vrender';
 import { addShapesToStage, colorPools } from '../utils';
+import { createBrowserPageStage } from '../page-stage';
 
 export const page = () => {
   const graphics: IGraphic[] = [];
@@ -128,7 +129,7 @@ export const page = () => {
   // graphics.push(bgStar);
 
   // Create the stage and add all graphics
-  const stage = createStage({
+  const stage = createBrowserPageStage({
     canvas: 'main',
     autoRender: true
   });

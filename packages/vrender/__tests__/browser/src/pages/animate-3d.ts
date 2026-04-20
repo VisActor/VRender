@@ -1,17 +1,9 @@
-import {
-  createStage,
-  createArc,
-  newThemeObj,
-  defaultTicker,
-  IGraphic,
-  createCircle,
-  createGroup,
-  createText
-} from '@visactor/vrender';
-import { addShapesToStage, colorPools } from '../utils';
+import { IGraphic, createCircle, createGroup, createText } from '@visactor/vrender';
+import { createBrowserPageStage } from '../page-stage';
 
 export const page = () => {
   const graphics: IGraphic[] = [];
+  const animatedGroups: IGraphic[] = [];
   const sun = createCircle({
     x: 500,
     y: 500,
@@ -499,29 +491,8 @@ export const page = () => {
     group.add(t4);
     group.add(t5);
     group.add(t6);
-    group
-      .animate()
-      .to(
-        {
-          beta: beta + Math.PI * 2
-        },
-        30000,
-        'linear'
-      )
-      .loop(Infinity)
-      .onFrame((_, ratio) => {
-        group.setTheme({
-          text: {
-            fillOpacity: Math.random() > 0.5 ? 1 : 0
-          }
-        });
-      });
     return group;
   };
-
-  for (let i = 0; i < 8; i++) {
-    ship.add(createWg(0, -60, 650, ((Math.PI * 2) / 8) * i, -Math.PI / 2));
-  }
 
   // 上身的风扇
   const tt1 = createText({
@@ -636,32 +607,12 @@ export const page = () => {
     group.add(t4);
     group.add(t5);
     group.add(t6);
-    group
-      .animate()
-      .to(
-        {
-          alpha: alpha + Math.PI * 2
-        },
-        30000,
-        'linear'
-      )
-      .loop(Infinity)
-      .onFrame((_, ratio) => {
-        group.setTheme({
-          text: {
-            fillOpacity: Math.random() > 0.5 ? 1 : 0
-          }
-        });
-      });
     return group;
   };
-  for (let i = 0; i < 8; i++) {
-    ship.add(createWg2(0, -160, 180, ((Math.PI * 2) / 8) * i));
-  }
 
   graphics.push(ship);
 
-  const stage = createStage({
+  const stage = createBrowserPageStage({
     canvas: 'main',
     autoRender: true
   });
@@ -676,5 +627,36 @@ export const page = () => {
 
   graphics.forEach(g => {
     stage.defaultLayer.add(g);
+  });
+
+  for (let i = 0; i < 8; i++) {
+    const group = createWg(0, -60, 650, ((Math.PI * 2) / 8) * i, -Math.PI / 2);
+    ship.add(group);
+    animatedGroups.push(group);
+  }
+
+  for (let i = 0; i < 8; i++) {
+    const group = createWg2(0, -160, 180, ((Math.PI * 2) / 8) * i);
+    ship.add(group);
+    animatedGroups.push(group);
+  }
+
+  animatedGroups.forEach(group => {
+    const target = group as any;
+    const animateTo =
+      target.attribute?.beta != null
+        ? { beta: target.attribute.beta + Math.PI * 2 }
+        : { alpha: target.attribute.alpha + Math.PI * 2 };
+    target
+      .animate()
+      .to(animateTo, 30000, 'linear')
+      .loop(Infinity)
+      .onFrame(() => {
+        target.setTheme({
+          text: {
+            fillOpacity: Math.random() > 0.5 ? 1 : 0
+          }
+        });
+      });
   });
 };

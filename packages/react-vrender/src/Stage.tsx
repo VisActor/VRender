@@ -1,5 +1,4 @@
-import { createStage } from '@visactor/vrender';
-// eslint-disable-next-line no-duplicate-imports
+import * as VRender from '@visactor/vrender';
 import type { IStage, IStageParams, IOption3D } from '@visactor/vrender';
 import React from 'react';
 // eslint-disable-next-line no-duplicate-imports
@@ -15,6 +14,15 @@ export interface StageProps
   containerTitle?: string | undefined;
   children?: any;
   stage3dOptions?: IOption3D;
+}
+
+type TVRenderApp = {
+  createStage: (params: Partial<IStageParams> & { autoRender?: boolean; container?: HTMLElement }) => IStage;
+  release?: () => void;
+};
+
+function createBrowserStageApp(): TVRenderApp {
+  return (VRender as any).createBrowserVRenderApp() as TVRenderApp;
 }
 
 export const Stage = React.forwardRef<IStage, StageProps>((props, ref) => {
@@ -42,11 +50,13 @@ export const Stage = React.forwardRef<IStage, StageProps>((props, ref) => {
   const fiberRoot = React.useRef<FiberRoot | null>(null);
   const divRef = React.useRef<HTMLDivElement>(null);
   const innerStageRef = React.useRef<IStage | null>(null);
+  const appRef = React.useRef<TVRenderApp | null>(null);
   const stageRef = ref && typeof ref !== 'function' ? (ref as MutableRefObject<IStage | null>) : innerStageRef;
   const initedRef = React.useRef(false);
 
   React.useLayoutEffect(() => {
-    const stage = createStage({
+    const app = createBrowserStageApp();
+    const stage = app.createStage({
       viewBox,
       width,
       height,
@@ -67,6 +77,7 @@ export const Stage = React.forwardRef<IStage, StageProps>((props, ref) => {
       stage.set3dOptions(stage3dOptions);
     }
 
+    appRef.current = app;
     stageRef.current = stage;
 
     fiberRoot.current = (reconcilor as any).createContainer(stage as any, 1, null, false, false, '');
@@ -78,6 +89,8 @@ export const Stage = React.forwardRef<IStage, StageProps>((props, ref) => {
       }
       stageRef.current = null;
       stage.release?.();
+      appRef.current?.release();
+      appRef.current = null;
     };
     // Intentionally mount-only: subsequent prop updates are handled by dedicated effects below.
     // eslint-disable-next-line react-hooks/exhaustive-deps

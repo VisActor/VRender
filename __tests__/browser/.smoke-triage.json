@@ -1,0 +1,27 @@
+{
+  "generatedAt": "2026-04-17T03:07:33.258Z",
+  "baseUrl": "http://127.0.0.1:3018/",
+  "pageCount": 1,
+  "results": [
+    {
+      "route": "animate-3d",
+      "category": "graphic",
+      "canOpen": true,
+      "hasFirstFrame": true,
+      "uncaughtErrorCount": 0,
+      "unhandledRejectionCount": 0,
+      "consoleErrorCount": 0,
+      "behaviorError": "none observed",
+      "baselineCandidate": false,
+      "rootCauseCategory": "none",
+      "handling": "retain, not baseline",
+      "errors": {
+        "importError": null,
+        "pageError": null,
+        "uncaughtErrors": [],
+        "unhandledRejections": [],
+        "consoleErrors": []
+      }
+    }
+  ]
+}

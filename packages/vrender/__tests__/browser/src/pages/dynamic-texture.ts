@@ -1,4 +1,4 @@
-import { createStage, createRect, IGraphic, IContext2d } from '@visactor/vrender';
+import { createRect, IGraphic, IContext2d } from '@visactor/vrender';
 import {
   randomOpacity,
   columnLeftToRight,
@@ -22,6 +22,7 @@ import {
   particleEffect
 } from '@visactor/vrender-kits';
 import { addShapesToStage, colorPools } from '../utils';
+import { createBrowserPageStage } from '../page-stage';
 
 // container.load(roughModule);
 export const page = () => {
@@ -105,7 +106,7 @@ export const page = () => {
     );
   });
 
-  const stage = createStage({
+  const stage = createBrowserPageStage({
     canvas: 'main',
     autoRender: true
   });

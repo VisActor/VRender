@@ -4,14 +4,20 @@ import { createRoot } from 'react-dom/client';
 
 jest.mock('@visactor/vrender', () => {
   return {
-    createStage: jest.fn(() => ({
-      stage: null,
-      set3dOptions: jest.fn(),
-      setViewBox: jest.fn(),
-      setDpr: jest.fn(),
-      resize: jest.fn(),
-      release: jest.fn()
-    }))
+    createBrowserVRenderApp: jest.fn(() => {
+      const stage = {
+        stage: null as any,
+        set3dOptions: jest.fn(),
+        setViewBox: jest.fn(),
+        setDpr: jest.fn(),
+        resize: jest.fn(),
+        release: jest.fn()
+      };
+      return {
+        createStage: jest.fn(() => stage),
+        release: jest.fn()
+      };
+    })
   };
 });
 
@@ -24,7 +30,7 @@ jest.mock('../../src/hostConfig', () => {
   };
 });
 
-import { createStage } from '@visactor/vrender';
+import { createBrowserVRenderApp } from '@visactor/vrender';
 import { reconcilor } from '../../src/hostConfig';
 import { Stage } from '../../src/Stage';
 
@@ -46,10 +52,12 @@ describe('react-vrender Stage', () => {
       );
     });
 
-    const stageStub = (createStage as any).mock.results[0].value;
+    const appStub = (createBrowserVRenderApp as any).mock.results[0].value;
+    const stageStub = appStub.createStage.mock.results[0].value;
     stageStub.stage = stageStub;
 
-    expect(createStage).toHaveBeenCalledTimes(1);
+    expect(createBrowserVRenderApp).toHaveBeenCalledTimes(1);
+    expect(appStub.createStage).toHaveBeenCalledTimes(1);
     expect(reconcilor.createContainer).toHaveBeenCalledTimes(1);
     expect(ref.current).toBe(stageStub);
     expect(stageStub.set3dOptions).toHaveBeenCalledTimes(1);
@@ -59,6 +67,7 @@ describe('react-vrender Stage', () => {
     });
 
     expect(reconcilor.updateContainer).toHaveBeenCalled();
+    expect(appStub.release).toHaveBeenCalledTimes(1);
   });
 
   test('initedRef gate for viewBox/dpr/resize', () => {
@@ -75,7 +84,10 @@ describe('react-vrender Stage', () => {
       );
     });
 
-    const stageStub = (createStage as any).mock.results[(createStage as any).mock.results.length - 1].value;
+    const appStub = (createBrowserVRenderApp as any).mock.results[
+      (createBrowserVRenderApp as any).mock.results.length - 1
+    ].value;
+    const stageStub = appStub.createStage.mock.results[appStub.createStage.mock.results.length - 1].value;
     stageStub.stage = stageStub;
 
     // 初次 mount 时不应直接同步 props（受 initedRef 控制）

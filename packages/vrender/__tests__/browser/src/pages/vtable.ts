@@ -4,8 +4,10 @@ import * as VRenderKits from '@visactor/vrender-kits';
 import * as VRenderComponents from '@visactor/vrender-components';
 import { addShapesToStage, colorPools } from '../utils';
 import { pi, pi2 } from '@visactor/vutils';
+import { createBrowserPageApp } from '../page-stage';
 
 export const page = () => {
+  const app = createBrowserPageApp();
   // @ts-ignore
   window.VRender = VRender;
   // @ts-ignore
@@ -337,7 +339,7 @@ export const page = () => {
     })
   );
 
-  const stage = createStage({
+  const stage = app.createStage({
     canvas: 'main',
     autoRender: true,
     poptip: true

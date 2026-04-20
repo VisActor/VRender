@@ -3,18 +3,16 @@
  * 1. 事件测试
  * 2. setValue 测试
  */
-import type { IGraphic, Stage, ISymbol, IGroup, IRect, IText } from '@visactor/vrender-core';
+import type { IGraphic, Stage, ISymbol, IRect, IText } from '@visactor/vrender-core';
 import { Slider, SLIDER_ELEMENT_NAME } from '../../src';
 import { createCanvas } from '../util/dom';
-import { createStage } from '../util/vrender';
-import { initBrowserEnv } from '@visactor/vrender-kits';
-initBrowserEnv();
+import { createTestStage } from '../util/vrender';
 
 describe('Slider', () => {
   let stage: Stage;
   beforeAll(() => {
     createCanvas(document.body, 'main');
-    stage = createStage('main');
+    stage = createTestStage('main');
   });
 
   afterAll(() => {
@@ -53,8 +51,7 @@ describe('Slider', () => {
       stage.defaultLayer.add(slider as unknown as IGraphic);
       stage.render();
 
-      const railContainer = slider.getElementsByName(SLIDER_ELEMENT_NAME.railContainer)[0] as IGroup;
-      // expect(railContainer.getChildren()).toHaveLength(3);
+      // expect((slider.getElementsByName(SLIDER_ELEMENT_NAME.railContainer)[0] as IGroup).getChildren()).toHaveLength(3);
 
       const rail = slider.getElementsByName(SLIDER_ELEMENT_NAME.rail)[0] as IRect;
       expect(rail.AABBBounds.width()).toBe(200);

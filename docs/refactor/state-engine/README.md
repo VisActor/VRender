@@ -37,6 +37,23 @@
 | `D3_ARCHIVE_INDEX.md` | **D3 归档索引**（后续维护者导航入口；归档文档，不是新的规范源） |
 | `D3_FOLLOWUPS.md` | **D3 后续项跟踪**（非阻塞 follow-up 清单；归档文档，不是新的规范源） |
 | `D3_PRE_HANDOFF_HARDENING.md` | **D3 交付前加固方案**（上层图表库接入前的最小验证与 release gate；归档/执行文档，不是新的规范源） |
+| `D3_PRE_HANDOFF_HARDENING_SUMMARY.md` | **D3 交付前加固结果**（历史 hardening 收口结果；legacy removal 已完成，overall handoff 已恢复） |
+| `D3_PRE_HANDOFF_SMOKE_HARNESS.md` | **D3 交付前 smoke harness 规划**（将 `packages/vrender rushx start` 收口为 handoff smoke 环境；归档/执行文档，不是新的规范源） |
+| `D3_PRE_HANDOFF_SMOKE_PROMPT.md` | **D3 smoke harness 开发者执行 Prompt**（给实现 agent） |
+| `D3_PRE_HANDOFF_SMOKE_TRIAGE.md` | **D3 smoke triage 与 baseline 留档**（全量页面 triage、baseline 清单、历史 exclusions、迁移结论） |
+| `D3_PRE_HANDOFF_SMOKE_RENDERER_REGRESSION.md` | **browser 空白页问题留档**（scene tree 正常但 renderer registry 为空的定位与修复） |
+| `D3_MEMORY_BENCHMARK_PERF_CONTEXT.md` | **memory benchmark 性能问题上下文**（`memory.ts` 与 `develop` 的性能差距归因与后续优化边界） |
+| `D3_MEMORY_BENCHMARK_P2_GUIDE.md` | **memory benchmark P2 实施任务文档**（面向 VTable-lite 业务场景的构造期固定成本优化） |
+| `D3_MEMORY_BENCHMARK_P2_PROMPT.md` | **memory benchmark P2 开发者执行 Prompt**（给实现 agent） |
+| `D3_LEGACY_PATH_REMOVAL_PLAN.md` | **legacy path removal 规划**（legacy binding / deprecated createStage / hygiene 残留的分层迁移计划） |
+| `D3_LEGACY_PATH_REMOVAL_PROMPT.md` | **legacy path removal 开发者执行 Prompt**（给实现 agent） |
+| `D3_LEGACY_PATH_REMOVAL_STATUS.md` | **legacy path removal 当前结论**（P0 completed / P1 formally closed to boundary / P2 completed；legacy removal 已完成，overall handoff 已恢复） |
+| `D3_LEGACY_P0_INSTALLER_GUIDE.md` | **legacy P0 installer surface 实施任务文档**（下一轮只聚焦补正式安装链，不扩大 P1/P2） |
+| `D3_LEGACY_P0_INSTALLER_PROMPT.md` | **legacy P0 installer surface 开发者执行 Prompt**（给实现 agent） |
+| `D3_LEGACY_NODE_RUNTIME_SMOKE_ALIGNMENT.md` | **legacy node runtime / smoke harness alignment 专项文档**（将 `stage-graphic.test.ts` 从当前 P1 caller cleanup 中正式剥离） |
+| `D3_LEGACY_NODE_RUNTIME_SMOKE_PROMPT.md` | **legacy node runtime / smoke harness alignment 开发者执行 Prompt**（给实现 agent） |
+| `D3_LEGACY_P2_HYGIENE_GUIDE.md` | **legacy P2 hygiene cleanup 实施任务文档**（只做 live package / lockfile / active docs 清理） |
+| `D3_LEGACY_P2_HYGIENE_PROMPT.md` | **legacy P2 hygiene cleanup 开发者执行 Prompt**（给实现 agent） |
 
 ## 归档与导航
 
@@ -48,6 +65,23 @@
 | `D3_ARCHIVE_INDEX.md` | 归档入口，回答“后续维护者先看哪份、每份文档解决什么问题” |
 | `D3_FOLLOWUPS.md` | 非阻塞 follow-up 跟踪清单，不重开已关闭阶段设计 |
 | `D3_PRE_HANDOFF_HARDENING.md` | 上层图表库接入前的最小加固方案，聚焦测试缺口、release gate 与 handoff 门槛 |
+| `D3_PRE_HANDOFF_HARDENING_SUMMARY.md` | pre-handoff hardening 的历史完成记录；当前总体 handoff 已恢复为 ready，legacy removal 也已完成 |
+| `D3_PRE_HANDOFF_SMOKE_HARNESS.md` | `packages/vrender rushx start` 的 browser smoke harness 收口规划 |
+| `D3_PRE_HANDOFF_SMOKE_PROMPT.md` | browser smoke harness 的实现 agent 执行入口 |
+| `D3_PRE_HANDOFF_SMOKE_TRIAGE.md` | browser smoke harness 的 triage/baseline/exclusions 最终留档 |
+| `D3_PRE_HANDOFF_SMOKE_RENDERER_REGRESSION.md` | browser 空白页问题的定位与修复留档 |
+| `D3_MEMORY_BENCHMARK_PERF_CONTEXT.md` | `memory.ts` benchmark 性能问题的归因与后续优化上下文 |
+| `D3_MEMORY_BENCHMARK_P2_GUIDE.md` | memory benchmark `P2` 的实施文档（补 VTable-lite 业务验证口径与单目标优化边界） |
+| `D3_MEMORY_BENCHMARK_P2_PROMPT.md` | memory benchmark `P2` 的实现 agent 执行入口 |
+| `D3_LEGACY_PATH_REMOVAL_PLAN.md` | legacy binding / deprecated createStage / hygiene 残留的收口规划 |
+| `D3_LEGACY_PATH_REMOVAL_PROMPT.md` | legacy path removal 的实现 agent 执行入口 |
+| `D3_LEGACY_PATH_REMOVAL_STATUS.md` | legacy path removal 的最终结论与收口证据（P2 已完成） |
+| `D3_LEGACY_P0_INSTALLER_GUIDE.md` | legacy removal 下一轮只聚焦 P0 installer surface 的实施文档 |
+| `D3_LEGACY_P0_INSTALLER_PROMPT.md` | legacy removal 下一轮 P0 installer surface 的实现 agent 执行入口 |
+| `D3_LEGACY_NODE_RUNTIME_SMOKE_ALIGNMENT.md` | 将 `stage-graphic.test.ts` 单独拆出的 node runtime / smoke harness alignment 专项 |
+| `D3_LEGACY_NODE_RUNTIME_SMOKE_PROMPT.md` | 上述专项的实现 agent 执行入口 |
+| `D3_LEGACY_P2_HYGIENE_GUIDE.md` | legacy removal 最后一轮 `P2 hygiene cleanup` 的实施文档 |
+| `D3_LEGACY_P2_HYGIENE_PROMPT.md` | legacy removal 最后一轮 `P2 hygiene cleanup` 的实现 agent 执行入口 |
 
 ## 历史开发者沟通
 

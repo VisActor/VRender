@@ -1,5 +1,6 @@
 import { DefaultTicker } from '../../src/ticker/default-ticker';
 import { ManualTicker } from '../../src/ticker/manual-ticker';
+import { defaultTicker, defaultTimeline } from '../../src/index';
 
 describe('vrender-animate Ticker', () => {
   test('DefaultTicker interval/FPS setters', () => {
@@ -32,5 +33,10 @@ describe('vrender-animate Ticker', () => {
     expect(ticker.start()).toBe(false);
 
     ticker.release();
+  });
+
+  test('defaultTicker is exported and wired to defaultTimeline', () => {
+    expect(defaultTicker).toBeInstanceOf(DefaultTicker);
+    expect(defaultTicker.getTimelines()).toContain(defaultTimeline);
   });
 });

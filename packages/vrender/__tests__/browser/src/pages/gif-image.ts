@@ -1,11 +1,12 @@
 /** @deprecated Legacy DI browser fixture retained for major-migration tracking. Prefer app-scoped entries/plugins. */
-import { createStage, getLegacyBindingContext } from '@visactor/vrender-core';
+import { getLegacyBindingContext } from '@visactor/vrender-core';
 import {
   GifImage,
   IGifImageGraphicAttribute,
   bindGifImageCanvasPickerContribution,
   bindGifImageRenderContribution
 } from '@visactor/vrender-kits';
+import { createBrowserPageStage } from '../page-stage';
 import { addShapesToStage, colorPools } from '../utils';
 
 const legacyContext = getLegacyBindingContext();
@@ -13,6 +14,14 @@ bindGifImageRenderContribution(legacyContext);
 bindGifImageCanvasPickerContribution(legacyContext);
 
 export const page = () => {
+  const stage = createBrowserPageStage({
+    canvas: 'main',
+    width: 1200,
+    height: 600,
+    viewWidth: 1200,
+    viewHeight: 600
+  });
+
   const shapes = [];
   shapes.push(
     new GifImage({
@@ -53,14 +62,6 @@ export const page = () => {
       gifImage: './sources/loading-1.gif'
     } as IGifImageGraphicAttribute)
   );
-
-  const stage = createStage({
-    canvas: 'main',
-    width: 1200,
-    height: 600,
-    viewWidth: 1200,
-    viewHeight: 600
-  });
 
   addShapesToStage(stage, shapes as any, true);
   stage.render();

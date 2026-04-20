@@ -1,7 +1,6 @@
 /** @deprecated Legacy DI browser fixture retained for major-migration tracking. Prefer app-scoped entries/plugins. */
 import { createPyramid3d } from '@visactor/vrender';
 import {
-  createStage,
   createGroup,
   createLine,
   createText,
@@ -22,6 +21,7 @@ import {
 // import { json } from './json';
 // import { json3 } from './xtable';
 import { roughModule } from '@visactor/vrender-kits';
+import { createBrowserPageStage } from '../page-stage';
 
 const json = {
   attribute: {},
@@ -1057,10 +1057,8 @@ function _add(group, json) {
 }
 
 export const page = () => {
-  const c = document.getElementById('main') as HTMLCanvasElement;
-
-  const stage = createStage({
-    canvas: c as HTMLCanvasElement,
+  const stage = createBrowserPageStage({
+    canvas: 'main',
     width: 802,
     height: 500,
     disableDirtyBounds: true,

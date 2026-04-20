@@ -1,6 +1,5 @@
 /** @deprecated Legacy DI browser fixture retained for major-migration tracking. Prefer app-scoped entries/plugins. */
 import {
-  createStage,
   createRichText,
   createGroup,
   createCircle,
@@ -11,6 +10,7 @@ import {
   XMLParser
 } from '@visactor/vrender';
 import { addShapesToStage, colorPools } from '../utils';
+import { createBrowserPageStage } from '../page-stage';
 
 let richTextPluginLoaded = false;
 
@@ -89,7 +89,7 @@ export const page = () => {
     shapes[0].setAttributes({ editable: true });
   }, 1000);
 
-  const stage = createStage({
+  const stage = createBrowserPageStage({
     canvas: 'main',
     width: 1200,
     height: 700,

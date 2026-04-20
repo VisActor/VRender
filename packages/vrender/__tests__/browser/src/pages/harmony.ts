@@ -1,4 +1,4 @@
-// import { createStage, createRect, IGraphic, createPath, vglobal, loadHarmonyEnv } from '@visactor/vrender';
+// import { createRect, IGraphic, createPath, vglobal, loadHarmonyEnv } from '@visactor/vrender';
 // import { roughModule } from '@visactor/vrender-kits';
 // import { addShapesToStage, colorPools } from '../utils';
 
@@ -29,7 +29,7 @@
 //   canvas.style.left = '100px';
 //   canvas.style.top = '0';
 
-//   const stage = createStage({
+//   const stage = createBrowserPageStage({
 //     canvas,
 //     autoRender: true
 //   });

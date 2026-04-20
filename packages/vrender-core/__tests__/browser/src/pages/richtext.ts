@@ -1,5 +1,6 @@
-import { createStage, createRichText, createGroup, createCircle, xul } from '@visactor/vrender';
+import { createRichText, createGroup, createCircle, xul } from '@visactor/vrender';
 import { addShapesToStage, colorPools } from '../utils';
+import { createBrowserPageStage } from '../page-stage';
 
 // const urlPng = 'https://vega.github.io/images/idl-logo.png';
 const svg =
@@ -683,7 +684,7 @@ export const page = () => {
     })
   );
 
-  const stage = createStage({
+  const stage = createBrowserPageStage({
     canvas: 'main',
     width: 1200,
     height: 700

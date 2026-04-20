@@ -7,11 +7,13 @@ import { ContributionRegistry, PickerRegistry, PluginRegistry, RendererRegistry 
 
 class StageStub {
   released = false;
+  releaseCount = 0;
 
   constructor(public readonly params: Partial<IStageParams>) {}
 
   release(): void {
     this.released = true;
+    this.releaseCount += 1;
   }
 }
 
@@ -94,10 +96,25 @@ describe('app context', () => {
     context.release();
 
     expect(stage.released).toBe(true);
+    expect(stage.releaseCount).toBe(1);
     expect(plugin.uninstallCount).toBe(1);
     expect(context.registry.plugin.getAll()).toEqual([]);
     expect(context.registry.renderer.getAll()).toEqual([]);
     expect(context.released).toBe(true);
+  });
+
+  test('should unregister a released stage from app-scoped tracking', () => {
+    const context = createAppContext();
+    const stage1 = context.createStage({ width: 100, height: 100 }) as unknown as StageStub;
+    const stage2 = context.createStage({ width: 200, height: 200 }) as unknown as StageStub;
+
+    stage1.release();
+    context.release();
+
+    expect(stage1.released).toBe(true);
+    expect(stage1.releaseCount).toBe(1);
+    expect(stage2.released).toBe(true);
+    expect(stage2.releaseCount).toBe(1);
   });
 
   test('should reject app operations after release', () => {

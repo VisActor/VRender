@@ -2,7 +2,7 @@
 const CanvasPkg = require('canvas');
 const {
   vglobal,
-  createStage,
+  createNodeVRenderApp,
   getLegacyBindingContext,
   Path,
   Arc,
@@ -48,7 +48,8 @@ roughModule(getLegacyBindingContext());
 vglobal.setEnv('node', CanvasPkg);
 
 function run() {
-  const stage = createStage({ width: 1800, height: 1800, title: '这是title', dpr: 2 });
+  const app = createNodeVRenderApp();
+  const stage = app.createStage({ width: 1800, height: 1800, title: '这是title', dpr: 2 });
   stage.resize(1200, 1200);
   stage.defaultLayer.add(
     new Path({
@@ -128,6 +129,8 @@ function run() {
     stage.render();
     const buffer = stage.window.getImageBuffer();
     fs.writeFileSync(`./image.png`, buffer);
+    stage.release();
+    app.release();
   };
 }
 

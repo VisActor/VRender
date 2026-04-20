@@ -1,4 +1,6 @@
-declare let require: any;
+export {};
+
+declare const require: any;
 
 describe('env-check', () => {
   afterEach(() => {

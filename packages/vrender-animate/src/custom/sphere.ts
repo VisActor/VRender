@@ -36,9 +36,10 @@ export class RotateBySphereAnimate extends ACustomAnimate<any> {
   onStart(): void {
     super.onStart();
     const { center, r } = typeof this.params === 'function' ? this.params() : this.params;
-    const startX = this.target.finalAttribute.x;
-    const startY = this.target.finalAttribute.y;
-    const startZ = this.target.finalAttribute.z;
+    const source = (this.target as any).finalAttribute ?? this.target.attribute;
+    const startX = source.x;
+    const startY = source.y;
+    const startZ = source.z ?? 0;
     const phi = Math.acos((startY - center.y) / r);
     let theta = Math.acos((startX - center.x) / r / Math.sin(phi));
     if (startZ - center.z < 0) {

@@ -156,16 +156,14 @@ export class NodeWindowHandlerContribution extends BaseWindowHandlerContribution
   }
 }
 
-let nodeWindowContributionBound = false;
-
 export function bindNodeWindowContribution(container: any) {
-  if (nodeWindowContributionBound) {
-    return;
+  if (!container.isBound?.(NodeWindowHandlerContribution)) {
+    container.bind(NodeWindowHandlerContribution).toSelf();
   }
-  nodeWindowContributionBound = true;
-  container.bind(NodeWindowHandlerContribution).toSelf();
-  container
-    .bind(WindowHandlerContribution)
-    .toService(NodeWindowHandlerContribution)
-    .whenTargetNamed(NodeWindowHandlerContribution.env);
+  if (!container.getNamed?.(WindowHandlerContribution, NodeWindowHandlerContribution.env)) {
+    container
+      .bind(WindowHandlerContribution)
+      .toService(NodeWindowHandlerContribution)
+      .whenTargetNamed(NodeWindowHandlerContribution.env);
+  }
 }

@@ -21,8 +21,30 @@
    看对应 Phase 的 execution prompt、implementation log、close-out prompt、acceptance template
 5. 需要知道还有什么没做但不阻塞：
    看 [D3_FOLLOWUPS.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_FOLLOWUPS.md)
-6. 准备交给上层图表库前，要看还必须补哪些验证：
+6. 需要确认 legacy removal 最终如何收口，以及当前为什么已经可以恢复宣称 `handoff ready`：
+   先看 [D3_LEGACY_PATH_REMOVAL_STATUS.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_LEGACY_PATH_REMOVAL_STATUS.md)
+7. 准备交给上层图表库前，要看还必须补哪些验证：
    看 [D3_PRE_HANDOFF_HARDENING.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_PRE_HANDOFF_HARDENING.md)
+8. 需要处理 `packages/vrender rushx start` 的 browser smoke harness：
+   看 [D3_PRE_HANDOFF_SMOKE_HARNESS.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_PRE_HANDOFF_SMOKE_HARNESS.md)
+9. 需要看 smoke baseline、全量 triage 和 exclusions 结果：
+   看 [D3_PRE_HANDOFF_SMOKE_TRIAGE.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_PRE_HANDOFF_SMOKE_TRIAGE.md)
+10. 遇到“页面空白但 scene tree 正常”的 browser 渲染问题：
+   看 [D3_PRE_HANDOFF_SMOKE_RENDERER_REGRESSION.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_PRE_HANDOFF_SMOKE_RENDERER_REGRESSION.md)
+11. 需要看 legacy binding / deprecated createStage / hygiene 残留最终是如何收口的：
+   看 [D3_LEGACY_PATH_REMOVAL_PLAN.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_LEGACY_PATH_REMOVAL_PLAN.md)
+12. 需要看 legacy path removal 最终推进到了哪里，以及 `P2` 如何完成收口：
+   看 [D3_LEGACY_PATH_REMOVAL_STATUS.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_LEGACY_PATH_REMOVAL_STATUS.md)
+13. 需要看下一轮为什么只做 `P0 installer surface`，而不是继续批量清 caller：
+   看 [D3_LEGACY_P0_INSTALLER_GUIDE.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_LEGACY_P0_INSTALLER_GUIDE.md)
+14. 需要看为什么 `stage-graphic.test.ts` 已被从当前 `P1 caller cleanup` 中剥离：
+   看 [D3_LEGACY_NODE_RUNTIME_SMOKE_ALIGNMENT.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_LEGACY_NODE_RUNTIME_SMOKE_ALIGNMENT.md)
+15. 需要看 legacy removal 最后一轮为什么只做 `P2 hygiene cleanup`：
+   看 [D3_LEGACY_P2_HYGIENE_GUIDE.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_LEGACY_P2_HYGIENE_GUIDE.md)
+16. 需要看 `memory.ts` benchmark 与 `develop` 的性能差距为什么在复用单 app 后仍然存在：
+   看 [D3_MEMORY_BENCHMARK_PERF_CONTEXT.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_MEMORY_BENCHMARK_PERF_CONTEXT.md)
+17. 需要看为什么 `memory benchmark` 现在继续推进到 `P2`，以及 VTable-lite 的业务验证口径是什么：
+   看 [D3_MEMORY_BENCHMARK_P2_GUIDE.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_MEMORY_BENCHMARK_P2_GUIDE.md)
 
 ---
 
@@ -54,6 +76,23 @@
 - [D3_ARCHIVE_INDEX.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_ARCHIVE_INDEX.md)
 - [D3_FOLLOWUPS.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_FOLLOWUPS.md)
 - [D3_PRE_HANDOFF_HARDENING.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_PRE_HANDOFF_HARDENING.md)
+- [D3_PRE_HANDOFF_HARDENING_SUMMARY.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_PRE_HANDOFF_HARDENING_SUMMARY.md)
+- [D3_PRE_HANDOFF_SMOKE_HARNESS.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_PRE_HANDOFF_SMOKE_HARNESS.md)
+- [D3_PRE_HANDOFF_SMOKE_PROMPT.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_PRE_HANDOFF_SMOKE_PROMPT.md)
+- [D3_PRE_HANDOFF_SMOKE_TRIAGE.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_PRE_HANDOFF_SMOKE_TRIAGE.md)
+- [D3_PRE_HANDOFF_SMOKE_RENDERER_REGRESSION.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_PRE_HANDOFF_SMOKE_RENDERER_REGRESSION.md)
+- [D3_MEMORY_BENCHMARK_PERF_CONTEXT.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_MEMORY_BENCHMARK_PERF_CONTEXT.md)
+- [D3_MEMORY_BENCHMARK_P2_GUIDE.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_MEMORY_BENCHMARK_P2_GUIDE.md)
+- [D3_MEMORY_BENCHMARK_P2_PROMPT.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_MEMORY_BENCHMARK_P2_PROMPT.md)
+- [D3_LEGACY_PATH_REMOVAL_PLAN.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_LEGACY_PATH_REMOVAL_PLAN.md)
+- [D3_LEGACY_PATH_REMOVAL_PROMPT.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_LEGACY_PATH_REMOVAL_PROMPT.md)
+- [D3_LEGACY_PATH_REMOVAL_STATUS.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_LEGACY_PATH_REMOVAL_STATUS.md)
+- [D3_LEGACY_P0_INSTALLER_GUIDE.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_LEGACY_P0_INSTALLER_GUIDE.md)
+- [D3_LEGACY_P0_INSTALLER_PROMPT.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_LEGACY_P0_INSTALLER_PROMPT.md)
+- [D3_LEGACY_NODE_RUNTIME_SMOKE_ALIGNMENT.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_LEGACY_NODE_RUNTIME_SMOKE_ALIGNMENT.md)
+- [D3_LEGACY_NODE_RUNTIME_SMOKE_PROMPT.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_LEGACY_NODE_RUNTIME_SMOKE_PROMPT.md)
+- [D3_LEGACY_P2_HYGIENE_GUIDE.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_LEGACY_P2_HYGIENE_GUIDE.md)
+- [D3_LEGACY_P2_HYGIENE_PROMPT.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_LEGACY_P2_HYGIENE_PROMPT.md)
 
 ---
 
@@ -120,6 +159,16 @@
 | 某阶段有没有真的通过验收 | 对应 Phase 的 `IMPLEMENTATION_LOG` + `ACCEPTANCE_TEMPLATE` |
 | 还有哪些没做但不阻塞 | `D3_FOLLOWUPS.md` |
 | 上层接入前还必须补哪些验证 | `D3_PRE_HANDOFF_HARDENING.md` |
+| pre-handoff hardening 为什么曾经先通过、legacy removal 又如何最终收口 | `D3_PRE_HANDOFF_HARDENING_SUMMARY.md` + `D3_LEGACY_PATH_REMOVAL_STATUS.md` |
+| `rushx start` 的 browser smoke harness 该怎么收口 | `D3_PRE_HANDOFF_SMOKE_HARNESS.md` |
+| smoke baseline、全量 triage 和 exclusions 结果在哪 | `D3_PRE_HANDOFF_SMOKE_TRIAGE.md` |
+| 页面空白但 scene tree 正常时先查什么 | `D3_PRE_HANDOFF_SMOKE_RENDERER_REGRESSION.md` |
+| legacy 路径剩余项当时如何拆成 P0 / P1 / P2 并最终收口 | `D3_LEGACY_PATH_REMOVAL_PLAN.md` |
+| legacy path removal 最终如何关闭，以及 handoff ready 为什么可以恢复 | `D3_LEGACY_PATH_REMOVAL_STATUS.md` |
+| 下一轮 legacy removal 为什么只做 P0 installer surface | `D3_LEGACY_P0_INSTALLER_GUIDE.md` |
+| 为什么 `stage-graphic.test.ts` 不再混入当前 P1 caller cleanup | `D3_LEGACY_NODE_RUNTIME_SMOKE_ALIGNMENT.md` |
+| legacy removal 最后一轮为什么只剩 `P2 hygiene cleanup` | `D3_LEGACY_P2_HYGIENE_GUIDE.md` |
+| memory benchmark 为什么现在开启 `P2`，以及 VTable-lite 业务验证怎么定义 | `D3_MEMORY_BENCHMARK_P2_GUIDE.md` |
 
 ---
 

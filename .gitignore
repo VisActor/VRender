@@ -99,3 +99,4 @@ docs/public/documents
 
 spec-types
 *.tsbuildinfo
+.omx/

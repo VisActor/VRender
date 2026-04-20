@@ -256,12 +256,15 @@ describe('core explicit bindings', () => {
 
       expect(bind).toHaveBeenCalled();
       expect(bindContributionProvider).toHaveBeenCalled();
-      expect(toDynamicValue).toHaveBeenCalledTimes(1);
-      const [interactiveFactory] = (toDynamicValue.mock.calls as any[]).map(
+      expect(toDynamicValue).toHaveBeenCalledTimes(2);
+      const [groupFactory, interactiveFactory] = (toDynamicValue.mock.calls as any[]).map(
         args => args[0] as (ctx: { container: any }) => unknown
       );
-      interactiveFactory({ container: { getAll: jest.fn(() => []), isBound: jest.fn(() => false) } });
-      expect(createContributionProvider).toHaveBeenCalledWith('InteractiveSubRenderContribution', expect.anything());
+      const container = { getAll: jest.fn(() => []), isBound: jest.fn(() => false) };
+      groupFactory({ container });
+      interactiveFactory({ container });
+      expect(createContributionProvider).toHaveBeenCalledWith('GroupRenderContribution', container);
+      expect(createContributionProvider).toHaveBeenCalledWith('InteractiveSubRenderContribution', container);
     });
   });
 

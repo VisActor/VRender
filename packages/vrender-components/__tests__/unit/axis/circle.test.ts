@@ -2,11 +2,9 @@ import { BandScale } from '@visactor/vscale';
 import type { IGraphic, Stage, Group, Circle, Text } from '@visactor/vrender-core';
 import { CircleAxis, CircleAxisGrid } from '../../../src';
 import { createCanvas } from '../../util/dom';
-import { createStage } from '../../util/vrender';
+import { createTestStage } from '../../util/vrender';
 import type { Tag } from '../../../src/tag/tag';
 import { AXIS_ELEMENT_NAME } from '../../../src/axis/constant';
-import { initBrowserEnv } from '@visactor/vrender-kits';
-initBrowserEnv();
 
 describe('Circle Axis', () => {
   let stage: Stage;
@@ -14,7 +12,7 @@ describe('Circle Axis', () => {
   let grid: CircleAxisGrid;
   beforeAll(() => {
     createCanvas(document.body, 'main');
-    stage = createStage('main');
+    stage = createTestStage('main');
 
     const domain = 'ABCDEFGH'.split('');
     const scale = new BandScale().domain(domain).range([0, 1]);

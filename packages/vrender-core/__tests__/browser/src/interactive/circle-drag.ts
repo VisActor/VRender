@@ -1,4 +1,5 @@
-import { createStage, DragNDrop, Circle, createCircle } from '@visactor/vrender';
+import { DragNDrop, Circle, createCircle } from '@visactor/vrender';
+import { createBrowserPageStage } from '../page-stage';
 
 export function renderCircle() {
   const container = document.querySelector<HTMLDivElement>('#container')!;
@@ -7,7 +8,7 @@ export function renderCircle() {
   const canopusDom = document.createElement('div');
   div.appendChild(canopusDom);
   const t = Date.now();
-  const stage = createStage({
+  const stage = createBrowserPageStage({
     canvas: 'main',
     width: 1200,
     height: 600,

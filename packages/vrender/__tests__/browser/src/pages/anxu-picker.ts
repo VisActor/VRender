@@ -1,14 +1,20 @@
-import { createStage, createRect, getLegacyBindingContext, IGraphic } from '@visactor/vrender-core';
-import { loadBrowserEnv, loadMathPicker, registerRect } from '@visactor/vrender-kits';
+import { createRect, getLegacyBindingContext, IGraphic } from '@visactor/vrender-core';
+import { bindRectCanvasPickerContribution, loadBrowserEnv, registerRect } from '@visactor/vrender-kits';
+import { createBrowserPageStage } from '../page-stage';
 
 const legacyContext = getLegacyBindingContext();
 
 registerRect();
-loadBrowserEnv(legacyContext);
-loadMathPicker(legacyContext);
+loadBrowserEnv(legacyContext, false);
+bindRectCanvasPickerContribution(legacyContext);
 
 // container.load(roughModule);
 export const page = () => {
+  const stage = createBrowserPageStage({
+    canvas: 'main',
+    autoRender: true
+  });
+
   const graphics: IGraphic[] = [];
   // graphics.push(
   //   createRect({
@@ -39,11 +45,6 @@ export const page = () => {
 
   rect.addEventListener('click', () => {
     console.log('click');
-  });
-
-  const stage = createStage({
-    canvas: 'main',
-    autoRender: true
   });
   stage.defaultLayer.add(rect);
 };

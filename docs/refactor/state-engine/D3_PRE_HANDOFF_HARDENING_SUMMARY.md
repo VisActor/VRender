@@ -2,7 +2,7 @@
 
 > **文档类型**：交付前加固结果记录
 > **用途**：记录本轮 handoff 前 P0 补测、运行时修复、上层测试收口与 release gate 结果
-> **当前状态**：已完成，待架构师 review
+> **当前状态**：历史结果已留档；legacy removal 现已完成，当前总体 handoff 状态已恢复为 `handoff ready`
 > **执行基线**：`D3_PRE_HANDOFF_HARDENING.md`
 
 ---
@@ -12,6 +12,12 @@
 本轮不是新的 Phase，也不重开 D3 主设计。
 
 唯一目标是：在 D3 Phase 1-4 已完成并关闭的前提下，把当前仓库在交给上层图表库前仍缺失的验证和已知红灯收口到可 handoff 状态。
+
+补充说明：
+
+1. 本文记录的是 **pre-handoff hardening 这条子任务本身** 的完成情况。
+2. 它曾经支撑过一轮 `handoff ready` 结论。
+3. 后续 `legacy path removal` 曾把 handoff 门槛进一步收紧；目前 `P0 / P1 / P2` 已全部完成，因此当前总体状态也已恢复为 `handoff ready`，结论以 [D3_LEGACY_PATH_REMOVAL_STATUS.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_LEGACY_PATH_REMOVAL_STATUS.md) 为准。
 
 本轮明确不做：
 
@@ -155,15 +161,32 @@
 
 1. `2026-04-09 23:42 — Pre-handoff hardening / 动画属性级补测与上层红灯收口（阶段性）`
 2. `2026-04-09 23:58 — Pre-handoff hardening / release gate 全通过，进入 handoff ready`
+3. `2026-04-10 11:09 — Legacy path removal / P1 局部迁移推进，P0 runtime installer blocker 确认`
 
 ---
 
 ## 7. 当前结论
 
-当前仓库已经满足 handoff 前的 P0 要求。
+需要区分“本轮 hardening 子任务结论”和“当前总体 handoff 结论”。
 
-结论为：
+### 7.1 本轮 hardening 子任务结论
 
-- **handoff ready**
+本轮 `pre-handoff hardening` 本身已经完成，并且其定义的 release gate 当时全部通过。
 
-但是否正式作为“架构上已接受的交付前状态”归档，仍需架构师 review 复核。
+### 7.2 当前总体 handoff 结论
+
+当前可以恢复宣称：
+
+- `handoff ready`
+
+原因是：
+
+1. `legacy path removal` 曾被纳入更严格的 handoff 门槛
+2. 其 `P0 / P1 / P2` 现已全部完成
+3. 因此当前总体结论以下列文档为准：
+   - [D3_LEGACY_PATH_REMOVAL_STATUS.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_LEGACY_PATH_REMOVAL_STATUS.md)
+
+简化表述：
+
+1. **hardening 子任务：已完成**
+2. **当前总体 handoff：已恢复为 `handoff ready`**

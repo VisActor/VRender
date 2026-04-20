@@ -2,11 +2,8 @@
 // @ts-nocheck
 import { AABBBounds } from '@visactor/vutils';
 import {
-  createStage,
   Circle,
   Rect,
-  EventManager,
-  FederatedPointerEvent,
   Group,
   createRect,
   createArc,
@@ -16,7 +13,7 @@ import {
   createSymbol,
   createText
 } from '../../src/index';
-import { createCanvas, removeDom } from '../util';
+import { createBrowserStage, createCanvas, removeDom } from '../util';
 
 describe('Graphic-Bounds', () => {
   // let layer;
@@ -41,7 +38,7 @@ describe('Graphic-Bounds', () => {
     //   system.destroy();
     // });
 
-    stage = createStage({
+    stage = createBrowserStage({
       canvas: canvasDom,
       width: 1000,
       height: 1000,

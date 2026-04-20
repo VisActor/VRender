@@ -1,6 +1,7 @@
-import { createStage, createCircle, FederatedEvent } from '@visactor/vrender';
+import { createCircle, FederatedEvent } from '@visactor/vrender';
 import { registerAnimate } from '@visactor/vrender-animate';
 import { addShapesToStage, colorPools } from '../utils';
+import { createBrowserPageStage } from '../page-stage';
 
 registerAnimate();
 // container.load(roughModule);
@@ -141,7 +142,7 @@ export const page = () => {
     });
   });
 
-  const stage = createStage({
+  const stage = createBrowserPageStage({
     canvas: 'main',
     width: 1200,
     height: 600,

@@ -1,4 +1,5 @@
-declare let require: any;
+declare const require: any;
+export {};
 
 describe('smoke: stage & graphic (app-scoped node helper)', () => {
   test('createStage + add rect + render does not throw', () => {

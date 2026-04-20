@@ -14,7 +14,18 @@ import type {
   FederatedPointerEvent,
   Cursor
 } from '@visactor/vrender-core';
-import { isNil, merge, clamp, isValid, array, isObject, isArray, clampRange, debounce } from '@visactor/vutils';
+import {
+  isNil,
+  merge,
+  clamp,
+  isValid,
+  array,
+  isObject,
+  isArray,
+  clampRange,
+  debounce,
+  isFunction
+} from '@visactor/vutils';
 import { vglobal, CustomEvent } from '@visactor/vrender-core';
 import { graphicCreator } from '../util/graphic-creator';
 import { AbstractComponent } from '../core/base';
@@ -476,6 +487,35 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
   }
 
   private _renderHandlerText(value: number, position: 'start' | 'end') {
+    const textShape = graphicCreator.text(this._getHandlerTextAttributes(value, position));
+    return textShape;
+  }
+
+  private _getHandlerTextStyle(value: number, position: 'start' | 'end') {
+    const {
+      align,
+      handlerSize = 14,
+      handlerText = {},
+      railHeight,
+      railWidth,
+      slidable
+    } = this.attribute as SliderAttributes;
+
+    if (isFunction(handlerText.style)) {
+      return handlerText.style(value, position, {
+        layout: this.attribute.layout,
+        align,
+        railWidth,
+        railHeight,
+        handlerSize,
+        slidable
+      });
+    }
+
+    return handlerText.style;
+  }
+
+  private _getHandlerTextAttributes(value: number, position: 'start' | 'end'): ITextGraphicAttribute {
     const {
       align,
       handlerSize = 14,
@@ -489,9 +529,10 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
 
     const pos = this.calculatePosByValue(value, position);
     const textSpace = handlerText.space ?? 4;
+    const handlerTextStyle = this._getHandlerTextStyle(value, position);
     const textStyle: ITextGraphicAttribute = {
       text: handlerText.formatter ? handlerText.formatter(value) : value.toFixed(handlerText.precision ?? 0),
-      lineHeight: handlerText.style?.lineHeight,
+      lineHeight: handlerTextStyle?.lineHeight,
       cursor: slidable === false ? 'default' : getDefaultCursor(isHorizontal)
     };
     if (isHorizontal) {
@@ -524,12 +565,10 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
       }
     }
 
-    // 展示 handler 当前所在的数值
-    const textShape = graphicCreator.text({
+    return {
       ...textStyle,
-      ...handlerText.style
-    });
-    return textShape;
+      ...handlerTextStyle
+    };
   }
 
   private _renderTooltip() {

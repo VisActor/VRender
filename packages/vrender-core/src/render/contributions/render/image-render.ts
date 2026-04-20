@@ -3,7 +3,10 @@ import type {
   IGraphicAttribute,
   IContext2d,
   IMarkAttribute,
+  BackgroundSizing,
+  BackgroundMode,
   IImage,
+  IImageGraphicAttribute,
   IThemeAttribute,
   IGraphicRender,
   IImageRenderContribution,
@@ -21,8 +24,135 @@ import { createRectPath } from '../../../common/shape/rect';
 import { BaseRender } from './base-render';
 import { defaultImageBackgroundRenderContribution, defaultImageRenderContribution } from './contributions';
 import { ResourceLoader } from '../../../resource-loader/loader';
+import { drawBackgroundImage } from './contributions/base-contribution-render';
 
 const repeatStr = ['', 'repeat-x', 'repeat-y', 'repeat'];
+
+export type IImageLayoutDrawParams = Pick<
+  IImageGraphicAttribute,
+  'repeatX' | 'repeatY' | 'imageMode' | 'imageScale' | 'imageOffsetX' | 'imageOffsetY' | 'imagePosition'
+>;
+
+export function resolveImageRepeatMode(
+  repeatX: IImageGraphicAttribute['repeatX'],
+  repeatY: IImageGraphicAttribute['repeatY']
+): 'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat' {
+  let repeat = 0;
+  if (repeatX === 'repeat') {
+    repeat |= 0b0001;
+  }
+  if (repeatY === 'repeat') {
+    repeat |= 0b0010;
+  }
+  return repeat ? (repeatStr[repeat] as 'repeat' | 'repeat-x' | 'repeat-y') : 'no-repeat';
+}
+
+export function resolveImageMode({
+  repeatX = 'no-repeat',
+  repeatY = 'no-repeat',
+  imageMode
+}: Pick<IImageLayoutDrawParams, 'repeatX' | 'repeatY' | 'imageMode'>): {
+  repeatMode: 'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat';
+  sizingMode: BackgroundSizing;
+} {
+  const repeatMode = resolveImageRepeatMode(repeatX, repeatY);
+  return {
+    repeatMode,
+    sizingMode: repeatMode === 'no-repeat' ? imageMode ?? 'fill' : 'fill'
+  };
+}
+
+const IMAGE_MODE_TO_BACKGROUND_MODE: Record<BackgroundSizing, BackgroundMode> = {
+  cover: 'no-repeat-cover',
+  contain: 'no-repeat-contain',
+  fill: 'no-repeat-fill',
+  auto: 'no-repeat-auto'
+};
+
+export function resolveBackgroundParamsByImageSizing(sizingMode: BackgroundSizing): {
+  backgroundMode: BackgroundMode;
+  backgroundFit: boolean;
+  backgroundKeepAspectRatio: boolean;
+} {
+  return {
+    backgroundMode: IMAGE_MODE_TO_BACKGROUND_MODE[sizingMode],
+    backgroundFit: false,
+    backgroundKeepAspectRatio: false
+  };
+}
+
+export function shouldClipImageByLayout({
+  repeatX = 'no-repeat',
+  repeatY = 'no-repeat',
+  imageMode,
+  imageScale = 1,
+  imageOffsetX = 0,
+  imageOffsetY = 0
+}: IImageLayoutDrawParams): boolean {
+  const { repeatMode, sizingMode } = resolveImageMode({
+    repeatX,
+    repeatY,
+    imageMode
+  });
+  return (
+    repeatMode === 'no-repeat' &&
+    (sizingMode === 'cover' || sizingMode === 'auto' || imageScale !== 1 || imageOffsetX !== 0 || imageOffsetY !== 0)
+  );
+}
+
+export function drawImageWithLayout(
+  context: IContext2d,
+  data: any,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  {
+    repeatX = 'no-repeat',
+    repeatY = 'no-repeat',
+    imageMode,
+    imageScale = 1,
+    imageOffsetX = 0,
+    imageOffsetY = 0,
+    imagePosition = 'top-left'
+  }: IImageLayoutDrawParams
+) {
+  const { repeatMode, sizingMode } = resolveImageMode({
+    repeatX,
+    repeatY,
+    imageMode
+  });
+  const imageBackgroundParams =
+    repeatMode === 'no-repeat'
+      ? resolveBackgroundParamsByImageSizing(sizingMode)
+      : {
+          backgroundMode: repeatMode,
+          backgroundFit: false,
+          backgroundKeepAspectRatio: false
+        };
+
+  drawBackgroundImage(
+    context,
+    data,
+    {
+      x1: x,
+      y1: y,
+      x2: x + width,
+      y2: y + height,
+      width: () => width,
+      height: () => height
+    } as any,
+    {
+      backgroundMode: imageBackgroundParams.backgroundMode,
+      backgroundFit: imageBackgroundParams.backgroundFit,
+      backgroundKeepAspectRatio: imageBackgroundParams.backgroundKeepAspectRatio,
+      backgroundScale: imageScale,
+      backgroundOffsetX: imageOffsetX,
+      backgroundOffsetY: imageOffsetY,
+      backgroundPosition: imagePosition
+    }
+  );
+}
 
 export class DefaultCanvasImageRender extends BaseRender<IImage> implements IGraphicRender {
   type: 'image';
@@ -62,6 +192,11 @@ export class DefaultCanvasImageRender extends BaseRender<IImage> implements IGra
       cornerRadius = imageAttribute.cornerRadius,
       fillStrokeOrder = imageAttribute.fillStrokeOrder,
       cornerType = imageAttribute.cornerType,
+      imageMode = imageAttribute.imageMode,
+      imageScale = imageAttribute.imageScale,
+      imageOffsetX = imageAttribute.imageOffsetX,
+      imageOffsetY = imageAttribute.imageOffsetY,
+      imagePosition = imageAttribute.imagePosition,
       image: url
     } = image.attribute;
 
@@ -84,14 +219,14 @@ export class DefaultCanvasImageRender extends BaseRender<IImage> implements IGra
     context.beginPath();
 
     // deal with cornerRadius
-    let needRestore = false;
+    let needCornerClip = false;
     if (cornerRadius === 0 || (isArray(cornerRadius) && (<number[]>cornerRadius).every(num => num === 0))) {
       // 不需要处理圆角
       context.rect(x, y, width, height);
     } else {
       // context.beginPath();
       createRectPath(context, x, y, width, height, cornerRadius, cornerType !== 'bevel');
-      needRestore = true;
+      needCornerClip = true;
     }
 
     // shadow
@@ -105,22 +240,15 @@ export class DefaultCanvasImageRender extends BaseRender<IImage> implements IGra
           fillCb(context, image.attribute, imageAttribute);
         } else if (fVisible) {
           context.setCommonStyle(image, image.attribute, x, y, imageAttribute);
-          let repeat = 0;
-          if (repeatX === 'repeat') {
-            repeat |= 0b0001;
-          }
-          if (repeatY === 'repeat') {
-            repeat |= 0b0010;
-          }
-          if (repeat) {
-            const pattern = context.createPattern(res.data, repeatStr[repeat]);
-            context.fillStyle = pattern;
-            context.translate(x, y, true);
-            context.fillRect(0, 0, width, height);
-            context.translate(-x, -y, true);
-          } else {
-            context.drawImage(res.data, x, y, width, height);
-          }
+          drawImageWithLayout(context, res.data, x, y, width, height, {
+            repeatX,
+            repeatY,
+            imageMode,
+            imageScale,
+            imageOffsetX,
+            imageOffsetY,
+            imagePosition
+          });
         }
       }
     };
@@ -136,26 +264,37 @@ export class DefaultCanvasImageRender extends BaseRender<IImage> implements IGra
       }
     };
 
+    const needLayoutClip = shouldClipImageByLayout({
+      repeatX,
+      repeatY,
+      imageMode,
+      imageScale,
+      imageOffsetX,
+      imageOffsetY,
+      imagePosition
+    });
+    const needClip = needCornerClip || needLayoutClip;
+
     if (!fillStrokeOrder) {
-      if (needRestore) {
+      if (needClip) {
         context.save();
         context.clip();
       }
       this.beforeRenderStep(image, context, x, y, doFill, false, fVisible, false, imageAttribute, drawContext, fillCb);
       _runFill();
-      if (needRestore) {
+      if (needClip) {
         context.restore();
       }
       _runStroke();
     } else {
       _runStroke();
-      if (needRestore) {
+      if (needClip) {
         context.save();
         context.clip();
       }
       this.beforeRenderStep(image, context, x, y, doFill, false, fVisible, false, imageAttribute, drawContext, fillCb);
       _runFill();
-      if (needRestore) {
+      if (needClip) {
         context.restore();
       }
     }

@@ -30,6 +30,7 @@ import { boundsAllocate } from '../../../allocator/bounds-allocate';
 import { matrixAllocate } from '../../../allocator/matrix-allocate';
 import { application } from '../../../application';
 import type { IRendererRegistry } from '../../../registry';
+import { drawBackgroundImage, getBackgroundImage } from './contributions/base-contribution-render';
 
 interface IDrawContributionDeps {
   rendererRegistry?: IRendererRegistry;
@@ -504,16 +505,30 @@ export class DefaultDrawContribution implements IDrawContribution {
         renderService.drawParams.stage.hooks.afterClearRect.call(renderService.drawParams);
       }
       const stage = renderService.drawParams?.stage;
-      stage && (context.globalAlpha = (stage as any).attribute.opacity ?? 1);
+      if (stage) {
+        context.globalAlpha =
+          ((stage as any).attribute.opacity ?? 1) * ((stage as any).attribute.backgroundOpacity ?? 1);
+      }
       if (stage && (stage as any).backgroundImg && (stage as any).resources) {
-        const res = (stage as any).resources.get(clear);
+        const res = (stage as any).resources.get(getBackgroundImage(clear));
         if (res && res.state === 'success' && res.data) {
-          context.drawImage(res.data, x, y, width, height);
+          const backgroundBounds = boundsAllocate.allocate(x, y, x + width, y + height);
+          drawBackgroundImage(context, res.data, backgroundBounds, {
+            backgroundMode: (stage as any).attribute.backgroundMode ?? DefaultAttribute.backgroundMode,
+            backgroundFit: (stage as any).attribute.backgroundFit ?? DefaultAttribute.backgroundFit,
+            backgroundKeepAspectRatio:
+              (stage as any).attribute.backgroundKeepAspectRatio ?? DefaultAttribute.backgroundKeepAspectRatio,
+            backgroundScale: (stage as any).attribute.backgroundScale ?? DefaultAttribute.backgroundScale,
+            backgroundOffsetX: (stage as any).attribute.backgroundOffsetX ?? DefaultAttribute.backgroundOffsetX,
+            backgroundOffsetY: (stage as any).attribute.backgroundOffsetY ?? DefaultAttribute.backgroundOffsetY,
+            backgroundPosition: (stage as any).attribute.backgroundPosition ?? DefaultAttribute.backgroundPosition
+          });
+          boundsAllocate.free(backgroundBounds);
         }
       } else {
         context.fillStyle = createColor(
           context,
-          clear,
+          clear as any,
           {
             AABBBounds: { x1: x, y1: y, x2: x + width, y2: y + height }
           },

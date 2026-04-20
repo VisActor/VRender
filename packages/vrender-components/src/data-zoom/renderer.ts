@@ -6,7 +6,7 @@ import type { IArea, IGroup, ILine, IRect, ISymbol, INode } from '@visactor/vren
 // eslint-disable-next-line no-duplicate-imports
 import { Bounds, isFunction, merge } from '@visactor/vutils';
 import { Tag, type TagAttributes } from '../tag';
-import { DEFAULT_HANDLER_ATTR_MAP } from './config';
+import { DEFAULT_HANDLER_ATTR_MAP, LAYOUT_LEVEL } from './config';
 import { isTextOverflow } from './utils';
 export interface DataZoomRendererAttrs {
   attribute: Partial<Required<DataZoomAttributes>>;
@@ -194,6 +194,7 @@ export class DataZoomRenderer {
           y: position.y,
           width: (end - start) * width,
           height: height,
+          zIndex: LAYOUT_LEVEL.dragMask,
           ...dragMaskStyle
         },
         'rect'
@@ -206,6 +207,7 @@ export class DataZoomRenderer {
           y: position.y + start * height,
           width,
           height: (end - start) * height,
+          zIndex: LAYOUT_LEVEL.dragMask,
           ...dragMaskStyle
         },
         'rect'
@@ -229,6 +231,7 @@ export class DataZoomRenderer {
         width,
         height,
         cursor: brushSelect ? 'crosshair' : 'auto',
+        zIndex: LAYOUT_LEVEL.background,
         ...backgroundStyle,
         pickable: zoomLock ? false : backgroundStyle.pickable ?? true
       },
@@ -263,6 +266,7 @@ export class DataZoomRenderer {
             y: position.y - middleHandlerBackgroundSize,
             width: (end - start) * width,
             height: middleHandlerBackgroundSize,
+            zIndex: LAYOUT_LEVEL.handler,
             ...middleHandlerStyle.background?.style,
             pickable: zoomLock ? false : middleHandlerStyle.background?.style?.pickable ?? true
           },
@@ -276,6 +280,7 @@ export class DataZoomRenderer {
             strokeBoundsBuffer: 0,
             angle: 0,
             symbolType: middleHandlerStyle.icon?.symbolType ?? 'square',
+            zIndex: LAYOUT_LEVEL.handler,
             ...middleHandlerStyle.icon,
             pickable: zoomLock ? false : middleHandlerStyle.icon.pickable ?? true
           },
@@ -290,6 +295,7 @@ export class DataZoomRenderer {
           size: height,
           symbolType: startHandlerStyle.symbolType ?? 'square',
           ...(DEFAULT_HANDLER_ATTR_MAP.horizontal as any),
+          zIndex: LAYOUT_LEVEL.handler,
           ...startHandlerStyle,
           pickable: zoomLock ? false : startHandlerStyle.pickable ?? true
         },
@@ -303,6 +309,7 @@ export class DataZoomRenderer {
           size: height,
           symbolType: endHandlerStyle.symbolType ?? 'square',
           ...(DEFAULT_HANDLER_ATTR_MAP.horizontal as any),
+          zIndex: LAYOUT_LEVEL.handler,
           ...endHandlerStyle,
           pickable: zoomLock ? false : endHandlerStyle.pickable ?? true
         },
@@ -324,7 +331,7 @@ export class DataZoomRenderer {
           height: startHandlerHeight,
           fill: 'white',
           fillOpacity: 0,
-          zIndex: 999,
+          zIndex: LAYOUT_LEVEL.handlerMask,
           ...(DEFAULT_HANDLER_ATTR_MAP.horizontal as any),
           pickable: !zoomLock
         },
@@ -339,7 +346,7 @@ export class DataZoomRenderer {
           height: endHandlerHeight,
           fill: 'white',
           fillOpacity: 0,
-          zIndex: 999,
+          zIndex: LAYOUT_LEVEL.handlerMask,
           ...(DEFAULT_HANDLER_ATTR_MAP.horizontal as any),
           pickable: !zoomLock
         },
@@ -356,6 +363,7 @@ export class DataZoomRenderer {
             y: position.y + start * height,
             width: middleHandlerBackgroundSize,
             height: (end - start) * height,
+            zIndex: LAYOUT_LEVEL.handler,
             ...middleHandlerStyle.background?.style,
             pickable: zoomLock ? false : middleHandlerStyle.background?.style?.pickable ?? true
           },
@@ -373,6 +381,7 @@ export class DataZoomRenderer {
             angle: 90 * (Math.PI / 180),
             symbolType: middleHandlerStyle.icon?.symbolType ?? 'square',
             strokeBoundsBuffer: 0,
+            zIndex: LAYOUT_LEVEL.handler,
             ...middleHandlerStyle.icon,
             pickable: zoomLock ? false : middleHandlerStyle.icon?.pickable ?? true
           },
@@ -387,6 +396,7 @@ export class DataZoomRenderer {
           size: width,
           symbolType: startHandlerStyle.symbolType ?? 'square',
           ...(DEFAULT_HANDLER_ATTR_MAP.vertical as any),
+          zIndex: LAYOUT_LEVEL.handler,
           ...startHandlerStyle,
           pickable: zoomLock ? false : startHandlerStyle.pickable ?? true
         },
@@ -400,6 +410,7 @@ export class DataZoomRenderer {
           y: position.y + end * height,
           size: width,
           symbolType: endHandlerStyle.symbolType ?? 'square',
+          zIndex: LAYOUT_LEVEL.handler,
           ...(DEFAULT_HANDLER_ATTR_MAP.vertical as any),
           ...endHandlerStyle,
           pickable: zoomLock ? false : endHandlerStyle.pickable ?? true
@@ -422,7 +433,7 @@ export class DataZoomRenderer {
           height: endHandlerWidth,
           fill: 'white',
           fillOpacity: 0,
-          zIndex: 999,
+          zIndex: LAYOUT_LEVEL.handlerMask,
           ...(DEFAULT_HANDLER_ATTR_MAP.vertical as any),
           pickable: !zoomLock
         },
@@ -437,7 +448,7 @@ export class DataZoomRenderer {
           height: endHandlerWidth,
           fill: 'white',
           fillOpacity: 0,
-          zIndex: 999,
+          zIndex: LAYOUT_LEVEL.handlerMask,
           ...(DEFAULT_HANDLER_ATTR_MAP.vertical as any),
           pickable: !zoomLock
         },
@@ -471,6 +482,7 @@ export class DataZoomRenderer {
           width: (end - start) * width,
           height: height,
           cursor: brushSelect ? 'crosshair' : 'move',
+          zIndex: LAYOUT_LEVEL.selectedBackground,
           ...selectedBackgroundStyle,
           pickable: zoomLock ? false : (selectedBackgroundChartStyle as any).pickable ?? true
         },
@@ -486,6 +498,7 @@ export class DataZoomRenderer {
           width,
           height: (end - start) * height,
           cursor: brushSelect ? 'crosshair' : 'move',
+          zIndex: LAYOUT_LEVEL.selectedBackground,
           ...selectedBackgroundStyle,
           pickable: zoomLock ? false : selectedBackgroundStyle.pickable ?? true
         },
@@ -497,7 +510,11 @@ export class DataZoomRenderer {
   // 使用callback绘制背景图表 (数据和数据映射从外部传进来)
   private _setPreviewAttributes(type: 'line' | 'area', group: IGroup) {
     if (!this._previewGroup) {
-      this._previewGroup = group.createOrUpdateChild('previewGroup', { pickable: false }, 'group') as IGroup;
+      this._previewGroup = group.createOrUpdateChild(
+        'previewGroup',
+        { pickable: false, zIndex: LAYOUT_LEVEL.preview },
+        'group'
+      ) as IGroup;
     }
     if (type === 'line') {
       this._previewLine = this._previewGroup.createOrUpdateChild('previewLine', {}, 'line') as ILine;
@@ -532,7 +549,7 @@ export class DataZoomRenderer {
     if (!this._selectedPreviewGroupClip) {
       this._selectedPreviewGroupClip = group.createOrUpdateChild(
         'selectedPreviewGroupClip',
-        { pickable: false },
+        { pickable: false, zIndex: LAYOUT_LEVEL.selectedPreview },
         'group'
       ) as IGroup;
       this._selectedPreviewGroup = this._selectedPreviewGroupClip.createOrUpdateChild(
@@ -813,7 +830,8 @@ export class DataZoomRenderer {
         visible: this._showText,
         pickable: false,
         childrenPickable: false,
-        textStyle: startTextAlignStyle
+        textStyle: startTextAlignStyle,
+        zIndex: LAYOUT_LEVEL.handlerText
       }),
       `data-zoom-start-text`
     );
@@ -826,7 +844,8 @@ export class DataZoomRenderer {
         visible: this._showText,
         pickable: false,
         childrenPickable: false,
-        textStyle: endTextAlignStyle
+        textStyle: endTextAlignStyle,
+        zIndex: LAYOUT_LEVEL.handlerText
       }),
       `data-zoom-end-text`
     );

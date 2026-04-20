@@ -62,7 +62,14 @@ The core team is monitoring for pull requests. We will review your pull request 
 
 ## Development Workflow
 
-After cloning VRender, run `rush update --full` to fetch its dependencies. Then, you can run several commands:
+VRender development is verified against Node.js `20`, `22`, and `24`. We recommend using Node.js `24` for day-to-day local development.
+
+If you switch between Node.js major versions, make sure to rebuild native dependencies such as `canvas`:
+
+1. `node common/scripts/install-run-rush.js purge`
+2. `node common/scripts/install-run-rush.js install --bypass-policy`
+
+After cloning VRender, run `node common/scripts/install-run-rush.js update --bypass-policy` to fetch its dependencies. Then, you can run several commands:
 
 1. `rush run -p @internal/dev-demos -s start` runs VRender test page locally.
 2. `rush eslint` checks the code style.

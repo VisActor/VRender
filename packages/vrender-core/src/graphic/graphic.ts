@@ -139,6 +139,17 @@ export const GRAPHIC_UPDATE_TAG_KEY = [
 const tempConstantXYKey = ['x', 'y'];
 const tempConstantScaleXYKey = ['scaleX', 'scaleY'];
 const tempConstantAngleKey = ['angle'];
+const builtinTextureTypes = new Set([
+  'circle',
+  'diamond',
+  'rect',
+  'vertical-line',
+  'horizontal-line',
+  'bias-lr',
+  'bias-rl',
+  'grid',
+  'wave'
+]);
 
 const point = new Point();
 
@@ -453,7 +464,11 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     this.updateAABBBoundsStamp = 0;
     if (params.background) {
       this.loadImage((params.background as any).background ?? params.background, true);
-    } else if (params.shadowGraphic) {
+    }
+    if (isExternalTexture(params.texture)) {
+      this.loadImage(params.texture, false);
+    }
+    if (params.shadowGraphic) {
       this.setShadowGraphic(params.shadowGraphic);
     }
     // this.attribute = createTrackableObject(this.attribute);
@@ -1266,7 +1281,11 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
 
     if (params.background) {
       this.loadImage(params.background, true);
-    } else if (params.shadowGraphic) {
+    }
+    if (isExternalTexture(params.texture)) {
+      this.loadImage(params.texture, false);
+    }
+    if (params.shadowGraphic) {
       this.setShadowGraphic(params.shadowGraphic);
     }
     this._setAttributes(params, forceUpdateTag, context);
@@ -1288,6 +1307,8 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     }
     if (key === 'background') {
       this.loadImage(value, true);
+    } else if (key === 'texture' && isExternalTexture(value)) {
+      this.loadImage(value, false);
     } else if (key === 'shadowGraphic') {
       this.setShadowGraphic(value);
     }
@@ -1326,7 +1347,11 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     this._syncAttribute();
     if (params.background) {
       this.loadImage(params.background, true);
-    } else if (params.shadowGraphic) {
+    }
+    if (isExternalTexture(params.texture)) {
+      this.loadImage(params.texture, false);
+    }
+    if (params.shadowGraphic) {
       this.setShadowGraphic(params.shadowGraphic);
     }
     this._updateTag = UpdateTag.INIT;
@@ -2119,7 +2144,14 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   }
 
   loadImage(image: any, background: boolean = false) {
-    if (!image || (background && backgroundNotImage(image))) {
+    if (background && image?.background) {
+      image = image.background;
+    }
+    if (background && (!image || backgroundNotImage(image))) {
+      this.backgroundImg = false;
+      return;
+    }
+    if (!image) {
       return;
     }
     const url = image;
@@ -2289,8 +2321,27 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
 Graphic.mixin(EventTarget);
 
 function backgroundNotImage(image: any) {
+  if (typeof image === 'string') {
+    return !(image.startsWith('<svg') || isValidUrl(image) || image.includes('/') || isBase64(image));
+  }
   if (image.fill || image.stroke) {
     return true;
   }
+  if (typeof image.gradient === 'string' && Array.isArray(image.stops)) {
+    return true;
+  }
   return false;
+}
+
+function isExternalTexture(texture: any) {
+  if (!texture) {
+    return false;
+  }
+  if (typeof texture === 'string') {
+    if (builtinTextureTypes.has(texture)) {
+      return false;
+    }
+    return texture.startsWith('<svg') || isValidUrl(texture) || texture.includes('/') || isBase64(texture);
+  }
+  return isObject(texture);
 }

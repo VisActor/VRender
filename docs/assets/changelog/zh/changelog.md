@@ -1,3 +1,22 @@
+# v1.0.43
+
+2026-03-25
+
+
+**🐛 功能修复**
+
+- **@visactor/vrender-components**: add datazoom graphic layout level to render right level when update data. fix @VisActor/VChart[#4186](https://github.com/VisActor/VRender/issues/4186)
+
+[更多详情请查看 v1.0.43](https://github.com/VisActor/VRender/releases/tag/v1.0.43)
+
+# v1.0.42
+
+2026-03-23
+
+
+
+[更多详情请查看 v1.0.42](https://github.com/VisActor/VRender/releases/tag/v1.0.42)
+
 # v1.0.15
 
 2025-09-02

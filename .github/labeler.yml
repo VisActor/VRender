@@ -1,54 +1,59 @@
-# Add 'core' label to any change within the 'core' package
 core:
-  - packages/vrender/**
+  - changed-files:
+      - any-glob-to-any-file: 'packages/vrender/**'
 
-# Add 'react' label to any change within the 'core' package
 react:
-  - packages/react-vrender/**
+  - changed-files:
+      - any-glob-to-any-file: 'packages/react-vrender/**'
 
-# Add 'hierarchy' label to any change within the 'core' package
 react-utils:
-  - packages/react-vrender-utils/**
+  - changed-files:
+      - any-glob-to-any-file: 'packages/react-vrender-utils/**'
 
-# Add 'projection' label to any change within the 'core' package
 components:
-  - packages/vrender-components/**
+  - changed-files:
+      - any-glob-to-any-file: 'packages/vrender-components/**'
 
-# Add 'sankey' label to any change within the 'core' package
 kits:
-  - packages/vrender-kits/**
+  - changed-files:
+      - any-glob-to-any-file: 'packages/vrender-kits/**'
 
-# Add 'test' label to any change to packages/*/__tests__/* files within the source dir
 test:
-  - packages/*/__tests__/*
+  - changed-files:
+      - any-glob-to-any-file: 'packages/*/__tests__/*'
 
-# Add 'docs' label to any change to docs/ files within the source dir
 docs:
-  - docs/**
+  - changed-files:
+      - any-glob-to-any-file: 'docs/**'
 
-# Add 'eslint' label to any change to docs/ files within the source dir
 eslint:
-  - share/eslint-config/**
-  - packages/*/.eslintrc.js
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'share/eslint-config/**'
+          - 'packages/*/.eslintrc.js'
 
-# Add 'jest' label to any change to docs/ files within the source dir
 jest:
-  - share/jest-config/**
-  - packages/*/jest.config.js
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'share/jest-config/**'
+          - 'packages/*/jest.config.js'
 
-# Add 'typescript' label to any change to docs/ files within the source dir
 typescript:
-  - share/ts-config/**
-  - packages/*/tsconfig.json
-  - packages/*/tsconfig.eslint.json
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'share/ts-config/**'
+          - 'packages/*/tsconfig.json'
+          - 'packages/*/tsconfig.eslint.json'
 
-# Add 'bundler' label to any change to tools/bunder/** files within the source dir
 bundler:
-  - tools/bundler/**
-  - packages/*/bundler.config.js
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'tools/bundler/**'
+          - 'packages/*/bundler.config.js'
 
-# Add 'chore' label to any change to common/** files within the source dir
 chore:
-  - common/autoinstallers/**
-  - common/git-hooks/**
-  - common/scripts/**
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'common/autoinstallers/**'
+          - 'common/git-hooks/**'
+          - 'common/scripts/**'

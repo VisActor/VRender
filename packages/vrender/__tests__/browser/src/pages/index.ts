@@ -92,6 +92,10 @@ export const pages = [
         path: 'rect'
       },
       {
+        name: 'background布局',
+        path: 'background'
+      },
+      {
         name: 'path绘制',
         path: 'path'
       },

@@ -27,7 +27,7 @@ export class Line extends Graphic<ILineGraphicAttribute> implements ILine {
     return super.isValid() && this._isValid();
   }
   private _isValid(): boolean {
-    if (this.pathProxy) {
+    if (this.getPathProxy()) {
       return true;
     }
     const { points, segments } = this.attribute;

@@ -194,7 +194,8 @@ export abstract class BaseRender<T extends IGraphic> {
       themeAttribute: IThemeAttribute
     ) => boolean
   ) {
-    if (!graphic.pathProxy) {
+    const path = graphic.getPathProxy();
+    if (!path) {
       return false;
     }
 
@@ -231,7 +232,6 @@ export abstract class BaseRender<T extends IGraphic> {
     }
 
     context.beginPath();
-    const path = typeof graphic.pathProxy === 'function' ? graphic.pathProxy(graphic.attribute) : graphic.pathProxy;
     renderCommandList(path.commandList, context, x, y);
 
     // shadow

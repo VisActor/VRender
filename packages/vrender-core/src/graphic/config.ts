@@ -206,6 +206,7 @@ export const DefaultAttribute: Required<IGraphicAttribute> = {
   shadowPickMode: 'graphic',
   keepStrokeScale: false,
   clipConfig: null,
+  pathProxy: null,
   roughStyle: null,
   ...DefaultDebugAttribute,
   ...DefaultStyle,

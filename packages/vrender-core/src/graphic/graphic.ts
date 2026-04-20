@@ -105,6 +105,7 @@ export const PURE_STYLE_KEY = [
 
 export const GRAPHIC_UPDATE_TAG_KEY = [
   'lineWidth',
+  'pathProxy',
   // 'lineCap',
   // 'lineJoin',
   // 'miterLimit',
@@ -321,7 +322,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   // declare prevAttrs?: T;
   // declare finalAttrs?: T;
 
-  declare pathProxy?: ICustomPath2D;
+  declare pathProxy?: string | ICustomPath2D | ((attrs: T) => string | ICustomPath2D);
   // 依附于某个theme，如果该节点不存在parent，那么这个Theme就作为节点的Theme，避免添加到节点前计算属性
   declare attachedThemeGraphic?: IGraphic;
   protected updateAABBBoundsStamp: number;
@@ -555,7 +556,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   }
 
   updatePathProxyAABBBounds(aabbBounds: IAABBBounds): boolean {
-    const path = typeof this.pathProxy === 'function' ? (this.pathProxy as any)(this.attribute) : this.pathProxy;
+    const path = this.getPathProxy();
     if (!path) {
       return false;
     }
@@ -1492,13 +1493,35 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   }
 
   createPathProxy(path?: string) {
-    if (isString(path, true)) {
-      this.pathProxy = new CustomPath2D().fromString(path as string);
-    } else {
-      this.pathProxy = new CustomPath2D();
+    const proxy = isString(path, true) ? new CustomPath2D().fromString(path as string) : new CustomPath2D();
+    // 兼容：保留运行时字段，同时将能力下沉到attribute配置
+    this.pathProxy = proxy;
+    (this.attribute as any).pathProxy = proxy;
+    this.addUpdateShapeAndBoundsTag();
+    this.onAttributeUpdate();
+    return proxy;
+  }
+
+  getPathProxy(): ICustomPath2D | null {
+    const attributePathProxy = (this.attribute as any)?.pathProxy;
+    const rawPathProxy = attributePathProxy ?? this.pathProxy;
+    if (!rawPathProxy) {
+      return null;
     }
 
-    return this.pathProxy;
+    const resolvedPathProxy =
+      typeof rawPathProxy === 'function'
+        ? (rawPathProxy as (attrs: T) => string | ICustomPath2D)(this.attribute)
+        : rawPathProxy;
+    if (!resolvedPathProxy) {
+      return null;
+    }
+
+    if (isString(resolvedPathProxy, true)) {
+      return new CustomPath2D().fromString(resolvedPathProxy as string);
+    }
+
+    return resolvedPathProxy as ICustomPath2D;
   }
 
   loadImage(image: any, background: boolean = false) {
@@ -1632,6 +1655,10 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   abstract clone(): IGraphic<any>;
 
   toCustomPath(): ICustomPath2D {
+    const pathProxy = this.getPathProxy();
+    if (pathProxy) {
+      return pathProxy;
+    }
     // throw new Error('暂不支持');
     const renderer = (this.stage?.renderService || application.renderService)?.drawContribution?.getRenderContribution(
       this

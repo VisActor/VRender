@@ -756,6 +756,10 @@ export type IGraphicAttribute = IDebugType &
     clipConfig: {
       shape: string;
     } | null;
+    /**
+     * 自定义路径，可覆盖图元默认路径渲染（支持字符串、Path2D对象、以及动态函数）
+     */
+    pathProxy?: string | ICustomPath2D | ((attrs: Partial<IGraphicAttribute>) => string | ICustomPath2D) | null;
   };
 
 export interface IGraphicJson<T extends Partial<IGraphicAttribute> = Partial<IGraphicAttribute>> {
@@ -832,7 +836,7 @@ export interface IGraphic<T extends Partial<IGraphicAttribute> = Partial<IGraphi
   attribute: Partial<T>;
 
   /** 用于实现morph动画场景，转换成bezier曲线渲染 */
-  pathProxy?: ICustomPath2D | ((attrs: T) => ICustomPath2D);
+  pathProxy?: string | ICustomPath2D | ((attrs: T) => string | ICustomPath2D);
   incremental?: number;
   incrementalAt?: number;
 
@@ -929,6 +933,8 @@ export interface IGraphic<T extends Partial<IGraphicAttribute> = Partial<IGraphi
 
   /** 创建pathProxy */
   createPathProxy: (path?: string) => void;
+  /** 获取解析后的pathProxy（优先取attribute.pathProxy） */
+  getPathProxy: () => ICustomPath2D | null;
   /** 将图形转换成CustomPath2D */
   toCustomPath?: () => ICustomPath2D;
 

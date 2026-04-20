@@ -180,6 +180,10 @@ export const pages = [
         path: 'clip'
       },
       {
+        name: 'pathProxy挖洞',
+        path: 'path-proxy-hole'
+      },
+      {
         name: 'wordcloud3d测试',
         path: 'wordcloud3d'
       },

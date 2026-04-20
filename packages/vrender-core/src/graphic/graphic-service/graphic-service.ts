@@ -260,7 +260,7 @@ export class DefaultGraphicService implements IGraphicService {
   }
   // TODO delete
   updatePathProxyAABBBounds(aabbBounds: IAABBBounds, graphic?: IGraphic): boolean {
-    const path = typeof graphic.pathProxy === 'function' ? graphic.pathProxy(graphic.attribute) : graphic.pathProxy;
+    const path = graphic?.getPathProxy?.();
     if (!path) {
       return false;
     }

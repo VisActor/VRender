@@ -282,7 +282,10 @@ export class MorphingPath extends ACustomAnimate<Record<string, any>> {
    */
   onUpdate(end: boolean, ratio: number, out: Record<string, any>): void {
     const target = this.target as IGraphic;
-    const pathProxy = typeof target.pathProxy === 'function' ? target.pathProxy(target.attribute) : target.pathProxy;
+    const pathProxy = target.getPathProxy();
+    if (!pathProxy) {
+      return;
+    }
     interpolateMorphingData(this.morphingData, pathProxy, ratio);
     if (this.otherAttrs && this.otherAttrs.length) {
       interpolateOtherAttrs(this.otherAttrs, out, ratio);
@@ -291,6 +294,7 @@ export class MorphingPath extends ACustomAnimate<Record<string, any>> {
     // 计算位置
     if (end && !this.saveOnEnd) {
       (this.target as IGraphic).pathProxy = null;
+      (this.target as IGraphic).setAttribute('pathProxy', null);
     }
   }
 }
@@ -454,6 +458,7 @@ export class MultiToOneMorphingPath extends ACustomAnimate<Record<string, any>> 
 
     shadowRoot.forEachChildren(child => {
       (child as IGraphic).pathProxy = null;
+      (child as IGraphic).setAttribute('pathProxy', null);
     });
   }
 
@@ -471,11 +476,11 @@ export class MultiToOneMorphingPath extends ACustomAnimate<Record<string, any>> 
     const shadowRoot = (this.target as IGraphic).shadowRoot;
 
     shadowRoot.forEachChildren((child: IGraphic, index) => {
-      interpolateMorphingData(
-        this.morphingData[index],
-        typeof child.pathProxy === 'function' ? child.pathProxy(child.attribute) : child.pathProxy,
-        ratio
-      );
+      const pathProxy = child.getPathProxy();
+      if (!pathProxy) {
+        return;
+      }
+      interpolateMorphingData(this.morphingData[index], pathProxy, ratio);
 
       if (this.otherAttrs?.[index] && this.otherAttrs[index].length) {
         interpolateOtherAttrs(this.otherAttrs[index], child.attribute, ratio);

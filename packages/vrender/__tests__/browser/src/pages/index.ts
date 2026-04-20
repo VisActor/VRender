@@ -48,6 +48,14 @@ export const pages = [
         path: 'memory'
       },
       {
+        name: 'VTable-lite basic',
+        path: 'vtable-lite-basic'
+      },
+      {
+        name: 'VTable-lite text-stateProxy',
+        path: 'vtable-lite-text-stateproxy'
+      },
+      {
         name: '按需加载',
         path: 'anxu-picker'
       },
@@ -221,7 +229,8 @@ export const pages = [
       },
       {
         name: 'jsx',
-        path: 'jsx'
+        path: 'jsx',
+        type: 'tsx'
       },
       {
         name: 'dynamic-texture',
@@ -241,7 +250,12 @@ export const pages = [
       },
       {
         name: 'react',
-        path: 'react'
+        path: 'react',
+        type: 'tsx'
+      },
+      {
+        name: 'shared-state/batch smoke',
+        path: 'shared-state-batch-smoke'
       },
       {
         name: 'gif-image',

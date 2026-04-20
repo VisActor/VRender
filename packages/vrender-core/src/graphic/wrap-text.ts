@@ -1,9 +1,14 @@
 import { isArray } from '@visactor/vutils';
 import { CanvasTextLayout } from '../core/contributions/textMeasure/layout';
-import type { IText, ITextGraphicAttribute, IWrapTextGraphicAttribute, LayoutItemType } from '../interface';
+import {
+  MeasureModeEnum,
+  type IText,
+  type ITextGraphicAttribute,
+  type IWrapTextGraphicAttribute,
+  type LayoutItemType
+} from '../interface';
 import { application } from '../application';
 import { Text } from './text';
-import { getTheme } from './theme';
 import { calculateLineHeight } from '../common/utils';
 
 const WRAP_TEXT_UPDATE_TAG_KEY = ['heightLimit', 'lineClamp'];
@@ -105,11 +110,16 @@ export class WrapText extends Text {
               false,
               suffixPosition
             );
+            const metrics = layoutObj.textMeasure.measureTextPixelADscentAndWidth(
+              clip.str,
+              layoutObj.textOptions,
+              MeasureModeEnum.actualBounding
+            );
             linesLayout.push({
               str: clip.str,
               width: clip.width,
-              ascent: 0,
-              descent: 0,
+              ascent: metrics.ascent,
+              descent: metrics.descent,
               keepCenterInLine: false
             });
             break; // 不处理后续行
@@ -142,11 +152,17 @@ export class WrapText extends Text {
             needCut = false;
           }
 
+          const metrics = layoutObj.textMeasure.measureTextPixelADscentAndWidth(
+            clip.str,
+            layoutObj.textOptions,
+            MeasureModeEnum.actualBounding
+          );
+
           linesLayout.push({
             str: clip.str,
             width: clip.width,
-            ascent: 0,
-            descent: 0,
+            ascent: metrics.ascent,
+            descent: metrics.descent,
             keepCenterInLine: false
           });
           if (clip.str.length === str.length) {
@@ -180,11 +196,16 @@ export class WrapText extends Text {
             false,
             suffixPosition
           );
+          const metrics = layoutObj.textMeasure.measureTextPixelADscentAndWidth(
+            clip.str,
+            layoutObj.textOptions,
+            MeasureModeEnum.actualBounding
+          );
           linesLayout.push({
             str: clip.str,
             width: clip.width,
-            ascent: 0,
-            descent: 0,
+            ascent: metrics.ascent,
+            descent: metrics.descent,
             keepCenterInLine: false
           });
           lineWidth = Math.max(lineWidth, clip.width);
@@ -193,8 +214,19 @@ export class WrapText extends Text {
 
         text = lines[i] as string;
         width = layoutObj.textMeasure.measureTextWidth(text, layoutObj.textOptions, wordBreak === 'break-word');
+        const metrics = layoutObj.textMeasure.measureTextPixelADscentAndWidth(
+          text,
+          layoutObj.textOptions,
+          MeasureModeEnum.actualBounding
+        );
         lineWidth = Math.max(lineWidth, width);
-        linesLayout.push({ str: text, width, ascent: 0, descent: 0, keepCenterInLine: false });
+        linesLayout.push({
+          str: text,
+          width,
+          ascent: metrics.ascent,
+          descent: metrics.descent,
+          keepCenterInLine: false
+        });
       }
       bboxWH[0] = lineWidth;
     }
@@ -207,7 +239,7 @@ export class WrapText extends Text {
       height: bboxWH[1]
     };
 
-    layoutObj.LayoutBBox(bbox, textAlign, textBaseline as any);
+    layoutObj.LayoutBBox(bbox, textAlign, textBaseline as any, linesLayout);
 
     const layoutData = layoutObj.layoutWithBBox(bbox, linesLayout, textAlign, textBaseline as any, lineHeight);
 
@@ -220,7 +252,7 @@ export class WrapText extends Text {
     //   maxLineWidth
     // );
     // const { bbox } = layoutData;
-    this.cache.layoutData = layoutData;
+    this.getOrCreateCache().layoutData = layoutData;
     this.clearUpdateShapeTag();
     this._AABBBounds.set(bbox.xOffset, bbox.yOffset, bbox.xOffset + bbox.width, bbox.yOffset + bbox.height);
 

@@ -145,7 +145,7 @@ const point = new Point();
 type AttributeDelta = Map<string, { prev: unknown; next: unknown }>;
 
 function isPlainObjectValue(value: unknown): value is Record<string, any> {
-  return value != null && isObject(value) && !isArray(value);
+  return typeof value === 'object' && value != null && !isArray(value);
 }
 
 function cloneAttributeValue<T>(value: T): T {
@@ -153,9 +153,41 @@ function cloneAttributeValue<T>(value: T): T {
     return value;
   }
 
+  const source = value as Record<string, any>;
   const clone: Record<string, any> = {};
-  Object.keys(value).forEach(key => {
-    clone[key] = cloneAttributeValue((value as Record<string, any>)[key]);
+  Object.keys(source).forEach(key => {
+    const nextValue = source[key];
+    clone[key] = isPlainObjectValue(nextValue) ? cloneAttributeValue(nextValue) : nextValue;
+  });
+  return clone as T;
+}
+
+function cloneSimpleAttributeRecord<T>(value: T): T {
+  if (!isPlainObjectValue(value)) {
+    return value;
+  }
+
+  return { ...(value as Record<string, any>) } as T;
+}
+
+export function shouldUseSimpleAttributeFastPath(value: unknown): value is Record<string, any> {
+  if (!isPlainObjectValue(value)) {
+    return false;
+  }
+
+  return !Object.keys(value).some(key => isPlainObjectValue((value as Record<string, any>)[key]));
+}
+
+function cloneAttributeSurface<T>(value: T): T {
+  if (!isPlainObjectValue(value)) {
+    return value;
+  }
+
+  const source = value as Record<string, any>;
+  const clone: Record<string, any> = {};
+  Object.keys(source).forEach(key => {
+    const nextValue = source[key];
+    clone[key] = isPlainObjectValue(nextValue) ? { ...nextValue } : nextValue;
   });
   return clone as T;
 }
@@ -396,9 +428,9 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   protected stateEngineStateSort?: (stateA: string, stateB: string) => number;
   protected stateEngineMergeMode?: StateMergeMode;
   protected stateEngineStateProxyModeKey?: string;
-  protected readonly stateStyleResolver = new StateStyleResolver<T>();
-  protected readonly deepStateStyleResolver = new StateStyleResolver<T>({ mergeMode: 'deep' });
-  protected readonly stateTransitionOrchestrator = new StateTransitionOrchestrator<T>();
+  protected stateStyleResolver?: StateStyleResolver<T>;
+  protected deepStateStyleResolver?: StateStyleResolver<T>;
+  protected stateTransitionOrchestrator?: StateTransitionOrchestrator<T>;
   protected _deprecatedNormalAttrsView?: Partial<T> | null;
   protected localStateDefinitionsSource?: StateDefinitionsInput<T>;
   protected resolverEpoch: number = 0;
@@ -407,9 +439,16 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     super();
     this._AABBBounds = new AABBBounds();
     this._updateTag = UpdateTag.INIT;
-    const initialAttributes = cloneAttributeValue(params) as T;
-    this.attribute = initialAttributes;
-    this.baseAttributes = cloneAttributeValue(initialAttributes) as Partial<T>;
+    const useSimpleAttributeFastPath = shouldUseSimpleAttributeFastPath(params);
+    const initialBaseAttributes = (
+      useSimpleAttributeFastPath ? cloneSimpleAttributeRecord(params) : cloneAttributeValue(params)
+    ) as Partial<T>;
+    this.baseAttributes = initialBaseAttributes;
+    this.attribute = (
+      useSimpleAttributeFastPath
+        ? cloneSimpleAttributeRecord(initialBaseAttributes)
+        : cloneAttributeSurface(initialBaseAttributes)
+    ) as T;
     this.valid = this.isValid();
     this.updateAABBBoundsStamp = 0;
     if (params.background) {
@@ -434,6 +473,29 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
 
   getAttributes(): T {
     return this.attribute;
+  }
+
+  protected getStateStyleResolver(mergeMode?: StateMergeMode): StateStyleResolver<T> {
+    if (mergeMode === 'deep') {
+      if (!this.deepStateStyleResolver) {
+        this.deepStateStyleResolver = new StateStyleResolver<T>({ mergeMode: 'deep' });
+      }
+      return this.deepStateStyleResolver;
+    }
+
+    if (!this.stateStyleResolver) {
+      this.stateStyleResolver = new StateStyleResolver<T>();
+    }
+
+    return this.stateStyleResolver;
+  }
+
+  protected getStateTransitionOrchestrator(): StateTransitionOrchestrator<T> {
+    if (!this.stateTransitionOrchestrator) {
+      this.stateTransitionOrchestrator = new StateTransitionOrchestrator<T>();
+    }
+
+    return this.stateTransitionOrchestrator;
   }
 
   protected resolveBoundSharedStateScope(): SharedStateScope<T> | SharedStateScope<Record<string, any>> | undefined {
@@ -649,7 +711,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     const resolvedStateAttrs =
       this.stateEngine && this.compiledStateDefinitions
         ? { ...(this.stateEngine.resolvedPatch as Partial<T>) }
-        : (this.stateMergeMode === 'deep' ? this.deepStateStyleResolver : this.stateStyleResolver).resolve(
+        : this.getStateStyleResolver(this.stateMergeMode).resolve(
             stateResolveBaseAttrs,
             this.states as any,
             this.stateProxy as any,
@@ -1527,7 +1589,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     const transitionOptions = resolvedAnimateConfig ? { animateConfig: resolvedAnimateConfig } : undefined;
 
     if (isClear) {
-      this.stateTransitionOrchestrator.applyClearTransition(
+      this.getStateTransitionOrchestrator().applyClearTransition(
         this as any,
         attrs,
         hasAnimation,
@@ -1537,12 +1599,12 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       return;
     }
 
-    const plan = this.stateTransitionOrchestrator.analyzeTransition({}, attrs, stateNames, hasAnimation, {
+    const plan = this.getStateTransitionOrchestrator().analyzeTransition({}, attrs, stateNames, hasAnimation, {
       noWorkAnimateAttr: this.getNoWorkAnimateAttr(),
       animateConfig: resolvedAnimateConfig
     });
 
-    this.stateTransitionOrchestrator.applyTransition(this as any, plan, hasAnimation, transitionOptions);
+    this.getStateTransitionOrchestrator().applyTransition(this as any, plan, hasAnimation, transitionOptions);
   }
 
   updateNormalAttrs(stateAttrs: Partial<T>) {
@@ -1661,12 +1723,11 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       return;
     }
 
-    const resolver = this.stateMergeMode === 'deep' ? this.deepStateStyleResolver : this.stateStyleResolver;
     const effectiveStates = transition.effectiveStates ?? transition.states;
     const resolvedStateAttrs =
       this.stateEngine && this.compiledStateDefinitions
         ? { ...(this.stateEngine.resolvedPatch as Partial<T>) }
-        : resolver.resolve(
+        : this.getStateStyleResolver(this.stateMergeMode).resolve(
             stateResolveBaseAttrs,
             this.states as any,
             this.stateProxy as any,

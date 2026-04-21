@@ -8,6 +8,9 @@ export function bindRect3dCanvasPickerContribution(container: any) {
   if (loadRect3dPick) {
     return;
   }
+  if (!container.isBound?.(Rect3DRender)) {
+    return;
+  }
   loadRect3dPick = true;
   container
     .bind(CanvasRect3dPicker)

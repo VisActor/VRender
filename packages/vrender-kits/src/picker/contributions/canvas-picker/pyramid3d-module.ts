@@ -8,6 +8,9 @@ export function bindPyramid3dCanvasPickerContribution(container: any) {
   if (loadPyramid3dPick) {
     return;
   }
+  if (!container.isBound?.(Pyramid3dRender)) {
+    return;
+  }
   loadPyramid3dPick = true;
   container
     .bind(CanvasPyramid3dPicker)

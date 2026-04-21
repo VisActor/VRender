@@ -8,6 +8,9 @@ export function bindStarCanvasPickerContribution(container: any) {
   if (loadStarPick) {
     return;
   }
+  if (!container.isBound?.(StarRender)) {
+    return;
+  }
   loadStarPick = true;
   container
     .bind(CanvasStarPicker)

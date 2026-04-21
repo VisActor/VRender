@@ -8,6 +8,9 @@ export function bindArc3dCanvasPickerContribution(container: any) {
   if (loadArc3dPick) {
     return;
   }
+  if (!container.isBound?.(Arc3dRender)) {
+    return;
+  }
   loadArc3dPick = true;
   container
     .bind(CanvasArc3dPicker)

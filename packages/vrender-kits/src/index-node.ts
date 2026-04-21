@@ -3,6 +3,13 @@ import _roughModule from './render/contributions/rough/module';
 
 export const roughModule = _roughModule;
 export * from './picker/contributions/constants';
+export {
+  installBrowserEnvToApp,
+  installNodeEnvToApp,
+  installDefaultGraphicsToApp,
+  installBrowserPickersToApp,
+  installNodePickersToApp
+} from './installers/app';
 
 export * from './jsx';
 export * from './react-tree';

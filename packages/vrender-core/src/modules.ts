@@ -27,7 +27,12 @@ import { CanvasFactory, Context2dFactory } from './canvas/constants';
 import { IncrementalDrawContribution } from './render/contributions/render/symbol';
 import { DefaultWindow, WindowHandlerContribution } from './core/window';
 import { vglobal } from './global';
-import { createLegacySingletonProxy, resolveLegacyNamed, resolveLegacySingleton } from './legacy/bootstrap';
+import {
+  createLegacySingletonProxy,
+  getLegacyBindingContext,
+  resolveLegacyNamed,
+  resolveLegacySingleton
+} from './legacy/bootstrap';
 // loadPickContributions(container);
 // loadCanvasContributions(container);
 
@@ -38,6 +43,7 @@ export {
   type ILegacyBindContext,
   type ILegacyBindingContext
 } from './legacy/bootstrap';
+export const container = getLegacyBindingContext();
 export const graphicUtil = createLegacySingletonProxy<IGraphicUtil>(() =>
   resolveLegacySingleton<IGraphicUtil>(GraphicUtil)
 );

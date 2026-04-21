@@ -303,7 +303,7 @@ export class Stage extends Group implements IStage {
       viewBox: params.viewBox,
       container: params.container,
       dpr: params.dpr || this.global.devicePixelRatio,
-      canvasControled: params.canvasControled !== false,
+      canvasControled: params.canvasControled ?? !params.canvas,
       title: params.title || '',
       canvas: params.canvas
     });

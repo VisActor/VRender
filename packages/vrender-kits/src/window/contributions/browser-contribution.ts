@@ -178,6 +178,9 @@ export class BrowserWindowHandlerContribution
     let canvas: HTMLCanvasElement | null;
     if (typeof params.canvas === 'string') {
       canvas = this.global.getElementById(params.canvas) as HTMLCanvasElement | null;
+      if (!canvas && typeof document !== 'undefined') {
+        canvas = document.getElementById(params.canvas) as HTMLCanvasElement | null;
+      }
       if (!canvas) {
         throw new Error('canvasId 参数不正确，请确认canvas存在并插入dom');
       }
@@ -214,7 +217,7 @@ export class BrowserWindowHandlerContribution
       height: height,
       dpr: dpr,
       nativeCanvas: canvas,
-      canvasControled: params.canvasControled
+      canvasControled: params.canvasControled ?? false
     });
     // if (params.canvasControled) {
     //   this.canvas.resetStyle({

@@ -2,7 +2,7 @@
 export * from './core/global';
 export * from './graphic';
 export { createGraphic, graphicCreator, registerGraphic } from './graphic/graphic-creator';
-export { graphicUtil, transformUtil, graphicService, layerService } from './modules';
+export { container, graphicUtil, transformUtil, graphicService, layerService } from './modules';
 export {
   preLoadAllModule,
   getLegacyBindingContext,

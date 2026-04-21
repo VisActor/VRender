@@ -1,4 +1,3 @@
-import * as graphicCreatorModule from '../../../vrender-core/src/graphic/graphic-creator';
 import type {
   IArc,
   IArcGraphicAttribute,
@@ -23,11 +22,9 @@ import type {
   IText,
   ITextGraphicAttribute
 } from '@visactor/vrender-core';
+import { createGraphic as createCoreGraphic } from '@visactor/vrender-core';
 
-const createGraphic = (graphicCreatorModule as any).createGraphic as <TGraphic, TAttributes>(
-  type: string,
-  attributes: TAttributes
-) => TGraphic;
+const createGraphic = createCoreGraphic as <TGraphic, TAttributes>(type: string, attributes: TAttributes) => TGraphic;
 
 export const graphicCreator = {
   arc: (attributes: IArcGraphicAttribute): IArc => createGraphic('arc', attributes),

@@ -1,11 +1,11 @@
-jest.mock('../../../../vrender-core/src/graphic/graphic-creator', () => ({
+jest.mock('@visactor/vrender-core', () => ({
   createGraphic: jest.fn((type: string, attrs: Record<string, unknown>) => ({
     type,
     attribute: attrs
   }))
 }));
 
-import { createGraphic } from '../../../../vrender-core/src/graphic/graphic-creator';
+import { createGraphic } from '@visactor/vrender-core';
 import { graphicCreator } from '../../../src/util/graphic-creator';
 
 describe('component graphic creator', () => {

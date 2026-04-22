@@ -54,7 +54,10 @@ export abstract class AbstractComponent<T extends IGroupGraphicAttribute = IGrou
     });
     this.attribute = attributes;
     // 这里调用渲染和事件绑定逻辑
-    this.onSetStage(() => {
+    this.onSetStage((_, stage) => {
+      if (!stage) {
+        return;
+      }
       this.render();
       this.bindEvents();
     });

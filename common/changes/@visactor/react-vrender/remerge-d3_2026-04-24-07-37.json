@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "Prepare browser alpha app-scoped runtime verification.",
+      "type": "none",
+      "packageName": "@visactor/react-vrender"
+    }
+  ],
+  "packageName": "@visactor/react-vrender",
+  "email": "lixuef1313@163.com"
+}

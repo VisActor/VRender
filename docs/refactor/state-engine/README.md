@@ -45,7 +45,7 @@
 | `D3_UPPER_LAYER_ADOPTION_GUIDE.md` | **上层业务接入指南**（给 `vchart` / `vtable` 等上层仓库 agent 的新版本 VRender 使用说明） |
 | `D3_UPPER_LAYER_INTEGRATION_FRICTION_REVIEW.md` | **上层接入困难点评审文档**（从上层使用者视角评估 app-scoped 接入的摩擦点、归因层级与建议动作） |
 | `D3_UPPER_LAYER_LOGIC_CHAIN_AUDIT.md` | **上层接入逻辑链审计文档**（检查推荐链与真实上层链是否已经对齐） |
-| `D3_VCHART_APP_SCOPED_ALIGNMENT_PLAN.md` | **VChart app-scoped 对齐实施计划**（以 external-stage-first 拿到第一条真实上层 app-scoped 集成链） |
+| `D3_VCHART_APP_SCOPED_ALIGNMENT_PLAN.md` | **VChart app-scoped 对齐实施计划**（external-stage 证据已通过，下一步推进 app-provider-first / VChart-created-stage 源码级对齐） |
 | `D3_MULTI_ENV_ON_DEMAND_GOVERNANCE.md` | **multi-env / on-demand 治理任务文档**（决定是否继续保留更宽 public contract，并给出治理工作流） |
 | `D3_ALPHA_COORDINATION.md` | **alpha 协作文档**（给 `VRender agent` / `VChart agent` / 协调者的当前 alpha gate、blocker 和 handoff 状态面） |
 | `D3_POST_ALPHA_WRAPUP_PLAN.md` | **alpha 后收尾优先级计划**（browser alpha gate 关闭后的必要收尾、owner、优先级与完成标准） |

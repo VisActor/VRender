@@ -26,8 +26,9 @@
 1. browser binding / installer root-cause 已完成 consumer-side re-check
 2. full-link browser 功能回归已通过
 3. `textHeavy` mixed scene recreate 性能回归已完成双边验证并从 browser alpha gate 中移除
-4. 推荐 app-scoped 入口的真实上层接入验证已在 `external-stage-first` 路径完成 fresh rerun
+4. app-scoped 入口的真实上层接入验证已在 external-stage 路径完成 fresh rerun
 5. 上层接入体验审查与“多环境一等支持”治理任务已完成，当前推荐接入契约已足够支撑 browser alpha 验证
+6. root app creator public typing 已修正为返回 `IApp`，可被上层 TypeScript 代码直接消费
 
 ---
 
@@ -109,7 +110,7 @@ first round snapshot：
 
 ### 3.5 Latest VRender delivery
 
-`VRender agent` 最新有效提交：
+`VRender agent` 最新 runtime 修复提交：
 
 - `9b6508ea70ac223be87a2e86608ebcb3db49d1cf`
 
@@ -129,9 +130,20 @@ first round snapshot：
   - perf recreate longTasks: `1 -> 0`
   - `basicBar / basicLine / textHeavy` 仍均为 `firstFrame: true`
 
-### 3.6 App-scoped external-stage-first validation
+当前待发布分支最新提交：
 
-当前 fresh 证据表明，`external-stage-first` 的推荐 app-scoped 接入路径已经在 consumer 侧完成 rerun：
+- `4d1798865`
+
+该提交在 `9b6508...` 的 runtime 修复之后补齐 root app creator 的 public typing：
+
+- `createBrowserVRenderApp(options?): IApp`
+- `createNodeVRenderApp(options?): IApp`
+- 新增 source-level type test 与 build artifact typing check
+- 不改变 browser runtime gate 判断，只收口上层 TypeScript 接入面
+
+### 3.6 App-scoped external-stage validation
+
+当前 fresh 证据表明，external-stage app-scoped 接入路径已经在 consumer 侧完成 rerun：
 
 - `createBrowserVRenderApp()`: 可用
 - `app.createStage()`: 可用
@@ -146,7 +158,9 @@ first round snapshot：
 
 结论边界：
 
-- 推荐 app-scoped 入口在 `external-stage-first` 路径上已经具备真实上层验证证据
+- external-stage 路径已经具备真实上层验证证据
+- 这条路径是 advanced borrowed-stage path，不是最终普通用户推荐主链
+- 最终普通用户推荐主链应是 app-provider-first / VChart-created-stage
 - 这不等于已经完成 full internal migration
 
 ### 3.7 Root-only browser smoke
@@ -175,7 +189,8 @@ first round snapshot：
 | 默认 browser env / picker 安装链过宽 | `VRender-side` | 已完成 consumer-side re-check，canonical rerun 中不再出现 `installNodeEnvToApp` / `Arc3dRender` / `Pyramid3dRender` / `StarRender`，且 `basicBar / basicLine / textHeavy` 已拿到 `firstFrame: true` |
 | `VChart` full-link browser 功能回归 | `cross-repo integration` | 已通过，三个场景 `init / update / recreate / interaction` 正常 |
 | `textHeavy` mixed scene recreate 性能回归 | `VRender-side` | 已完成 consumer-side perf re-check，`functional recreate` 回到 `57.71ms`，`perf recreate median` 回到 `45.96ms`，且 `recreate longTasks` 消失 |
-| 推荐 app-scoped external-stage-first 接入验证 | `cross-repo integration` | 已完成 consumer-side fresh rerun，`createBrowserVRenderApp() + app.createStage() + { stage }` 路径稳定成立 |
+| app-scoped external-stage 接入验证 | `cross-repo integration` | 已完成 consumer-side fresh rerun，`createBrowserVRenderApp() + app.createStage() + { stage }` 路径稳定成立 |
+| root app creator public typing | `VRender-side` | 已补齐，`createBrowserVRenderApp()` / `createNodeVRenderApp()` 的 public typing 已返回 `IApp` |
 
 ---
 
@@ -186,10 +201,10 @@ first round snapshot：
 | Item | Owner | 当前状态 | 说明 |
 | --- | --- | --- | --- |
 | `createNodeVRenderApp().createStage()` node runtime 未转绿 | `VRender-side` | open | `createWindow` 为空导致 node runtime 失败；这是 node lane，不属于当前 browser gate |
-| `VChart` source-level external-stage-first 对齐尚未正式落仓 | `cross-repo integration` | follow-up | 当前已有 consumer harness 证据；下一步应按 `D3_VCHART_APP_SCOPED_ALIGNMENT_PLAN.md` 推进源码对齐 |
-| 是否继续做 full internal migration | `cross-repo integration` | follow-up | 当前不作为 alpha 先决条件，应在 external-stage-first 稳定后再决定 |
+| `VChart` app-provider-first / VChart-created-stage 源码级对齐尚未正式落仓 | `cross-repo integration` | follow-up | 当前已有 external-stage consumer harness 证据；下一步应按 `D3_VCHART_APP_SCOPED_ALIGNMENT_PLAN.md` 推进源码对齐 |
+| 是否继续做 full internal migration | `cross-repo integration` | follow-up | 当前不作为 alpha 先决条件，应在 app-provider-first 源码级路径稳定后再决定 |
 | 真实上层 `text stateProxy` 路径未覆盖 | `cross-repo integration` | follow-up | 当前只覆盖到非 text `stateProxy` |
-| 外部传入 stage 的更完整 ownership 约束与治理沉淀 | `VChart-side` | follow-up | 当前 external-stage-first 路径已可用，但源码侧契约治理仍建议继续落档 |
+| 外部传入 stage 的更完整 ownership 约束与治理沉淀 | `VChart-side` | follow-up | 当前 external-stage 路径已可用，但源码侧契约治理仍建议继续落档 |
 
 ---
 
@@ -198,7 +213,8 @@ first round snapshot：
 ### 6.1 Latest from VRender agent
 
 - 仓库：`/Users/bytedance/Documents/GitHub/VRender2`
-- 最新有效提交：`9b6508ea70ac223be87a2e86608ebcb3db49d1cf`
+- 最新 runtime 修复提交：`9b6508ea70ac223be87a2e86608ebcb3db49d1cf`
+- 当前待发布分支最新提交：`4d1798865`
 - 最新交付内容：
   - 将 `AbstractComponent` 的 `onSetStage` 收成 attach-only
   - detach 路径不再触发组件 `render() + bindEvents()`
@@ -213,7 +229,8 @@ first round snapshot：
   - browser binding / installer 根因已通过
   - browser functional lane 已通过
   - browser perf lane 已通过
-  - `external-stage-first` app-scoped fresh rerun 已通过
+  - external-stage app-scoped fresh rerun 已通过
+  - app-provider-first / VChart-created-stage 源码级对齐仍是 post-alpha P0
   - 当前 browser alpha gate 已无新的 blocker
 - 当前下一步：
   - 如需要继续推进，按 `D3_VCHART_APP_SCOPED_ALIGNMENT_PLAN.md` 做 source-level alignment，而不是重新验证 gate
@@ -237,7 +254,7 @@ first round snapshot：
 
 当前最短路径只有 2 步：
 
-1. 按 `D3_VCHART_APP_SCOPED_ALIGNMENT_PLAN.md` 推进 `VChart` 的 source-level external-stage-first 对齐
+1. 按 `D3_VCHART_APP_SCOPED_ALIGNMENT_PLAN.md` 推进 `VChart` 的 app-provider-first / VChart-created-stage 源码级对齐
 2. 如对齐过程中再次出现 `VRender-side` 问题，再由 `VRender agent` 接手收口
 
 browser alpha 发布后的完整收尾优先级看：
@@ -262,7 +279,8 @@ browser alpha 发布后的完整收尾优先级看：
 - 默认 browser env / picker 安装链过宽这条 root cause，已经在 consumer-side re-check 中通过
 - `VChart` full-link browser 功能回归已通过
 - `textHeavy` recreate perf blocker 已完成 consumer-side re-check，可从 browser alpha gate 中移除
-- 推荐 app-scoped `external-stage-first` 真实上层接入验证已完成 fresh rerun
+- app-scoped external-stage 真实上层接入验证已完成 fresh rerun
+- root app creator public typing 已补齐，上层 TypeScript 调用方不需要退回 `any/cast`
 - 因此当前 **browser alpha gate 已关闭**
 
 当前协调口径：

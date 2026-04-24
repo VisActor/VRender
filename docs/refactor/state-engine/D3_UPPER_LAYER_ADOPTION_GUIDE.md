@@ -49,7 +49,7 @@
 4. `handoff ready`
    - 当前仓库已恢复到可以交给上层使用的状态
 5. `browser alpha gate closed`
-   - browser binding / installer、functional、perf 和 external-stage-first app-scoped consumer rerun 均已通过
+   - browser binding / installer、functional、perf 和 external-stage app-scoped consumer rerun 均已通过
 6. root app creator public typing 已补齐
    - `createBrowserVRenderApp()` / `createNodeVRenderApp()` 当前对外类型应返回 `IApp`
 

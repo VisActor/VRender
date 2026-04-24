@@ -14,7 +14,7 @@
 截至 browser alpha close-out：
 
 1. `VRender` 推荐 root path 已经足以支撑 browser alpha
-2. `external-stage-first` 的 consumer-side app-scoped rerun 已通过
+2. external-stage consumer-side app-scoped rerun 已通过
 3. `VChart` 真实源码链路仍未整体迁到推荐 root path
 4. 因此当前结论应理解为：consumer-side integration evidence 已有，app-provider-first source-level alignment 仍是 post-alpha P0 follow-up
 

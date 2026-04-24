@@ -160,7 +160,7 @@ this._stage = this._option.stage ?? new Stage(...)
 
 这条结果很重要，但边界也必须写清：
 
-1. 它证明 **至少有一条真实 app-scoped external-stage-first 集成链可以跑通**
+1. 它证明 **至少有一条真实 app-scoped external-stage 集成链可以跑通**
 2. 它 **不等于** broader external-stage ownership 问题已经正式关闭
 3. 在把 ownership blocker 从 open 改成 cleared 前，仍应继续要求更明确的 owner/release 级验证
 
@@ -376,6 +376,6 @@ Phase A 完成后，需要做一次明确判断：
 1. `VChart` 还没有完成对推荐 app-scoped 结构链的真实对齐
 2. 但它已经有一条足够好的外部注入 seam，可作为最短迁移入口
 3. 所以下一步最值得做的不是抽象争论，而是：
-   - **external-stage-first**
-   - **先拿真实 integration evidence**
+   - **app-provider-first / VChart-created-stage**
+   - **把已通过的 external-stage consumer evidence 沉淀成普通用户不感知 app 的源码级 contract**
    - **再决定 full internal migration 值不值得做**

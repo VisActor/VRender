@@ -123,17 +123,17 @@
 - 当前状态：open
 - 说明：`createNodeVRenderApp().createStage()` 仍未转绿。这是 node lane，不属于当前 browser alpha gate。
 
-### F-Alpha-02 VChart source-level external-stage-first alignment
+### F-Alpha-02 VChart app-provider-first source-level alignment
 
 - Owner: `cross-repo integration`
 - 当前状态：follow-up
-- 说明：`createBrowserVRenderApp() + app.createStage() + { stage }` 的 consumer-side 路径已完成 fresh rerun 并成立；下一步应按 `D3_VCHART_APP_SCOPED_ALIGNMENT_PLAN.md` 推进源码级 external-stage-first 对齐。
+- 说明：`createBrowserVRenderApp() + app.createStage() + { stage }` 的 consumer-side external-stage 路径已完成 fresh rerun 并成立；下一步应按 `D3_VCHART_APP_SCOPED_ALIGNMENT_PLAN.md` 推进 app-provider-first / VChart-created-stage 源码级对齐。
 
 ### F-Alpha-03 full internal migration decision
 
 - Owner: `cross-repo integration`
 - 当前状态：follow-up
-- 说明：当前不作为 alpha 先决条件。应在 external-stage-first 稳定后，再决定是否继续做 full internal migration。
+- 说明：当前不作为 alpha 先决条件。应在 app-provider-first 源码级路径稳定后，再决定是否继续做 full internal migration。
 
 ### F-Alpha-04 text stateProxy real-path coverage
 
@@ -145,4 +145,4 @@
 
 - Owner: `VChart-side`
 - 当前状态：follow-up
-- 说明：external-stage-first 路径已可用，但源码侧 ownership 契约与治理沉淀仍建议继续收口，不再作为当前 browser alpha gate blocker。
+- 说明：external-stage 路径已可用，但源码侧 ownership 契约与治理沉淀仍建议继续收口，不再作为当前 browser alpha gate blocker。

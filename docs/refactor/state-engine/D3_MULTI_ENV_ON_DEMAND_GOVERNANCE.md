@@ -18,7 +18,7 @@
 3. 非 browser/node 环境能力仍在，但不再默认描述成已经进入对等 app-scoped 一等契约
 4. fine-grained on-demand 能力仍在，但不再描述成已由 root app creator 等价承接
 5. root app creator 的 public typing 已修正为返回 `IApp`
-6. `external-stage-first` 的 consumer-side app-scoped 验证已通过
+6. external-stage consumer-side app-scoped 验证已通过；普通用户主链仍应推进 app-provider-first / VChart-created-stage
 
 后续如果继续治理，应按 [D3_POST_ALPHA_WRAPUP_PLAN.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_POST_ALPHA_WRAPUP_PLAN.md) 中的 P1 support matrix 项推进，不再把它作为 browser alpha gate blocker。
 

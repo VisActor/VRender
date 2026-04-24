@@ -8,6 +8,7 @@ const path = require('path')
 const checkAndUpdateNextBump = require('./version-policies');
 const getPackageJson = require('./get-package-json');
 const writePrereleaseVersion = require('./set-prerelease-version');
+const { buildTagPackages } = require('./build-tag-packages');
 
 
 const semverRegex = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-(alpha|beta|rc)(?:\.(?:(0|[1-9])))*)$/;
@@ -57,10 +58,7 @@ function run() {
     writePrereleaseVersion(checkAndUpdateNextBump(process.argv.slice(2)[1]), preReleaseName)
 
     // 2. build all the packages
-    spawnSync('sh', ['-c', `rush build --only tag:package`], {
-      stdio: 'inherit',
-      shell: false,
-    });
+    buildTagPackages();
 
     // 3. publish to npm
     spawnSync('sh', ['-c', `rush publish --publish --include-all --tag ${preReleaseType}`], {
@@ -94,4 +92,3 @@ function run() {
 }
 
 run()
-

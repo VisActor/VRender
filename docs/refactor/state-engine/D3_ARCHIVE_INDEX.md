@@ -45,6 +45,12 @@
    看 [D3_MEMORY_BENCHMARK_PERF_CONTEXT.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_MEMORY_BENCHMARK_PERF_CONTEXT.md)
 17. 需要看为什么 `memory benchmark` 现在继续推进到 `P2`，以及 VTable-lite 的业务验证口径是什么：
    看 [D3_MEMORY_BENCHMARK_P2_GUIDE.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_MEMORY_BENCHMARK_P2_GUIDE.md)
+18. 需要看上层业务（例如 `vchart` / `vtable` 仓库）应该如何使用新版本 VRender：
+   看 [D3_UPPER_LAYER_ADOPTION_GUIDE.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_UPPER_LAYER_ADOPTION_GUIDE.md)
+19. 需要看当前 alpha gate、双 agent blocker 归属和最新 handoff：
+   看 [D3_ALPHA_COORDINATION.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_ALPHA_COORDINATION.md)
+20. 需要看 browser alpha 发布后还剩哪些必要收尾，以及先做哪一项：
+   看 [D3_POST_ALPHA_WRAPUP_PLAN.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_POST_ALPHA_WRAPUP_PLAN.md)
 
 ---
 
@@ -81,6 +87,9 @@
 - [D3_PRE_HANDOFF_SMOKE_PROMPT.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_PRE_HANDOFF_SMOKE_PROMPT.md)
 - [D3_PRE_HANDOFF_SMOKE_TRIAGE.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_PRE_HANDOFF_SMOKE_TRIAGE.md)
 - [D3_PRE_HANDOFF_SMOKE_RENDERER_REGRESSION.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_PRE_HANDOFF_SMOKE_RENDERER_REGRESSION.md)
+- [D3_UPPER_LAYER_ADOPTION_GUIDE.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_UPPER_LAYER_ADOPTION_GUIDE.md)
+- [D3_ALPHA_COORDINATION.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_ALPHA_COORDINATION.md)
+- [D3_POST_ALPHA_WRAPUP_PLAN.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_POST_ALPHA_WRAPUP_PLAN.md)
 - [D3_MEMORY_BENCHMARK_PERF_CONTEXT.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_MEMORY_BENCHMARK_PERF_CONTEXT.md)
 - [D3_MEMORY_BENCHMARK_P2_GUIDE.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_MEMORY_BENCHMARK_P2_GUIDE.md)
 - [D3_MEMORY_BENCHMARK_P2_PROMPT.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_MEMORY_BENCHMARK_P2_PROMPT.md)
@@ -163,6 +172,9 @@
 | `rushx start` 的 browser smoke harness 该怎么收口 | `D3_PRE_HANDOFF_SMOKE_HARNESS.md` |
 | smoke baseline、全量 triage 和 exclusions 结果在哪 | `D3_PRE_HANDOFF_SMOKE_TRIAGE.md` |
 | 页面空白但 scene tree 正常时先查什么 | `D3_PRE_HANDOFF_SMOKE_RENDERER_REGRESSION.md` |
+| 上层业务（如 `vchart` / `vtable`）应如何使用新版本 VRender | `D3_UPPER_LAYER_ADOPTION_GUIDE.md` |
+| 当前 alpha gate、双 agent blocker 归属和 handoff 先看什么 | `D3_ALPHA_COORDINATION.md` |
+| browser alpha 发布后必要收尾如何排序 | `D3_POST_ALPHA_WRAPUP_PLAN.md` |
 | legacy 路径剩余项当时如何拆成 P0 / P1 / P2 并最终收口 | `D3_LEGACY_PATH_REMOVAL_PLAN.md` |
 | legacy path removal 最终如何关闭，以及 handoff ready 为什么可以恢复 | `D3_LEGACY_PATH_REMOVAL_STATUS.md` |
 | 下一轮 legacy removal 为什么只做 P0 installer surface | `D3_LEGACY_P0_INSTALLER_GUIDE.md` |

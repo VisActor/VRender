@@ -42,6 +42,13 @@
 | `D3_PRE_HANDOFF_SMOKE_PROMPT.md` | **D3 smoke harness 开发者执行 Prompt**（给实现 agent） |
 | `D3_PRE_HANDOFF_SMOKE_TRIAGE.md` | **D3 smoke triage 与 baseline 留档**（全量页面 triage、baseline 清单、历史 exclusions、迁移结论） |
 | `D3_PRE_HANDOFF_SMOKE_RENDERER_REGRESSION.md` | **browser 空白页问题留档**（scene tree 正常但 renderer registry 为空的定位与修复） |
+| `D3_UPPER_LAYER_ADOPTION_GUIDE.md` | **上层业务接入指南**（给 `vchart` / `vtable` 等上层仓库 agent 的新版本 VRender 使用说明） |
+| `D3_UPPER_LAYER_INTEGRATION_FRICTION_REVIEW.md` | **上层接入困难点评审文档**（从上层使用者视角评估 app-scoped 接入的摩擦点、归因层级与建议动作） |
+| `D3_UPPER_LAYER_LOGIC_CHAIN_AUDIT.md` | **上层接入逻辑链审计文档**（检查推荐链与真实上层链是否已经对齐） |
+| `D3_VCHART_APP_SCOPED_ALIGNMENT_PLAN.md` | **VChart app-scoped 对齐实施计划**（以 external-stage-first 拿到第一条真实上层 app-scoped 集成链） |
+| `D3_MULTI_ENV_ON_DEMAND_GOVERNANCE.md` | **multi-env / on-demand 治理任务文档**（决定是否继续保留更宽 public contract，并给出治理工作流） |
+| `D3_ALPHA_COORDINATION.md` | **alpha 协作文档**（给 `VRender agent` / `VChart agent` / 协调者的当前 alpha gate、blocker 和 handoff 状态面） |
+| `D3_POST_ALPHA_WRAPUP_PLAN.md` | **alpha 后收尾优先级计划**（browser alpha gate 关闭后的必要收尾、owner、优先级与完成标准） |
 | `D3_MEMORY_BENCHMARK_PERF_CONTEXT.md` | **memory benchmark 性能问题上下文**（`memory.ts` 与 `develop` 的性能差距归因与后续优化边界） |
 | `D3_MEMORY_BENCHMARK_P2_GUIDE.md` | **memory benchmark P2 实施任务文档**（面向 VTable-lite 业务场景的构造期固定成本优化） |
 | `D3_MEMORY_BENCHMARK_P2_PROMPT.md` | **memory benchmark P2 开发者执行 Prompt**（给实现 agent） |
@@ -70,6 +77,13 @@
 | `D3_PRE_HANDOFF_SMOKE_PROMPT.md` | browser smoke harness 的实现 agent 执行入口 |
 | `D3_PRE_HANDOFF_SMOKE_TRIAGE.md` | browser smoke harness 的 triage/baseline/exclusions 最终留档 |
 | `D3_PRE_HANDOFF_SMOKE_RENDERER_REGRESSION.md` | browser 空白页问题的定位与修复留档 |
+| `D3_UPPER_LAYER_ADOPTION_GUIDE.md` | `vchart` / `vtable` 等上层仓库 agent 的接入说明 |
+| `D3_UPPER_LAYER_INTEGRATION_FRICTION_REVIEW.md` | app-scoped 上层接入摩擦点的正式评审文档 |
+| `D3_UPPER_LAYER_LOGIC_CHAIN_AUDIT.md` | 推荐接入链与当前真实上层链的一致性审计文档 |
+| `D3_VCHART_APP_SCOPED_ALIGNMENT_PLAN.md` | 让 `VChart` 拿到第一条真实 app-scoped integration evidence 的跨仓库实施计划 |
+| `D3_MULTI_ENV_ON_DEMAND_GOVERNANCE.md` | multi-env / on-demand contract 是否继续保留及如何治理的专项入口 |
+| `D3_ALPHA_COORDINATION.md` | `VRender` / `VChart` 双 agent 和协调者共用的 alpha gate / blocker / handoff 状态面 |
+| `D3_POST_ALPHA_WRAPUP_PLAN.md` | browser alpha gate 关闭后，统一整理 alpha 后必要收尾事项、优先级、owner 与完成标准 |
 | `D3_MEMORY_BENCHMARK_PERF_CONTEXT.md` | `memory.ts` benchmark 性能问题的归因与后续优化上下文 |
 | `D3_MEMORY_BENCHMARK_P2_GUIDE.md` | memory benchmark `P2` 的实施文档（补 VTable-lite 业务验证口径与单目标优化边界） |
 | `D3_MEMORY_BENCHMARK_P2_PROMPT.md` | memory benchmark `P2` 的实现 agent 执行入口 |

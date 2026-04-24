@@ -105,6 +105,13 @@ Phase 1 以“实现完成并通过验证”作为阶段收口，没有单独走
 
 这两项不会影响 Phase 2 / Phase 3 / Phase 4 已 `closed` 的结论，后续应在独立 follow-up 清单中跟踪，不再回流污染已关闭阶段的主文档。
 
+补充：
+
+browser alpha gate 关闭后新增的上层接入、node runtime、VTable-lite P2、multi-env / on-demand support matrix 等收尾事项，不属于 Phase 1-4 主线 reopen。它们统一看：
+
+- [D3_POST_ALPHA_WRAPUP_PLAN.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_POST_ALPHA_WRAPUP_PLAN.md)
+- [D3_FOLLOWUPS.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_FOLLOWUPS.md)
+
 ---
 
 ## 5. 规范源入口

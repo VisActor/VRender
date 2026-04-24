@@ -15,11 +15,19 @@
 
 因此，当前仍需要 post-alpha 继续处理的高优先级摩擦主要是：
 
-1. `VChart` source-level external-stage-first 对齐
+1. `VChart` source-level app-provider-first 对齐
 2. external stage ownership contract hardening
 3. node app-scoped runtime readiness
 4. text `stateProxy` 真实上层覆盖
 5. multi-env / on-demand 长期 support matrix 与 advanced public surface
+
+补充状态：
+
+- adoption guide 已补充 `VChart` 场景下的 internal-owned / external-owned ownership 矩阵
+- 当前推荐不是“把所有 app/stage 管理完全交给外部”，而是三模式：
+  - 同页多 `VChart` 时，优先从 scene/context/provider 获取 app，由 `VChart` 自己创建 stage
+  - 获取不到 app 时，`VChart` 使用 managed shared fallback app，避免同页多 chart 重复创建 app
+  - 外部传入 stage 时 `VChart` 只借用，不释放外部 stage/app
 
 执行优先级统一看：
 

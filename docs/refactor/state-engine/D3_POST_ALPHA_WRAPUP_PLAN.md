@@ -66,31 +66,43 @@ alpha 后收尾不能重新打开下面已经关闭的阶段或 blocker：
 
 P0 是 alpha 发布后最先要收尾的事项。它们不阻塞 browser alpha 发布，但会直接影响上层是否能把 alpha 结果沉淀成长期可维护的接入路径。
 
-### P0-1 VChart source-level external-stage-first alignment
+### P0-1 VChart app-provider-first source-level alignment
 
 - Owner: `cross-repo integration` / `VChart-side`
 - Status: follow-up
 - Source: [D3_VCHART_APP_SCOPED_ALIGNMENT_PLAN.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_VCHART_APP_SCOPED_ALIGNMENT_PLAN.md)
 
-当前已有 `/tmp` consumer harness 证明：
+当前已有 `/tmp` consumer harness 证明 external-stage integration path 可行：
 
 1. `createBrowserVRenderApp()` 可用
 2. `app.createStage()` 可用
 3. `new VChart(..., { stage })` 可用
 4. init / update / recreate / release / stage reuse 证据已通过
 
-但这还不是 `VChart` 源码级正式对齐。alpha 后第一优先级应是把 external-stage-first 路径落到 `VChart` 的正式 harness / test / source-level contract 中。
+但这还不是最终用户侧的 `VChart` 源码级正式对齐。alpha 后第一优先级应是把 app-provider-first / VChart-created-stage 路径落到 `VChart` 的正式 harness / test / source-level contract 中。
 
 完成标准：
 
-1. `VChart` 源码或正式 runtime harness 中存在一条明确的 app-scoped external-stage-first 路径
+1. `VChart` 源码或正式 runtime harness 中存在一条明确的 app-provider-first 路径
 2. 该路径直接使用：
    - `createBrowserVRenderApp()`
    - `app.createStage()`
-   - `new VChart(..., { stage })`
+   - `new VChart(spec, { dom })` 或等价内部创建链
 3. 覆盖 init / update / recreate / release
 4. 明确外部传入 stage 的 ownership：谁创建，谁释放
-5. 不要求同时完成 full internal migration
+5. 明确 `VChart` 自己内部创建 stage 时的 ownership：
+   - 普通 `new VChart(spec, { dom })` 应先尝试从场景/上下文获取 app
+   - 获取不到 app 时，`VChart` 应创建或复用 VChart-managed shared app
+   - `chart.release()` 应释放 `VChart` 自己创建的 stage
+   - `chart.release()` 在 shared fallback app 场景下释放 app 引用，最后一个使用者释放后清理 app
+   - external stage 只借用，不释放
+6. 覆盖同页多个 `VChart` 实例：
+   - scene-app-owned 模式下，多个 chart 复用同一个 scene app
+   - 每个 `VChart` 仍应自己创建并释放自己的 stage
+   - 单个 `chart.release()` 不释放 scene-owned app
+   - VChart-managed shared fallback 模式下，多个 chart 复用 fallback app，避免重复 bootstrap
+   - external-stage-owned 模式下，`chart.release()` 不释放外部 stage/app
+7. 不要求同时完成 full internal migration
 
 ### P0-2 External stage ownership contract hardening
 
@@ -105,7 +117,9 @@ external-stage-first 已经证明路径可用，但源码侧仍应把 ownership 
 1. `VChart` 明确区分 internal stage 与 external stage
 2. `chart.release()` 不释放外部创建并传入的 stage
 3. 有最小测试或 runtime harness 证明 external stage 在 `chart.release()` 后仍可被创建者继续管理
-4. 文档中写清 ownership contract
+4. 有最小测试或 runtime harness 证明 scene-app-owned 模式下 `chart.release()` 只释放本 chart 创建的 stage，不释放 shared app
+5. 有最小测试或 runtime harness 证明 VChart-managed shared fallback app 会被多个 chart 复用，且最后一个使用者释放后正确清理
+6. 文档中写清 ownership contract
 
 ---
 
@@ -183,12 +197,12 @@ P2 是建议保留但不应挤占 P0/P1 的后续项。
 - Status: decision pending
 - Source: [D3_VCHART_APP_SCOPED_ALIGNMENT_PLAN.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_VCHART_APP_SCOPED_ALIGNMENT_PLAN.md)
 
-只有 external-stage-first 源码级对齐稳定后，才决定是否继续 full internal migration。
+只有 app-provider-first 源码级对齐稳定后，才决定是否继续 full internal migration。
 
 可能结论：
 
 1. 继续内部迁移到 root app creator
-2. 长期保留 compatibility-heavy internal path，但将 external-stage-first 写成正式推荐集成方式
+2. 长期保留 compatibility-heavy internal path，但将 app-provider-first 写成正式推荐集成方式
 
 ### P2-2 `graphic.states` missing-state warning strategy
 
@@ -221,13 +235,13 @@ P2 是建议保留但不应挤占 P0/P1 的后续项。
 | Priority | Item | Owner | Why now |
 | --- | --- | --- | --- |
 | Release-day | lock alpha evidence and docs | Coordinator | 保证 alpha 发布口径与证据一致 |
-| P0 | VChart source-level external-stage-first alignment | `cross-repo integration` / `VChart-side` | 把 `/tmp` 证据沉淀成正式上层路径 |
+| P0 | VChart app-provider-first source-level alignment | `cross-repo integration` / `VChart-side` | 把 `/tmp` 证据沉淀成正式上层路径，同时降低普通用户对 app 的感知 |
 | P0 | external stage ownership contract hardening | `VChart-side` | 防止推荐路径的 ownership 再次被误用 |
 | P1 | node app-scoped runtime readiness | `VRender-side` | 从 browser alpha 走向 node-complete alpha 的必要项 |
 | P1 | text stateProxy real-path coverage | `cross-repo integration` | 补齐真实上层状态覆盖缺口 |
 | P1 | memory benchmark / VTable-lite P2 | `VRender-side` | 继续收口高数量业务场景构造成本 |
 | P1 | multi-env / on-demand support matrix | `VRender-side` / maintainers | 固化长期 public contract |
-| P2 | full internal migration decision | `cross-repo integration` | 只有 external-stage-first 稳定后才值得决策 |
+| P2 | full internal migration decision | `cross-repo integration` | 只有 app-provider-first 稳定后才值得决策 |
 | P2 | `graphic.states` warning strategy | maintainers | 开发体验项，不影响运行时正确性 |
 | P2 | Glyph ownership docs | maintainers | 文档组织项 |
 | P2 | legacy/custom samples cleanup | `VRender-side` | 降低后续误读成本 |
@@ -260,7 +274,7 @@ P2 是建议保留但不应挤占 P0/P1 的后续项。
 1. 某项 follow-up 需要改变 `baseAttributes + resolvedStatePatch -> attribute` 静态真值模型
 2. 某项 follow-up 需要扩大 `stateProxy` 深层 nested mutation 兼容承诺
 3. 某项 follow-up 需要重开已关闭的 browser alpha gate
-4. full internal migration 被提前启动，且没有先完成 external-stage-first 源码级对齐
+4. full internal migration 被提前启动，且没有先完成 app-provider-first 源码级对齐
 5. multi-env / on-demand 任务开始无差别扩 public surface，而没有先拍板 support matrix
 
 ---
@@ -270,6 +284,6 @@ P2 是建议保留但不应挤占 P0/P1 的后续项。
 当前统一判断：
 
 - browser alpha 可以发布验证版
-- alpha 后第一收尾任务不是继续刷 gate，而是把 `VChart` external-stage-first 路径沉淀到源码级正式链路
+- alpha 后第一收尾任务不是继续刷 gate，而是把 `VChart` app-provider-first 路径沉淀到源码级正式链路
 - node runtime、text `stateProxy` 覆盖、VTable-lite P2、multi-env/on-demand support matrix 是后续高优先级收尾
 - full internal migration 是决策项，不是 alpha 后立即默认执行项

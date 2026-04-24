@@ -2,7 +2,7 @@
 
 > **文档类型**：跨仓库实施计划
 > **用途**：把 `VChart` 从当前 compatibility-heavy 上层接入链，推进到至少一条真实可验证的 app-scoped 集成链
-> **当前状态**：consumer-side external-stage-first 证据已通过；source-level alignment 仍为 post-alpha P0 follow-up
+> **当前状态**：consumer-side external-stage 证据已通过；app-provider-first source-level alignment 仍为 post-alpha P0 follow-up
 > **重要说明**：本计划优先拿到真实 app-scoped 上层证据，不默认要求一次性把 `VChart` 内部创建链完全改写
 
 ---
@@ -21,7 +21,7 @@
 6. `reuseSameStage.success = true`
 7. `globalErrors = []`
 
-这证明 external-stage-first 路径在 consumer-side 已成立，但还没有等价于 `VChart` 源码级正式对齐。post-alpha 的 P0 工作仍然是把这条路径沉淀到 `VChart` 的正式 source / runtime harness / ownership contract 中。
+这证明 external-stage integration path 在 consumer-side 已成立，但还没有等价于 `VChart` 源码级正式对齐。post-alpha 的 P0 工作应进一步沉淀为 app-provider-first / VChart-created-stage 的正式 source / runtime harness / ownership contract。
 
 优先级与完成标准看：
 
@@ -60,10 +60,45 @@
 ```text
 先修 external-stage contract
 -> 再用 external stage injection 拿到真实 app-scoped integration evidence
+-> 再推进 app-provider-first / VChart-created-stage source-level alignment
 -> 再决定是否推进 full internal migration
 ```
 
 这是当前风险最低、信息增益最高的推进顺序。
+
+### 2.1 Ownership modes that must be explicit
+
+`VChart` 后续不能只支持“外部把 stage 全部准备好”这一种模式。对普通 `VChart` 用户而言，`app` 多数时候不应该成为必须理解的概念。
+
+source-level alignment 必须明确区分三种 ownership mode：
+
+| Mode | 谁提供 app | 谁创建 stage | release 责任 | 适用场景 |
+| --- | --- | --- | --- | --- |
+| `scene-app-owned` | 页面/场景/上层运行时提供 app singleton | `VChart` 通过该 app 创建自己的 stage | `chart.release()` 释放自己创建的 stage；app 由提供者释放 | 同页多个 `VChart` 的推荐模式 |
+| `VChart-managed shared fallback` | `VChart` 找不到可用 scene app 时，按当前 runtime/env 创建或复用一份内部 shared app | 每个 `VChart` 通过 shared app 创建自己的 stage | `chart.release()` 释放自己的 stage 并释放引用；shared app 在最后一个使用者释放后清理 | 普通 `new VChart(spec, { dom })` 的低心智兜底路径 |
+| `external-stage-owned` | 调用方提供 app 并创建 stage | 调用方创建 stage 并通过 `{ stage }` 注入 | `chart.release()` 不释放外部 stage/app | advanced/custom assembly、已有 stage 生命周期由上层统一管理 |
+
+结论：
+
+1. 不能把 app / stage 管理完全推给外部调用方；普通上层使用仍需要 `VChart` 自己能创建 stage 并正确释放。
+2. 同一页面有多个 `VChart` 时，推荐优先从页面/场景上下文获取 app singleton，然后由每个 `VChart` 实例用该 app 创建自己的 stage。
+3. 如果获取不到 scene app，`VChart` 应 fallback 到内部管理的一份 shared app，而不是每个 chart 创建一份 app。
+4. 如果调用方显式传入 `stage`，`VChart` 只借用该 stage；external-stage-owned 模式必须保持 borrowed semantics。
+5. `VChart` managed shared app 必须有明确作用域和生命周期；它可以按 runtime/env 或 scene/container 分域，但不应是无法回收的 process-wide 永久单例。
+6. shared fallback app 需要引用计数或等价机制，保证最后一个 `VChart` 释放后 app 也能释放。
+
+推荐解析顺序：
+
+```text
+if option.stage exists:
+  use external-stage-owned mode
+else:
+  app = resolve app from explicit option/context/scene provider
+     ?? getOrCreateVChartManagedSharedApp(runtime/env scope)
+  stage = app.createStage(...)
+  chart owns stage
+  chart releases app reference only when using VChart-managed shared fallback
+```
 
 ---
 
@@ -96,12 +131,11 @@ this._stage = this._option.stage ?? new Stage(...)
 
 1. external stage ownership bug
    - [compiler.ts](/Users/bytedance/Documents/GitHub/VChart/packages/vchart/src/compile/compiler.ts:694)
-2. VRender root app creator 类型面太弱
-   - app creator return type 仍是 `object`
-3. 当前缺少一条真实 browser harness 证明：
-   - 外部通过 `createBrowserVRenderApp() + app.createStage()` 创建 stage
-   - 再把 stage 注入 `VChart`
-   - 整体能稳定完成 init/update/recreate/release
+2. 当前缺少源码级 app-provider-first browser harness 证明：
+   - `VChart` 普通 `{ dom }` 路径能解析 app
+   - `VChart` 通过 app 创建自己的 stage
+   - 同页多个 `VChart` 能共享 scene app，同时各自释放自己的 stage
+3. VRender root app creator 类型面已修正为返回 `IApp`
 
 ### 3.3 Current narrow local probe
 
@@ -134,24 +168,27 @@ this._stage = this._option.stage ?? new Stage(...)
 
 ## 4. Recommended strategy
 
-推荐分成两个阶段：
+推荐分成两个阶段。external-stage consumer probe 已经证明 root app creator 可以被 `VChart` 消费；post-alpha 的下一步应把这件事转成普通用户不感知 app 的 source-level contract。
 
-### Phase A: External-stage-first alignment
+### Phase A: App-provider-first source-level alignment
 
 目标：
 
-1. 不改 `VChart` 内部默认创建链
-2. 先让它安全、正确地消费外部 stage
-3. 用这条路径拿到第一轮真实 app-scoped integration evidence
+1. 普通 `new VChart(spec, { dom })` 不要求用户显式创建 app
+2. `VChart` 内部优先从 scene/context/provider 获取 app
+3. 获取不到 app 时，`VChart` 使用 managed shared fallback app
+4. `VChart` 始终通过 app 创建自己拥有的 stage
+5. external `{ stage }` 继续作为 advanced borrowed-stage path 保留
 
 ### Phase B: Decide full migration or compatibility contract
 
-只有在 Phase A 有了真实 evidence 之后，再决定：
+只有在 Phase A 有了源码级真实 evidence 之后，再决定：
 
 1. **继续内部迁移**
    - 让 `VChart` 自己内部改走 root app creator / app-scoped ownership
 2. **保留双路径**
-   - 推荐路径：external stage injection / root app creator
+   - 推荐路径：app-provider-first / VChart-created-stage
+   - advanced 路径：external stage injection / root app creator
    - compatibility 路径：direct stage creation
 
 当前不建议先跳到 Phase B。
@@ -166,6 +203,7 @@ this._stage = this._option.stage ?? new Stage(...)
 
 1. 修复 external stage ownership
 2. 补齐 VRender public typing
+3. 明确 scene-app-owned、VChart-managed shared fallback、external-stage-owned 三套 stage/app ownership contract
 
 建议触点：
 
@@ -178,12 +216,16 @@ this._stage = this._option.stage ?? new Stage(...)
 
 1. 外部传入 stage 不会被 `chart.release()` 误释放
 2. TypeScript 调用方能不靠 `any/cast` 消费 root app creator
+3. `VChart` 自己创建 stage 时，必须通过 app-scoped 入口创建并在 `chart.release()` 中释放自己拥有的 stage
+4. `VChart` 使用 managed shared fallback app 时，`chart.release()` 只释放本 chart 的 stage，并释放 shared app 引用
+5. 最后一个使用 shared fallback app 的 `VChart` 释放后，shared app 应被清理
+6. 同页多个 `VChart` 实例互不释放对方的 stage，也不误释放 scene-owned app
 
 ### Workstream 2: Real browser integration evidence
 
 目标：
 
-在 `VChart` browser runtime harness 里新增一条明确走 app-scoped 的 page / test path。
+在 `VChart` browser runtime harness 里新增一条明确走 app-scoped app-provider-first 的 page / test path。
 
 建议触点：
 
@@ -191,7 +233,29 @@ this._stage = this._option.stage ?? new Stage(...)
 - `VChart/packages/vchart/__tests__/runtime/browser/index.page*.ts`
 - 必要时补一条 unit/runtime assertion
 
-建议最小样例：
+建议最小用户侧样例：
+
+```ts
+import VChart from '../../../src';
+
+const chart = new VChart(spec, {
+  dom: document.getElementById('chart')!,
+  mode: 'desktop-browser'
+});
+```
+
+这条路径的内部目标是：
+
+```text
+resolve app from scene/context/provider
+  ?? createBrowserVRenderApp()
+
+stage = app.createStage(...)
+chart owns stage
+chart owns app only when it created the fallback app
+```
+
+advanced borrowed-stage 样例：
 
 ```ts
 import { createBrowserVRenderApp } from '@visactor/vrender';
@@ -216,14 +280,19 @@ const chart = new VChart(spec, {
 3. recreate
 4. release
 5. external stage 仍归创建者控制
+6. 同页两个 `VChart`：
+   - scene-app-owned 模式下，A/B 复用同一个 app，但各自创建和释放自己的 stage
+   - VChart-managed shared fallback 模式下，A/B 复用 fallback app，但各自 stage 互不影响，最后一个 release 后 app 清理
+   - external-stage-owned 模式下释放 chart 不释放外部 stage/app
 
 ### Workstream 3: Decision checkpoint
 
 Phase A 完成后，需要做一次明确判断：
 
-1. 这条 external-stage-first 链是否足够覆盖真实上层需求？
+1. 这条 app-provider-first 链是否足够覆盖真实上层需求？
 2. 如果足够，是否可以把它写成正式推荐上层接入路径？
 3. 如果不够，再决定是否投入 full internal migration
+4. 是否需要新增 explicit app provider / app manager API 来支持同页多 chart 共享 app
 
 ---
 

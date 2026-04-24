@@ -93,6 +93,35 @@ ownership 规则：
 3. 如果你自己先 `stage.release()`，再 `app.release()`，这是允许且推荐的显式顺序
 4. 如果 stage 不是这个 `app` 创建的，不要假设 `app.release()` 应该替你释放它
 
+### 4.1.1 VChart 场景下的 app / stage ownership
+
+对 `VChart` 这类上层库，`app` 多数场景下不应该成为普通 `VChart` 用户必须考虑的概念。推荐把 ownership 明确拆成三种模式：
+
+| 场景 | app 创建/提供者 | stage 创建者 | release 责任 | 建议 |
+|------|------|------|------|------|
+| 普通 `new VChart(spec, { dom })` | `VChart` 先尝试从场景/上下文获取 app，失败时创建或复用 VChart-managed shared app | `VChart` | `chart.release()` 释放自己创建的 stage；shared app 按引用计数或等价机制清理 | 普通用户不需要感知 app |
+| 同页多个 `VChart` | 页面/场景/上层运行时提供 app singleton | 每个 `VChart` 用该 app 创建自己的 stage | 每个 `chart.release()` 释放自己的 stage；app 由场景提供者释放 | 推荐模式，减少接入方心智并避免重复 bootstrap |
+| `new VChart(spec, { stage })` | 外部调用方 | 外部调用方 | 外部调用方 | advanced 模式；`VChart` 只借用 stage，`chart.release()` 不应释放外部 stage/app |
+
+推荐解析顺序：
+
+```text
+if option.stage exists:
+  borrow the external stage
+else:
+  app = resolve app from scene/context/provider
+     ?? getOrCreateVChartManagedSharedApp(runtime/env scope)
+  stage = app.createStage(...)
+```
+
+注意：
+
+1. `VChart` 创建的 stage 应由 `VChart` 在 `chart.release()` 中释放
+2. 场景/上下文提供的 app 不应由单个 `chart.release()` 释放
+3. `VChart` fallback 不应每个 chart 创建一份 app；应复用 VChart-managed shared app，避免同页多 chart 重复 bootstrap
+4. VChart-managed shared app 必须有明确作用域和生命周期，最后一个使用者释放后应清理
+5. 不建议 `VChart` 私下维护 process-wide 永久 singleton app；如果需要共享 app，应是 runtime/env 或 scene/container scoped
+
 ### 4.2 Node
 
 Node 侧同理：

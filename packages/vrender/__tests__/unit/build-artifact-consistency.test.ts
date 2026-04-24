@@ -40,11 +40,31 @@ describe('vrender published root artifacts', () => {
     expect(artifact).toContain('createBrowserVRenderApp');
   });
 
+  test.each(browserEntryFiles.filter(path => path.endsWith('.d.ts')))(
+    '%s should expose the browser app creator as an IApp factory',
+    relativePath => {
+      const artifact = readArtifact(relativePath);
+
+      expect(artifact).toContain('IApp');
+      expect(artifact).not.toContain('): object;');
+    }
+  );
+
   test.each(nodeEntryFiles)('%s should contain the node app creator', relativePath => {
     const artifact = readArtifact(relativePath);
 
     expect(artifact).toContain('createNodeVRenderApp');
   });
+
+  test.each(nodeEntryFiles.filter(path => path.endsWith('.d.ts')))(
+    '%s should expose the node app creator as an IApp factory',
+    relativePath => {
+      const artifact = readArtifact(relativePath);
+
+      expect(artifact).toContain('IApp');
+      expect(artifact).not.toContain('): object;');
+    }
+  );
 
   test('cjs root entry should expose app-scoped runtime exports', () => {
     const vrender = require(path.join(packageRoot, 'cjs/index.js'));

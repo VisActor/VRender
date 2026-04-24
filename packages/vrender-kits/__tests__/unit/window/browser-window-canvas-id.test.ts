@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 declare const require: any;
 export {};
 

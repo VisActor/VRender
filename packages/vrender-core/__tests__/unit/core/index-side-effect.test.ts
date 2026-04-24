@@ -9,6 +9,7 @@ describe('vrender-core index side effects', () => {
   test('should not preload legacy modules when importing index', () => {
     jest.isolateModules(() => {
       const preLoadAllModule = jest.fn();
+      const legacyBindingContext = { id: 'legacy-context' };
 
       jest.doMock('../../../src/legacy/bootstrap', () => ({
         createLegacySingletonProxy: jest.fn(
@@ -22,6 +23,7 @@ describe('vrender-core index side effects', () => {
               }
             )
         ),
+        getLegacyBindingContext: jest.fn(() => legacyBindingContext),
         preLoadAllModule,
         resolveLegacySingleton: jest.fn(() => ({})),
         resolveLegacyNamed: jest.fn()
@@ -30,7 +32,7 @@ describe('vrender-core index side effects', () => {
       const mod = require('../../../src/index');
 
       expect(preLoadAllModule).not.toHaveBeenCalled();
-      expect('container' in mod).toBe(false);
+      expect(mod.container).toBe(legacyBindingContext);
     });
   });
 });

@@ -277,6 +277,7 @@ describe('core explicit bindings', () => {
       const layerServiceInstance = { id: 'layer-service' };
       const canvasFactoryInstance = { id: 'canvas-factory' };
       const context2dFactoryInstance = { id: 'context2d-factory' };
+      const legacyBindingContext = { id: 'legacy-context' };
       const application = {
         global: { env: 'browser' }
       } as Record<string, unknown>;
@@ -327,6 +328,7 @@ describe('core explicit bindings', () => {
             })
         ),
         preLoadAllModule,
+        getLegacyBindingContext: jest.fn(() => legacyBindingContext),
         resolveLegacySingleton,
         resolveLegacyNamed
       }));
@@ -377,6 +379,7 @@ describe('core explicit bindings', () => {
       const mod = require('../../../src/modules');
 
       expect(preLoadAllModule).not.toHaveBeenCalled();
+      expect(mod.container).toBe(legacyBindingContext);
       expect(mod.vglobal).toBe(globalInstance);
       expect((mod.graphicUtil as { id: string }).id).toBe('graphic-util');
       expect((mod.transformUtil as { id: string }).id).toBe('transform-util');

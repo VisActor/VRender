@@ -661,12 +661,16 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       string,
       CompiledStateDefinition<T>
     >;
+    const sharedStateProxyModeKey = this.stateProxy ? 'shared-missing-only' : 'none';
+    const sharedStateProxyEligibility = this.stateProxy
+      ? (stateName: string) => !sharedCompiledDefinitions.has(stateName)
+      : undefined;
     if (!hasStates) {
       this.localFallbackCompiledDefinitions = undefined;
       return {
         compiledDefinitions: sharedCompiledDefinitions,
-        stateProxyModeKey: this.stateProxy ? 'shared-disabled' : 'none',
-        stateProxyEligibility: this.stateProxy ? () => false : undefined
+        stateProxyModeKey: sharedStateProxyModeKey,
+        stateProxyEligibility: sharedStateProxyEligibility
       };
     }
 
@@ -685,8 +689,8 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       this.localFallbackCompiledDefinitions = undefined;
       return {
         compiledDefinitions: sharedCompiledDefinitions,
-        stateProxyModeKey: this.stateProxy ? 'shared-disabled' : 'none',
-        stateProxyEligibility: this.stateProxy ? () => false : undefined
+        stateProxyModeKey: sharedStateProxyModeKey,
+        stateProxyEligibility: sharedStateProxyEligibility
       };
     }
 
@@ -704,9 +708,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     return {
       compiledDefinitions: this.localFallbackCompiledDefinitions,
       stateProxyModeKey,
-      stateProxyEligibility: this.stateProxy
-        ? (stateName: string) => !sharedCompiledDefinitions.has(stateName)
-        : undefined
+      stateProxyEligibility: sharedStateProxyEligibility
     };
   }
 

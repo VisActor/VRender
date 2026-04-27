@@ -711,7 +711,8 @@ export class AnimateExecutor implements IAnimateExecutor {
         if (value === undefined) {
           continue;
         }
-        if (!props.hasOwnProperty(key)) {
+        const inAnimatedChannel = props.hasOwnProperty(key) || !!from?.hasOwnProperty(key);
+        if (!inAnimatedChannel) {
           attrOutChannel[key] = value;
           hasAttrs = true;
         }

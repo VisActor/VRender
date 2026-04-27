@@ -250,6 +250,61 @@ describe('D3 pre-handoff animation runtime', () => {
     expect((rect as any).baseAttributes.x).toBe(0);
   });
 
+  test('executor keeps from-only appear channels out of attrOutChannel static writes', () => {
+    const { group, ticker, graphicService } = createStageHarness('executor-from-only-appear-channel');
+    const final = {
+      x: 78.75,
+      y: 31.2,
+      y1: 260,
+      width: 202.5,
+      visible: true
+    };
+    const rect = createRect(final);
+    bindGraphicService(rect as any, graphicService);
+    rect.setFinalAttributes(final);
+    (rect as any).context = {
+      animationState: 'appear',
+      data: [{ value: 10 }],
+      diffAttrs: {
+        y: 260,
+        y1: 260
+      }
+    };
+    group.appendChild(rect);
+
+    new AnimateExecutor(rect).execute({
+      type: 'growHeightIn',
+      channel: {
+        y: { from: 260 },
+        y1: { from: 260 }
+      },
+      duration: 100,
+      easing: 'linear',
+      options: { overall: 260 }
+    });
+
+    expect((rect as any).baseAttributes.y).toBe(31.2);
+    expect((rect as any).baseAttributes.y1).toBe(260);
+    expect(rect.attribute.y).toBe(260);
+    expect(rect.attribute.y1).toBe(260);
+    expect(rect.getFinalAttribute().y).toBe(31.2);
+    expect(rect.getFinalAttribute().y1).toBe(260);
+
+    tick(ticker, 50);
+    expect(rect.attribute.y).toBeCloseTo(145.6, 5);
+    expect(rect.attribute.y1).toBe(260);
+    expect((rect as any).baseAttributes.y).toBe(31.2);
+    expect((rect as any).baseAttributes.y1).toBe(260);
+
+    tick(ticker, 50);
+    expect((rect as any).baseAttributes.y).toBe(31.2);
+    expect((rect as any).baseAttributes.y1).toBe(260);
+    expect(rect.attribute.y).toBe(31.2);
+    expect(rect.attribute.y1).toBe(260);
+    expect(rect.getFinalAttribute().y).toBe(31.2);
+    expect(rect.getFinalAttribute().y1).toBe(260);
+  });
+
   test('switching states mid-animation restores to the new static truth and blocks late writes', () => {
     const { group, ticker, graphicService } = createStageHarness('state-conflict');
     const rect = createAnimatedRect(graphicService);

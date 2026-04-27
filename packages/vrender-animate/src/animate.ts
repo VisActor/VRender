@@ -1,5 +1,6 @@
 import { Step, WaitStep } from './step';
 import {
+  AttributeUpdateType,
   Generator,
   AnimateStatus,
   AnimateStepType,
@@ -12,6 +13,7 @@ import {
 } from '@visactor/vrender-core';
 import { defaultTimeline } from './timeline';
 import { FromTo } from './custom/fromTo';
+import { applyAnimationTransientAttributes } from './custom/transient';
 
 export class Animate implements IAnimate {
   readonly id: string | number;
@@ -467,13 +469,16 @@ export class Animate implements IAnimate {
     }
 
     if (type === 'start') {
-      // 设置为开始状态
+      // Explicit stop targets are static commit APIs, unlike automatic
+      // animation frames which must use transient attributes.
       this.target.setAttributes(this._startProps);
     } else if (type === 'end') {
-      // 设置为结束状态
+      // Explicit stop targets are static commit APIs, unlike automatic
+      // animation frames which must use transient attributes.
       this.target.setAttributes(this._endProps);
     } else if (type) {
-      // 设置为自定义状态
+      // Explicit stop targets are static commit APIs, unlike automatic
+      // animation frames which must use transient attributes.
       this.target.setAttributes(type);
     }
   }
@@ -644,7 +649,7 @@ export class Animate implements IAnimate {
 
     // 如果是新的循环，重置为初始状态
     if (newLoop && !bounceTime) {
-      this.target.setAttributes(this._startProps);
+      applyAnimationTransientAttributes(this.target, this._startProps, AttributeUpdateType.ANIMATE_START);
     }
 
     // 选择起始步骤和遍历方向

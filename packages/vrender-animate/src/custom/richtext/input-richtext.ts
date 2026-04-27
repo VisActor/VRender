@@ -1,12 +1,13 @@
 import { ACustomAnimate } from '../custom-animate';
-import type {
-  IRichTextCharacter,
-  IRichTextParagraphCharacter,
-  IAnimate,
-  IStep,
-  EasingType
+import {
+  RichText,
+  type EasingType,
+  type IAnimate,
+  type IRichTextCharacter,
+  type IRichTextParagraphCharacter,
+  type IStep
 } from '@visactor/vrender-core';
-import { RichText } from '@visactor/vrender-core';
+import { applyAnimationTransientAttributes } from '../transient';
 
 /**
  * 富文本输入动画，实现类似打字机的字符逐个显示效果
@@ -228,6 +229,6 @@ export class InputRichText extends ACustomAnimate<{ textConfig: IRichTextCharact
     }
 
     // 更新富文本的textConfig属性
-    this.target.setAttribute('textConfig', currentTextConfig);
+    applyAnimationTransientAttributes(this.target, { textConfig: currentTextConfig });
   }
 }

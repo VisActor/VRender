@@ -13,6 +13,7 @@ import {
 import { Easing } from './utils/easing';
 import { commonInterpolateUpdate, interpolateUpdateStore } from './interpolate/store';
 import { isString } from '@visactor/vutils';
+import { applyAnimationTransientAttributes } from './custom/transient';
 
 function noop() {
   //...
@@ -339,7 +340,7 @@ export class WaitStep extends Step {
     super.onStart();
 
     const fromProps = this.getFromProps();
-    this.target.setAttributes(fromProps);
+    applyAnimationTransientAttributes(this.target, fromProps, AttributeUpdateType.ANIMATE_START);
   }
 
   update(end: boolean, ratio: number, out: Record<string, any>): void {

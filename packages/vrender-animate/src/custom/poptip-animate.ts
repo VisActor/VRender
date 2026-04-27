@@ -1,6 +1,7 @@
 import { AComponentAnimate } from './custom-animate';
 import { createComponentAnimator } from '../component';
 import { InputText } from './input-text';
+import { applyAppearStartAttributes } from './transient';
 
 /**
  * PoptipAppear class handles the appear animation for Poptip components
@@ -17,7 +18,7 @@ export class PoptipAppear extends AComponentAnimate<any> {
 
     const { wave } = this.params;
 
-    target.setAttributes({ scaleX: 0, scaleY: 0 });
+    applyAppearStartAttributes(target, { scaleX: 0, scaleY: 0 });
 
     animator.animate(target, {
       type: 'to',

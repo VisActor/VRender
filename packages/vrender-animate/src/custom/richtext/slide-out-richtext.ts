@@ -1,6 +1,6 @@
 import { ACustomAnimate } from '../custom-animate';
-import type { IRichTextCharacter, IAnimate, IStep, EasingType } from '@visactor/vrender-core';
-import { RichText } from '@visactor/vrender-core';
+import { RichText, type EasingType, type IAnimate, type IRichTextCharacter, type IStep } from '@visactor/vrender-core';
+import { applyAnimationTransientAttributes } from '../transient';
 
 /**
  * 滑动富文本退出动画，文字会向指定方向滑出，同时逐字消失
@@ -228,7 +228,7 @@ export class SlideOutRichText extends ACustomAnimate<{ textConfig: IRichTextChar
     }
 
     // 更新富文本的textConfig属性
-    this.target.setAttribute('textConfig', updatedTextConfig);
+    applyAnimationTransientAttributes(this.target, { textConfig: updatedTextConfig });
   }
 
   // 按单词更新文本配置

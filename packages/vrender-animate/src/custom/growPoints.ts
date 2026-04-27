@@ -1,6 +1,7 @@
 import { pointInterpolation, type IGraphic, type IGroup, type EasingType } from '@visactor/vrender-core';
 import { isValidNumber, type IPointLike } from '@visactor/vutils';
 import { ACustomAnimate } from './custom-animate';
+import { applyAppearStartAttributes } from './transient';
 
 interface IAnimationParameters {
   width: number;
@@ -120,7 +121,7 @@ export class GrowPointsIn extends GworPointsBase {
       // 用于入场的时候设置属性（因为有动画的时候VChart不会再设置属性了）
       (this.target as any).applyFinalAttributeToAttribute?.();
       if (this.params.controlOptions?.immediatelyApply !== false) {
-        this.target.setAttributes(from);
+        applyAppearStartAttributes(this.target, from);
       }
     } else {
       this.valid = false;
@@ -216,7 +217,7 @@ export class GrowPointsXIn extends GworPointsBase {
       // 用于入场的时候设置属性（因为有动画的时候VChart不会再设置属性了）
       (this.target as any).applyFinalAttributeToAttribute?.();
       if (this.params.controlOptions?.immediatelyApply !== false) {
-        this.target.setAttributes(from);
+        applyAppearStartAttributes(this.target, from);
       }
     } else {
       this.valid = false;
@@ -312,7 +313,7 @@ export class GrowPointsYIn extends GworPointsBase {
       (this.target as any).applyFinalAttributeToAttribute?.();
 
       if (this.params.controlOptions?.immediatelyApply !== false) {
-        this.target.setAttributes(from);
+        applyAppearStartAttributes(this.target, from);
       }
     } else {
       this.valid = false;

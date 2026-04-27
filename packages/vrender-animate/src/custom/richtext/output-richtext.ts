@@ -1,6 +1,6 @@
 import { ACustomAnimate } from '../custom-animate';
-import type { IRichTextCharacter, IAnimate, IStep, EasingType } from '@visactor/vrender-core';
-import { RichText } from '@visactor/vrender-core';
+import { RichText, type EasingType, type IAnimate, type IRichTextCharacter, type IStep } from '@visactor/vrender-core';
+import { applyAnimationTransientAttributes } from '../transient';
 
 /**
  * 富文本退出动画，实现类似打字机的字符逐个消失效果
@@ -157,7 +157,7 @@ export class OutputRichText extends ACustomAnimate<{ textConfig: IRichTextCharac
       }
 
       // 更新富文本的textConfig属性
-      this.target.setAttribute('textConfig', currentTextConfig);
+      applyAnimationTransientAttributes(this.target, { textConfig: currentTextConfig });
     } else {
       // 从后往前消失（类似于退格删除效果）
       if (this.fadeOutChars) {
@@ -183,7 +183,7 @@ export class OutputRichText extends ACustomAnimate<{ textConfig: IRichTextCharac
       }
 
       // 更新富文本的textConfig属性
-      this.target.setAttribute('textConfig', currentTextConfig);
+      applyAnimationTransientAttributes(this.target, { textConfig: currentTextConfig });
     }
   }
 
@@ -194,17 +194,6 @@ export class OutputRichText extends ACustomAnimate<{ textConfig: IRichTextCharac
     totalItems: number,
     displayedLength: number
   ): IRichTextCharacter[] {
-    // 计算边界字符的索引，这是正在淡出的字符
-    let fadeIndex: number;
-
-    if (this.direction === 'forward') {
-      // 从前往后消失，当前正在淡出的是第displayedLength个字符
-      fadeIndex = totalItems - displayedLength;
-    } else {
-      // 从后往前消失，当前正在淡出的是第displayedLength个字符
-      fadeIndex = displayedLength;
-    }
-
     // 计算边界字符的透明度
     const fadeProgress = (ratio - (1 - this.fadeOutDuration)) / this.fadeOutDuration;
     const fadeOpacity = Math.max(0, 1 - Math.min(1, fadeProgress));

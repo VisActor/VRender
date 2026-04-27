@@ -1,6 +1,7 @@
 import type { EasingType, IGraphic } from '@visactor/vrender-core';
 import { isNumberClose, isValidNumber } from '@visactor/vutils';
 import { ACustomAnimate } from './custom-animate';
+import { applyAppearStartAttributes } from './transient';
 
 export interface IRotateAnimationOptions {
   orient?: 'clockwise' | 'anticlockwise';
@@ -81,7 +82,7 @@ export class RotateIn extends RotateBase {
     (this.target as any).applyFinalAttributeToAttribute?.();
 
     if (this.params.controlOptions?.immediatelyApply !== false) {
-      this.target.setAttributes(from);
+      applyAppearStartAttributes(this.target, from);
     }
   }
 }

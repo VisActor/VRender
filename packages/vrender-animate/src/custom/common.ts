@@ -1,5 +1,6 @@
 import type { EasingType, IAnimate, IStep } from '@visactor/vrender-core';
 import { ACustomAnimate } from './custom-animate';
+import { applyAppearStartAttributes } from './transient';
 
 export interface IScaleAnimationOptions {
   direction?: 'x' | 'y' | 'xy';
@@ -36,7 +37,7 @@ export class CommonIn extends ACustomAnimate<Record<string, number>> {
     this.to = to;
 
     if (this.params.controlOptions?.immediatelyApply !== false) {
-      this.target.setAttributes(from);
+      applyAppearStartAttributes(this.target, from);
     }
   }
 

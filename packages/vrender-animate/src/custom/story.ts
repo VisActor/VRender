@@ -1,8 +1,8 @@
 import { FadeIn } from './fade';
-import type { EasingType, IGraphicAttribute } from '@visactor/vrender-core';
+import { interpolateColor, type EasingType } from '@visactor/vrender-core';
 import { ACustomAnimate } from './custom-animate';
 import { AnimateExecutor } from '../executor/animate-executor';
-import { ColorStore, ColorType, interpolateColor } from '@visactor/vrender-core';
+import { applyAppearStartAttributes } from './transient';
 
 export class StoryFadeIn extends FadeIn {}
 
@@ -104,7 +104,7 @@ export class SlideIn extends ACustomAnimate<Record<string, number>> {
     this.props = to;
 
     // 将初始属性应用到目标对象
-    this.target.setAttributes(from as any);
+    applyAppearStartAttributes(this.target, from);
   }
 
   onUpdate(end: boolean, ratio: number, out: Record<string, any>): void {
@@ -162,7 +162,7 @@ export class GrowIn extends ACustomAnimate<Record<string, number>> {
     this.props = to;
 
     // 将初始属性应用到目标对象
-    this.target.setAttributes(from as any);
+    applyAppearStartAttributes(this.target, from);
   }
 
   onUpdate(end: boolean, ratio: number, out: Record<string, any>): void {
@@ -220,7 +220,7 @@ export class SpinIn extends ACustomAnimate<Record<string, number>> {
     this.props = to;
 
     // 将初始属性应用到目标对象
-    this.target.setAttributes(from as any);
+    applyAppearStartAttributes(this.target, from);
   }
 
   onUpdate(end: boolean, ratio: number, out: Record<string, any>): void {
@@ -313,7 +313,7 @@ export class StrokeIn extends ACustomAnimate<Record<string, any>> {
     this.props = this.to;
 
     // 应用初始属性
-    this.target.setAttributes(this.from);
+    applyAppearStartAttributes(this.target, this.from);
   }
 
   onUpdate(end: boolean, ratio: number, out: Record<string, any>): void {
@@ -417,7 +417,7 @@ export class StrokeOut extends ACustomAnimate<Record<string, any>> {
     this.props = this.to;
 
     // 应用初始属性
-    this.target.setAttributes(this.from);
+    applyAppearStartAttributes(this.target, this.from);
   }
 
   onUpdate(end: boolean, ratio: number, out: Record<string, any>): void {

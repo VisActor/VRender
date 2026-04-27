@@ -1,6 +1,7 @@
 import { type IGraphic, type IGroup, type EasingType } from '@visactor/vrender-core';
 import { ACustomAnimate } from './custom-animate';
 import { isNumber } from '@visactor/vutils';
+import { applyAppearStartAttributes } from './transient';
 
 interface IAnimationParameters {
   width: number;
@@ -229,7 +230,7 @@ export class GrowAngleIn extends GrowAngleBase {
     (this.target as any).applyFinalAttributeToAttribute?.();
 
     if (this.params.controlOptions?.immediatelyApply !== false) {
-      this.target.setAttributes(fromAttrs);
+      applyAppearStartAttributes(this.target, fromAttrs);
     }
     this.determineUpdateFunction();
   }

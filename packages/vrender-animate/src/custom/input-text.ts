@@ -1,5 +1,6 @@
 import type { EasingType, IAnimate, IStep } from '@visactor/vrender-core';
 import { ACustomAnimate } from './custom-animate';
+import { applyAnimationTransientAttributes } from './transient';
 
 /**
  * 文本输入动画，实现类似打字机的字符逐个显示效果
@@ -141,6 +142,6 @@ export class InputText extends ACustomAnimate<{ text: string }> {
     }
 
     // 更新图形的text属性
-    this.target.setAttribute('text', displayText);
+    applyAnimationTransientAttributes(this.target, { text: displayText });
   }
 }

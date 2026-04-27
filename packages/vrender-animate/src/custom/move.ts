@@ -1,6 +1,7 @@
 import type { EasingType, IGraphic, IGroup } from '@visactor/vrender-core';
 import { isFunction, isValidNumber } from '@visactor/vutils';
 import { ACustomAnimate } from './custom-animate';
+import { applyAppearStartAttributes } from './transient';
 
 export type FunctionCallback<T> = (...args: any[]) => T;
 
@@ -146,7 +147,7 @@ export class MoveIn extends MoveBase {
     (this.target as any).applyFinalAttributeToAttribute?.();
 
     if (this.params.controlOptions?.immediatelyApply !== false) {
-      this.target.setAttributes(from);
+      applyAppearStartAttributes(this.target, from);
     }
   }
 }

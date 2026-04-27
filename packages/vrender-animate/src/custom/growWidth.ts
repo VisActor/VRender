@@ -1,6 +1,7 @@
 import type { IGraphic, IGroup, IAnimate, IStep, EasingType } from '@visactor/vrender-core';
 import { isNil, isNumber, isValid } from '@visactor/vutils';
 import { ACustomAnimate } from './custom-animate';
+import { applyAppearStartAttributes } from './transient';
 
 interface IGrowCartesianAnimationOptions {
   orient?: 'positive' | 'negative';
@@ -173,7 +174,7 @@ export class GrowWidthIn extends ACustomAnimate<Record<string, number>> {
     (this.target as any).applyFinalAttributeToAttribute?.();
 
     if (this.params.controlOptions?.immediatelyApply !== false) {
-      this.target.setAttributes(fromAttrs);
+      applyAppearStartAttributes(this.target, fromAttrs);
     }
   }
 

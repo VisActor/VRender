@@ -11,7 +11,7 @@ import type {
   IAnimationCustomConstructor,
   IAnimationChannelInterpolator
 } from './executor';
-import { cloneDeep, isArray, isFunction, isValidNumber } from '@visactor/vutils';
+import { isArray, isFunction, isValidNumber } from '@visactor/vutils';
 import { getCustomType } from './utils';
 
 interface IAnimateExecutor {
@@ -359,6 +359,8 @@ export class AnimateExecutor implements IAnimateExecutor {
       from = parsedFromProps.from;
     }
     if (parsedFromProps.attrOutChannel) {
+      // attrOutChannel contains final diff attrs that are not part of the animated channels.
+      // They are static initialization/update writes, not animation start frames.
       graphic.setAttributes(parsedFromProps.attrOutChannel);
     }
 
@@ -563,6 +565,8 @@ export class AnimateExecutor implements IAnimateExecutor {
         from = parsedFromProps.from;
       }
       if (parsedFromProps.attrOutChannel) {
+        // attrOutChannel contains final diff attrs that are not part of the animated channels.
+        // They are static initialization/update writes, not animation start frames.
         graphic.setAttributes(parsedFromProps.attrOutChannel);
       }
       const custom = effect.custom ?? AnimateExecutor.builtInAnimateMap[type];

@@ -1,7 +1,7 @@
 import { clamp, isValidNumber, Point, type IPointLike } from '@visactor/vutils';
-import type { ISegment, ILineAttribute, EasingType } from '@visactor/vrender-core';
-import { pointInterpolation } from '@visactor/vrender-core';
+import { pointInterpolation, type EasingType, type ILineAttribute, type ISegment } from '@visactor/vrender-core';
 import { ACustomAnimate } from './custom-animate';
+import { applyAnimationTransientAttributes } from './transient';
 
 export class TagPointsUpdate extends ACustomAnimate<{ points?: IPointLike[]; segments?: ISegment[] }> {
   protected fromPoints: IPointLike[];
@@ -174,7 +174,7 @@ export class TagPointsUpdate extends ACustomAnimate<{ points?: IPointLike[]; seg
         }
         return;
       }
-      this.target.setAttributes({ clipRange: this.clipRange + (1 - this.clipRange) * ratio } as any);
+      applyAnimationTransientAttributes(this.target, { clipRange: this.clipRange + (1 - this.clipRange) * ratio });
     }
     if (this.segmentsCache && this.to.segments) {
       let start = 0;

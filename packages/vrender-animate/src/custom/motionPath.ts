@@ -1,5 +1,6 @@
 import type { CustomPath2D, IGraphic, EasingType } from '@visactor/vrender-core';
 import { ACustomAnimate } from './custom-animate';
+import { applyAnimationTransientAttributes } from './transient';
 
 export class MotionPath extends ACustomAnimate<any> {
   declare valid: boolean;
@@ -9,6 +10,7 @@ export class MotionPath extends ACustomAnimate<any> {
   declare totalLength: number;
   declare initAngle: number;
   declare changeAngle: boolean;
+  declare commitOnEnd: boolean;
   declare cb?: (from: any, to: any, ratio: number, target: IGraphic) => void;
   constructor(
     from: any,
@@ -21,6 +23,9 @@ export class MotionPath extends ACustomAnimate<any> {
       cb?: (from: any, to: any, ratio: number, target: IGraphic) => void;
       initAngle?: number;
       changeAngle?: boolean;
+      // Keep the public positional contract: transient frames, endpoint committed by default.
+      commitOnEnd?: boolean;
+      saveOnEnd?: boolean;
     }
   ) {
     super(from, to, duration, easing, params);
@@ -31,6 +36,7 @@ export class MotionPath extends ACustomAnimate<any> {
       this.totalLength = this.distance * this.pathLength;
       this.initAngle = params.initAngle ?? 0;
       this.changeAngle = !!params.changeAngle;
+      this.commitOnEnd = params.commitOnEnd ?? params.saveOnEnd ?? true;
       this.cb = params.cb;
     }
   }
@@ -52,6 +58,10 @@ export class MotionPath extends ACustomAnimate<any> {
       attrs.angle = angle + this.initAngle;
     }
     this.cb && this.cb(this.from, this.to, ratio, this.target as IGraphic);
-    this.target.setAttributes(attrs);
+    if (end && this.commitOnEnd) {
+      this.target.setAttributes(attrs);
+      return;
+    }
+    applyAnimationTransientAttributes(this.target, attrs);
   }
 }

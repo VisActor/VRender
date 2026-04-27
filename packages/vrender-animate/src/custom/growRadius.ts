@@ -1,6 +1,7 @@
 import { type IGraphic, type IGroup, type EasingType } from '@visactor/vrender-core';
 import { ACustomAnimate } from './custom-animate';
 import { isNumber } from '@visactor/vutils';
+import { applyAppearStartAttributes } from './transient';
 
 interface IAnimationParameters {
   width: number;
@@ -155,7 +156,7 @@ export class GrowRadiusIn extends GrowPointsBase {
     // 用于入场的时候设置属性（因为有动画的时候VChart不会再设置属性了）
     (this.target as any).applyFinalAttributeToAttribute?.();
     if (this.params.controlOptions?.immediatelyApply !== false) {
-      this.target.setAttributes(fromAttrs);
+      applyAppearStartAttributes(this.target, fromAttrs);
     }
   }
 }

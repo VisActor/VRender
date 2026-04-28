@@ -204,6 +204,27 @@ describe('StateTransitionOrchestrator', () => {
     });
   });
 
+  test('should not globally treat geometry names as optional aliases', () => {
+    const orchestrator = new StateTransitionOrchestrator<any>();
+
+    const plan = orchestrator.analyzeTransition(
+      {},
+      {
+        height: undefined
+      },
+      [],
+      true,
+      {
+        isClear: true,
+        getDefaultAttribute: (key: string) => (key === 'height' ? 0 : undefined)
+      }
+    );
+
+    expect(plan.animateAttrs).toEqual({
+      height: 0
+    });
+  });
+
   test('should not materialize undefined rect geometry aliases to theme defaults during clear transitions', () => {
     const orchestrator = new StateTransitionOrchestrator<any>();
 
@@ -235,7 +256,39 @@ describe('StateTransitionOrchestrator', () => {
       }
     );
 
-    expect(verticalPlan.animateAttrs).toEqual({
+    expect(verticalPlan.animateAttrs).toHaveProperty('height', 0);
+    expect(verticalPlan.animateAttrs).toHaveProperty('x1', 0);
+
+    const verticalRectPlan = orchestrator.analyzeTransition(
+      {},
+      {
+        lineWidth: 0,
+        fillOpacity: undefined,
+        x: 150,
+        y: 0,
+        y1: 320,
+        width: 140,
+        x1: undefined,
+        height: undefined
+      },
+      [],
+      true,
+      {
+        isClear: true,
+        getDefaultAttribute: (key: string) => {
+          if (key === 'lineWidth' || key === 'height' || key === 'x1') {
+            return 0;
+          }
+          if (key === 'fillOpacity') {
+            return 1;
+          }
+          return undefined;
+        },
+        shouldSkipDefaultAttribute: (key: string) => key === 'height' || key === 'x1'
+      }
+    );
+
+    expect(verticalRectPlan.animateAttrs).toEqual({
       lineWidth: 0,
       fillOpacity: 1,
       x: 150,
@@ -243,8 +296,19 @@ describe('StateTransitionOrchestrator', () => {
       y1: 320,
       width: 140
     });
-    expect(verticalPlan.animateAttrs).not.toHaveProperty('height');
-    expect(verticalPlan.animateAttrs).not.toHaveProperty('x1');
+    expect(verticalRectPlan.animateAttrs).not.toHaveProperty('height');
+    expect(verticalRectPlan.animateAttrs).not.toHaveProperty('x1');
+
+    expect(verticalPlan.animateAttrs).toEqual({
+      lineWidth: 0,
+      fillOpacity: 1,
+      x: 150,
+      y: 0,
+      y1: 320,
+      width: 140,
+      x1: 0,
+      height: 0
+    });
 
     const horizontalPlan = orchestrator.analyzeTransition(
       {},
@@ -274,7 +338,39 @@ describe('StateTransitionOrchestrator', () => {
       }
     );
 
-    expect(horizontalPlan.animateAttrs).toEqual({
+    expect(horizontalPlan.animateAttrs).toHaveProperty('width', 0);
+    expect(horizontalPlan.animateAttrs).toHaveProperty('y1', 0);
+
+    const horizontalRectPlan = orchestrator.analyzeTransition(
+      {},
+      {
+        lineWidth: 0,
+        fillOpacity: undefined,
+        x: 10,
+        x1: 210,
+        y: 5,
+        height: 40,
+        width: undefined,
+        y1: undefined
+      },
+      [],
+      true,
+      {
+        isClear: true,
+        getDefaultAttribute: (key: string) => {
+          if (key === 'lineWidth' || key === 'width' || key === 'y1') {
+            return 0;
+          }
+          if (key === 'fillOpacity') {
+            return 1;
+          }
+          return undefined;
+        },
+        shouldSkipDefaultAttribute: (key: string) => key === 'width' || key === 'y1'
+      }
+    );
+
+    expect(horizontalRectPlan.animateAttrs).toEqual({
       lineWidth: 0,
       fillOpacity: 1,
       x: 10,
@@ -282,8 +378,19 @@ describe('StateTransitionOrchestrator', () => {
       y: 5,
       height: 40
     });
-    expect(horizontalPlan.animateAttrs).not.toHaveProperty('width');
-    expect(horizontalPlan.animateAttrs).not.toHaveProperty('y1');
+    expect(horizontalRectPlan.animateAttrs).not.toHaveProperty('width');
+    expect(horizontalRectPlan.animateAttrs).not.toHaveProperty('y1');
+
+    expect(horizontalPlan.animateAttrs).toEqual({
+      lineWidth: 0,
+      fillOpacity: 1,
+      x: 10,
+      x1: 210,
+      y: 5,
+      height: 40,
+      width: 0,
+      y1: 0
+    });
   });
 
   test('should allow animateConfig to append additional no-animate attrs', () => {
@@ -347,5 +454,33 @@ describe('StateTransitionOrchestrator', () => {
       fillOpacity: 1
     });
     expect(plan.targetAttrs).not.toHaveProperty('fillOpacity');
+  });
+
+  test('should allow extra animation attrs to replace an undefined clear target transiently', () => {
+    const orchestrator = new StateTransitionOrchestrator<any>();
+
+    const plan = orchestrator.analyzeTransition(
+      {},
+      {
+        height: undefined
+      },
+      [],
+      true,
+      {
+        isClear: true,
+        getDefaultAttribute: (key: string) => (key === 'height' ? 0 : undefined),
+        shouldSkipDefaultAttribute: (key: string) => key === 'height',
+        extraAnimateAttrs: {
+          height: 100
+        }
+      }
+    );
+
+    expect(plan.targetAttrs).toEqual({
+      height: undefined
+    });
+    expect(plan.animateAttrs).toEqual({
+      height: 100
+    });
   });
 });

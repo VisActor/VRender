@@ -14,6 +14,7 @@ export interface IStateTransitionAnalysisOptions {
   noWorkAnimateAttr?: Record<string, number>;
   isClear?: boolean;
   getDefaultAttribute?: (key: string) => unknown;
+  shouldSkipDefaultAttribute?: (key: string, targetAttrs: Record<string, unknown>) => boolean;
   animateConfig?: IAnimateConfig;
   extraAnimateAttrs?: Record<string, unknown>;
 }
@@ -21,6 +22,7 @@ export interface IStateTransitionAnalysisOptions {
 export interface IStateTransitionApplyOptions {
   animateConfig?: IAnimateConfig;
   extraAnimateAttrs?: Record<string, unknown>;
+  shouldSkipDefaultAttribute?: (key: string, targetAttrs: Record<string, unknown>) => boolean;
 }
 
 export interface IStateTransitionGraphic<T> {
@@ -35,6 +37,7 @@ export interface IStateTransitionGraphic<T> {
   _emitCustomEvent: (type: string, context?: { type: AttributeUpdateType }) => void;
   getNoWorkAnimateAttr?: () => Record<string, number>;
   getDefaultAttribute?: (key: string) => unknown;
+  shouldSkipStateTransitionDefaultAttribute?: (key: string, targetAttrs?: Partial<T>) => boolean;
 }
 
 export interface IStateTransitionOrchestrator<T> {
@@ -62,17 +65,6 @@ export interface IStateTransitionOrchestrator<T> {
 
 function hasOwnKeys(value: object): boolean {
   return Object.keys(value).length > 0;
-}
-
-const optionalGeometryAliasAttrs: Record<string, true> = {
-  width: true,
-  height: true,
-  x1: true,
-  y1: true
-};
-
-export function isOptionalGeometryAliasAttr(key: string): boolean {
-  return optionalGeometryAliasAttrs[key] === true;
 }
 
 function normalizeNoAnimateAttrConfig(config?: IAnimateConfig['noAnimateAttrs']): Record<string, number> {
@@ -123,6 +115,7 @@ export class StateTransitionOrchestrator<T extends Record<string, any> = Record<
     };
     const isClear = options.isClear === true;
     const getDefaultAttribute = options.getDefaultAttribute;
+    const shouldSkipDefaultAttribute = options.shouldSkipDefaultAttribute;
 
     const assignTransitionAttr = (key: string, value: any): void => {
       if (noWorkAnimateAttr[key]) {
@@ -132,7 +125,7 @@ export class StateTransitionOrchestrator<T extends Record<string, any> = Record<
       }
 
       if (isClear && value === undefined) {
-        if (isOptionalGeometryAliasAttr(key)) {
+        if (shouldSkipDefaultAttribute?.(key, targetAttrs as Record<string, unknown>)) {
           return;
         }
         (plan.animateAttrs as Record<string, any>)[key] = getDefaultAttribute ? getDefaultAttribute(key) : value;
@@ -154,9 +147,10 @@ export class StateTransitionOrchestrator<T extends Record<string, any> = Record<
     const extraAnimateAttrs = options.extraAnimateAttrs;
     if (extraAnimateAttrs) {
       for (const key in extraAnimateAttrs) {
+        const hasTargetAttr = Object.prototype.hasOwnProperty.call(targetAttrs, key);
         if (
           !Object.prototype.hasOwnProperty.call(extraAnimateAttrs, key) ||
-          Object.prototype.hasOwnProperty.call(targetAttrs, key)
+          (hasTargetAttr && (targetAttrs as Record<string, any>)[key] !== undefined)
         ) {
           continue;
         }
@@ -218,6 +212,8 @@ export class StateTransitionOrchestrator<T extends Record<string, any> = Record<
       noWorkAnimateAttr: graphic.getNoWorkAnimateAttr?.(),
       isClear: true,
       getDefaultAttribute: graphic.getDefaultAttribute?.bind(graphic),
+      shouldSkipDefaultAttribute:
+        options.shouldSkipDefaultAttribute ?? graphic.shouldSkipStateTransitionDefaultAttribute?.bind(graphic),
       animateConfig: options.animateConfig,
       extraAnimateAttrs: options.extraAnimateAttrs
     });

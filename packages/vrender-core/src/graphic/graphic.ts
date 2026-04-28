@@ -61,7 +61,7 @@ import { StateEngine } from './state/state-engine';
 import { StateModel } from './state/state-model';
 import { UpdateCategory, classifyAttributeDelta } from './state/attribute-update-classifier';
 import { StateStyleResolver, type StateMergeMode } from './state/state-style-resolver';
-import { StateTransitionOrchestrator, isOptionalGeometryAliasAttr } from './state/state-transition-orchestrator';
+import { StateTransitionOrchestrator } from './state/state-transition-orchestrator';
 import {
   collectSharedStateScopeChain,
   ensureSharedStateScopeFresh,
@@ -776,23 +776,34 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     }
 
     const snapshot = this.buildStaticAttributeSnapshot() as Record<string, any>;
+    const staticTargetAttrs = snapshot as Partial<T>;
     Object.keys(previousResolvedStatePatch).forEach(key => {
-      if (Object.prototype.hasOwnProperty.call(targetStateAttrs, key)) {
+      const hasTargetAttr = Object.prototype.hasOwnProperty.call(targetStateAttrs, key);
+      if (hasTargetAttr && (targetStateAttrs as Record<string, any>)[key] !== undefined) {
         return;
       }
-      if (Object.prototype.hasOwnProperty.call(snapshot, key)) {
-        const snapshotValue = snapshot[key];
-        if (snapshotValue === undefined && isOptionalGeometryAliasAttr(key)) {
+
+      const assignFallbackAttr = (value: any): void => {
+        if (value === undefined && this.shouldSkipStateTransitionDefaultAttribute(key, staticTargetAttrs)) {
           return;
         }
-        extraAttrs[key] =
-          snapshotValue === undefined ? this.getDefaultAttribute(key) : cloneAttributeValue(snapshotValue);
+        extraAttrs[key] = value === undefined ? value : cloneAttributeValue(value);
+      };
+
+      if (hasTargetAttr) {
+        assignFallbackAttr(this.getStateTransitionDefaultAttribute(key, staticTargetAttrs));
         return;
       }
-      if (isOptionalGeometryAliasAttr(key)) {
+
+      if (Object.prototype.hasOwnProperty.call(snapshot, key)) {
+        const snapshotValue = snapshot[key];
+        assignFallbackAttr(
+          snapshotValue === undefined ? this.getStateTransitionDefaultAttribute(key, staticTargetAttrs) : snapshotValue
+        );
         return;
       }
-      extraAttrs[key] = this.getDefaultAttribute(key);
+
+      assignFallbackAttr(this.getStateTransitionDefaultAttribute(key, staticTargetAttrs));
     });
 
     return extraAttrs as Partial<T>;
@@ -1648,7 +1659,14 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   ) {
     const resolvedAnimateConfig = hasAnimation ? this.resolveStateAnimateConfig(animateConfig) : undefined;
     const transitionOptions = resolvedAnimateConfig
-      ? { animateConfig: resolvedAnimateConfig, extraAnimateAttrs: extraAnimateAttrs as Record<string, unknown> }
+      ? {
+          animateConfig: resolvedAnimateConfig,
+          extraAnimateAttrs: extraAnimateAttrs as Record<string, unknown>,
+          shouldSkipDefaultAttribute: this.shouldSkipStateTransitionDefaultAttribute.bind(this) as (
+            key: string,
+            targetAttrs: Record<string, unknown>
+          ) => boolean
+        }
       : undefined;
 
     if (isClear) {
@@ -1665,7 +1683,11 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     const plan = this.getStateTransitionOrchestrator().analyzeTransition({}, attrs, stateNames, hasAnimation, {
       noWorkAnimateAttr: this.getNoWorkAnimateAttr(),
       animateConfig: resolvedAnimateConfig,
-      extraAnimateAttrs: extraAnimateAttrs as Record<string, unknown>
+      extraAnimateAttrs: extraAnimateAttrs as Record<string, unknown>,
+      shouldSkipDefaultAttribute: this.shouldSkipStateTransitionDefaultAttribute.bind(this) as (
+        key: string,
+        targetAttrs: Record<string, unknown>
+      ) => boolean
     });
 
     this.getStateTransitionOrchestrator().applyTransition(this as any, plan, hasAnimation, transitionOptions);
@@ -1673,6 +1695,14 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
 
   updateNormalAttrs(stateAttrs: Partial<T>) {
     this._deprecatedNormalAttrsView = cloneAttributeValue(this.baseAttributes);
+  }
+
+  protected getStateTransitionDefaultAttribute(key: string, targetAttrs?: Partial<T>) {
+    return this.getDefaultAttribute(key);
+  }
+
+  protected shouldSkipStateTransitionDefaultAttribute(_key: string, _targetAttrs?: Partial<T>): boolean {
+    return false;
   }
 
   protected stopStateAnimates(type: 'start' | 'end' = 'end') {

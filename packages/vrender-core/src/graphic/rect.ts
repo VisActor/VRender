@@ -7,7 +7,6 @@ import { application } from '../application';
 import { RECT_NUMBER_TYPE } from './constants';
 import { normalizeRectAttributes } from '../common/rect-utils';
 import { updateBoundsOfCommonOuterBorder } from './graphic-service/common-outer-boder-bounds';
-import { EmptyContext2d } from '../canvas';
 
 const RECT_UPDATE_TAG_KEY = ['width', 'x1', 'y1', 'height', 'cornerRadius', ...GRAPHIC_UPDATE_TAG_KEY];
 
@@ -68,6 +67,67 @@ export class Rect extends Graphic<IRectGraphicAttribute> implements IRect {
   }
   protected needUpdateTag(key: string): boolean {
     return super.needUpdateTag(key, RECT_UPDATE_TAG_KEY);
+  }
+
+  protected shouldSkipStateTransitionDefaultAttribute(
+    key: string,
+    targetAttrs?: Partial<IRectGraphicAttribute>
+  ): boolean {
+    const attrs = (targetAttrs ?? this.baseAttributes ?? this.attribute) as Partial<IRectGraphicAttribute>;
+    const hasValue = (attrKey: keyof IRectGraphicAttribute) => (attrs as any)[attrKey] != null;
+    const isNilValue = (attrKey: keyof IRectGraphicAttribute) => (attrs as any)[attrKey] == null;
+
+    switch (key) {
+      case 'width':
+        return isNilValue('width') && hasValue('x') && hasValue('x1');
+      case 'height':
+        return isNilValue('height') && hasValue('y') && hasValue('y1');
+      case 'x1':
+        return isNilValue('x1') && hasValue('x') && hasValue('width');
+      case 'y1':
+        return isNilValue('y1') && hasValue('y') && hasValue('height');
+      default:
+        return false;
+    }
+  }
+
+  protected getStateTransitionDefaultAttribute(key: string, targetAttrs?: Partial<IRectGraphicAttribute>) {
+    const attrs = (targetAttrs ?? this.baseAttributes ?? this.attribute) as Partial<IRectGraphicAttribute>;
+    const getNumber = (attrKey: keyof IRectGraphicAttribute) => {
+      const value = attrs[attrKey];
+      return typeof value === 'number' && Number.isFinite(value) ? value : undefined;
+    };
+    const x = getNumber('x');
+    const y = getNumber('y');
+    const x1 = getNumber('x1');
+    const y1 = getNumber('y1');
+    const width = getNumber('width');
+    const height = getNumber('height');
+
+    switch (key) {
+      case 'width':
+        if (width == null && x != null && x1 != null) {
+          return x1 - x;
+        }
+        break;
+      case 'height':
+        if (height == null && y != null && y1 != null) {
+          return y1 - y;
+        }
+        break;
+      case 'x1':
+        if (x1 == null && x != null && width != null) {
+          return x + width;
+        }
+        break;
+      case 'y1':
+        if (y1 == null && y != null && height != null) {
+          return y + height;
+        }
+        break;
+    }
+
+    return super.getStateTransitionDefaultAttribute(key, targetAttrs);
   }
 
   toCustomPath(): ICustomPath2D {

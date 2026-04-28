@@ -426,6 +426,204 @@ describe('D3 pre-handoff animation runtime', () => {
     expect(rect.getFinalAttribute().fillOpacity).toBeUndefined();
   });
 
+  test('clearing explicit height state on y/y1 rect animates to computed layout height', () => {
+    const { group, ticker, graphicService } = createStageHarness('state-runtime-clear-explicit-height-alias');
+    const rect = createRect({
+      x: 0,
+      y: 0,
+      y1: 100,
+      width: 20,
+      height: undefined,
+      visible: true
+    } as any);
+    bindGraphicService(rect as any, graphicService);
+    rect.setFinalAttributes({ ...rect.attribute });
+    group.appendChild(rect);
+
+    rect.states = {
+      hover: {
+        height: 60
+      }
+    } as any;
+    rect.stateAnimateConfig = {
+      duration: 100,
+      easing: 'linear'
+    } as any;
+
+    rect.useStates(['hover'], true);
+    tick(ticker, 100);
+    expect(rect.attribute.height).toBe(60);
+    expect((rect as any).baseAttributes.height).toBeUndefined();
+
+    rect.useStates([], true);
+    tick(ticker, 50);
+
+    expect(rect.attribute.height).toBeGreaterThan(60);
+    expect(rect.attribute.height).toBeLessThan(100);
+    expect(boundsSize(rect).height).toBeGreaterThan(60);
+    expect((rect as any).baseAttributes.height).toBeUndefined();
+    expect(rect.getFinalAttribute().height).toBeUndefined();
+
+    tick(ticker, 100);
+    expect(rect.attribute.height).toBeUndefined();
+    expect(rect.attribute.y).toBe(0);
+    expect(rect.attribute.y1).toBe(100);
+    expect(boundsSize(rect).height).toBeGreaterThan(90);
+    expect((rect as any).baseAttributes.height).toBeUndefined();
+    expect(rect.getFinalAttribute().height).toBeUndefined();
+  });
+
+  test('clearing explicit width state on x/x1 rect animates to computed layout width', () => {
+    const { group, ticker, graphicService } = createStageHarness('state-runtime-clear-explicit-width-alias');
+    const rect = createRect({
+      x: 0,
+      x1: 100,
+      y: 0,
+      height: 20,
+      width: undefined,
+      visible: true
+    } as any);
+    bindGraphicService(rect as any, graphicService);
+    rect.setFinalAttributes({ ...rect.attribute });
+    group.appendChild(rect);
+
+    rect.states = {
+      hover: {
+        width: 60
+      }
+    } as any;
+    rect.stateAnimateConfig = {
+      duration: 100,
+      easing: 'linear'
+    } as any;
+
+    rect.useStates(['hover'], true);
+    tick(ticker, 100);
+    expect(rect.attribute.width).toBe(60);
+    expect((rect as any).baseAttributes.width).toBeUndefined();
+
+    rect.useStates([], true);
+    tick(ticker, 50);
+
+    expect(rect.attribute.width).toBeGreaterThan(60);
+    expect(rect.attribute.width).toBeLessThan(100);
+    expect(boundsSize(rect).width).toBeGreaterThan(60);
+    expect((rect as any).baseAttributes.width).toBeUndefined();
+    expect(rect.getFinalAttribute().width).toBeUndefined();
+
+    tick(ticker, 100);
+    expect(rect.attribute.width).toBeUndefined();
+    expect(rect.attribute.x).toBe(0);
+    expect(rect.attribute.x1).toBe(100);
+    expect(boundsSize(rect).width).toBeGreaterThan(90);
+    expect((rect as any).baseAttributes.width).toBeUndefined();
+    expect(rect.getFinalAttribute().width).toBeUndefined();
+  });
+
+  test('switching from explicit height state to another state animates to computed layout height', () => {
+    const { group, ticker, graphicService } = createStageHarness('state-runtime-switch-explicit-height-alias');
+    const rect = createRect({
+      x: 0,
+      y: 0,
+      y1: 100,
+      width: 20,
+      height: undefined,
+      visible: true
+    } as any);
+    bindGraphicService(rect as any, graphicService);
+    rect.setFinalAttributes({ ...rect.attribute });
+    group.appendChild(rect);
+
+    rect.states = {
+      hover: {
+        height: 60
+      },
+      selected: {
+        fillOpacity: 0.5
+      }
+    } as any;
+    rect.stateAnimateConfig = {
+      duration: 100,
+      easing: 'linear'
+    } as any;
+
+    rect.useStates(['hover'], true);
+    tick(ticker, 100);
+    expect(rect.attribute.height).toBe(60);
+
+    rect.useStates(['selected'], true);
+    tick(ticker, 50);
+
+    expect(rect.attribute.height).toBeGreaterThan(60);
+    expect(rect.attribute.height).toBeLessThan(100);
+    expect(rect.attribute.fillOpacity).toBeGreaterThan(0.5);
+    expect(rect.attribute.fillOpacity).toBeLessThan(1);
+    expect(boundsSize(rect).height).toBeGreaterThan(60);
+    expect((rect as any).baseAttributes.height).toBeUndefined();
+    expect(rect.getFinalAttribute().height).toBeUndefined();
+
+    tick(ticker, 100);
+    expect(rect.attribute.height).toBeUndefined();
+    expect(rect.attribute.y).toBe(0);
+    expect(rect.attribute.y1).toBe(100);
+    expect(rect.attribute.fillOpacity).toBe(0.5);
+    expect(boundsSize(rect).height).toBeGreaterThan(90);
+    expect((rect as any).baseAttributes.height).toBeUndefined();
+    expect(rect.getFinalAttribute().height).toBeUndefined();
+  });
+
+  test('switching from explicit width state to another state animates to computed layout width', () => {
+    const { group, ticker, graphicService } = createStageHarness('state-runtime-switch-explicit-width-alias');
+    const rect = createRect({
+      x: 0,
+      x1: 100,
+      y: 0,
+      height: 20,
+      width: undefined,
+      visible: true
+    } as any);
+    bindGraphicService(rect as any, graphicService);
+    rect.setFinalAttributes({ ...rect.attribute });
+    group.appendChild(rect);
+
+    rect.states = {
+      hover: {
+        width: 60
+      },
+      selected: {
+        fillOpacity: 0.5
+      }
+    } as any;
+    rect.stateAnimateConfig = {
+      duration: 100,
+      easing: 'linear'
+    } as any;
+
+    rect.useStates(['hover'], true);
+    tick(ticker, 100);
+    expect(rect.attribute.width).toBe(60);
+
+    rect.useStates(['selected'], true);
+    tick(ticker, 50);
+
+    expect(rect.attribute.width).toBeGreaterThan(60);
+    expect(rect.attribute.width).toBeLessThan(100);
+    expect(rect.attribute.fillOpacity).toBeGreaterThan(0.5);
+    expect(rect.attribute.fillOpacity).toBeLessThan(1);
+    expect(boundsSize(rect).width).toBeGreaterThan(60);
+    expect((rect as any).baseAttributes.width).toBeUndefined();
+    expect(rect.getFinalAttribute().width).toBeUndefined();
+
+    tick(ticker, 100);
+    expect(rect.attribute.width).toBeUndefined();
+    expect(rect.attribute.x).toBe(0);
+    expect(rect.attribute.x1).toBe(100);
+    expect(rect.attribute.fillOpacity).toBe(0.5);
+    expect(boundsSize(rect).width).toBeGreaterThan(90);
+    expect((rect as any).baseAttributes.width).toBeUndefined();
+    expect(rect.getFinalAttribute().width).toBeUndefined();
+  });
+
   test('animate.to restores static truth after completion and keeps baseAttributes untouched', () => {
     const { group, ticker, graphicService } = createStageHarness('self-to');
     const rect = createAnimatedRect(graphicService);

@@ -765,6 +765,29 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     return snapshot;
   }
 
+  protected buildStateAnimationTargetAttrs(
+    resolvedStateAttrs: Partial<T>,
+    previousResolvedStatePatch?: Partial<T>
+  ): Partial<T> {
+    const targetAttrs = cloneAttributeValue(resolvedStateAttrs) as Record<string, any>;
+
+    if (!previousResolvedStatePatch) {
+      return targetAttrs as Partial<T>;
+    }
+
+    const snapshot = this.buildStaticAttributeSnapshot() as Record<string, any>;
+    Object.keys(previousResolvedStatePatch).forEach(key => {
+      if (Object.prototype.hasOwnProperty.call(targetAttrs, key)) {
+        return;
+      }
+      targetAttrs[key] = Object.prototype.hasOwnProperty.call(snapshot, key)
+        ? cloneAttributeValue(snapshot[key])
+        : this.getDefaultAttribute(key);
+    });
+
+    return targetAttrs as Partial<T>;
+  }
+
   protected syncObjectToSnapshot(target: Record<string, any>, snapshot: Record<string, any>): AttributeDelta {
     const delta: AttributeDelta = new Map();
     const keySet = new Set<string>([...Object.keys(target), ...Object.keys(snapshot)]);
@@ -1742,6 +1765,9 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     }
 
     const previousStates = this.currentStates ? this.currentStates.slice() : [];
+    const previousResolvedStatePatch = this.resolvedStatePatch
+      ? cloneAttributeValue(this.resolvedStatePatch)
+      : undefined;
     const stateResolveBaseAttrs = (this.baseAttributes ?? this.attribute) as Partial<T>;
     const stateModel = this.createStateModel();
     this.stateEngine?.setResolveContext(this, stateResolveBaseAttrs);
@@ -1778,7 +1804,11 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     });
     if (hasAnimation) {
       this._syncFinalAttributeFromStaticTruth();
-      this.applyStateAttrs(resolvedStateAttrs, transition.states, hasAnimation);
+      this.applyStateAttrs(
+        this.buildStateAnimationTargetAttrs(resolvedStateAttrs, previousResolvedStatePatch),
+        transition.states,
+        hasAnimation
+      );
     } else {
       this.stopStateAnimates();
       this._restoreAttributeFromStaticTruth({ type: AttributeUpdateType.STATE });

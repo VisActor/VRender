@@ -137,7 +137,10 @@ export class Animate implements IAnimate {
     }
     this.onRemove(() => {
       this.stop();
-      if (typeof trackerTarget.restoreStaticAttribute === 'function') {
+      if (
+        !(this as any).__skipRestoreStaticAttributeOnRemove &&
+        typeof trackerTarget.restoreStaticAttribute === 'function'
+      ) {
         trackerTarget.restoreStaticAttribute();
       }
       if (typeof trackerTarget.untrackAnimate === 'function') {

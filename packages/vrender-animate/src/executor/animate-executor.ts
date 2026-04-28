@@ -785,7 +785,10 @@ export class AnimateExecutor implements IAnimateExecutor {
     while (this._animates.length > 0) {
       const animate = this._animates.pop();
       // 不执行回调时 标记动画为结束状态
-      callEnd === false && (animate.status = AnimateStatus.END);
+      if (callEnd === false) {
+        animate.status = AnimateStatus.END;
+        (animate as any).__skipRestoreStaticAttributeOnRemove = true;
+      }
       animate?.stop(type);
     }
 

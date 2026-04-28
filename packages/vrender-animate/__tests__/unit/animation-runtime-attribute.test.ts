@@ -121,6 +121,134 @@ describe('D3 pre-handoff animation runtime', () => {
     expect((rect as any).baseAttributes.opacity).toBe(1);
   });
 
+  test('state animation ends at the resolved state style without committing it to baseAttributes', () => {
+    const { group, ticker, graphicService } = createStageHarness('state-runtime-end-style');
+    const rect = createAnimatedRect(graphicService);
+    rect.setAttribute('lineWidth', 1);
+    rect.setFinalAttributes({ ...rect.attribute });
+    group.appendChild(rect);
+
+    rect.states = {
+      a: {
+        opacity: 0.35,
+        lineWidth: 6
+      }
+    } as any;
+    rect.stateAnimateConfig = {
+      duration: 100,
+      easing: 'linear'
+    } as any;
+
+    rect.useStates(['a'], true);
+
+    expect(rect.currentStates).toEqual(['a']);
+    expect(rect.resolvedStatePatch).toEqual({
+      opacity: 0.35,
+      lineWidth: 6
+    });
+    expect(rect.attribute.opacity).toBe(1);
+    expect(rect.attribute.lineWidth).toBe(1);
+    expect((rect as any).baseAttributes.opacity).toBe(1);
+    expect((rect as any).baseAttributes.lineWidth).toBe(1);
+    expect(rect.getFinalAttribute().opacity).toBe(0.35);
+    expect(rect.getFinalAttribute().lineWidth).toBe(6);
+
+    tick(ticker, 50);
+    expect(rect.attribute.opacity).toBeCloseTo(0.675, 5);
+    expect(rect.attribute.lineWidth).toBeCloseTo(3.5, 5);
+    expect((rect as any).baseAttributes.opacity).toBe(1);
+    expect((rect as any).baseAttributes.lineWidth).toBe(1);
+
+    tick(ticker, 50);
+    expect(rect.attribute.opacity).toBeCloseTo(0.35, 5);
+    expect(rect.attribute.lineWidth).toBeCloseTo(6, 5);
+    expect(rect.getFinalAttribute().opacity).toBeCloseTo(0.35, 5);
+    expect(rect.getFinalAttribute().lineWidth).toBeCloseTo(6, 5);
+    expect((rect as any).baseAttributes.opacity).toBe(1);
+    expect((rect as any).baseAttributes.lineWidth).toBe(1);
+    expect(rect.currentStates).toEqual(['a']);
+    expect(rect.resolvedStatePatch).toEqual({
+      opacity: 0.35,
+      lineWidth: 6
+    });
+  });
+
+  test('interrupted state animations resolve [] to [a] to [a,b] to [a] to [] without stale state styles', () => {
+    const { group, ticker, graphicService } = createStageHarness('state-runtime-interrupted-stack');
+    const rect = createAnimatedRect(graphicService);
+    rect.setAttribute('lineWidth', 1);
+    rect.setFinalAttributes({ ...rect.attribute });
+    group.appendChild(rect);
+
+    rect.states = {
+      a: {
+        opacity: 0.2
+      },
+      b: {
+        lineWidth: 5
+      }
+    } as any;
+    rect.stateAnimateConfig = {
+      duration: 100,
+      easing: 'linear'
+    } as any;
+
+    rect.useStates(['a'], true);
+    tick(ticker, 25);
+    expect(rect.attribute.opacity).toBeCloseTo(0.8, 5);
+    expect(rect.attribute.lineWidth).toBe(1);
+    expect(rect.currentStates).toEqual(['a']);
+    expect(rect.resolvedStatePatch).toEqual({
+      opacity: 0.2
+    });
+
+    rect.useStates(['a', 'b'], true);
+    tick(ticker, 25);
+    expect(rect.attribute.opacity).toBeGreaterThan(0.2);
+    expect(rect.attribute.opacity).toBeLessThan(0.8);
+    expect(rect.attribute.lineWidth).toBeGreaterThan(1);
+    expect(rect.attribute.lineWidth).toBeLessThan(5);
+    expect(rect.currentStates).toEqual(['a', 'b']);
+    expect(rect.resolvedStatePatch).toEqual({
+      opacity: 0.2,
+      lineWidth: 5
+    });
+    const lineWidthWithB = rect.attribute.lineWidth;
+
+    rect.useStates(['a'], true);
+    tick(ticker, 25);
+    expect(rect.attribute.opacity).toBeGreaterThan(0.2);
+    expect(rect.attribute.opacity).toBeLessThan(0.8);
+    expect(rect.attribute.lineWidth).toBeGreaterThan(1);
+    expect(rect.attribute.lineWidth).toBeLessThan(lineWidthWithB);
+    expect(rect.getFinalAttribute().opacity).toBe(0.2);
+    expect(rect.getFinalAttribute().lineWidth).toBe(1);
+    expect(rect.currentStates).toEqual(['a']);
+    expect(rect.resolvedStatePatch).toEqual({
+      opacity: 0.2
+    });
+    const lineWidthAfterRemovingB = rect.attribute.lineWidth;
+
+    rect.useStates([], true);
+    tick(ticker, 25);
+    expect(rect.attribute.opacity).toBeGreaterThan(0.2);
+    expect(rect.attribute.opacity).toBeLessThan(1);
+    expect(rect.attribute.lineWidth).toBeGreaterThan(1);
+    expect(rect.attribute.lineWidth).toBeLessThan(lineWidthAfterRemovingB);
+    expect(rect.currentStates).toEqual([]);
+    expect(rect.resolvedStatePatch).toBeUndefined();
+
+    tick(ticker, 100);
+    expect(rect.attribute.opacity).toBe(1);
+    expect(rect.attribute.lineWidth).toBe(1);
+    expect(rect.getFinalAttribute().opacity).toBe(1);
+    expect(rect.getFinalAttribute().lineWidth).toBe(1);
+    expect((rect as any).baseAttributes.opacity).toBe(1);
+    expect((rect as any).baseAttributes.lineWidth).toBe(1);
+    expect(rect.currentStates).toEqual([]);
+    expect(rect.resolvedStatePatch).toBeUndefined();
+  });
+
   test('animate.to restores static truth after completion and keeps baseAttributes untouched', () => {
     const { group, ticker, graphicService } = createStageHarness('self-to');
     const rect = createAnimatedRect(graphicService);
@@ -399,7 +527,7 @@ describe('D3 pre-handoff animation runtime', () => {
 
     rect.useStates(['selected'], true);
     tick(ticker, 50);
-    expect(rect.attribute.opacity).toBeCloseTo(0.8, 5);
+    expect(rect.attribute.opacity).toBeCloseTo(0.7, 5);
 
     tick(ticker, 50);
     expect(rect.attribute.opacity).toBeCloseTo(0.8, 5);

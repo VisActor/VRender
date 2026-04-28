@@ -305,6 +305,80 @@ describe('D3 pre-handoff animation runtime', () => {
     expect(rect.getFinalAttribute().y1).toBe(260);
   });
 
+  test('executor update animation restores to resized final layout after completion', () => {
+    const { group, ticker, graphicService } = createStageHarness('executor-update-resize-static-truth');
+    const initial = {
+      x: 78.75,
+      y: 31.2,
+      y1: 260,
+      width: 202.5,
+      visible: true
+    };
+    const resized = {
+      x: 105,
+      y: 38.4,
+      y1: 320,
+      width: 270,
+      visible: true
+    };
+    const rect = createRect(initial);
+    bindGraphicService(rect as any, graphicService);
+    rect.setFinalAttributes(initial);
+    group.appendChild(rect);
+
+    (rect as any).context = {
+      animationState: 'update',
+      data: [{ value: 10 }],
+      diffAttrs: {
+        x: resized.x,
+        y: resized.y,
+        y1: resized.y1,
+        width: resized.width
+      },
+      finalAttrs: resized
+    };
+    rect.setFinalAttributes(resized);
+
+    new AnimateExecutor(rect).execute({
+      type: 'update',
+      duration: 100,
+      easing: 'linear'
+    });
+
+    expect((rect as any).baseAttributes.x).toBe(initial.x);
+    expect((rect as any).baseAttributes.y).toBe(initial.y);
+    expect((rect as any).baseAttributes.y1).toBe(initial.y1);
+    expect((rect as any).baseAttributes.width).toBe(initial.width);
+    expect(rect.getFinalAttribute().x).toBe(resized.x);
+    expect(rect.getFinalAttribute().y).toBe(resized.y);
+    expect(rect.getFinalAttribute().y1).toBe(resized.y1);
+    expect(rect.getFinalAttribute().width).toBe(resized.width);
+
+    tick(ticker, 50);
+    expect(rect.attribute.x).toBeCloseTo(91.875, 5);
+    expect(rect.attribute.y).toBeCloseTo(34.8, 5);
+    expect(rect.attribute.y1).toBeCloseTo(290, 5);
+    expect(rect.attribute.width).toBeCloseTo(236.25, 5);
+    expect((rect as any).baseAttributes.x).toBe(initial.x);
+    expect((rect as any).baseAttributes.y).toBe(initial.y);
+    expect((rect as any).baseAttributes.y1).toBe(initial.y1);
+    expect((rect as any).baseAttributes.width).toBe(initial.width);
+
+    tick(ticker, 50);
+    expect((rect as any).baseAttributes.x).toBe(resized.x);
+    expect((rect as any).baseAttributes.y).toBe(resized.y);
+    expect((rect as any).baseAttributes.y1).toBe(resized.y1);
+    expect((rect as any).baseAttributes.width).toBe(resized.width);
+    expect(rect.attribute.x).toBe(resized.x);
+    expect(rect.attribute.y).toBe(resized.y);
+    expect(rect.attribute.y1).toBe(resized.y1);
+    expect(rect.attribute.width).toBe(resized.width);
+    expect(rect.getFinalAttribute().x).toBe(resized.x);
+    expect(rect.getFinalAttribute().y).toBe(resized.y);
+    expect(rect.getFinalAttribute().y1).toBe(resized.y1);
+    expect(rect.getFinalAttribute().width).toBe(resized.width);
+  });
+
   test('switching states mid-animation restores to the new static truth and blocks late writes', () => {
     const { group, ticker, graphicService } = createStageHarness('state-conflict');
     const rect = createAnimatedRect(graphicService);

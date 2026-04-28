@@ -1,4 +1,4 @@
-import type { EasingType } from '@visactor/vrender-core';
+import { AttributeUpdateType, type EasingType, type IAnimate, type IStep } from '@visactor/vrender-core';
 import { ACustomAnimate } from './custom-animate';
 
 export interface IUpdateAnimationOptions {
@@ -35,6 +35,18 @@ export class Update extends ACustomAnimate<Record<string, number>> {
     }
 
     this.props = diffAttrs;
+  }
+
+  onEnd(cb?: (animate: IAnimate, step: IStep) => void): void {
+    if (cb) {
+      super.onEnd(cb);
+      return;
+    }
+
+    if (this.props && Object.keys(this.props).length) {
+      this.target.setAttributes(this.props, false, { type: AttributeUpdateType.ANIMATE_END });
+    }
+    super.onEnd();
   }
 
   update(end: boolean, ratio: number, out: Record<string, any>): void {

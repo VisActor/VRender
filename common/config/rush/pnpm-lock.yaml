@@ -16,7 +16,7 @@ importers:
         specifier: 2.46.1
         version: 2.46.1(@types/react@18.3.28)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@visactor/vrender':
-        specifier: workspace:1.0.45
+        specifier: workspace:1.1.0-alpha.5
         version: link:../packages/vrender
       '@visactor/vutils':
         specifier: ~1.0.12
@@ -89,7 +89,7 @@ importers:
   ../../packages/react-vrender:
     dependencies:
       '@visactor/vrender':
-        specifier: workspace:1.0.45
+        specifier: workspace:1.1.0-alpha.5
         version: link:../vrender
       '@visactor/vutils':
         specifier: ~1.0.12
@@ -162,10 +162,10 @@ importers:
   ../../packages/react-vrender-utils:
     dependencies:
       '@visactor/react-vrender':
-        specifier: workspace:1.0.45
+        specifier: workspace:1.1.0-alpha.5
         version: link:../react-vrender
       '@visactor/vrender':
-        specifier: workspace:1.0.45
+        specifier: workspace:1.1.0-alpha.5
         version: link:../vrender
       '@visactor/vutils':
         specifier: ~1.0.12
@@ -235,16 +235,16 @@ importers:
   ../../packages/vrender:
     dependencies:
       '@visactor/vrender-animate':
-        specifier: workspace:1.0.45
+        specifier: workspace:1.1.0-alpha.5
         version: link:../vrender-animate
       '@visactor/vrender-components':
-        specifier: workspace:1.0.45
+        specifier: workspace:1.1.0-alpha.5
         version: link:../vrender-components
       '@visactor/vrender-core':
-        specifier: workspace:1.0.45
+        specifier: workspace:1.1.0-alpha.5
         version: link:../vrender-core
       '@visactor/vrender-kits':
-        specifier: workspace:1.0.45
+        specifier: workspace:1.1.0-alpha.5
         version: link:../vrender-kits
     devDependencies:
       '@internal/bundler':
@@ -314,7 +314,7 @@ importers:
   ../../packages/vrender-animate:
     dependencies:
       '@visactor/vrender-core':
-        specifier: workspace:1.0.45
+        specifier: workspace:1.1.0-alpha.5
         version: link:../vrender-core
       '@visactor/vutils':
         specifier: ~1.0.12
@@ -387,13 +387,13 @@ importers:
   ../../packages/vrender-components:
     dependencies:
       '@visactor/vrender-animate':
-        specifier: workspace:1.0.45
+        specifier: workspace:1.1.0-alpha.5
         version: link:../vrender-animate
       '@visactor/vrender-core':
-        specifier: workspace:1.0.45
+        specifier: workspace:1.1.0-alpha.5
         version: link:../vrender-core
       '@visactor/vrender-kits':
-        specifier: workspace:1.0.45
+        specifier: workspace:1.1.0-alpha.5
         version: link:../vrender-kits
       '@visactor/vscale':
         specifier: ~1.0.12
@@ -512,7 +512,7 @@ importers:
         specifier: 2.4.1
         version: 2.4.1
       '@visactor/vrender-core':
-        specifier: workspace:1.0.45
+        specifier: workspace:1.1.0-alpha.5
         version: link:../vrender-core
       '@visactor/vutils':
         specifier: ~1.0.12
@@ -643,19 +643,19 @@ importers:
   ../../tools/bugserver-trigger:
     dependencies:
       '@visactor/vrender':
-        specifier: workspace:1.0.45
+        specifier: workspace:1.1.0-alpha.5
         version: link:../../packages/vrender
       '@visactor/vrender-animate':
-        specifier: workspace:1.0.45
+        specifier: workspace:1.1.0-alpha.5
         version: link:../../packages/vrender-animate
       '@visactor/vrender-components':
-        specifier: workspace:1.0.45
+        specifier: workspace:1.1.0-alpha.5
         version: link:../../packages/vrender-components
       '@visactor/vrender-core':
-        specifier: workspace:1.0.45
+        specifier: workspace:1.1.0-alpha.5
         version: link:../../packages/vrender-core
       '@visactor/vrender-kits':
-        specifier: workspace:1.0.45
+        specifier: workspace:1.1.0-alpha.5
         version: link:../../packages/vrender-kits
     devDependencies:
       '@internal/bundler':
@@ -7334,7 +7334,7 @@ snapshots:
       '@types/istanbul-lib-coverage': 2.0.6
       collect-v8-coverage: 1.0.3
 
-  '@jest/test-sequencer@26.6.3':
+  '@jest/test-sequencer@26.6.3(canvas@2.11.2)(ts-node@10.9.0(@types/node@25.6.0)(typescript@4.9.5))':
     dependencies:
       '@jest/test-result': 26.6.2
       graceful-fs: 4.2.11
@@ -7342,7 +7342,11 @@ snapshots:
       jest-runner: 26.6.3(canvas@2.11.2)(ts-node@10.9.0(@types/node@25.6.0)(typescript@4.9.5))
       jest-runtime: 26.6.3(canvas@2.11.2)(ts-node@10.9.0(@types/node@25.6.0)(typescript@4.9.5))
     transitivePeerDependencies:
+      - bufferutil
+      - canvas
       - supports-color
+      - ts-node
+      - utf-8-validate
 
   '@jest/transform@26.6.2':
     dependencies:
@@ -10257,7 +10261,7 @@ snapshots:
   jest-config@26.6.3(canvas@2.11.2)(ts-node@10.9.0(@types/node@25.6.0)(typescript@4.9.5)):
     dependencies:
       '@babel/core': 7.20.12
-      '@jest/test-sequencer': 26.6.3
+      '@jest/test-sequencer': 26.6.3(canvas@2.11.2)(ts-node@10.9.0(@types/node@25.6.0)(typescript@4.9.5))
       '@jest/types': 26.6.2
       babel-jest: 26.6.3(@babel/core@7.20.12)
       chalk: 4.1.2

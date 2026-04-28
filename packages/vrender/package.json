@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vrender",
-  "version": "1.0.45",
+  "version": "1.1.0-alpha.6",
   "description": "",
   "sideEffects": true,
   "main": "cjs/index.js",
@@ -25,10 +25,10 @@
     "test-watch": "cross-env DEBUG_MODE=1 jest --watch -c jest.config.js"
   },
   "dependencies": {
-    "@visactor/vrender-core": "workspace:1.0.45",
-    "@visactor/vrender-kits": "workspace:1.0.45",
-    "@visactor/vrender-animate": "workspace:1.0.45",
-    "@visactor/vrender-components": "workspace:1.0.45"
+    "@visactor/vrender-core": "workspace:1.1.0-alpha.6",
+    "@visactor/vrender-kits": "workspace:1.1.0-alpha.6",
+    "@visactor/vrender-animate": "workspace:1.1.0-alpha.6",
+    "@visactor/vrender-components": "workspace:1.1.0-alpha.6"
   },
   "devDependencies": {
     "@internal/bundler": "workspace:*",

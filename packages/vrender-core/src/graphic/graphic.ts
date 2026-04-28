@@ -61,7 +61,7 @@ import { StateEngine } from './state/state-engine';
 import { StateModel } from './state/state-model';
 import { UpdateCategory, classifyAttributeDelta } from './state/attribute-update-classifier';
 import { StateStyleResolver, type StateMergeMode } from './state/state-style-resolver';
-import { StateTransitionOrchestrator } from './state/state-transition-orchestrator';
+import { StateTransitionOrchestrator, isOptionalGeometryAliasAttr } from './state/state-transition-orchestrator';
 import {
   collectSharedStateScopeChain,
   ensureSharedStateScopeFresh,
@@ -765,27 +765,37 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     return snapshot;
   }
 
-  protected buildStateAnimationTargetAttrs(
-    resolvedStateAttrs: Partial<T>,
+  protected buildRemovedStateAnimationAttrs(
+    targetStateAttrs: Partial<T>,
     previousResolvedStatePatch?: Partial<T>
   ): Partial<T> {
-    const targetAttrs = cloneAttributeValue(resolvedStateAttrs) as Record<string, any>;
+    const extraAttrs: Record<string, any> = {};
 
     if (!previousResolvedStatePatch) {
-      return targetAttrs as Partial<T>;
+      return extraAttrs as Partial<T>;
     }
 
     const snapshot = this.buildStaticAttributeSnapshot() as Record<string, any>;
     Object.keys(previousResolvedStatePatch).forEach(key => {
-      if (Object.prototype.hasOwnProperty.call(targetAttrs, key)) {
+      if (Object.prototype.hasOwnProperty.call(targetStateAttrs, key)) {
         return;
       }
-      targetAttrs[key] = Object.prototype.hasOwnProperty.call(snapshot, key)
-        ? cloneAttributeValue(snapshot[key])
-        : this.getDefaultAttribute(key);
+      if (Object.prototype.hasOwnProperty.call(snapshot, key)) {
+        const snapshotValue = snapshot[key];
+        if (snapshotValue === undefined && isOptionalGeometryAliasAttr(key)) {
+          return;
+        }
+        extraAttrs[key] =
+          snapshotValue === undefined ? this.getDefaultAttribute(key) : cloneAttributeValue(snapshotValue);
+        return;
+      }
+      if (isOptionalGeometryAliasAttr(key)) {
+        return;
+      }
+      extraAttrs[key] = this.getDefaultAttribute(key);
     });
 
-    return targetAttrs as Partial<T>;
+    return extraAttrs as Partial<T>;
   }
 
   protected syncObjectToSnapshot(target: Record<string, any>, snapshot: Record<string, any>): AttributeDelta {
@@ -1633,10 +1643,13 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     stateNames: string[],
     hasAnimation?: boolean,
     isClear?: boolean,
-    animateConfig?: IAnimateConfig
+    animateConfig?: IAnimateConfig,
+    extraAnimateAttrs?: Partial<T>
   ) {
     const resolvedAnimateConfig = hasAnimation ? this.resolveStateAnimateConfig(animateConfig) : undefined;
-    const transitionOptions = resolvedAnimateConfig ? { animateConfig: resolvedAnimateConfig } : undefined;
+    const transitionOptions = resolvedAnimateConfig
+      ? { animateConfig: resolvedAnimateConfig, extraAnimateAttrs: extraAnimateAttrs as Record<string, unknown> }
+      : undefined;
 
     if (isClear) {
       this.getStateTransitionOrchestrator().applyClearTransition(
@@ -1651,7 +1664,8 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
 
     const plan = this.getStateTransitionOrchestrator().analyzeTransition({}, attrs, stateNames, hasAnimation, {
       noWorkAnimateAttr: this.getNoWorkAnimateAttr(),
-      animateConfig: resolvedAnimateConfig
+      animateConfig: resolvedAnimateConfig,
+      extraAnimateAttrs: extraAnimateAttrs as Record<string, unknown>
     });
 
     this.getStateTransitionOrchestrator().applyTransition(this as any, plan, hasAnimation, transitionOptions);
@@ -1698,6 +1712,9 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
 
   clearStates(hasAnimation?: boolean) {
     const previousStates = this.currentStates ? this.currentStates.slice() : [];
+    const previousResolvedStatePatch = this.resolvedStatePatch
+      ? cloneAttributeValue(this.resolvedStatePatch)
+      : undefined;
     const transition = this.createStateModel().clearStates();
     if (!transition.changed && previousStates.length === 0) {
       this.currentStates = [];
@@ -1728,7 +1745,14 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     });
     if (hasAnimation) {
       this._syncFinalAttributeFromStaticTruth();
-      this.applyStateAttrs(resolvedStateAttrs, transition.states, hasAnimation, true);
+      this.applyStateAttrs(
+        resolvedStateAttrs,
+        transition.states,
+        hasAnimation,
+        true,
+        undefined,
+        this.buildRemovedStateAnimationAttrs(resolvedStateAttrs, previousResolvedStatePatch)
+      );
     } else {
       this.stopStateAnimates();
       this._restoreAttributeFromStaticTruth({ type: AttributeUpdateType.STATE });
@@ -1805,9 +1829,12 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     if (hasAnimation) {
       this._syncFinalAttributeFromStaticTruth();
       this.applyStateAttrs(
-        this.buildStateAnimationTargetAttrs(resolvedStateAttrs, previousResolvedStatePatch),
+        resolvedStateAttrs,
         transition.states,
-        hasAnimation
+        hasAnimation,
+        false,
+        undefined,
+        this.buildRemovedStateAnimationAttrs(resolvedStateAttrs, previousResolvedStatePatch)
       );
     } else {
       this.stopStateAnimates();

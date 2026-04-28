@@ -1,4 +1,4 @@
-import { createGroup, createRect } from '@visactor/vrender-core';
+import { application, createGroup, createRect, DefaultGraphicService } from '@visactor/vrender-core';
 import { registerAnimate } from '../../src/register';
 import { registerCustomAnimate } from '../../src/custom/register';
 import { AnimateExecutor } from '../../src/executor/animate-executor';
@@ -13,6 +13,9 @@ function ensureAnimationRuntime() {
   }
   registerAnimate();
   registerCustomAnimate();
+  if (!application.graphicService) {
+    application.graphicService = new DefaultGraphicService();
+  }
   animationRuntimeRegistered = true;
 }
 
@@ -23,6 +26,9 @@ function createGraphicServiceStub() {
     onRemove: jest.fn(),
     onAddIncremental: jest.fn(),
     onClearIncremental: jest.fn(),
+    beforeUpdateAABBBounds: jest.fn(),
+    afterUpdateAABBBounds: jest.fn(),
+    clearAABBBounds: jest.fn(),
     validCheck: jest.fn(() => true)
   };
 }
@@ -81,6 +87,14 @@ function createAnimatedRect(graphicService: any) {
 
 function tick(ticker: ManualTicker, delta: number) {
   ticker.tick(delta);
+}
+
+function boundsSize(graphic: any) {
+  const bounds = graphic.AABBBounds;
+  return {
+    width: bounds.x2 - bounds.x1,
+    height: bounds.y2 - bounds.y1
+  };
 }
 
 describe('D3 pre-handoff animation runtime', () => {
@@ -247,6 +261,169 @@ describe('D3 pre-handoff animation runtime', () => {
     expect((rect as any).baseAttributes.lineWidth).toBe(1);
     expect(rect.currentStates).toEqual([]);
     expect(rect.resolvedStatePatch).toBeUndefined();
+  });
+
+  test('clearing hover state keeps y/y1 rect layout from collapsing through undefined height aliases', () => {
+    const { group, ticker, graphicService } = createStageHarness('state-runtime-clear-vertical-alias');
+    const rect = createRect({
+      x: 150,
+      y: 0,
+      y1: 320,
+      width: 140,
+      x1: undefined,
+      height: undefined,
+      lineWidth: 0,
+      fill: '#1664FF',
+      stroke: '#1664FF',
+      fillOpacity: undefined,
+      visible: true
+    } as any);
+    bindGraphicService(rect as any, graphicService);
+    rect.setFinalAttributes({ ...rect.attribute });
+    group.appendChild(rect);
+
+    rect.states = {
+      hover: {
+        lineWidth: 4,
+        fillOpacity: 0.6
+      }
+    } as any;
+    rect.stateAnimateConfig = {
+      duration: 100,
+      easing: 'linear'
+    } as any;
+
+    rect.useStates(['hover'], true);
+    tick(ticker, 100);
+    expect(rect.attribute.lineWidth).toBe(4);
+    expect(rect.attribute.fillOpacity).toBe(0.6);
+    expect((rect as any).baseAttributes.height).toBeUndefined();
+    expect((rect as any).baseAttributes.x1).toBeUndefined();
+
+    rect.useStates([], true);
+    tick(ticker, 16);
+
+    expect(rect.attribute.height).toBeUndefined();
+    expect(rect.attribute.x1).toBeUndefined();
+    expect(rect.attribute.y).toBe(0);
+    expect(rect.attribute.y1).toBe(320);
+    expect(boundsSize(rect).height).toBeGreaterThan(100);
+
+    tick(ticker, 100);
+    expect(rect.attribute.height).toBeUndefined();
+    expect(rect.attribute.x1).toBeUndefined();
+    expect((rect as any).baseAttributes.height).toBeUndefined();
+    expect((rect as any).baseAttributes.x1).toBeUndefined();
+    expect(rect.getFinalAttribute().height).toBeUndefined();
+    expect(rect.getFinalAttribute().x1).toBeUndefined();
+    expect(rect.attribute.y).toBe(0);
+    expect(rect.attribute.y1).toBe(320);
+    expect(rect.attribute.lineWidth).toBe(0);
+    expect(boundsSize(rect).height).toBeGreaterThan(100);
+  });
+
+  test('clearing hover state keeps x/x1 rect layout from collapsing through undefined width aliases', () => {
+    const { group, ticker, graphicService } = createStageHarness('state-runtime-clear-horizontal-alias');
+    const rect = createRect({
+      x: 10,
+      x1: 210,
+      y: 5,
+      height: 40,
+      width: undefined,
+      y1: undefined,
+      lineWidth: 0,
+      fill: '#1664FF',
+      stroke: '#1664FF',
+      fillOpacity: undefined,
+      visible: true
+    } as any);
+    bindGraphicService(rect as any, graphicService);
+    rect.setFinalAttributes({ ...rect.attribute });
+    group.appendChild(rect);
+
+    rect.states = {
+      hover: {
+        lineWidth: 4,
+        fillOpacity: 0.6
+      }
+    } as any;
+    rect.stateAnimateConfig = {
+      duration: 100,
+      easing: 'linear'
+    } as any;
+
+    rect.useStates(['hover'], true);
+    tick(ticker, 100);
+    expect(rect.attribute.lineWidth).toBe(4);
+    expect(rect.attribute.fillOpacity).toBe(0.6);
+    expect((rect as any).baseAttributes.width).toBeUndefined();
+    expect((rect as any).baseAttributes.y1).toBeUndefined();
+
+    rect.useStates([], true);
+    tick(ticker, 16);
+
+    expect(rect.attribute.width).toBeUndefined();
+    expect(rect.attribute.y1).toBeUndefined();
+    expect(rect.attribute.x).toBe(10);
+    expect(rect.attribute.x1).toBe(210);
+    expect(boundsSize(rect).width).toBeGreaterThan(100);
+
+    tick(ticker, 100);
+    expect(rect.attribute.width).toBeUndefined();
+    expect(rect.attribute.y1).toBeUndefined();
+    expect((rect as any).baseAttributes.width).toBeUndefined();
+    expect((rect as any).baseAttributes.y1).toBeUndefined();
+    expect(rect.getFinalAttribute().width).toBeUndefined();
+    expect(rect.getFinalAttribute().y1).toBeUndefined();
+    expect(rect.attribute.x).toBe(10);
+    expect(rect.attribute.x1).toBe(210);
+    expect(rect.attribute.lineWidth).toBe(0);
+    expect(boundsSize(rect).width).toBeGreaterThan(100);
+  });
+
+  test('clearing hover state animates removed style keys to defaults when base lacks those keys', () => {
+    const { group, ticker, graphicService } = createStageHarness('state-runtime-clear-missing-style-key');
+    const rect = createRect({
+      x: 0,
+      y: 0,
+      y1: 100,
+      width: 20,
+      lineWidth: 0,
+      fill: '#1664FF',
+      visible: true
+    } as any);
+    bindGraphicService(rect as any, graphicService);
+    rect.setFinalAttributes({ ...rect.attribute });
+    group.appendChild(rect);
+
+    rect.states = {
+      hover: {
+        lineWidth: 4,
+        fillOpacity: 0.6
+      }
+    } as any;
+    rect.stateAnimateConfig = {
+      duration: 100,
+      easing: 'linear'
+    } as any;
+
+    rect.useStates(['hover'], true);
+    tick(ticker, 100);
+    expect(rect.attribute.fillOpacity).toBe(0.6);
+    expect((rect as any).baseAttributes.fillOpacity).toBeUndefined();
+
+    rect.useStates([], true);
+    tick(ticker, 16);
+
+    expect(rect.attribute.fillOpacity).toBeGreaterThan(0.6);
+    expect(rect.attribute.fillOpacity).toBeLessThan(1);
+    expect((rect as any).baseAttributes.fillOpacity).toBeUndefined();
+    expect(rect.getFinalAttribute().fillOpacity).toBeUndefined();
+
+    tick(ticker, 100);
+    expect(rect.attribute.fillOpacity).toBeUndefined();
+    expect((rect as any).baseAttributes.fillOpacity).toBeUndefined();
+    expect(rect.getFinalAttribute().fillOpacity).toBeUndefined();
   });
 
   test('animate.to restores static truth after completion and keeps baseAttributes untouched', () => {

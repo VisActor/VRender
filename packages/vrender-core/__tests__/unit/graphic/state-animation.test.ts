@@ -243,6 +243,42 @@ describe('Graphic state animation integration', () => {
     });
   });
 
+  test('should animate removed clear-state style keys back to defaults when base lacks the key', () => {
+    const graphic = createGraphic();
+    delete (graphic as any).baseAttributes.fillOpacity;
+    delete (graphic.attribute as any).fillOpacity;
+    graphic.setFinalAttributes?.({ ...(graphic.attribute as any) });
+    graphic.states = {
+      hover: {
+        lineWidth: 4,
+        fillOpacity: 0.6
+      }
+    } as any;
+    const applyAnimationState = jest.fn();
+    (graphic as any).applyAnimationState = applyAnimationState;
+
+    graphic.useStates(['hover'], true);
+    graphic.clearStates(true);
+
+    expect(applyAnimationState).toHaveBeenLastCalledWith(
+      ['state'],
+      [
+        {
+          name: 'state',
+          animation: {
+            type: 'state',
+            to: expect.objectContaining({
+              lineWidth: 1,
+              fillOpacity: graphic.getDefaultAttribute('fillOpacity')
+            }),
+            duration: DefaultStateAnimateConfig.duration,
+            easing: DefaultStateAnimateConfig.easing
+          }
+        }
+      ]
+    );
+  });
+
   test('should allow explicit animateConfig to override graphic and context defaults in applyStateAttrs', () => {
     const graphic = createGraphic();
     graphic.stateAnimateConfig = {

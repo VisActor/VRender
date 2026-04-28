@@ -15,10 +15,12 @@ export interface IStateTransitionAnalysisOptions {
   isClear?: boolean;
   getDefaultAttribute?: (key: string) => unknown;
   animateConfig?: IAnimateConfig;
+  extraAnimateAttrs?: Record<string, unknown>;
 }
 
 export interface IStateTransitionApplyOptions {
   animateConfig?: IAnimateConfig;
+  extraAnimateAttrs?: Record<string, unknown>;
 }
 
 export interface IStateTransitionGraphic<T> {
@@ -60,6 +62,17 @@ export interface IStateTransitionOrchestrator<T> {
 
 function hasOwnKeys(value: object): boolean {
   return Object.keys(value).length > 0;
+}
+
+const optionalGeometryAliasAttrs: Record<string, true> = {
+  width: true,
+  height: true,
+  x1: true,
+  y1: true
+};
+
+export function isOptionalGeometryAliasAttr(key: string): boolean {
+  return optionalGeometryAliasAttrs[key] === true;
 }
 
 function normalizeNoAnimateAttrConfig(config?: IAnimateConfig['noAnimateAttrs']): Record<string, number> {
@@ -111,21 +124,44 @@ export class StateTransitionOrchestrator<T extends Record<string, any> = Record<
     const isClear = options.isClear === true;
     const getDefaultAttribute = options.getDefaultAttribute;
 
+    const assignTransitionAttr = (key: string, value: any): void => {
+      if (noWorkAnimateAttr[key]) {
+        (plan.jumpAttrs as Record<string, any>)[key] = value;
+        (plan.noAnimateAttrs as Record<string, any>)[key] = value;
+        return;
+      }
+
+      if (isClear && value === undefined) {
+        if (isOptionalGeometryAliasAttr(key)) {
+          return;
+        }
+        (plan.animateAttrs as Record<string, any>)[key] = getDefaultAttribute ? getDefaultAttribute(key) : value;
+        return;
+      }
+
+      (plan.animateAttrs as Record<string, any>)[key] = value;
+    };
+
     for (const key in targetAttrs) {
       if (!Object.prototype.hasOwnProperty.call(targetAttrs, key)) {
         continue;
       }
 
       const value = (targetAttrs as Record<string, any>)[key];
+      assignTransitionAttr(key, value);
+    }
 
-      if (noWorkAnimateAttr[key]) {
-        (plan.jumpAttrs as Record<string, any>)[key] = value;
-        (plan.noAnimateAttrs as Record<string, any>)[key] = value;
-        continue;
+    const extraAnimateAttrs = options.extraAnimateAttrs;
+    if (extraAnimateAttrs) {
+      for (const key in extraAnimateAttrs) {
+        if (
+          !Object.prototype.hasOwnProperty.call(extraAnimateAttrs, key) ||
+          Object.prototype.hasOwnProperty.call(targetAttrs, key)
+        ) {
+          continue;
+        }
+        assignTransitionAttr(key, (extraAnimateAttrs as Record<string, any>)[key]);
       }
-
-      (plan.animateAttrs as Record<string, any>)[key] =
-        isClear && value === undefined && getDefaultAttribute ? getDefaultAttribute(key) : value;
     }
 
     return plan;
@@ -182,7 +218,8 @@ export class StateTransitionOrchestrator<T extends Record<string, any> = Record<
       noWorkAnimateAttr: graphic.getNoWorkAnimateAttr?.(),
       isClear: true,
       getDefaultAttribute: graphic.getDefaultAttribute?.bind(graphic),
-      animateConfig: options.animateConfig
+      animateConfig: options.animateConfig,
+      extraAnimateAttrs: options.extraAnimateAttrs
     });
 
     return this.applyTransition(graphic, plan, hasAnimation, options);

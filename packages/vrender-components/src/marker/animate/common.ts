@@ -2,6 +2,13 @@ import type { EasingType, IGraphic } from '@visactor/vrender-core';
 import type { ArcSegment, Segment } from '../../segment';
 import type { Tag } from '../../tag';
 
+export function getSegmentLineGraphics(segment: Segment | ArcSegment): IGraphic[] {
+  if (!segment) {
+    return [];
+  }
+  return [...(segment.lines ?? []), (segment as ArcSegment).line].filter(Boolean) as IGraphic[];
+}
+
 /** fade-in */
 export function graphicFadeIn(graphic: IGraphic, delay: number, duration: number, easing: EasingType) {
   if (!graphic) {
@@ -35,8 +42,7 @@ export function segmentFadeIn(segment: Segment, delay: number, duration: number,
   graphicFadeIn(segment.startSymbol, delay, duration, easing);
 
   // line
-  segment.lines.forEach(line => graphicFadeIn(line, delay, duration, easing));
-  graphicFadeIn((segment as ArcSegment).line, delay, duration, easing);
+  getSegmentLineGraphics(segment).forEach(line => graphicFadeIn(line, delay, duration, easing));
 
   // end symbol
   graphicFadeIn(segment.endSymbol, delay, duration, easing);
@@ -77,8 +83,7 @@ export function segmentFadeOut(segment: Segment | ArcSegment, delay: number, dur
   graphicFadeOut(segment.startSymbol, delay, duration, easing);
 
   // line
-  segment.lines.forEach(line => graphicFadeOut(line, delay, duration, easing));
-  graphicFadeOut((segment as ArcSegment).line, delay, duration, easing);
+  getSegmentLineGraphics(segment).forEach(line => graphicFadeOut(line, delay, duration, easing));
 
   // end symbol
   graphicFadeOut(segment.endSymbol, delay, duration, easing);

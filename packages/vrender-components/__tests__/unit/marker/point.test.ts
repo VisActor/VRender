@@ -104,6 +104,6 @@ describe('Marker', () => {
 
     expect(line.key).toBe('arc-segment');
     expect(line.line?.attribute.clipRange).toBe(0);
-    expect(line.line?.animates?.length).toBeGreaterThan(0);
+    expect(line.line?.animates?.size).toBeGreaterThan(0);
   });
 });

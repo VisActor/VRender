@@ -80,7 +80,7 @@ export function markArcAreaAnimate(area: IArc, label: Tag | Tag[], animationconf
 }
 
 export function markPointAnimate(
-  lines: [Segment, ILine],
+  lines: [Segment | ArcSegment, ILine],
   item: Tag | IRichText | ISymbol | IImage,
   animationconfig: any,
   state: MarkerAnimationState

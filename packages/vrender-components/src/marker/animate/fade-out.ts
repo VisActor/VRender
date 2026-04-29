@@ -34,7 +34,7 @@ export function arcAreaFadeOut(area: IArc, label: Tag | Tag[], duration: number,
 }
 
 export function pointFadeOut(
-  itemLine: Segment,
+  itemLine: Segment | ArcSegment,
   decorativeLine: ILine,
   item: Tag | IRichText | ISymbol | IImage,
   duration: number,

@@ -195,14 +195,14 @@ export type BaseMarkerAnimation<T> = {
    */
   animationExit?: MarkerExitAnimation;
 };
-export type MarkerAnimation<T> = MarkerUpdateAnimation<T> | MarkerUpdateAnimation<T>;
+export type MarkerAnimation<T> = MarkerUpdateAnimation<T> | MarkerExitAnimation;
 
 export type MarkerUpdateAnimation<T> = {
   /**
    * 设置动画的类型
    */
   type: T;
-} & MarkerExitAnimation;
+} & MarkerAnimationBase;
 
 export type MarkCommonLineAnimationType = 'clipIn' | 'fadeIn';
 
@@ -210,11 +210,7 @@ export type CommonMarkAreaAnimationType = 'fadeIn';
 
 export type MarkPointAnimationType = 'callIn' | 'fadeIn';
 
-export type MarkerExitAnimation = {
-  /**
-   * 设置离场动画的类型为fadeOut，即淡出
-   */
-  type: 'fadeOut';
+export type MarkerAnimationBase = {
   /**
    * 动画的时长
    */
@@ -227,6 +223,13 @@ export type MarkerExitAnimation = {
    * 动画的缓动函数
    */
   easing?: EasingType;
+};
+
+export type MarkerExitAnimation = MarkerAnimationBase & {
+  /**
+   * 设置离场动画的类型为fadeOut，即淡出
+   */
+  type: 'fadeOut';
 };
 
 export type MarkerAnimationState = 'enter' | 'update' | 'exit';

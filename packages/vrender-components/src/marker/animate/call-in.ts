@@ -2,6 +2,7 @@ import type { EasingType, IImage, ILine, IRichText, ISymbol } from '@visactor/vr
 import type { Segment } from '../../segment';
 import type { Tag } from '../../tag';
 import { graphicFadeIn } from './common';
+import { commitUpdateAnimationTarget } from '../../animation/static-truth';
 
 export function pointCallIn(
   itemLine: Segment,
@@ -21,7 +22,7 @@ export function pointCallIn(
   graphicFadeIn(itemLine.startSymbol, delay, startSymbolDuration, easing);
 
   // line
-  itemLine.lines.forEach(line => line.setAttribute('clipRange', 0));
+  itemLine.lines.forEach(line => commitUpdateAnimationTarget(line, { clipRange: 1 }, { clipRange: 0 }));
   itemLine.lines.forEach((l, index) => {
     const stepDuration = lineDuration / itemLine.lines.length;
     l.animate()

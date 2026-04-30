@@ -3,8 +3,8 @@ import { AbstractComponent } from '../core/base';
 import { loadTimelineComponent } from './register';
 import type { TimelineAttrs } from './type';
 import type { ComponentOptions } from '../interface';
-import { getTheme, type IGraphicAttribute, type IGroup, type ILine, type IText } from '@visactor/vrender-core';
-import type { ISymbol } from '@visactor/vrender-core';
+import type { IGraphicAttribute, IGroup, ILine, ISymbol, IText } from '@visactor/vrender-core';
+import { commitUpdateAnimationTarget } from '../animation/static-truth';
 
 loadTimelineComponent();
 
@@ -200,15 +200,16 @@ export class Timeline extends AbstractComponent<Required<TimelineAttrs>> {
     const symbolDelay = percent * 100;
     const symbolNormalDelay = percent * 600;
     if (this._line) {
-      this._line.setAttributes({ clipRange: 0 });
+      commitUpdateAnimationTarget(this._line, { clipRange: 1 }, { clipRange: 0 });
       this._line.animate().to({ clipRange: 1 }, lineDuration, easing as any);
     }
     if (this._activeLine) {
-      this._activeLine.setAttributes({ opacity: 0 });
+      const opacity = this._activeLine.attribute.opacity ?? 1;
+      commitUpdateAnimationTarget(this._activeLine, { opacity }, { opacity: 0 });
       this._activeLine
         .animate()
         .wait(500)
-        .to({ opacity: 1 }, activeLineDuration, easing as any);
+        .to({ opacity }, activeLineDuration, easing as any);
     }
     if (this._symbolGroup) {
       const size = this._symbolGroup.count - 1;
@@ -220,11 +221,12 @@ export class Timeline extends AbstractComponent<Required<TimelineAttrs>> {
           originAttrs[k] = (symbol.attribute as any)[k];
         });
 
-        symbol.setAttributes({ opacity: 0 });
+        const opacity = symbol.attribute.opacity ?? 1;
+        commitUpdateAnimationTarget(symbol, { opacity }, { opacity: 0 });
         symbol
           .animate()
           .wait(symbolDelay + delay * i)
-          .to({ opacity: 1 }, perSymbolDuration, easing as any);
+          .to({ opacity }, perSymbolDuration, easing as any);
         symbol
           .animate()
           .wait(symbolNormalDelay + delayNormal * i)
@@ -241,11 +243,12 @@ export class Timeline extends AbstractComponent<Required<TimelineAttrs>> {
         Object.keys(activeLabelStyle).forEach(k => {
           originAttrs[k] = (label.attribute as any)[k];
         });
-        label.setAttributes({ opacity: 0 });
+        const opacity = label.attribute.opacity ?? 1;
+        commitUpdateAnimationTarget(label, { opacity }, { opacity: 0 });
         label
           .animate()
           .wait(symbolDelay + delay * i)
-          .to({ opacity: 1 }, perSymbolDuration, easing as any);
+          .to({ opacity }, perSymbolDuration, easing as any);
         label
           .animate()
           .wait(symbolNormalDelay + delayNormal * i)
@@ -292,6 +295,7 @@ export class Timeline extends AbstractComponent<Required<TimelineAttrs>> {
       // const actDuration =
       //   (Math.abs(nextClipRange - clipRange) / ((this._timesPercent[i] ?? 1) - (this._timesPercent[i - 1] ?? 0))) *
       //   duration;
+      commitUpdateAnimationTarget(this as any, { clipRange: nextClipRange }, { clipRange });
       this.animate().to({ clipRange: nextClipRange }, duration, easing as any);
     } else {
       this.setAttributes({ clipRange: nextClipRange });

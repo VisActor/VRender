@@ -1,4 +1,5 @@
 import { AComponentAnimate, AnimateExecutor, createComponentAnimator } from '@visactor/vrender-animate';
+import { commitUpdateAnimationTarget } from './static-truth';
 
 /**
  * AxisEnter class handles the enter animation for Axis components
@@ -21,7 +22,7 @@ export class AxisEnter extends AComponentAnimate<any> {
       const newX = this.target.attribute.x;
       const newY = this.target.attribute.y;
 
-      this.target.setAttributes({ x: point.x, y: point.y });
+      commitUpdateAnimationTarget(this.target, { x: newX, y: newY }, { x: point.x, y: point.y });
       animator.animate(this.target, {
         type: 'to',
         to: { x: newX, y: newY },
@@ -79,7 +80,7 @@ export class AxisUpdate extends AComponentAnimate<any> {
     this._animator = animator;
     const duration = this.duration;
     const easing = this.easing;
-    const { config, diffAttrs } = this.params;
+    const { diffAttrs } = this.params;
     // this.target.applyAnimationState(
     //   ['update'],
     //   [
@@ -98,6 +99,7 @@ export class AxisUpdate extends AComponentAnimate<any> {
     //   ]
     // );
     // console.log('this.props', this.props, { ...this.target.attribute });
+    commitUpdateAnimationTarget(this.target, { ...diffAttrs });
     animator.animate(this.target, {
       type: 'to',
       to: { ...diffAttrs },

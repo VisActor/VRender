@@ -1,6 +1,7 @@
 import type { EasingType, IGraphic } from '@visactor/vrender-core';
 import type { ArcSegment, Segment } from '../../segment';
 import type { Tag } from '../../tag';
+import { commitUpdateAnimationTarget } from '../../animation/static-truth';
 
 /** fade-in */
 export function graphicFadeIn(graphic: IGraphic, delay: number, duration: number, easing: EasingType) {
@@ -11,10 +12,17 @@ export function graphicFadeIn(graphic: IGraphic, delay: number, duration: number
   const fillOpacityConfig = graphic.attribute?.fillOpacity ?? 1;
   const strokeOpacityConfig = graphic.attribute?.strokeOpacity ?? 1;
 
-  graphic.setAttributes({
-    fillOpacity: 0,
-    strokeOpacity: 0
-  });
+  commitUpdateAnimationTarget(
+    graphic,
+    {
+      fillOpacity: fillOpacityConfig,
+      strokeOpacity: strokeOpacityConfig
+    },
+    {
+      fillOpacity: 0,
+      strokeOpacity: 0
+    }
+  );
 
   graphic.animate().wait(delay).to(
     {
@@ -60,10 +68,17 @@ export function graphicFadeOut(graphic: IGraphic, delay: number, duration: numbe
     return;
   }
 
-  graphic.setAttributes({
-    fillOpacity: graphic.attribute?.fillOpacity ?? 1,
-    strokeOpacity: graphic.attribute?.strokeOpacity ?? 1
-  });
+  commitUpdateAnimationTarget(
+    graphic,
+    {
+      fillOpacity: 0,
+      strokeOpacity: 0
+    },
+    {
+      fillOpacity: graphic.attribute?.fillOpacity ?? 1,
+      strokeOpacity: graphic.attribute?.strokeOpacity ?? 1
+    }
+  );
 
   graphic.animate().wait(delay).to({ fillOpacity: 0, strokeOpacity: 0 }, duration, easing);
 }

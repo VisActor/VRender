@@ -16,7 +16,7 @@ import type {
   IRectGraphicAttribute
 } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
-import { AttributeUpdateType, IContainPointMode, CustomPath2D } from '@visactor/vrender-core';
+import { AttributeUpdateType, CustomPath2D } from '@visactor/vrender-core';
 import { graphicCreator } from '../util/graphic-creator';
 import type { IAABBBounds, IBoundsLike, IPointLike } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports
@@ -58,6 +58,7 @@ import type { ComponentOptions } from '../interface';
 import { loadLabelComponent } from './register';
 import { shiftY } from './overlap/shiftY';
 import { AnimateComponent } from '../animation/animate-component';
+import { commitUpdateAnimationTarget } from '../animation/static-truth';
 
 loadLabelComponent();
 export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
@@ -894,6 +895,9 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
     const { text: prevText, labelLine: prevLabelLine } = prevLabel;
     const { text: curText, labelLine: curLabelLine } = currentLabel;
 
+    commitUpdateAnimationTarget(prevText, curText?.attribute as Record<string, any>);
+    commitUpdateAnimationTarget(prevLabelLine, curLabelLine?.attribute as Record<string, any>);
+
     prevText.applyAnimationState(
       ['update'],
       [
@@ -942,7 +946,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
   }
 
   protected _updateLabel(prevLabel: LabelContent, currentLabel: LabelContent) {
-    const { text: prevText, labelLine: prevLabelLine } = prevLabel;
+    const { labelLine: prevLabelLine } = prevLabel;
     const { text: curText, labelLine: curLabelLine } = currentLabel;
 
     if (this._enableAnimation === false || this._animationConfig.update === false) {

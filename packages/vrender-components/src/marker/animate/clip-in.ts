@@ -3,6 +3,7 @@ import type { ArcSegment, Segment } from '../../segment';
 import type { Tag } from '../../tag';
 import { graphicFadeIn } from './common';
 import { array } from '@visactor/vutils';
+import { commitUpdateAnimationTarget } from '../../animation/static-truth';
 
 export function commonLineClipIn(
   line: Segment | ArcSegment,
@@ -20,7 +21,7 @@ export function commonLineClipIn(
   graphicFadeIn(line.startSymbol, delay, startSymbolDuration, easing);
 
   // line
-  line.lines.forEach(line => line.setAttribute('clipRange', 0));
+  line.lines.forEach(line => commitUpdateAnimationTarget(line, { clipRange: 1 }, { clipRange: 0 }));
   line.lines.forEach((l, index) => {
     const stepDuration = lineDuration / line.lines.length;
     l.animate()

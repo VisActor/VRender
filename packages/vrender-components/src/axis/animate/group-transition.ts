@@ -1,17 +1,18 @@
-import { AnimateMode } from '@visactor/vrender-core';
-import type { EasingType, IGraphic, IGroup } from '@visactor/vrender-core';
+import { AnimateMode, type EasingType, type IGraphic, type IGroup } from '@visactor/vrender-core';
 import { ACustomAnimate } from '@visactor/vrender-animate';
-import type { Dict } from '@visactor/vutils';
-import { cloneDeep, interpolateString, isEqual, isValidNumber } from '@visactor/vutils';
+import { cloneDeep, interpolateString, isEqual, isValidNumber, type Dict } from '@visactor/vutils';
 import { traverseGroup } from '../../util';
+import { commitUpdateAnimationTarget } from '../../animation/static-truth';
 
 export class GroupTransition extends ACustomAnimate<any> {
   declare target: IGroup;
 
   private _newElementAttrMap: Dict<any>;
+  private _started: boolean;
   mode = AnimateMode.NORMAL; // 组件的群组动画不需要设置走 AnimateMode.SET_ATTR_IMMEDIATELY
 
   onBind(): void {
+    this._started = false;
     // @ts-ignore
     const currentInnerView = this.target.getInnerView();
     // @ts-ignore
@@ -42,7 +43,11 @@ export class GroupTransition extends ACustomAnimate<any> {
               }
             };
 
-            (el as IGraphic).setAttributes((oldEl as IGraphic).attribute);
+            commitUpdateAnimationTarget(
+              el as IGraphic,
+              this._newElementAttrMap[el.id].attrs,
+              cloneDeep((oldEl as IGraphic).attribute)
+            );
           }
         } else {
           // 新入场元素，进行 fadeIn 动画
@@ -56,7 +61,7 @@ export class GroupTransition extends ACustomAnimate<any> {
             node: el,
             attrs: finalOpacityAttrs
           };
-          (el as IGraphic).setAttributes({
+          commitUpdateAnimationTarget(el as IGraphic, finalOpacityAttrs, {
             opacity: 0,
             fillOpacity: 0,
             strokeOpacity: 0
@@ -67,6 +72,11 @@ export class GroupTransition extends ACustomAnimate<any> {
   }
 
   onStart(): void {
+    if (this._started) {
+      return;
+    }
+    this._started = true;
+
     let duration = this.duration;
     let easing = this.easing;
 

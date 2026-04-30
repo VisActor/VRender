@@ -39,6 +39,7 @@ import { Tag } from '../tag/tag';
 import { getElMap, getVerticalCoord } from './util';
 import { dispatchClickState, dispatchHoverState, dispatchUnHoverState } from '../util/interaction';
 import { AnimateComponent } from '../animation/animate-component';
+import { commitUpdateAnimationTarget } from '../animation/static-truth';
 import { DefaultAxisAnimation } from './animate/config';
 import type { IBaseScale } from '@visactor/vscale';
 
@@ -600,14 +601,12 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AnimateComp
       traverseGroup(currentInnerView, (el: IGraphic) => {
         if ((el as IGraphic).type !== 'group' && el.id) {
           const oldEl = prevInnerView[el.id];
-          // 删除旧图元的动画
-          el.setFinalAttributes(el.attribute);
           if (oldEl) {
             oldEl.release();
             // oldEl.stopAnimationState('enter');
             // oldEl.stopAnimationState('update');
-            const oldAttrs = (oldEl as IGraphic).attribute;
-            const finalAttrs = el.getFinalAttribute();
+            const oldAttrs = cloneDeep((oldEl as IGraphic).attribute);
+            const finalAttrs = cloneDeep((el as IGraphic).attribute);
             const diffAttrs: Record<string, any> = diff(oldAttrs, finalAttrs);
 
             let hasDiff = Object.keys(diffAttrs).length > 0;
@@ -621,11 +620,10 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AnimateComp
               this._newElementAttrMap[el.id] = {
                 state: 'update',
                 node: el,
-                attrs: el.attribute
+                attrs: finalAttrs
               };
-              const oldAttrs = (oldEl as IGraphic).attribute;
 
-              (el as IGraphic).setAttributes(oldAttrs);
+              commitUpdateAnimationTarget(el as IGraphic, finalAttrs, oldAttrs);
 
               el.applyAnimationState(
                 ['update'],

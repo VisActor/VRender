@@ -37,14 +37,46 @@ export class Update extends ACustomAnimate<Record<string, number>> {
     this.props = diffAttrs;
   }
 
+  private getStaticCommitAttrs(): Record<string, any> | null {
+    if (!this.props) {
+      return null;
+    }
+
+    const target = this.target as any;
+    const contextFinalAttrs = target.context?.finalAttrs as Record<string, any> | undefined;
+    const finalAttribute = (
+      typeof target.getFinalAttribute === 'function' ? target.getFinalAttribute() : target.finalAttribute
+    ) as Record<string, any> | undefined;
+    const commitAttrs: Record<string, any> = {};
+
+    Object.keys(this.props).forEach(key => {
+      if (contextFinalAttrs && Object.prototype.hasOwnProperty.call(contextFinalAttrs, key)) {
+        commitAttrs[key] = contextFinalAttrs[key];
+        return;
+      }
+
+      if (finalAttribute && Object.prototype.hasOwnProperty.call(finalAttribute, key)) {
+        commitAttrs[key] = finalAttribute[key];
+        return;
+      }
+
+      if (this.animate.validAttr(key)) {
+        commitAttrs[key] = (this.props as Record<string, any>)[key];
+      }
+    });
+
+    return Object.keys(commitAttrs).length ? commitAttrs : null;
+  }
+
   onEnd(cb?: (animate: IAnimate, step: IStep) => void): void {
     if (cb) {
       super.onEnd(cb);
       return;
     }
 
-    if (this.props && Object.keys(this.props).length) {
-      this.target.setAttributes(this.props, false, { type: AttributeUpdateType.ANIMATE_END });
+    const commitAttrs = this.getStaticCommitAttrs();
+    if (commitAttrs) {
+      this.target.setAttributes(commitAttrs, false, { type: AttributeUpdateType.ANIMATE_END });
     }
     super.onEnd();
   }

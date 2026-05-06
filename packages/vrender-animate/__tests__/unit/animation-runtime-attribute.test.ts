@@ -882,6 +882,82 @@ describe('D3 pre-handoff animation runtime', () => {
     expect(rect.getFinalAttribute().width).toBe(resized.width);
   });
 
+  test('superseded executor update cannot commit stale layout when it ends late', () => {
+    const { group, ticker, graphicService } = createStageHarness('executor-update-stale-end');
+    const threeItemLayout = {
+      x: 76.61875,
+      y: 0,
+      y1: 320,
+      width: 41.5125,
+      visible: true
+    };
+    const fourItemLayout = {
+      x: 73.54375,
+      y: 0,
+      y1: 320,
+      width: 32.2875,
+      visible: true
+    };
+    const rect = createRect(threeItemLayout);
+    bindGraphicService(rect as any, graphicService);
+    rect.setFinalAttributes(threeItemLayout);
+    group.appendChild(rect);
+
+    (rect as any).context = {
+      animationState: 'update',
+      data: [{ value: 10 }],
+      diffAttrs: {
+        x: fourItemLayout.x,
+        width: fourItemLayout.width
+      },
+      finalAttrs: fourItemLayout
+    };
+    rect.setFinalAttributes(fourItemLayout);
+    new AnimateExecutor(rect).execute({
+      type: 'update',
+      duration: 200,
+      easing: 'linear'
+    });
+
+    tick(ticker, 50);
+    expect(rect.attribute.x).toBeLessThan(threeItemLayout.x);
+    expect(rect.attribute.x).toBeGreaterThan(fourItemLayout.x);
+    expect(rect.attribute.width).toBeLessThan(threeItemLayout.width);
+    expect(rect.attribute.width).toBeGreaterThan(fourItemLayout.width);
+
+    (rect as any).context = {
+      animationState: 'update',
+      data: [{ value: 10 }],
+      diffAttrs: {
+        x: threeItemLayout.x,
+        width: threeItemLayout.width
+      },
+      finalAttrs: threeItemLayout
+    };
+    rect.setFinalAttributes(threeItemLayout);
+    new AnimateExecutor(rect).execute({
+      type: 'update',
+      duration: 100,
+      easing: 'linear'
+    });
+
+    tick(ticker, 100);
+    expect(rect.attribute.x).toBeCloseTo(threeItemLayout.x, 5);
+    expect(rect.attribute.width).toBeCloseTo(threeItemLayout.width, 5);
+    expect((rect as any).baseAttributes.x).toBeCloseTo(threeItemLayout.x, 5);
+    expect((rect as any).baseAttributes.width).toBeCloseTo(threeItemLayout.width, 5);
+    expect(rect.getFinalAttribute().x).toBeCloseTo(threeItemLayout.x, 5);
+    expect(rect.getFinalAttribute().width).toBeCloseTo(threeItemLayout.width, 5);
+
+    tick(ticker, 50);
+    expect(rect.attribute.x).toBeCloseTo(threeItemLayout.x, 5);
+    expect(rect.attribute.width).toBeCloseTo(threeItemLayout.width, 5);
+    expect((rect as any).baseAttributes.x).toBeCloseTo(threeItemLayout.x, 5);
+    expect((rect as any).baseAttributes.width).toBeCloseTo(threeItemLayout.width, 5);
+    expect(rect.getFinalAttribute().x).toBeCloseTo(threeItemLayout.x, 5);
+    expect(rect.getFinalAttribute().width).toBeCloseTo(threeItemLayout.width, 5);
+  });
+
   test('switching states mid-animation restores to the new static truth and blocks late writes', () => {
     const { group, ticker, graphicService } = createStageHarness('state-conflict');
     const rect = createAnimatedRect(graphicService);

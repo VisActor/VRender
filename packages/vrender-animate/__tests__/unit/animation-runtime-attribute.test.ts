@@ -958,6 +958,138 @@ describe('D3 pre-handoff animation runtime', () => {
     expect(rect.getFinalAttribute().width).toBeCloseTo(threeItemLayout.width, 5);
   });
 
+  test('executor update keeps parent clip path in sync with child transient layout', () => {
+    const { group, ticker, graphicService } = createStageHarness('executor-update-clip-path-sync');
+    const currentLayout = {
+      x: 266.8696428571429,
+      y: 404,
+      y1: 808,
+      width: 142.39017857142858,
+      visible: true
+    };
+    const finalLayout = {
+      x: 257.01875,
+      y: 404,
+      y1: 808,
+      width: 112.8375,
+      visible: true
+    };
+    const rect = createRect(currentLayout);
+    const clipRect = createRect(finalLayout);
+    bindGraphicService(rect as any, graphicService);
+    bindGraphicService(clipRect as any, graphicService);
+    rect.setFinalAttributes(currentLayout);
+    clipRect.setFinalAttributes(finalLayout);
+    group.appendChild(rect);
+    group.setAttributes({
+      clip: true,
+      path: [clipRect]
+    });
+
+    (rect as any).context = {
+      animationState: 'update',
+      data: [{ value: 10 }],
+      diffAttrs: {
+        x: finalLayout.x,
+        width: finalLayout.width
+      },
+      finalAttrs: finalLayout
+    };
+    rect.setFinalAttributes(finalLayout);
+
+    new AnimateExecutor(group).execute({
+      type: 'update',
+      duration: 300,
+      easing: 'linear'
+    });
+
+    expect(clipRect.attribute.x).toBeCloseTo(currentLayout.x, 5);
+    expect(clipRect.attribute.width).toBeCloseTo(currentLayout.width, 5);
+    expect((clipRect as any).baseAttributes.x).toBeCloseTo(finalLayout.x, 5);
+    expect((clipRect as any).baseAttributes.width).toBeCloseTo(finalLayout.width, 5);
+
+    tick(ticker, 20);
+    expect(rect.attribute.x).toBeLessThan(currentLayout.x);
+    expect(rect.attribute.x).toBeGreaterThan(finalLayout.x);
+    expect(rect.attribute.width).toBeLessThan(currentLayout.width);
+    expect(rect.attribute.width).toBeGreaterThan(finalLayout.width);
+    expect(clipRect.attribute.x).toBeCloseTo(rect.attribute.x, 5);
+    expect(clipRect.attribute.width).toBeCloseTo(rect.attribute.width, 5);
+    expect((clipRect as any).baseAttributes.x).toBeCloseTo(finalLayout.x, 5);
+    expect((clipRect as any).baseAttributes.width).toBeCloseTo(finalLayout.width, 5);
+
+    tick(ticker, 280);
+    expect(rect.attribute.x).toBeCloseTo(finalLayout.x, 5);
+    expect(rect.attribute.width).toBeCloseTo(finalLayout.width, 5);
+    expect(clipRect.attribute.x).toBeCloseTo(finalLayout.x, 5);
+    expect(clipRect.attribute.width).toBeCloseTo(finalLayout.width, 5);
+    expect((clipRect as any).baseAttributes.x).toBeCloseTo(finalLayout.x, 5);
+    expect((clipRect as any).baseAttributes.width).toBeCloseTo(finalLayout.width, 5);
+    expect(clipRect.getFinalAttribute().x).toBeCloseTo(finalLayout.x, 5);
+    expect(clipRect.getFinalAttribute().width).toBeCloseTo(finalLayout.width, 5);
+  });
+
+  test('executor update does not sync unrelated parent clip paths', () => {
+    const { group, ticker, graphicService } = createStageHarness('executor-update-unrelated-clip-path');
+    const currentLayout = {
+      x: 100,
+      y: 0,
+      y1: 100,
+      width: 80,
+      visible: true
+    };
+    const finalLayout = {
+      x: 120,
+      y: 0,
+      y1: 100,
+      width: 40,
+      visible: true
+    };
+    const unrelatedClipLayout = {
+      x: 0,
+      y: 0,
+      y1: 100,
+      width: 300,
+      visible: true
+    };
+    const rect = createRect(currentLayout);
+    const clipRect = createRect(unrelatedClipLayout);
+    bindGraphicService(rect as any, graphicService);
+    bindGraphicService(clipRect as any, graphicService);
+    rect.setFinalAttributes(currentLayout);
+    clipRect.setFinalAttributes(unrelatedClipLayout);
+    group.appendChild(rect);
+    group.setAttributes({
+      clip: true,
+      path: [clipRect]
+    });
+
+    (rect as any).context = {
+      animationState: 'update',
+      data: [{ value: 10 }],
+      diffAttrs: {
+        x: finalLayout.x,
+        width: finalLayout.width
+      },
+      finalAttrs: finalLayout
+    };
+    rect.setFinalAttributes(finalLayout);
+
+    new AnimateExecutor(group).execute({
+      type: 'update',
+      duration: 100,
+      easing: 'linear'
+    });
+
+    tick(ticker, 50);
+    expect(rect.attribute.x).toBeCloseTo(110, 5);
+    expect(rect.attribute.width).toBeCloseTo(60, 5);
+    expect(clipRect.attribute.x).toBeCloseTo(unrelatedClipLayout.x, 5);
+    expect(clipRect.attribute.width).toBeCloseTo(unrelatedClipLayout.width, 5);
+    expect((clipRect as any).baseAttributes.x).toBeCloseTo(unrelatedClipLayout.x, 5);
+    expect((clipRect as any).baseAttributes.width).toBeCloseTo(unrelatedClipLayout.width, 5);
+  });
+
   test('switching states mid-animation restores to the new static truth and blocks late writes', () => {
     const { group, ticker, graphicService } = createStageHarness('state-conflict');
     const rect = createAnimatedRect(graphicService);

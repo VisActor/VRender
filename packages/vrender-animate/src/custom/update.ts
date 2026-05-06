@@ -141,7 +141,6 @@ export class Update extends ACustomAnimate<Record<string, number>> {
 
     const clipGraphic = path[childIndex] as any;
     if (!clipGraphic?.attribute || clipGraphic.type !== target.type || !this.isClipPathStaticTarget(clipGraphic)) {
-      this.clipPathSyncDisabled = true;
       return;
     }
 

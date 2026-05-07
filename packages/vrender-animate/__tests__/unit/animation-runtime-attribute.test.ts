@@ -991,6 +991,85 @@ describe('D3 pre-handoff animation runtime', () => {
     expect(rect.getFinalAttribute().y).toBe(next.y);
   });
 
+  test('executor update consumes start snapshots after split planners replace diffAttrs by channel subset', () => {
+    const { group, ticker, graphicService } = createStageHarness('executor-update-split-start-snapshot');
+    const initial = {
+      x: 10,
+      y: 50,
+      width: 20,
+      height: 10,
+      visible: true
+    };
+    const next = {
+      ...initial,
+      x: 100,
+      y: 3,
+      height: 34
+    };
+    const rect = createRect(initial);
+    bindGraphicService(rect as any, graphicService);
+    rect.setFinalAttributes(initial);
+    group.appendChild(rect);
+
+    const diffAttrs = {
+      x: next.x,
+      y: next.y,
+      height: next.height
+    };
+    (rect as any).context = {
+      animationState: 'update',
+      diffState: 'update',
+      data: [{ id: 'China_share_global_co2' }],
+      diffAttrs,
+      finalAttrs: next
+    };
+
+    rect.setAttributesAndPreventAnimate(diffAttrs);
+    rect.setFinalAttributes(next);
+
+    (rect as any).context.diffAttrs = {
+      y: next.y,
+      height: next.height
+    };
+    (rect as any).executeAnimation({
+      type: 'update',
+      duration: 300,
+      easing: 'linear'
+    });
+
+    tick(ticker, 150);
+    expect(rect.attribute.y).toBeGreaterThan(next.y);
+    expect(rect.attribute.y).toBeLessThan(initial.y);
+    expect(rect.attribute.height).toBeGreaterThan(initial.height);
+    expect(rect.attribute.height).toBeLessThan(next.height);
+
+    tick(ticker, 150);
+    expect(rect.attribute.y).toBe(next.y);
+    expect(rect.attribute.height).toBe(next.height);
+
+    (rect as any).context.diffAttrs = {
+      x: next.x
+    };
+    (rect as any).executeAnimation({
+      type: 'update',
+      duration: 300,
+      easing: 'linear'
+    });
+
+    tick(ticker, 150);
+    expect(rect.attribute.x).toBeGreaterThan(initial.x);
+    expect(rect.attribute.x).toBeLessThan(next.x);
+
+    tick(ticker, 150);
+    expect(rect.attribute.x).toBe(next.x);
+    expect((rect as any).baseAttributes.x).toBe(next.x);
+    expect((rect as any).baseAttributes.y).toBe(next.y);
+    expect((rect as any).baseAttributes.height).toBe(next.height);
+    expect(rect.getFinalAttribute().x).toBe(next.x);
+    expect(rect.getFinalAttribute().y).toBe(next.y);
+    expect(rect.getFinalAttribute().height).toBe(next.height);
+  });
+
   test('superseded executor update cannot commit stale layout when it ends late', () => {
     const { group, ticker, graphicService } = createStageHarness('executor-update-stale-end');
     const threeItemLayout = {

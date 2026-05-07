@@ -1343,10 +1343,14 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       return;
     }
 
-    let fromAttrs: Record<string, any> | null =
-      this.transientFromAttrsBeforePreventAnimateDiffAttrs === diffAttrs
-        ? this.transientFromAttrsBeforePreventAnimate ?? null
-        : null;
+    const sameDiffAttrs = this.transientFromAttrsBeforePreventAnimateDiffAttrs === diffAttrs;
+    let fromAttrs: Record<string, any> | null = sameDiffAttrs
+      ? this.transientFromAttrsBeforePreventAnimate ?? null
+      : null;
+    if (!sameDiffAttrs) {
+      this.transientFromAttrsBeforePreventAnimate = null;
+      this.transientFromAttrsBeforePreventAnimateDiffAttrs = null;
+    }
     let captured = false;
     for (let i = 0; i < keys.length; i++) {
       const key = keys[i];
@@ -1371,13 +1375,19 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     }
   }
 
-  protected consumeTransientFromAttrsBeforePreventAnimate(
-    rawDiffAttrs: Record<string, any>,
-    diffAttrs: Record<string, any>
-  ): Record<string, any> | null {
+  protected consumeTransientFromAttrsBeforePreventAnimate(diffAttrs: Record<string, any>): Record<string, any> | null {
     const transientFromAttrs = this.transientFromAttrsBeforePreventAnimate;
-    if (!transientFromAttrs || this.transientFromAttrsBeforePreventAnimateDiffAttrs !== rawDiffAttrs) {
+    const sourceDiffAttrs = this.transientFromAttrsBeforePreventAnimateDiffAttrs;
+    if (!transientFromAttrs || !sourceDiffAttrs) {
       return null;
+    }
+    for (const key in diffAttrs) {
+      if (
+        Object.prototype.hasOwnProperty.call(diffAttrs, key) &&
+        (!Object.prototype.hasOwnProperty.call(sourceDiffAttrs, key) || !isEqual(sourceDiffAttrs[key], diffAttrs[key]))
+      ) {
+        return null;
+      }
     }
 
     let fromAttrs: Record<string, any> | null = null;

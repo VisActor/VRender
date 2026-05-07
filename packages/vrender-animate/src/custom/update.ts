@@ -66,16 +66,13 @@ export class Update extends ACustomAnimate<Record<string, number>> {
     const targetContext = this.target.context ?? ({} as any);
     let { diffAttrs = {} } = targetContext;
     const { options } = this.params as any;
-    const rawDiffAttrs = diffAttrs;
 
     diffAttrs = filterExcludedChannels(diffAttrs, options?.excludeChannels);
 
     this.props = diffAttrs;
     const consumeTransientFromAttrs = (this.target as any).consumeTransientFromAttrsBeforePreventAnimate;
     this.updateFromAttrs =
-      typeof consumeTransientFromAttrs === 'function'
-        ? consumeTransientFromAttrs.call(this.target, rawDiffAttrs, diffAttrs)
-        : null;
+      typeof consumeTransientFromAttrs === 'function' ? consumeTransientFromAttrs.call(this.target, diffAttrs) : null;
     this.clipPathSyncKeys = Object.keys(diffAttrs).filter(key => clipPathGeometryAttrs[key]);
     this.clipPathSyncDisabled = !this.clipPathSyncKeys.length;
     this.syncParentClipPathToTarget();

@@ -934,6 +934,63 @@ describe('D3 pre-handoff animation runtime', () => {
     expect(rect.getFinalAttribute().width).toBe(resized.width);
   });
 
+  test('executor update uses the transient value before setAttributesAndPreventAnimate as its start frame', () => {
+    const { group, ticker, graphicService } = createStageHarness('executor-update-start-snapshot');
+    const initial = {
+      x: 0,
+      y: 50,
+      width: 10,
+      height: 10,
+      visible: true
+    };
+    const next = {
+      ...initial,
+      y: 3
+    };
+    const rect = createRect(initial);
+    bindGraphicService(rect as any, graphicService);
+    rect.setFinalAttributes(initial);
+    group.appendChild(rect);
+
+    const diffAttrs = {
+      y: next.y
+    };
+    (rect as any).context = {
+      animationState: 'update',
+      diffState: 'update',
+      data: [{ id: 'China_share_global_co2' }],
+      diffAttrs,
+      finalAttrs: next
+    };
+
+    rect.setAttributesAndPreventAnimate(diffAttrs);
+    rect.setFinalAttributes(next);
+
+    expect(Object.prototype.hasOwnProperty.call((rect as any).context, '__vrenderTransientFromAttrs')).toBe(false);
+    expect(Object.prototype.hasOwnProperty.call((rect as any).context, '__vrenderTransientFromAttrsDiffAttrs')).toBe(
+      false
+    );
+    expect(rect.attribute.y).toBe(next.y);
+    expect(rect.getFinalAttribute().y).toBe(next.y);
+
+    (rect as any).executeAnimation({
+      type: 'update',
+      duration: 300,
+      easing: 'linear'
+    });
+
+    tick(ticker, 150);
+    expect(rect.attribute.y).toBeGreaterThan(next.y);
+    expect(rect.attribute.y).toBeLessThan(initial.y);
+    expect(rect.attribute.y).toBeCloseTo(26.5, 5);
+    expect(rect.getFinalAttribute().y).toBe(next.y);
+
+    tick(ticker, 150);
+    expect(rect.attribute.y).toBe(next.y);
+    expect((rect as any).baseAttributes.y).toBe(next.y);
+    expect(rect.getFinalAttribute().y).toBe(next.y);
+  });
+
   test('superseded executor update cannot commit stale layout when it ends late', () => {
     const { group, ticker, graphicService } = createStageHarness('executor-update-stale-end');
     const threeItemLayout = {

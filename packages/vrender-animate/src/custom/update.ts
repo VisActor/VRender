@@ -50,6 +50,7 @@ export interface IUpdateAnimationOptions {
 export class Update extends ACustomAnimate<Record<string, number>> {
   declare valid: boolean;
   // params: IUpdateAnimationOptions;
+  private updateFromAttrs: Record<string, any> | null = null;
   private clipPathSyncKeys: string[] | null = null;
   private clipPathSyncParent: any = null;
   private clipPathSyncChildIndex: number = -1;
@@ -62,15 +63,32 @@ export class Update extends ACustomAnimate<Record<string, number>> {
 
   onBind() {
     super.onBind();
-    let { diffAttrs = {} } = this.target.context ?? ({} as any);
+    const targetContext = this.target.context ?? ({} as any);
+    let { diffAttrs = {} } = targetContext;
     const { options } = this.params as any;
+    const rawDiffAttrs = diffAttrs;
 
     diffAttrs = filterExcludedChannels(diffAttrs, options?.excludeChannels);
 
     this.props = diffAttrs;
+    const consumeTransientFromAttrs = (this.target as any).consumeTransientFromAttrsBeforePreventAnimate;
+    this.updateFromAttrs =
+      typeof consumeTransientFromAttrs === 'function'
+        ? consumeTransientFromAttrs.call(this.target, rawDiffAttrs, diffAttrs)
+        : null;
     this.clipPathSyncKeys = Object.keys(diffAttrs).filter(key => clipPathGeometryAttrs[key]);
     this.clipPathSyncDisabled = !this.clipPathSyncKeys.length;
     this.syncParentClipPathToTarget();
+  }
+
+  trySyncStartProps(): void {
+    const updateFromAttrs = this.updateFromAttrs;
+    this.propKeys.forEach(key => {
+      this.fromProps[key] =
+        updateFromAttrs && Object.prototype.hasOwnProperty.call(updateFromAttrs, key)
+          ? updateFromAttrs[key]
+          : this.animate.target.getComputedAttribute(key);
+    });
   }
 
   onEnd(cb?: (animate: IAnimate, step: IStep) => void): void {

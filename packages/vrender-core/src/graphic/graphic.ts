@@ -321,6 +321,8 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
 
   // 保存语法上下文
   declare context?: Record<string, any>;
+  private transientFromAttrsBeforePreventAnimate?: Record<string, any> | null;
+  private transientFromAttrsBeforePreventAnimateDiffAttrs?: Record<string, any> | null;
 
   static userSymbolMap: Record<string, ISymbolClass> = {};
 
@@ -1306,16 +1308,111 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     context?: ISetAttributeContext,
     ignorePriority?: boolean
   ) {
+    if (!params) {
+      return;
+    }
+    const keys = Object.keys(params);
+    this.captureTransientFromAttrsBeforePreventAnimate(params, keys, context);
     this.visitTrackedAnimates(animate => {
       // 优先级最高的动画（一般是循环动画），不屏蔽
       if (animate.priority === Infinity && !ignorePriority) {
         return;
       }
-      Object.keys(params).forEach(key => {
-        animate.preventAttr(key);
-      });
+      animate.preventAttrs(keys);
     });
     this.applyTransientAttributes(params, forceUpdateTag, context);
+  }
+
+  protected captureTransientFromAttrsBeforePreventAnimate(
+    params: Partial<T>,
+    keys: string[],
+    context?: ISetAttributeContext
+  ) {
+    const graphicContext = this.context as Record<string, any> | undefined;
+    const diffAttrs = graphicContext?.diffAttrs as Record<string, any> | undefined;
+    const updateType = context?.type;
+    if (
+      !keys.length ||
+      !graphicContext ||
+      !diffAttrs ||
+      updateType === AttributeUpdateType.STATE ||
+      (updateType != null &&
+        updateType >= AttributeUpdateType.ANIMATE_BIND &&
+        updateType <= AttributeUpdateType.ANIMATE_END)
+    ) {
+      return;
+    }
+
+    let fromAttrs: Record<string, any> | null =
+      this.transientFromAttrsBeforePreventAnimateDiffAttrs === diffAttrs
+        ? this.transientFromAttrsBeforePreventAnimate ?? null
+        : null;
+    let captured = false;
+    for (let i = 0; i < keys.length; i++) {
+      const key = keys[i];
+      if (!Object.prototype.hasOwnProperty.call(diffAttrs, key)) {
+        continue;
+      }
+
+      const previousValue = (this.attribute as Record<string, any>)[key];
+      const nextValue = (params as Record<string, any>)[key];
+      if (isEqual(previousValue, nextValue)) {
+        continue;
+      }
+
+      fromAttrs ?? (fromAttrs = {});
+      fromAttrs[key] = cloneAttributeValue(previousValue);
+      captured = true;
+    }
+
+    if (captured) {
+      this.transientFromAttrsBeforePreventAnimate = fromAttrs;
+      this.transientFromAttrsBeforePreventAnimateDiffAttrs = diffAttrs;
+    }
+  }
+
+  protected consumeTransientFromAttrsBeforePreventAnimate(
+    rawDiffAttrs: Record<string, any>,
+    diffAttrs: Record<string, any>
+  ): Record<string, any> | null {
+    const transientFromAttrs = this.transientFromAttrsBeforePreventAnimate;
+    if (!transientFromAttrs || this.transientFromAttrsBeforePreventAnimateDiffAttrs !== rawDiffAttrs) {
+      return null;
+    }
+
+    let fromAttrs: Record<string, any> | null = null;
+    let remaining = false;
+    for (const key in transientFromAttrs) {
+      if (!Object.prototype.hasOwnProperty.call(transientFromAttrs, key)) {
+        continue;
+      }
+
+      if (Object.prototype.hasOwnProperty.call(diffAttrs, key)) {
+        fromAttrs ?? (fromAttrs = {});
+        fromAttrs[key] = transientFromAttrs[key];
+        continue;
+      }
+
+      remaining = true;
+    }
+
+    if (remaining) {
+      const nextTransientFromAttrs: Record<string, any> = {};
+      for (const key in transientFromAttrs) {
+        if (
+          Object.prototype.hasOwnProperty.call(transientFromAttrs, key) &&
+          !Object.prototype.hasOwnProperty.call(diffAttrs, key)
+        ) {
+          nextTransientFromAttrs[key] = transientFromAttrs[key];
+        }
+      }
+      this.transientFromAttrsBeforePreventAnimate = nextTransientFromAttrs;
+    } else {
+      this.transientFromAttrsBeforePreventAnimate = null;
+      this.transientFromAttrsBeforePreventAnimateDiffAttrs = null;
+    }
+
+    return fromAttrs;
   }
 
   setAttributes(params: Partial<T>, forceUpdateTag: boolean = false, context?: ISetAttributeContext) {

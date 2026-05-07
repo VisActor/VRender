@@ -19,6 +19,15 @@ function noop() {
   //...
 }
 
+function includesKey(keys: string[], key: string): boolean {
+  for (let i = 0; i < keys.length; i++) {
+    if (keys[i] === key) {
+      return true;
+    }
+  }
+  return false;
+}
+
 export class Step implements IStep {
   id: number;
   type: IAnimateStepType;
@@ -178,6 +187,25 @@ export class Step implements IStep {
     (this.target as any).onAttributeUpdate?.({ type: AttributeUpdateType.ANIMATE_UPDATE });
   };
 
+  protected runInterpolateUpdate(fromProps: Record<string, any>, toProps: Record<string, any>, ratio: number): void {
+    if (this.animate.interpolateUpdateFunction) {
+      this.animate.interpolateUpdateFunction(fromProps, toProps, ratio, this, this.target);
+      return;
+    }
+
+    const funcs = this.interpolateUpdateFunctions;
+    const propKeys = this.propKeys;
+    if (!funcs || !propKeys) {
+      return;
+    }
+    for (let index = 0; index < funcs.length; index++) {
+      const key = propKeys[index];
+      const fromValue = fromProps[key];
+      const toValue = toProps[key];
+      funcs[index](key, fromValue, toValue, ratio, this, this.target);
+    }
+  }
+
   /**
    * 首次运行逻辑
    * 如果跳帧了就不一定会执行
@@ -217,30 +245,87 @@ export class Step implements IStep {
         target.animates?.forEach(cb);
       });
 
+    const propKeys = this.propKeys;
     forEachTrackedAnimate((a: any) => {
       if (a === animate || a.priority > animate.priority || a.priority === Infinity) {
         return;
       }
       const fromProps = a.getStartProps();
-      this.propKeys.forEach(key => {
+      let conflictKeys: string[] | null = null;
+      for (let i = 0; i < propKeys.length; i++) {
+        const key = propKeys[i];
         if (fromProps[key] != null) {
-          a.preventAttr(key);
+          (conflictKeys ?? (conflictKeys = [])).push(key);
         }
-      });
+      }
+      if (conflictKeys) {
+        a.preventAttrs(conflictKeys);
+      }
     });
+  }
+
+  protected removeKeysFromRecord<T extends Record<string, any> | undefined>(record: T, keys: string[]): T {
+    if (!record) {
+      return record;
+    }
+
+    let hasBlockedKey = false;
+    for (const key in record) {
+      if (Object.prototype.hasOwnProperty.call(record, key) && includesKey(keys, key)) {
+        hasBlockedKey = true;
+        break;
+      }
+    }
+    if (!hasBlockedKey) {
+      return record;
+    }
+
+    const nextRecord: Record<string, any> = {};
+    for (const key in record) {
+      if (Object.prototype.hasOwnProperty.call(record, key) && !includesKey(keys, key)) {
+        nextRecord[key] = record[key];
+      }
+    }
+    return nextRecord as T;
   }
 
   /**
    * 删除自身属性，会直接从props等内容里删除掉
    */
   deleteSelfAttr(key: string): void {
-    delete this.props[key];
-    // fromProps在动画开始时才会计算，这时可能不在
-    this.fromProps && delete this.fromProps[key];
-    const index = this.propKeys.indexOf(key);
-    if (index !== -1) {
-      this.propKeys.splice(index, 1);
-      this.interpolateUpdateFunctions?.splice(index, 1);
+    this.deleteSelfAttrs([key]);
+  }
+
+  deleteSelfAttrs(keys: string[]): void {
+    if (!keys?.length) {
+      return;
+    }
+
+    this.props = this.removeKeysFromRecord(this.props, keys);
+    this.fromProps = this.removeKeysFromRecord(this.fromProps, keys);
+    this.fromParsedProps = this.removeKeysFromRecord(this.fromParsedProps, keys);
+    this.toParsedProps = this.removeKeysFromRecord(this.toParsedProps, keys);
+
+    if (this.propKeys?.length) {
+      const funcs = this.interpolateUpdateFunctions;
+      let writeIndex = 0;
+      for (let readIndex = 0; readIndex < this.propKeys.length; readIndex++) {
+        const propKey = this.propKeys[readIndex];
+        if (includesKey(keys, propKey)) {
+          continue;
+        }
+        if (writeIndex !== readIndex) {
+          this.propKeys[writeIndex] = propKey;
+          if (funcs) {
+            funcs[writeIndex] = funcs[readIndex];
+          }
+        }
+        writeIndex++;
+      }
+      this.propKeys.length = writeIndex;
+      if (funcs) {
+        funcs.length = writeIndex;
+      }
     }
   }
 
@@ -266,18 +351,7 @@ export class Step implements IStep {
     }
     // 应用缓动函数
     const easedRatio = this.easing(ratio);
-    this.animate.interpolateUpdateFunction
-      ? this.animate.interpolateUpdateFunction(this.fromProps, this.props, easedRatio, this, this.target)
-      : this.interpolateUpdateFunctions.forEach((func, index) => {
-          // 如果这个属性被屏蔽了，直接跳过
-          if (!this.animate.validAttr(this.propKeys[index])) {
-            return;
-          }
-          const key = this.propKeys[index];
-          const fromValue = this.fromProps[key];
-          const toValue = this.props[key];
-          func(key, fromValue, toValue, easedRatio, this, this.target);
-        });
+    this.runInterpolateUpdate(this.fromProps, this.props, easedRatio);
     this.onUpdate(end, easedRatio, out);
     this.syncAttributeUpdate();
   }

@@ -1,7 +1,8 @@
-import { application, createGroup, createRect, DefaultGraphicService } from '@visactor/vrender-core';
+import { application, createGroup, createLine, createRect, DefaultGraphicService } from '@visactor/vrender-core';
 import { registerAnimate } from '../../src/register';
 import { registerCustomAnimate } from '../../src/custom/register';
 import { AnimateExecutor } from '../../src/executor/animate-executor';
+import { TagPointsUpdate } from '../../src/custom/tag-points';
 import { DefaultTimeline } from '../../src/timeline';
 import { ManualTicker } from '../../src/ticker/manual-ticker';
 
@@ -95,6 +96,14 @@ function boundsSize(graphic: any) {
     width: bounds.x2 - bounds.x1,
     height: bounds.y2 - bounds.y1
   };
+}
+
+function pointList(xs: number[], ys: number[] = xs.map(() => 0)) {
+  return xs.map((x, index) => ({
+    x,
+    y: ys[index],
+    context: `p-${index}`
+  }));
 }
 
 describe('D3 pre-handoff animation runtime', () => {
@@ -643,6 +652,49 @@ describe('D3 pre-handoff animation runtime', () => {
     expect((rect as any).baseAttributes.x).toBe(0);
   });
 
+  test('animate.to interpolation frames use direct writes without polluting static truth', () => {
+    const { group, ticker, graphicService } = createStageHarness('self-to-direct-frame-path');
+    const rect = createAnimatedRect(graphicService);
+    group.appendChild(rect);
+
+    const transientCalls: Record<string, any>[] = [];
+    const originalApplyTransientAttributes = (rect as any).applyTransientAttributes.bind(rect);
+    (rect as any).applyTransientAttributes = (attrs: Record<string, any>, forceUpdateTag: boolean, context: any) => {
+      transientCalls.push({ attrs, forceUpdateTag, context });
+      return originalApplyTransientAttributes(attrs, forceUpdateTag, context);
+    };
+
+    rect.animate().to({ x: 100, width: 20 }, 100, 'linear');
+    tick(ticker, 50);
+
+    expect(transientCalls).toHaveLength(0);
+    expect(rect.attribute.x).toBeCloseTo(50, 5);
+    expect(rect.attribute.width).toBeCloseTo(15, 5);
+    expect((rect as any).baseAttributes.x).toBe(0);
+    expect((rect as any).baseAttributes.width).toBe(10);
+  });
+
+  test('ending an older self-driven animation does not restore over a newer animation frame', () => {
+    const { group, ticker, graphicService } = createStageHarness('self-to-superseded-restore');
+    const rect = createAnimatedRect(graphicService);
+    group.appendChild(rect);
+
+    rect.animate().to({ x: 100 }, 100, 'linear');
+    tick(ticker, 50);
+    expect(rect.attribute.x).toBeCloseTo(50, 5);
+
+    rect.animate().to({ x: 200 }, 100, 'linear');
+    tick(ticker, 25);
+    expect(rect.attribute.x).toBeGreaterThan(50);
+    expect(rect.attribute.x).toBeLessThan(200);
+    const newerFrameBeforeOldEnd = rect.attribute.x;
+
+    tick(ticker, 25);
+    expect(rect.attribute.x).toBeGreaterThan(newerFrameBeforeOldEnd);
+    expect(rect.attribute.x).toBeLessThan(200);
+    expect((rect as any).baseAttributes.x).toBe(0);
+  });
+
   test('animate.from interpolates from the provided value back to static truth', () => {
     const { group, ticker, graphicService } = createStageHarness('self-from');
     const rect = createAnimatedRect(graphicService);
@@ -1152,6 +1204,76 @@ describe('D3 pre-handoff animation runtime', () => {
     expect(clipRect.attribute.width).toBeCloseTo(unrelatedClipLayout.width, 5);
     expect((clipRect as any).baseAttributes.x).toBeCloseTo(unrelatedClipLayout.x, 5);
     expect((clipRect as any).baseAttributes.width).toBeCloseTo(unrelatedClipLayout.width, 5);
+  });
+
+  test('TagPointsUpdate commits resized final points as static truth after update animation', () => {
+    const { group, ticker, graphicService } = createStageHarness('tag-points-update-static-truth');
+    const oldPoints = pointList([78.83, 183.94, 289.06, 394.17], [135, 108, 81, 54]);
+    const resizedPoints = pointList([112.17, 261.72, 411.28, 560.83], [135, 108, 81, 54]);
+    const line = createLine({
+      points: oldPoints,
+      stroke: 'blue',
+      lineWidth: 2
+    });
+    bindGraphicService(line as any, graphicService);
+    line.setFinalAttributes({ points: resizedPoints });
+    group.appendChild(line);
+
+    line.animate().play(new TagPointsUpdate(null, null, 100, 'linear'));
+
+    expect((line as any).baseAttributes.points[0].x).toBe(oldPoints[0].x);
+    expect(line.getFinalAttribute().points[0].x).toBe(resizedPoints[0].x);
+
+    tick(ticker, 50);
+    expect(line.attribute.points[0].x).toBeCloseTo((oldPoints[0].x + resizedPoints[0].x) / 2, 5);
+    expect((line as any).baseAttributes.points[0].x).toBe(oldPoints[0].x);
+    expect(line.getFinalAttribute().points[0].x).toBe(resizedPoints[0].x);
+
+    tick(ticker, 50);
+    expect(line.attribute.points.map(point => point.x)).toEqual(resizedPoints.map(point => point.x));
+    expect((line as any).baseAttributes.points.map((point: any) => point.x)).toEqual(
+      resizedPoints.map(point => point.x)
+    );
+    expect(line.getFinalAttribute().points.map((point: any) => point.x)).toEqual(resizedPoints.map(point => point.x));
+    expect(Object.prototype.hasOwnProperty.call((line as any).baseAttributes, 'segments')).toBe(false);
+    expect(Object.prototype.hasOwnProperty.call(line.attribute, 'segments')).toBe(false);
+  });
+
+  test('TagPointsUpdate commits resized final segments as static truth after update animation', () => {
+    const { group, ticker, graphicService } = createStageHarness('tag-points-update-segments-static-truth');
+    const oldSegments = [{ points: pointList([78.83, 183.94, 289.06, 394.17], [135, 108, 81, 54]) }];
+    const resizedSegments = [{ points: pointList([112.17, 261.72, 411.28, 560.83], [135, 108, 81, 54]) }];
+    const line = createLine({
+      segments: oldSegments,
+      stroke: 'blue',
+      lineWidth: 2
+    });
+    bindGraphicService(line as any, graphicService);
+    line.setFinalAttributes({ segments: resizedSegments });
+    group.appendChild(line);
+
+    line.animate().play(new TagPointsUpdate(null, null, 100, 'linear'));
+
+    tick(ticker, 50);
+    expect(line.attribute.segments[0].points[0].x).toBeCloseTo(
+      (oldSegments[0].points[0].x + resizedSegments[0].points[0].x) / 2,
+      5
+    );
+    expect((line as any).baseAttributes.segments[0].points[0].x).toBe(oldSegments[0].points[0].x);
+    expect(line.getFinalAttribute().segments[0].points[0].x).toBe(resizedSegments[0].points[0].x);
+
+    tick(ticker, 50);
+    expect(line.attribute.segments[0].points.map(point => point.x)).toEqual(
+      resizedSegments[0].points.map(point => point.x)
+    );
+    expect((line as any).baseAttributes.segments[0].points.map((point: any) => point.x)).toEqual(
+      resizedSegments[0].points.map(point => point.x)
+    );
+    expect(line.getFinalAttribute().segments[0].points.map((point: any) => point.x)).toEqual(
+      resizedSegments[0].points.map(point => point.x)
+    );
+    expect(Object.prototype.hasOwnProperty.call((line as any).baseAttributes, 'points')).toBe(false);
+    expect(Object.prototype.hasOwnProperty.call(line.attribute, 'points')).toBe(false);
   });
 
   test('switching states mid-animation restores to the new static truth and blocks late writes', () => {

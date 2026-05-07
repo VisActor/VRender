@@ -15,6 +15,40 @@ import { defaultTimeline } from './timeline';
 import { FromTo } from './custom/fromTo';
 import { applyAnimationTransientAttributes } from './custom/transient';
 
+function includesKey(keys: string[], key: string): boolean {
+  for (let i = 0; i < keys.length; i++) {
+    if (keys[i] === key) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function removeKeysFromRecord<T extends Record<string, any> | undefined>(record: T, keys: string[]): T {
+  if (!record) {
+    return record;
+  }
+
+  let hasBlockedKey = false;
+  for (const key in record) {
+    if (Object.prototype.hasOwnProperty.call(record, key) && includesKey(keys, key)) {
+      hasBlockedKey = true;
+      break;
+    }
+  }
+  if (!hasBlockedKey) {
+    return record;
+  }
+
+  const nextRecord: Record<string, any> = {};
+  for (const key in record) {
+    if (Object.prototype.hasOwnProperty.call(record, key) && !includesKey(keys, key)) {
+      nextRecord[key] = record[key];
+    }
+  }
+  return nextRecord as T;
+}
+
 export class Animate implements IAnimate {
   readonly id: string | number;
   status: AnimateStatus;
@@ -375,22 +409,30 @@ export class Animate implements IAnimate {
    * 屏蔽单个属性
    */
   preventAttr(key: string): void {
-    this._preventAttrs.add(key);
-    // 从所有step中移除该属性，并从自身的_startProps和_endProps中移除该属性
-    delete this._startProps[key];
-    delete this._endProps[key];
-    let step = this._firstStep;
-    while (step) {
-      step.deleteSelfAttr(key);
-      step = step.next;
-    }
+    this.preventAttrs([key]);
   }
 
   /**
    * 屏蔽多个属性
    */
   preventAttrs(keys: string[]): void {
-    keys.forEach(key => this._preventAttrs.add(key));
+    if (!keys?.length) {
+      return;
+    }
+
+    for (let i = 0; i < keys.length; i++) {
+      this._preventAttrs.add(keys[i]);
+    }
+    // 从自身的_startProps和_endProps中移除该属性。这里不用 delete，
+    // 避免大量图元频繁切换动画时破坏对象形状并放大 GC 压力。
+    this._startProps = removeKeysFromRecord(this._startProps, keys);
+    this._endProps = removeKeysFromRecord(this._endProps, keys);
+
+    let step = this._firstStep;
+    while (step) {
+      step.deleteSelfAttrs(keys);
+      step = step.next;
+    }
   }
 
   /**

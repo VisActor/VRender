@@ -1,7 +1,7 @@
 import { pointInterpolation, type IGraphic, type IGroup, type EasingType } from '@visactor/vrender-core';
 import { isValidNumber, type IPointLike } from '@visactor/vutils';
 import { ACustomAnimate } from './custom-animate';
-import { applyAppearStartAttributes } from './transient';
+import { applyAnimationFrameAttributes, applyAppearStartAttributes } from './transient';
 
 interface IAnimationParameters {
   width: number;
@@ -96,9 +96,11 @@ export class GworPointsBase extends ACustomAnimate<Record<string, number>> {
       return;
     }
 
-    (this.target.attribute as any).points = fromPoints.map((point, index) => {
-      const newPoint = pointInterpolation(fromPoints[index], toPoints[index], ratio);
-      return newPoint;
+    applyAnimationFrameAttributes(this.target, {
+      points: fromPoints.map((point, index) => {
+        const newPoint = pointInterpolation(fromPoints[index], toPoints[index], ratio);
+        return newPoint;
+      })
     });
     this.target.addUpdatePositionTag();
     this.target.addUpdateShapeAndBoundsTag();

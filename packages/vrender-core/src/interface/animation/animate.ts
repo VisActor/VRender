@@ -63,6 +63,8 @@ export interface IStep {
 
   // 屏蔽自身属性，会直接从props等内容里删除掉
   deleteSelfAttr: (key: string) => void;
+  // 批量屏蔽自身属性，避免大量图元切换时反复 splice/delete
+  deleteSelfAttrs: (keys: string[]) => void;
 
   // 停止
   stop: () => void;

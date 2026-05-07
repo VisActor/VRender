@@ -1,4 +1,4 @@
-import type { EasingType, IAnimate, IStep } from '@visactor/vrender-core';
+import type { EasingType } from '@visactor/vrender-core';
 import { ACustomAnimate } from './custom-animate';
 
 export interface IUpdateAnimationOptions {
@@ -27,18 +27,7 @@ export class State extends ACustomAnimate<Record<string, number>> {
     }
     // 应用缓动函数
     const easedRatio = this.easing(ratio);
-    this.animate.interpolateUpdateFunction
-      ? this.animate.interpolateUpdateFunction(this.fromProps, this.props, easedRatio, this, this.target)
-      : this.interpolateUpdateFunctions.forEach((func, index) => {
-          // 如果这个属性被屏蔽了，直接跳过
-          if (!this.animate.validAttr(this.propKeys[index])) {
-            return;
-          }
-          const key = this.propKeys[index];
-          const fromValue = this.fromProps[key];
-          const toValue = this.props[key];
-          func(key, fromValue, toValue, easedRatio, this, this.target);
-        });
+    this.runInterpolateUpdate(this.fromProps, this.props, easedRatio);
     this.onUpdate(end, easedRatio, out);
     this.syncAttributeUpdate();
   }

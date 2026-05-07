@@ -1,6 +1,10 @@
-import type { EasingType, IAnimate, IStep } from '@visactor/vrender-core';
+import { AttributeUpdateType, type EasingType, type IAnimate, type IStep } from '@visactor/vrender-core';
 import { ACustomAnimate } from './custom-animate';
-import { applyAppearStartAttributes } from './transient';
+import {
+  applyAnimationFrameAttributes,
+  applyAnimationTransientAttributes,
+  applyAppearStartAttributes
+} from './transient';
 
 export interface IScaleAnimationOptions {
   direction?: 'x' | 'y' | 'xy';
@@ -42,10 +46,11 @@ export class CommonIn extends ACustomAnimate<Record<string, number>> {
   }
 
   onUpdate(end: boolean, ratio: number, out: Record<string, any>): void {
-    const attribute: Record<string, any> = this.target.attribute;
+    const attrs: Record<string, any> = {};
     this.propKeys.forEach(key => {
-      attribute[key] = this.from[key] + (this.to[key] - this.from[key]) * ratio;
+      attrs[key] = this.from[key] + (this.to[key] - this.from[key]) * ratio;
     });
+    applyAnimationFrameAttributes(this.target, attrs);
     this.target.addUpdatePositionTag();
     this.target.addUpdateShapeAndBoundsTag();
   }
@@ -76,7 +81,7 @@ export class CommonOut extends ACustomAnimate<Record<string, number>> {
     this.from = from;
     this.to = to;
 
-    Object.assign(this.target.attribute, from);
+    applyAnimationTransientAttributes(this.target, from, AttributeUpdateType.ANIMATE_BIND);
     this.target.addUpdatePositionTag();
     this.target.addUpdateBoundTag();
     // this.target.setAttributes(from as any);
@@ -87,10 +92,11 @@ export class CommonOut extends ACustomAnimate<Record<string, number>> {
   }
 
   onUpdate(end: boolean, ratio: number, out: Record<string, any>): void {
-    const attribute: Record<string, any> = this.target.attribute;
+    const attrs: Record<string, any> = {};
     this.propKeys.forEach(key => {
-      attribute[key] = this.from[key] + (this.to[key] - this.from[key]) * ratio;
+      attrs[key] = this.from[key] + (this.to[key] - this.from[key]) * ratio;
     });
+    applyAnimationFrameAttributes(this.target, attrs);
     this.target.addUpdatePositionTag();
     this.target.addUpdateShapeAndBoundsTag();
   }

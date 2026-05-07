@@ -55,8 +55,12 @@ export class FromTo extends ACustomAnimate<Record<string, number>> {
   }
 
   deleteSelfAttr(key: string): void {
-    super.deleteSelfAttr(key);
-    delete this.from[key];
+    this.deleteSelfAttrs([key]);
+  }
+
+  deleteSelfAttrs(keys: string[]): void {
+    super.deleteSelfAttrs(keys);
+    this.from = this.removeKeysFromRecord(this.from, keys);
   }
 
   /**
@@ -71,18 +75,7 @@ export class FromTo extends ACustomAnimate<Record<string, number>> {
     }
     // 应用缓动函数
     const easedRatio = this.easing(ratio);
-    this.animate.interpolateUpdateFunction
-      ? this.animate.interpolateUpdateFunction(this.from, this.props, easedRatio, this, this.target)
-      : this.interpolateUpdateFunctions.forEach((func, index) => {
-          // 如果这个属性被屏蔽了，直接跳过
-          if (!this.animate.validAttr(this.propKeys[index])) {
-            return;
-          }
-          const key = this.propKeys[index];
-          const fromValue = this.from[key];
-          const toValue = this.props[key];
-          func(key, fromValue, toValue, easedRatio, this, this.target);
-        });
+    this.runInterpolateUpdate(this.from, this.props, easedRatio);
     this.onUpdate(end, easedRatio, out);
     this.syncAttributeUpdate();
   }

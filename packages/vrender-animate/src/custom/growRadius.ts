@@ -1,7 +1,7 @@
 import { type IGraphic, type IGroup, type EasingType } from '@visactor/vrender-core';
 import { ACustomAnimate } from './custom-animate';
 import { isNumber } from '@visactor/vutils';
-import { applyAppearStartAttributes } from './transient';
+import { applyAnimationFrameAttributes, applyAppearStartAttributes } from './transient';
 
 interface IAnimationParameters {
   width: number;
@@ -131,10 +131,11 @@ export class GrowPointsBase extends ACustomAnimate<Record<string, number>> {
   }
 
   onUpdate(end: boolean, ratio: number, out: Record<string, any>): void {
-    const attribute: Record<string, any> = this.target.attribute;
+    const attrs: Record<string, any> = {};
     this.propKeys.forEach(key => {
-      attribute[key] = this.from[key] + (this.to[key] - this.from[key]) * ratio;
+      attrs[key] = this.from[key] + (this.to[key] - this.from[key]) * ratio;
     });
+    applyAnimationFrameAttributes(this.target, attrs);
     this.target.addUpdatePositionTag();
     this.target.addUpdateShapeAndBoundsTag();
   }

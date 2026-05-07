@@ -1,5 +1,25 @@
 import { AttributeUpdateType, type IGraphic } from '@visactor/vrender-core';
 
+const animateUpdateContext = { type: AttributeUpdateType.ANIMATE_UPDATE };
+
+export function applyAnimationFrameAttributes(target: IGraphic, attributes?: Record<string, any> | null): void {
+  if (!attributes) {
+    return;
+  }
+
+  const transientTarget = target as any;
+  if (!transientTarget.attribute) {
+    transientTarget.attribute = {};
+  }
+  const targetAttribute = transientTarget.attribute;
+  for (const key in attributes) {
+    if (Object.prototype.hasOwnProperty.call(attributes, key)) {
+      targetAttribute[key] = attributes[key];
+    }
+  }
+  transientTarget.onAttributeUpdate?.(animateUpdateContext);
+}
+
 export function applyAnimationTransientAttributes(
   target: IGraphic,
   attributes?: Record<string, any> | null,

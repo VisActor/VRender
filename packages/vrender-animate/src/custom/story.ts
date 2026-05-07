@@ -2,9 +2,32 @@ import { FadeIn } from './fade';
 import { interpolateColor, type EasingType } from '@visactor/vrender-core';
 import { ACustomAnimate } from './custom-animate';
 import { AnimateExecutor } from '../executor/animate-executor';
-import { applyAppearStartAttributes } from './transient';
+import {
+  applyAnimationFrameAttributes,
+  applyAnimationTransientAttributes,
+  applyAppearStartAttributes
+} from './transient';
 
 export class StoryFadeIn extends FadeIn {}
+
+function buildInterpolatedAttrs(
+  keys: string[],
+  from: Record<string, number>,
+  to: Record<string, number>,
+  ratio: number
+): Record<string, number> {
+  const attrs: Record<string, number> = {};
+  keys.forEach(key => {
+    attrs[key] = from[key] + (to[key] - from[key]) * ratio;
+  });
+  return attrs;
+}
+
+function applyStoryFrame(target: any, attrs: Record<string, any>): void {
+  applyAnimationFrameAttributes(target, attrs);
+  target.addUpdatePositionTag();
+  target.addUpdateShapeAndBoundsTag();
+}
 
 // 滑动动画的参数接口
 export interface ISlideAnimationOptions {
@@ -108,12 +131,7 @@ export class SlideIn extends ACustomAnimate<Record<string, number>> {
   }
 
   onUpdate(end: boolean, ratio: number, out: Record<string, any>): void {
-    const attribute: Record<string, any> = this.target.attribute;
-    this.propKeys.forEach(key => {
-      attribute[key] = this.from[key] + (this.to[key] - this.from[key]) * ratio;
-    });
-    this.target.addUpdatePositionTag();
-    this.target.addUpdateShapeAndBoundsTag();
+    applyStoryFrame(this.target, buildInterpolatedAttrs(this.propKeys, this.from, this.to, ratio));
   }
 }
 
@@ -166,12 +184,7 @@ export class GrowIn extends ACustomAnimate<Record<string, number>> {
   }
 
   onUpdate(end: boolean, ratio: number, out: Record<string, any>): void {
-    const attribute: Record<string, any> = this.target.attribute;
-    this.propKeys.forEach(key => {
-      attribute[key] = this.from[key] + (this.to[key] - this.from[key]) * ratio;
-    });
-    this.target.addUpdatePositionTag();
-    this.target.addUpdateShapeAndBoundsTag();
+    applyStoryFrame(this.target, buildInterpolatedAttrs(this.propKeys, this.from, this.to, ratio));
   }
 }
 
@@ -224,12 +237,7 @@ export class SpinIn extends ACustomAnimate<Record<string, number>> {
   }
 
   onUpdate(end: boolean, ratio: number, out: Record<string, any>): void {
-    const attribute: Record<string, any> = this.target.attribute;
-    this.propKeys.forEach(key => {
-      attribute[key] = this.from[key] + (this.to[key] - this.from[key]) * ratio;
-    });
-    this.target.addUpdatePositionTag();
-    this.target.addUpdateShapeAndBoundsTag();
+    applyStoryFrame(this.target, buildInterpolatedAttrs(this.propKeys, this.from, this.to, ratio));
   }
 }
 
@@ -317,15 +325,15 @@ export class StrokeIn extends ACustomAnimate<Record<string, any>> {
   }
 
   onUpdate(end: boolean, ratio: number, out: Record<string, any>): void {
-    const attribute: Record<string, any> = this.target.attribute;
-
-    // 更新lineDashOffset
-    attribute.lineDashOffset = this.from.lineDashOffset + (this.to.lineDashOffset - this.from.lineDashOffset) * ratio;
+    const attrs: Record<string, any> = {
+      lineDashOffset: this.from.lineDashOffset + (this.to.lineDashOffset - this.from.lineDashOffset) * ratio
+    };
 
     // 更新fillOpacity (如果需要显示填充)
     if (this.params?.showFill) {
-      attribute.fillOpacity = this.from.fillOpacity + (this.to.fillOpacity - this.from.fillOpacity) * ratio;
+      attrs.fillOpacity = this.from.fillOpacity + (this.to.fillOpacity - this.from.fillOpacity) * ratio;
     }
+    applyAnimationTransientAttributes(this.target, attrs);
   }
 
   onEnd(): void {
@@ -421,15 +429,15 @@ export class StrokeOut extends ACustomAnimate<Record<string, any>> {
   }
 
   onUpdate(end: boolean, ratio: number, out: Record<string, any>): void {
-    const attribute: Record<string, any> = this.target.attribute;
-
-    // 更新lineDashOffset
-    attribute.lineDashOffset = this.from.lineDashOffset + (this.to.lineDashOffset - this.from.lineDashOffset) * ratio;
+    const attrs: Record<string, any> = {
+      lineDashOffset: this.from.lineDashOffset + (this.to.lineDashOffset - this.from.lineDashOffset) * ratio
+    };
 
     // 更新fillOpacity (如果有)
     if (this.params?.showFill) {
-      attribute.fillOpacity = this.from.fillOpacity + (this.to.fillOpacity - this.from.fillOpacity) * ratio;
+      attrs.fillOpacity = this.from.fillOpacity + (this.to.fillOpacity - this.from.fillOpacity) * ratio;
     }
+    applyAnimationTransientAttributes(this.target, attrs);
   }
 }
 
@@ -619,12 +627,7 @@ export class SlideOut extends ACustomAnimate<Record<string, number>> {
   }
 
   onUpdate(end: boolean, ratio: number, out: Record<string, any>): void {
-    const attribute: Record<string, any> = this.target.attribute;
-    this.propKeys.forEach(key => {
-      attribute[key] = this.from[key] + (this.to[key] - this.from[key]) * ratio;
-    });
-    this.target.addUpdatePositionTag();
-    this.target.addUpdateShapeAndBoundsTag();
+    applyStoryFrame(this.target, buildInterpolatedAttrs(this.propKeys, this.from, this.to, ratio));
   }
 }
 
@@ -680,12 +683,7 @@ export class GrowOut extends ACustomAnimate<Record<string, number>> {
   }
 
   onUpdate(end: boolean, ratio: number, out: Record<string, any>): void {
-    const attribute: Record<string, any> = this.target.attribute;
-    this.propKeys.forEach(key => {
-      attribute[key] = this.from[key] + (this.to[key] - this.from[key]) * ratio;
-    });
-    this.target.addUpdatePositionTag();
-    this.target.addUpdateShapeAndBoundsTag();
+    applyStoryFrame(this.target, buildInterpolatedAttrs(this.propKeys, this.from, this.to, ratio));
   }
 }
 
@@ -741,12 +739,7 @@ export class SpinOut extends ACustomAnimate<Record<string, number>> {
   }
 
   onUpdate(end: boolean, ratio: number, out: Record<string, any>): void {
-    const attribute: Record<string, any> = this.target.attribute;
-    this.propKeys.forEach(key => {
-      attribute[key] = this.from[key] + (this.to[key] - this.from[key]) * ratio;
-    });
-    this.target.addUpdatePositionTag();
-    this.target.addUpdateShapeAndBoundsTag();
+    applyStoryFrame(this.target, buildInterpolatedAttrs(this.propKeys, this.from, this.to, ratio));
   }
 }
 
@@ -955,18 +948,17 @@ export class PulseAnimate extends ACustomAnimate<Record<string, any>> {
     // 将sin值（-1到1）映射到0到1的范围
     const pulseValue = Math.abs(Math.sin(angle));
 
-    // 应用属性
-    const attribute: Record<string, any> = this.target.attribute;
+    const attrs: Record<string, any> = {};
 
     // 应用透明度 pulse
     if (this.useOpacity) {
       // 确保即使是最小值也是基于原始透明度的百分比
       const opacity = 1 + (this.pulseOpacity - 1) * pulseValue;
       if (this.useStroke) {
-        attribute.strokeOpacity = (this.originalAttributes.strokeOpacity || 1) * opacity;
+        attrs.strokeOpacity = (this.originalAttributes.strokeOpacity || 1) * opacity;
       }
       if (this.useFill) {
-        attribute.fillOpacity = (this.originalAttributes.fillOpacity || 1) * opacity;
+        attrs.fillOpacity = (this.originalAttributes.fillOpacity || 1) * opacity;
       }
     }
 
@@ -974,33 +966,34 @@ export class PulseAnimate extends ACustomAnimate<Record<string, any>> {
     if (this.useScale) {
       // 计算缩放比例: 从1到pulseScale之间变化
       const scale = 1 + (this.pulseScale - 1) * pulseValue;
-      attribute.scaleX = (this.originalAttributes.scaleX || 1) * scale;
-      attribute.scaleY = (this.originalAttributes.scaleY || 1) * scale;
+      attrs.scaleX = (this.originalAttributes.scaleX || 1) * scale;
+      attrs.scaleY = (this.originalAttributes.scaleY || 1) * scale;
     }
 
     // 应用颜色脉冲
     if (this.useColor && this.pulseColor) {
-      this.applyColorPulse(attribute, pulseValue);
+      this.applyColorPulse(attrs, pulseValue);
     }
 
+    applyAnimationFrameAttributes(this.target, attrs);
     // 确保更新渲染
     this.target.addUpdateShapeAndBoundsTag();
     this.target.addUpdatePositionTag();
   }
 
   // 应用颜色脉冲
-  private applyColorPulse(attribute: Record<string, any>, pulseValue: number): void {
+  private applyColorPulse(attrs: Record<string, any>, pulseValue: number): void {
     // 根据pulseColorIntensity调整颜色变化强度
     const colorRatio = this.pulseColorIntensity * pulseValue;
 
     // 应用填充颜色脉冲
     if (this.useFill && this.originalFill && this.pulseColor) {
-      attribute.fill = interpolateColor(this.originalFill, this.pulseColor, colorRatio, true);
+      attrs.fill = interpolateColor(this.originalFill, this.pulseColor, colorRatio, true);
     }
 
     // 应用描边颜色脉冲
     if (this.useStroke && this.originalStroke && this.pulseColor) {
-      attribute.stroke = interpolateColor(this.originalStroke, this.pulseColor, colorRatio, true);
+      attrs.stroke = interpolateColor(this.originalStroke, this.pulseColor, colorRatio, true);
     }
   }
 

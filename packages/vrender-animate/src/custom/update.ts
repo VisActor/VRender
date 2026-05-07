@@ -1,6 +1,7 @@
-import { AttributeUpdateType, type EasingType, type IAnimate, type IStep } from '@visactor/vrender-core';
+import { type EasingType, type IAnimate, type IStep } from '@visactor/vrender-core';
 import { ACustomAnimate } from './custom-animate';
-import { applyAnimationTransientAttributes } from './transient';
+import { applyAnimationFrameAttributes } from './transient';
+import { commitAnimationStaticAttrs } from './static-truth';
 
 const clipPathGeometryAttrs: Record<string, true> = {
   x: true,
@@ -10,6 +11,29 @@ const clipPathGeometryAttrs: Record<string, true> = {
   width: true,
   height: true
 };
+
+function includesChannel(channels: string[], key: string): boolean {
+  for (let i = 0; i < channels.length; i++) {
+    if (channels[i] === key) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function filterExcludedChannels(diffAttrs: Record<string, any>, excludeChannels?: string[]): Record<string, any> {
+  if (!excludeChannels?.length) {
+    return diffAttrs;
+  }
+
+  const nextAttrs: Record<string, any> = {};
+  for (const key in diffAttrs) {
+    if (Object.prototype.hasOwnProperty.call(diffAttrs, key) && !includesChannel(excludeChannels, key)) {
+      nextAttrs[key] = diffAttrs[key];
+    }
+  }
+  return nextAttrs;
+}
 
 export interface IUpdateAnimationOptions {
   diffAttrs: Record<string, any>;
@@ -41,48 +65,12 @@ export class Update extends ACustomAnimate<Record<string, number>> {
     let { diffAttrs = {} } = this.target.context ?? ({} as any);
     const { options } = this.params as any;
 
-    diffAttrs = { ...diffAttrs };
-    if (options?.excludeChannels?.length) {
-      options.excludeChannels.forEach((channel: string) => {
-        delete diffAttrs[channel];
-      });
-    }
+    diffAttrs = filterExcludedChannels(diffAttrs, options?.excludeChannels);
 
     this.props = diffAttrs;
     this.clipPathSyncKeys = Object.keys(diffAttrs).filter(key => clipPathGeometryAttrs[key]);
     this.clipPathSyncDisabled = !this.clipPathSyncKeys.length;
     this.syncParentClipPathToTarget();
-  }
-
-  private getStaticCommitAttrs(): Record<string, any> | null {
-    if (!this.props) {
-      return null;
-    }
-
-    const target = this.target as any;
-    const contextFinalAttrs = target.context?.finalAttrs as Record<string, any> | undefined;
-    const finalAttribute = (
-      typeof target.getFinalAttribute === 'function' ? target.getFinalAttribute() : target.finalAttribute
-    ) as Record<string, any> | undefined;
-    const commitAttrs: Record<string, any> = {};
-
-    Object.keys(this.props).forEach(key => {
-      if (contextFinalAttrs && Object.prototype.hasOwnProperty.call(contextFinalAttrs, key)) {
-        commitAttrs[key] = contextFinalAttrs[key];
-        return;
-      }
-
-      if (finalAttribute && Object.prototype.hasOwnProperty.call(finalAttribute, key)) {
-        commitAttrs[key] = finalAttribute[key];
-        return;
-      }
-
-      if (this.animate.validAttr(key)) {
-        commitAttrs[key] = (this.props as Record<string, any>)[key];
-      }
-    });
-
-    return Object.keys(commitAttrs).length ? commitAttrs : null;
   }
 
   onEnd(cb?: (animate: IAnimate, step: IStep) => void): void {
@@ -91,9 +79,8 @@ export class Update extends ACustomAnimate<Record<string, number>> {
       return;
     }
 
-    const commitAttrs = this.getStaticCommitAttrs();
-    if (commitAttrs) {
-      this.target.setAttributes(commitAttrs, false, { type: AttributeUpdateType.ANIMATE_END });
+    if (this.props) {
+      commitAnimationStaticAttrs(this.target, this.propKeys ?? Object.keys(this.props), this.animate, this.props);
     }
     this.syncParentClipPathToTarget();
     super.onEnd();
@@ -106,18 +93,7 @@ export class Update extends ACustomAnimate<Record<string, number>> {
     }
     // 应用缓动函数
     const easedRatio = this.easing(ratio);
-    this.animate.interpolateUpdateFunction
-      ? this.animate.interpolateUpdateFunction(this.fromProps, this.props, easedRatio, this, this.target)
-      : this.interpolateUpdateFunctions.forEach((func, index) => {
-          // 如果这个属性被屏蔽了，直接跳过
-          if (!this.animate.validAttr(this.propKeys[index])) {
-            return;
-          }
-          const key = this.propKeys[index];
-          const fromValue = this.fromProps[key];
-          const toValue = this.props[key];
-          func(key, fromValue, toValue, easedRatio, this, this.target);
-        });
+    this.runInterpolateUpdate(this.fromProps, this.props, easedRatio);
     this.syncParentClipPathToTarget();
     this.onUpdate(end, easedRatio, out);
   }
@@ -146,7 +122,9 @@ export class Update extends ACustomAnimate<Record<string, number>> {
 
     const syncAttrs = this.buildClipPathTransientAttrs(clipGraphic);
     if (syncAttrs) {
-      applyAnimationTransientAttributes(clipGraphic, syncAttrs, AttributeUpdateType.ANIMATE_UPDATE);
+      applyAnimationFrameAttributes(clipGraphic, syncAttrs);
+      clipGraphic.addUpdatePositionTag?.();
+      clipGraphic.addUpdateShapeAndBoundsTag?.();
     }
   }
 

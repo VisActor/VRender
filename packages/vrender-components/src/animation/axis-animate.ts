@@ -114,8 +114,12 @@ export class AxisUpdate extends AComponentAnimate<any> {
 
   // 轴动画本身没有逻辑，具体通过animator中执行，所以当需要屏蔽自身属性时，需要通过animator中执行
   deleteSelfAttr(key: string): void {
-    super.deleteSelfAttr(key);
-    this._animator.deleteSelfAttr(key);
+    this.deleteSelfAttrs([key]);
+  }
+
+  deleteSelfAttrs(keys: string[]): void {
+    super.deleteSelfAttrs(keys);
+    this._animator.deleteSelfAttrs(keys);
   }
 
   // 轴动画本身没有逻辑，具体通过animator中执行，所以本身不需要屏蔽冲突

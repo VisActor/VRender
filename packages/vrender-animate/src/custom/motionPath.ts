@@ -1,6 +1,6 @@
 import type { CustomPath2D, IGraphic, EasingType } from '@visactor/vrender-core';
 import { ACustomAnimate } from './custom-animate';
-import { applyAnimationTransientAttributes } from './transient';
+import { applyAnimationFrameAttributes } from './transient';
 
 export class MotionPath extends ACustomAnimate<any> {
   declare valid: boolean;
@@ -62,6 +62,8 @@ export class MotionPath extends ACustomAnimate<any> {
       this.target.setAttributes(attrs);
       return;
     }
-    applyAnimationTransientAttributes(this.target, attrs);
+    applyAnimationFrameAttributes(this.target, attrs);
+    this.target.addUpdatePositionTag();
+    this.target.addUpdateShapeAndBoundsTag();
   }
 }

@@ -1,7 +1,8 @@
 import { clamp, isValidNumber, Point, type IPointLike } from '@visactor/vutils';
-import { pointInterpolation, type EasingType, type ILineAttribute, type ISegment } from '@visactor/vrender-core';
+import { pointInterpolation, type EasingType, type IAnimate, type ISegment, type IStep } from '@visactor/vrender-core';
 import { ACustomAnimate } from './custom-animate';
-import { applyAnimationTransientAttributes } from './transient';
+import { applyAnimationFrameAttributes, applyAnimationTransientAttributes } from './transient';
+import { commitAnimationStaticAttrs } from './static-truth';
 
 export class TagPointsUpdate extends ACustomAnimate<{ points?: IPointLike[]; segments?: ISegment[] }> {
   protected fromPoints: IPointLike[];
@@ -51,11 +52,23 @@ export class TagPointsUpdate extends ACustomAnimate<{ points?: IPointLike[]; seg
 
   onBind(): void {
     super.onBind();
-    const { points, segments } = this.target.attribute as any;
-    const { points: pointsTo, segments: segmentsTo } = this.target.getFinalAttribute() as any;
+    const currentAttribute = this.target.attribute as any;
+    const finalAttribute = this.target.getFinalAttribute() as any;
 
-    this.from = { points, segments };
-    this.to = { points: pointsTo, segments: segmentsTo };
+    this.from = {};
+    this.to = {};
+    if (Object.prototype.hasOwnProperty.call(currentAttribute, 'points')) {
+      this.from.points = currentAttribute.points;
+    }
+    if (Object.prototype.hasOwnProperty.call(currentAttribute, 'segments')) {
+      this.from.segments = currentAttribute.segments;
+    }
+    if (finalAttribute && Object.prototype.hasOwnProperty.call(finalAttribute, 'points')) {
+      this.to.points = finalAttribute.points;
+    }
+    if (finalAttribute && Object.prototype.hasOwnProperty.call(finalAttribute, 'segments')) {
+      this.to.segments = finalAttribute.segments;
+    }
     this.props = this.to;
 
     const originFromPoints = this.getPoints(this.from);
@@ -147,13 +160,37 @@ export class TagPointsUpdate extends ACustomAnimate<{ points?: IPointLike[]; seg
     }
   }
 
+  onEnd(cb?: (animate: IAnimate, step: IStep) => void): void {
+    if (cb) {
+      super.onEnd(cb);
+      return;
+    }
+
+    if (this.to) {
+      commitAnimationStaticAttrs(this.target, Object.keys(this.to), this.animate, this.to as Record<string, any>);
+    }
+    super.onEnd();
+  }
+
+  private applyPointTransientAttributes(attributes: Record<string, any>): void {
+    const validAttrs: Record<string, any> = {};
+    Object.keys(attributes).forEach(key => {
+      if (this.animate.validAttr(key)) {
+        validAttrs[key] = attributes[key];
+      }
+    });
+    if (!Object.keys(validAttrs).length) {
+      return;
+    }
+
+    applyAnimationFrameAttributes(this.target, validAttrs);
+    this.target.addUpdatePositionTag();
+    this.target.addUpdateShapeAndBoundsTag();
+  }
+
   onUpdate(end: boolean, ratio: number, out: Record<string, any>): void {
     if (end) {
-      Object.keys(this.to).forEach(k => {
-        (this.target.attribute as any)[k] = (this.to as any)[k];
-      });
-      this.target.addUpdatePositionTag();
-      this.target.addUpdateShapeAndBoundsTag();
+      this.applyPointTransientAttributes(this.to as Record<string, any>);
       return;
     }
     // if not create new points, multi points animation might not work well.
@@ -187,11 +224,9 @@ export class TagPointsUpdate extends ACustomAnimate<{ points?: IPointLike[]; seg
           points
         };
       });
-      (this.target.attribute as ILineAttribute).segments = segments;
+      this.applyPointTransientAttributes({ segments });
     } else {
-      (this.target.attribute as ILineAttribute).points = this.points;
+      this.applyPointTransientAttributes({ points: this.points });
     }
-    this.target.addUpdatePositionTag();
-    this.target.addUpdateShapeAndBoundsTag();
   }
 }

@@ -1,6 +1,7 @@
-import { application, createText } from '@visactor/vrender-core';
+import { application, createRect, createText } from '@visactor/vrender-core';
 import { DefaultTimeline, ManualTicker, registerAnimate } from '@visactor/vrender-animate';
 import { LabelBase } from '../../src/label/base';
+import { RectLabel } from '../../src/label/rect';
 
 class TestLabel extends LabelBase<any> {
   protected render(): void {
@@ -9,6 +10,33 @@ class TestLabel extends LabelBase<any> {
 
   runUpdate(prevLabel: any, currentLabel: any): void {
     (this as any)._updateLabel(prevLabel, currentLabel);
+  }
+}
+
+class TestRectLabel extends RectLabel {
+  protected getGraphicBounds(graphic?: any, point: any = {}): any {
+    if (graphic?.type === 'rect') {
+      const { x = 0, y = 0, x1, y1, width = 0, height = 0 } = graphic.attribute;
+      return {
+        x1: x,
+        y1: y,
+        x2: x1 ?? x + width,
+        y2: y1 ?? y + height
+      };
+    }
+
+    if (graphic?.type === 'text') {
+      const { x = 0, y = 0 } = graphic.attribute;
+      return {
+        x1: x,
+        y1: y,
+        x2: x + 20,
+        y2: y + 10
+      };
+    }
+
+    const { x = 0, y = 0, x1 = x, y1 = y } = point;
+    return { x1, y1, x2: x1, y2: y1 };
   }
 }
 
@@ -134,5 +162,57 @@ describe('Label update animation static truth', () => {
     expect((prevText as any).getFinalAttribute().y).toBeCloseTo(newAttrs.y, 5);
     expect((prevText as any).getFinalAttribute().text).toBe(newAttrs.text);
     expect((prevText as any).getFinalAttribute().opacity).toBeCloseTo(newAttrs.opacity, 5);
+  });
+
+  test('does not commit related rect final attrs while laying out labels for update animation', () => {
+    createStageHarness('label-related-rect-static-truth');
+
+    const oldAttrs = {
+      x: 0,
+      y: 46.90909090909094,
+      width: 10,
+      height: 34,
+      fill: '#1664ff',
+      visible: true
+    };
+    const finalAttrs = {
+      ...oldAttrs,
+      x: 974.1100285714286,
+      y: 3
+    };
+    const rect = createRect(oldAttrs);
+    const label = new TestRectLabel({
+      type: 'rect',
+      data: [{ id: 'China_share_global_co2', text: '31.953' }],
+      getBaseMarks: () => [rect],
+      animation: true,
+      animationEnter: false,
+      animationExit: false,
+      animationUpdate: false,
+      overlap: false,
+      smartInvert: false,
+      position: 'top'
+    } as any);
+
+    rect.context = {
+      diffState: 'update',
+      animationState: 'update',
+      diffAttrs: {
+        x: finalAttrs.x,
+        y: finalAttrs.y,
+        height: finalAttrs.height
+      },
+      finalAttrs
+    };
+    rect.setFinalAttributes(finalAttrs);
+
+    (label as any).render();
+
+    expect(rect.attribute.x).toBeCloseTo(oldAttrs.x, 6);
+    expect(rect.attribute.y).toBeCloseTo(oldAttrs.y, 6);
+    expect((rect as any).baseAttributes.x).toBeCloseTo(oldAttrs.x, 6);
+    expect((rect as any).baseAttributes.y).toBeCloseTo(oldAttrs.y, 6);
+    expect((rect as any).getFinalAttribute().x).toBeCloseTo(finalAttrs.x, 6);
+    expect((rect as any).getFinalAttribute().y).toBeCloseTo(finalAttrs.y, 6);
   });
 });

@@ -61,6 +61,20 @@ import { AnimateComponent } from '../animation/animate-component';
 import { commitUpdateAnimationTarget } from '../animation/static-truth';
 
 loadLabelComponent();
+
+function cloneAttributeSnapshot<T>(value: T): T {
+  if (!isObject(value) || isArray(value)) {
+    return value;
+  }
+
+  const snapshot: Record<string, any> = {};
+  Object.keys(value as Record<string, any>).forEach(key => {
+    const nextValue = (value as Record<string, any>)[key];
+    snapshot[key] = isObject(nextValue) && !isArray(nextValue) ? cloneAttributeSnapshot(nextValue) : nextValue;
+  });
+  return snapshot as T;
+}
+
 export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
   name = 'label';
 
@@ -182,7 +196,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
     const markAttributeList: any[] = [];
     if (this._enableAnimation !== false) {
       this._baseMarks.forEach(mark => {
-        markAttributeList.push(mark.attribute);
+        markAttributeList.push(cloneAttributeSnapshot(mark.attribute));
         mark.initAttributes(mark.getAttributes(true));
       });
     }

@@ -1125,6 +1125,112 @@ describe('D3 pre-handoff animation runtime', () => {
     expect(rect.getFinalAttribute().y).toBe(finalY);
   });
 
+  test.each([
+    ['style-only channel', ['fillOpacity']],
+    ['empty channel', []]
+  ])('animation state update keeps diffAttrs animated with %s', (_name, channel) => {
+    const { group, ticker, graphicService } = createStageHarness('state-update-channel-out-position');
+    const oldAttrs = {
+      x: 0,
+      y: 46.90909090909094,
+      width: 10,
+      height: 34,
+      fillOpacity: 1,
+      visible: true
+    };
+    const diffAttrs = {
+      x: 974.1100285714286,
+      y: 3,
+      height: 34
+    };
+    const finalAttrs = {
+      ...oldAttrs,
+      ...diffAttrs
+    };
+    const rect = createRect(oldAttrs);
+    bindGraphicService(rect as any, graphicService);
+    rect.setFinalAttributes(oldAttrs);
+    (rect as any).context = {
+      diffState: 'update',
+      animationState: 'update',
+      data: [{ id: 'China_share_global_co2' }],
+      diffAttrs,
+      finalAttrs
+    };
+    group.appendChild(rect);
+
+    rect.setFinalAttributes(finalAttrs);
+    (rect as any).applyAnimationState(
+      ['update'],
+      [
+        {
+          name: 'update_0',
+          animation: {
+            type: 'update',
+            duration: 300,
+            easing: 'linear',
+            channel
+          }
+        }
+      ]
+    );
+
+    tick(ticker, 1);
+
+    const animate = (rect as any)._animationStateManager.stateList[0].executor._animates[0];
+    const step = (animate as any)._firstStep;
+    expect(step.getFromProps().y).toBeCloseTo(oldAttrs.y, 6);
+    expect(step.getEndProps().y).toBeCloseTo(diffAttrs.y, 6);
+    expect(rect.attribute.y).toBeGreaterThan(diffAttrs.y);
+    expect(rect.attribute.y).toBeLessThan(oldAttrs.y);
+
+    tick(ticker, 299);
+
+    expect(rect.attribute.y).toBe(diffAttrs.y);
+    expect((rect as any).baseAttributes.y).toBe(diffAttrs.y);
+    expect(rect.getFinalAttribute().y).toBe(diffAttrs.y);
+  });
+
+  test('non-animation update commits diffAttrs without going through animation executor', () => {
+    const oldAttrs = {
+      x: 0,
+      y: 46.90909090909094,
+      width: 10,
+      height: 34,
+      fillOpacity: 1,
+      visible: true
+    };
+    const diffAttrs = {
+      x: 974.1100285714286,
+      y: 3,
+      height: 34
+    };
+    const finalAttrs = {
+      ...oldAttrs,
+      ...diffAttrs
+    };
+    const rect = createRect(oldAttrs);
+    rect.setFinalAttributes(oldAttrs);
+    (rect as any).context = {
+      diffState: 'update',
+      animationState: 'update',
+      data: [{ id: 'China_share_global_co2' }],
+      diffAttrs,
+      finalAttrs
+    };
+
+    rect.setAttributes(diffAttrs);
+    rect.setFinalAttributes(finalAttrs);
+
+    expect(rect.attribute.y).toBe(diffAttrs.y);
+    expect((rect as any).baseAttributes.y).toBe(diffAttrs.y);
+    expect(rect.getFinalAttribute().y).toBe(diffAttrs.y);
+    expect(rect.attribute.x).toBe(diffAttrs.x);
+    expect((rect as any).baseAttributes.x).toBe(diffAttrs.x);
+    expect(rect.getFinalAttribute().x).toBe(diffAttrs.x);
+    expect((rect as any)._animationStateManager).toBeUndefined();
+  });
+
   test('superseded executor update cannot commit stale layout when it ends late', () => {
     const { group, ticker, graphicService } = createStageHarness('executor-update-stale-end');
     const threeItemLayout = {

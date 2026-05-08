@@ -342,19 +342,19 @@ export class AnimateExecutor implements IAnimateExecutor {
     // }
 
     // 根据 channel 配置创建属性对象
-    // 根据 channel 配置创建属性对象
     let parsedFromProps = null;
     let props = params.to;
     let from = params.from;
+    const commitAttrOutChannel = this.shouldCommitAttrOutChannel(type);
     if (!props) {
       if (!parsedFromProps) {
-        parsedFromProps = this.createPropsFromChannel(channel, graphic);
+        parsedFromProps = this.createPropsFromChannel(channel, graphic, commitAttrOutChannel);
       }
       props = parsedFromProps.props;
     }
     if (!from) {
       if (!parsedFromProps) {
-        parsedFromProps = this.createPropsFromChannel(channel, graphic);
+        parsedFromProps = this.createPropsFromChannel(channel, graphic, commitAttrOutChannel);
       }
       from = parsedFromProps.from;
     }
@@ -552,15 +552,16 @@ export class AnimateExecutor implements IAnimateExecutor {
       let parsedFromProps = null;
       let props = effect.to;
       let from = effect.from;
+      const commitAttrOutChannel = this.shouldCommitAttrOutChannel(type);
       if (!props) {
         if (!parsedFromProps) {
-          parsedFromProps = this.createPropsFromChannel(channel, graphic);
+          parsedFromProps = this.createPropsFromChannel(channel, graphic, commitAttrOutChannel);
         }
         props = parsedFromProps.props;
       }
       if (!from) {
         if (!parsedFromProps) {
-          parsedFromProps = this.createPropsFromChannel(channel, graphic);
+          parsedFromProps = this.createPropsFromChannel(channel, graphic, commitAttrOutChannel);
         }
         from = parsedFromProps.from;
       }
@@ -620,6 +621,12 @@ export class AnimateExecutor implements IAnimateExecutor {
     animate.to(props, duration, easing);
   }
 
+  private shouldCommitAttrOutChannel(type: string): boolean {
+    // Update owns context.diffAttrs itself. Its channel config must not pre-commit
+    // omitted diff keys before Update captures their start frame.
+    return type !== 'update';
+  }
+
   /**
    * 创建自定义动画类
    */
@@ -654,7 +661,8 @@ export class AnimateExecutor implements IAnimateExecutor {
    */
   private createPropsFromChannel(
     channel: IAnimationChannelAttrs | IAnimationChannelAttributes | undefined,
-    graphic: IGraphic
+    graphic: IGraphic,
+    includeAttrOutChannel: boolean = true
   ): {
     from: Record<string, any> | null;
     props: Record<string, any>;
@@ -670,7 +678,7 @@ export class AnimateExecutor implements IAnimateExecutor {
       };
     }
 
-    const attrOutChannel: Record<string, any> | null = {};
+    const attrOutChannel: Record<string, any> | null = includeAttrOutChannel ? {} : null;
     let hasAttrs = false;
     const diffAttrs = graphic.context?.diffAttrs;
     if (Array.isArray(channel)) {
@@ -705,7 +713,7 @@ export class AnimateExecutor implements IAnimateExecutor {
       }
     });
 
-    if (diffAttrs) {
+    if (diffAttrs && attrOutChannel) {
       for (const key in diffAttrs) {
         const value = (diffAttrs as any)[key];
         if (value === undefined) {

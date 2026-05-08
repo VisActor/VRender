@@ -738,8 +738,10 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       ? this.attribute.item.width
       : innerGroupWidth + parsedPadding[1] + parsedPadding[3];
     const itemGroupHeight = this._itemHeightByUser || innerGroupHeight + parsedPadding[0] + parsedPadding[2];
-    itemGroup.attribute.width = itemGroupWidth;
-    itemGroup.attribute.height = itemGroupHeight;
+    itemGroup.setAttributes({
+      width: itemGroupWidth,
+      height: itemGroupHeight
+    });
     focusShape && focusShape.setAttribute('visible', false);
 
     innerGroup.translateTo(-innerGroupBounds.x1 + parsedPadding[3], -innerGroupBounds.y1 + parsedPadding[0]);

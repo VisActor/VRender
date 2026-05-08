@@ -434,4 +434,66 @@ describe('DiscreteLegend', () => {
         .maxLineWidth
     ).toBeCloseTo(49.975);
   });
+
+  it('should keep all horizontal legend item positions finite', () => {
+    const legend = new DiscreteLegend({
+      layout: 'horizontal',
+      autoPage: true,
+      maxWidth: 1192,
+      maxHeight: 844,
+      defaultSelected: ['Africa', 'EU', 'China', 'USA'],
+      item: {
+        spaceCol: 10,
+        spaceRow: 6,
+        padding: 2,
+        shape: {
+          space: 6,
+          style: {
+            size: 10,
+            lineWidth: 0,
+            fillOpacity: 1,
+            opacity: 1
+          }
+        },
+        label: {
+          space: 6,
+          style: {
+            fontSize: 12,
+            fill: '#606773',
+            lineHeight: '130%',
+            opacity: 1
+          }
+        }
+      },
+      items: [
+        { label: 'Africa', shape: { fill: '#1664FF', stroke: '#1664FF', symbolType: 'circle' } },
+        { label: 'EU', shape: { fill: '#1AC6FF', stroke: '#1AC6FF', symbolType: 'circle' } },
+        { label: 'China', shape: { fill: '#FF8A00', stroke: '#FF8A00', symbolType: 'circle' } },
+        { label: 'USA', shape: { fill: '#3CC780', stroke: '#3CC780', symbolType: 'circle' } }
+      ]
+    });
+
+    stage.defaultLayer.add(legend as unknown as IGraphic);
+    stage.render();
+
+    const items = legend.getElementsByName('legendItem') as IGroup[];
+    expect(items.length).toBe(4);
+
+    items.forEach(item => {
+      expect(Number.isFinite(item.attribute.x)).toBe(true);
+      expect(Number.isFinite(item.attribute.y)).toBe(true);
+      expect(Number.isFinite(item.attribute.width)).toBe(true);
+      expect(Number.isFinite(item.attribute.height)).toBe(true);
+      expect(Number.isFinite(item.AABBBounds.x1)).toBe(true);
+      expect(Number.isFinite(item.AABBBounds.y1)).toBe(true);
+      expect(Number.isFinite(item.AABBBounds.x2)).toBe(true);
+      expect(Number.isFinite(item.AABBBounds.y2)).toBe(true);
+    });
+
+    for (let i = 1; i < items.length; i++) {
+      expect(items[i].attribute.x).toBeGreaterThan(items[i - 1].attribute.x);
+    }
+
+    expect(legend.AABBBounds.width()).toBeGreaterThan(170);
+  });
 });

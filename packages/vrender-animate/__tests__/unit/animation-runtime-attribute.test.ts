@@ -1,8 +1,16 @@
-import { application, createGroup, createLine, createRect, DefaultGraphicService } from '@visactor/vrender-core';
+import {
+  application,
+  AttributeUpdateType,
+  createGroup,
+  createLine,
+  createRect,
+  DefaultGraphicService
+} from '@visactor/vrender-core';
 import { registerAnimate } from '../../src/register';
 import { registerCustomAnimate } from '../../src/custom/register';
 import { AnimateExecutor } from '../../src/executor/animate-executor';
 import { TagPointsUpdate } from '../../src/custom/tag-points';
+import { Update } from '../../src/custom/update';
 import { DefaultTimeline } from '../../src/timeline';
 import { ManualTicker } from '../../src/ticker/manual-ticker';
 
@@ -1068,6 +1076,53 @@ describe('D3 pre-handoff animation runtime', () => {
     expect(rect.getFinalAttribute().x).toBe(next.x);
     expect(rect.getFinalAttribute().y).toBe(next.y);
     expect(rect.getFinalAttribute().height).toBe(next.height);
+  });
+
+  test('update animation captures start attrs when diff context is attached after prevent-animate handoff', () => {
+    ensureAnimationRuntime();
+
+    const oldY = 46.90909090909094;
+    const finalY = 3;
+    const rect = createRect({
+      x: 0,
+      y: oldY,
+      width: 10,
+      height: 34
+    });
+    rect.setFinalAttributes({ ...rect.attribute });
+
+    const diffAttrs = {
+      x: 974.1100285714286,
+      y: finalY,
+      height: 34
+    };
+
+    rect.setAttributesAndPreventAnimate(diffAttrs, false, {
+      type: AttributeUpdateType.DEFAULT
+    });
+
+    expect(rect.attribute.y).toBe(finalY);
+    expect((rect as any).baseAttributes.y).toBeCloseTo(oldY);
+
+    (rect as any).context = {
+      diffAttrs,
+      finalAttrs: diffAttrs
+    };
+
+    const animate = rect.animate().play(new Update(null, null, 300, 'linear', {} as any));
+    animate.advance(1);
+
+    const step = (animate as any)._firstStep;
+    expect(step.getFromProps().y).toBeCloseTo(oldY);
+    expect(step.getEndProps().y).toBe(finalY);
+    expect(rect.attribute.y).toBeGreaterThan(finalY);
+    expect(rect.attribute.y).toBeLessThan(oldY);
+
+    animate.advance(300);
+
+    expect(rect.attribute.y).toBe(finalY);
+    expect((rect as any).baseAttributes.y).toBe(finalY);
+    expect(rect.getFinalAttribute().y).toBe(finalY);
   });
 
   test('superseded executor update cannot commit stale layout when it ends late', () => {

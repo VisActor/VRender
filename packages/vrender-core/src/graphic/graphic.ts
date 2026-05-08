@@ -1329,11 +1329,10 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     context?: ISetAttributeContext
   ) {
     const graphicContext = this.context as Record<string, any> | undefined;
-    const diffAttrs = graphicContext?.diffAttrs as Record<string, any> | undefined;
+    const diffAttrs = (graphicContext?.diffAttrs as Record<string, any> | undefined) ?? (params as Record<string, any>);
     const updateType = context?.type;
     if (
       !keys.length ||
-      !graphicContext ||
       !diffAttrs ||
       updateType === AttributeUpdateType.STATE ||
       (updateType != null &&

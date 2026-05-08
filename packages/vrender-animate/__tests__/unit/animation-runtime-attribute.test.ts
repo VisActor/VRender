@@ -4,6 +4,7 @@ import {
   createGroup,
   createLine,
   createRect,
+  createSymbol,
   DefaultGraphicService
 } from '@visactor/vrender-core';
 import { registerAnimate } from '../../src/register';
@@ -1189,6 +1190,139 @@ describe('D3 pre-handoff animation runtime', () => {
     expect(rect.attribute.y).toBe(diffAttrs.y);
     expect((rect as any).baseAttributes.y).toBe(diffAttrs.y);
     expect(rect.getFinalAttribute().y).toBe(diffAttrs.y);
+  });
+
+  test('animation state update interrupts an in-flight update and restarts from the current transient frame', () => {
+    const { group, ticker, graphicService } = createStageHarness('state-update-interrupt-current-frame');
+    const initialY = 101.57790217791035;
+    const hiddenY = 0;
+    const symbol = createSymbol({
+      x: 31.5,
+      y: initialY,
+      size: 10,
+      visible: true
+    });
+    bindGraphicService(symbol as any, graphicService);
+    symbol.setFinalAttributes({ ...symbol.attribute });
+    group.appendChild(symbol);
+
+    const applyUpdate = (targetY: number) => {
+      const finalAttrs = {
+        x: 31.5,
+        y: targetY,
+        size: 10,
+        visible: true
+      };
+      (symbol as any).context = {
+        diffState: 'update',
+        animationState: 'update',
+        data: [{ id: 'China_Nail polish' }],
+        diffAttrs: { y: targetY },
+        finalAttrs
+      };
+      symbol.setFinalAttributes(finalAttrs);
+      (symbol as any).applyAnimationState(
+        ['update'],
+        [
+          {
+            name: 'update_0',
+            animation: {
+              type: 'update',
+              duration: 300,
+              easing: 'linear'
+            }
+          }
+        ]
+      );
+    };
+
+    applyUpdate(hiddenY);
+    tick(ticker, 75);
+    const currentY = symbol.attribute.y;
+    expect(currentY).toBeGreaterThan(hiddenY);
+    expect(currentY).toBeLessThan(initialY);
+
+    applyUpdate(initialY);
+    const activeUpdateStates = (symbol as any)._animationStateManager.stateList.filter(
+      (state: any) => state.state === 'update'
+    );
+    expect(activeUpdateStates).toHaveLength(1);
+    const secondAnimate = activeUpdateStates[0].executor._animates[0];
+
+    tick(ticker, 75);
+    expect((secondAnimate as any)._firstStep.getFromProps().y).toBeCloseTo(currentY, 6);
+    expect(symbol.attribute.y).toBeGreaterThan(currentY);
+    expect(symbol.attribute.y).toBeLessThan(initialY);
+
+    tick(ticker, 225);
+    expect(symbol.attribute.y).toBeCloseTo(initialY, 6);
+    expect((symbol as any).baseAttributes.y).toBeCloseTo(initialY, 6);
+    expect(symbol.getFinalAttribute().y).toBeCloseTo(initialY, 6);
+  });
+
+  test('animation state update preserves an in-flight update that owns different attrs', () => {
+    const { group, ticker, graphicService } = createStageHarness('state-update-disjoint-attrs');
+    const rect = createRect({
+      x: 0,
+      y: 100,
+      width: 10,
+      height: 10,
+      visible: true
+    });
+    bindGraphicService(rect as any, graphicService);
+    rect.setFinalAttributes({ ...rect.attribute });
+    group.appendChild(rect);
+
+    const applyUpdate = (diffAttrs: Record<string, any>, finalAttrs: Record<string, any>) => {
+      (rect as any).context = {
+        diffState: 'update',
+        animationState: 'update',
+        data: [{ id: 'disjoint-update' }],
+        diffAttrs,
+        finalAttrs
+      };
+      rect.setFinalAttributes(finalAttrs);
+      (rect as any).applyAnimationState(
+        ['update'],
+        [
+          {
+            name: 'update_0',
+            animation: {
+              type: 'update',
+              duration: 300,
+              easing: 'linear'
+            }
+          }
+        ]
+      );
+    };
+
+    applyUpdate({ x: 100 }, { ...rect.attribute, x: 100 });
+    tick(ticker, 75);
+    const currentX = rect.attribute.x;
+    expect(currentX).toBeGreaterThan(0);
+    expect(currentX).toBeLessThan(100);
+
+    applyUpdate({ y: 200 }, { x: 100, y: 200, width: 10, height: 10, visible: true });
+
+    const activeUpdateStates = (rect as any)._animationStateManager.stateList.filter(
+      (state: any) => state.state === 'update'
+    );
+    expect(activeUpdateStates).toHaveLength(2);
+
+    tick(ticker, 75);
+    expect(rect.attribute.x).toBeGreaterThan(currentX);
+    expect(rect.attribute.x).toBeLessThan(100);
+    expect(rect.attribute.y).toBeGreaterThan(100);
+    expect(rect.attribute.y).toBeLessThan(200);
+
+    tick(ticker, 225);
+    expect(rect.attribute.x).toBeCloseTo(100, 6);
+    expect(rect.attribute.y).toBeCloseTo(200, 6);
+    expect((rect as any).baseAttributes.x).toBeCloseTo(100, 6);
+    expect((rect as any).baseAttributes.y).toBeCloseTo(200, 6);
+    expect(rect.getFinalAttribute().x).toBeCloseTo(100, 6);
+    expect(rect.getFinalAttribute().y).toBeCloseTo(200, 6);
   });
 
   test('non-animation update commits diffAttrs without going through animation executor', () => {

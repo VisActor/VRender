@@ -83,6 +83,58 @@ export class AnimateExecutor implements IAnimateExecutor {
     }
   }
 
+  getActiveAttrKeys(): string[] {
+    const keys: string[] = [];
+    for (let i = 0; i < this._animates.length; i++) {
+      const animate = this._animates[i];
+      if (animate.status === AnimateStatus.END) {
+        continue;
+      }
+      const endProps = animate.getEndProps();
+      if (!endProps) {
+        continue;
+      }
+      for (const key in endProps) {
+        if (Object.prototype.hasOwnProperty.call(endProps, key) && keys.indexOf(key) < 0) {
+          keys.push(key);
+        }
+      }
+    }
+    return keys;
+  }
+
+  hasActiveAttrs(): boolean {
+    for (let i = 0; i < this._animates.length; i++) {
+      const animate = this._animates[i];
+      if (animate.status === AnimateStatus.END) {
+        continue;
+      }
+      const endProps = animate.getEndProps();
+      if (!endProps) {
+        continue;
+      }
+      for (const key in endProps) {
+        if (Object.prototype.hasOwnProperty.call(endProps, key)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  preventAttrs(keys: string[]): boolean {
+    if (!keys?.length) {
+      return this.hasActiveAttrs();
+    }
+    for (let i = 0; i < this._animates.length; i++) {
+      const animate = this._animates[i];
+      if (animate.status !== AnimateStatus.END) {
+        animate.preventAttrs(keys);
+      }
+    }
+    return this.hasActiveAttrs();
+  }
+
   /**
    * 跟踪动画并附加生命周期钩子
    */

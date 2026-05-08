@@ -14,7 +14,7 @@
     "postinstall": "npm run build",
     "prepublishOnly": "npm run build",
     "eslint": "eslint -c .eslintrc.js src/",
-    "compile": "rimraf ./output && tsc --project ./tsconfig.json --noEmit",
+    "compile": "tsc --project ./tsconfig.json --noEmit",
     "build": "rimraf ./output && tsc --project ./tsconfig.json",
     "test": "vitest --run",
     "run": "DEBUG='Bundler*' node ./output/bootstrap.js",

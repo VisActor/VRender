@@ -113,7 +113,7 @@ describe('Graphic state resolution', () => {
     expect((graphic.attribute as any).shadowBlur).toEqual({
       value: 2,
       color: 'red',
-      offset: { x: 5 }
+      offset: { x: 5, y: 0 }
     });
   });
 

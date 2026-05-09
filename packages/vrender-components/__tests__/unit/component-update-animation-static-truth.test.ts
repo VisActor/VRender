@@ -1,4 +1,4 @@
-import { application, createGroup, createRect, createText } from '@visactor/vrender-core';
+import { application, AttributeUpdateType, createGroup, createRect, createText } from '@visactor/vrender-core';
 import { DefaultTimeline, ManualTicker, registerAnimate } from '@visactor/vrender-animate';
 import { registerAxisAnimate } from '../../src/animation/axis-animate';
 import { GroupTransition } from '../../src/axis/animate/group-transition';
@@ -93,7 +93,7 @@ describe('component update animation static truth', () => {
 
     tickText.setStage(stage, null as any);
     tickText.setFinalAttributes({ ...newAttrs });
-    tickText.setAttributes({ ...oldAttrs });
+    tickText.setAttributesAndPreventAnimate({ ...oldAttrs }, false, { type: AttributeUpdateType.ANIMATE_BIND });
 
     tickText.applyAnimationState(
       ['update'],

@@ -227,6 +227,38 @@ runPerf('animation frame performance baseline', () => {
     expect(duration).toBeLessThanOrEqual(maxMs);
   });
 
+  test('repeated update interruption reports ownership handoff cost', () => {
+    const animateCount = Number(process.env.VRENDER_ANIMATE_PERF_INTERRUPT_ANIMATES ?? 10_000);
+    const rounds = Number(process.env.VRENDER_ANIMATE_PERF_INTERRUPT_ROUNDS ?? 4);
+    const maxMs =
+      process.env.VRENDER_ANIMATE_PERF_MAX_INTERRUPT_MS == null
+        ? Number.POSITIVE_INFINITY
+        : Number(process.env.VRENDER_ANIMATE_PERF_MAX_INTERRUPT_MS);
+    const keys = ['x', 'y', 'width', 'height'];
+    const animates = Array.from({ length: animateCount }, () => createPreventAnimate(keys, 1));
+
+    const duration = timeLoop('repeated-update-interrupt-prevent', () => {
+      for (let r = 0; r < rounds; r++) {
+        const preventedKeys = r % 2 ? ['x', 'width'] : ['y', 'height'];
+        for (let i = 0; i < animates.length; i++) {
+          animates[i].preventAttrs(preventedKeys);
+        }
+      }
+    });
+
+    process.stdout.write(
+      JSON.stringify({
+        benchmark: 'repeated-update-interrupt-prevent',
+        animateCount,
+        rounds,
+        durationMs: Number(duration.toFixed(3)),
+        maxMs: Number.isFinite(maxMs) ? maxMs : null
+      }) + '\n'
+    );
+
+    expect(duration).toBeLessThanOrEqual(maxMs);
+  });
+
   test('static end commit reports final truth commit cost', () => {
     const iterations = Number(process.env.VRENDER_ANIMATE_PERF_COMMIT_ITERATIONS ?? 200_000);
     const maxMs =

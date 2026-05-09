@@ -161,6 +161,9 @@ export class Animate implements IAnimate {
   bind(target: IGraphic): this {
     this.target = target;
     const trackerTarget = this.target as any;
+    if (typeof trackerTarget.detachAttributeFromBaseAttributes === 'function') {
+      trackerTarget.detachAttributeFromBaseAttributes();
+    }
     if (typeof trackerTarget.trackAnimate === 'function') {
       trackerTarget.trackAnimate(this);
     } else {

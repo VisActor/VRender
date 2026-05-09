@@ -59,7 +59,7 @@ import type { CompiledStateDefinition, StateDefinition, StateDefinitionsInput } 
 import { StateDefinitionCompiler } from './state/state-definition-compiler';
 import { StateEngine } from './state/state-engine';
 import { StateModel } from './state/state-model';
-import { UpdateCategory, classifyAttributeDelta } from './state/attribute-update-classifier';
+import { ATTRIBUTE_CATEGORY, UpdateCategory, classifyAttributeDelta } from './state/attribute-update-classifier';
 import { StateStyleResolver, type StateMergeMode } from './state/state-style-resolver';
 import { StateTransitionOrchestrator } from './state/state-transition-orchestrator';
 import {
@@ -151,12 +151,29 @@ const builtinTextureTypes = new Set([
   'wave'
 ]);
 
+const FULL_STATE_DEFINITION_KEYS = new Set([
+  'name',
+  'patch',
+  'priority',
+  'exclude',
+  'suppress',
+  'resolver',
+  'declaredAffectedKeys'
+]);
+
 const point = new Point();
+const EMPTY_STATE_NAMES: readonly string[] = [];
+const BROAD_UPDATE_CATEGORY =
+  UpdateCategory.PAINT |
+  UpdateCategory.SHAPE |
+  UpdateCategory.BOUNDS |
+  UpdateCategory.TRANSFORM |
+  UpdateCategory.LAYOUT;
 
 type AttributeDelta = Map<string, { prev: unknown; next: unknown }>;
 
 function isPlainObjectValue(value: unknown): value is Record<string, any> {
-  return typeof value === 'object' && value != null && !isArray(value);
+  return typeof value === 'object' && value != null && !Array.isArray(value);
 }
 
 function cloneAttributeValue<T>(value: T): T {
@@ -173,22 +190,6 @@ function cloneAttributeValue<T>(value: T): T {
   return clone as T;
 }
 
-function cloneSimpleAttributeRecord<T>(value: T): T {
-  if (!isPlainObjectValue(value)) {
-    return value;
-  }
-
-  return { ...(value as Record<string, any>) } as T;
-}
-
-export function shouldUseSimpleAttributeFastPath(value: unknown): value is Record<string, any> {
-  if (!isPlainObjectValue(value)) {
-    return false;
-  }
-
-  return !Object.keys(value).some(key => isPlainObjectValue((value as Record<string, any>)[key]));
-}
-
 function cloneAttributeSurface<T>(value: T): T {
   if (!isPlainObjectValue(value)) {
     return value;
@@ -201,6 +202,16 @@ function cloneAttributeSurface<T>(value: T): T {
     clone[key] = isPlainObjectValue(nextValue) ? { ...nextValue } : nextValue;
   });
   return clone as T;
+}
+
+function areAttributeValuesEqual(left: unknown, right: unknown): boolean {
+  if (left === right) {
+    return true;
+  }
+  if (!isPlainObjectValue(left) && !isPlainObjectValue(right) && !Array.isArray(left) && !Array.isArray(right)) {
+    return false;
+  }
+  return isEqual(left, right);
 }
 
 function deepMergeAttributeValue(base: Record<string, any>, value: Record<string, any>): Record<string, any> {
@@ -447,27 +458,20 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   protected _deprecatedNormalAttrsView?: Partial<T> | null;
   protected localStateDefinitionsSource?: StateDefinitionsInput<T>;
   protected resolverEpoch: number = 0;
+  protected attributeMayContainTransientAttrs: boolean = false;
 
   constructor(params: T = {} as T) {
     super();
     this._AABBBounds = new AABBBounds();
     this._updateTag = UpdateTag.INIT;
-    const useSimpleAttributeFastPath = shouldUseSimpleAttributeFastPath(params);
-    const initialBaseAttributes = (
-      useSimpleAttributeFastPath ? cloneSimpleAttributeRecord(params) : cloneAttributeValue(params)
-    ) as Partial<T>;
-    this.baseAttributes = initialBaseAttributes;
-    this.attribute = (
-      useSimpleAttributeFastPath
-        ? cloneSimpleAttributeRecord(initialBaseAttributes)
-        : cloneAttributeSurface(initialBaseAttributes)
-    ) as T;
+    this.baseAttributes = params as Partial<T>;
+    this.attribute = this.baseAttributes as T;
     this.valid = this.isValid();
     this.updateAABBBoundsStamp = 0;
     if (params.background) {
       this.loadImage((params.background as any).background ?? params.background, true);
     }
-    if (isExternalTexture(params.texture)) {
+    if (params.texture && isExternalTexture(params.texture)) {
       this.loadImage(params.texture, false);
     }
     if (params.shadowGraphic) {
@@ -552,14 +556,36 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     return true;
   }
 
-  protected syncSharedStateActiveRegistrations(): void {
-    const nextScopes =
-      this.currentStates?.length && this.boundSharedStateScope
-        ? new Set(collectSharedStateScopeChain(this.boundSharedStateScope))
-        : new Set<SharedStateScope<T>>();
-    const previousScopes = this.registeredActiveScopes ?? new Set<SharedStateScope<T>>();
+  protected syncSharedStateScopeBindingOnTreeChange(markDirty: boolean = true): boolean {
+    if (
+      !this.currentStates?.length &&
+      !this.boundSharedStateScope &&
+      !this.registeredActiveScopes?.size &&
+      !this.sharedStateDirty
+    ) {
+      return false;
+    }
 
-    previousScopes.forEach(scope => {
+    return this.syncSharedStateScopeBindingFromTree(markDirty);
+  }
+
+  protected syncSharedStateActiveRegistrations(): void {
+    const previousScopes = this.registeredActiveScopes;
+
+    if (!this.currentStates?.length || !this.boundSharedStateScope) {
+      if (previousScopes?.size) {
+        previousScopes.forEach(scope => {
+          scope.subtreeActiveDescendants.delete(this);
+        });
+        previousScopes.clear();
+      }
+      this.registeredActiveScopes = undefined;
+      return;
+    }
+
+    const nextScopes = new Set(collectSharedStateScopeChain(this.boundSharedStateScope));
+
+    previousScopes?.forEach(scope => {
       if (!nextScopes.has(scope)) {
         scope.subtreeActiveDescendants.delete(this);
       }
@@ -595,7 +621,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       return;
     }
 
-    this.syncSharedStateScopeBindingFromTree();
+    this.syncSharedStateScopeBindingOnTreeChange();
   }
 
   refreshSharedStateBeforeRender(): void {
@@ -612,7 +638,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     this.recomputeCurrentStatePatch();
     this.stopStateAnimates();
     this._restoreAttributeFromStaticTruth({ type: AttributeUpdateType.STATE });
-    this._emitCustomEvent('afterStateUpdate', { type: AttributeUpdateType.STATE });
+    this.emitStateUpdateEvent();
     this.sharedStateDirty = false;
   }
 
@@ -740,7 +766,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
 
     this.currentStates = transition.states;
     this.effectiveStates = [...effectiveStates];
-    this.resolvedStatePatch = { ...resolvedStateAttrs };
+    this.resolvedStatePatch = resolvedStateAttrs;
     this.syncSharedStateActiveRegistrations();
   }
 
@@ -828,7 +854,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       }
 
       const nextValue = snapshot[key];
-      if (isEqual(previousValue, nextValue)) {
+      if (areAttributeValuesEqual(previousValue, nextValue)) {
         return;
       }
 
@@ -840,9 +866,13 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   }
 
   protected _syncAttribute(): AttributeDelta {
+    if (this.attribute === this.baseAttributes && this.resolvedStatePatch) {
+      this.attribute = cloneAttributeSurface(this.attribute) as T;
+    }
     const snapshot = this.buildStaticAttributeSnapshot() as Record<string, any>;
     const delta = this.syncObjectToSnapshot(this.attribute as Record<string, any>, snapshot);
     this.valid = this.isValid();
+    this.attributeMayContainTransientAttrs = false;
     return delta;
   }
 
@@ -855,7 +885,22 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     this.syncObjectToSnapshot(target, snapshot);
   }
 
-  protected submitUpdateByDelta(delta: AttributeDelta, forceUpdateTag: boolean = false): void {
+  protected mergeAttributeDeltaCategory(category: UpdateCategory, key: string, prev: unknown, next: unknown) {
+    let nextCategory =
+      key === 'stroke' || key === 'shadowBlur'
+        ? classifyAttributeDelta(key, prev, next)
+        : ATTRIBUTE_CATEGORY[key] ?? UpdateCategory.PAINT;
+    if (nextCategory & UpdateCategory.PICK) {
+      // Phase 2 keeps PICK invalidation on the existing bounds path instead of adding a dedicated pick tag.
+      nextCategory |= UpdateCategory.BOUNDS;
+    }
+    if (nextCategory === UpdateCategory.PAINT && this.needUpdateTag(key)) {
+      nextCategory = UpdateCategory.SHAPE | UpdateCategory.BOUNDS;
+    }
+    return category | nextCategory;
+  }
+
+  protected submitUpdateByCategory(category: UpdateCategory, forceUpdateTag: boolean = false): void {
     if (forceUpdateTag) {
       this.addUpdateShapeAndBoundsTag();
       this.addUpdatePositionTag();
@@ -863,22 +908,16 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       return;
     }
 
-    let category = UpdateCategory.NONE;
-
-    delta.forEach((entry, key) => {
-      let nextCategory = classifyAttributeDelta(key, entry.prev, entry.next);
-      if (nextCategory & UpdateCategory.PICK) {
-        // Phase 2 keeps PICK invalidation on the existing bounds path instead of adding a dedicated pick tag.
-        nextCategory |= UpdateCategory.BOUNDS;
-      }
-      if (nextCategory === UpdateCategory.PAINT && this.needUpdateTag(key)) {
-        nextCategory = UpdateCategory.SHAPE | UpdateCategory.BOUNDS;
-      }
-      category |= nextCategory;
-    });
-
     if (category !== UpdateCategory.NONE) {
-      getStageStatePerfMonitor(this.stage)?.recordCategory(category);
+      const stage = this.stage;
+      if (stage) {
+        getStageStatePerfMonitor(stage)?.recordCategory(category);
+      }
+    }
+
+    if ((category & BROAD_UPDATE_CATEGORY) === BROAD_UPDATE_CATEGORY) {
+      this.addBroadUpdateTag();
+      return;
     }
 
     if (category & UpdateCategory.SHAPE) {
@@ -900,6 +939,26 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     }
   }
 
+  protected submitUpdateByDelta(delta: AttributeDelta, forceUpdateTag: boolean = false): void {
+    let category = UpdateCategory.NONE;
+
+    delta.forEach((entry, key) => {
+      category = this.mergeAttributeDeltaCategory(category, key, entry.prev, entry.next);
+    });
+
+    this.submitUpdateByCategory(category, forceUpdateTag);
+  }
+
+  protected submitTouchedKeyUpdate(keys: string[], forceUpdateTag: boolean = false): void {
+    if (!this.updateShapeAndBoundsTagSetted() && (forceUpdateTag || this.needUpdateTags(keys))) {
+      this.addUpdateShapeAndBoundsTag();
+    } else {
+      this.addUpdateBoundTag();
+    }
+    this.addUpdatePositionTag();
+    this.addUpdateLayoutTag();
+  }
+
   protected commitBaseAttributeMutation(forceUpdateTag: boolean = false, context?: ISetAttributeContext): void {
     if (this.currentStates?.length) {
       this.resolverEpoch += 1;
@@ -911,11 +970,63 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     this.onAttributeUpdate(context);
   }
 
+  protected canCommitBaseAttributesByTouchedKeys(): boolean {
+    if (this.currentStates?.length || this.resolvedStatePatch || this.attributeMayContainTransientAttrs) {
+      return false;
+    }
+    if (!this.animates?.size && !(this as any)._animationStateManager) {
+      return true;
+    }
+    return !this.hasAnyTrackedAnimate();
+  }
+
+  protected detachAttributeFromBaseAttributes(): void {
+    if (this.attribute === this.baseAttributes) {
+      this.attribute = cloneAttributeSurface(this.attribute) as T;
+    }
+  }
+
+  protected commitInternalBaseAttributes(params: Partial<T>, context?: ISetAttributeContext): void {
+    if (!params || !Object.keys(params).length) {
+      return;
+    }
+
+    if (this.canCommitBaseAttributesByTouchedKeys()) {
+      this.commitBaseAttributesByTouchedKeys(params, false, context);
+      return;
+    }
+
+    this.detachAttributeFromBaseAttributes();
+    this.applyBaseAttributes(params);
+    this.commitBaseAttributeMutation(false, context);
+  }
+
+  protected commitBaseAttributesByTouchedKeys(
+    params: Partial<T>,
+    forceUpdateTag: boolean = false,
+    context?: ISetAttributeContext
+  ): void {
+    const keys = Object.keys(params);
+    const source = params as Record<string, any>;
+    const baseAttributes = this.baseAttributes as Record<string, any>;
+
+    for (let i = 0; i < keys.length; i++) {
+      const key = keys[i];
+      baseAttributes[key] = source[key];
+    }
+
+    this.attribute = this.baseAttributes as T;
+    this.valid = this.isValid();
+    this.attributeMayContainTransientAttrs = false;
+    this.submitTouchedKeyUpdate(keys, forceUpdateTag);
+    this.onAttributeUpdate(context);
+  }
+
   protected applyBaseAttributes(params: Partial<T>) {
     const keys = Object.keys(params);
     for (let i = 0; i < keys.length; i++) {
       const key = keys[i];
-      (this.baseAttributes as any)[key] = cloneAttributeValue((params as any)[key]);
+      (this.baseAttributes as any)[key] = (params as any)[key];
     }
   }
 
@@ -924,6 +1035,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     forceUpdateTag: boolean = false,
     context?: ISetAttributeContext
   ) {
+    this.detachAttributeFromBaseAttributes();
     const delta: AttributeDelta = new Map();
     const keys = Object.keys(params);
 
@@ -931,13 +1043,16 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       const key = keys[i];
       const previousValue = (this.attribute as Record<string, any>)[key];
       const nextValue = (params as Record<string, any>)[key];
-      if (isEqual(previousValue, nextValue)) {
+      if (areAttributeValuesEqual(previousValue, nextValue)) {
         continue;
       }
       delta.set(key, { prev: previousValue, next: nextValue });
-      (this.attribute as Record<string, any>)[key] = cloneAttributeValue(nextValue);
+      (this.attribute as Record<string, any>)[key] = nextValue;
     }
 
+    if (delta.size) {
+      this.attributeMayContainTransientAttrs = true;
+    }
     this.valid = this.isValid();
     this.submitUpdateByDelta(delta, forceUpdateTag);
     this.onAttributeUpdate(context);
@@ -947,6 +1062,111 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     this._syncFinalAttributeFromStaticTruth();
     const delta = this._syncAttribute();
     this.submitUpdateByDelta(delta);
+    this.onAttributeUpdate(context);
+  }
+
+  protected collectStatePatchDeltaKeys(previousPatch?: Partial<T>, nextPatch?: Partial<T>): string[] {
+    const keys = previousPatch ? Object.keys(previousPatch) : [];
+    if (!nextPatch) {
+      return keys;
+    }
+
+    for (const key in nextPatch) {
+      if (
+        Object.prototype.hasOwnProperty.call(nextPatch, key) &&
+        !Object.prototype.hasOwnProperty.call(previousPatch ?? {}, key)
+      ) {
+        keys.push(key);
+      }
+    }
+    return keys;
+  }
+
+  protected getStaticTruthValueForStateKey(key: string, nextPatch?: Partial<T>): { hasValue: boolean; value: any } {
+    const baseAttributes = (this.baseAttributes ?? {}) as Record<string, any>;
+    const patch = nextPatch as Record<string, any> | undefined;
+
+    if (patch && Object.prototype.hasOwnProperty.call(patch, key)) {
+      const patchValue = patch[key];
+      const baseValue = baseAttributes[key];
+      if (this.stateMergeMode === 'deep' && isPlainObjectValue(baseValue) && isPlainObjectValue(patchValue)) {
+        return {
+          hasValue: true,
+          value: deepMergeAttributeValue(baseValue, patchValue)
+        };
+      }
+      return {
+        hasValue: true,
+        value: patchValue
+      };
+    }
+
+    if (Object.prototype.hasOwnProperty.call(baseAttributes, key)) {
+      return {
+        hasValue: true,
+        value: baseAttributes[key]
+      };
+    }
+
+    return {
+      hasValue: false,
+      value: undefined
+    };
+  }
+
+  protected syncStatePatchDeltaToTarget(
+    target: Record<string, any>,
+    keys: string[],
+    nextPatch?: Partial<T>,
+    collectCategory: boolean = false
+  ): UpdateCategory {
+    let category = UpdateCategory.NONE;
+
+    for (let i = 0; i < keys.length; i++) {
+      const key = keys[i];
+      const previousValue = target[key];
+      const next = this.getStaticTruthValueForStateKey(key, nextPatch);
+
+      if (!next.hasValue) {
+        if (Object.prototype.hasOwnProperty.call(target, key)) {
+          delete target[key];
+          if (collectCategory) {
+            category = this.mergeAttributeDeltaCategory(category, key, previousValue, undefined);
+          }
+        }
+        continue;
+      }
+
+      if (areAttributeValuesEqual(previousValue, next.value)) {
+        continue;
+      }
+
+      const nextValue = cloneAttributeValue(next.value);
+      target[key] = nextValue;
+      if (collectCategory) {
+        category = this.mergeAttributeDeltaCategory(category, key, previousValue, nextValue);
+      }
+    }
+
+    return category;
+  }
+
+  protected restoreAttributeFromStatePatchDelta(
+    previousPatch?: Partial<T>,
+    nextPatch?: Partial<T>,
+    context?: ISetAttributeContext
+  ): void {
+    this.detachAttributeFromBaseAttributes();
+    const keys = this.collectStatePatchDeltaKeys(previousPatch, nextPatch);
+    const finalAttribute = (this as any).finalAttribute as Record<string, any> | undefined;
+    if (finalAttribute) {
+      this.syncStatePatchDeltaToTarget(finalAttribute, keys, nextPatch, false);
+    }
+    const category = this.syncStatePatchDeltaToTarget(this.attribute as Record<string, any>, keys, nextPatch, true);
+
+    this.valid = this.isValid();
+    this.attributeMayContainTransientAttrs = false;
+    this.submitUpdateByCategory(category);
     this.onAttributeUpdate(context);
   }
 
@@ -975,6 +1195,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   }
 
   onAnimateBind(animate: IAnimate) {
+    this.detachAttributeFromBaseAttributes();
     this._emitCustomEvent('animate-bind', animate);
   }
 
@@ -997,6 +1218,10 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       return getTrackedAnimates.call(this).size > 0;
     }
     return !!this.animates?.size;
+  }
+
+  protected mayHaveTrackedAnimates() {
+    return !!this.animates?.size || !!(this as any)._animationStateManager;
   }
 
   protected tryUpdateAABBBounds(): IAABBBounds {
@@ -1434,7 +1659,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     if (params.background) {
       this.loadImage(params.background, true);
     }
-    if (isExternalTexture(params.texture)) {
+    if (params.texture && isExternalTexture(params.texture)) {
       this.loadImage(params.texture, false);
     }
     if (params.shadowGraphic) {
@@ -1444,6 +1669,11 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   }
 
   _setAttributes(params: Partial<T>, forceUpdateTag: boolean = false, context?: ISetAttributeContext) {
+    if (this.canCommitBaseAttributesByTouchedKeys()) {
+      this.commitBaseAttributesByTouchedKeys(params, forceUpdateTag, context);
+      return;
+    }
+    this.detachAttributeFromBaseAttributes();
     this.applyBaseAttributes(params);
     this.commitBaseAttributeMutation(forceUpdateTag, context);
   }
@@ -1452,8 +1682,13 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     const params =
       this.onBeforeAttributeUpdate && this.onBeforeAttributeUpdate({ [key]: value }, this.attribute, key, context);
     if (!params) {
-      this.applyBaseAttributes({ [key]: value } as Partial<T>);
-      this.commitBaseAttributeMutation(!!forceUpdateTag, context);
+      const nextAttrs = { [key]: value } as Partial<T>;
+      if (this.canCommitBaseAttributesByTouchedKeys()) {
+        this.commitBaseAttributesByTouchedKeys(nextAttrs, !!forceUpdateTag, context);
+      } else {
+        this.applyBaseAttributes(nextAttrs);
+        this.commitBaseAttributeMutation(!!forceUpdateTag, context);
+      }
     } else {
       this._setAttributes(params, forceUpdateTag, context);
     }
@@ -1491,16 +1726,15 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     const context = { type: AttributeUpdateType.INIT };
     params =
       (this.onBeforeAttributeUpdate && this.onBeforeAttributeUpdate(params, this.attribute, null, context)) || params;
-    this.baseAttributes = cloneAttributeValue(params) as Partial<T>;
-    if (!this.attribute) {
-      this.attribute = {} as T;
-    }
+    this.baseAttributes = params as Partial<T>;
+    this.attribute = this.baseAttributes as T;
     this.resolvedStatePatch = undefined;
-    this._syncAttribute();
+    this.attributeMayContainTransientAttrs = false;
+    this.valid = this.isValid();
     if (params.background) {
       this.loadImage(params.background, true);
     }
-    if (isExternalTexture(params.texture)) {
+    if (params.texture && isExternalTexture(params.texture)) {
       this.loadImage(params.texture, false);
     }
     if (params.shadowGraphic) {
@@ -1526,18 +1760,20 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       y = params.y;
       delete params.x;
       delete params.y;
-      this.applyBaseAttributes(params);
     }
     const attribute = this.baseAttributes as T;
     const postMatrix = attribute.postMatrix;
+    const nextAttrs = (params || {}) as Partial<T>;
     if (!postMatrix) {
-      attribute.x = (attribute.x ?? DefaultTransform.x) + x;
-      attribute.y = (attribute.y ?? DefaultTransform.y) + y;
+      (nextAttrs as any).x = (attribute.x ?? DefaultTransform.x) + x;
+      (nextAttrs as any).y = (attribute.y ?? DefaultTransform.y) + y;
     } else {
-      application.transformUtil.fromMatrix(postMatrix, postMatrix).translate(x, y);
+      const nextPostMatrix = postMatrix.clone();
+      application.transformUtil.fromMatrix(nextPostMatrix, nextPostMatrix).translate(x, y);
+      (nextAttrs as any).postMatrix = nextPostMatrix;
     }
 
-    this.commitBaseAttributeMutation(false, context);
+    this.commitInternalBaseAttributes(nextAttrs, context);
     return this;
   }
 
@@ -1553,13 +1789,10 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       this.onBeforeAttributeUpdate &&
       this.onBeforeAttributeUpdate({ x, y }, this.attribute, tempConstantXYKey, context);
     if (params) {
-      this.applyBaseAttributes(params);
-      this.commitBaseAttributeMutation(false, context);
+      this.commitInternalBaseAttributes(params, context);
       return this;
     }
-    attribute.x = x;
-    attribute.y = y;
-    this.commitBaseAttributeMutation(false, context);
+    this.commitInternalBaseAttributes({ x, y } as Partial<T>, context);
     return this;
   }
 
@@ -1578,21 +1811,23 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       scaleY = params.scaleY;
       delete params.scaleX;
       delete params.scaleY;
-      this.applyBaseAttributes(params);
     }
     const attribute = this.baseAttributes as T;
+    const nextAttrs = (params || {}) as Partial<T>;
     if (!scaleCenter) {
-      attribute.scaleX = (attribute.scaleX ?? DefaultTransform.scaleX) * scaleX;
-      attribute.scaleY = (attribute.scaleY ?? DefaultTransform.scaleY) * scaleY;
+      (nextAttrs as any).scaleX = (attribute.scaleX ?? DefaultTransform.scaleX) * scaleX;
+      (nextAttrs as any).scaleY = (attribute.scaleY ?? DefaultTransform.scaleY) * scaleY;
     } else {
-      let { postMatrix } = this.attribute;
+      let { postMatrix } = this.baseAttributes as T;
       if (!postMatrix) {
         postMatrix = new Matrix();
-        attribute.postMatrix = postMatrix;
+      } else {
+        postMatrix = postMatrix.clone();
       }
       application.transformUtil.fromMatrix(postMatrix, postMatrix).scale(scaleX, scaleY, scaleCenter);
+      (nextAttrs as any).postMatrix = postMatrix;
     }
-    this.commitBaseAttributeMutation(false, context);
+    this.commitInternalBaseAttributes(nextAttrs, context);
     return this;
   }
 
@@ -1608,13 +1843,10 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       this.onBeforeAttributeUpdate &&
       this.onBeforeAttributeUpdate({ scaleX, scaleY }, this.attribute, tempConstantScaleXYKey, context);
     if (params) {
-      this.applyBaseAttributes(params);
-      this.commitBaseAttributeMutation(false, context);
+      this.commitInternalBaseAttributes(params, context);
       return this;
     }
-    attribute.scaleX = scaleX;
-    attribute.scaleY = scaleY;
-    this.commitBaseAttributeMutation(false, context);
+    this.commitInternalBaseAttributes({ scaleX, scaleY } as Partial<T>, context);
     return this;
   }
 
@@ -1628,21 +1860,22 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       this.onBeforeAttributeUpdate({ angle, rotateCenter }, this.attribute, tempConstantAngleKey, context);
     if (params) {
       delete params.angle;
-      this.applyBaseAttributes(params);
-      // return this;
     }
     const attribute = this.baseAttributes as T;
+    const nextAttrs = (params || {}) as Partial<T>;
     if (!rotateCenter) {
-      attribute.angle = (attribute.angle ?? DefaultTransform.angle) + angle;
+      (nextAttrs as any).angle = (attribute.angle ?? DefaultTransform.angle) + angle;
     } else {
       let { postMatrix } = this.baseAttributes as T;
       if (!postMatrix) {
         postMatrix = new Matrix();
-        (this.baseAttributes as T).postMatrix = postMatrix;
+      } else {
+        postMatrix = postMatrix.clone();
       }
       application.transformUtil.fromMatrix(postMatrix, postMatrix).rotate(angle, rotateCenter);
+      (nextAttrs as any).postMatrix = postMatrix;
     }
-    this.commitBaseAttributeMutation(false, context);
+    this.commitInternalBaseAttributes(nextAttrs, context);
     return this;
   }
 
@@ -1658,12 +1891,10 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       this.onBeforeAttributeUpdate &&
       this.onBeforeAttributeUpdate(angle, this.attribute, tempConstantAngleKey, context);
     if (params) {
-      this.applyBaseAttributes(params);
-      this.commitBaseAttributeMutation(false, context);
+      this.commitInternalBaseAttributes(params, context);
       return this;
     }
-    attribute.angle = angle;
-    this.commitBaseAttributeMutation(false, context);
+    this.commitInternalBaseAttributes({ angle } as Partial<T>, context);
     return this;
   }
 
@@ -1751,6 +1982,115 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     });
   }
 
+  protected resolveSimpleLocalStateTransition(
+    states: string[],
+    previousStates: readonly string[]
+  ): {
+    changed: boolean;
+    states: string[];
+    effectiveStates: string[];
+    resolvedStateAttrs: Partial<T>;
+  } | null {
+    if (
+      !this.states ||
+      this.stateProxy ||
+      this.stateSort ||
+      this.stateMergeMode === 'deep' ||
+      this.parent ||
+      this.stage?.rootSharedStateScope ||
+      this.boundSharedStateScope
+    ) {
+      return null;
+    }
+
+    if (states.length === 1) {
+      const stateName = states[0];
+      const hasDefinition = Object.prototype.hasOwnProperty.call(this.states, stateName);
+      const nextStates = [stateName];
+      const changed = !this.sameStateNames(previousStates, nextStates);
+      const resolvedStateAttrs: Partial<T> = {};
+
+      if (hasDefinition) {
+        const attrs = (this.states as Record<string, any>)[stateName];
+        if (attrs != null) {
+          if (!isPlainObjectValue(attrs)) {
+            return null;
+          }
+          const keys = Object.keys(attrs);
+          for (let keyIndex = 0; keyIndex < keys.length; keyIndex++) {
+            const key = keys[keyIndex];
+            if (FULL_STATE_DEFINITION_KEYS.has(key)) {
+              return null;
+            }
+            const attrValue = attrs[key];
+            (resolvedStateAttrs as Record<string, any>)[key] = isPlainObjectValue(attrValue)
+              ? cloneAttributeValue(attrValue)
+              : attrValue;
+          }
+        }
+      }
+
+      return {
+        changed,
+        states: nextStates,
+        effectiveStates: nextStates,
+        resolvedStateAttrs
+      };
+    }
+
+    const uniqueStates = Array.from(new Set(states));
+    const withDefinition: string[] = [];
+    const withoutDefinition: string[] = [];
+
+    for (let i = 0; i < uniqueStates.length; i++) {
+      const stateName = uniqueStates[i];
+      if (Object.prototype.hasOwnProperty.call(this.states, stateName)) {
+        withDefinition.push(stateName);
+      } else {
+        withoutDefinition.push(stateName);
+      }
+    }
+
+    withDefinition.sort((left, right) => left.localeCompare(right));
+    const nextStates = withDefinition.concat(withoutDefinition);
+    const changed = !this.sameStateNames(previousStates, nextStates);
+    const resolvedStateAttrs: Partial<T> = {};
+
+    for (let i = 0; i < nextStates.length; i++) {
+      const stateName = nextStates[i];
+      const hasDefinition = Object.prototype.hasOwnProperty.call(this.states, stateName);
+      if (!hasDefinition) {
+        continue;
+      }
+      const attrs = (this.states as Record<string, any>)[stateName];
+      if (attrs == null) {
+        continue;
+      }
+      if (!isPlainObjectValue(attrs)) {
+        return null;
+      }
+
+      const keys = Object.keys(attrs);
+      for (let keyIndex = 0; keyIndex < keys.length; keyIndex++) {
+        const key = keys[keyIndex];
+        if (FULL_STATE_DEFINITION_KEYS.has(key)) {
+          return null;
+        }
+        const attrValue = attrs[key];
+        (resolvedStateAttrs as Record<string, any>)[key] = isPlainObjectValue(attrValue)
+          ? cloneAttributeValue(attrValue)
+          : attrValue;
+      }
+    }
+
+    return {
+      changed,
+      states: nextStates,
+      effectiveStates: nextStates,
+      resolvedStateAttrs
+    };
+  }
+
   protected resolveStateAnimateConfig(animateConfig?: IAnimateConfig) {
     return animateConfig ?? this.stateAnimateConfig ?? this.context?.stateAnimateConfig ?? DefaultStateAnimateConfig;
   }
@@ -1817,6 +2157,9 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       stopAnimationState.call(this, 'state', type);
       return;
     }
+    if (!this.mayHaveTrackedAnimates()) {
+      return;
+    }
 
     const stateAnimates: IAnimate[] = [];
     this.visitTrackedAnimates(animate => {
@@ -1847,10 +2190,8 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   }
 
   clearStates(hasAnimation?: boolean) {
-    const previousStates = this.currentStates ? this.currentStates.slice() : [];
-    const previousResolvedStatePatch = this.resolvedStatePatch
-      ? cloneAttributeValue(this.resolvedStatePatch)
-      : undefined;
+    const previousStates = this.currentStates ?? EMPTY_STATE_NAMES;
+    const previousResolvedStatePatch = this.resolvedStatePatch;
     const transition = this.createStateModel().clearStates();
     if (!transition.changed && previousStates.length === 0) {
       this.currentStates = [];
@@ -1860,7 +2201,10 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       this.clearSharedStateActiveRegistrations();
       return;
     }
-    const resolvedStateAttrs = cloneAttributeValue((this.baseAttributes ?? {}) as Partial<T>) as Partial<T>;
+    const resolvedStateAttrs =
+      hasAnimation || this.hasCustomEvent('beforeStateUpdate')
+        ? (cloneAttributeValue((this.baseAttributes ?? {}) as Partial<T>) as Partial<T>)
+        : ((this.baseAttributes ?? {}) as Partial<T>);
 
     if (
       transition.changed &&
@@ -1874,11 +2218,14 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     this.resolvedStatePatch = undefined;
     this.sharedStateDirty = false;
     this.clearSharedStateActiveRegistrations();
-    getStageStatePerfMonitor(this.stage)?.incrementCounter('stateCommits');
-    getStageStatePerfMonitor(this.stage)?.recordEvent('state-commit', {
-      graphicId: this._uid,
-      targetStates: []
-    });
+    if (this.stage) {
+      const perfMonitor = getStageStatePerfMonitor(this.stage);
+      perfMonitor?.incrementCounter('stateCommits');
+      perfMonitor?.recordEvent('state-commit', {
+        graphicId: this._uid,
+        targetStates: []
+      });
+    }
     if (hasAnimation) {
       this._syncFinalAttributeFromStaticTruth();
       this.applyStateAttrs(
@@ -1891,8 +2238,14 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       );
     } else {
       this.stopStateAnimates();
-      this._restoreAttributeFromStaticTruth({ type: AttributeUpdateType.STATE });
-      this._emitCustomEvent('afterStateUpdate', { type: AttributeUpdateType.STATE });
+      if (this.attributeMayContainTransientAttrs) {
+        this._restoreAttributeFromStaticTruth({ type: AttributeUpdateType.STATE });
+      } else {
+        this.restoreAttributeFromStatePatchDelta(previousResolvedStatePatch, undefined, {
+          type: AttributeUpdateType.STATE
+        });
+      }
+      this.emitStateUpdateEvent();
     }
   }
 
@@ -1924,44 +2277,56 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       return;
     }
 
-    const previousStates = this.currentStates ? this.currentStates.slice() : [];
-    const previousResolvedStatePatch = this.resolvedStatePatch
-      ? cloneAttributeValue(this.resolvedStatePatch)
-      : undefined;
-    const stateResolveBaseAttrs = (this.baseAttributes ?? this.attribute) as Partial<T>;
-    const stateModel = this.createStateModel();
-    this.stateEngine?.setResolveContext(this, stateResolveBaseAttrs);
-    const transition = stateModel.useStates(states);
-    if (!transition.changed && this.sameStateNames(previousStates, transition.states)) {
-      return;
+    const previousStates = this.currentStates ?? EMPTY_STATE_NAMES;
+    const previousResolvedStatePatch = this.resolvedStatePatch;
+    let transition = this.resolveSimpleLocalStateTransition(states, previousStates);
+    const isSimpleLocalTransition = !!transition;
+    let resolvedStateAttrs: Partial<T>;
+    if (transition) {
+      if (!transition.changed) {
+        return;
+      }
+      resolvedStateAttrs = transition.resolvedStateAttrs;
+    } else {
+      const stateResolveBaseAttrs = (this.baseAttributes ?? this.attribute) as Partial<T>;
+      const stateModel = this.createStateModel();
+      this.stateEngine?.setResolveContext(this, stateResolveBaseAttrs);
+      transition = stateModel.useStates(states) as typeof transition;
+      if (!transition.changed && this.sameStateNames(previousStates, transition.states)) {
+        return;
+      }
+
+      resolvedStateAttrs =
+        this.stateEngine && this.compiledStateDefinitions
+          ? { ...(this.stateEngine.resolvedPatch as Partial<T>) }
+          : this.getStateStyleResolver(this.stateMergeMode).resolve(
+              stateResolveBaseAttrs,
+              this.states as any,
+              this.stateProxy as any,
+              transition.states,
+              this.stateSort
+            );
     }
 
     const effectiveStates = transition.effectiveStates ?? transition.states;
-    const resolvedStateAttrs =
-      this.stateEngine && this.compiledStateDefinitions
-        ? { ...(this.stateEngine.resolvedPatch as Partial<T>) }
-        : this.getStateStyleResolver(this.stateMergeMode).resolve(
-            stateResolveBaseAttrs,
-            this.states as any,
-            this.stateProxy as any,
-            transition.states,
-            this.stateSort
-          );
 
     if (!this.beforeStateUpdate(resolvedStateAttrs, previousStates, transition.states, hasAnimation, false)) {
       return;
     }
 
     this.currentStates = transition.states;
-    this.effectiveStates = [...effectiveStates];
-    this.resolvedStatePatch = { ...resolvedStateAttrs };
+    this.effectiveStates = isSimpleLocalTransition ? (effectiveStates as string[]) : [...effectiveStates];
+    this.resolvedStatePatch = resolvedStateAttrs;
     this.sharedStateDirty = false;
     this.syncSharedStateActiveRegistrations();
-    getStageStatePerfMonitor(this.stage)?.incrementCounter('stateCommits');
-    getStageStatePerfMonitor(this.stage)?.recordEvent('state-commit', {
-      graphicId: this._uid,
-      targetStates: [...transition.states]
-    });
+    if (this.stage) {
+      const perfMonitor = getStageStatePerfMonitor(this.stage);
+      perfMonitor?.incrementCounter('stateCommits');
+      perfMonitor?.recordEvent('state-commit', {
+        graphicId: this._uid,
+        targetStates: [...transition.states]
+      });
+    }
     if (hasAnimation) {
       this._syncFinalAttributeFromStaticTruth();
       this.applyStateAttrs(
@@ -1974,8 +2339,14 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       );
     } else {
       this.stopStateAnimates();
-      this._restoreAttributeFromStaticTruth({ type: AttributeUpdateType.STATE });
-      this._emitCustomEvent('afterStateUpdate', { type: AttributeUpdateType.STATE });
+      if (this.attributeMayContainTransientAttrs) {
+        this._restoreAttributeFromStaticTruth({ type: AttributeUpdateType.STATE });
+      } else {
+        this.restoreAttributeFromStatePatchDelta(previousResolvedStatePatch, this.resolvedStatePatch, {
+          type: AttributeUpdateType.STATE
+        });
+      }
+      this.emitStateUpdateEvent();
     }
   }
 
@@ -1991,12 +2362,12 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     const transition = this.stateEngine.applyStates(this.currentStates);
     const resolvedStateAttrs = { ...(this.stateEngine.resolvedPatch as Partial<T>) };
     this.effectiveStates = [...transition.effectiveStates];
-    this.resolvedStatePatch = { ...resolvedStateAttrs };
+    this.resolvedStatePatch = resolvedStateAttrs;
     this.sharedStateDirty = false;
     this.syncSharedStateActiveRegistrations();
     this.stopStateAnimates();
     this._restoreAttributeFromStaticTruth({ type: AttributeUpdateType.STATE });
-    this._emitCustomEvent('afterStateUpdate', { type: AttributeUpdateType.STATE });
+    this.emitStateUpdateEvent();
   }
 
   private sameStateNames(left?: readonly string[], right?: readonly string[]): boolean {
@@ -2035,6 +2406,21 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
 
   addUpdateShapeAndBoundsTag() {
     this._updateTag |= UpdateTag.UPDATE_SHAPE_AND_BOUNDS; // for shape&bounds
+    if (this.parent) {
+      this.parent.addChildUpdateBoundTag();
+    }
+    if (this.glyphHost) {
+      this.glyphHost.addUpdateBoundTag();
+    }
+  }
+
+  protected addBroadUpdateTag() {
+    this.shadowRoot && this.shadowRoot.addUpdateGlobalPositionTag();
+    this._updateTag |=
+      UpdateTag.UPDATE_SHAPE_AND_BOUNDS |
+      UpdateTag.UPDATE_PAINT |
+      UpdateTag.UPDATE_GLOBAL_LOCAL_MATRIX |
+      UpdateTag.UPDATE_LAYOUT;
     if (this.parent) {
       this.parent.addChildUpdateBoundTag();
     }
@@ -2211,9 +2597,9 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     if (this.stage !== stage || this.layer !== layer) {
       this.stage = stage;
       this.layer = layer;
-      this.syncSharedStateScopeBindingFromTree(!!this.currentStates?.length);
+      this.syncSharedStateScopeBindingOnTreeChange(!!this.currentStates?.length);
       this.setStageToShadowRoot(stage, layer);
-      if (this.hasAnyTrackedAnimate()) {
+      if (this.mayHaveTrackedAnimates() && this.hasAnyTrackedAnimate()) {
         const previousTimeline = previousStage?.getTimeline?.();
         const nextTimeline = stage?.getTimeline?.();
         const detachedStageAnimates: IAnimate[] = [];
@@ -2259,7 +2645,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       return;
     }
 
-    this.syncSharedStateScopeBindingFromTree(!!this.currentStates?.length);
+    this.syncSharedStateScopeBindingOnTreeChange(!!this.currentStates?.length);
   }
 
   setStageToShadowRoot(stage?: IStage, layer?: ILayer) {
@@ -2426,6 +2812,10 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   }
 
   private _stopAnimates() {
+    if (!this.mayHaveTrackedAnimates()) {
+      return;
+    }
+
     const animates: IAnimate[] = [];
     this.visitTrackedAnimates(animate => {
       animates.push(animate);
@@ -2458,8 +2848,12 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     super.release();
   }
 
+  protected hasCustomEvent(type: string): boolean {
+    return !!this._events && type in this._events;
+  }
+
   protected _dispatchCustomEvent(type: string, context?: any) {
-    if (this._events && type in this._events) {
+    if (this.hasCustomEvent(type)) {
       const changeEvent = new CustomEvent(type, context);
       changeEvent.bubbles = false;
       const manager = (this.stage as any)?.eventSystem?.manager;
@@ -2476,11 +2870,14 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
 
   protected beforeStateUpdate(
     attrs: Partial<T>,
-    prevStates: string[],
-    nextStates: string[],
+    prevStates: readonly string[],
+    nextStates: readonly string[],
     hasAnimation?: boolean,
     isClear?: boolean
   ) {
+    if (!this.hasCustomEvent('beforeStateUpdate')) {
+      return true;
+    }
     return this._dispatchCustomEvent('beforeStateUpdate', {
       type: AttributeUpdateType.STATE,
       attrs: { ...attrs },
@@ -2489,6 +2886,12 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       hasAnimation: !!hasAnimation,
       isClear: !!isClear
     });
+  }
+
+  protected emitStateUpdateEvent() {
+    if (this.hasCustomEvent('afterStateUpdate')) {
+      this._emitCustomEvent('afterStateUpdate', { type: AttributeUpdateType.STATE });
+    }
   }
 
   protected _emitCustomEvent(type: string, context?: any) {

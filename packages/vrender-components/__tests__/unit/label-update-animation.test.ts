@@ -125,8 +125,8 @@ describe('Label update animation static truth', () => {
       text: '20',
       opacity: 0.8
     };
-    const prevText = createText(oldAttrs);
-    const curText = createText(newAttrs);
+    const prevText = createText({ ...oldAttrs });
+    const curText = createText({ ...newAttrs });
     const label = new TestLabel({ data: [], animation: true } as any);
 
     prevText.setStage(stage, null as any);

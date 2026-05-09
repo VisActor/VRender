@@ -168,12 +168,15 @@ describe('Graphic useStates', () => {
       }
     } as any;
 
-    const restoreFromStaticTruth = jest.spyOn(graphic as any, '_restoreAttributeFromStaticTruth');
+    const onAttributeUpdate = jest.spyOn(graphic as any, 'onAttributeUpdate');
 
     graphic.useStates(['hover'], false);
+    const attributeAfterFirstUpdate = graphic.attribute;
     graphic.useStates(['hover'], false);
 
-    expect(restoreFromStaticTruth).toHaveBeenCalledTimes(1);
+    expect(onAttributeUpdate).toHaveBeenCalledTimes(1);
+    expect(graphic.attribute).toBe(attributeAfterFirstUpdate);
+    expect(graphic.attribute.fill).toBe('red');
     expect(graphic.currentStates).toEqual(['hover']);
   });
 

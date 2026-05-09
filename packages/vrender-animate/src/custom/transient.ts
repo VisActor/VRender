@@ -11,6 +11,12 @@ export function applyAnimationFrameAttributes(target: IGraphic, attributes?: Rec
   if (!transientTarget.attribute) {
     transientTarget.attribute = {};
   }
+  if (
+    transientTarget.attribute === transientTarget.baseAttributes &&
+    typeof transientTarget.detachAttributeFromBaseAttributes === 'function'
+  ) {
+    transientTarget.detachAttributeFromBaseAttributes();
+  }
   const targetAttribute = transientTarget.attribute;
   for (const key in attributes) {
     if (Object.prototype.hasOwnProperty.call(attributes, key)) {

@@ -1,7 +1,7 @@
 import type { IGraphic, IGroup, IAnimate, IStep, EasingType } from '@visactor/vrender-core';
 import { isNil, isNumber, isValid } from '@visactor/vutils';
 import { ACustomAnimate } from './custom-animate';
-import { applyAnimationFrameAttributes, applyAppearStartAttributes } from './transient';
+import { applyAnimationFrameNumberAttributes, applyAppearStartAttributes } from './transient';
 
 interface IGrowCartesianAnimationOptions {
   orient?: 'positive' | 'negative';
@@ -125,11 +125,7 @@ export class GrowHeightIn extends ACustomAnimate<Record<string, number>> {
   }
 
   onUpdate(end: boolean, ratio: number, out: Record<string, any>): void {
-    const attrs: Record<string, any> = {};
-    this.propKeys.forEach(key => {
-      attrs[key] = this.from[key] + (this.to[key] - this.from[key]) * ratio;
-    });
-    applyAnimationFrameAttributes(this.target, attrs);
+    applyAnimationFrameNumberAttributes(this.target, this.propKeys, this.from, this.to, ratio);
     this.target.addUpdatePositionTag();
     this.target.addUpdateShapeAndBoundsTag();
   }
@@ -225,11 +221,7 @@ export class GrowHeightOut extends ACustomAnimate<Record<string, number>> {
   }
 
   onUpdate(end: boolean, ratio: number, out: Record<string, any>): void {
-    const attrs: Record<string, any> = {};
-    this.propKeys.forEach(key => {
-      attrs[key] = this.from[key] + (this.to[key] - this.from[key]) * ratio;
-    });
-    applyAnimationFrameAttributes(this.target, attrs);
+    applyAnimationFrameNumberAttributes(this.target, this.propKeys, this.from, this.to, ratio);
     this.target.addUpdatePositionTag();
     this.target.addUpdateShapeAndBoundsTag();
   }

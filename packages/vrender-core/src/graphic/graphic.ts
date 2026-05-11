@@ -1030,6 +1030,30 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     }
   }
 
+  applyAnimationTransientAttributes(
+    params: Partial<T>,
+    forceUpdateTag: boolean = false,
+    context?: ISetAttributeContext
+  ) {
+    this.detachAttributeFromBaseAttributes();
+    const keys = Object.keys(params);
+    if (!keys.length) {
+      return;
+    }
+    const target = this.attribute as Record<string, any>;
+    const source = params as Record<string, any>;
+
+    for (let i = 0; i < keys.length; i++) {
+      const key = keys[i];
+      target[key] = source[key];
+    }
+
+    this.attributeMayContainTransientAttrs = true;
+    this.valid = this.isValid();
+    this.submitTouchedKeyUpdate(keys, forceUpdateTag);
+    this.onAttributeUpdate(context);
+  }
+
   protected applyTransientAttributes(
     params: Partial<T>,
     forceUpdateTag: boolean = false,

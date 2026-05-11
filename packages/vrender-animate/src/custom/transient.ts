@@ -1,12 +1,23 @@
 import { AttributeUpdateType, type IGraphic } from '@visactor/vrender-core';
 
 const animateUpdateContext = { type: AttributeUpdateType.ANIMATE_UPDATE };
+const animateBindContext = { type: AttributeUpdateType.ANIMATE_BIND };
+const animateStartContext = { type: AttributeUpdateType.ANIMATE_START };
 
-export function applyAnimationFrameAttributes(target: IGraphic, attributes?: Record<string, any> | null): void {
-  if (!attributes) {
-    return;
+function getAnimationContext(type: AttributeUpdateType) {
+  switch (type) {
+    case AttributeUpdateType.ANIMATE_UPDATE:
+      return animateUpdateContext;
+    case AttributeUpdateType.ANIMATE_BIND:
+      return animateBindContext;
+    case AttributeUpdateType.ANIMATE_START:
+      return animateStartContext;
+    default:
+      return { type };
   }
+}
 
+function prepareAnimationFrameAttribute(target: IGraphic): Record<string, any> {
   const transientTarget = target as any;
   if (!transientTarget.attribute) {
     transientTarget.attribute = {};
@@ -17,13 +28,41 @@ export function applyAnimationFrameAttributes(target: IGraphic, attributes?: Rec
   ) {
     transientTarget.detachAttributeFromBaseAttributes();
   }
-  const targetAttribute = transientTarget.attribute;
+  transientTarget.attributeMayContainTransientAttrs = true;
+  return transientTarget.attribute;
+}
+
+function commitAnimationFrameAttribute(target: IGraphic): void {
+  (target as any).onAttributeUpdate?.(animateUpdateContext);
+}
+
+export function applyAnimationFrameAttributes(target: IGraphic, attributes?: Record<string, any> | null): void {
+  if (!attributes) {
+    return;
+  }
+
+  const targetAttribute = prepareAnimationFrameAttribute(target);
   for (const key in attributes) {
     if (Object.prototype.hasOwnProperty.call(attributes, key)) {
       targetAttribute[key] = attributes[key];
     }
   }
-  transientTarget.onAttributeUpdate?.(animateUpdateContext);
+  commitAnimationFrameAttribute(target);
+}
+
+export function applyAnimationFrameNumberAttributes(
+  target: IGraphic,
+  keys: string[],
+  from: Record<string, any>,
+  to: Record<string, any>,
+  ratio: number
+): void {
+  const targetAttribute = prepareAnimationFrameAttribute(target);
+  for (let i = 0; i < keys.length; i++) {
+    const key = keys[i];
+    targetAttribute[key] = from[key] + (to[key] - from[key]) * ratio;
+  }
+  commitAnimationFrameAttribute(target);
 }
 
 export function applyAnimationTransientAttributes(
@@ -35,8 +74,13 @@ export function applyAnimationTransientAttributes(
     return;
   }
 
-  const context = { type };
+  const context = getAnimationContext(type);
   const transientTarget = target as any;
+  if (typeof transientTarget.applyAnimationTransientAttributes === 'function') {
+    transientTarget.applyAnimationTransientAttributes(attributes, false, context);
+    return;
+  }
+
   if (typeof transientTarget.applyTransientAttributes === 'function') {
     transientTarget.applyTransientAttributes(attributes, false, context);
     return;

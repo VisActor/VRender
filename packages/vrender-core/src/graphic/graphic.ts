@@ -1249,6 +1249,9 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   }
 
   protected tryUpdateAABBBounds(): IAABBBounds {
+    if (!this.shadowRoot && !(this._updateTag & UpdateTag.UPDATE_BOUNDS)) {
+      return this._AABBBounds;
+    }
     const full = this.attribute.boundsMode === 'imprecise';
     if (!this.shouldUpdateAABBBounds()) {
       return this._AABBBounds;

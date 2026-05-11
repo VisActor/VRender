@@ -566,7 +566,10 @@ export class Stage extends Group implements IStage {
   }
 
   protected beforeRender = (stage: IStage) => {
-    flushStageSharedStateRefresh(this);
+    const pendingSharedRefresh = (this as any)._pendingSharedStateRefreshGraphics as Set<IGraphic> | undefined;
+    if (pendingSharedRefresh?.size) {
+      flushStageSharedStateRefresh(this);
+    }
     this._beforeRenderList.forEach(cb => cb(stage));
   };
   protected afterClearScreen = (drawParams: any) => {

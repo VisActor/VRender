@@ -15,6 +15,7 @@ const graphicsPerRun = Number(process.env.VRENDER_BENCH_GRAPHICS || 10000);
 const stageRepeats = Number(process.env.VRENDER_BENCH_STAGE_REPEATS || 10);
 const firstFrameRepeats = Number(process.env.VRENDER_BENCH_FIRST_FRAME_REPEATS || stageRepeats);
 const firstFrameGraphics = Number(process.env.VRENDER_BENCH_FIRST_FRAME_GRAPHICS || graphicsPerRun);
+const stageMode = process.env.VRENDER_BENCH_STAGE_MODE || 'auto';
 
 app.commandLine.appendSwitch('js-flags', '--max-old-space-size=8192 --expose-gc');
 app.commandLine.appendSwitch('disable-gpu');
@@ -30,6 +31,7 @@ function toRendererSource() {
       const stageRepeats = ${stageRepeats};
       const firstFrameRepeats = ${firstFrameRepeats};
       const firstFrameGraphics = ${firstFrameGraphics};
+      const stageMode = ${JSON.stringify(stageMode)};
       const v = require(entry);
       const createRect = v.createRect;
       if (typeof createRect !== 'function') {
@@ -139,7 +141,7 @@ function toRendererSource() {
           height: 800,
           ...(ticker ? { ticker } : {})
         };
-        if (typeof v.createBrowserVRenderApp === 'function') {
+        if (stageMode !== 'legacy' && typeof v.createBrowserVRenderApp === 'function') {
           const managedApp = v.createBrowserVRenderApp();
           const stage = managedApp.createStage(params);
           return {
@@ -310,7 +312,7 @@ function toRendererSource() {
           chrome: process.versions.chrome,
           electron: process.versions.electron
         },
-        config: { repeats, graphicsPerRun, stageRepeats, firstFrameRepeats, firstFrameGraphics },
+        config: { repeats, graphicsPerRun, stageRepeats, firstFrameRepeats, firstFrameGraphics, stageMode },
         results,
         errors
       };

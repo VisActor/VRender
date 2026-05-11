@@ -400,7 +400,19 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   declare stamp?: number;
 
   declare attribute: T;
-  declare baseAttributes: Partial<T>;
+  protected _baseAttributes?: Partial<T>;
+
+  get baseAttributes(): Partial<T> {
+    return this._baseAttributes ?? this.attribute;
+  }
+
+  set baseAttributes(value: Partial<T>) {
+    if (value === this.attribute) {
+      this._baseAttributes = undefined;
+      return;
+    }
+    this._baseAttributes = value;
+  }
 
   declare shadowRoot?: IShadowRoot;
 
@@ -457,15 +469,14 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   protected stateTransitionOrchestrator?: StateTransitionOrchestrator<T>;
   protected _deprecatedNormalAttrsView?: Partial<T> | null;
   protected localStateDefinitionsSource?: StateDefinitionsInput<T>;
-  protected resolverEpoch: number = 0;
-  protected attributeMayContainTransientAttrs: boolean = false;
+  protected resolverEpoch?: number;
+  protected attributeMayContainTransientAttrs?: boolean;
 
   constructor(params: T = {} as T) {
     super();
     this._AABBBounds = new AABBBounds();
     this._updateTag = UpdateTag.INIT;
-    this.baseAttributes = params as Partial<T>;
-    this.attribute = this.baseAttributes as T;
+    this.attribute = params;
     this.valid = this.isValid();
     this.updateAABBBoundsStamp = 0;
     if (params.background) {
@@ -486,6 +497,10 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
 
   set normalAttrs(value: Partial<T> | undefined) {
     this._deprecatedNormalAttrsView = value ?? undefined;
+  }
+
+  protected getBaseAttributesStorage(): Partial<T> {
+    return this._baseAttributes ?? this.attribute;
   }
 
   getGraphicService() {
@@ -867,7 +882,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
 
   protected _syncAttribute(): AttributeDelta {
     if (this.attribute === this.baseAttributes && this.resolvedStatePatch) {
-      this.attribute = cloneAttributeSurface(this.attribute) as T;
+      this.detachAttributeFromBaseAttributes();
     }
     const snapshot = this.buildStaticAttributeSnapshot() as Record<string, any>;
     const delta = this.syncObjectToSnapshot(this.attribute as Record<string, any>, snapshot);
@@ -961,7 +976,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
 
   protected commitBaseAttributeMutation(forceUpdateTag: boolean = false, context?: ISetAttributeContext): void {
     if (this.currentStates?.length) {
-      this.resolverEpoch += 1;
+      this.resolverEpoch = (this.resolverEpoch ?? 0) + 1;
       this.stateEngine?.invalidateResolverCache();
       this.recomputeCurrentStatePatch();
     }
@@ -982,6 +997,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
 
   protected detachAttributeFromBaseAttributes(): void {
     if (this.attribute === this.baseAttributes) {
+      this._baseAttributes = this.attribute as Partial<T>;
       this.attribute = cloneAttributeSurface(this.attribute) as T;
     }
   }
@@ -1008,14 +1024,15 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   ): void {
     const keys = Object.keys(params);
     const source = params as Record<string, any>;
-    const baseAttributes = this.baseAttributes as Record<string, any>;
+    const baseAttributes = this.getBaseAttributesStorage() as Record<string, any>;
 
     for (let i = 0; i < keys.length; i++) {
       const key = keys[i];
       baseAttributes[key] = source[key];
     }
 
-    this.attribute = this.baseAttributes as T;
+    this.attribute = baseAttributes as T;
+    this._baseAttributes = undefined;
     this.valid = this.isValid();
     this.attributeMayContainTransientAttrs = false;
     this.submitTouchedKeyUpdate(keys, forceUpdateTag);
@@ -1026,7 +1043,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     const keys = Object.keys(params);
     for (let i = 0; i < keys.length; i++) {
       const key = keys[i];
-      (this.baseAttributes as any)[key] = (params as any)[key];
+      (this.getBaseAttributesStorage() as Record<string, any>)[key] = (params as any)[key];
     }
   }
 
@@ -1253,6 +1270,29 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       return this._AABBBounds;
     }
     const full = this.attribute.boundsMode === 'imprecise';
+
+    if (!this.shadowRoot) {
+      const graphicService = this.getGraphicService();
+      const graphicTheme = this.getGraphicTheme() as Required<T>;
+      if (!graphicService.validCheck(this.attribute, graphicTheme, this._AABBBounds, this)) {
+        return this._AABBBounds;
+      }
+      if (!this.valid) {
+        this._AABBBounds.clear();
+        return this._AABBBounds;
+      }
+
+      graphicService.beforeUpdateAABBBounds(this, this.stage, true, this._AABBBounds);
+      const bounds = this.doUpdateAABBBounds(full, graphicTheme);
+      graphicService.afterUpdateAABBBounds(this, this.stage, this._AABBBounds, this, true);
+
+      // 直接返回空Bounds，但是前面的流程还是要走
+      if (this.attribute.boundsMode === 'empty') {
+        bounds.clear();
+      }
+      return bounds;
+    }
+
     if (!this.shouldUpdateAABBBounds()) {
       return this._AABBBounds;
     }
@@ -1399,14 +1439,14 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     return _parsedPath;
   }
 
-  protected doUpdateAABBBounds(full?: boolean): IAABBBounds {
+  protected doUpdateAABBBounds(full?: boolean, graphicTheme?: Required<T>): IAABBBounds {
     this.updateAABBBoundsStamp++;
-    const graphicTheme = this.getGraphicTheme();
+    const resolvedGraphicTheme = graphicTheme ?? (this.getGraphicTheme() as Required<T>);
     this._AABBBounds.clear();
     const attribute = this.attribute;
-    const bounds = this.updateAABBBounds(attribute, graphicTheme as Required<T>, this._AABBBounds, full) as AABBBounds;
+    const bounds = this.updateAABBBounds(attribute, resolvedGraphicTheme, this._AABBBounds, full) as AABBBounds;
 
-    const { boundsPadding = graphicTheme.boundsPadding } = attribute;
+    const { boundsPadding = resolvedGraphicTheme.boundsPadding } = attribute;
     const paddingArray = parsePadding(boundsPadding);
     if (paddingArray) {
       bounds.expand(paddingArray);
@@ -1753,8 +1793,8 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     const context = { type: AttributeUpdateType.INIT };
     params =
       (this.onBeforeAttributeUpdate && this.onBeforeAttributeUpdate(params, this.attribute, null, context)) || params;
-    this.baseAttributes = params as Partial<T>;
-    this.attribute = this.baseAttributes as T;
+    this.attribute = params;
+    this._baseAttributes = undefined;
     this.resolvedStatePatch = undefined;
     this.attributeMayContainTransientAttrs = false;
     this.valid = this.isValid();
@@ -2384,7 +2424,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
 
     const stateResolveBaseAttrs = (this.baseAttributes ?? this.attribute) as Partial<T>;
     this.stateEngine.setResolveContext(this, stateResolveBaseAttrs);
-    this.resolverEpoch += 1;
+    this.resolverEpoch = (this.resolverEpoch ?? 0) + 1;
     this.stateEngine.invalidateResolverCache();
     const transition = this.stateEngine.applyStates(this.currentStates);
     const resolvedStateAttrs = { ...(this.stateEngine.resolvedPatch as Partial<T>) };

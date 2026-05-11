@@ -116,6 +116,7 @@ describe('Graphic attribute layering', () => {
     const graphic = createGraphic();
 
     expect(graphic.attribute).toBe((graphic as any).baseAttributes);
+    expect(Object.prototype.hasOwnProperty.call(graphic, 'baseAttributes')).toBe(false);
 
     graphic.setAttributes({
       x: 12,
@@ -124,6 +125,7 @@ describe('Graphic attribute layering', () => {
     });
 
     expect(graphic.attribute).toBe((graphic as any).baseAttributes);
+    expect(Object.prototype.hasOwnProperty.call(graphic, 'baseAttributes')).toBe(false);
     expect(graphic.attribute.x).toBe(12);
     expect((graphic as any).baseAttributes.x).toBe(12);
   });

@@ -1,6 +1,12 @@
 import type { IDrawContribution, IGraphic, IGraphicRender, IRenderServiceDrawParams } from '../../../src/interface';
+import { BaseRenderContributionTime } from '../../../src/common/enums';
 import { RendererRegistry } from '../../../src/registry';
 import { DefaultDrawContribution } from '../../../src/render/contributions/render/draw-contribution';
+import {
+  defaultBaseClipRenderAfterContribution,
+  defaultBaseClipRenderBeforeContribution
+} from '../../../src/render/contributions/render/contributions';
+import { DefaultCanvasRectRender } from '../../../src/render/contributions/render/rect-render';
 import { DefaultRenderService } from '../../../src/render/render-service';
 
 function createRenderer(numberType: number, style?: string): IGraphicRender {
@@ -84,5 +90,36 @@ describe('render registry migration', () => {
 
     expect(drawContribution.draw).toHaveBeenCalledWith(renderService, expect.objectContaining(params));
     expect(drawContribution.reInit).not.toHaveBeenCalled();
+  });
+
+  test('renderer reInit should not mutate provider contribution cache or duplicate builtins', () => {
+    const providerBeforeContribution = {
+      time: BaseRenderContributionTime.beforeFillStroke,
+      order: 1,
+      drawShape: jest.fn()
+    };
+    const providerAfterContribution = {
+      time: BaseRenderContributionTime.afterFillStroke,
+      order: 1,
+      drawShape: jest.fn()
+    };
+    const providerContributions = [providerBeforeContribution, providerAfterContribution];
+    const provider = {
+      getContributions: jest.fn(() => providerContributions)
+    };
+
+    const renderer = new DefaultCanvasRectRender(provider as any) as any;
+
+    expect(providerContributions).toEqual([providerBeforeContribution, providerAfterContribution]);
+
+    renderer.reInit();
+
+    expect(providerContributions).toEqual([providerBeforeContribution, providerAfterContribution]);
+    expect(
+      renderer._renderContribitions.filter((item: any) => item === defaultBaseClipRenderBeforeContribution)
+    ).toHaveLength(1);
+    expect(
+      renderer._renderContribitions.filter((item: any) => item === defaultBaseClipRenderAfterContribution)
+    ).toHaveLength(1);
   });
 });

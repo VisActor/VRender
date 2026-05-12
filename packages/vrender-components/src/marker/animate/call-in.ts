@@ -1,10 +1,10 @@
 import type { EasingType, IImage, ILine, IRichText, ISymbol } from '@visactor/vrender-core';
-import type { Segment } from '../../segment';
+import type { ArcSegment, Segment } from '../../segment';
 import type { Tag } from '../../tag';
-import { graphicFadeIn } from './common';
+import { getSegmentLineGraphics, graphicFadeIn } from './common';
 
 export function pointCallIn(
-  itemLine: Segment,
+  itemLine: Segment | ArcSegment,
   decorativeLine: ILine,
   item: Tag | IRichText | ISymbol | IImage,
   duration: number,
@@ -21,9 +21,10 @@ export function pointCallIn(
   graphicFadeIn(itemLine.startSymbol, delay, startSymbolDuration, easing);
 
   // line
-  itemLine.lines.forEach(line => line.setAttribute('clipRange', 0));
-  itemLine.lines.forEach((l, index) => {
-    const stepDuration = lineDuration / itemLine.lines.length;
+  const lines = getSegmentLineGraphics(itemLine);
+  lines.forEach(line => line.setAttribute('clipRange', 0));
+  lines.forEach((l, index) => {
+    const stepDuration = lineDuration / lines.length;
     l.animate()
       .wait(delay + startSymbolDuration + index * stepDuration)
       .to({ clipRange: 1 }, stepDuration, easing);

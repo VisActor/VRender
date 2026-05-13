@@ -71,7 +71,7 @@ export interface INode extends Releaseable, IEventElement {
   /**
    * 删除节点
    * @param node
-   * @param highPerformance 是否高性能模式（不检查是否合法）
+   * @param highPerformance 是否高性能模式；仅用于释放/批量清理，跳过更新和通知链路
    */
   removeChild: (node: INode, highPerformance?: boolean) => INode | null;
   /**

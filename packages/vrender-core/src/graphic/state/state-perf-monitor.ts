@@ -409,3 +409,16 @@ export function getStageStatePerfMonitor(stage?: IStage): StatePerfMonitor | und
   }
   return (stage as any)[STAGE_PERF_MONITOR] as StatePerfMonitor | undefined;
 }
+
+export function getActiveStageStatePerfMonitor(stage?: IStage): StatePerfMonitor | undefined {
+  if (!stage) {
+    return undefined;
+  }
+
+  const current = getStageStatePerfMonitor(stage);
+  if (current) {
+    return current;
+  }
+
+  return (stage as any).statePerfConfig?.enabled === true ? ensureStageStatePerfMonitor(stage) : undefined;
+}

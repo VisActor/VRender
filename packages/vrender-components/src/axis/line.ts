@@ -907,8 +907,8 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
     return offset;
   }
 
-  release(): void {
-    super.release();
+  release(all?: boolean): void {
+    super.release(all);
     this._breaks = null;
   }
 }

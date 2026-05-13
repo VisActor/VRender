@@ -5,6 +5,7 @@ import type {
   IGroup,
   Text,
   IGraphic,
+  IAnimate,
   IText,
   FederatedPointerEvent,
   IColor,
@@ -33,7 +34,7 @@ import {
   pointInRect,
   isBoolean
 } from '@visactor/vutils';
-import type { PointLocationCfg } from '../core/type';
+import type { ComponentExitReleaseOptions, PointLocationCfg } from '../core/type';
 import { labelSmartInvert, contrastAccessibilityChecker, smartInvertStrategy } from '../util/label-smartInvert';
 import { createTextGraphicByType, getMarksByName, getNoneGroupMarksByName, traverseGroup } from '../util';
 import { StateValue } from '../constant';
@@ -74,6 +75,13 @@ function cloneAttributeSnapshot<T>(value: T): T {
   });
   return snapshot as T;
 }
+
+type LabelExitReleaseState = {
+  pendingAnimates: Set<IAnimate>;
+  finalized: boolean;
+  removeFromParent: boolean;
+  onComplete: (() => void)[];
+};
 
 export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
   name = 'label';
@@ -124,6 +132,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
   private _lastSelect: IGraphic;
 
   private _enableAnimation: boolean;
+  private _exitReleaseState?: LabelExitReleaseState;
 
   constructor(attributes: BaseLabelAttrs, options?: ComponentOptions) {
     const { data, ...restAttributes } = attributes;
@@ -187,7 +196,159 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
     }
   }
 
+  private _collectTrackedAnimates(graphic: IGraphic, animates: IAnimate[], visited: Set<IAnimate>) {
+    const trackedAnimates = (graphic as any).getTrackedAnimates?.() ?? (graphic as any).animates;
+
+    trackedAnimates?.forEach((animate: IAnimate) => {
+      if (animate && !visited.has(animate)) {
+        visited.add(animate);
+        animates.push(animate);
+      }
+    });
+
+    (graphic as IGroup).forEachChildren?.((child: IGraphic) => {
+      this._collectTrackedAnimates(child, animates, visited);
+    });
+  }
+
+  private _appendExitReleaseCallback(callback?: () => void) {
+    if (callback) {
+      this._exitReleaseState?.onComplete.push(callback);
+    }
+  }
+
+  private _finalizeExitRelease() {
+    const state = this._exitReleaseState;
+    if (state?.finalized) {
+      return;
+    }
+
+    if (state) {
+      state.finalized = true;
+    }
+
+    const parent = this.parent;
+    const removeFromParent = !!state?.removeFromParent;
+    const callbacks = state?.onComplete ?? [];
+
+    this._exitReleaseState = undefined;
+    this._graphicToText = new Map();
+    this._idToGraphic?.clear();
+    this._idToPoint?.clear();
+    this._baseMarks = undefined;
+    this.removeAllChild(true);
+    super.release(true);
+    if (removeFromParent) {
+      (parent ?? this.parent)?.removeChild(this);
+    }
+
+    callbacks.forEach(callback => {
+      callback();
+    });
+  }
+
+  private _runExitAnimationBeforeRelease(options: ComponentExitReleaseOptions = {}) {
+    if (this._exitReleaseState && !this._exitReleaseState.finalized) {
+      this._exitReleaseState.removeFromParent = this._exitReleaseState.removeFromParent || !!options.removeFromParent;
+      this._appendExitReleaseCallback(options.onComplete);
+      return true;
+    }
+
+    if (
+      !this.stage ||
+      this.attribute.animation === false ||
+      this.attribute.animationExit === false ||
+      !this._graphicToText?.size
+    ) {
+      return false;
+    }
+
+    this._prepareAnimate(DefaultLabelAnimation);
+    if (!this._animationConfig?.exit) {
+      return false;
+    }
+
+    const exitTargets = new Set<IGraphic>();
+    this._graphicToText.forEach(label => {
+      label?.text && exitTargets.add(label.text);
+      label?.labelLine && exitTargets.add(label.labelLine);
+    });
+
+    if (!exitTargets.size) {
+      return false;
+    }
+
+    const existingAnimates: IAnimate[] = [];
+    this._collectTrackedAnimates(this as unknown as IGraphic, existingAnimates, new Set());
+
+    exitTargets.forEach(target => {
+      target.applyAnimationState(
+        ['exit'],
+        [
+          {
+            name: 'exit',
+            animation: {
+              ...this._animationConfig.exit,
+              type: (this._animationConfig.exit as any).type ?? 'fadeOut',
+              selfOnly: true
+            }
+          }
+        ]
+      );
+    });
+
+    const animates: IAnimate[] = [];
+    this._collectTrackedAnimates(this as unknown as IGraphic, animates, new Set());
+    const exitAnimates = animates.filter(animate => !existingAnimates.includes(animate));
+
+    if (!exitAnimates.length) {
+      return false;
+    }
+
+    this.setAttribute('childrenPickable', false);
+    this.releaseStatus = 'willRelease';
+
+    const pendingAnimates = new Set(exitAnimates);
+    this._exitReleaseState = {
+      pendingAnimates,
+      finalized: false,
+      removeFromParent: !!options.removeFromParent,
+      onComplete: options.onComplete ? [options.onComplete] : []
+    };
+
+    const finish = (animate: IAnimate) => {
+      const state = this._exitReleaseState;
+      if (!state || state.finalized || !state.pendingAnimates.has(animate)) {
+        return;
+      }
+
+      state.pendingAnimates.delete(animate);
+      if (!state.pendingAnimates.size) {
+        this._finalizeExitRelease();
+      }
+    };
+
+    exitAnimates.forEach(animate => {
+      animate.onEnd(() => finish(animate));
+      animate.onRemove(() => finish(animate));
+    });
+
+    return true;
+  }
+
+  releaseWithExitAnimation(options: ComponentExitReleaseOptions = {}): boolean {
+    if (this.releaseStatus === 'released') {
+      return false;
+    }
+
+    return this._runExitAnimationBeforeRelease(options);
+  }
+
   protected render() {
+    if (this._exitReleaseState) {
+      return;
+    }
+
     this._prepare();
     if (isNil(this._idToGraphic) || (this._isCollectionBase && isNil(this._idToPoint))) {
       return;
@@ -1167,6 +1328,22 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
       return false;
     }
     return shapeBound.encloses(textBound);
+  }
+
+  release(all?: boolean): void {
+    if (this._exitReleaseState) {
+      this._finalizeExitRelease();
+      return;
+    }
+
+    if (all) {
+      this.removeAllChild(true);
+    }
+    super.release(all);
+    this._graphicToText = new Map();
+    this._idToGraphic?.clear();
+    this._idToPoint?.clear();
+    this._baseMarks = undefined;
   }
 
   setLocation(point: PointLocationCfg) {

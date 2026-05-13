@@ -11,6 +11,7 @@ export class DirtyBoundsPlugin implements IPlugin {
   pluginService: IPluginService;
   _uid: number = Generator.GenAutoIncrementId();
   key: string = this.name + this._uid;
+  protected dirtyBoundsHooksRegistered: boolean = false;
 
   protected ensurePaintDirtyBoundsCache(graphic: IGraphic): IAABBBounds {
     const owner = graphic as any;
@@ -29,6 +30,14 @@ export class DirtyBoundsPlugin implements IPlugin {
     }
 
     return owner._globalAABBBounds ?? owner.globalAABBBounds;
+  }
+
+  protected getRemoveDirtyBounds(graphic: IGraphic): IAABBBounds | undefined {
+    const owner = (graphic.glyphHost ?? graphic) as any;
+    const cachedBounds = owner._globalAABBBounds as IAABBBounds | undefined;
+    if (cachedBounds && typeof cachedBounds.empty === 'function' && !cachedBounds.empty()) {
+      return cachedBounds;
+    }
   }
 
   protected handlePaintOnlyUpdate = (graphic: IGraphic) => {
@@ -60,16 +69,8 @@ export class DirtyBoundsPlugin implements IPlugin {
     (shadowRoot as any).clearUpdatePaintTag?.();
   };
 
-  activate(context: IPluginService): void {
-    this.pluginService = context;
-    context.stage.hooks.afterRender.tap(this.key, stage => {
-      if (!(stage && stage === this.pluginService.stage)) {
-        return;
-      }
-      stage.dirtyBounds.clear();
-    });
-    const stage = this.pluginService.stage;
-    if (!stage) {
+  protected registerDirtyBoundsHooks(stage: IStage): void {
+    if (this.dirtyBoundsHooksRegistered) {
       return;
     }
     stage.graphicService.hooks.onAttributeUpdate.tap(this.key, this.handlePaintOnlyUpdate);
@@ -127,10 +128,30 @@ export class DirtyBoundsPlugin implements IPlugin {
       if (!(stage && stage === this.pluginService.stage && stage.renderCount)) {
         return;
       }
-      if (stage) {
-        stage.dirty(graphic.globalAABBBounds);
+      const bounds = this.getRemoveDirtyBounds(graphic);
+      if (bounds && !bounds.empty()) {
+        stage.dirty(bounds);
       }
     });
+    this.dirtyBoundsHooksRegistered = true;
+  }
+
+  activate(context: IPluginService): void {
+    this.pluginService = context;
+    context.stage.hooks.afterRender.tap(this.key, stage => {
+      if (!(stage && stage === this.pluginService.stage)) {
+        return;
+      }
+      stage.dirtyBounds.clear();
+      this.registerDirtyBoundsHooks(stage);
+    });
+    const stage = this.pluginService.stage;
+    if (!stage) {
+      return;
+    }
+    if (stage.renderCount) {
+      this.registerDirtyBoundsHooks(stage);
+    }
   }
   deactivate(context: IPluginService): void {
     const stage = this.pluginService.stage;
@@ -142,6 +163,7 @@ export class DirtyBoundsPlugin implements IPlugin {
         return item.name !== this.key;
       }
     );
+    this.dirtyBoundsHooksRegistered = false;
     stage.graphicService.hooks.beforeUpdateAABBBounds.taps =
       stage.graphicService.hooks.beforeUpdateAABBBounds.taps.filter(item => {
         return item.name !== this.key;

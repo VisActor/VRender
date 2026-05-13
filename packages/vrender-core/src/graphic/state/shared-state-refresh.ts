@@ -1,13 +1,13 @@
 import type { IGraphic, IStage } from '../../interface';
 import type { SharedStateScope } from './shared-state-scope';
-import { getStageStatePerfMonitor } from './state-perf-monitor';
+import { getActiveStageStatePerfMonitor } from './state-perf-monitor';
 
 export function scheduleStageSharedStateRefresh(stage: IStage | undefined): void {
   if (!stage || (stage as any).releaseStatus === 'released') {
     return;
   }
 
-  getStageStatePerfMonitor(stage)?.recordRefresh('renderScheduled');
+  getActiveStageStatePerfMonitor(stage)?.recordRefresh('renderScheduled');
   stage.renderNextFrame();
 }
 
@@ -22,7 +22,7 @@ export function enqueueGraphicSharedStateRefresh(stage: IStage | undefined, grap
 
   if (!pending.has(graphic)) {
     pending.add(graphic);
-    const perfMonitor = getStageStatePerfMonitor(stage);
+    const perfMonitor = getActiveStageStatePerfMonitor(stage);
     perfMonitor?.recordRefresh('queuedGraphics');
     perfMonitor?.recordAllocation('refreshQueuePushes');
   }
@@ -51,7 +51,7 @@ export function flushStageSharedStateRefresh(stage: IStage): void {
     return;
   }
 
-  const perfMonitor = getStageStatePerfMonitor(stage);
+  const perfMonitor = getActiveStageStatePerfMonitor(stage);
   const start = perfMonitor ? performance.now() : 0;
   const graphics = Array.from(pending.values());
   pending.clear();

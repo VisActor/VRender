@@ -3,6 +3,55 @@ import { createGroup } from '../../../src/graphic/group';
 import { createSharedStateTestStage } from './shared-state-test-utils';
 
 describe('group shared-state registration lifecycle', () => {
+  test('should not create group shared-state scopes until a group owns definitions', () => {
+    const stage = createSharedStateTestStage();
+    const group = createGroup({});
+    const childGroup = createGroup({});
+    const rect = createRect({ x: 0, y: 0, width: 10, height: 10, fill: 'base' });
+
+    stage.appendChild(group);
+    group.appendChild(childGroup);
+    childGroup.appendChild(rect);
+
+    expect((group as any).sharedStateScope).toBeUndefined();
+    expect((childGroup as any).sharedStateScope).toBeUndefined();
+    expect((group as any).boundSharedStateScope).toBeUndefined();
+    expect((childGroup as any).boundSharedStateScope).toBeUndefined();
+
+    (childGroup as any).sharedStateDefinitions = {
+      hover: { fill: 'child-hover' }
+    };
+
+    expect((group as any).sharedStateScope).toBeUndefined();
+    expect((childGroup as any).sharedStateScope).toBeDefined();
+  });
+
+  test('should rebind active descendants when definitions are added to a previously plain group', () => {
+    const stage = createSharedStateTestStage();
+    const group = createGroup({});
+    const rect = createRect({ x: 0, y: 0, width: 10, height: 10, fill: 'base' });
+
+    (stage.theme as any).stateDefinitions = {
+      hover: { fill: 'theme-hover' }
+    };
+
+    stage.appendChild(group);
+    group.appendChild(rect);
+
+    rect.useStates(['hover'], false);
+    expect(rect.attribute.fill).toBe('theme-hover');
+    expect((group as any).sharedStateScope).toBeUndefined();
+
+    (group as any).sharedStateDefinitions = {
+      hover: { fill: 'group-hover' }
+    };
+    stage.hooks.beforeRender.call(stage);
+
+    expect((rect as any).boundSharedStateScope).toBe((group as any).sharedStateScope);
+    expect(((group as any).sharedStateScope?.subtreeActiveDescendants as Set<any>)?.has(rect)).toBe(true);
+    expect(rect.attribute.fill).toBe('group-hover');
+  });
+
   test('should update scope registrations and resolved style after reparent', () => {
     const stage = createSharedStateTestStage();
     const left = createGroup({});

@@ -90,4 +90,31 @@ describe('shared state resolver cache', () => {
     expect(rect.attribute.fill).toBe('proxy-hover');
     expect(rect.attribute.stroke).toBe('proxy-selected');
   });
+
+  test('should refresh dirty shared definitions through setStates even when target state names are unchanged', () => {
+    const stage = createSharedStateTestStage();
+    const group = createGroup({});
+    const rect = createRect({ x: 0, y: 0, width: 10, height: 10, fill: 'base' });
+
+    (group as any).sharedStateDefinitions = {
+      hover: { fill: 'red' }
+    };
+
+    stage.appendChild(group);
+    group.appendChild(rect);
+
+    rect.setStates(['hover'], false);
+
+    expect(rect.attribute.fill).toBe('red');
+
+    (group as any).sharedStateDefinitions = {
+      hover: { fill: 'green' }
+    };
+
+    rect.setStates(['hover'], false);
+
+    expect(rect.currentStates).toEqual(['hover']);
+    expect(rect.resolvedStatePatch).toEqual({ fill: 'green' });
+    expect(rect.attribute.fill).toBe('green');
+  });
 });

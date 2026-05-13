@@ -4,7 +4,7 @@ import type {
   StateDefinitionsInput,
   StateTransitionResult
 } from './state-definition';
-import { getStageStatePerfMonitor } from './state-perf-monitor';
+import { getActiveStageStatePerfMonitor } from './state-perf-monitor';
 
 function isPlainObject(value: unknown): value is Record<string, any> {
   return value != null && typeof value === 'object' && !Array.isArray(value);
@@ -199,7 +199,7 @@ export class StateEngine<T extends Record<string, any> = Record<string, any>> {
     this.resolverPatchCache.clear();
     this.resolverCacheKey = '';
     this.resolverCacheValid = false;
-    getStageStatePerfMonitor(this.graphic?.stage)?.recordResolver('invalidations');
+    getActiveStageStatePerfMonitor(this.graphic?.stage)?.recordResolver('invalidations');
   }
 
   hasState(stateName?: string): boolean {
@@ -306,7 +306,7 @@ export class StateEngine<T extends Record<string, any> = Record<string, any>> {
   }
 
   private recomputePatch(effectiveStates: string[]): void {
-    const perfMonitor = getStageStatePerfMonitor(this.graphic?.stage);
+    const perfMonitor = getActiveStageStatePerfMonitor(this.graphic?.stage);
     const patchStart = perfMonitor ? performance.now() : 0;
     let resolverCost = 0;
     const cacheKey = effectiveStates.join(',');

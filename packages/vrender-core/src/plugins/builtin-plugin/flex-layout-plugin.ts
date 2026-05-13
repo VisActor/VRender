@@ -507,7 +507,10 @@ export class FlexLayoutPlugin implements IPlugin {
       }
     );
     // 添加到场景树
-    stage.graphicService.hooks.onSetStage.tap(this.key, graphic => {
+    stage.graphicService.hooks.onSetStage.tap(this.key, (graphic, nextStage) => {
+      if (!(nextStage && nextStage === this.pluginService.stage)) {
+        return;
+      }
       if (graphic.glyphHost) {
         graphic = graphic.glyphHost;
       }

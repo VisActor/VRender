@@ -2,7 +2,7 @@ import type { IGraphic, IStage } from '../../interface';
 import type { IGroup } from '../../interface/graphic/group';
 import { StateDefinitionCompiler } from './state-definition-compiler';
 import type { CompiledStateDefinition, StateDefinitionsInput } from './state-definition';
-import { getStageStatePerfMonitor } from './state-perf-monitor';
+import { getActiveStageStatePerfMonitor } from './state-perf-monitor';
 
 export interface SharedStateScope<T extends Record<string, any> = Record<string, any>> {
   ownerKind: 'group' | 'root';
@@ -169,7 +169,7 @@ export function ensureSharedStateScopeFresh<T extends Record<string, any> = Reco
     return undefined;
   }
 
-  getStageStatePerfMonitor(scope.ownerStage)?.recordRefresh('ensureFreshCalls');
+  getActiveStageStatePerfMonitor(scope.ownerStage)?.recordRefresh('ensureFreshCalls');
 
   if (scope.parentScope) {
     ensureSharedStateScopeFresh(scope.parentScope);

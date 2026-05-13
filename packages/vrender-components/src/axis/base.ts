@@ -4,6 +4,7 @@
  * @description 坐标轴组件基类
  */
 import type {
+  IAnimate,
   IGroup,
   INode,
   ITextGraphicAttribute,
@@ -19,7 +20,7 @@ import { graphicCreator } from '../util/graphic-creator';
 import type { Dict } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports
 import { abs, cloneDeep, get, isEmpty, isFunction, merge, pi } from '@visactor/vutils';
-import type { Point } from '../core/type';
+import type { ComponentExitReleaseOptions, Point } from '../core/type';
 import type { TagAttributes } from '../tag';
 import { createTextGraphicByType, traverseGroup } from '../util';
 import { DEFAULT_STATES } from '../constant';
@@ -42,6 +43,13 @@ import { AnimateComponent } from '../animation/animate-component';
 import { commitUpdateAnimationTarget } from '../animation/static-truth';
 import { DefaultAxisAnimation } from './animate/config';
 import type { IBaseScale } from '@visactor/vscale';
+
+type AxisExitReleaseState = {
+  pendingAnimates: Set<IAnimate>;
+  finalized: boolean;
+  removeFromParent: boolean;
+  onComplete: (() => void)[];
+};
 
 export abstract class AxisBase<T extends AxisBaseAttributes> extends AnimateComponent<Required<T>> {
   name = 'axis';
@@ -79,6 +87,7 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AnimateComp
 
   private _lastHover: IGraphic;
   private _lastSelect: IGraphic;
+  private _exitReleaseState?: AxisExitReleaseState;
 
   // 用于动画diff
   protected _newElementAttrMap: Dict<any>;
@@ -139,7 +148,166 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AnimateComp
     return offscreenGroup.AABBBounds;
   }
 
+  private _collectTrackedAnimates(graphic: IGraphic, animates: IAnimate[], visited: Set<IAnimate>) {
+    const trackedAnimates = (graphic as any).getTrackedAnimates?.() ?? (graphic as any).animates;
+
+    trackedAnimates?.forEach((animate: IAnimate) => {
+      if (animate && !visited.has(animate)) {
+        visited.add(animate);
+        animates.push(animate);
+      }
+    });
+
+    (graphic as IGroup).forEachChildren?.((child: IGraphic) => {
+      this._collectTrackedAnimates(child, animates, visited);
+    });
+  }
+
+  private _appendExitReleaseCallback(callback?: () => void) {
+    if (callback) {
+      this._exitReleaseState?.onComplete.push(callback);
+    }
+  }
+
+  private _finalizeExitRelease() {
+    const state = this._exitReleaseState;
+    if (state?.finalized) {
+      return;
+    }
+
+    if (state) {
+      state.finalized = true;
+    }
+
+    const parent = this.parent;
+    const removeFromParent = !!state?.removeFromParent;
+    const callbacks = state?.onComplete ?? [];
+
+    this._exitReleaseState = undefined;
+    this._prevInnerView = null;
+    this._innerView = null;
+    this.axisLabelsContainer = null;
+    this.axisContainer = null;
+    this.removeAllChild(true);
+    super.release(true);
+    if (removeFromParent) {
+      (parent ?? this.parent)?.removeChild(this);
+    }
+
+    callbacks.forEach(callback => {
+      callback();
+    });
+  }
+
+  private _runExitAnimationBeforeRelease(options: ComponentExitReleaseOptions = {}) {
+    if (this._exitReleaseState && !this._exitReleaseState.finalized) {
+      this._exitReleaseState.removeFromParent = this._exitReleaseState.removeFromParent || !!options.removeFromParent;
+      this._appendExitReleaseCallback(options.onComplete);
+      return true;
+    }
+
+    if (
+      !this.stage ||
+      this.attribute.animation === false ||
+      this.attribute.animationExit === false ||
+      !this._innerView
+    ) {
+      return false;
+    }
+
+    this._prepare();
+    if (!this._animationConfig?.exit) {
+      return false;
+    }
+
+    const exitTargets = new Set<IGraphic>();
+    traverseGroup(this._innerView, (el: IGraphic) => {
+      if (el.type !== 'group') {
+        exitTargets.add(el);
+      }
+    });
+
+    if (!exitTargets.size) {
+      return false;
+    }
+
+    const existingAnimates: IAnimate[] = [];
+    this._collectTrackedAnimates(this as unknown as IGraphic, existingAnimates, new Set());
+
+    const {
+      delay = 0,
+      duration = DefaultAxisAnimation.duration,
+      easing = DefaultAxisAnimation.easing
+    } = this._animationConfig.exit as any;
+    exitTargets.forEach(target => {
+      const startAttrs = {
+        opacity: target.attribute.opacity ?? 1,
+        fillOpacity: target.attribute.fillOpacity ?? 1,
+        strokeOpacity: target.attribute.strokeOpacity ?? 1
+      };
+      const endAttrs = {
+        opacity: 0,
+        fillOpacity: 0,
+        strokeOpacity: 0
+      };
+
+      commitUpdateAnimationTarget(target, endAttrs, startAttrs);
+      target.animate().wait(delay).to(endAttrs, duration, easing);
+    });
+
+    const animates: IAnimate[] = [];
+    this._collectTrackedAnimates(this as unknown as IGraphic, animates, new Set());
+    const exitAnimates = animates.filter(animate => !existingAnimates.includes(animate));
+
+    if (!exitAnimates.length) {
+      return false;
+    }
+
+    this.setAttribute('childrenPickable', false);
+    (this._innerView as any).removeAllEventListeners?.();
+    this.releaseStatus = 'willRelease';
+
+    const pendingAnimates = new Set(exitAnimates);
+    this._exitReleaseState = {
+      pendingAnimates,
+      finalized: false,
+      removeFromParent: !!options.removeFromParent,
+      onComplete: options.onComplete ? [options.onComplete] : []
+    };
+
+    const finish = (animate: IAnimate) => {
+      const state = this._exitReleaseState;
+      if (!state || state.finalized || !state.pendingAnimates.has(animate)) {
+        return;
+      }
+
+      state.pendingAnimates.delete(animate);
+      if (!state.pendingAnimates.size) {
+        this._finalizeExitRelease();
+      }
+    };
+
+    exitAnimates.forEach(animate => {
+      animate.onEnd(() => finish(animate));
+      animate.onRemove(() => finish(animate));
+    });
+
+    return true;
+  }
+
+  releaseWithExitAnimation(options: ComponentExitReleaseOptions = {}): boolean {
+    if (this.releaseStatus === 'released') {
+      return false;
+    }
+
+    return this._runExitAnimationBeforeRelease(options);
+  }
+
   protected render(): void {
+    if (this._exitReleaseState) {
+      return;
+    }
+
     this._prepare();
     this._prevInnerView = this._innerView && getElMap(this._innerView);
     this.removeAllChild(true);
@@ -675,8 +843,19 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AnimateComp
     }
   }
 
-  release(): void {
-    super.release();
+  release(all?: boolean): void {
+    if (this._exitReleaseState) {
+      this._finalizeExitRelease();
+      return;
+    }
+
+    if (all) {
+      this.removeAllChild(true);
+    }
+    super.release(all);
+    if (all) {
+      this.removeAllChild(true);
+    }
     this._prevInnerView = null;
     this._innerView = null;
   }

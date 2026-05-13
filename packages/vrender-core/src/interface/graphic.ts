@@ -780,6 +780,7 @@ export interface IGraphic<T extends Partial<IGraphicAttribute> = Partial<IGraphi
   toggleState: (stateName: string, hasAnimation?: boolean) => void;
   removeState: (stateName: string | string[], hasAnimation?: boolean) => void;
   clearStates: (hasAnimation?: boolean) => void;
+  setStates: (states?: string[] | null, hasAnimation?: boolean) => void;
   useStates: (states: string[], hasAnimation?: boolean) => void;
   addState: (stateName: string, keepCurrentStates?: boolean, hasAnimation?: boolean) => void;
   invalidateResolver: () => void;
@@ -857,6 +858,7 @@ export interface IGraphic<T extends Partial<IGraphicAttribute> = Partial<IGraphi
   setAttribute: (key: string, value: any, forceUpdateTag?: boolean, context?: ISetAttributeContext) => void;
 
   setStage: (stage?: IStage, layer?: ILayer) => void;
+  detachStageForRelease: () => void;
   onSetStage: (cb: (g: IGraphic, stage: IStage) => void) => void;
 
   shouldUpdateAABBBounds: () => boolean;

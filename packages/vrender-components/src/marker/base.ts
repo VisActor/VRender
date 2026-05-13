@@ -1,11 +1,33 @@
-import type { FederatedPointerEvent, IGraphic, IGroup, IImage, IRichText, ISymbol } from '@visactor/vrender-core';
+import type {
+  FederatedPointerEvent,
+  IAnimate,
+  IGraphic,
+  IGroup,
+  IImage,
+  IRichText,
+  ISymbol
+} from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
 import { graphicCreator } from '../util/graphic-creator';
 import { AbstractComponent } from '../core/base';
 import type { Tag } from '../tag';
-import type { MarkerAnimationState, MarkerAttrs, MarkerExitAnimation, MarkerUpdateAnimation } from './type';
+import type {
+  MarkerAnimationState,
+  MarkerAttrs,
+  MarkerExitAnimation,
+  MarkerExitReleaseOptions,
+  MarkerUpdateAnimation
+} from './type';
 import { dispatchClickState, dispatchHoverState, dispatchUnHoverState } from '../util/interaction';
 import { isObject, merge } from '@visactor/vutils';
+
+type MarkerExitReleaseState = {
+  pendingAnimates: Set<IAnimate>;
+  finalized: boolean;
+  releaseSelf: boolean;
+  removeFromParent: boolean;
+  onComplete: (() => void)[];
+};
 
 export abstract class Marker<T extends MarkerAttrs<AnimationAttr>, AnimationAttr> extends AbstractComponent<
   Required<T>
@@ -34,6 +56,7 @@ export abstract class Marker<T extends MarkerAttrs<AnimationAttr>, AnimationAttr
 
   private _lastHover: IGraphic;
   private _lastSelect: IGraphic;
+  private _exitReleaseState?: MarkerExitReleaseState;
 
   protected abstract setLabelPos(labelNode: IGroup, labelAttrs: any): any;
   protected abstract initMarker(container: IGroup): any;
@@ -146,7 +169,152 @@ export abstract class Marker<T extends MarkerAttrs<AnimationAttr>, AnimationAttr
     });
   }
 
+  private _collectTrackedAnimates(graphic: IGraphic, animates: IAnimate[], visited: Set<IAnimate>) {
+    const trackedAnimates = (graphic as any).getTrackedAnimates?.() ?? (graphic as any).animates;
+
+    trackedAnimates?.forEach((animate: IAnimate) => {
+      if (animate && !visited.has(animate)) {
+        visited.add(animate);
+        animates.push(animate);
+      }
+    });
+
+    (graphic as IGroup).forEachChildren?.((child: IGraphic) => {
+      this._collectTrackedAnimates(child, animates, visited);
+    });
+  }
+
+  private _appendExitReleaseCallback(callback?: () => void) {
+    if (callback) {
+      this._exitReleaseState?.onComplete.push(callback);
+    }
+  }
+
+  private _finalizeExitRelease() {
+    const state = this._exitReleaseState;
+    if (state?.finalized) {
+      return;
+    }
+
+    if (state) {
+      state.finalized = true;
+    }
+
+    const parent = this.parent;
+    const removeFromParent = !!state?.removeFromParent;
+    const releaseSelf = !!state?.releaseSelf;
+    const callbacks = state?.onComplete ?? [];
+
+    this._exitReleaseState = undefined;
+    this._releaseEvent();
+    this._container = null;
+    this._containerClip = null;
+    this.removeAllChild(true);
+
+    if (releaseSelf) {
+      super.release(true);
+      if (removeFromParent) {
+        (parent ?? this.parent)?.removeChild(this);
+      }
+    }
+
+    callbacks.forEach(callback => {
+      callback();
+    });
+  }
+
+  private _runExitAnimationBeforeCleanup(
+    options: MarkerExitReleaseOptions & {
+      releaseSelf?: boolean;
+    } = {}
+  ) {
+    const releaseSelf = !!options.releaseSelf;
+
+    if (this._exitReleaseState && !this._exitReleaseState.finalized) {
+      this._exitReleaseState.releaseSelf = this._exitReleaseState.releaseSelf || releaseSelf;
+      this._exitReleaseState.removeFromParent = this._exitReleaseState.removeFromParent || !!options.removeFromParent;
+      this._appendExitReleaseCallback(options.onComplete);
+      return true;
+    }
+
+    if (
+      !this.stage ||
+      this.attribute.animation === false ||
+      (this.attribute as any).animationExit === false ||
+      !this._container
+    ) {
+      return false;
+    }
+
+    this.transAnimationConfig();
+    if (!this._animationConfig?.exit) {
+      return false;
+    }
+
+    const existingAnimates: IAnimate[] = [];
+    this._collectTrackedAnimates(this, existingAnimates, new Set());
+
+    this.markerAnimate('exit');
+
+    const animates: IAnimate[] = [];
+    this._collectTrackedAnimates(this, animates, new Set());
+    const exitAnimates = animates.filter(animate => !existingAnimates.includes(animate));
+
+    if (!exitAnimates.length) {
+      return false;
+    }
+
+    this._releaseEvent();
+    this.setAttribute('childrenPickable', false);
+    if (releaseSelf) {
+      this.releaseStatus = 'willRelease';
+    }
+
+    const pendingAnimates = new Set(exitAnimates);
+    this._exitReleaseState = {
+      pendingAnimates,
+      finalized: false,
+      releaseSelf,
+      removeFromParent: !!options.removeFromParent,
+      onComplete: options.onComplete ? [options.onComplete] : []
+    };
+
+    const finish = (animate: IAnimate) => {
+      const state = this._exitReleaseState;
+      if (!state || state.finalized || !state.pendingAnimates.has(animate)) {
+        return;
+      }
+
+      state.pendingAnimates.delete(animate);
+      if (!state.pendingAnimates.size) {
+        this._finalizeExitRelease();
+      }
+    };
+
+    exitAnimates.forEach(animate => {
+      animate.onEnd(() => finish(animate));
+      animate.onRemove(() => finish(animate));
+    });
+
+    return true;
+  }
+
+  releaseWithExitAnimation(options: MarkerExitReleaseOptions = {}): boolean {
+    if (this.releaseStatus === 'released') {
+      return false;
+    }
+
+    return this._runExitAnimationBeforeCleanup({
+      ...options,
+      releaseSelf: true
+    });
+  }
+
   protected render() {
+    if (this._exitReleaseState?.releaseSelf) {
+      return;
+    }
+
     this.transAnimationConfig();
 
     // 因为标注本身不规则，所以默认将组件的 group 设置为不可拾取
@@ -158,6 +326,9 @@ export abstract class Marker<T extends MarkerAttrs<AnimationAttr>, AnimationAttr
     }
 
     if (markerVisible && this.isValidPoints()) {
+      if (this._exitReleaseState) {
+        this._finalizeExitRelease();
+      }
       if (!this._container) {
         this._initContainer();
         this.initMarker(this._container);
@@ -168,9 +339,11 @@ export abstract class Marker<T extends MarkerAttrs<AnimationAttr>, AnimationAttr
         this.markerAnimate('update');
       }
     } else {
-      this.markerAnimate('exit');
-      this._container = null;
-      this.removeAllChild(true);
+      if (!this._runExitAnimationBeforeCleanup()) {
+        this._container = null;
+        this._containerClip = null;
+        this.removeAllChild(true);
+      }
     }
 
     // 先把之前的event都release掉，否则会重复触发
@@ -178,10 +351,20 @@ export abstract class Marker<T extends MarkerAttrs<AnimationAttr>, AnimationAttr
     this._bindEvent();
   }
 
-  release(): void {
-    this.markerAnimate('exit');
-    super.release();
+  release(all?: boolean): void {
+    if (this._exitReleaseState) {
+      this._finalizeExitRelease();
+      return;
+    }
+    if (this.attribute.animation !== false && (this.attribute as any).animationExit !== false) {
+      this.markerAnimate('exit');
+    }
+    if (all) {
+      this.removeAllChild(true);
+    }
+    super.release(all);
     this._releaseEvent();
     this._container = null;
+    this._containerClip = null;
   }
 }

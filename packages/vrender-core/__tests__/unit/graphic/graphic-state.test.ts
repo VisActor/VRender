@@ -51,6 +51,32 @@ describe('Graphic useStates', () => {
     expect(graphic.normalAttrs).toEqual((graphic as any).baseAttributes);
   });
 
+  test('should sync target states through a single optimized call', () => {
+    const graphic = createGraphic();
+    graphic.states = {
+      hover: {
+        fill: 'red'
+      }
+    } as any;
+
+    const createStateModel = jest.spyOn(graphic as any, 'createStateModel');
+
+    graphic.setStates(undefined, false);
+
+    expect(createStateModel).not.toHaveBeenCalled();
+    expect(graphic.attribute.fill).toBe('blue');
+
+    graphic.setStates(['hover'], false);
+
+    expect(graphic.attribute.fill).toBe('red');
+    expect(graphic.currentStates).toEqual(['hover']);
+
+    graphic.setStates([], false);
+
+    expect(graphic.attribute.fill).toBe('blue');
+    expect(graphic.currentStates).toEqual([]);
+  });
+
   test('should merge multiple states using compiled priority and rank order', () => {
     const graphic = createGraphic();
     graphic.states = {

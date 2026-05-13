@@ -1,7 +1,22 @@
 import { createRect } from '../../../src/graphic/rect';
+import { getStageStatePerfMonitor } from '../../../src/graphic/state/state-perf-monitor';
 import { createSharedStateTestStage } from './shared-state-test-utils';
 
 describe('StateBatchScheduler', () => {
+  test('should keep scheduler and perf monitor lazy for plain stages', () => {
+    const stage = createSharedStateTestStage();
+
+    expect((stage as any)._stateBatchScheduler).toBeUndefined();
+    expect((stage as any).rootSharedStateScope).toBeUndefined();
+    expect(getStageStatePerfMonitor(stage)).toBeUndefined();
+
+    const snapshot = stage.getStatePerfSnapshot();
+
+    expect(snapshot.counters.stateCommits).toBe(0);
+    expect(getStageStatePerfMonitor(stage)).toBeDefined();
+    expect((stage as any)._stateBatchScheduler).toBeUndefined();
+  });
+
   test('should defer paint-only state commits and keep per-graphic committed snapshots atomic', async () => {
     const stage = createSharedStateTestStage();
     stage.statePerfConfig = { enabled: true };

@@ -226,7 +226,7 @@ export class Stage extends Group implements IStage {
   protected timeline: ITimeline;
   declare rootSharedStateScope?: SharedStateScope<Record<string, any>>;
   protected _pendingSharedStateRefreshGraphics?: Set<IGraphic>;
-  protected _stateBatchScheduler!: StateBatchScheduler;
+  protected _stateBatchScheduler?: StateBatchScheduler;
 
   declare params: Partial<IStageParams>;
 
@@ -330,22 +330,19 @@ export class Stage extends Group implements IStage {
 
     this.nextFrameRenderLayerSet = new Set();
     this.willNextFrameRender = false;
-    ensureStageStatePerfMonitor(this);
-    this._stateBatchScheduler = new StateBatchScheduler(this, ensureStageStatePerfMonitor(this));
-    this.rootSharedStateScope = createRootSharedStateScope(
-      this,
-      this.theme?.stateDefinitions as StateDefinitionsInput<Record<string, any>> | undefined
-    );
     this.theme.onStateDefinitionsChange = () => {
-      if (!this.rootSharedStateScope) {
+      const definitions = this.theme?.stateDefinitions as StateDefinitionsInput<Record<string, any>> | undefined;
+      if (!definitions || !Object.keys(definitions).length) {
+        if (this.rootSharedStateScope) {
+          setRootSharedStateScopeThemeDefinitions(this.rootSharedStateScope, definitions);
+          markScopeActiveDescendantsDirty(this.rootSharedStateScope, this);
+        }
         return;
       }
 
-      setRootSharedStateScopeThemeDefinitions(
-        this.rootSharedStateScope,
-        this.theme?.stateDefinitions as StateDefinitionsInput<Record<string, any>> | undefined
-      );
-      markScopeActiveDescendantsDirty(this.rootSharedStateScope, this);
+      const rootScope = this.ensureRootSharedStateScope(definitions);
+      setRootSharedStateScopeThemeDefinitions(rootScope, definitions);
+      markScopeActiveDescendantsDirty(rootScope, this);
     };
     this.renderStyle = params.renderStyle;
 
@@ -920,8 +917,27 @@ export class Stage extends Group implements IStage {
     }
   }
 
+  ensureRootSharedStateScope(
+    themeStateDefinitions?: StateDefinitionsInput<Record<string, any>>
+  ): SharedStateScope<Record<string, any>> {
+    if (!this.rootSharedStateScope) {
+      this.rootSharedStateScope = createRootSharedStateScope(this, themeStateDefinitions);
+      return this.rootSharedStateScope;
+    }
+
+    this.rootSharedStateScope.ownerStage = this;
+    return this.rootSharedStateScope;
+  }
+
+  protected getStateBatchScheduler(): StateBatchScheduler {
+    if (!this._stateBatchScheduler) {
+      this._stateBatchScheduler = new StateBatchScheduler(this, ensureStageStatePerfMonitor(this));
+    }
+    return this._stateBatchScheduler;
+  }
+
   scheduleStateBatch(graphics: IGraphic[], targetStates: string[]): void {
-    this._stateBatchScheduler.schedule(graphics, targetStates);
+    this.getStateBatchScheduler().schedule(graphics, targetStates);
   }
 
   getStatePerfSnapshot(): IStatePerfSnapshot {

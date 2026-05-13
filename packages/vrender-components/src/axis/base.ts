@@ -4,7 +4,6 @@
  * @description 坐标轴组件基类
  */
 import type {
-  IAnimate,
   IGroup,
   INode,
   ITextGraphicAttribute,
@@ -41,15 +40,17 @@ import { getElMap, getVerticalCoord } from './util';
 import { dispatchClickState, dispatchHoverState, dispatchUnHoverState } from '../util/interaction';
 import { AnimateComponent } from '../animation/animate-component';
 import { commitUpdateAnimationTarget } from '../animation/static-truth';
+import {
+  appendExitReleaseCallback,
+  bindExitReleaseAnimates,
+  collectTrackedAnimates,
+  runExitReleaseCallbacks,
+  type AnimateExitReleaseState
+} from '../animation/exit-release';
 import { DefaultAxisAnimation } from './animate/config';
 import type { IBaseScale } from '@visactor/vscale';
 
-type AxisExitReleaseState = {
-  pendingAnimates: Set<IAnimate>;
-  finalized: boolean;
-  removeFromParent: boolean;
-  onComplete: (() => void)[];
-};
+type AxisExitReleaseState = AnimateExitReleaseState;
 
 export abstract class AxisBase<T extends AxisBaseAttributes> extends AnimateComponent<Required<T>> {
   name = 'axis';
@@ -148,27 +149,6 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AnimateComp
     return offscreenGroup.AABBBounds;
   }
 
-  private _collectTrackedAnimates(graphic: IGraphic, animates: IAnimate[], visited: Set<IAnimate>) {
-    const trackedAnimates = (graphic as any).getTrackedAnimates?.() ?? (graphic as any).animates;
-
-    trackedAnimates?.forEach((animate: IAnimate) => {
-      if (animate && !visited.has(animate)) {
-        visited.add(animate);
-        animates.push(animate);
-      }
-    });
-
-    (graphic as IGroup).forEachChildren?.((child: IGraphic) => {
-      this._collectTrackedAnimates(child, animates, visited);
-    });
-  }
-
-  private _appendExitReleaseCallback(callback?: () => void) {
-    if (callback) {
-      this._exitReleaseState?.onComplete.push(callback);
-    }
-  }
-
   private _finalizeExitRelease() {
     const state = this._exitReleaseState;
     if (state?.finalized) {
@@ -194,15 +174,13 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AnimateComp
       (parent ?? this.parent)?.removeChild(this);
     }
 
-    callbacks.forEach(callback => {
-      callback();
-    });
+    runExitReleaseCallbacks(callbacks);
   }
 
   private _runExitAnimationBeforeRelease(options: ComponentExitReleaseOptions = {}) {
     if (this._exitReleaseState && !this._exitReleaseState.finalized) {
       this._exitReleaseState.removeFromParent = this._exitReleaseState.removeFromParent || !!options.removeFromParent;
-      this._appendExitReleaseCallback(options.onComplete);
+      appendExitReleaseCallback(this._exitReleaseState, options.onComplete);
       return true;
     }
 
@@ -231,8 +209,7 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AnimateComp
       return false;
     }
 
-    const existingAnimates: IAnimate[] = [];
-    this._collectTrackedAnimates(this as unknown as IGraphic, existingAnimates, new Set());
+    const existingAnimates = collectTrackedAnimates(this as unknown as IGraphic);
 
     const {
       delay = 0,
@@ -255,8 +232,7 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AnimateComp
       target.animate().wait(delay).to(endAttrs, duration, easing);
     });
 
-    const animates: IAnimate[] = [];
-    this._collectTrackedAnimates(this as unknown as IGraphic, animates, new Set());
+    const animates = collectTrackedAnimates(this as unknown as IGraphic);
     const exitAnimates = animates.filter(animate => !existingAnimates.includes(animate));
 
     if (!exitAnimates.length) {
@@ -275,22 +251,11 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AnimateComp
       onComplete: options.onComplete ? [options.onComplete] : []
     };
 
-    const finish = (animate: IAnimate) => {
-      const state = this._exitReleaseState;
-      if (!state || state.finalized || !state.pendingAnimates.has(animate)) {
-        return;
-      }
-
-      state.pendingAnimates.delete(animate);
-      if (!state.pendingAnimates.size) {
-        this._finalizeExitRelease();
-      }
-    };
-
-    exitAnimates.forEach(animate => {
-      animate.onEnd(() => finish(animate));
-      animate.onRemove(() => finish(animate));
-    });
+    bindExitReleaseAnimates(
+      exitAnimates,
+      () => this._exitReleaseState,
+      () => this._finalizeExitRelease()
+    );
 
     return true;
   }

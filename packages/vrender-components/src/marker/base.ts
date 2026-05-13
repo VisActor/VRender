@@ -1,12 +1,4 @@
-import type {
-  FederatedPointerEvent,
-  IAnimate,
-  IGraphic,
-  IGroup,
-  IImage,
-  IRichText,
-  ISymbol
-} from '@visactor/vrender-core';
+import type { FederatedPointerEvent, IGraphic, IGroup, IImage, IRichText, ISymbol } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
 import { graphicCreator } from '../util/graphic-creator';
 import { AbstractComponent } from '../core/base';
@@ -20,13 +12,16 @@ import type {
 } from './type';
 import { dispatchClickState, dispatchHoverState, dispatchUnHoverState } from '../util/interaction';
 import { isObject, merge } from '@visactor/vutils';
+import {
+  appendExitReleaseCallback,
+  bindExitReleaseAnimates,
+  collectTrackedAnimates,
+  runExitReleaseCallbacks,
+  type AnimateExitReleaseState
+} from '../animation/exit-release';
 
-type MarkerExitReleaseState = {
-  pendingAnimates: Set<IAnimate>;
-  finalized: boolean;
+type MarkerExitReleaseState = AnimateExitReleaseState & {
   releaseSelf: boolean;
-  removeFromParent: boolean;
-  onComplete: (() => void)[];
 };
 
 export abstract class Marker<T extends MarkerAttrs<AnimationAttr>, AnimationAttr> extends AbstractComponent<
@@ -169,27 +164,6 @@ export abstract class Marker<T extends MarkerAttrs<AnimationAttr>, AnimationAttr
     });
   }
 
-  private _collectTrackedAnimates(graphic: IGraphic, animates: IAnimate[], visited: Set<IAnimate>) {
-    const trackedAnimates = (graphic as any).getTrackedAnimates?.() ?? (graphic as any).animates;
-
-    trackedAnimates?.forEach((animate: IAnimate) => {
-      if (animate && !visited.has(animate)) {
-        visited.add(animate);
-        animates.push(animate);
-      }
-    });
-
-    (graphic as IGroup).forEachChildren?.((child: IGraphic) => {
-      this._collectTrackedAnimates(child, animates, visited);
-    });
-  }
-
-  private _appendExitReleaseCallback(callback?: () => void) {
-    if (callback) {
-      this._exitReleaseState?.onComplete.push(callback);
-    }
-  }
-
   private _finalizeExitRelease() {
     const state = this._exitReleaseState;
     if (state?.finalized) {
@@ -218,9 +192,7 @@ export abstract class Marker<T extends MarkerAttrs<AnimationAttr>, AnimationAttr
       }
     }
 
-    callbacks.forEach(callback => {
-      callback();
-    });
+    runExitReleaseCallbacks(callbacks);
   }
 
   private _runExitAnimationBeforeCleanup(
@@ -233,7 +205,7 @@ export abstract class Marker<T extends MarkerAttrs<AnimationAttr>, AnimationAttr
     if (this._exitReleaseState && !this._exitReleaseState.finalized) {
       this._exitReleaseState.releaseSelf = this._exitReleaseState.releaseSelf || releaseSelf;
       this._exitReleaseState.removeFromParent = this._exitReleaseState.removeFromParent || !!options.removeFromParent;
-      this._appendExitReleaseCallback(options.onComplete);
+      appendExitReleaseCallback(this._exitReleaseState, options.onComplete);
       return true;
     }
 
@@ -251,13 +223,11 @@ export abstract class Marker<T extends MarkerAttrs<AnimationAttr>, AnimationAttr
       return false;
     }
 
-    const existingAnimates: IAnimate[] = [];
-    this._collectTrackedAnimates(this, existingAnimates, new Set());
+    const existingAnimates = collectTrackedAnimates(this);
 
     this.markerAnimate('exit');
 
-    const animates: IAnimate[] = [];
-    this._collectTrackedAnimates(this, animates, new Set());
+    const animates = collectTrackedAnimates(this);
     const exitAnimates = animates.filter(animate => !existingAnimates.includes(animate));
 
     if (!exitAnimates.length) {
@@ -279,22 +249,11 @@ export abstract class Marker<T extends MarkerAttrs<AnimationAttr>, AnimationAttr
       onComplete: options.onComplete ? [options.onComplete] : []
     };
 
-    const finish = (animate: IAnimate) => {
-      const state = this._exitReleaseState;
-      if (!state || state.finalized || !state.pendingAnimates.has(animate)) {
-        return;
-      }
-
-      state.pendingAnimates.delete(animate);
-      if (!state.pendingAnimates.size) {
-        this._finalizeExitRelease();
-      }
-    };
-
-    exitAnimates.forEach(animate => {
-      animate.onEnd(() => finish(animate));
-      animate.onRemove(() => finish(animate));
-    });
+    bindExitReleaseAnimates(
+      exitAnimates,
+      () => this._exitReleaseState,
+      () => this._finalizeExitRelease()
+    );
 
     return true;
   }

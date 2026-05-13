@@ -112,51 +112,6 @@ describe('Graphic state extracted modules parity', () => {
     expect(graphic.attribute.stroke).toBe((resolvedAttrs as any).stroke);
   });
 
-  test('StateStyleResolver backup should stay a legacy helper while graphic normalAttrs now reflects base truth', () => {
-    const graphic = createGraphic();
-    graphic.states = {
-      hover: {
-        fill: 'red',
-        lineWidth: 3
-      },
-      active: {
-        opacity: 0.4
-      }
-    } as any;
-    const resolver = new StateStyleResolver<any>();
-
-    graphic.useStates(['hover'], false);
-
-    const targetAttrs = {
-      opacity: 0.4
-    };
-    const legacyTargetAttrs = { ...targetAttrs };
-    const backup = resolver.computeNormalAttrsBackup(
-      graphic.normalAttrs as any,
-      targetAttrs,
-      ((graphic as any).finalAttribute ?? graphic.attribute) as any
-    );
-
-    (graphic as any).updateNormalAttrs(legacyTargetAttrs);
-
-    expect(backup.normalAttrs).toEqual({
-      opacity: 1
-    });
-    expect(graphic.normalAttrs).toEqual((graphic as any).baseAttributes);
-    expect(backup.attrs).toEqual({
-      ...legacyTargetAttrs,
-      fill: 'blue',
-      lineWidth: 1,
-      x: 0,
-      y: 0,
-      width: 10,
-      height: 20,
-      stroke: 'black',
-      visible: true,
-      zIndex: 1
-    });
-  });
-
   test('StateTransitionOrchestrator should match legacy animated state application', () => {
     const legacyGraphic = createGraphic();
     const newGraphic = createGraphic();

@@ -7,12 +7,14 @@ import type { DataLabelAttrs } from './type';
 import { LabelBase as PointLabel, type LabelBase } from './base';
 import type { ComponentOptions } from '../interface';
 import { getLabelComponent } from './data-label-register';
+import {
+  appendExitReleaseCallback,
+  runExitReleaseCallbacks,
+  type ExitReleaseCallbackState
+} from '../animation/exit-release';
 
-type DataLabelExitReleaseState = {
+type DataLabelExitReleaseState = ExitReleaseCallbackState & {
   pendingCount: number;
-  finalized: boolean;
-  removeFromParent: boolean;
-  onComplete: (() => void)[];
 };
 
 export class DataLabel extends AbstractComponent<DataLabelAttrs> {
@@ -93,12 +95,6 @@ export class DataLabel extends AbstractComponent<DataLabelAttrs> {
     this._componentMap = currentComponentMap;
   }
 
-  private _appendExitReleaseCallback(callback?: () => void) {
-    if (callback) {
-      this._exitReleaseState?.onComplete.push(callback);
-    }
-  }
-
   private _finalizeExitRelease() {
     const state = this._exitReleaseState;
     if (state?.finalized) {
@@ -121,9 +117,7 @@ export class DataLabel extends AbstractComponent<DataLabelAttrs> {
       (parent ?? this.parent)?.removeChild(this);
     }
 
-    callbacks.forEach(callback => {
-      callback();
-    });
+    runExitReleaseCallbacks(callbacks);
   }
 
   releaseWithExitAnimation(options: ComponentExitReleaseOptions = {}): boolean {
@@ -133,7 +127,7 @@ export class DataLabel extends AbstractComponent<DataLabelAttrs> {
 
     if (this._exitReleaseState && !this._exitReleaseState.finalized) {
       this._exitReleaseState.removeFromParent = this._exitReleaseState.removeFromParent || !!options.removeFromParent;
-      this._appendExitReleaseCallback(options.onComplete);
+      appendExitReleaseCallback(this._exitReleaseState, options.onComplete);
       return true;
     }
 

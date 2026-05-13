@@ -467,7 +467,6 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   protected stateStyleResolver?: StateStyleResolver<T>;
   protected deepStateStyleResolver?: StateStyleResolver<T>;
   protected stateTransitionOrchestrator?: StateTransitionOrchestrator<T>;
-  protected _deprecatedNormalAttrsView?: Partial<T> | null;
   protected localStateDefinitionsSource?: StateDefinitionsInput<T>;
   protected resolverEpoch?: number;
   protected attributeMayContainTransientAttrs?: boolean;
@@ -495,8 +494,8 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     return this.baseAttributes;
   }
 
-  set normalAttrs(value: Partial<T> | undefined) {
-    this._deprecatedNormalAttrsView = value ?? undefined;
+  set normalAttrs(_value: Partial<T> | undefined) {
+    void _value;
   }
 
   protected getBaseAttributesStorage(): Partial<T> {
@@ -2245,8 +2244,8 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     this.getStateTransitionOrchestrator().applyTransition(this as any, plan, hasAnimation, transitionOptions);
   }
 
-  updateNormalAttrs(stateAttrs: Partial<T>) {
-    this._deprecatedNormalAttrsView = cloneAttributeValue(this.baseAttributes);
+  updateNormalAttrs(_stateAttrs: Partial<T>) {
+    void _stateAttrs;
   }
 
   protected getStateTransitionDefaultAttribute(key: string, targetAttrs?: Partial<T>) {

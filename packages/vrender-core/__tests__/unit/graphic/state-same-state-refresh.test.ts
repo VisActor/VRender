@@ -78,6 +78,34 @@ describe('Graphic same-state refresh', () => {
     expect(rect.baseAttributes?.fillOpacity).toBe(1);
   });
 
+  test('should not let a pending shared refresh overwrite an explicit same-state patch animation', () => {
+    const { stage, group, rect } = createSharedRect(0.2);
+    const applyAnimationState = jest.fn();
+    (rect as any).applyAnimationState = applyAnimationState;
+
+    group.sharedStateDefinitions = {
+      custom1: { fillOpacity: 0.5 }
+    } as any;
+    expect((rect as any).sharedStateDirty).toBe(true);
+
+    rect.setStates(['custom1'], {
+      animate: true,
+      animateSameStatePatchChange: true
+    });
+
+    expect((rect as any).sharedStateDirty).toBe(false);
+    expect(rect.resolvedStatePatch).toEqual({ fillOpacity: 0.5 });
+    expect(rect.attribute.fillOpacity).toBe(0.2);
+
+    stage.hooks.beforeRender.call(stage);
+
+    expect(applyAnimationState).toHaveBeenCalledTimes(1);
+    expect(rect.currentStates).toEqual(['custom1']);
+    expect(rect.resolvedStatePatch).toEqual({ fillOpacity: 0.5 });
+    expect(rect.attribute.fillOpacity).toBe(0.2);
+    expect(rect.baseAttributes?.fillOpacity).toBe(1);
+  });
+
   test('should synchronously apply new patch when same-state patch animation is disabled', () => {
     const { group, rect } = createSharedRect(0.2);
     const applyAnimationState = jest.fn();

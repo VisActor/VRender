@@ -64,6 +64,9 @@ export function flushStageSharedStateRefresh(stage: IStage): void {
     if (graphic.stage !== stage) {
       return;
     }
+    if (!(graphic as any).sharedStateDirty) {
+      return;
+    }
 
     const refresh = (graphic as any).refreshSharedStateBeforeRender;
     if (typeof refresh === 'function') {

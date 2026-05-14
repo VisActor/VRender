@@ -780,7 +780,10 @@ export interface IGraphic<T extends Partial<IGraphicAttribute> = Partial<IGraphi
   toggleState: (stateName: string, hasAnimation?: boolean) => void;
   removeState: (stateName: string | string[], hasAnimation?: boolean) => void;
   clearStates: (hasAnimation?: boolean) => void;
-  setStates: (states?: string[] | null, hasAnimation?: boolean) => void;
+  setStates: {
+    (states?: string[] | null, hasAnimation?: boolean): void;
+    (states?: string[] | null, options?: ISetStatesOptions): void;
+  };
   useStates: (states: string[], hasAnimation?: boolean) => void;
   addState: (stateName: string, keepCurrentStates?: boolean, hasAnimation?: boolean) => void;
   invalidateResolver: () => void;
@@ -909,6 +912,11 @@ export type IAnimateConfig = {
   duration?: number;
   easing?: EasingType;
   noAnimateAttrs?: string[] | Record<string, boolean | number>;
+};
+
+export type ISetStatesOptions = {
+  animate?: boolean;
+  animateSameStatePatchChange?: boolean;
 };
 
 export type GraphicReleaseStatus = 'released' | 'willRelease';

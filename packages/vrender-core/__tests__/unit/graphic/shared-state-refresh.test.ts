@@ -54,4 +54,35 @@ describe('shared state refresh contract', () => {
     expect(stage.getScheduledFrameCount()).toBe(1);
     expect((rect as any).sharedStateDirty).toBe(true);
   });
+
+  test('should provide graphic to shared state resolver during eager refresh', () => {
+    const stage = createSharedStateTestStage();
+    const group = createGroup({});
+    const rect = createRect({ x: 0, y: 0, width: 10, height: 10, fill: 'red' });
+    const resolver = jest.fn(({ graphic }) => ({
+      fillOpacity: graphic.context.fillOpacity
+    }));
+
+    (group as any).sharedStateDefinitions = {
+      hover: {
+        resolver,
+        declaredAffectedKeys: ['fillOpacity']
+      }
+    };
+
+    rect.context = { fillOpacity: 0.2 };
+    rect.currentStates = ['hover'];
+
+    stage.appendChild(group);
+    group.appendChild(rect);
+    rect.refreshSharedStateBeforeRender();
+
+    expect(resolver).toHaveBeenCalledWith(
+      expect.objectContaining({
+        graphic: rect
+      })
+    );
+    expect(rect.resolvedStatePatch).toEqual({ fillOpacity: 0.2 });
+    expect(rect.attribute.fillOpacity).toBe(0.2);
+  });
 });

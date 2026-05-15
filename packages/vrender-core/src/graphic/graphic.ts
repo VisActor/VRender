@@ -773,9 +773,8 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       return;
     }
 
-    const stateResolveBaseAttrs = (this.baseAttributes ?? this.attribute) as Partial<T>;
-    const stateModel = this.createStateModel();
-    this.stateEngine?.setResolveContext(this, stateResolveBaseAttrs);
+    const stateResolveBaseAttrs = this.getStateResolveBaseAttrs();
+    const stateModel = this.createStateModel(stateResolveBaseAttrs);
     const transition = stateModel.useStates(this.currentStates);
     const effectiveStates = transition.effectiveStates ?? transition.states;
     const resolvedStateAttrs =
@@ -2057,7 +2056,16 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     return this.states?.[stateName];
   }
 
-  protected createStateModel() {
+  protected getStateResolveBaseAttrs(): Partial<T> {
+    return (this.baseAttributes ?? this.attribute) as Partial<T>;
+  }
+
+  protected syncStateResolveContext(stateResolveBaseAttrs: Partial<T> = this.getStateResolveBaseAttrs()): Partial<T> {
+    this.stateEngine?.setResolveContext(this, stateResolveBaseAttrs);
+    return stateResolveBaseAttrs;
+  }
+
+  protected createStateModel(stateResolveBaseAttrs: Partial<T> = this.getStateResolveBaseAttrs()) {
     const { compiledDefinitions, stateProxyEligibility, stateProxyModeKey } =
       this.resolveEffectiveCompiledDefinitions();
     this.compiledStateDefinitions = compiledDefinitions;
@@ -2088,6 +2096,8 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       this.stateEngineMergeMode = this.stateMergeMode;
       this.stateEngineStateProxyModeKey = stateProxyModeKey;
     }
+
+    this.syncStateResolveContext(stateResolveBaseAttrs);
 
     return new StateModel<T>({
       states: this.states,
@@ -2219,9 +2229,8 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     if (transition) {
       resolvedStateAttrs = transition.resolvedStateAttrs;
     } else {
-      const stateResolveBaseAttrs = (this.baseAttributes ?? this.attribute) as Partial<T>;
-      const stateModel = this.createStateModel();
-      this.stateEngine?.setResolveContext(this, stateResolveBaseAttrs);
+      const stateResolveBaseAttrs = this.getStateResolveBaseAttrs();
+      const stateModel = this.createStateModel(stateResolveBaseAttrs);
       if (forceResolverRefresh) {
         this.stateEngine?.invalidateResolverCache();
       }
@@ -2621,8 +2630,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       return;
     }
 
-    const stateResolveBaseAttrs = (this.baseAttributes ?? this.attribute) as Partial<T>;
-    this.stateEngine.setResolveContext(this, stateResolveBaseAttrs);
+    const stateResolveBaseAttrs = this.syncStateResolveContext();
     this.resolverEpoch = (this.resolverEpoch ?? 0) + 1;
     this.stateEngine.invalidateResolverCache();
     const transition = this.stateEngine.applyStates(this.currentStates);

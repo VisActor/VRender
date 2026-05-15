@@ -26,7 +26,7 @@ describe('Slider', () => {
       const slider = new Slider({
         x: 100,
         y: 100,
-        layout: 'horizontal',
+        layout: 'horizontal' as const,
         railWidth: 200,
         railHeight: 10,
         min: 0,
@@ -92,7 +92,7 @@ describe('Slider', () => {
       const slider = new Slider({
         x: 100,
         y: 120,
-        layout: 'vertical',
+        layout: 'vertical' as const,
         railWidth: 10,
         railHeight: 200,
         min: 0,
@@ -163,7 +163,7 @@ describe('Slider', () => {
       const slider = new Slider({
         x: 100,
         y: 100,
-        layout: 'horizontal',
+        layout: 'horizontal' as const,
         align: 'bottom',
         railWidth: 200,
         railHeight: 10,
@@ -216,7 +216,7 @@ describe('Slider', () => {
       const slider = new Slider({
         x: 100,
         y: 200,
-        layout: 'horizontal',
+        layout: 'horizontal' as const,
         railWidth: 200,
         railHeight: 10,
         range: true,
@@ -275,7 +275,7 @@ describe('Slider', () => {
       const slider = new Slider({
         x: 100,
         y: 220,
-        layout: 'vertical',
+        layout: 'vertical' as const,
         railWidth: 10,
         railHeight: 200,
         range: true,

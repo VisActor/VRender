@@ -1,6 +1,12 @@
-import { BaseEnvContribution, rafBasedSto } from '@visactor/vrender-core';
+import {
+  BaseEnvContribution,
+  rafBasedSto,
+  type EnvType,
+  type ICreateCanvasParams,
+  type IEnvContribution,
+  type IGlobal
+} from '@visactor/vrender-core';
 // import { loadTaroContributions } from '../../../kits';
-import type { EnvType, ICreateCanvasParams, IEnvContribution, IGlobal } from '@visactor/vrender-core';
 
 type Canvas = any;
 
@@ -33,6 +39,17 @@ export class NodeEnvContribution extends BaseEnvContribution implements IEnvCont
       service.setActiveEnvContribution(this);
       this.pkg = pkg;
     }
+  }
+
+  private getNodePackage(feature: string, requiredKey?: keyof NodePkg): NodePkg {
+    if (!this.pkg || (requiredKey && typeof this.pkg[requiredKey] !== 'function')) {
+      throw new Error(
+        `Node env requires node-canvas package before ${feature}. ` +
+          `Use vglobal.setEnv('node', CanvasPkg) before createNodeVRenderApp(), ` +
+          `or createNodeVRenderApp({ envParams: CanvasPkg }).`
+      );
+    }
+    return this.pkg;
   }
 
   /**
@@ -94,7 +111,7 @@ export class NodeEnvContribution extends BaseEnvContribution implements IEnvCont
     loadState: 'success' | 'fail';
     data: HTMLImageElement | null;
   }> {
-    const { loadImage } = this.pkg;
+    const { loadImage } = this.getNodePackage('loadImage', 'loadImage');
     if (loadImage) {
       return loadImage(url)
         .then((image: any) => {
@@ -121,7 +138,7 @@ export class NodeEnvContribution extends BaseEnvContribution implements IEnvCont
   }> {
     // // eslint-disable-next-line @typescript-eslint/no-var-requires
     // const { Resvg } = require('@resvg/resvg-js');
-    const Resvg = this.pkg.Resvg;
+    const Resvg = this.getNodePackage('loadSvg').Resvg;
     if (!Resvg) {
       return Promise.reject(new Error('@resvg/resvg-js svgParser could not be found!'));
     }
@@ -131,7 +148,8 @@ export class NodeEnvContribution extends BaseEnvContribution implements IEnvCont
   }
 
   createCanvas(params: any): Canvas {
-    const canvas = this.pkg.createCanvas(params.width, params.height);
+    const { createCanvas } = this.getNodePackage('createCanvas', 'createCanvas');
+    const canvas = createCanvas(params.width, params.height);
     return canvas;
   }
 

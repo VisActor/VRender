@@ -6,11 +6,8 @@ import { bindWxWindowContribution } from '../window/contributions/wx-contributio
 import { WxEnvContribution } from './contributions/wx-contribution';
 import type { LegacyBindContainer, LegacyContainer } from '../common/legacy-container';
 
-let isWxBound = false;
-
 export function bindWxEnv(container: LegacyBindContainer) {
-  if (!isWxBound) {
-    isWxBound = true;
+  if (!(container as any).isBound?.(WxEnvContribution)) {
     container.bind(WxEnvContribution).toSelf().inSingletonScope();
     container.bind(EnvContribution).toService(WxEnvContribution);
   }

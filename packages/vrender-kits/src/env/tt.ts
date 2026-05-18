@@ -5,11 +5,8 @@ import { loadMathPicker } from '../picker/math-module';
 import { TTEnvContribution } from './contributions/tt-contribution';
 import type { LegacyBindContainer, LegacyContainer } from '../common/legacy-container';
 
-let isTTBound = false;
-
 export function bindTTEnv(container: LegacyBindContainer) {
-  if (!isTTBound) {
-    isTTBound = true;
+  if (!(container as any).isBound?.(TTEnvContribution)) {
     container.bind(TTEnvContribution).toSelf().inSingletonScope();
     container.bind(EnvContribution).toService(TTEnvContribution);
   }

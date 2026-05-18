@@ -230,16 +230,14 @@ export class WxWindowHandlerContribution extends BaseWindowHandlerContribution i
   }
 }
 
-let wxWindowContributionBound = false;
-
 export function bindWxWindowContribution(container: any) {
-  if (wxWindowContributionBound) {
-    return;
+  if (!container.isBound?.(WxWindowHandlerContribution)) {
+    container.bind(WxWindowHandlerContribution).toSelf();
   }
-  wxWindowContributionBound = true;
-  container.bind(WxWindowHandlerContribution).toSelf();
-  container
-    .bind(WindowHandlerContribution)
-    .toService(WxWindowHandlerContribution)
-    .whenTargetNamed(WxWindowHandlerContribution.env);
+  if (!container.getNamed?.(WindowHandlerContribution, WxWindowHandlerContribution.env)) {
+    container
+      .bind(WindowHandlerContribution)
+      .toService(WxWindowHandlerContribution)
+      .whenTargetNamed(WxWindowHandlerContribution.env);
+  }
 }

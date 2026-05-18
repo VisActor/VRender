@@ -233,16 +233,14 @@ export class FeishuWindowHandlerContribution
   }
 }
 
-let feishuWindowContributionBound = false;
-
 export function bindFeishuWindowContribution(container: any) {
-  if (feishuWindowContributionBound) {
-    return;
+  if (!container.isBound?.(FeishuWindowHandlerContribution)) {
+    container.bind(FeishuWindowHandlerContribution).toSelf();
   }
-  feishuWindowContributionBound = true;
-  container.bind(FeishuWindowHandlerContribution).toSelf();
-  container
-    .bind(WindowHandlerContribution)
-    .toService(FeishuWindowHandlerContribution)
-    .whenTargetNamed(FeishuWindowHandlerContribution.env);
+  if (!container.getNamed?.(WindowHandlerContribution, FeishuWindowHandlerContribution.env)) {
+    container
+      .bind(WindowHandlerContribution)
+      .toService(FeishuWindowHandlerContribution)
+      .whenTargetNamed(FeishuWindowHandlerContribution.env);
+  }
 }

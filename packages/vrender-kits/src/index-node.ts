@@ -5,7 +5,14 @@ export const roughModule = _roughModule;
 export * from './picker/contributions/constants';
 export {
   installBrowserEnvToApp,
+  installFeishuEnvToApp,
+  installHarmonyEnvToApp,
+  installLynxEnvToApp,
+  installMathPickersToApp,
   installNodeEnvToApp,
+  installTaroEnvToApp,
+  installTTEnvToApp,
+  installWxEnvToApp,
   installDefaultGraphicsToApp,
   installBrowserPickersToApp,
   installNodePickersToApp

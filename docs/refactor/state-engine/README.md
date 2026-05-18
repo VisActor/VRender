@@ -49,6 +49,7 @@
 | `D3_MULTI_ENV_ON_DEMAND_GOVERNANCE.md` | **multi-env / on-demand 治理任务文档**（决定是否继续保留更宽 public contract，并给出治理工作流） |
 | `D3_ALPHA_COORDINATION.md` | **alpha 协作文档**（给 `VRender agent` / `VChart agent` / 协调者的当前 alpha gate、blocker 和 handoff 状态面） |
 | `D3_POST_ALPHA_WRAPUP_PLAN.md` | **alpha 后收尾优先级计划**（browser alpha gate 关闭后的必要收尾、owner、优先级与完成标准） |
+| `D3_STABLE_RELEASE_CLOSEOUT_PLAN.md` | **稳定正式版收敛计划**（将 node / multi-env / 上层接入 / 性能尾项提升为正式 release gate，目标是 D3 全环境完成且无 D3 follow-up） |
 | `D3_MEMORY_BENCHMARK_PERF_CONTEXT.md` | **memory benchmark 性能问题上下文**（`memory.ts` 与 `develop` 的性能差距归因与后续优化边界） |
 | `D3_MEMORY_BENCHMARK_P2_GUIDE.md` | **memory benchmark P2 实施任务文档**（面向 VTable-lite 业务场景的构造期固定成本优化） |
 | `D3_MEMORY_BENCHMARK_P2_PROMPT.md` | **memory benchmark P2 开发者执行 Prompt**（给实现 agent） |
@@ -84,6 +85,7 @@
 | `D3_MULTI_ENV_ON_DEMAND_GOVERNANCE.md` | multi-env / on-demand contract 是否继续保留及如何治理的专项入口 |
 | `D3_ALPHA_COORDINATION.md` | `VRender` / `VChart` 双 agent 和协调者共用的 alpha gate / blocker / handoff 状态面 |
 | `D3_POST_ALPHA_WRAPUP_PLAN.md` | browser alpha gate 关闭后，统一整理 alpha 后必要收尾事项、优先级、owner 与完成标准 |
+| `D3_STABLE_RELEASE_CLOSEOUT_PLAN.md` | 稳定正式版收敛入口；browser alpha 之后的新 release gate，以全环境可用和 D3 follow-up 清零为目标 |
 | `D3_MEMORY_BENCHMARK_PERF_CONTEXT.md` | `memory.ts` benchmark 性能问题的归因与后续优化上下文 |
 | `D3_MEMORY_BENCHMARK_P2_GUIDE.md` | memory benchmark `P2` 的实施文档（补 VTable-lite 业务验证口径与单目标优化边界） |
 | `D3_MEMORY_BENCHMARK_P2_PROMPT.md` | memory benchmark `P2` 的实现 agent 执行入口 |

@@ -1,3 +1,7 @@
+/**
+ * @jest-environment node
+ */
+
 declare const require: any;
 export {};
 

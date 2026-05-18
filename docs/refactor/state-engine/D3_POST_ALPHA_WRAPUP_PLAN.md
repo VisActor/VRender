@@ -4,6 +4,7 @@
 > **用途**：在 `browser alpha gate closed` 之后，整理 D3 重构剩余事项、优先级、owner 与完成标准
 > **当前状态**：待执行
 > **重要说明**：本文件不是新的设计规范，不重开 Phase 1-4、legacy removal 或 browser alpha gate；它只负责 alpha 发布后的必要收尾排序
+> **2026-05-18 更新**：本文保留 browser alpha 后历史优先级口径。稳定正式版目标已升级为“D3 全环境最终完成、无 D3 follow-up”，新 release gate 以 [D3_STABLE_RELEASE_CLOSEOUT_PLAN.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_STABLE_RELEASE_CLOSEOUT_PLAN.md) 为准；其中 node app-scoped runtime、multi-env support matrix、性能 P2 结论等已提升为 stable release P0 gate。
 
 ---
 

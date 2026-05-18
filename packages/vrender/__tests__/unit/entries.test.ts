@@ -1,3 +1,7 @@
+/**
+ * @jest-environment node
+ */
+
 declare const require: any;
 export {};
 
@@ -155,6 +159,108 @@ describe('vrender app-scoped entries', () => {
       expect(installNodePickersToApp).toHaveBeenCalledWith(app);
     });
   });
+
+  test.each([
+    ['createTaroVRenderApp', 'installTaroEnvToApp', 'loadTaroEnv', 'taro'],
+    ['createFeishuVRenderApp', 'installFeishuEnvToApp', 'loadFeishuEnv', 'feishu'],
+    ['createTTVRenderApp', 'installTTEnvToApp', 'loadTTEnv', 'tt'],
+    ['createWxVRenderApp', 'installWxEnvToApp', 'loadWxEnv', 'wx'],
+    ['createLynxVRenderApp', 'installLynxEnvToApp', 'loadLynxEnv', 'lynx'],
+    ['createHarmonyVRenderApp', 'installHarmonyEnvToApp', 'loadHarmonyEnv', 'harmony']
+  ])(
+    '%s should create a miniapp app and run the app-scoped bootstrap pipeline',
+    (creatorName, installName, loadName, env) => {
+      jest.isolateModules(() => {
+        const app = {
+          id: `${env}-app`,
+          registry: {
+            renderer: { getAll: jest.fn(() => []), clear: jest.fn(), register: jest.fn() },
+            picker: { getAll: jest.fn(() => []), clear: jest.fn(), register: jest.fn() }
+          }
+        };
+        const createMiniappApp = jest.fn(() => app);
+        const installEnv = jest.fn();
+        const loadEnv = jest.fn();
+        const installDefaultGraphicsToApp = jest.fn();
+        const installMathPickersToApp = jest.fn();
+        const envParams = { domref: { width: 100, height: 80 }, canvasIdLists: ['main'], freeCanvasIdx: 0 };
+
+        jest.doMock('@visactor/vrender-core', () => ({
+          createBrowserApp: jest.fn(),
+          createMiniappApp,
+          createNodeApp: jest.fn(),
+          getLegacyBindingContext: jest.fn(() => ({ getAll: jest.fn(() => []) })),
+          GraphicRender: 'GraphicRender',
+          isBrowserEnv: () => false,
+          isNodeEnv: () => false,
+          registerDirectionalLight: jest.fn(),
+          registerFlexLayoutPlugin: jest.fn(),
+          registerHtmlAttributePlugin: jest.fn(),
+          registerOrthoCamera: jest.fn(),
+          registerReactAttributePlugin: jest.fn(),
+          registerViewTransform3dPlugin: jest.fn()
+        }));
+        jest.doMock('@visactor/vrender-kits', () => ({
+          MathPickerContribution: 'MathPickerContribution',
+          loadBrowserEnv: jest.fn(),
+          loadNodeEnv: jest.fn(),
+          loadTaroEnv: jest.fn(),
+          loadFeishuEnv: jest.fn(),
+          loadTTEnv: jest.fn(),
+          loadWxEnv: jest.fn(),
+          loadLynxEnv: jest.fn(),
+          loadHarmonyEnv: jest.fn(),
+          registerArc: jest.fn(),
+          registerArc3d: jest.fn(),
+          registerArea: jest.fn(),
+          registerCircle: jest.fn(),
+          registerGlyph: jest.fn(),
+          registerGifImage: jest.fn(),
+          registerGroup: jest.fn(),
+          registerImage: jest.fn(),
+          registerLine: jest.fn(),
+          registerPath: jest.fn(),
+          registerPolygon: jest.fn(),
+          registerPyramid3d: jest.fn(),
+          registerRect: jest.fn(),
+          registerRect3d: jest.fn(),
+          registerRichtext: jest.fn(),
+          registerShadowRoot: jest.fn(),
+          registerStar: jest.fn(),
+          registerSymbol: jest.fn(),
+          registerText: jest.fn(),
+          registerWrapText: jest.fn(),
+          installBrowserEnvToApp: jest.fn(),
+          installBrowserPickersToApp: jest.fn(),
+          installDefaultGraphicsToApp,
+          installMathPickersToApp,
+          installNodeEnvToApp: jest.fn(),
+          installNodePickersToApp: jest.fn(),
+          installTaroEnvToApp: jest.fn(),
+          installFeishuEnvToApp: jest.fn(),
+          installTTEnvToApp: jest.fn(),
+          installWxEnvToApp: jest.fn(),
+          installLynxEnvToApp: jest.fn(),
+          installHarmonyEnvToApp: jest.fn(),
+          [installName]: installEnv,
+          [loadName]: loadEnv
+        }));
+        jest.doMock('@visactor/vrender-animate', () => ({
+          registerAnimate: jest.fn(),
+          registerCustomAnimate: jest.fn()
+        }));
+
+        const entries = require('../../src/entries');
+
+        expect(entries[creatorName]({ context: { tag: env }, envParams })).toBe(app);
+        expect(createMiniappApp).toHaveBeenCalledWith({ context: { tag: env } });
+        expect(installEnv).toHaveBeenCalledWith(app, envParams);
+        expect(installDefaultGraphicsToApp).toHaveBeenCalledWith(app);
+        expect(installMathPickersToApp).toHaveBeenCalledWith(app);
+        expect(loadEnv).toHaveBeenCalledTimes(1);
+      });
+    }
+  );
 
   test('bootstrapVRenderBrowserApp should only bootstrap the same app once', () => {
     jest.isolateModules(() => {

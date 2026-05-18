@@ -1,7 +1,14 @@
 export * from './index-node';
 export {
   installBrowserEnvToApp,
+  installFeishuEnvToApp,
+  installHarmonyEnvToApp,
+  installLynxEnvToApp,
+  installMathPickersToApp,
   installNodeEnvToApp,
+  installTaroEnvToApp,
+  installTTEnvToApp,
+  installWxEnvToApp,
   installDefaultGraphicsToApp,
   installBrowserPickersToApp,
   installNodePickersToApp

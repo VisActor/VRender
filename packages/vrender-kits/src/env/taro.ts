@@ -6,11 +6,8 @@ import { bindTaroWindowContribution } from '../window/contributions/taro-contrib
 import { TaroEnvContribution } from './contributions/taro-contribution';
 import type { LegacyBindContainer, LegacyContainer } from '../common/legacy-container';
 
-let isTaroBound = false;
-
 export function bindTaroEnv(container: LegacyBindContainer) {
-  if (!isTaroBound) {
-    isTaroBound = true;
+  if (!(container as any).isBound?.(TaroEnvContribution)) {
     container.bind(TaroEnvContribution).toSelf().inSingletonScope();
     container.bind(EnvContribution).toService(TaroEnvContribution);
   }

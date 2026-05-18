@@ -230,16 +230,14 @@ export class LynxWindowHandlerContribution extends BaseWindowHandlerContribution
   }
 }
 
-let lynxWindowContributionBound = false;
-
 export function bindLynxWindowContribution(container: any) {
-  if (lynxWindowContributionBound) {
-    return;
+  if (!container.isBound?.(LynxWindowHandlerContribution)) {
+    container.bind(LynxWindowHandlerContribution).toSelf();
   }
-  lynxWindowContributionBound = true;
-  container.bind(LynxWindowHandlerContribution).toSelf();
-  container
-    .bind(WindowHandlerContribution)
-    .toService(LynxWindowHandlerContribution)
-    .whenTargetNamed(LynxWindowHandlerContribution.env);
+  if (!container.getNamed?.(WindowHandlerContribution, LynxWindowHandlerContribution.env)) {
+    container
+      .bind(WindowHandlerContribution)
+      .toService(LynxWindowHandlerContribution)
+      .whenTargetNamed(LynxWindowHandlerContribution.env);
+  }
 }

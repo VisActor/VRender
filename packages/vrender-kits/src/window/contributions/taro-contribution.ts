@@ -247,16 +247,14 @@ export class TaroWindowHandlerContribution extends BaseWindowHandlerContribution
   }
 }
 
-let taroWindowContributionBound = false;
-
 export function bindTaroWindowContribution(container: any) {
-  if (taroWindowContributionBound) {
-    return;
+  if (!container.isBound?.(TaroWindowHandlerContribution)) {
+    container.bind(TaroWindowHandlerContribution).toSelf();
   }
-  taroWindowContributionBound = true;
-  container.bind(TaroWindowHandlerContribution).toSelf();
-  container
-    .bind(WindowHandlerContribution)
-    .toService(TaroWindowHandlerContribution)
-    .whenTargetNamed(TaroWindowHandlerContribution.env);
+  if (!container.getNamed?.(WindowHandlerContribution, TaroWindowHandlerContribution.env)) {
+    container
+      .bind(WindowHandlerContribution)
+      .toService(TaroWindowHandlerContribution)
+      .whenTargetNamed(TaroWindowHandlerContribution.env);
+  }
 }

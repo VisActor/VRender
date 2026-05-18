@@ -230,16 +230,14 @@ export class TTWindowHandlerContribution extends BaseWindowHandlerContribution i
   }
 }
 
-let ttWindowContributionBound = false;
-
 export function bindTTWindowContribution(container: any) {
-  if (ttWindowContributionBound) {
-    return;
+  if (!container.isBound?.(TTWindowHandlerContribution)) {
+    container.bind(TTWindowHandlerContribution).toSelf();
   }
-  ttWindowContributionBound = true;
-  container.bind(TTWindowHandlerContribution).toSelf();
-  container
-    .bind(WindowHandlerContribution)
-    .toService(TTWindowHandlerContribution)
-    .whenTargetNamed(TTWindowHandlerContribution.env);
+  if (!container.getNamed?.(WindowHandlerContribution, TTWindowHandlerContribution.env)) {
+    container
+      .bind(WindowHandlerContribution)
+      .toService(TTWindowHandlerContribution)
+      .whenTargetNamed(TTWindowHandlerContribution.env);
+  }
 }

@@ -5,11 +5,8 @@ import { bindHarmonyCanvasModules } from '../canvas/contributions/harmony/module
 import { HarmonyEnvContribution } from './contributions/harmony-contribution';
 import type { LegacyBindContainer, LegacyContainer } from '../common/legacy-container';
 
-let isHarmonyBound = false;
-
 export function bindHarmonyEnv(container: LegacyBindContainer) {
-  if (!isHarmonyBound) {
-    isHarmonyBound = true;
+  if (!(container as any).isBound?.(HarmonyEnvContribution)) {
     container.bind(HarmonyEnvContribution).toSelf().inSingletonScope();
     container.bind(EnvContribution).toService(HarmonyEnvContribution);
   }

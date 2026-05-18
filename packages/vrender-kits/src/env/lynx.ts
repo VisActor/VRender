@@ -6,11 +6,8 @@ import { LynxEnvContribution } from './contributions/lynx-contribution';
 // import { lynxEnvModule } from './contributions/module';
 import type { LegacyBindContainer, LegacyContainer } from '../common/legacy-container';
 
-let isLynxBound = false;
-
 export function bindLynxEnv(container: LegacyBindContainer) {
-  if (!isLynxBound) {
-    isLynxBound = true;
+  if (!(container as any).isBound?.(LynxEnvContribution)) {
     container.bind(LynxEnvContribution).toSelf().inSingletonScope();
     container.bind(EnvContribution).toService(LynxEnvContribution);
   }

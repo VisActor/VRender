@@ -227,16 +227,14 @@ export class HarmonyWindowHandlerContribution
   }
 }
 
-let harmonyWindowContributionBound = false;
-
 export function bindHarmonyWindowContribution(container: any) {
-  if (harmonyWindowContributionBound) {
-    return;
+  if (!container.isBound?.(HarmonyWindowHandlerContribution)) {
+    container.bind(HarmonyWindowHandlerContribution).toSelf();
   }
-  harmonyWindowContributionBound = true;
-  container.bind(HarmonyWindowHandlerContribution).toSelf();
-  container
-    .bind(WindowHandlerContribution)
-    .toService(HarmonyWindowHandlerContribution)
-    .whenTargetNamed(HarmonyWindowHandlerContribution.env);
+  if (!container.getNamed?.(WindowHandlerContribution, HarmonyWindowHandlerContribution.env)) {
+    container
+      .bind(WindowHandlerContribution)
+      .toService(HarmonyWindowHandlerContribution)
+      .whenTargetNamed(HarmonyWindowHandlerContribution.env);
+  }
 }

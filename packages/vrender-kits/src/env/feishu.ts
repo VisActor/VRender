@@ -5,11 +5,8 @@ import { loadMathPicker } from '../picker/math-module';
 import { FeishuEnvContribution } from './contributions/feishu-contribution';
 import type { LegacyBindContainer, LegacyContainer } from '../common/legacy-container';
 
-let isFeishuBound = false;
-
 export function bindFeishuEnv(container: LegacyBindContainer) {
-  if (!isFeishuBound) {
-    isFeishuBound = true;
+  if (!(container as any).isBound?.(FeishuEnvContribution)) {
     container.bind(FeishuEnvContribution).toSelf().inSingletonScope();
     container.bind(EnvContribution).toService(FeishuEnvContribution);
   }

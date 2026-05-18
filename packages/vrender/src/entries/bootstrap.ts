@@ -1,6 +1,7 @@
 import {
   getLegacyBindingContext,
   GraphicRender,
+  vglobal,
   isBrowserEnv,
   isNodeEnv,
   registerDirectionalLight,
@@ -8,7 +9,8 @@ import {
   registerHtmlAttributePlugin,
   registerOrthoCamera,
   registerReactAttributePlugin,
-  registerViewTransform3dPlugin
+  registerViewTransform3dPlugin,
+  type IEnvParamsMap
 } from '@visactor/vrender-core';
 import {
   installBrowserEnvToApp,
@@ -41,9 +43,34 @@ import {
   registerText,
   registerWrapText
 } from '@visactor/vrender-kits';
+// eslint-disable-next-line no-duplicate-imports
+import * as VRenderKitsRuntime from '@visactor/vrender-kits';
 import { registerCustomAnimate, registerAnimate } from '@visactor/vrender-animate';
 
 const BOOTSTRAP_STATE = Symbol.for('vrender.bootstrap.state');
+const installBrowserEnvToAppWithParams = installBrowserEnvToApp as (
+  app: any,
+  envParams?: IEnvParamsMap['browser']
+) => void;
+const installNodeEnvToAppWithParams = installNodeEnvToApp as (app: any, envParams?: IEnvParamsMap['node']) => void;
+type TAppScopedMiniEnv = 'taro' | 'feishu' | 'tt' | 'wx' | 'lynx' | 'harmony';
+type TAppScopedMiniEnvInstaller<TEnv extends TAppScopedMiniEnv> = (app: any, envParams?: IEnvParamsMap[TEnv]) => void;
+type TAppScopedMiniEnvBootstrap<TEnv extends TAppScopedMiniEnv> = {
+  installEnv: TAppScopedMiniEnvInstaller<TEnv>;
+  loadEnv: () => void;
+};
+type TAppScopedMiniEnvBootstraps = {
+  [TEnv in TAppScopedMiniEnv]: TAppScopedMiniEnvBootstrap<TEnv>;
+};
+const runtimeKits = VRenderKitsRuntime as typeof VRenderKitsRuntime & Record<string, any>;
+const miniEnvBootstraps: TAppScopedMiniEnvBootstraps = {
+  taro: { installEnv: runtimeKits.installTaroEnvToApp, loadEnv: runtimeKits.loadTaroEnv },
+  feishu: { installEnv: runtimeKits.installFeishuEnvToApp, loadEnv: runtimeKits.loadFeishuEnv },
+  tt: { installEnv: runtimeKits.installTTEnvToApp, loadEnv: runtimeKits.loadTTEnv },
+  wx: { installEnv: runtimeKits.installWxEnvToApp, loadEnv: runtimeKits.loadWxEnv },
+  lynx: { installEnv: runtimeKits.installLynxEnvToApp, loadEnv: runtimeKits.loadLynxEnv },
+  harmony: { installEnv: runtimeKits.installHarmonyEnvToApp, loadEnv: runtimeKits.loadHarmonyEnv }
+};
 
 type TBootstrapTarget = Record<string | symbol, unknown> & {
   [BOOTSTRAP_STATE]?: Set<string>;
@@ -147,14 +174,18 @@ function syncLegacyPickersToApp(app: any, pickerContribution: symbol): void {
   });
 }
 
-export function bootstrapVRenderBrowserApp<TApp extends object>(app: TApp): TApp {
+export function bootstrapVRenderBrowserApp<TApp extends object>(app: TApp, envParams?: IEnvParamsMap['browser']): TApp {
   const target = app as TBootstrapTarget;
 
   if (!ensureBootstrap(target, 'browser')) {
     return app;
   }
 
-  installBrowserEnvToApp(app as any);
+  if (envParams === undefined) {
+    installBrowserEnvToApp(app as any);
+  } else {
+    installBrowserEnvToAppWithParams(app as any, envParams);
+  }
   installDefaultGraphicsToApp(app as any);
   installBrowserPickersToApp(app as any);
   loadBrowserEnv();
@@ -165,17 +196,53 @@ export function bootstrapVRenderBrowserApp<TApp extends object>(app: TApp): TApp
   return app;
 }
 
-export function bootstrapVRenderNodeApp<TApp extends object>(app: TApp): TApp {
+function resolveNodeEnvParams(envParams?: IEnvParamsMap['node']): IEnvParamsMap['node'] | undefined {
+  if (envParams != null) {
+    return envParams;
+  }
+
+  return vglobal?.env === 'node' ? vglobal.envParams : undefined;
+}
+
+export function bootstrapVRenderNodeApp<TApp extends object>(app: TApp, envParams?: IEnvParamsMap['node']): TApp {
   const target = app as TBootstrapTarget;
 
   if (!ensureBootstrap(target, 'node')) {
     return app;
   }
 
-  installNodeEnvToApp(app as any);
+  const resolvedEnvParams = resolveNodeEnvParams(envParams);
+  if (resolvedEnvParams === undefined) {
+    installNodeEnvToApp(app as any);
+  } else {
+    installNodeEnvToAppWithParams(app as any, resolvedEnvParams);
+  }
   installDefaultGraphicsToApp(app as any);
   installNodePickersToApp(app as any);
   loadNodeEnv();
+  legacyGraphicRegistrations.forEach(register => register());
+  syncLegacyRenderersToApp(app as any);
+  syncLegacyPickersToApp(app as any, MathPickerContribution);
+  registerDefaultPipeline();
+  return app;
+}
+
+export function bootstrapVRenderMiniApp<TEnv extends TAppScopedMiniEnv, TApp extends object>(
+  app: TApp,
+  env: TEnv,
+  envParams?: IEnvParamsMap[TEnv]
+): TApp {
+  const target = app as TBootstrapTarget;
+
+  if (!ensureBootstrap(target, env)) {
+    return app;
+  }
+
+  const bootstrap = miniEnvBootstraps[env];
+  bootstrap.installEnv(app as any, envParams);
+  installDefaultGraphicsToApp(app as any);
+  runtimeKits.installMathPickersToApp(app as any);
+  bootstrap.loadEnv();
   legacyGraphicRegistrations.forEach(register => register());
   syncLegacyRenderersToApp(app as any);
   syncLegacyPickersToApp(app as any, MathPickerContribution);

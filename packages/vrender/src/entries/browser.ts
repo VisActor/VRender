@@ -1,13 +1,17 @@
 import * as VRenderCore from '@visactor/vrender-core';
-import type { IApp, IEntryOptions } from '@visactor/vrender-core';
+import type { IApp, IEntryOptions, IEnvParamsMap } from '@visactor/vrender-core';
 import { bootstrapVRenderBrowserApp } from './bootstrap';
 
-type TVRenderAppEntryOptions = IEntryOptions;
-
-const { createBrowserApp } = VRenderCore as typeof VRenderCore & {
-  createBrowserApp: (options?: TVRenderAppEntryOptions) => IApp;
+export type TVRenderBrowserAppEntryOptions = IEntryOptions & {
+  envParams?: IEnvParamsMap['browser'];
 };
 
-export function createBrowserVRenderApp(options: TVRenderAppEntryOptions = {}): IApp {
-  return bootstrapVRenderBrowserApp(createBrowserApp(options));
+const { createBrowserApp } = VRenderCore as typeof VRenderCore & {
+  createBrowserApp: (options?: IEntryOptions) => IApp;
+};
+
+export function createBrowserVRenderApp(options: TVRenderBrowserAppEntryOptions = {}): IApp {
+  const { envParams, ...entryOptions } = options;
+
+  return bootstrapVRenderBrowserApp(createBrowserApp(entryOptions), envParams);
 }

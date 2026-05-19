@@ -53,20 +53,41 @@ export class TagPointsUpdate extends ACustomAnimate<{ points?: IPointLike[]; seg
   onBind(): void {
     super.onBind();
     const currentAttribute = this.target.attribute as any;
+    const explicitFrom = (this.from ?? {}) as any;
+    const explicitTo = (this.to ?? {}) as any;
+    const context = (this.target.context ?? {}) as any;
+    const contextFinalAttrs = context.finalAttrs ?? {};
+    const contextDiffAttrs = context.diffAttrs ?? {};
     const finalAttribute = this.target.getFinalAttribute() as any;
 
     this.from = {};
     this.to = {};
-    if (Object.prototype.hasOwnProperty.call(currentAttribute, 'points')) {
+    if (Object.prototype.hasOwnProperty.call(explicitFrom, 'points')) {
+      this.from.points = explicitFrom.points;
+    } else if (Object.prototype.hasOwnProperty.call(currentAttribute, 'points')) {
       this.from.points = currentAttribute.points;
     }
-    if (Object.prototype.hasOwnProperty.call(currentAttribute, 'segments')) {
+    if (Object.prototype.hasOwnProperty.call(explicitFrom, 'segments')) {
+      this.from.segments = explicitFrom.segments;
+    } else if (Object.prototype.hasOwnProperty.call(currentAttribute, 'segments')) {
       this.from.segments = currentAttribute.segments;
     }
-    if (finalAttribute && Object.prototype.hasOwnProperty.call(finalAttribute, 'points')) {
+    if (Object.prototype.hasOwnProperty.call(explicitTo, 'points')) {
+      this.to.points = explicitTo.points;
+    } else if (Object.prototype.hasOwnProperty.call(contextFinalAttrs, 'points')) {
+      this.to.points = contextFinalAttrs.points;
+    } else if (Object.prototype.hasOwnProperty.call(contextDiffAttrs, 'points')) {
+      this.to.points = contextDiffAttrs.points;
+    } else if (finalAttribute && Object.prototype.hasOwnProperty.call(finalAttribute, 'points')) {
       this.to.points = finalAttribute.points;
     }
-    if (finalAttribute && Object.prototype.hasOwnProperty.call(finalAttribute, 'segments')) {
+    if (Object.prototype.hasOwnProperty.call(explicitTo, 'segments')) {
+      this.to.segments = explicitTo.segments;
+    } else if (Object.prototype.hasOwnProperty.call(contextFinalAttrs, 'segments')) {
+      this.to.segments = contextFinalAttrs.segments;
+    } else if (Object.prototype.hasOwnProperty.call(contextDiffAttrs, 'segments')) {
+      this.to.segments = contextDiffAttrs.segments;
+    } else if (finalAttribute && Object.prototype.hasOwnProperty.call(finalAttribute, 'segments')) {
       this.to.segments = finalAttribute.segments;
     }
     this.props = this.to;

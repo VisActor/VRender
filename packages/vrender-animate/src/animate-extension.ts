@@ -141,9 +141,7 @@ export class AnimateExtension {
    */
   executeAnimations(configs: IAnimationConfig[]): this {
     this.initAnimateExecutor();
-    configs.forEach(config => {
-      this._animateExecutor.execute(config);
-    });
+    this._animateExecutor.execute(configs);
     return this;
   }
 

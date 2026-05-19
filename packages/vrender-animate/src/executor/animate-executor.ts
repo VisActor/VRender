@@ -9,7 +9,8 @@ import type {
   IAnimationChannelAttrs,
   IAnimationChannelAttributes,
   IAnimationCustomConstructor,
-  IAnimationChannelInterpolator
+  IAnimationChannelInterpolator,
+  IAnimationEffect
 } from './executor';
 import { isArray, isFunction, isValidNumber } from '@visactor/vutils';
 import { getCustomType } from './utils';
@@ -43,6 +44,8 @@ export class AnimateExecutor implements IAnimateExecutor {
 
   // 当前正在运行的动画数量
   private _activeCount: number = 0;
+
+  private _activeConfigList: IAnimationConfig[] | null = null;
 
   constructor(target: IGraphic) {
     this._target = target;
@@ -268,7 +271,13 @@ export class AnimateExecutor implements IAnimateExecutor {
 
   execute(params: IAnimationConfig | IAnimationConfig[]) {
     if (Array.isArray(params)) {
-      params.forEach(param => this._execute(param));
+      const prevConfigList = this._activeConfigList;
+      this._activeConfigList = params;
+      try {
+        params.forEach(param => this._execute(param));
+      } finally {
+        this._activeConfigList = prevConfigList;
+      }
     } else {
       this._execute(params);
     }
@@ -350,6 +359,8 @@ export class AnimateExecutor implements IAnimateExecutor {
     index: number,
     count: number
   ): IAnimate {
+    this.syncFinalAttrsFromContext(graphic);
+
     const {
       type = 'fromTo',
       channel,
@@ -400,13 +411,23 @@ export class AnimateExecutor implements IAnimateExecutor {
     const commitAttrOutChannel = this.shouldCommitAttrOutChannel(type);
     if (!props) {
       if (!parsedFromProps) {
-        parsedFromProps = this.createPropsFromChannel(channel, graphic, commitAttrOutChannel);
+        parsedFromProps = this.createPropsFromChannel(
+          channel,
+          graphic,
+          commitAttrOutChannel,
+          this.getAttrOutChannelExcludedKeys(graphic)
+        );
       }
       props = parsedFromProps.props;
     }
     if (!from) {
       if (!parsedFromProps) {
-        parsedFromProps = this.createPropsFromChannel(channel, graphic, commitAttrOutChannel);
+        parsedFromProps = this.createPropsFromChannel(
+          channel,
+          graphic,
+          commitAttrOutChannel,
+          this.getAttrOutChannelExcludedKeys(graphic)
+        );
       }
       from = parsedFromProps.from;
     }
@@ -531,6 +552,8 @@ export class AnimateExecutor implements IAnimateExecutor {
    * 执行 Timeline 类型的动画
    */
   private executeTimelineItem(params: IAnimationTimeline, graphic: IGraphic, index: number, count: number): IAnimate {
+    this.syncFinalAttrsFromContext(graphic);
+
     const { timeSlices, startTime = 0, loop, bounce, oneByOneDelay, priority, controlOptions } = params as any;
 
     // 如果设置了indexKey，则使用indexKey作为index
@@ -607,13 +630,23 @@ export class AnimateExecutor implements IAnimateExecutor {
       const commitAttrOutChannel = this.shouldCommitAttrOutChannel(type);
       if (!props) {
         if (!parsedFromProps) {
-          parsedFromProps = this.createPropsFromChannel(channel, graphic, commitAttrOutChannel);
+          parsedFromProps = this.createPropsFromChannel(
+            channel,
+            graphic,
+            commitAttrOutChannel,
+            this.getAttrOutChannelExcludedKeys(graphic)
+          );
         }
         props = parsedFromProps.props;
       }
       if (!from) {
         if (!parsedFromProps) {
-          parsedFromProps = this.createPropsFromChannel(channel, graphic, commitAttrOutChannel);
+          parsedFromProps = this.createPropsFromChannel(
+            channel,
+            graphic,
+            commitAttrOutChannel,
+            this.getAttrOutChannelExcludedKeys(graphic)
+          );
         }
         from = parsedFromProps.from;
       }
@@ -714,7 +747,8 @@ export class AnimateExecutor implements IAnimateExecutor {
   private createPropsFromChannel(
     channel: IAnimationChannelAttrs | IAnimationChannelAttributes | undefined,
     graphic: IGraphic,
-    includeAttrOutChannel: boolean = true
+    includeAttrOutChannel: boolean = true,
+    excludedAttrOutKeys?: Record<string, true> | null
   ): {
     from: Record<string, any> | null;
     props: Record<string, any>;
@@ -772,7 +806,7 @@ export class AnimateExecutor implements IAnimateExecutor {
           continue;
         }
         const inAnimatedChannel = props.hasOwnProperty(key) || !!from?.hasOwnProperty(key);
-        if (!inAnimatedChannel) {
+        if (!inAnimatedChannel && !excludedAttrOutKeys?.[key]) {
           attrOutChannel[key] = value;
           hasAttrs = true;
         }
@@ -801,9 +835,162 @@ export class AnimateExecutor implements IAnimateExecutor {
     return value as T;
   }
 
+  private getAttrOutChannelExcludedKeys(graphic: IGraphic): Record<string, true> | null {
+    const configList = this._activeConfigList;
+    const diffAttrs = graphic.context?.diffAttrs;
+    if (!configList || configList.length <= 1 || !diffAttrs) {
+      return null;
+    }
+
+    let excludedKeys: Record<string, true> | null = null;
+    for (let i = 0; i < configList.length; i++) {
+      excludedKeys = this.collectAnimatedDiffKeys(configList[i], graphic, diffAttrs, excludedKeys);
+    }
+    return excludedKeys;
+  }
+
+  private collectAnimatedDiffKeys(
+    config: IAnimationConfig,
+    graphic: IGraphic,
+    diffAttrs: Record<string, any>,
+    keys: Record<string, true> | null
+  ): Record<string, true> | null {
+    if ('timeSlices' in config) {
+      const slices = (
+        Array.isArray(config.timeSlices) ? config.timeSlices : [config.timeSlices]
+      ) as IAnimationTimeSlice[];
+      for (let i = 0; i < slices.length; i++) {
+        const effects = (
+          Array.isArray(slices[i].effects) ? slices[i].effects : [slices[i].effects]
+        ) as IAnimationEffect[];
+        for (let j = 0; j < effects.length; j++) {
+          keys = this.collectAnimatedDiffKeysFromEffect(effects[j], graphic, diffAttrs, keys);
+        }
+      }
+      return keys;
+    }
+
+    return this.collectAnimatedDiffKeysFromEffect(config, graphic, diffAttrs, keys);
+  }
+
+  private collectAnimatedDiffKeysFromEffect(
+    effect: IAnimationTypeConfig | IAnimationEffect,
+    graphic: IGraphic,
+    diffAttrs: Record<string, any>,
+    keys: Record<string, true> | null
+  ): Record<string, true> | null {
+    const type = effect.type ?? 'fromTo';
+
+    if (type === 'update') {
+      const options = this.resolveValue((effect as IAnimationTypeConfig).options as any, graphic, undefined) as
+        | { excludeChannels?: string[] }
+        | undefined;
+      const excludeChannels = options?.excludeChannels;
+      for (const key in diffAttrs) {
+        if (
+          Object.prototype.hasOwnProperty.call(diffAttrs, key) &&
+          diffAttrs[key] !== undefined &&
+          !this.includesChannel(excludeChannels, key)
+        ) {
+          keys ?? (keys = {});
+          keys[key] = true;
+        }
+      }
+      return keys;
+    }
+
+    keys = this.collectExplicitAnimatedKeys(effect.to, diffAttrs, keys);
+    keys = this.collectExplicitAnimatedKeys(effect.from, diffAttrs, keys);
+    return this.collectChannelAnimatedKeys(effect.channel, diffAttrs, keys);
+  }
+
+  private collectExplicitAnimatedKeys(
+    attrs: Record<string, any> | undefined,
+    diffAttrs: Record<string, any>,
+    keys: Record<string, true> | null
+  ): Record<string, true> | null {
+    if (!attrs) {
+      return keys;
+    }
+
+    for (const key in attrs) {
+      if (
+        Object.prototype.hasOwnProperty.call(attrs, key) &&
+        Object.prototype.hasOwnProperty.call(diffAttrs, key) &&
+        diffAttrs[key] !== undefined
+      ) {
+        keys ?? (keys = {});
+        keys[key] = true;
+      }
+    }
+    return keys;
+  }
+
+  private collectChannelAnimatedKeys(
+    channel: IAnimationChannelAttrs | IAnimationChannelAttributes | undefined,
+    diffAttrs: Record<string, any>,
+    keys: Record<string, true> | null
+  ): Record<string, true> | null {
+    if (!channel) {
+      return keys;
+    }
+
+    if (Array.isArray(channel)) {
+      for (let i = 0; i < channel.length; i++) {
+        const key = channel[i];
+        if (Object.prototype.hasOwnProperty.call(diffAttrs, key) && diffAttrs[key] !== undefined) {
+          keys ?? (keys = {});
+          keys[key] = true;
+        }
+      }
+      return keys;
+    }
+
+    for (const key in channel) {
+      if (
+        Object.prototype.hasOwnProperty.call(channel, key) &&
+        Object.prototype.hasOwnProperty.call(diffAttrs, key) &&
+        diffAttrs[key] !== undefined
+      ) {
+        const config = channel[key];
+        if (config.to !== undefined || config.from !== undefined) {
+          keys ?? (keys = {});
+          keys[key] = true;
+        }
+      }
+    }
+    return keys;
+  }
+
+  private includesChannel(channels: string[] | undefined, key: string): boolean {
+    if (!channels?.length) {
+      return false;
+    }
+    for (let i = 0; i < channels.length; i++) {
+      if (channels[i] === key) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private syncFinalAttrsFromContext(graphic: IGraphic): void {
+    const finalAttrs = graphic.context?.finalAttrs;
+    const setFinalAttributes = (graphic as any).setFinalAttributes;
+    if (finalAttrs && typeof setFinalAttributes === 'function') {
+      setFinalAttributes.call(graphic, finalAttrs);
+    }
+  }
+
   executeItem(params: IAnimationConfig | IAnimationConfig[], graphic: IGraphic, index: number = 0, count: number = 1) {
     if (Array.isArray(params)) {
-      return params.map(param => this._executeItem(param, graphic, index, count)).filter(Boolean);
+      const prevConfigList = this._activeConfigList;
+      this._activeConfigList = params;
+      try {
+        return params.map(param => this._executeItem(param, graphic, index, count)).filter(Boolean);
+      } finally {
+        this._activeConfigList = prevConfigList;
+      }
     }
     return [this._executeItem(params, graphic, index, count)].filter(Boolean);
   }

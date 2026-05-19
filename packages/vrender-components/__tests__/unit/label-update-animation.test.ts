@@ -164,7 +164,7 @@ describe('Label update animation static truth', () => {
     expect((prevText as any).getFinalAttribute().opacity).toBeCloseTo(newAttrs.opacity, 5);
   });
 
-  test('does not commit related rect final attrs while laying out labels for update animation', () => {
+  test('lays out labels from related rect context final attrs before update handoff', () => {
     createStageHarness('label-related-rect-static-truth');
 
     const oldAttrs = {
@@ -204,15 +204,16 @@ describe('Label update animation static truth', () => {
       },
       finalAttrs
     };
-    rect.setFinalAttributes(finalAttrs);
 
     (label as any).render();
+
+    const labelContent = [...((label as any)._graphicToText as Map<any, any>).values()][0];
+    expect(labelContent.text.attribute.x).toBeCloseTo(finalAttrs.x + finalAttrs.width / 2, 6);
 
     expect(rect.attribute.x).toBeCloseTo(oldAttrs.x, 6);
     expect(rect.attribute.y).toBeCloseTo(oldAttrs.y, 6);
     expect((rect as any).baseAttributes.x).toBeCloseTo(oldAttrs.x, 6);
     expect((rect as any).baseAttributes.y).toBeCloseTo(oldAttrs.y, 6);
-    expect((rect as any).getFinalAttribute().x).toBeCloseTo(finalAttrs.x, 6);
-    expect((rect as any).getFinalAttribute().y).toBeCloseTo(finalAttrs.y, 6);
+    expect((rect as any).getFinalAttribute()).toBeUndefined();
   });
 });

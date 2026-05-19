@@ -814,6 +814,95 @@ describe('D3 pre-handoff animation runtime', () => {
     expect((rect as any).baseAttributes.x).toBe(0);
   });
 
+  test('prevent-animate update seeds final attributes from update context before animation bind', () => {
+    const { group, graphicService } = createStageHarness('prevent-animate-context-final-target');
+    const rect = createAnimatedRect(graphicService);
+    rect.setFinalAttributes({ x: 0, y: 0, width: 10, height: 10, fill: 'orange' });
+    group.appendChild(rect);
+
+    (rect as any).context = {
+      diffAttrs: {
+        x: 80
+      },
+      finalAttrs: {
+        x: 80,
+        y: 0,
+        width: 10,
+        height: 10,
+        fill: 'purple'
+      }
+    };
+
+    expect(rect.getAttributes(true).x).toBe(0);
+    expect(rect.getAttributes(true).fill).toBe('orange');
+
+    rect.setAttributesAndPreventAnimate({ x: 80 });
+
+    expect(rect.attribute.x).toBe(80);
+    expect(rect.attribute.fill).toBe('blue');
+    expect((rect as any).baseAttributes.x).toBe(0);
+    expect(rect.getAttributes(true).x).toBe(80);
+    expect(rect.getAttributes(true).fill).toBe('purple');
+  });
+
+  test('executor does not let sibling channel updates pre-commit attrs animated by update', () => {
+    const { group, ticker, graphicService } = createStageHarness('executor-sibling-update-channel-ownership');
+    const oldPoints = pointList([0, 10, 20], [0, 5, 0]);
+    const nextPoints = pointList([0, 10, 20, 30, 40], [10, 15, 10, 20, 10]);
+    const oldStroke = '#F0A868';
+    const nextStroke = '#4A5568';
+    const line = createLine({
+      points: oldPoints,
+      stroke: oldStroke,
+      lineWidth: 2
+    });
+    bindGraphicService(line as any, graphicService);
+    group.appendChild(line);
+
+    (line as any).context = {
+      animationState: 'update',
+      diffState: 'update',
+      data: [{ id: 'line-a' }],
+      diffAttrs: {
+        stroke: nextStroke,
+        points: nextPoints
+      },
+      finalAttrs: {
+        points: nextPoints,
+        stroke: nextStroke,
+        lineWidth: 2
+      }
+    };
+
+    new AnimateExecutor(line).execute([
+      {
+        type: 'update',
+        options: { excludeChannels: ['points', 'defined', 'segments'] },
+        duration: 100,
+        easing: 'linear'
+      },
+      {
+        channel: ['points', 'segments'],
+        custom: TagPointsUpdate,
+        duration: 100,
+        easing: 'linear'
+      }
+    ]);
+
+    expect(line.attribute.stroke).toBe(oldStroke);
+    expect((line as any).baseAttributes.stroke).toBe(oldStroke);
+
+    tick(ticker, 50);
+    expect(line.attribute.stroke).not.toBe(oldStroke);
+    expect(line.attribute.stroke).not.toBe(nextStroke);
+    expect((line as any).baseAttributes.stroke).toBe(oldStroke);
+
+    tick(ticker, 50);
+    expect(line.attribute.stroke).toBe(nextStroke);
+    expect((line as any).baseAttributes.stroke).toBe(nextStroke);
+    expect(line.getFinalAttribute().stroke).toBe(nextStroke);
+  });
+
   test('executor keeps from-only appear channels out of attrOutChannel static writes', () => {
     const { group, ticker, graphicService } = createStageHarness('executor-from-only-appear-channel');
     const final = {
@@ -1668,6 +1757,45 @@ describe('D3 pre-handoff animation runtime', () => {
     expect(line.getFinalAttribute().points.map((point: any) => point.x)).toEqual(resizedPoints.map(point => point.x));
     expect(Object.prototype.hasOwnProperty.call((line as any).baseAttributes, 'segments')).toBe(false);
     expect(Object.prototype.hasOwnProperty.call(line.attribute, 'segments')).toBe(false);
+  });
+
+  test('TagPointsUpdate can read point targets from update context without setFinalAttributes', () => {
+    const { group, ticker, graphicService } = createStageHarness('tag-points-update-context-target');
+    const oldPoints = pointList([78.83, 183.94, 289.06], [135, 108, 81]);
+    const resizedPoints = pointList([112.17, 261.72, 411.28, 560.83, 710.39], [135, 108, 81, 54, 27]);
+    const line = createLine({
+      points: oldPoints,
+      stroke: 'blue',
+      lineWidth: 2
+    });
+    bindGraphicService(line as any, graphicService);
+    (line as any).context = {
+      animationState: 'update',
+      diffState: 'update',
+      diffAttrs: {
+        points: resizedPoints
+      },
+      finalAttrs: {
+        points: resizedPoints,
+        stroke: 'blue',
+        lineWidth: 2
+      }
+    };
+    group.appendChild(line);
+
+    line.animate().play(new TagPointsUpdate(null, null, 100, 'linear'));
+
+    tick(ticker, 50);
+    expect(line.attribute.points.length).toBe(resizedPoints.length);
+    expect(line.attribute.points[0].x).toBeCloseTo((oldPoints[0].x + resizedPoints[0].x) / 2, 5);
+    expect((line as any).baseAttributes.points.length).toBe(oldPoints.length);
+
+    tick(ticker, 50);
+    expect(line.attribute.points.map(point => point.x)).toEqual(resizedPoints.map(point => point.x));
+    expect((line as any).baseAttributes.points.map((point: any) => point.x)).toEqual(
+      resizedPoints.map(point => point.x)
+    );
+    expect(line.getFinalAttribute().points.map((point: any) => point.x)).toEqual(resizedPoints.map(point => point.x));
   });
 
   test('TagPointsUpdate commits resized final segments as static truth after update animation', () => {

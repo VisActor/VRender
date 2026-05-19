@@ -53,6 +53,7 @@ export function commitAnimationStaticAttrs(
     return false;
   }
 
+  (target as any).setFinalAttributes?.(commitAttrs);
   target.setAttributes(commitAttrs as any, false, { type: AttributeUpdateType.ANIMATE_END });
   return true;
 }

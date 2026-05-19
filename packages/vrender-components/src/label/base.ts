@@ -185,8 +185,9 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
         };
       }
 
-      if (baseMark && baseMark.getAttributes(true).fill) {
-        lineGraphic.setAttribute('stroke', baseMark.getAttributes(true).fill);
+      const baseMarkAttrs = baseMark && this.getGraphicFinalLayoutAttributes(baseMark);
+      if (baseMarkAttrs?.fill) {
+        lineGraphic.setAttribute('stroke', baseMarkAttrs.fill);
       }
 
       if (this.attribute.line && !isEmpty(this.attribute.line.style)) {
@@ -323,7 +324,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
     if (this._enableAnimation !== false) {
       this._baseMarks.forEach(mark => {
         markAttributeList.push(cloneAttributeSnapshot(mark.attribute));
-        mark.initAttributes(mark.getAttributes(true));
+        mark.initAttributes(this.getGraphicFinalLayoutAttributes(mark));
       });
     }
 
@@ -593,6 +594,16 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
     return this._idToGraphic.get(item.id);
   }
 
+  protected getGraphicFinalLayoutAttributes<TAttrs extends Record<string, any> = Record<string, any>>(
+    graphic: IGraphic
+  ): TAttrs {
+    return ((graphic.context as Record<string, any> | undefined)?.finalAttrs ?? graphic.getAttributes(true)) as TAttrs;
+  }
+
+  protected hasGraphicContextFinalLayoutAttributes(graphic?: IGraphic): boolean {
+    return !!(graphic?.context as Record<string, any> | undefined)?.finalAttrs;
+  }
+
   protected _initText(data: LabelItem[] = []): (IText | IRichText)[] {
     const { textStyle = {} } = this.attribute;
     const labels = [];
@@ -603,7 +614,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
         continue;
       }
 
-      const graphicAttribute = baseMark.getAttributes(true);
+      const graphicAttribute = this.getGraphicFinalLayoutAttributes(baseMark);
       const labelAttribute = {
         fill: this._isCollectionBase
           ? isArray(graphicAttribute.stroke)
@@ -934,9 +945,9 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
     if (graphic) {
       if (graphic.attribute.visible !== false) {
         // TODO 这里有些hack 如果有动画，需要使用finalAttribute
-        if (graphic.context?.animationState) {
+        if (graphic.context?.animationState || this.hasGraphicContextFinalLayoutAttributes(graphic)) {
           const clonedGraphic = graphic.clone();
-          Object.assign(clonedGraphic.attribute, graphic.getAttributes(true));
+          Object.assign(clonedGraphic.attribute, this.getGraphicFinalLayoutAttributes(graphic));
           return clonedGraphic.AABBBounds;
         }
         return graphic.AABBBounds;
@@ -1201,8 +1212,9 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
        * similarBase（智能反色的补色），
        * null（不执行智能反色，保持fill设置的颜色）
        * */
-      let backgroundColor = baseMark.getAttributes(true).fill as IColor;
-      const backgroundOpacity = baseMark.getAttributes(true).fillOpacity as number;
+      const baseMarkAttrs = this.getGraphicFinalLayoutAttributes(baseMark);
+      let backgroundColor = baseMarkAttrs.fill as IColor;
+      const backgroundOpacity = baseMarkAttrs.fillOpacity as number;
       let foregroundColor = label.attribute.fill as IColor;
 
       if (isObject(backgroundColor) && backgroundColor.gradient) {

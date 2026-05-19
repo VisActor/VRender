@@ -1653,6 +1653,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     }
     const keys = Object.keys(params);
     this.captureTransientFromAttrsBeforePreventAnimate(params, keys, context);
+    this.syncFinalAttributesFromUpdateContext(context);
     this.visitTrackedAnimates(animate => {
       // 优先级最高的动画（一般是循环动画），不屏蔽
       if (animate.priority === Infinity && !ignorePriority) {
@@ -1661,6 +1662,24 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       animate.preventAttrs(keys);
     });
     this.applyTransientAttributes(params, forceUpdateTag, context);
+  }
+
+  protected syncFinalAttributesFromUpdateContext(context?: ISetAttributeContext): void {
+    const updateType = context?.type;
+    if (
+      updateType === AttributeUpdateType.STATE ||
+      (updateType != null &&
+        updateType >= AttributeUpdateType.ANIMATE_BIND &&
+        updateType <= AttributeUpdateType.ANIMATE_END)
+    ) {
+      return;
+    }
+
+    const finalAttrs = (this.context as Record<string, any> | undefined)?.finalAttrs;
+    const setFinalAttributes = (this as any).setFinalAttributes;
+    if (finalAttrs && typeof setFinalAttributes === 'function') {
+      setFinalAttributes.call(this, finalAttrs);
+    }
   }
 
   protected captureTransientFromAttrsBeforePreventAnimate(

@@ -4,6 +4,12 @@
  * Install the Eslint extension before using this feature.
  */
 module.exports = {
+  root: true,
+  ignorePatterns: [
+    'miniprogram/pages/index/index.ts',
+    'miniprogram/miniprogram_npm/**',
+    'node_modules/**',
+  ],
   env: {
     es6: true,
     browser: true,

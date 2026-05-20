@@ -1,13 +1,14 @@
-import { BaseEnvContribution, rafBasedSto } from '@visactor/vrender-core';
-// import { loadFeishuContributions } from '../../../kits';
-import type {
-  ICanvasLike,
-  EnvType,
-  ICreateCanvasParams,
-  IEnvContribution,
-  IGlobal,
-  ITTCanvas
+import {
+  BaseEnvContribution,
+  rafBasedSto,
+  type ICanvasLike,
+  type EnvType,
+  type ICreateCanvasParams,
+  type IEnvContribution,
+  type IGlobal,
+  type ITTCanvas
 } from '@visactor/vrender-core';
+// import { loadFeishuContributions } from '../../../kits';
 
 declare const wx: {
   getSystemInfoSync: () => { pixelRatio: number };
@@ -169,8 +170,11 @@ export class WxEnvContribution extends BaseEnvContribution implements IEnvContri
     loadState: 'success' | 'fail';
     data: HTMLImageElement | ImageData | null;
   }> {
-    // 飞书小组件不支持DOMParser和URL.createObjectURL，无法解析svg字符串，可以通过url使用svg资源
-    return Promise.reject();
+    // 微信小程序不支持 DOMParser 和 URL.createObjectURL，无法解析 svg 字符串，可以通过 url 使用 svg 资源
+    return Promise.resolve({
+      data: null,
+      loadState: 'fail'
+    });
   }
 
   createCanvas(params: ICreateCanvasParams): ITTCanvas {

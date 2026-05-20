@@ -24,3 +24,8 @@ shrinkwrap.json
 # Build outputs
 dist
 lib
+
+# Multi-platform smoke projects
+multi-platform/wx-vrender/miniprogram/pages/index/index.ts
+multi-platform/wx-vrender/miniprogram/miniprogram_npm/
+multi-platform/wx-vrender/node_modules/

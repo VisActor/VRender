@@ -1,7 +1,7 @@
 /**
  * @description 框选组件
  */
-import type { FederatedPointerEvent, IGroup, IPolygon } from '@visactor/vrender-core';
+import type { FederatedPointerEvent, IGroup, ILayer, IPolygon, IStage } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
 import { graphicCreator } from '../util/graphic-creator';
 import type { IBounds, IPointLike } from '@visactor/vutils';
@@ -40,6 +40,7 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
   private _cacheMovePoint!: IPointLike; // 用于维护鼠标所在位置，主要用于计算位移量
 
   private _operatingMask!: IPolygon; // 用于标记正在绘制的mask 或 正在移动的mask
+  private _brushEventStage: IStage | null = null;
 
   // 透出给上层的属性（主要是所有mask的AABBBounds，这里用的是dict存储方便添加和修改）
   private _brushMaskAABBBoundsDict: { [name: string]: IBounds } = {};
@@ -57,10 +58,15 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
     if (this.attribute.disableTriggerEvent) {
       return;
     }
+    const stage = this.stage;
+    if (!stage) {
+      return;
+    }
+    this._brushEventStage = stage;
     const { trigger = DEFAULT_BRUSH_ATTRIBUTES.trigger, resetTrigger = DEFAULT_BRUSH_ATTRIBUTES.resetTrigger } = this
       .attribute as BrushAttributes;
-    array(trigger).forEach(t => this.stage.addEventListener(t, this._onBrushStart as EventListener));
-    array(resetTrigger).forEach(t => this.stage.addEventListener(t, this._onBrushClear as EventListener));
+    array(trigger).forEach(t => stage.addEventListener(t, this._onBrushStart as EventListener));
+    array(resetTrigger).forEach(t => stage.addEventListener(t, this._onBrushClear as EventListener));
   }
 
   /**
@@ -83,8 +89,12 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
       endTrigger = DEFAULT_BRUSH_ATTRIBUTES.endTrigger,
       brushMoved = true
     } = this.attribute as BrushAttributes;
-    array(updateTrigger).forEach(t => this.stage.addEventListener(t, this._onBrushingWithDelay as EventListener));
-    array(endTrigger).forEach(t => this.stage.addEventListener(t, this._onBrushEnd as EventListener));
+    const stage = this.stage;
+    if (!stage) {
+      return;
+    }
+    array(updateTrigger).forEach(t => stage.addEventListener(t, this._onBrushingWithDelay as EventListener));
+    array(endTrigger).forEach(t => stage.addEventListener(t, this._onBrushEnd as EventListener));
 
     e.stopPropagation();
     this._firstUpdate = true;
@@ -342,19 +352,39 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
     this._container = group;
   }
 
-  releaseBrushEvents(): void {
-    const { trigger = DEFAULT_BRUSH_ATTRIBUTES.trigger, resetTrigger = DEFAULT_BRUSH_ATTRIBUTES.resetTrigger } = this
-      .attribute as BrushAttributes;
-    array(trigger).forEach(t => this.stage.removeEventListener(t, this._onBrushStart as EventListener));
-    array(resetTrigger).forEach(t => this.stage.removeEventListener(t, this._onBrushClear as EventListener));
-    this._releaseBrushUpdateEvents();
+  setStage(stage?: IStage, layer?: ILayer) {
+    if (this._brushEventStage && this._brushEventStage !== stage) {
+      this.releaseBrushEvents();
+    }
+    super.setStage(stage, layer);
   }
 
-  private _releaseBrushUpdateEvents(): void {
+  release(all?: boolean) {
+    this.releaseBrushEvents();
+    super.release(all);
+  }
+
+  releaseBrushEvents(): void {
+    const stage = this._brushEventStage ?? this.stage;
+    if (!stage) {
+      return;
+    }
+    const { trigger = DEFAULT_BRUSH_ATTRIBUTES.trigger, resetTrigger = DEFAULT_BRUSH_ATTRIBUTES.resetTrigger } = this
+      .attribute as BrushAttributes;
+    array(trigger).forEach(t => stage.removeEventListener(t, this._onBrushStart as EventListener));
+    array(resetTrigger).forEach(t => stage.removeEventListener(t, this._onBrushClear as EventListener));
+    this._releaseBrushUpdateEvents(stage);
+    this._brushEventStage = null;
+  }
+
+  private _releaseBrushUpdateEvents(stage: IStage = this._brushEventStage ?? this.stage): void {
+    if (!stage) {
+      return;
+    }
     const { updateTrigger = DEFAULT_BRUSH_ATTRIBUTES.updateTrigger, endTrigger = DEFAULT_BRUSH_ATTRIBUTES.endTrigger } =
       this.attribute as BrushAttributes;
-    array(updateTrigger).forEach(t => this.stage.removeEventListener(t, this._onBrushingWithDelay as EventListener));
-    array(endTrigger).forEach(t => this.stage.removeEventListener(t, this._onBrushEnd as EventListener));
+    array(updateTrigger).forEach(t => stage.removeEventListener(t, this._onBrushingWithDelay as EventListener));
+    array(endTrigger).forEach(t => stage.removeEventListener(t, this._onBrushEnd as EventListener));
   }
 
   /**

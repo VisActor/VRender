@@ -29,3 +29,5 @@ lib
 multi-platform/wx-vrender/miniprogram/pages/index/index.ts
 multi-platform/wx-vrender/miniprogram/miniprogram_npm/
 multi-platform/wx-vrender/node_modules/
+multi-platform/lynx-vrender/dist/
+multi-platform/lynx-vrender/node_modules/

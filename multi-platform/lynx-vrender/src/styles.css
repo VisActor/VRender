@@ -1,0 +1,258 @@
+.Page {
+  width: 100%;
+  min-height: 100%;
+  padding: 16px;
+  background: #f5f7fb;
+}
+
+.Header {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.Title {
+  color: #1f2633;
+  font-size: 21px;
+  font-weight: 600;
+  line-height: 28px;
+}
+
+.BridgeSummary {
+  margin-top: 3px;
+  color: #5b6475;
+  font-size: 11px;
+  line-height: 16px;
+}
+
+.Status {
+  color: #5b6475;
+  font-size: 13px;
+  line-height: 20px;
+}
+
+.SceneTabs {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.SceneTab {
+  min-width: 48px;
+  height: 28px;
+  margin-right: 7px;
+  margin-bottom: 7px;
+  padding-right: 8px;
+  padding-left: 8px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #cdd5df;
+  border-radius: 6px;
+  background: #ffffff;
+}
+
+.SceneTabActive {
+  border-color: #101828;
+  background: #101828;
+}
+
+.SceneTabText {
+  color: #344054;
+  font-size: 12px;
+  line-height: 26px;
+  text-align: center;
+}
+
+.SceneTabTextActive {
+  color: #ffffff;
+}
+
+.LifecycleModes {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 10px;
+}
+
+.LifecycleMode {
+  flex: 1;
+  height: 28px;
+  margin-right: 7px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #cdd5df;
+  border-radius: 6px;
+  background: #ffffff;
+}
+
+.LifecycleModeActive {
+  border-color: #0f766e;
+  background: #0f766e;
+}
+
+.LifecycleModeText {
+  color: #344054;
+  font-size: 12px;
+  line-height: 26px;
+  text-align: center;
+}
+
+.LifecycleModeTextActive {
+  color: #ffffff;
+}
+
+.SceneCopy {
+  margin-bottom: 10px;
+}
+
+.SceneTitle {
+  color: #1d2939;
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 24px;
+}
+
+.SceneHint {
+  margin-top: 3px;
+  color: #667085;
+  font-size: 12px;
+  line-height: 17px;
+}
+
+.CanvasPanel {
+  position: relative;
+  width: 360px;
+  height: 420px;
+  background: #ffffff;
+  border-width: 1px;
+  border-color: #d8deea;
+  border-style: solid;
+}
+
+.CanvasEventBox {
+  position: relative;
+  width: 360px;
+  height: 420px;
+}
+
+.VRenderCanvas {
+  width: 360px;
+  height: 420px;
+}
+
+.CanvasEventLayer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 2;
+  width: 360px;
+  height: 420px;
+}
+
+.BackupCanvas {
+  position: absolute;
+  left: -1000px;
+  top: -1000px;
+  width: 64px;
+  height: 64px;
+}
+
+.CanvasFallback {
+  width: 360px;
+  height: 420px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: #f8fafc;
+}
+
+.FallbackTitle {
+  color: #1f2633;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.FallbackText {
+  margin-top: 8px;
+  color: #5b6475;
+  font-size: 13px;
+}
+
+.DiagnosticText {
+  width: 328px;
+  margin-top: 6px;
+  color: #697386;
+  font-size: 11px;
+  line-height: 15px;
+}
+
+.Capabilities {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.Capability {
+  margin-right: 6px;
+  margin-bottom: 6px;
+  padding: 3px 8px;
+  color: #475467;
+  background: #f2f4f7;
+  border-width: 1px;
+  border-color: #e4e7ec;
+  border-style: solid;
+  border-radius: 5px;
+  font-size: 11px;
+  line-height: 16px;
+}
+
+.ActionBar {
+  display: flex;
+  flex-direction: row;
+  margin-top: 8px;
+}
+
+.ActionButton {
+  flex: 1;
+  height: 38px;
+  margin-right: 8px;
+  border-radius: 6px;
+  background: #276ef1;
+}
+
+.SecondaryButton {
+  background: #0f766e;
+}
+
+.GhostButton {
+  margin-right: 0;
+  background: #ffffff;
+  border-width: 1px;
+  border-color: #cdd5df;
+  border-style: solid;
+}
+
+.ActionText {
+  color: #ffffff;
+  font-size: 13px;
+  line-height: 38px;
+  text-align: center;
+}
+
+.GhostActionText {
+  color: #344054;
+  font-size: 13px;
+  line-height: 36px;
+  text-align: center;
+}
+
+.Hint {
+  margin-top: 10px;
+  color: #5b6475;
+  font-size: 13px;
+  line-height: 18px;
+}

@@ -54,6 +54,7 @@ export class CanvasLayerHandlerContribution implements ILayerHandlerContribution
       }
       if (!nativeCanvas) {
         nativeCanvas = this.global.createCanvas({
+          id: params.canvasId,
           width: window.width,
           height: window.height
         });

@@ -38,6 +38,55 @@ const stage2 = createStage({
 })
 ```
 
+### App and Stage Lifecycle
+
+For browser, Node, mini-app, Lynx, and other multi-platform integrations, prefer the app-scoped entry points such as `createBrowserVRenderApp()` and `createLynxVRenderApp()`, then create stages with `app.createStage()`. The app owns application-level resources such as renderers, pickers, plugins, and environment contributions. Treat it as a page-level, container-level, or host Canvas-view-level instance instead of creating and releasing it during ordinary UI switches.
+
+App-level `envParams` should only contain environment-level capabilities, such as the `node-canvas` package in Node or a Lynx runtime / `canvasFactory` that is valid for the whole app scope. The concrete Canvas view `canvas` name/id, width, height, and dpr belong to Stage or Layer creation and should be passed through `app.createStage({ canvas, width, height, dpr })` or the layer creation path. If an integration puts a `canvasFactory`-like capability on the app, that integration must ensure it is globally valid for all VRender users sharing the same app.
+
+When multiple upper-level libraries on the same page need VRender, such as one VChart chart and one VTable table, use `acquireSharedVRenderApp()` to acquire a shared app by `env + key`. The first acquirer creates the app with its app-level parameters, and later acquirers with the same `env + key` reuse it. VRender does not merge or validate later `envParams`, so the integration layer must ensure the same key means the same global environment capabilities. Each user should still create and release its own Stage:
+
+```ts
+import { acquireSharedVRenderApp } from '@visactor/vrender';
+
+const sharedApp = acquireSharedVRenderApp({
+  env: 'lynx',
+  key: 'page-main',
+  envParams: {
+    pixelRatio,
+    lynx
+  }
+});
+
+const stage = sharedApp.app.createStage({
+  canvas: 'chart-canvas',
+  width: 360,
+  height: 240,
+  dpr: pixelRatio
+});
+
+// dispose this VRender user
+stage.release();
+sharedApp.release();
+```
+
+For tab switches, filter changes, scene switches, or component-page switches, prefer reusing the existing app/stage and only clearing the previous graphics, stopping old animations/timers, and rebuilding or updating the scenegraph:
+
+```ts
+stage.defaultLayer.removeAllChild(true);
+// rebuild or update scenegraph
+stage.render();
+```
+
+If the Stage really needs to be replaced, keep the same app and recreate the Stage only on a low-frequency lifecycle boundary. Release the app only when the page, container, or host Canvas view is fully unmounted:
+
+```ts
+stage.release();
+app.release();
+```
+
+During the Lynx smoke investigation, the old test path coupled app recreation, Canvas-view binding, scenegraph cleanup, and redraw. Repeated switches once caused visible simulator stutter, while the current model, where concrete Canvas parameters are moved from app `envParams` to Stage creation, no longer shows continuous degradation from recreating the app alone. This points to the previous Canvas/native-view operation mix in the test path rather than an inherent VRender app-core leak. For Lynx and similar multi-platform hosts, still reuse a singleton or page-scoped app and avoid putting `app.release()` on high-frequency UI switching paths.
+
 All the parameters that the stage supports are as follows:
 
 ```ts

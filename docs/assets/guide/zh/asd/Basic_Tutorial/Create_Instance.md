@@ -38,6 +38,55 @@ const stage2 = createStage({
 })
 ```
 
+### App 与 Stage 生命周期建议
+
+在 browser、node、小程序、Lynx 等多端接入中，推荐使用 `createBrowserVRenderApp()`、`createLynxVRenderApp()` 等 app-scoped 入口创建 VRender app，再通过 `app.createStage()` 创建 Stage。app 负责管理 renderer、picker、plugin、env contribution 等应用级资源，应按页面、容器或宿主 Canvas view 的生命周期复用，而不是在普通业务切换中频繁创建和释放。
+
+app 级 `envParams` 只应放环境级能力，例如 node 下的 `node-canvas` 包、Lynx 下对整个 app scope 都有效的 `lynx` runtime 或 `canvasFactory`。具体 Canvas view 的 `canvas` name/id、宽高和 dpr 属于 Stage 或 Layer 创建参数，应由 `app.createStage({ canvas, width, height, dpr })` 或图层创建路径传入。接入层如果把 `canvasFactory` 这类能力放到 app 上，需要保证它对同一 app 下的所有 VRender 使用者都是全局有效的。
+
+当同一页面里有多个上层库需要使用 VRender（例如一个 VChart 图表和一个 VTable 表格），可以使用 `acquireSharedVRenderApp()` 按 `env + key` 获取共享 app。第一个获取者的 app 级参数会用于创建 app，后续相同 `env + key` 的获取者复用同一个 app；VRender 不会合并或校验后续 `envParams`，因此接入层需要保证同一个 key 表示同一个全局环境能力集合。每个使用者仍应创建和释放自己的 Stage：
+
+```ts
+import { acquireSharedVRenderApp } from '@visactor/vrender';
+
+const sharedApp = acquireSharedVRenderApp({
+  env: 'lynx',
+  key: 'page-main',
+  envParams: {
+    pixelRatio,
+    lynx
+  }
+});
+
+const stage = sharedApp.app.createStage({
+  canvas: 'chart-canvas',
+  width: 360,
+  height: 240,
+  dpr: pixelRatio
+});
+
+// dispose this VRender user
+stage.release();
+sharedApp.release();
+```
+
+普通页签切换、筛选条件切换、场景切换或组件页切换时，优先复用已有 app/stage，只清理旧图元、停止旧动画/定时器并重建或更新 scenegraph：
+
+```ts
+stage.defaultLayer.removeAllChild(true);
+// rebuild or update scenegraph
+stage.render();
+```
+
+如果确实需要更换 Stage，可复用同一个 app，低频执行 `stage.release()` 后重新 `app.createStage()`。只有当页面、容器或 Canvas view 彻底卸载时，再执行完整释放：
+
+```ts
+stage.release();
+app.release();
+```
+
+在 Lynx smoke 排查中，旧测试路径曾把 app 重建、Canvas view 绑定、scenegraph 清理和重绘耦合在一起，连续切换后出现过明显卡顿；将具体 Canvas 参数从 app `envParams` 拆到 Stage 创建参数后，单独重建 app 未再观察到持续劣化。这说明此前卡顿更可能来自测试路径中的 Canvas/native view 操作组合，而不是 VRender app core 的必然泄漏。Lynx 和其他多端宿主接入时仍应尽量把 app 作为单例或页面级实例复用，避免把 `app.release()` 绑定到高频 UI 切换路径上。
+
 stage支持的所有参数配置如下：
 
 ```ts

@@ -1,16 +1,17 @@
-import { Generator, BaseWindowHandlerContribution, WindowHandlerContribution } from '@visactor/vrender-core';
-import type {
-  EnvType,
-  IGlobal,
-  IContext2d,
-  ICanvas,
-  IDomRectLike,
-  IWindowParams,
-  IWindowHandlerContribution
+import {
+  Generator,
+  BaseWindowHandlerContribution,
+  WindowHandlerContribution,
+  application,
+  type EnvType,
+  type IGlobal,
+  type IContext2d,
+  type ICanvas,
+  type IDomRectLike,
+  type IWindowParams,
+  type IWindowHandlerContribution
 } from '@visactor/vrender-core';
-import type { IBoundsLike } from '@visactor/vutils';
 import { LynxCanvas } from '../../canvas/contributions/lynx';
-import { application } from '@visactor/vrender-core';
 
 class MiniAppEventManager {
   addEventListener(type: string, func: EventListenerOrEventListenerObject) {
@@ -38,6 +39,106 @@ class MiniAppEventManager {
     this.cache = {};
   }
   cache: Record<string, { listener: EventListenerOrEventListenerObject[] }> = {};
+}
+
+function setMiniAppEventTarget(event: any, key: 'target' | 'currentTarget', value: any) {
+  if (!event || !value) {
+    return;
+  }
+
+  try {
+    event[key] = value;
+  } catch {
+    Object.defineProperty(event, key, {
+      configurable: true,
+      value
+    });
+  }
+}
+
+function isValidCoordinate(value: unknown): value is number {
+  return typeof value === 'number' && Number.isFinite(value);
+}
+
+function pickCoordinate(...values: unknown[]): number | undefined {
+  for (let i = 0; i < values.length; i++) {
+    if (isValidCoordinate(values[i])) {
+      return values[i] as number;
+    }
+  }
+  return undefined;
+}
+
+function setLynxEventValue(
+  event: any,
+  key: 'x' | 'y' | 'offsetX' | 'offsetY' | 'clientX' | 'clientY' | 'pageX' | 'pageY' | 'touches',
+  value: any
+) {
+  try {
+    event[key] = value;
+  } catch {
+    Object.defineProperty(event, key, {
+      configurable: true,
+      value
+    });
+  }
+}
+
+function normalizeLynxTouchEventPoint(event: any) {
+  const touch = event?.changedTouches?.[0] ?? event?.touches?.[0];
+  if (!touch) {
+    return;
+  }
+
+  const x = pickCoordinate(
+    event.x,
+    event.offsetX,
+    event.clientX,
+    event.pageX,
+    touch.x,
+    touch.offsetX,
+    touch.clientX,
+    touch.pageX
+  );
+  const y = pickCoordinate(
+    event.y,
+    event.offsetY,
+    event.clientY,
+    event.pageY,
+    touch.y,
+    touch.offsetY,
+    touch.clientY,
+    touch.pageY
+  );
+  if (x == null || y == null) {
+    return;
+  }
+
+  if (!event.touches && event.changedTouches) {
+    setLynxEventValue(
+      event,
+      'touches',
+      event.type === 'touchend' || event.type === 'touchcancel' ? [] : event.changedTouches
+    );
+  }
+
+  setLynxEventValue(event, 'x', x);
+  setLynxEventValue(event, 'y', y);
+  setLynxEventValue(event, 'offsetX', event.offsetX ?? x);
+  setLynxEventValue(event, 'offsetY', event.offsetY ?? y);
+  setLynxEventValue(event, 'clientX', event.clientX ?? x);
+  setLynxEventValue(event, 'clientY', event.clientY ?? y);
+  setLynxEventValue(event, 'pageX', event.pageX ?? x);
+  setLynxEventValue(event, 'pageY', event.pageY ?? y);
+
+  touch.x = touch.x ?? x;
+  touch.y = touch.y ?? y;
+  touch.offsetX = touch.offsetX ?? x;
+  touch.offsetY = touch.offsetY ?? y;
+  touch.clientX = touch.clientX ?? x;
+  touch.clientY = touch.clientY ?? y;
+  touch.pageX = touch.pageX ?? x;
+  touch.pageY = touch.pageY ?? y;
 }
 
 export class LynxWindowHandlerContribution extends BaseWindowHandlerContribution implements IWindowHandlerContribution {
@@ -102,10 +203,18 @@ export class LynxWindowHandlerContribution extends BaseWindowHandlerContribution
     if (typeof params.canvas === 'string') {
       canvas = this.global.getElementById(params.canvas) as HTMLCanvasElement | null;
       if (!canvas) {
+        canvas = this.global.createCanvas({
+          id: params.canvas,
+          width: params.width,
+          height: params.height,
+          dpr: params.dpr
+        }) as HTMLCanvasElement | null;
+      }
+      if (!canvas) {
         throw new Error('canvasId 参数不正确，请确认canvas存在并插入dom');
       }
     } else {
-      canvas = params!.canvas as HTMLCanvasElement | null;
+      canvas = params.canvas as HTMLCanvasElement | null;
     }
 
     // 如果没有传入wh，或者是不受控制的canvas，那就用canvas的原始wh
@@ -171,15 +280,11 @@ export class LynxWindowHandlerContribution extends BaseWindowHandlerContribution
       return false;
     }
 
-    // hack for offsetX offsetY
-    if (event.changedTouches && event.changedTouches[0]) {
-      event.offsetX = event.changedTouches[0].x;
-      event.changedTouches[0].offsetX = event.changedTouches[0].x;
-      event.changedTouches[0].clientX = event.changedTouches[0].x;
-      event.offsetY = event.changedTouches[0].y;
-      event.changedTouches[0].offsetY = event.changedTouches[0].y;
-      event.changedTouches[0].clientY = event.changedTouches[0].y;
-    }
+    const nativeCanvas = this.canvas?.nativeCanvas;
+    setMiniAppEventTarget(event, 'target', nativeCanvas);
+    setMiniAppEventTarget(event, 'currentTarget', nativeCanvas);
+
+    normalizeLynxTouchEventPoint(event);
     event.preventDefault = () => {
       return;
     };

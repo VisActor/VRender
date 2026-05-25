@@ -27,7 +27,7 @@ const stage1 = new Stage({
   height: 600,
   autoRender: true,
   background: 'pink'
-})
+});
 
 const stage2 = createStage({
   container: document.getElementById('container'),
@@ -35,7 +35,7 @@ const stage2 = createStage({
   height: 600,
   autoRender: true,
   background: 'pink'
-})
+});
 ```
 
 ### App and Stage Lifecycle
@@ -86,6 +86,52 @@ app.release();
 ```
 
 During the Lynx smoke investigation, the old test path coupled app recreation, Canvas-view binding, scenegraph cleanup, and redraw. Repeated switches once caused visible simulator stutter, while the current model, where concrete Canvas parameters are moved from app `envParams` to Stage creation, no longer shows continuous degradation from recreating the app alone. This points to the previous Canvas/native-view operation mix in the test path rather than an inherent VRender app-core leak. For Lynx and similar multi-platform hosts, still reuse a singleton or page-scoped app and avoid putting `app.release()` on high-frequency UI switching paths.
+
+### Harmony Integration and Offline Verification
+
+Harmony integrations should also use `createHarmonyVRenderApp()` or `acquireSharedVRenderApp({ env: 'harmony' })` to create the app. App-level `envParams` should only contain capabilities that are valid for the whole app scope, such as `pixelRatio`, a `canvasFactory` that can create host Canvas objects for any Stage canvas name/id, or an equivalent host runtime. The concrete Canvas name/id, width, height, and dpr still belong to Stage creation:
+
+```ts
+import { createHarmonyVRenderApp } from '@visactor/vrender';
+
+const app = createHarmonyVRenderApp({
+  envParams: {
+    pixelRatio,
+    canvasFactory: ({ id, width, height, dpr, offscreen }) => {
+      // Return a host Canvas-like object:
+      // it must support getContext('2d') and allow width/height assignment.
+      return createHostHarmonyCanvas({ id, width, height, dpr, offscreen });
+    }
+  }
+});
+
+const stage = app.createStage({
+  canvas: 'chart-canvas',
+  width: 360,
+  height: 240,
+  dpr: pixelRatio,
+  autoRender: true
+});
+```
+
+Without a Harmony device, you can still verify the following:
+
+- Run the VRender Harmony env/window unit tests, related package compile, and type checks to validate the runtime contract for app-scoped entry points, Stage-level Canvas creation, event normalization, and SVG fallback.
+- Use the DevEco Studio / HarmonyOS SDK simulator or preview environment to verify that the host Canvas adapter can return a usable `CanvasRenderingContext2D`, and that touch/click events can be forwarded to `stage.window.dispatchEvent()`.
+- Use a mock `canvasFactory` to verify that upper-level libraries such as VChart and VTable create their own Canvas from Stage parameters instead of putting concrete canvas ids/sizes into a shared app's `envParams`.
+
+Without a real device, you cannot fully prove real-device GPU/Canvas bridge performance, font and image loading differences, long-running touch interaction stability, multi-layer Canvas composition, or low-end device memory behavior. Those still require a Harmony device, or at least an official simulator, for smoke verification.
+
+The Harmony host needs to convert touch events into VRender-recognizable events and forward them to the active Stage:
+
+```ts
+stage.window.dispatchEvent({
+  type: 'touchstart',
+  changedTouches: [{ x, y, clientX: x, clientY: y }]
+});
+```
+
+The VRender Harmony window contribution normalizes `target/currentTarget` to the native canvas and fills top-level `x/y/offsetX/offsetY/clientX/clientY`, but the host still needs to provide coordinates in the current Canvas coordinate system.
 
 All the parameters that the stage supports are as follows:
 
@@ -185,7 +231,7 @@ const rect2 = createRect({
   y: 100,
   width: 100,
   height: 100,
-  fill:'red'
+  fill: 'red'
 });
 ```
 
@@ -203,7 +249,7 @@ const rect = VRender.createRect({
   y: 100,
   width: 100,
   height: 100,
-  fill:'red'
+  fill: 'red'
 });
 
 stage.defaultLayer.add(rect);

@@ -8,36 +8,217 @@ import type {
   IGlobal,
   ILynxCanvas
 } from '@visactor/vrender-core';
-import { CanvasWrapDisableWH, CanvasWrapEnableWH } from './canvas-wrap';
+import { CanvasWrapEnableWH } from './canvas-wrap';
 
-function createCanvas(width: number, height: number, id?: string) {
-  // const context = new (OffscreenCanvasRenderingContext2D as any)(width, height);
-  // 浏览器debug
-  const _c = new OffscreenCanvas(width, height);
-  const context = _c.getContext('2d');
+type HarmonyCanvasFactoryOptions = {
+  id: string;
+  width: number;
+  height: number;
+  dpr: number;
+  offscreen: boolean;
+};
 
-  const nativeCanvas = {
+type HarmonyCanvasFactory = (options: HarmonyCanvasFactoryOptions) => any;
+
+type HarmonyRuntime = Partial<{
+  createCanvas: (options: HarmonyCanvasFactoryOptions) => any;
+  createOffscreenCanvas: (options: HarmonyCanvasFactoryOptions) => any;
+  createImage: (src: string) => any;
+}>;
+
+type HarmonyEnvParams = {
+  domref?: any;
+  canvasIdLists?: string[];
+  freeCanvasIdx?: number;
+  offscreen?: boolean;
+  pixelRatio?: number;
+  harmony?: HarmonyRuntime;
+  runtime?: HarmonyRuntime;
+  canvasFactory?: HarmonyCanvasFactory;
+};
+
+const HARMONY_CANVAS_BRIDGE_ERROR =
+  'Harmony canvas bridge is unavailable. VRender Harmony env requires envParams.canvasFactory ' +
+  'or a Harmony runtime that exposes a global createCanvas/createOffscreenCanvas capability.';
+const HARMONY_CANVAS_SIZE_ERROR =
+  'Harmony canvas size is unavailable. Pass stage width/height when creating a Harmony stage canvas.';
+
+function isValidCoordinate(value: unknown): value is number {
+  return typeof value === 'number' && Number.isFinite(value);
+}
+
+function pickCoordinate(...values: unknown[]): number | undefined {
+  for (let i = 0; i < values.length; i++) {
+    if (isValidCoordinate(values[i])) {
+      return values[i] as number;
+    }
+  }
+  return undefined;
+}
+
+function getPrimaryTouch(event: any) {
+  return event?.changedTouches?.[0] ?? event?.touches?.[0];
+}
+
+function getHarmonyEventPoint(event: any) {
+  const touch = getPrimaryTouch(event);
+  const x = pickCoordinate(
+    event?.x,
+    event?.offsetX,
+    event?.clientX,
+    event?.pageX,
+    touch?.x,
+    touch?.offsetX,
+    touch?.clientX,
+    touch?.pageX
+  );
+  const y = pickCoordinate(
+    event?.y,
+    event?.offsetY,
+    event?.clientY,
+    event?.pageY,
+    touch?.y,
+    touch?.offsetY,
+    touch?.clientY,
+    touch?.pageY
+  );
+
+  return x == null || y == null ? null : { x, y };
+}
+
+function getHarmonyRuntime(params?: HarmonyEnvParams): HarmonyRuntime | undefined {
+  return params?.harmony ?? params?.runtime;
+}
+
+function getHarmonyPixelRatio(params?: HarmonyEnvParams): number {
+  return params?.pixelRatio ?? 1;
+}
+
+function getCanvasSize(domref: any, width?: number, height?: number) {
+  const resolvedWidth = width ?? domref?.width;
+  const resolvedHeight = height ?? domref?.height;
+  if (!isValidCoordinate(resolvedWidth) || !isValidCoordinate(resolvedHeight)) {
+    throw new Error(HARMONY_CANVAS_SIZE_ERROR);
+  }
+  return { width: resolvedWidth, height: resolvedHeight };
+}
+
+function getGlobalOffscreenCanvasCtor() {
+  try {
+    return typeof OffscreenCanvas !== 'undefined' ? OffscreenCanvas : undefined;
+  } catch (err) {
+    return undefined;
+  }
+}
+
+function createFallbackOffscreenCanvas(width: number, height: number) {
+  const OffscreenCanvasCtor = getGlobalOffscreenCanvasCtor();
+  if (typeof OffscreenCanvasCtor !== 'function') {
+    return null;
+  }
+  return new OffscreenCanvasCtor(width, height);
+}
+
+function wrapHarmonyNativeCanvas(nativeCanvas: any, id: string, width: number, height: number, dpr: number) {
+  nativeCanvas.width = width * dpr;
+  nativeCanvas.height = height * dpr;
+  const context = nativeCanvas.getContext?.('2d') ?? nativeCanvas.getContext?.();
+  if (!context) {
+    throw new Error(HARMONY_CANVAS_BRIDGE_ERROR);
+  }
+  if (typeof nativeCanvas.getBoundingClientRect !== 'function') {
+    nativeCanvas.getBoundingClientRect = () => ({
+      width,
+      height
+    });
+  }
+  return new CanvasWrapEnableWH(nativeCanvas, context, dpr, width, height, id);
+}
+
+function createHarmonyNativeCanvas(
+  id: string,
+  width: number,
+  height: number,
+  dpr: number,
+  offscreen: boolean,
+  params: HarmonyEnvParams,
+  runtime?: HarmonyRuntime
+) {
+  const options = {
+    id,
     width,
     height,
-    context,
-    _c,
-    getBoundingClientRect() {
-      return {
-        width,
-        height
-      };
-    },
-    getContext() {
-      return context;
-    }
+    dpr,
+    offscreen
   };
-  return new CanvasWrapDisableWH(nativeCanvas, context, 1, width, height, id);
+
+  if (params.canvasFactory) {
+    return params.canvasFactory(options);
+  }
+
+  if (offscreen && typeof runtime?.createOffscreenCanvas === 'function') {
+    const canvas = runtime.createOffscreenCanvas(options);
+    if (canvas) {
+      return canvas;
+    }
+  }
+
+  if (!offscreen && typeof runtime?.createCanvas === 'function') {
+    const canvas = runtime.createCanvas(options);
+    if (canvas) {
+      return canvas;
+    }
+  }
+
+  if (offscreen) {
+    const canvas = createFallbackOffscreenCanvas(width * dpr, height * dpr);
+    if (canvas) {
+      return canvas;
+    }
+  }
+
+  throw new Error(HARMONY_CANVAS_BRIDGE_ERROR);
+}
+
+function makeUpCanvas(
+  params: HarmonyEnvParams = {},
+  canvasMap: Map<string, ILynxCanvas>,
+  freeCanvasList: ILynxCanvas[]
+) {
+  const runtime = getHarmonyRuntime(params);
+  const { domref, canvasIdLists = [], freeCanvasIdx = 0 } = params;
+  const offscreen = !!params.offscreen;
+  const dpr = getHarmonyPixelRatio(params);
+
+  canvasIdLists.forEach((id, i) => {
+    const size = getCanvasSize(domref);
+    const nativeCanvas = createHarmonyNativeCanvas(
+      String(id),
+      size.width,
+      size.height,
+      dpr,
+      offscreen,
+      params,
+      runtime
+    );
+    const canvas = wrapHarmonyNativeCanvas(nativeCanvas, String(id), size.width, size.height, dpr);
+
+    canvasMap.set(String(id), canvas);
+    if (i > freeCanvasIdx) {
+      freeCanvasList.push(canvas);
+    }
+  });
 }
 
 export class HarmonyEnvContribution extends BaseEnvContribution implements IEnvContribution {
   type: EnvType = 'harmony';
   supportEvent: boolean = true;
   rafSTO: RafBasedSTO;
+  canvasMap: Map<string, ILynxCanvas> = new Map();
+  freeCanvasList: ILynxCanvas[] = [];
+  canvasIdx: number = 0;
+  private harmonyRuntime?: HarmonyRuntime;
+  private harmonyEnvParams?: HarmonyEnvParams;
 
   constructor() {
     super();
@@ -55,12 +236,12 @@ export class HarmonyEnvContribution extends BaseEnvContribution implements IEnvC
 
   // TODO：VGrammar在小程序环境会重复调用setEnv传入canvas，所以每次configure并不会释放
   // 这里等待后续和VGrammar沟通
-  configure(
-    service: IGlobal,
-    params: { domref: any; canvasIdLists: string[]; freeCanvasIdx: number; offscreen?: boolean; pixelRatio?: number }
-  ) {
+  configure(service: IGlobal, params: HarmonyEnvParams = {}) {
     if (service.env === this.type) {
       service.setActiveEnvContribution(this);
+      this.harmonyEnvParams = params;
+      this.harmonyRuntime = getHarmonyRuntime(params);
+      makeUpCanvas(params, this.canvasMap, this.freeCanvasList);
 
       // loadFeishuContributions();
     }
@@ -83,19 +264,69 @@ export class HarmonyEnvContribution extends BaseEnvContribution implements IEnvC
     loadState: 'success' | 'fail';
     data: HTMLImageElement | ImageData | null;
   }> {
-    return;
+    if (typeof this.harmonyRuntime?.createImage !== 'function') {
+      return Promise.resolve({
+        data: null,
+        loadState: 'fail'
+      });
+    }
+    const img = this.harmonyRuntime.createImage(url);
+    return new Promise(resolve => {
+      img.onload = () => {
+        resolve({
+          data: img,
+          loadState: 'success'
+        });
+      };
+      img.onerror = () => {
+        resolve({
+          data: null,
+          loadState: 'fail'
+        });
+      };
+    });
   }
 
   loadSvg(url: string): Promise<{
     loadState: 'success' | 'fail';
     data: HTMLImageElement | ImageData | null;
   }> {
-    // 飞书小组件不支持DOMParser和URL.createObjectURL，无法解析svg字符串，可以通过url使用svg资源
-    return Promise.reject();
+    return Promise.resolve({
+      data: null,
+      loadState: 'fail'
+    });
   }
 
   createCanvas(params: ICreateCanvasParams): ILynxCanvas {
-    return createCanvas(params.width, params.height, params.id);
+    const envParams = this.harmonyEnvParams ?? {};
+    const runtime = getHarmonyRuntime(envParams);
+    const dpr = params.dpr ?? getHarmonyPixelRatio(envParams);
+    const size = getCanvasSize(envParams.domref, params.width, params.height);
+
+    if (params.id != null) {
+      const id = String(params.id);
+      const existing = this.canvasMap.get(id);
+      if (existing) {
+        return existing;
+      }
+      const nativeCanvas = createHarmonyNativeCanvas(id, size.width, size.height, dpr, false, envParams, runtime);
+      const canvas = wrapHarmonyNativeCanvas(nativeCanvas, id, size.width, size.height, dpr);
+      this.canvasMap.set(id, canvas);
+      return canvas;
+    }
+
+    const result = this.freeCanvasList[this.canvasIdx] || this.freeCanvasList[this.freeCanvasList.length - 1];
+    this.canvasIdx++;
+    if (result) {
+      return result;
+    }
+
+    const id = Math.random().toString();
+    const nativeCanvas = createHarmonyNativeCanvas(id, size.width, size.height, dpr, true, envParams, runtime);
+    const canvas = wrapHarmonyNativeCanvas(nativeCanvas, id, size.width, size.height, dpr);
+    this.canvasMap.set(id, canvas);
+    this.freeCanvasList.push(canvas);
+    return canvas;
   }
 
   createOffscreenCanvas(params: ICreateCanvasParams) {
@@ -107,7 +338,7 @@ export class HarmonyEnvContribution extends BaseEnvContribution implements IEnvC
   }
 
   getDevicePixelRatio(): number {
-    return 1;
+    return getHarmonyPixelRatio(this.harmonyEnvParams);
   }
 
   getRequestAnimationFrame(): (callback: FrameRequestCallback) => number {
@@ -131,10 +362,7 @@ export class HarmonyEnvContribution extends BaseEnvContribution implements IEnvC
   }
 
   mapToCanvasPoint(event: any) {
-    if (event?.type?.startsWith('mouse')) {
-      return event;
-    }
-    return event;
+    return getHarmonyEventPoint(event) ?? event;
   }
 
   addEventListener<K extends keyof DocumentEventMap>(
@@ -171,7 +399,7 @@ export class HarmonyEnvContribution extends BaseEnvContribution implements IEnvC
 
   // 只能索引canvas
   getElementById(str: string): any | null {
-    return null;
+    return this.canvasMap.get(str) ?? null;
   }
 
   getRootElement(): HTMLElement | null {

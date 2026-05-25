@@ -39,6 +39,106 @@ class MiniAppEventManager {
   cache: Record<string, { listener: EventListenerOrEventListenerObject[] }> = {};
 }
 
+function setMiniAppEventTarget(event: any, key: 'target' | 'currentTarget', value: any) {
+  if (!event || !value) {
+    return;
+  }
+
+  try {
+    event[key] = value;
+  } catch {
+    Object.defineProperty(event, key, {
+      configurable: true,
+      value
+    });
+  }
+}
+
+function isValidCoordinate(value: unknown): value is number {
+  return typeof value === 'number' && Number.isFinite(value);
+}
+
+function pickCoordinate(...values: unknown[]): number | undefined {
+  for (let i = 0; i < values.length; i++) {
+    if (isValidCoordinate(values[i])) {
+      return values[i] as number;
+    }
+  }
+  return undefined;
+}
+
+function setHarmonyEventValue(
+  event: any,
+  key: 'x' | 'y' | 'offsetX' | 'offsetY' | 'clientX' | 'clientY' | 'pageX' | 'pageY' | 'touches',
+  value: any
+) {
+  try {
+    event[key] = value;
+  } catch {
+    Object.defineProperty(event, key, {
+      configurable: true,
+      value
+    });
+  }
+}
+
+function normalizeHarmonyTouchEventPoint(event: any) {
+  const touch = event?.changedTouches?.[0] ?? event?.touches?.[0];
+  if (!touch) {
+    return;
+  }
+
+  const x = pickCoordinate(
+    event.x,
+    event.offsetX,
+    event.clientX,
+    event.pageX,
+    touch.x,
+    touch.offsetX,
+    touch.clientX,
+    touch.pageX
+  );
+  const y = pickCoordinate(
+    event.y,
+    event.offsetY,
+    event.clientY,
+    event.pageY,
+    touch.y,
+    touch.offsetY,
+    touch.clientY,
+    touch.pageY
+  );
+  if (x == null || y == null) {
+    return;
+  }
+
+  if (!event.touches && event.changedTouches) {
+    setHarmonyEventValue(
+      event,
+      'touches',
+      event.type === 'touchend' || event.type === 'touchcancel' ? [] : event.changedTouches
+    );
+  }
+
+  setHarmonyEventValue(event, 'x', x);
+  setHarmonyEventValue(event, 'y', y);
+  setHarmonyEventValue(event, 'offsetX', event.offsetX ?? x);
+  setHarmonyEventValue(event, 'offsetY', event.offsetY ?? y);
+  setHarmonyEventValue(event, 'clientX', event.clientX ?? x);
+  setHarmonyEventValue(event, 'clientY', event.clientY ?? y);
+  setHarmonyEventValue(event, 'pageX', event.pageX ?? x);
+  setHarmonyEventValue(event, 'pageY', event.pageY ?? y);
+
+  touch.x = touch.x ?? x;
+  touch.y = touch.y ?? y;
+  touch.offsetX = touch.offsetX ?? x;
+  touch.offsetY = touch.offsetY ?? y;
+  touch.clientX = touch.clientX ?? x;
+  touch.clientY = touch.clientY ?? y;
+  touch.pageX = touch.pageX ?? x;
+  touch.pageY = touch.pageY ?? y;
+}
+
 export class HarmonyWindowHandlerContribution
   extends BaseWindowHandlerContribution
   implements IWindowHandlerContribution
@@ -84,7 +184,8 @@ export class HarmonyWindowHandlerContribution
     // 创建canvas
     const nativeCanvas = this.global.createCanvas({
       width: params.width,
-      height: params.height
+      height: params.height,
+      dpr: params.dpr
     });
 
     // 绑定
@@ -104,6 +205,14 @@ export class HarmonyWindowHandlerContribution
     if (typeof params.canvas === 'string') {
       canvas = this.global.getElementById(params.canvas) as HTMLCanvasElement | null;
       if (!canvas) {
+        canvas = this.global.createCanvas({
+          id: params.canvas,
+          width: params.width,
+          height: params.height,
+          dpr: params.dpr
+        }) as HTMLCanvasElement | null;
+      }
+      if (!canvas) {
         throw new Error('canvasId 参数不正确，请确认canvas存在并插入dom');
       }
     } else {
@@ -118,15 +227,21 @@ export class HarmonyWindowHandlerContribution
       width = data.width;
       height = data.height;
     }
+    let dpr = params.dpr;
+    if (dpr == null) {
+      dpr = canvas.width / width;
+    }
     this.canvas = new HarmonyCanvas({
       width: width,
       height: height,
-      dpr: 1,
+      dpr: dpr,
       nativeCanvas: canvas,
       canvasControled: params.canvasControled
     });
   }
   releaseWindow(): void {
+    this.eventManager.cleanEvent();
+    this.canvas?.release?.();
     return;
   }
   resizeWindow(width: number, height: number): void {
@@ -168,15 +283,10 @@ export class HarmonyWindowHandlerContribution
       return false;
     }
 
-    // hack for offsetX offsetY
-    if (event.changedTouches && event.changedTouches[0]) {
-      event.offsetX = event.changedTouches[0].x;
-      event.changedTouches[0].offsetX = event.changedTouches[0].x;
-      event.changedTouches[0].clientX = event.changedTouches[0].x;
-      event.offsetY = event.changedTouches[0].y;
-      event.changedTouches[0].offsetY = event.changedTouches[0].y;
-      event.changedTouches[0].clientY = event.changedTouches[0].y;
-    }
+    const nativeCanvas = this.canvas?.nativeCanvas;
+    setMiniAppEventTarget(event, 'target', nativeCanvas);
+    setMiniAppEventTarget(event, 'currentTarget', nativeCanvas);
+    normalizeHarmonyTouchEventPoint(event);
     event.preventDefault = () => {
       return;
     };

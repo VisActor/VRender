@@ -65,7 +65,7 @@ The VRender section is organized as a multi-scene smoke page. Use the scene butt
 
 - `图元`: rect/circle/symbol/line/area/arc/path/polygon render with gradient, shadow, opacity, lineDash and corner radius. Tap rect/circle and run both actions.
 - `文本`: normal text, multiline text, wrap text, rich text, underline and lineThrough render without overlap.
-- `资源`: records current image/canvas-resource capability. If Harmony does not expose a usable image resource path, the scene must show a clear fallback instead of crashing.
+- `资源`: uses ArkUI `OffscreenCanvas` to draw local A/B image resources, converts them to `ImageBitmap`, and verifies VRender image rendering with contain/cover/fill plus picking. If Harmony does not expose a usable image resource path, the scene must show a clear fallback instead of crashing.
 - `动画`: loop, bounce, from, wait, color/position/size/opacity animation. `主操作` pauses/resumes the moving rect; `次操作` stops the orange rect with `stop(end)`.
 - `状态`: setStates, same-state patch, addState/removeState and toggleState. Tap the diamond and run both actions.
 - `变换`: nested group, clip, opacity, zIndex, rotation/scale/translate. Tap the transformed group and run `主操作`.
@@ -86,6 +86,7 @@ The VRender section is organized as a multi-scene smoke page. Use the scene butt
 - console logging with the `[harmony-vrender]` prefix
 - VRender `acquireSharedVRenderApp({ env: 'harmony' })`
 - VRender Stage creation through `envParams.canvasFactory`
+- local image-resource smoke through ArkUI `OffscreenCanvas.transferToImageBitmap()`
 - VRender multi-scene smoke rendering on a Harmony `Canvas`
 - touch forwarding to `stage.window.dispatchEvent`
 

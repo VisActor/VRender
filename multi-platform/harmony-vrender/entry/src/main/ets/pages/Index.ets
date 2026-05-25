@@ -67,12 +67,19 @@ interface VRenderCanvasBridge {
   dispatchEvent: () => boolean;
 }
 
+interface VRenderResourceCanvasOptions {
+  width: number;
+  height: number;
+  variant: string;
+}
+
 interface HarmonyVRenderMountOptions {
   canvasId: string;
   width: number;
   height: number;
   pixelRatio: number;
   canvasBridge: VRenderCanvasBridge;
+  resourceCanvasFactory?: (options: VRenderResourceCanvasOptions) => OffscreenCanvas | undefined;
   onEvent: (message: string) => void;
 }
 
@@ -253,6 +260,17 @@ struct Index {
     return this.vrenderCanvasBridge;
   }
 
+  private createVRenderResourceCanvas(options: VRenderResourceCanvasOptions): OffscreenCanvas | undefined {
+    try {
+      const width = Math.max(1, Math.ceil(options.width));
+      const height = Math.max(1, Math.ceil(options.height));
+      return new OffscreenCanvas(width, height);
+    } catch (err) {
+      console.warn('[harmony-vrender] resource OffscreenCanvas unavailable', err);
+      return undefined;
+    }
+  }
+
   private mountVRenderSmoke(): void {
     try {
       this.releaseVRenderSmoke();
@@ -262,6 +280,9 @@ struct Index {
         height: this.vrenderCanvasHeight,
         pixelRatio: 1,
         canvasBridge: this.getVRenderCanvasBridge(),
+        resourceCanvasFactory: (resourceOptions: VRenderResourceCanvasOptions): OffscreenCanvas | undefined => {
+          return this.createVRenderResourceCanvas(resourceOptions);
+        },
         onEvent: (message: string): void => {
           this.vrenderEventStatus = message;
         }

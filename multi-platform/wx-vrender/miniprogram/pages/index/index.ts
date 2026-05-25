@@ -183,6 +183,14 @@ type CanvasQueryResult = {
   dpr: number;
 };
 
+type WxCanvasFactoryOptions = {
+  id?: string;
+  width: number;
+  height: number;
+  dpr: number;
+  offscreen: boolean;
+};
+
 const linearGradient = (from: string, to: string): any => ({
   gradient: 'linear',
   x0: 0,
@@ -268,7 +276,8 @@ Page({
 
       this.app = createWxVRenderApp({
         envParams: {
-          pixelRatio: dpr
+          pixelRatio: dpr,
+          canvasFactory: this.createWxCanvasFactory(dpr)
         }
       });
 
@@ -311,6 +320,28 @@ Page({
           resolve({ canvas, width, height, dpr });
         });
     });
+  },
+
+  createWxCanvasFactory(defaultDpr: number) {
+    return (options: WxCanvasFactoryOptions) => {
+      const createOffscreenCanvas = (wx as any).createOffscreenCanvas;
+      if (typeof createOffscreenCanvas !== 'function') {
+        throw new Error('wx.createOffscreenCanvas is required for VRender internal canvas allocation.');
+      }
+
+      const dpr = options.dpr || defaultDpr || 1;
+      const width = options.width || 1;
+      const height = options.height || 1;
+      const pixelWidth = Math.max(1, Math.ceil(width * dpr));
+      const pixelHeight = Math.max(1, Math.ceil(height * dpr));
+      const canvas = createOffscreenCanvas({ type: '2d', width: pixelWidth, height: pixelHeight });
+      canvas.width = pixelWidth;
+      canvas.height = pixelHeight;
+      if (options.id != null) {
+        canvas.id = options.id;
+      }
+      return canvas;
+    };
   },
 
   switchScene(event: any) {

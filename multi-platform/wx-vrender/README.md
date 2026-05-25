@@ -19,7 +19,7 @@
 - 使用 `createWxVRenderApp` 初始化 wx 端 VRender app，再通过该 app 创建 stage。
 - 微信 Canvas 2D 节点必须提前写在 WXML 中，并声明 `type="2d"`。当前项目预置 `vrender-main` 作为主渲染 canvas。
 - app 级 `envParams` 只放 `pixelRatio`、宿主 runtime、全局有效的 `canvasFactory` 等环境能力；不要再传 `domref`、`canvasIdLists`、`freeCanvasIdx` 或页面私有 canvas 列表。
-- 当前 smoke 通过 selector query 拿到原生 Canvas 节点后，直接传给 `app.createStage({ canvas, width, height, dpr })`。如果接入层只能传字符串 id，需要提供对当前共享 app 全局有效的 `canvasFactory({ id, width, height, dpr, offscreen })` 或等价宿主 runtime。
+- 当前 smoke 通过 selector query 拿到原生 Canvas 节点后，直接传给 `app.createStage({ canvas, width, height, dpr })`；同时用 `wx.createOffscreenCanvas` 提供 app-scope `canvasFactory`，供 VRender 内部共享 canvas / 测量 canvas 使用。如果接入层只能传字符串 id，也需要提供对当前共享 app 全局有效的 `canvasFactory({ id, width, height, dpr, offscreen })` 或等价宿主 runtime。
 - `createStage` 建议传 `canvasControled: true`，并使用 selector query 得到的 canvas 尺寸。微信 Canvas 2D 节点没有 DOM `getBoundingClientRect()`。
 
 ### npm 构建与本地包验证

@@ -64,6 +64,43 @@ describe('miniapp stage-scoped canvas creation', () => {
   );
 
   test.each(miniAppCases)(
+    '%s creates an internal canvas from the app-scope canvasFactory',
+    (envName, EnvContribution) => {
+      const env = new EnvContribution();
+      const service = {
+        env: envName,
+        setActiveEnvContribution: jest.fn()
+      };
+      const nativeCanvas = {
+        getContext: jest.fn(() => ({ id: `${envName}-internal-ctx` }))
+      };
+      const canvasFactory = jest.fn(() => nativeCanvas);
+
+      env.configure(service as any, {
+        pixelRatio: 2,
+        canvasFactory
+      });
+
+      const canvas = env.createCanvas({
+        width: 100,
+        height: 50,
+        dpr: 2
+      });
+
+      expect(canvasFactory).toHaveBeenCalledWith({
+        id: undefined,
+        width: 100,
+        height: 50,
+        dpr: 2,
+        offscreen: true
+      });
+      expect(nativeCanvas.getContext).toHaveBeenCalledWith('2d');
+      expect((canvas as any).width).toBe(200);
+      expect((canvas as any).height).toBe(100);
+    }
+  );
+
+  test.each(miniAppCases)(
     '%s window creation asks the env for a missing string canvas',
     (envName, _EnvContribution, WindowContribution) => {
       const nativeCanvas = {

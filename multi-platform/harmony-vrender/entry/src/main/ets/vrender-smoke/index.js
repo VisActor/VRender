@@ -786,9 +786,9 @@ class HarmonySmokeController {
       return null;
     }
 
-    const canvas = resourceFactory({ width: size, height: size, variant: alt ? 'B' : 'A' });
-    const ctx = canvas?.getContext?.('2d');
-    if (!canvas || !ctx || typeof ctx.createLinearGradient !== 'function') {
+    const resource = resourceFactory({ width: size, height: size, variant: alt ? 'B' : 'A' });
+    const ctx = resource?.getContext?.('2d');
+    if (!resource || !ctx || typeof ctx.createLinearGradient !== 'function') {
       return null;
     }
 
@@ -809,7 +809,7 @@ class HarmonySmokeController {
       ctx.font = `${Math.round(size * 0.22)}px sans-serif`;
       ctx.fillText(alt ? 'B' : 'A', x + size * 0.16, y + size * 0.76);
       ctx.restore?.();
-      return canvas;
+      return typeof resource.transferToImageBitmap === 'function' ? resource.transferToImageBitmap() : resource;
     } catch (err) {
       console.warn('[harmony-vrender] create resource canvas failed', err);
       return null;

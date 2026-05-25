@@ -4,6 +4,11 @@
       "comment": "Prepare browser alpha app-scoped runtime verification.",
       "type": "none",
       "packageName": "@visactor/vrender"
+    },
+    {
+      "comment": "Keep browser background smoke page on the app-scoped stage helper.",
+      "type": "none",
+      "packageName": "@visactor/vrender"
     }
   ],
   "packageName": "@visactor/vrender",

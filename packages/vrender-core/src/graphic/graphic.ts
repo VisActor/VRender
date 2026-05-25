@@ -164,6 +164,7 @@ const FULL_STATE_DEFINITION_KEYS = new Set([
 
 const point = new Point();
 const EMPTY_STATE_NAMES: readonly string[] = [];
+const deprecatedLocalStateFallbackWarningStateNames = new Set<string>();
 const BROAD_UPDATE_CATEGORY =
   UpdateCategory.PAINT |
   UpdateCategory.SHAPE |
@@ -676,6 +677,21 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     return this.localFallbackVersion ?? 0;
   }
 
+  protected warnDeprecatedLocalStatesFallback(stateNames: string[]): void {
+    for (let index = 0; index < stateNames.length; index++) {
+      const stateName = stateNames[index];
+      if (deprecatedLocalStateFallbackWarningStateNames.has(stateName)) {
+        continue;
+      }
+
+      deprecatedLocalStateFallbackWarningStateNames.add(stateName);
+      console.warn(
+        `[VRender] graphic.states fallback for missing shared state definition "${stateName}" is deprecated. ` +
+          'Move the state definition to sharedStateDefinitions or use stateProxy for dynamic per-graphic styles.'
+      );
+    }
+  }
+
   protected resolveEffectiveCompiledDefinitions(): {
     compiledDefinitions?: Map<string, CompiledStateDefinition<T>>;
     stateProxyModeKey: string;
@@ -746,6 +762,8 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
         stateProxyEligibility: sharedStateProxyEligibility
       };
     }
+
+    this.warnDeprecatedLocalStatesFallback(missingStateNames);
 
     const localStatesVersion = this.getLocalStatesVersion();
     const stateProxyModeKey = this.stateProxy ? `missing:${missingStateNames.sort().join('|')}` : 'none';
@@ -2649,7 +2667,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       return;
     }
 
-    const stateResolveBaseAttrs = this.syncStateResolveContext();
+    this.syncStateResolveContext();
     this.resolverEpoch = (this.resolverEpoch ?? 0) + 1;
     this.stateEngine.invalidateResolverCache();
     const transition = this.stateEngine.applyStates(this.currentStates);

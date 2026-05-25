@@ -1,4 +1,5 @@
-import { createGroup, createRect, createStage, createText, IGraphic, IGraphicAttribute } from '@visactor/vrender';
+import { createGroup, createRect, createText, IGraphic, IGraphicAttribute } from '@visactor/vrender';
+import { createBrowserPageStage } from '../page-stage';
 
 const demoImage = `<svg xmlns="http://www.w3.org/2000/svg" width="240" height="140" viewBox="0 0 240 140">
   <defs>
@@ -147,7 +148,7 @@ function createDemoFrame(
 }
 
 export const page = () => {
-  const stage = createStage({
+  const stage = createBrowserPageStage({
     canvas: 'main',
     width: 1600,
     height: 900,

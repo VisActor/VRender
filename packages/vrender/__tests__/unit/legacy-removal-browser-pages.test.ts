@@ -16,6 +16,7 @@ const browserPages = [
   'animate-ticker.ts',
   'animate-3d.ts',
   'bar3d.ts',
+  'background.ts',
   'custom-animate.ts',
   'flex.ts',
   'graphic.ts',

@@ -4,6 +4,11 @@
       "comment": "Prepare browser alpha app-scoped runtime verification.",
       "type": "none",
       "packageName": "@visactor/vrender-core"
+    },
+    {
+      "comment": "Warn when deprecated graphic.states fallback supplies missing shared-state definitions.",
+      "type": "patch",
+      "packageName": "@visactor/vrender-core"
     }
   ],
   "packageName": "@visactor/vrender-core",

@@ -2,7 +2,7 @@
 
 > **文档类型**：归档后续项清单
 > **用途**：记录 D3 项目已确认的非阻塞 follow-up，供后续规划与维护使用
-> **当前状态**：持续跟踪
+> **当前状态**：stable release closeout 已收口；本文件保留历史清单与最终处理结论
 > **重要说明**：本文件不是新的设计讨论场；它只承接已明确降级为非阻塞的问题，不重开 Phase 2 / 3 / 4 已关闭设计
 
 ---
@@ -21,13 +21,14 @@
 ### F-01 `graphic.states` missing-state fallback 告警策略
 
 - 问题：
-  当前 shared-state 主路径已经把 `graphic.states` 收口为 missing-state fallback，但 fallback 的告警策略尚未拍板，例如是 dev-only warning、deprecated 提示，还是完全静默兼容。
+  shared-state 主路径已经把 `graphic.states` 收口为 missing-state fallback，需要明确开发期提示策略，避免调用方继续把实例级状态定义当作推荐主路径。
 - 当前状态：
-  已识别、已降级为非阻塞 follow-up，尚未进入独立实现。
+  completed。当前已在 VRender core 中对“绑定 shared scope 后，由 `graphic.states` 补齐缺失 shared definition”的路径输出一次性 deprecated warning；普通本地图元状态与命中 shared definition 的路径不告警。
 - 为什么是非阻塞：
   Phase 3 ownership、fallback 裁决语义和 Phase 4 主路径都已经闭环；这个问题只影响开发时提示策略，不影响当前 `closed` 阶段的运行时正确性。
-- 建议归属阶段/负责人：
-  建议作为后续文档与兼容性治理任务处理；默认由架构师与维护者共同拍板，必要时实现 agent 配合落地。
+- 证据入口：
+  - `packages/vrender-core/src/graphic/graphic.ts`
+  - `packages/vrender-core/__tests__/unit/graphic/shared-state-fallback.test.ts`
 - 是否影响现有 closed 结论：
   否。不影响 Phase 3 / Phase 4 已 `closed` 的结论。
 
@@ -36,11 +37,13 @@
 - 问题：
   `Glyph` 在 D3 中一直被明确隔离为非主路径扩展面，但后续仍需决定它的 ownership 文档应该单独拆出，还是并入后续维护章节。
 - 当前状态：
-  已识别、已降级为非阻塞 follow-up，当前仅保持“隔离、不扩展 glyph 专属状态语义”的约束。
+  closed as documented boundary。稳定版不把 `Glyph` 并回 shared-state 主路径；`Glyph` 继续保留 `glyphStates` / `glyphStateProxy` 专属 surface，尤其是 `subAttributes` 与 subGraphic 原型继承语义不等价于普通 `Graphic.states` / `sharedStateDefinitions`。
 - 为什么是非阻塞：
-  Phase 2 已保证 `Glyph` 跟随主路径回到正确真值；Phase 3 / Phase 4 主路径没有再把 `Glyph` 拉回核心模型，因此该问题只影响后续文档组织与维护入口，不影响当前闭环结果。
-- 建议归属阶段/负责人：
-  建议作为后续架构文档整理任务处理，由架构师主导，必要时结合实际代码维护者意见。
+  Phase 2 已保证 `Glyph` 状态切换后能回到 base truth；现有 `glyph-state.test.ts` 明确锁定 Glyph 当前行为：状态属性作用于 glyph 自身，`subAttributes` 不直接驱动 subGraphic。把 Glyph 强行并入 shared-state 会扩大发布前行为面，且需要重新定义 subGraphic ownership，不属于 D3 stable release 必需改造。
+- 证据入口：
+  - `packages/vrender-core/src/graphic/glyph.ts`
+  - `packages/vrender-core/__tests__/unit/graphic/glyph-state.test.ts`
+  - [D3_STABLE_RELEASE_CLOSEOUT_PLAN.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_STABLE_RELEASE_CLOSEOUT_PLAN.md)
 - 是否影响现有 closed 结论：
   否。不影响 Phase 2 / Phase 3 / Phase 4 已 `closed` 的结论。
 

@@ -96,18 +96,23 @@ Phase 1 以“实现完成并通过验证”作为阶段收口，没有单独走
 
 ---
 
-## 4. 当前保留的非阻塞项
+## 4. Stable Release Closeout Update
 
-当前项目仍保留 2 个明确的非阻塞 follow-up：
+Phase 1-4 关闭时曾保留 2 个非阻塞 follow-up：
 
 1. `graphic.states` missing-state fallback 的告警策略
 2. `Glyph ownership` 的文档拆分与后续归属
 
-这两项不会影响 Phase 2 / Phase 3 / Phase 4 已 `closed` 的结论，后续应在独立 follow-up 清单中跟踪，不再回流污染已关闭阶段的主文档。
+稳定正式版收尾阶段已经处理完毕：
+
+1. `graphic.states` missing-state fallback 已补 deprecated warning，并用 `shared-state-fallback.test.ts` 锁定告警边界。
+2. `Glyph ownership` 已关闭为文档化特例边界：不并回 D3 shared-state 主路径，继续保留 `glyphStates` / `glyphStateProxy` 专属 surface。
+
+这两项不再作为 D3 stable release follow-up 保留；历史阶段文档中的“留下的 follow-up”只记录当时阶段出口状态，不代表当前仍未处理。
 
 补充：
 
-browser alpha gate 关闭后新增的上层接入、node runtime、VTable-lite P2、multi-env / on-demand support matrix 等收尾事项，不属于 Phase 1-4 主线 reopen。它们统一看：
+browser alpha gate 关闭后新增的上层接入、node runtime、VTable-lite P2、multi-env / on-demand support matrix 等收尾事项，不属于 Phase 1-4 主线 reopen。当前 stable release 收口统一看：
 
 - [D3_POST_ALPHA_WRAPUP_PLAN.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_POST_ALPHA_WRAPUP_PLAN.md)
 - [D3_FOLLOWUPS.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_FOLLOWUPS.md)

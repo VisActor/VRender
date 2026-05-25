@@ -233,26 +233,26 @@ P2 是建议保留但不应挤占 P0/P1 的后续项。
 ### P2-2 `graphic.states` missing-state warning strategy
 
 - Owner: maintainers
-- Status: follow-up
+- Status: completed
 - Source: [D3_FOLLOWUPS.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_FOLLOWUPS.md)
 
-这是开发体验和兼容提示策略，不影响 D3 已关闭结论。
+已在 VRender core 中补充 deprecated warning：只有绑定 shared scope 后由 `graphic.states` 补齐缺失 shared definition 的路径会提示，普通本地图元状态和 shared definition 命中路径不提示。
 
 ### P2-3 Glyph ownership documentation split
 
 - Owner: maintainers
-- Status: follow-up
+- Status: closed as documented boundary
 - Source: [D3_FOLLOWUPS.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_FOLLOWUPS.md)
 
-`Glyph` 仍是非主路径扩展面，建议后续作为文档整理项处理。
+`Glyph` 仍是非主路径扩展面，稳定版不并回 shared-state 主路径；`glyphStates` / `glyphStateProxy` 与 `subAttributes` 继续作为 Glyph 专属 surface。
 
 ### P2-4 Legacy/custom assembly samples cleanup
 
 - Owner: `VRender-side`
-- Status: follow-up
+- Status: completed for D3 stable scope
 - Source: [D3_LEGACY_PATH_REMOVAL_STATUS.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_LEGACY_PATH_REMOVAL_STATUS.md)
 
-继续清理或标注 triage-only demo / legacy sample，避免它们被误当作当前推荐用法。
+`packages/vrender` browser pages 的 direct deprecated root `createStage()` scan 已补入 `background.ts` 并切到 app-scoped `createBrowserPageStage()`；剩余 triage-only 页面是能力验证口径，不再代表推荐接入方式或 D3 stable release follow-up。
 
 ---
 
@@ -268,9 +268,9 @@ P2 是建议保留但不应挤占 P0/P1 的后续项。
 | P1 | memory benchmark / VTable-lite P2 | `VRender-side` | 已关闭为 D3 stable release no-go |
 | P1 | multi-env / on-demand support matrix | `VRender-side` / maintainers | stable support matrix 已关闭，advanced on-demand 移出 D3 release |
 | P2 | full internal migration decision | `cross-repo integration` | 只有 app-provider-first 稳定后才值得决策 |
-| P2 | `graphic.states` warning strategy | maintainers | 开发体验项，不影响运行时正确性 |
-| P2 | Glyph ownership docs | maintainers | 文档组织项 |
-| P2 | legacy/custom samples cleanup | `VRender-side` | 降低后续误读成本 |
+| P2 | `graphic.states` warning strategy | maintainers | 已完成 deprecated warning |
+| P2 | Glyph ownership docs | maintainers | 已关闭为文档化特例边界 |
+| P2 | legacy/custom samples cleanup | `VRender-side` | 已完成 D3 stable scope scan 补强 |
 
 ---
 

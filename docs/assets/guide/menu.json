@@ -67,6 +67,13 @@
               }
             },
             {
+              "path": "App",
+              "title": {
+                "zh": "App能力与使用建议",
+                "en": "App Capabilities and Usage"
+              }
+            },
+            {
               "path": "Graphic",
               "title": {
                 "zh": "图元",

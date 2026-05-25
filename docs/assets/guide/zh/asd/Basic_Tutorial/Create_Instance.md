@@ -40,6 +40,8 @@ const stage2 = createStage({
 
 ### App 与 Stage 生命周期建议
 
+完整的 App 能力、共享 App 接口、`envParams` 边界和各端使用建议见 [App 能力与使用建议](./App)。
+
 在 browser、node、小程序、Lynx 等多端接入中，推荐使用 `createBrowserVRenderApp()`、`createLynxVRenderApp()` 等 app-scoped 入口创建 VRender app，再通过 `app.createStage()` 创建 Stage。app 负责管理 renderer、picker、plugin、env contribution 等应用级资源，应按页面、容器或宿主 Canvas view 的生命周期复用，而不是在普通业务切换中频繁创建和释放。
 
 app 级 `envParams` 只应放环境级能力，例如 node 下的 `node-canvas` 包、Lynx 下对整个 app scope 都有效的 `lynx` runtime 或 `canvasFactory`。具体 Canvas view 的 `canvas` name/id、宽高和 dpr 属于 Stage 或 Layer 创建参数，应由 `app.createStage({ canvas, width, height, dpr })` 或图层创建路径传入。接入层如果把 `canvasFactory` 这类能力放到 app 上，需要保证它对同一 app 下的所有 VRender 使用者都是全局有效的。

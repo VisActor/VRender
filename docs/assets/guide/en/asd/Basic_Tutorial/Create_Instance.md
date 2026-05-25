@@ -40,6 +40,8 @@ const stage2 = createStage({
 
 ### App and Stage Lifecycle
 
+For the full description of App capabilities, shared App APIs, `envParams` boundaries, and platform usage notes, see [App Capabilities and Usage](./App).
+
 For browser, Node, mini-app, Lynx, and other multi-platform integrations, prefer the app-scoped entry points such as `createBrowserVRenderApp()` and `createLynxVRenderApp()`, then create stages with `app.createStage()`. The app owns application-level resources such as renderers, pickers, plugins, and environment contributions. Treat it as a page-level, container-level, or host Canvas-view-level instance instead of creating and releasing it during ordinary UI switches.
 
 App-level `envParams` should only contain environment-level capabilities, such as the `node-canvas` package in Node or a Lynx runtime / `canvasFactory` that is valid for the whole app scope. The concrete Canvas view `canvas` name/id, width, height, and dpr belong to Stage or Layer creation and should be passed through `app.createStage({ canvas, width, height, dpr })` or the layer creation path. If an integration puts a `canvasFactory`-like capability on the app, that integration must ensure it is globally valid for all VRender users sharing the same app.

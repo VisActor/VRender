@@ -69,19 +69,6 @@ import {
 
 loadLabelComponent();
 
-function cloneAttributeSnapshot<T>(value: T): T {
-  if (!isObject(value) || isArray(value)) {
-    return value;
-  }
-
-  const snapshot: Record<string, any> = {};
-  Object.keys(value as Record<string, any>).forEach(key => {
-    const nextValue = (value as Record<string, any>)[key];
-    snapshot[key] = isObject(nextValue) && !isArray(nextValue) ? cloneAttributeSnapshot(nextValue) : nextValue;
-  });
-  return snapshot as T;
-}
-
 type LabelExitReleaseState = AnimateExitReleaseState;
 
 export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
@@ -134,6 +121,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
 
   private _enableAnimation: boolean;
   private _exitReleaseState?: LabelExitReleaseState;
+  private _finalLayoutBoundsCache?: Map<IGraphic, IAABBBounds>;
 
   constructor(attributes: BaseLabelAttrs, options?: ComponentOptions) {
     const { data, ...restAttributes } = attributes;
@@ -159,7 +147,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
   }
 
   protected _getLabelLinePoints(text: IText | IRichText, baseMark?: IGraphic) {
-    return connectLineBetweenBounds(text.AABBBounds, baseMark?.AABBBounds);
+    return connectLineBetweenBounds(text.AABBBounds, this.getGraphicFinalLayoutBounds(baseMark));
   }
 
   protected _createLabelLine(text: IText | IRichText, baseMark?: IGraphic): ILine | undefined {
@@ -315,18 +303,12 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
       return;
     }
 
+    this._finalLayoutBoundsCache = undefined;
     this._prepare();
     if (isNil(this._idToGraphic) || (this._isCollectionBase && isNil(this._idToPoint))) {
       return;
     }
-    // 如果有动画的话，需要先设置入场的最终属性，否则无法计算放重叠、反色之类的逻辑
-    const markAttributeList: any[] = [];
-    if (this._enableAnimation !== false) {
-      this._baseMarks.forEach(mark => {
-        markAttributeList.push(cloneAttributeSnapshot(mark.attribute));
-        mark.initAttributes(this.getGraphicFinalLayoutAttributes(mark));
-      });
-    }
+    this._finalLayoutBoundsCache = new Map();
 
     const { overlap, smartInvert, dataFilter, customLayoutFunc, customOverlapFunc } = this.attribute;
     let data = this.attribute.data;
@@ -404,12 +386,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
     }
 
     this._renderLabels(labels);
-
-    if (this._enableAnimation !== false) {
-      this._baseMarks.forEach((mark, index) => {
-        mark.initAttributes(markAttributeList[index]);
-      });
-    }
+    this._finalLayoutBoundsCache = undefined;
   }
 
   private _bindEvent(target: IGraphic) {
@@ -602,6 +579,37 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
 
   protected hasGraphicContextFinalLayoutAttributes(graphic?: IGraphic): boolean {
     return !!(graphic?.context as Record<string, any> | undefined)?.finalAttrs;
+  }
+
+  protected shouldUseGraphicFinalLayoutAttributes(graphic?: IGraphic): boolean {
+    return !!graphic && (!!graphic.context?.animationState || this.hasGraphicContextFinalLayoutAttributes(graphic));
+  }
+
+  protected getGraphicFinalLayoutBounds(graphic?: IGraphic): IAABBBounds | undefined {
+    if (!graphic) {
+      return;
+    }
+
+    const useFinalAttrs = this.shouldUseGraphicFinalLayoutAttributes(graphic);
+    const graphicAttrs = useFinalAttrs ? this.getGraphicFinalLayoutAttributes(graphic) : graphic.attribute;
+    if (graphicAttrs?.visible === false) {
+      return;
+    }
+
+    if (!useFinalAttrs) {
+      return graphic.AABBBounds;
+    }
+
+    const cachedBounds = this._finalLayoutBoundsCache?.get(graphic);
+    if (cachedBounds) {
+      return cachedBounds;
+    }
+
+    const clonedGraphic = graphic.clone();
+    clonedGraphic.initAttributes({ ...clonedGraphic.attribute, ...graphicAttrs });
+    const bounds = clonedGraphic.AABBBounds;
+    this._finalLayoutBoundsCache?.set(graphic, bounds);
+    return bounds;
   }
 
   protected _initText(data: LabelItem[] = []): (IText | IRichText)[] {
@@ -816,7 +824,8 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
     // 躲避关联的基础图元
     if (avoidBaseMark) {
       this._baseMarks?.forEach(mark => {
-        mark.AABBBounds && bitmap.setRange(boundToRange(bmpTool, mark.AABBBounds, true));
+        const markBounds = this.getGraphicFinalLayoutBounds(mark);
+        markBounds && bitmap.setRange(boundToRange(bmpTool, markBounds, true));
       });
     }
 
@@ -856,8 +865,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
         if (
           checkBounds &&
           baseMark &&
-          baseMark.AABBBounds &&
-          this._canPlaceInside(text.AABBBounds, baseMark.AABBBounds)
+          this._canPlaceInside(text.AABBBounds, this.getGraphicFinalLayoutBounds(baseMark))
         ) {
           bitmap.setRange(boundToRange(bmpTool, text.AABBBounds, true));
           result.push(text);
@@ -913,13 +921,18 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
   }
 
   protected isMarkInsideRect(baseMark: IGraphic, bmpTool: BitmapTool) {
+    if (!baseMark) {
+      return false;
+    }
     const { left, right, top, bottom } = bmpTool.padding;
     const rect: IBoundsLike = { x1: -left, x2: bmpTool.width + right, y1: -top, y2: bmpTool.height + bottom };
-    const bounds = baseMark.AABBBounds;
-    if (bounds.width() !== 0 && bounds.height() !== 0) {
-      return isRectIntersect(baseMark.AABBBounds, rect, true);
+    const bounds = this.getGraphicFinalLayoutBounds(baseMark);
+    if (bounds && bounds.width() !== 0 && bounds.height() !== 0) {
+      return isRectIntersect(bounds, rect, true);
     }
-    const { attribute } = baseMark;
+    const attribute = this.shouldUseGraphicFinalLayoutAttributes(baseMark)
+      ? this.getGraphicFinalLayoutAttributes(baseMark)
+      : baseMark.attribute;
     if (baseMark.type === 'rect') {
       const { x, x1, y, y1 } = attribute as IRectGraphicAttribute;
       return pointInRect({ x: x ?? x1, y: y ?? y1 }, rect, true);
@@ -943,16 +956,13 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
     position?: string
   ): IBoundsLike {
     if (graphic) {
-      if (graphic.attribute.visible !== false) {
-        // TODO 这里有些hack 如果有动画，需要使用finalAttribute
-        if (graphic.context?.animationState || this.hasGraphicContextFinalLayoutAttributes(graphic)) {
-          const clonedGraphic = graphic.clone();
-          Object.assign(clonedGraphic.attribute, this.getGraphicFinalLayoutAttributes(graphic));
-          return clonedGraphic.AABBBounds;
-        }
-        return graphic.AABBBounds;
+      const graphicAttrs = this.shouldUseGraphicFinalLayoutAttributes(graphic)
+        ? this.getGraphicFinalLayoutAttributes(graphic)
+        : graphic.attribute;
+      if (graphicAttrs.visible !== false) {
+        return this.getGraphicFinalLayoutBounds(graphic) as IBoundsLike;
       }
-      const { x, y } = graphic.attribute;
+      const { x, y } = graphicAttrs;
       return { x1: x, x2: x, y1: y, y2: y } as IBoundsLike;
     }
     if (point && position && position === 'inside-middle') {
@@ -1235,9 +1245,10 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
         mode
       );
       const similarColor = contrastAccessibilityChecker(invertColor, brightColor) ? brightColor : darkColor;
-      const isInside = this._canPlaceInside(label.AABBBounds, baseMark.AABBBounds);
+      const baseMarkBounds = this.getGraphicFinalLayoutBounds(baseMark);
+      const isInside = this._canPlaceInside(label.AABBBounds, baseMarkBounds);
       const isIntersect =
-        !isInside && label.AABBBounds && baseMark.AABBBounds && baseMark.AABBBounds.intersects(label.AABBBounds);
+        !isInside && label.AABBBounds && baseMarkBounds && baseMarkBounds.intersects(label.AABBBounds);
 
       if (isInside || outsideEnable || (isIntersect && interactInvertType === 'inside')) {
         // 按照标签展示在柱子内部的情况，执行反色逻辑
@@ -1300,7 +1311,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
    * @param shapeBound
    * @returns
    */
-  protected _canPlaceInside(textBound: IBoundsLike, shapeBound: IAABBBounds) {
+  protected _canPlaceInside(textBound: IBoundsLike, shapeBound?: IAABBBounds) {
     if (!textBound || !shapeBound) {
       return false;
     }

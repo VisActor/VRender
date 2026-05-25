@@ -2,7 +2,7 @@
 
 > **文档类型**：性能问题上下文留档
 > **用途**：记录 `memory.ts` benchmark 在 D3 重构后与 `develop` 分支的性能差异、已完成归因、以及后续优化任务的边界
-> **当前状态**：`P1 accepted`，`P2 approved to start`
+> **当前状态**：`P1 accepted`；`P2 closed as no-go for D3 stable release`
 > **重要说明**：本文件不是新的规范源；它只承接 `memory.ts` benchmark 的问题背景、当前 accepted 边界与后续 gate，不重开实现方案或 Phase 1-4 主设计
 
 ---
@@ -37,7 +37,7 @@
    - 已经通过复用单 app 收口一截
 2. 第二阶段问题
    - 单个 `Graphic` 的固定构造成本增加
-   - 当前仍然是剩余主要差距
+   - 当前仍然是剩余主要差距，但本轮 `P2` 已因官方 gate 收益不充分关闭为 D3 stable release no-go；后续若继续优化，应作为独立性能专项重开
 
 ---
 

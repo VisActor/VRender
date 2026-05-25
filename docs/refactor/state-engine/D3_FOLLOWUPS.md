@@ -49,7 +49,7 @@
 - 问题：
   `memory.ts` benchmark 在已经改成“复用单 app、只重建 stage”之后，当前分支相较 `develop` 仍存在显著性能差距。进一步归因后，主因已经收敛到 `Graphic` 在 D3 重构后每实例固定成本上升，而不是 app/stage 重建策略。
 - 当前状态：
-  已从 follow-up 升级为独立性能专项；后续不再在本文件中继续展开。
+  已从 follow-up 升级为独立性能专项；稳定版收尾阶段已关闭为 D3 stable release no-go。`Text.cache` lazy-init 尝试对 `VTable-lite text-stateProxy cells` 有可见收益，但官方 `memory.ts run 100` no-trace 未形成足够清晰改善，因此本轮 `P2` 不接受，后续如继续优化需作为独立性能专项重开。
 - 为什么是非阻塞：
   这是一个极端构造 benchmark 的性能问题，不等于当前 handoff 主链不可用，也不直接推翻 Phase 1-4 或 legacy removal 的完成结论。
 - 证据入口：
@@ -83,7 +83,7 @@
 - 问题：
   进入 app-scoped 主路径后，VRender 的 browser/node 默认入口已经清晰，但历史上存在的多环境支持与细粒度按需装配能力没有同步升级成对等 public contract。当前能力层面仍然存在，但 user-facing contract、public surface、类型面、验证面都已经分层，容易被上层误读成“新主路径已等价承接旧能力”。
 - 当前状态：
-  已完成 browser alpha 所需的最小治理收口；长期 support matrix、advanced public surface 与验证矩阵继续按 post-alpha P1 follow-up 处理。
+  stable support matrix 已完成收口：Tier 1 为 `browser` / `node` / `wx` / `lynx` / `harmony`，Tier 2 为 `taro` / `feishu` / `tt`，`native` 不进入 stable default contract。advanced public surface 与更强 runtime isolation 后续仍可单独治理，但不再作为 D3 stable release follow-up 保留。
 - 为什么是非阻塞：
   当前 browser root-package 主路径已经足以支撑 handoff 与上层继续验证；这条问题影响的是更宽 contract 的明确化与长期治理，不直接推翻 Phase 2 / 3 / 4 或 `legacy removal completed` 的既有结论。
 - 证据入口：
@@ -93,7 +93,7 @@
   - [D3_VCHART_APP_SCOPED_ALIGNMENT_PLAN.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_VCHART_APP_SCOPED_ALIGNMENT_PLAN.md)
   - [D3_UPPER_LAYER_ADOPTION_GUIDE.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_UPPER_LAYER_ADOPTION_GUIDE.md)
 - 建议归属阶段/负责人：
-  post-alpha 阶段继续由架构师与维护者拍板 support matrix / public surface，再由实现 agent 分 workstream 推进。
+  若后续继续推进，应作为独立 advanced assembly / runtime isolation 治理任务处理；taro / feishu / tt 升级 Tier 1 需先补真实端 smoke。
 - 是否影响现有 closed 结论：
   否。不影响 D3 主线 closed 结论；它影响的是 VRender 是否继续正式承诺更宽的 multi-env / on-demand contract。
 
@@ -120,8 +120,8 @@
 ### F-Alpha-01 node app-scoped runtime
 
 - Owner: `VRender-side`
-- 当前状态：open
-- 说明：`createNodeVRenderApp().createStage()` 仍未转绿。这是 node lane，不属于当前 browser alpha gate。
+- 当前状态：completed
+- 说明：Node app-scoped runtime 已补 `createNodeVRenderApp({ envParams })` public path、legacy-compatible `vglobal.setEnv('node', CanvasPkg)` path 与 Node 20.19.6 native canvas smoke；CI 侧需继续保证 Node ABI 与 `canvas` native binding 匹配。
 
 ### F-Alpha-02 VChart app-provider-first source-level alignment
 
@@ -138,8 +138,8 @@
 ### F-Alpha-04 text stateProxy real-path coverage
 
 - Owner: `cross-repo integration`
-- 当前状态：follow-up
-- 说明：当前只覆盖到非 text `stateProxy`。这条属于覆盖补齐，不再阻塞当前 browser alpha gate。
+- 当前状态：completed
+- 说明：已补 VTable-lite text `stateProxy` workload。`packages/vrender/__tests__/browser/src/pages/vtable-lite-text-stateproxy.ts` 通过 `vtable-lite-shared.ts` 创建 text + stateProxy 场景，并对 `10` 个 sample text 执行 `useStates(['hover'], false)`；`D3_PHASE4_IMPLEMENTATION_LOG.md` 已记录 `stateProxy` sample 语义 `10/10` 通过。该项不再作为 D3 stable release follow-up 保留。
 
 ### F-Alpha-05 external stage ownership governance hardening
 

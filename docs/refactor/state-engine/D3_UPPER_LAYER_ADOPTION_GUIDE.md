@@ -2,8 +2,8 @@
 
 > **文档类型**：上层接入指南
 > **用途**：给在 `vchart` / `vtable` 等上层仓库里工作的 agent 提供一份可以直接执行的 VRender 新版本接入说明
-> **当前状态**：基于当前已确认基线编写：`P0 accepted`、`P1 accepted`、`legacy removal completed`、`browser alpha gate closed`
-> **重要说明**：本文件只总结当前对上层已经稳定的使用口径，不重开 D3 主架构，也不把 `P2` 中仍在评估的性能尝试写成上层契约
+> **当前状态**：基于当前已确认基线编写：`P0 accepted`、`P1 accepted`、`legacy removal completed`、`browser alpha gate closed`、`multi-env stable matrix closed`
+> **重要说明**：本文件只总结当前对上层已经稳定的使用口径，不重开 D3 主架构，也不把已关闭为 no-go 的 `P2` 性能尝试写成上层契约
 
 ---
 
@@ -24,11 +24,11 @@
 
 如果你只记住最关键的规则，记这些：
 
-1. 新代码优先使用 `createBrowserVRenderApp()` / `createNodeVRenderApp()`，不要继续写 deprecated `createStage()`
+1. 新代码优先使用当前环境对应的 stable Tier 1 app creator，不要继续写 deprecated `createStage()`
 2. `app.createStage()` 是当前推荐入口；如果同一页面里会重建 stage，优先复用同一个 app
 3. `app.release()` 会释放它仍然拥有的 stage；单 stage 场景里，仍建议显式先 `stage.release()`，再 `app.release()`
-4. 根包 `createBrowserVRenderApp()` / `createNodeVRenderApp()` 是 **default bootstrap 入口**，不是细粒度按需装配入口
-5. 当前 browser/node 是 app-scoped 一等路径；feishu / wx / taro / harmony / lynx / tt / miniapp 等环境能力仍在，但更多还停留在 legacy 或更底层装配面
+4. 根包 stable Tier 1 app creator 是 **default bootstrap 入口**，不是细粒度按需装配入口
+5. 当前 browser / node / wx / lynx / harmony 是 app-scoped 一等路径；taro / feishu / tt 保留 public creator 与代码路径，但真实端 smoke 前仍按 Tier 2 理解
 6. 不要在已经走 root app creator 的 caller 里再混用 `initBrowserEnv()` / `initFeishuEnv()` / `initAllEnv()` 这类旧 env 初始化
 7. 状态静态真值现在按 `baseAttributes + resolvedStatePatch -> attribute` 理解，动画不是新的真值源
 8. `normalAttrs` 只剩 deprecated alias/view 语义，不要再把它当成 snapshot/restore 主路径
@@ -51,13 +51,18 @@
 5. `browser alpha gate closed`
    - browser binding / installer、functional、perf 和 external-stage app-scoped consumer rerun 均已通过
 6. root app creator public typing 已补齐
-   - `createBrowserVRenderApp()` / `createNodeVRenderApp()` 当前对外类型应返回 `IApp`
+   - stable Tier 1 root app creator 当前对外类型应返回 `IApp`
+7. multi-env stable matrix 已收口
+   - Tier 1: `browser` / `node` / `wx` / `lynx` / `harmony`
+   - Tier 2: `taro` / `feishu` / `tt`
+   - Tier 3: `native`
 
 当前**不应**把下面这些写成上层契约：
 
-1. `P2` 中仍在评估的性能尝试
+1. 已关闭为 no-go 的 `P2` 性能尝试
 2. 任意更深层的构造期表示优化
 3. 对 `graphic.attribute` 深层 nested mutation 的额外隔离保证
+4. 同一 JS runtime 内多 env 完全隔离
 
 ---
 
@@ -129,7 +134,7 @@ Node 侧同理：
 ```ts
 import { createNodeVRenderApp } from '@visactor/vrender';
 
-const app = createNodeVRenderApp();
+const app = createNodeVRenderApp({ envParams: CanvasPkg });
 const stage = app.createStage({
   width: 800,
   height: 600
@@ -138,10 +143,35 @@ const stage = app.createStage({
 
 额外提醒：
 
-1. 当前 browser 是最稳定的推荐主路径
-2. 如果你的上层真实依赖 node runtime，请把它当成单独验证项，不要直接假设它已经和 browser 路径等强
+1. Node 需要传入 node-canvas 兼容包作为 `envParams`
+2. 旧兼容路径 `vglobal.setEnv('node', CanvasPkg)` 后再 `createNodeVRenderApp()` 仍可用，但新代码优先显式传 `envParams`
+3. CI / 本地测试需要保证 Node 版本与 native `canvas` ABI 匹配；当前已验证 Node 20.19.6
 
-### 4.3 React
+### 4.3 Miniapp / Lynx / Harmony
+
+已进入 stable Tier 1 的端侧环境：
+
+```ts
+import { createWxVRenderApp, createLynxVRenderApp, createHarmonyVRenderApp } from '@visactor/vrender';
+```
+
+推荐用法：
+
+1. 微信小程序使用 `createWxVRenderApp({ envParams })`
+2. Lynx 使用 `createLynxVRenderApp({ envParams })`
+3. Harmony 使用 `createHarmonyVRenderApp({ envParams })`
+4. 具体 canvas id/name、宽高、dpr 仍属于 stage/layer 创建参数，不要长期塞进 app 级共享状态
+5. app 级 `envParams` 只放对整个 app scope 都有效的端能力，例如 runtime、可复用的 canvasFactory、pixelRatio
+
+仍按 Tier 2 理解的端侧环境：
+
+1. `createTaroVRenderApp`
+2. `createFeishuVRenderApp`
+3. `createTTVRenderApp`
+
+这些入口和代码路径保留，但真实端 smoke 前不要在上层 release note 中写成稳定版一等承诺。
+
+### 4.4 React
 
 如果你在上层用的是 `react-vrender`，当前 `Stage` 组件内部已经切到 app-scoped `createBrowserVRenderApp() + app.createStage()` 模型。
 对上层来说，重点是：
@@ -201,8 +231,11 @@ import { createBrowserVRenderApp, createNodeVRenderApp } from '@visactor/vrender
 | 场景 | 当前推荐路径 | 说明 |
 |------|------|------|
 | browser 默认接入 | `@visactor/vrender` + `createBrowserVRenderApp()` | 当前一等路径 |
-| node 默认接入 | `@visactor/vrender` + `createNodeVRenderApp()` | 有入口，但要单独验证真实 node runtime |
-| 非 browser/node 环境 | `vrender-core` / `vrender-kits` 更底层 env loader / 自定义装配 | 当前不要假设已经存在对等 root app creator |
+| node 默认接入 | `@visactor/vrender` + `createNodeVRenderApp({ envParams })` | 当前一等路径，注意 Node ABI |
+| wx 默认接入 | `@visactor/vrender` + `createWxVRenderApp({ envParams })` | 当前一等路径 |
+| lynx 默认接入 | `@visactor/vrender` + `createLynxVRenderApp({ envParams })` | 当前一等路径 |
+| harmony 默认接入 | `@visactor/vrender` + `createHarmonyVRenderApp({ envParams })` | 当前一等路径 |
+| taro / feishu / tt | 对应 root public creator 或更底层 env loader | Tier 2，待真实端 smoke 后升级 |
 | 细粒度按需装配 | 更底层 installer / register surface | 当前 root app creator 不是细粒度按需装配接口 |
 
 额外边界：
@@ -285,23 +318,27 @@ Theme -> stage.rootSharedStateScope -> Group scopes -> Graphic
 
 ## 9. 组件 / 插件 / 安装链
 
-如果你只使用根包 `@visactor/vrender` 的默认 browser/node app 入口，通常不需要自己再手动补 env/graphics/picker 安装。
+如果你只使用根包 `@visactor/vrender` 的默认 Tier 1 app 入口，通常不需要自己再手动补 env/graphics/picker 安装。
 
 如果你在更底层做装配，当前 repo 已经存在 app-scoped installer surface，例如：
 
 1. `installBrowserEnvToApp`
 2. `installNodeEnvToApp`
-3. `installDefaultGraphicsToApp`
-4. `installBrowserPickersToApp`
-5. `installNodePickersToApp`
-6. `installPoptipToApp`
-7. `installScrollbarToApp`
+3. `installWxEnvToApp`
+4. `installLynxEnvToApp`
+5. `installHarmonyEnvToApp`
+6. `installDefaultGraphicsToApp`
+7. `installBrowserPickersToApp`
+8. `installNodePickersToApp`
+9. `installMathPickersToApp`
+10. `installPoptipToApp`
+11. `installScrollbarToApp`
 
 上层仓库的原则是：
 
 1. 能走根包默认入口就不要自己再拼 legacy bootstrap
 2. 真要自定义装配，也优先找 app-scoped installer，不要再回到旧 `ContainerModule` / legacy binding 路径
-3. 当前 app-scoped public installer surface 主要覆盖 browser/node 默认 env、默认 graphics/pickers 和少量组件插件；它还不是完整的多环境一等 surface，也不是细粒度按需装配 surface
+3. 当前 app-scoped public installer surface 已覆盖 stable Tier 1 env、默认 graphics/pickers 和少量组件插件；它仍不是细粒度按需装配 surface
 4. 如果你发现 caller 仍显式依赖 `registerRect()` / `registerArc()` / `loadFeishuEnv()` / `initAllEnv()` 这类能力，请先把它归类为“高级自定义装配路径”，不要直接套 root app creator 迁移模板
 
 ---
@@ -324,9 +361,9 @@ rg "registerRect\\(|registerArc\\(|registerLine\\(|registerPolygon\\(|registerTe
 处理原则：
 
 1. 新代码不再新增 deprecated `createStage()`
-2. 如果已有旧 caller，优先迁到 `createBrowserVRenderApp()` / `createNodeVRenderApp()` + `app.createStage()`
+2. 如果已有旧 caller，优先迁到当前环境对应的 stable Tier 1 app creator + `app.createStage()`
 3. 不再假设 import 副作用会自动补完运行时装配
-4. 如果命中了额外 env loader 或 `register*()` 细粒度装配点，先把该 caller 标记为“高级自定义装配路径”，不要直接按普通 browser/node 模板替换
+4. 如果命中了额外 env loader 或 `register*()` 细粒度装配点，先把该 caller 标记为“高级自定义装配路径”，不要直接按默认 Tier 1 模板替换
 
 ### 10.2 再查状态写法
 
@@ -345,7 +382,7 @@ rg "registerRect\\(|registerArc\\(|registerLine\\(|registerPolygon\\(|registerTe
 3. text + graphic 混合场景
 4. 如果上层使用 `stateProxy`，补一条 `text stateProxy` 验证
 5. 如果有 React 接入，补 mount / unmount 生命周期验证
-6. 如果你依赖 node runtime、非 browser/node 环境或细粒度按需装配，补对应的专门 smoke，不要只靠 browser baseline
+6. 如果你依赖 node / wx / lynx / harmony 或细粒度按需装配，补对应的专门 smoke，不要只靠 browser baseline；taro / feishu / tt 仍需真实端 smoke 后再升级承诺
 
 ---
 
@@ -369,10 +406,10 @@ rg "registerRect\\(|registerArc\\(|registerLine\\(|registerPolygon\\(|registerTe
 
 当前不要把下面这些写进上层依赖假设：
 
-1. `P2` 中仍在评估的 memory/VTable 性能尝试
+1. 已关闭为 no-go 的 memory/VTable `P2` 性能尝试
 2. 任意新的构造期 lazy-init 候选
 3. `_AABBBounds lazy-init` 这类还没单独拍板的更宽边界方案
-4. 非 browser/node 的一等 app-scoped creator 已经齐全
+4. taro / feishu / tt 已经具备 stable Tier 1 端侧验证
 5. 存在细粒度的 app-scoped public on-demand installer family
 6. 当前 app-scoped 已经天然提供完整的 per-app/per-env 隔离
 
@@ -382,13 +419,13 @@ rg "registerRect\\(|registerArc\\(|registerLine\\(|registerPolygon\\(|registerTe
 2. `P1 accepted`
 3. `legacy removal completed`
 4. 可以基于这版 VRender 继续开发/验证
-5. browser root-package 默认路径当前是主推荐入口
+5. stable Tier 1 root-package 默认路径当前是主推荐入口：browser / node / wx / lynx / harmony
 
 当前不能对上层说的是：
 
 1. `P2 accepted`
 2. “所有高数量场景都已进一步优化完成”
-3. “多环境一等支持已经全部迁入新 app-scoped 主路径”
+3. “所有历史多端环境都已成为 Tier 1”
 4. “细粒度按需装配已经由 root app creator 等价承接”
 
 ---
@@ -398,7 +435,7 @@ rg "registerRect\\(|registerArc\\(|registerLine\\(|registerPolygon\\(|registerTe
 如果你现在就在 `vchart` 目录工作，建议按下面顺序行动：
 
 1. 先确认当前接入点是不是 deprecated `createStage()`
-2. 如果是新代码，直接改成 `createBrowserVRenderApp()` / `createNodeVRenderApp()` + `app.createStage()`
+2. 如果是新代码，直接改成当前环境对应的 stable Tier 1 app creator + `app.createStage()`
 3. 再确认状态逻辑里有没有继续依赖旧 `normalAttrs` 或深层 nested mutation
 4. 再确认当前 caller 是否还显式依赖额外 env loader 或 `register*()` 细粒度装配；如果是，先把它归类为高级自定义装配路径
 5. 再补最小 smoke：
@@ -406,7 +443,7 @@ rg "registerRect\\(|registerArc\\(|registerLine\\(|registerPolygon\\(|registerTe
    - stage recreate
    - text + graphic
    - 如有 `stateProxy`，补 text-stateProxy
-6. 如果路径涉及 node runtime / 非 browser/node 环境 / 细粒度装配，追加专门 smoke，再决定是否继续迁移
+6. 如果路径涉及 node / wx / lynx / harmony / Tier 2 端环境 / 细粒度装配，追加专门 smoke，再决定是否继续迁移
 7. 只有在 smoke 稳定后，再继续放大到更复杂业务页面
 
 ---

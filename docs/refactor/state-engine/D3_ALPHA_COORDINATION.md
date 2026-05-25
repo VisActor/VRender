@@ -13,13 +13,12 @@
 
 - `P0 accepted`
 - `P1 accepted`
-- `P2 approved to start`
-- `P2` 当前 **未 accepted**
+- `P2` 已关闭为 D3 stable release no-go；当前 **未 accepted**
 - `Text.cache lazy-init` 引入的 `WrapText` 兼容回归已修复并通过复核
-- 当前可以恢复继续评估 `P2`
+- 后续若继续评估构造期固定成本，应作为独立性能专项重开，不再作为 D3 stable release follow-up
 - 当前 **browser alpha gate 已关闭**
 - 当前可以按 **browser alpha ready / browser alpha verification build** 处理
-- 当前 **还不是 node-complete alpha**
+- Node app-scoped runtime 已进入 stable Tier 1；历史“node-complete alpha 未关闭”状态已由 stable closeout supersede
 
 当前统一判断：
 
@@ -27,7 +26,7 @@
 2. full-link browser 功能回归已通过
 3. `textHeavy` mixed scene recreate 性能回归已完成双边验证并从 browser alpha gate 中移除
 4. app-scoped 入口的真实上层接入验证已在 external-stage 路径完成 fresh rerun
-5. 上层接入体验审查与“多环境一等支持”治理任务已完成，当前推荐接入契约已足够支撑 browser alpha 验证
+5. 上层接入体验审查与“多环境一等支持”治理任务已完成，当前推荐接入契约已升级到 stable support matrix
 6. root app creator public typing 已修正为返回 `IApp`，可被上层 TypeScript 代码直接消费
 
 ---
@@ -48,9 +47,9 @@
 当前明确 **不** 把下面两项当作 browser alpha gate：
 
 - `P2 accepted`
-- `createNodeVRenderApp().createStage()` 的 node runtime 全绿
+- `createNodeVRenderApp().createStage()` 的 node runtime 全绿（这是历史 browser-alpha 口径；stable closeout 已补齐 node Tier 1）
 
-node app-scoped runtime 仍然是已知 blocker，但当前单独挂账，不作为 browser alpha 先决条件。
+node app-scoped runtime 不再是 stable release blocker；当前只保留 Node ABI / `canvas` native binding 匹配约束。
 
 ---
 
@@ -200,10 +199,10 @@ first round snapshot：
 
 | Item | Owner | 当前状态 | 说明 |
 | --- | --- | --- | --- |
-| `createNodeVRenderApp().createStage()` node runtime 未转绿 | `VRender-side` | open | `createWindow` 为空导致 node runtime 失败；这是 node lane，不属于当前 browser gate |
+| `createNodeVRenderApp()` node runtime | `VRender-side` | completed | 已由 stable closeout 覆盖：`createNodeVRenderApp({ envParams })` 与 legacy-compatible path 已验证，Node 20.19.6 native canvas smoke 通过 |
 | `VChart` app-provider-first / VChart-created-stage 源码级对齐尚未正式落仓 | `cross-repo integration` | follow-up | 当前已有 external-stage consumer harness 证据；下一步应按 `D3_VCHART_APP_SCOPED_ALIGNMENT_PLAN.md` 推进源码对齐 |
 | 是否继续做 full internal migration | `cross-repo integration` | follow-up | 当前不作为 alpha 先决条件，应在 app-provider-first 源码级路径稳定后再决定 |
-| 真实上层 `text stateProxy` 路径未覆盖 | `cross-repo integration` | follow-up | 当前只覆盖到非 text `stateProxy` |
+| 真实上层 `text stateProxy` 路径覆盖 | `cross-repo integration` | completed | 已补 VTable-lite text-stateProxy workload，sample 语义 `10/10` 通过 |
 | 外部传入 stage 的更完整 ownership 约束与治理沉淀 | `VChart-side` | follow-up | 当前 external-stage 路径已可用，但源码侧契约治理仍建议继续落档 |
 
 ---
@@ -286,7 +285,7 @@ browser alpha 发布后的完整收尾优先级看：
 当前协调口径：
 
 - **可以按 browser alpha ready / browser alpha verification build 处理**
-- **不能写成 node-complete alpha**
+- **历史 alpha release note 不能写成 node-complete alpha；stable closeout 可写 node 已进入 Tier 1**
 - 剩余事项全部按 non-gate follow-up 管理
 
 ---

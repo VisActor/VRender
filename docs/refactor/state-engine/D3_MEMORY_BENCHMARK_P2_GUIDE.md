@@ -2,8 +2,22 @@
 
 > **文档类型**：专项实施文档
 > **用途**：为 `memory.ts` 与 VTable 相关高数量、低状态场景开启 `P2` 性能专项，明确业务价值、验证口径、允许改动范围与 stop 条件
-> **当前状态**：`P1 accepted`，`P2 approved to start`
+> **当前状态**：`P1 accepted`；`P2 closed as no-go for D3 stable release`
 > **重要说明**：本文件不是新的架构设计文档；它只定义 `memory benchmark`/VTable 相关 `P2` 的执行边界，不重开 D3 Phase 1-4 主设计
+
+## 0. Stable Release Closure
+
+2026-05-25 release closeout 决策：
+
+1. `P2` 不进入 D3 stable release 阻塞项。
+2. 已有一次低风险单目标尝试（`Text.cache` lazy-init）并完成 before / after 测量。
+3. `VTable-lite text-stateProxy cells` 业务 gate 有可见收益，且 `stateProxy` sample 语义保持 `10/10` 通过。
+4. 官方 gate `memory.ts run 100` no-trace 没有形成足够清晰的可见改善，因此本轮 `P2` 不接受。
+5. 后续若继续做性能优化，应作为独立性能专项重开，不再作为 D3 stable release follow-up 保留。
+
+证据入口：
+
+- `D3_PHASE4_IMPLEMENTATION_LOG.md` / `2026-04-17 12:15 — Memory benchmark P2 / VTable-lite workload 与 text cache lazy-init 尝试`
 
 ---
 

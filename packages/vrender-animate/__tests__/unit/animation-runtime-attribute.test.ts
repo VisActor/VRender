@@ -724,6 +724,46 @@ describe('D3 pre-handoff animation runtime', () => {
     expect((rect as any).baseAttributes.x).toBe(80);
   });
 
+  test('fade appear keeps final opacity in static truth when using animate.from', () => {
+    const { group, ticker, graphicService } = createStageHarness('fade-appear-from');
+    const rect = createAnimatedRect(graphicService);
+    rect.setAttribute('opacity', 1);
+    group.appendChild(rect);
+
+    rect.animate().from({ opacity: 0 }, 100, 'linear');
+
+    expect(rect.attribute.opacity).toBe(0);
+    expect((rect as any).baseAttributes.opacity).toBe(1);
+
+    tick(ticker, 50);
+    expect(rect.attribute.opacity).toBeCloseTo(0.5, 5);
+    expect((rect as any).baseAttributes.opacity).toBe(1);
+
+    tick(ticker, 50);
+    expect(rect.attribute.opacity).toBe(1);
+    expect((rect as any).baseAttributes.opacity).toBe(1);
+  });
+
+  test('fade to does not make the animation endpoint the static truth', () => {
+    const { group, ticker, graphicService } = createStageHarness('fade-appear-to');
+    const rect = createAnimatedRect(graphicService);
+    rect.setAttribute('opacity', 0);
+    group.appendChild(rect);
+
+    rect.animate().to({ opacity: 1 }, 100, 'linear');
+
+    expect(rect.attribute.opacity).toBe(0);
+    expect((rect as any).baseAttributes.opacity).toBe(0);
+
+    tick(ticker, 50);
+    expect(rect.attribute.opacity).toBeCloseTo(0.5, 5);
+    expect((rect as any).baseAttributes.opacity).toBe(0);
+
+    tick(ticker, 50);
+    expect(rect.attribute.opacity).toBe(0);
+    expect((rect as any).baseAttributes.opacity).toBe(0);
+  });
+
   test('wait step holds the previous frame without committing it to baseAttributes', () => {
     const { group, ticker, graphicService } = createStageHarness('wait-step');
     const rect = createAnimatedRect(graphicService);

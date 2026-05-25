@@ -1,3 +1,5 @@
+> 状态：已归档。`P2` 已在 D3 stable release closeout 中关闭为 no-go；不要直接按本 prompt 继续执行。若后续要继续做构造期固定成本优化，应作为新的独立性能专项重开，并先更新 `D3_MEMORY_BENCHMARK_P2_GUIDE.md`。
+
 你现在负责执行 D3 memory benchmark 性能专项的 `P2`。
 
 先读：
@@ -11,7 +13,7 @@
 当前已经拍板：
 - `P0 accepted`
 - `P1 accepted`
-- `P2 approved to start`
+- `P2` 已关闭为 D3 stable release no-go
 
 这轮不是新的架构设计，也不是继续泛化做全仓性能优化。
 

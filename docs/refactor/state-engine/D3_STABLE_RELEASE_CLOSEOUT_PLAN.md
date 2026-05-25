@@ -100,27 +100,28 @@ Owner: VRender-side / maintainers
    - create/render/release/recreate 验证状态
 3. 后续用户提供真实端环境后，逐项补 smoke，而不是改架构。
 
-Initial code-level matrix:
+Stable release support matrix:
 
 | Env | Env loader | Canvas module | Window contribution | Public app-scoped default creator | Current stable status |
 | --- | --- | --- | --- | --- | --- |
-| `browser` | yes | yes | yes | `createBrowserVRenderApp` | Tier 1 candidate; browser alpha gate 已关，stable 仍需 release-day rerun |
-| `node` | yes | yes | yes | `createNodeVRenderApp` | Tier 1 candidate; source/runtime tests 已过，native canvas 需固定 Node ABI |
-| `taro` | yes | yes | yes | `createTaroVRenderApp` | code-level app-scoped path connected; stable 前需真实端 smoke |
-| `feishu` | yes | yes | yes | `createFeishuVRenderApp` | code-level app-scoped path connected; stable 前需真实端 smoke |
-| `tt` | yes | yes | yes | `createTTVRenderApp` | code-level app-scoped path connected; stable 前需真实端 smoke |
-| `wx` | yes | yes | yes | `createWxVRenderApp` | code-level app-scoped path connected; stable 前需真实端 smoke |
-| `lynx` | yes | yes | yes | `createLynxVRenderApp` | code-level app-scoped path connected; stable 前需真实端 smoke |
-| `harmony` | yes | yes | yes | `createHarmonyVRenderApp` | code-level app-scoped path connected; stable 前需真实端 smoke |
-| `native` | no obvious env loader | no obvious canvas module | partial window contribution only | not yet | cannot claim stable support until owner decides tier and fills missing pieces |
+| `browser` | yes | yes | yes | `createBrowserVRenderApp` | Tier 1; browser alpha gate 已关，release-day 仍需 rerun |
+| `node` | yes | yes | yes | `createNodeVRenderApp` | Tier 1; source/runtime tests 与 Node 20.19.6 native canvas smoke 已过，CI 需固定 Node ABI |
+| `wx` | yes | yes | yes | `createWxVRenderApp` | Tier 1; 真实微信小程序 smoke 已确认常规图元、文本、动画、组件、事件、批量、资源等能力正常 |
+| `lynx` | yes | yes | yes | `createLynxVRenderApp` | Tier 1; Lynx 真机/宿主 smoke 已确认可渲染并完成常规能力验证 |
+| `harmony` | yes | yes | yes | `createHarmonyVRenderApp` | Tier 1; Harmony 测试环境 smoke 已确认可渲染并完成常规能力验证 |
+| `taro` | yes | yes | yes | `createTaroVRenderApp` | Tier 2; code-level app-scoped path connected，待真实端 smoke 后再升级 |
+| `feishu` | yes | yes | yes | `createFeishuVRenderApp` | Tier 2; code-level app-scoped path connected，待真实端 smoke 后再升级 |
+| `tt` | yes | yes | yes | `createTTVRenderApp` | Tier 2; code-level app-scoped path connected，待真实端 smoke 后再升级 |
+| `native` | no obvious env loader | no obvious canvas module | partial window contribution only | not yet | Tier 3 / unsupported by stable default contract until owner fills missing pieces |
 
 Current progress:
 
 - `browser` / `node` / `taro` / `feishu` / `tt` / `wx` / `lynx` / `harmony` 均已接入 app-scoped env installer 与 public app creator。
 - miniapp env / window contribution binding 已从 module-level boolean 改为 container-level idempotence，避免 legacy container 和 app-scoped runtime container 互相污染或漏绑。
 - `installMathPickersToApp` 作为非 browser env 的 app-scoped picker helper 暴露，miniapp public bootstrap 统一走 math picker。
-- 已验证 public creator bootstrap 顺序单测；真实端渲染 smoke 仍依赖外部项目环境和测试版发布后补证据。
+- 已验证 public creator bootstrap 顺序单测；wx / lynx / harmony 真实端 smoke 已补齐，taro / feishu / tt 保持代码级连接与 Tier 2 限制说明。
 - `vrender` 发布构件一致性测试已覆盖 `es/cjs` 的 miniapp entry 与 `IApp` factory 类型面；本地 build 已生成对应 ignored artifacts 用于验证。
+- 当前不承诺同一 JS runtime 内多个 env 同时完全隔离；public creator 每次都会显式激活当前 env，调用方需要跨 env 时必须按 env/page 作用域管理 app 生命周期。
 
 ### P0-5 Upper-Layer Integration Gates
 
@@ -132,6 +133,14 @@ Owner: VRender-side + VChart/VTable-side
 2. VChart 不再通过 clearStates -> setStates 避免 state 问题；使用 public refresh/setStates options。
 3. VTable 图形动画 appear/fade 场景使用最终静态属性 + from 起始态的契约，或由 VRender 提供明确等价 API。
 4. Text stateProxy real-path 覆盖至少一个真实上层 workload。
+
+Current progress:
+
+- VChart state sync 已收敛到 `graphic.setStates(states, { animate, animateSameStatePatchChange: true })` 的 public state refresh 路径；VRender 已支持 same-state patch changed animation。
+- VRender line update 已修复 sibling channel ownership，`TagPointsUpdate` 可从标准 update target 来源读取目标 `points/segments`，不再要求 VChart 为该路径外部预写 `setFinalAttributes(finalAttrs)`。
+- VRender-components label layout 已移除 render 期间临时 `mark.initAttributes(finalAttrs)` / restore 原图元的路径，改为只读 `context.finalAttrs` / final-bounds layout context；VChart 侧 label 相关处理已完成，后续不再作为 VRender 当前执行片阻塞项。
+- VTable appear/fade 相关动画静态真值契约已由 VRender 单测锁住：普通 fade appear 应保持最终 `opacity` 为静态真值并使用 `animate().from({ opacity: 0 })` 表示起始态；`animate().to({ opacity: 1 })` 不会把终点写入 `baseAttributes`。
+- VTable-lite text-stateProxy workload 已存在并完成语义验证：`packages/vrender/__tests__/browser/src/pages/vtable-lite-text-stateproxy.ts` / `vtable-lite-shared.ts` 对 `10` 个 sample text 调用 `useStates(['hover'], false)`，`stateProxy` sample 语义 `10/10` 通过。
 
 ### P0-6 Performance And Memory Closure
 
@@ -145,6 +154,12 @@ Owner: VRender-side
    - closed as no-go with measured rationale。
 3. 不允许稳定版仍保留 `P2 approved to start, not accepted` 状态。
 
+Current decision:
+
+- `P1 accepted` 结论保持成立。
+- `P2` 已关闭为 D3 stable release no-go：上一轮 `Text.cache` lazy-init 对 `VTable-lite text-stateProxy cells` 有可见收益，且 `stateProxy` sample 语义保持 `10/10` 通过；但官方 `memory.ts run 100` no-trace gate 没有形成足够清晰改善，因此本轮不接受为 D3 P2。
+- 后续若继续追构造期固定成本，应作为独立性能专项重开，不再作为 D3 stable release follow-up。
+
 ### P0-7 Documentation And Release Contract
 
 Owner: Coordinator / maintainers
@@ -155,22 +170,36 @@ Owner: Coordinator / maintainers
 2. release note 明确正式支持的 env tier。
 3. D3 follow-up 清单清零：每一项都有 completed / rejected / moved-out-of-D3 状态。
 
-## 4. First Execution Slice
+Current progress:
 
-当前先推进 VRender-side 最小闭环：
+- Stable support matrix 已明确为 Tier 1: `browser` / `node` / `wx` / `lynx` / `harmony`；Tier 2: `taro` / `feishu` / `tt`；Tier 3: `native`。
+- `text stateProxy` 与 memory P2 已从 follow-up 中收口，memory P2 关闭为 D3 stable release no-go。
+- 2026-05-25 VRender-side local rerun 已完成：
+  - `packages/vrender-components` full unit: 36 suites / 114 tests passed
+  - `packages/vrender` targeted app entry / node runtime / build artifact tests: 3 suites / 42 tests passed
+  - `packages/vrender-animate` animation runtime targeted test: 1 suite / 44 tests passed
+  - `packages/vrender` compile passed
+  - `packages/vrender-animate` compile passed
+  - affected `vrender-components` eslint passed
+  - affected `vrender-animate` eslint passed
+  - `git diff --check` passed
+- 仍需在正式 release-day 按目标发布环境复跑 browser / node / components targeted suites，并由 VTable 回填 appear/fade 调用契约结论。
 
-1. 修复 public Node app-scoped env activation。
-2. 补 Node public runtime 单测。
-3. 跑 `vrender` targeted tests、compile、lint。
-4. 回填本文件中的 P0-1 / P0-3 进度。
+## 4. Current Next Slice
 
-第二执行片已开始并完成代码级接入：
+Node 与 wx / lynx / harmony 已进入 stable Tier 1，且 VChart label 相关处理已完成后，当前 VRender owner 的下一执行片切到 VRender release-day 证据与剩余契约边界：
 
-1. 接入 `taro` / `feishu` / `tt` / `wx` / `lynx` / `harmony` 的 app-scoped installers。
-2. 新增对应 public app creators。
-3. 用单测确认 public creator bootstrap pipeline。
-
-下一步需要在发布测试版后，借助外部项目环境逐端补 create/render/release/recreate smoke；在真实端环境到位前，本仓库只能关闭代码级架构一致性，不能宣称端侧 Tier 1 完成。
+1. **VRender release-day rerun**
+   - rerun `vrender-components` label targeted / full unit / compile。
+   - rerun `packages/vrender` targeted tests，Node lane 使用 Node 20.19.6 或其它与 `canvas` native binding 匹配的版本。
+   - rerun `git diff --check`、affected lint/typecheck。
+2. **VTable appear/fade 调用契约**
+   - 上层优先采用“先写最终静态属性，再用 `animate().from(...)` 表示起始态”的普通图元 appear 写法。
+   - 若必须保留 wait + to 链式写法，应显式确认动画终点不会替代静态真值；否则由上层先 `setAttribute` 最终态。
+3. **Tier 2 env 后续**
+   - taro / feishu / tt 保持 Tier 2，等真实端环境可用后再补 smoke 并决定是否升级；不阻塞 D3 stable release。
+4. **Non-blocking advanced governance**
+   - advanced on-demand assembly 与更强 runtime isolation 不作为 D3 stable release blocker；若维护者决定继续推进，应单独开治理任务。
 
 ## 5. Stop Rules
 

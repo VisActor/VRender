@@ -2,7 +2,7 @@
 
 > **文档类型**：治理任务文档
 > **用途**：为 VRender 维护者、架构师和实现 agent 明确 “多环境一等支持” 与 “细粒度按需装配” 是否继续作为正式承诺保留，以及若保留应如何在 app-scoped 路径下完成治理
-> **当前状态**：治理已完成到足以支撑 browser alpha；长期 support matrix / advanced surface 仍作为 post-alpha follow-up
+> **当前状态**：stable support matrix 已收口；advanced on-demand surface 仍作为非 D3 release 后续治理
 > **重要说明**：本文件不是新的 D3 主架构设计；它只处理 app-scoped 接入下的 contract / API / 验证 / 文档治理，不重开 Phase 2 / 3 / 4 已关闭设计
 
 ---
@@ -11,16 +11,16 @@
 
 ### 1.1 Current closure update
 
-截至当前 browser alpha close-out，这条治理线已经完成了用于解锁 browser alpha 的最小收口：
+截至 stable release close-out，这条治理线已经从 browser alpha 保守口径推进到明确 support matrix：
 
-1. browser root-package default path 继续作为主推荐 contract
-2. node path 继续保留，但 node runtime readiness 仍单独挂账
-3. 非 browser/node 环境能力仍在，但不再默认描述成已经进入对等 app-scoped 一等契约
-4. fine-grained on-demand 能力仍在，但不再描述成已由 root app creator 等价承接
-5. root app creator 的 public typing 已修正为返回 `IApp`
-6. external-stage consumer-side app-scoped 验证已通过；普通用户主链仍应推进 app-provider-first / VChart-created-stage
+1. browser / node / wx / lynx / harmony 进入 stable Tier 1 app-scoped public contract。
+2. taro / feishu / tt 保留 app-scoped public creator 与代码级装配路径，但在真实端 smoke 前保持 Tier 2。
+3. native 不进入 stable default contract；当前按 Tier 3 / unsupported 处理。
+4. fine-grained on-demand 能力仍在，但不描述成已由 root app creator 等价承接。
+5. root app creator 的 public typing 已修正为返回 `IApp`。
+6. external-stage consumer-side app-scoped 验证已通过；普通用户主链仍应推进 app-provider-first / VChart-created-stage。
 
-后续如果继续治理，应按 [D3_POST_ALPHA_WRAPUP_PLAN.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_POST_ALPHA_WRAPUP_PLAN.md) 中的 P1 support matrix 项推进，不再把它作为 browser alpha gate blocker。
+后续如果继续治理，应聚焦 advanced on-demand assembly surface、taro / feishu / tt 真实端 smoke、以及是否需要更强 runtime isolation；这些不再作为 D3 stable release blocker。
 
 当前已经形成的事实是：
 
@@ -60,16 +60,20 @@
 
 ---
 
-## 3. Conservative contract after browser alpha
+## 3. Stable contract after multi-env verification
 
-在长期 support matrix 和 advanced public surface 最终拍板前，建议继续按下面口径对外说明：
+稳定版按下面口径对外说明：
 
 1. **正式主推荐路径**
    - browser: `@visactor/vrender` + `createBrowserVRenderApp()`
-   - node: `@visactor/vrender` + `createNodeVRenderApp()`，但仍需单独验证真实 node runtime
+   - node: `@visactor/vrender` + `createNodeVRenderApp({ envParams })`
+   - wx: `@visactor/vrender` + `createWxVRenderApp({ envParams })`
+   - lynx: `@visactor/vrender` + `createLynxVRenderApp({ envParams })`
+   - harmony: `@visactor/vrender` + `createHarmonyVRenderApp({ envParams })`
 2. **多环境能力**
-   - 仍然存在
-   - 但除 browser/node 外，当前不要默认描述成已经进入对等 app-scoped 一等契约
+   - `browser` / `node` / `wx` / `lynx` / `harmony` 为 stable Tier 1
+   - `taro` / `feishu` / `tt` 为 Tier 2，代码路径保留，待真实端 smoke 后升级
+   - `native` 不作为 stable default contract
 3. **按需装配能力**
    - 仍然存在
    - 但当前不要默认描述成已经由 root app creator 等价承接
@@ -89,17 +93,32 @@
 
 1. `vrender-core` 仍然保留 `createMiniappApp()`。
 2. `vrender-kits` 仍导出 browser / node / feishu / lynx / taro / wx / tt / harmony 等 env loader。
-3. 但 app-scoped installer surface 当前只有：
+3. app-scoped installer surface 已覆盖：
    - `installBrowserEnvToApp`
    - `installNodeEnvToApp`
-4. `vrender-kits` 的 root installer export 测试当前也只固定了 browser/node 两套 app installer。
-5. 现有 triage 已经记录过实际混用问题：
+   - `installTaroEnvToApp`
+   - `installFeishuEnvToApp`
+   - `installTTEnvToApp`
+   - `installWxEnvToApp`
+   - `installLynxEnvToApp`
+   - `installHarmonyEnvToApp`
+4. 根包已提供对应 public app creators：
+   - `createBrowserVRenderApp`
+   - `createNodeVRenderApp`
+   - `createTaroVRenderApp`
+   - `createFeishuVRenderApp`
+   - `createTTVRenderApp`
+   - `createWxVRenderApp`
+   - `createLynxVRenderApp`
+   - `createHarmonyVRenderApp`
+5. wx / lynx / harmony 已完成真实端 smoke；taro / feishu / tt 保持代码级连接与 Tier 2 限制。
+6. 现有 triage 已经记录过实际混用问题：
    - 在 root app creator 路径中再显式调用 `initBrowserEnv()` / `initFeishuEnv()` / `initAllEnv()`，会打乱 app-scoped browser handler 装配链。
 
 结论：
 
-- 多环境能力没有消失。
-- 但新 public contract 已经天然偏向 browser/node。
+- 多环境能力没有消失，并已在 stable contract 中分层。
+- stable Tier 1 不等于所有历史环境一律一等；未做真实端 smoke 的环境继续保持 Tier 2。
 
 ### 4.2 On-demand side
 
@@ -174,15 +193,15 @@
 
 如果选择 1，才进入下面的实施工作。
 
-### 6.2 If we keep the promise
+### 6.2 Stable support matrix
 
-建议不要笼统承诺“所有历史环境都一等支持”，而应先建立 support matrix：
+不要笼统承诺“所有历史环境都一等支持”。当前 stable support matrix 为：
 
-| Tier | 含义 | 示例 |
+| Tier | 含义 | Envs |
 |------|------|------|
-| Tier 1 | 一等 app-scoped public contract | `browser`, `node` |
-| Tier 2 | 继续支持，但走 advanced/custom assembly | 视维护者拍板而定 |
-| Tier 3 | 仅 legacy / migration sample，不再作为正式推荐 contract | 历史页或未验证环境 |
+| Tier 1 | 一等 app-scoped public contract，已有自动化或真实端 smoke 证据 | `browser`, `node`, `wx`, `lynx`, `harmony` |
+| Tier 2 | public creator 与代码路径保留，真实端 smoke 前不写成一等承诺 | `taro`, `feishu`, `tt` |
+| Tier 3 | 不进入 stable default contract | `native` |
 
 多环境 first-class 支持的最小完成标准：
 
@@ -216,12 +235,12 @@
 
 ### 6.4 Exit criteria
 
-只有同时满足下面条件，才能说 multi-env first-class support 治理完成：
+对 stable release 而言，multi-env first-class support 治理已完成到可发布口径：
 
 1. 已拍板 support matrix
 2. 已拍板 public surface
 3. 已补齐对应类型面
-4. 已补齐对应验证基线
+4. 已补齐 Tier 1 对应验证基线
 5. adoption / coordination / follow-up 文档口径一致
 
 ---
@@ -296,15 +315,13 @@
 
 建议按下面顺序推进，不要并行无边界扩张：
 
-1. **先补文档**
-   - 把当前 temporary contract 写清楚
-2. **再拍板 multi-env support matrix**
-   - 不要先写实现再决定承诺边界
-3. **再拍板 on-demand granularity**
+1. **multi-env support matrix 已拍板**
+   - stable Tier 1 / Tier 2 / Tier 3 见上文
+2. **后续再拍板 on-demand granularity**
    - 不要在 public API 上无差别扩 surface
-4. **先 harden default path**
-   - 保证 browser/node default path 不继续被 optional capability 污染
-5. **最后才补 selected advanced public surface**
+3. **继续 harden default path**
+   - 保证 stable Tier 1 default path 不继续被 optional capability 污染
+4. **最后才补 selected advanced public surface**
    - 只对被正式承诺保留的能力补齐 app-scoped public contract
 
 ---
@@ -331,17 +348,23 @@
 
 ## 10. Current verdict
 
-当前统一口径保持为：
+当前统一口径为：
 
-1. browser root-package default path 继续作为主推荐 contract
-2. node path 继续保留，但仍需单独验证真实 runtime readiness
-3. 非 browser/node 环境：
-   - 能力仍在
-   - 但不要默认描述成已经进入对等 app-scoped 一等契约
+1. stable Tier 1 root-package default path 继续作为主推荐 contract：
+   - `browser`
+   - `node`
+   - `wx`
+   - `lynx`
+   - `harmony`
+2. Tier 2 环境保留 public creator 与代码路径，但真实端 smoke 前不写成一等承诺：
+   - `taro`
+   - `feishu`
+   - `tt`
+3. `native` 不进入 stable default contract
 4. 细粒度按需装配：
    - 能力仍在
    - 但不要默认描述成已经由 root app creator 等价承接
 5. 同进程混合多环境隔离：
    - 在没有专项验证前，不做“已经完全隔离”的承诺
 
-这条口径是 post-alpha 前的保守 contract，不是永久裁决。长期 support matrix 与 advanced public surface 仍需单独收口。
+这条口径是 stable release contract。advanced public surface 与更强 runtime isolation 后续仍可单独治理，但不再阻塞 D3 stable release。

@@ -14,17 +14,7 @@ class TestLabel extends LabelBase<any> {
 }
 
 class TestRectLabel extends RectLabel {
-  protected getGraphicBounds(graphic?: any, point: any = {}): any {
-    if (graphic?.type === 'rect') {
-      const { x = 0, y = 0, x1, y1, width = 0, height = 0 } = graphic.attribute;
-      return {
-        x1: x,
-        y1: y,
-        x2: x1 ?? x + width,
-        y2: y1 ?? y + height
-      };
-    }
-
+  protected getGraphicBounds(graphic?: any, point: any = {}, position?: string): any {
     if (graphic?.type === 'text') {
       const { x = 0, y = 0 } = graphic.attribute;
       return {
@@ -33,6 +23,10 @@ class TestRectLabel extends RectLabel {
         x2: x + 20,
         y2: y + 10
       };
+    }
+
+    if (graphic) {
+      return super.getGraphicBounds(graphic, point, position);
     }
 
     const { x = 0, y = 0, x1 = x, y1 = y } = point;
@@ -60,6 +54,13 @@ function createGraphicServiceStub() {
     beforeUpdateAABBBounds: jest.fn(),
     afterUpdateAABBBounds: jest.fn(),
     clearAABBBounds: jest.fn(),
+    updateTempAABBBounds: jest.fn((aabbBounds: any) => ({
+      tb1: aabbBounds,
+      tb2: aabbBounds
+    })),
+    transformAABBBounds: jest.fn((attribute: any, aabbBounds: any) => {
+      aabbBounds.translate(attribute.x ?? 0, attribute.y ?? 0);
+    }),
     validCheck: jest.fn(() => true)
   };
 }
@@ -181,6 +182,7 @@ describe('Label update animation static truth', () => {
       y: 3
     };
     const rect = createRect(oldAttrs);
+    const initAttributesSpy = jest.spyOn(rect as any, 'initAttributes');
     const label = new TestRectLabel({
       type: 'rect',
       data: [{ id: 'China_share_global_co2', text: '31.953' }],
@@ -210,6 +212,7 @@ describe('Label update animation static truth', () => {
     const labelContent = [...((label as any)._graphicToText as Map<any, any>).values()][0];
     expect(labelContent.text.attribute.x).toBeCloseTo(finalAttrs.x + finalAttrs.width / 2, 6);
 
+    expect(initAttributesSpy).not.toHaveBeenCalled();
     expect(rect.attribute.x).toBeCloseTo(oldAttrs.x, 6);
     expect(rect.attribute.y).toBeCloseTo(oldAttrs.y, 6);
     expect((rect as any).baseAttributes.x).toBeCloseTo(oldAttrs.x, 6);

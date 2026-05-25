@@ -1,6 +1,5 @@
 import '../../npm-preload';
 import {
-  application,
   createArc,
   createArea,
   createCircle,
@@ -62,9 +61,6 @@ import {
   Tooltip,
   WeatherBox
 } from '@visactor/vrender';
-
-const WX_CANVAS_IDS = ['vrender-main', 'vrender-buffer-0', 'vrender-buffer-1', 'vrender-buffer-2'];
-const WX_FREE_CANVAS_START = 1;
 
 const SCENES = [
   { key: 'primitives', label: '基础图元' },
@@ -270,18 +266,11 @@ Page({
       this.canvasHeight = height;
       this.setData({ status: `canvas ${Math.round(width)}x${Math.round(height)} @${dpr}` });
 
-      const envParams = {
-        domref: { width, height },
-        canvasIdLists: WX_CANVAS_IDS,
-        freeCanvasIdx: WX_FREE_CANVAS_START,
-        component: this,
-        forceUpdate: true
-      };
-
       this.app = createWxVRenderApp({
-        envParams: envParams as any
+        envParams: {
+          pixelRatio: dpr
+        }
       });
-      await this.waitForWxCanvasPool(WX_CANVAS_IDS);
 
       this.stage = this.app.createStage({
         canvas,
@@ -322,18 +311,6 @@ Page({
           resolve({ canvas, width, height, dpr });
         });
     });
-  },
-
-  async waitForWxCanvasPool(canvasIds: string[]): Promise<void> {
-    for (let i = 0; i < 30; i++) {
-      const missingIds = canvasIds.filter(id => !(application.global as any)?.getElementById?.(id));
-      if (!missingIds.length) {
-        return;
-      }
-      await new Promise(resolve => setTimeout(resolve, 16));
-    }
-
-    throw new Error(`VRender wx canvas pool is not ready: ${canvasIds.join(', ')}`);
   },
 
   switchScene(event: any) {

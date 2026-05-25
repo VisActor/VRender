@@ -241,7 +241,7 @@ VRender 支持在浏览器、小程序和 Node.js 环境下运行，同时也支
 ### 注册&使用环境
 
 ```ts
-import { vglobal, loadTTEnv, initTaroEnv, initWxEnv, initNodeEnv, initHarmonyEnv, container } from '@visactor/vrender';
+import { vglobal, createStage, loadTTEnv, initTaroEnv, initWxEnv, initNodeEnv, initHarmonyEnv, container } from '@visactor/vrender';
 const CanvasPkg = require('canvas');
 
 // 根据自己产品的环境，注册相关环境的逻辑
@@ -254,12 +254,21 @@ initFeishuEnv();
 
 // 注册后，就可以调用setEnv，使用对应的环境了
 vglobal.setEnv('node', CanvasPkg);
-// 小程序需要传递的内容会多一些
+// 小程序 app 级参数只放环境级能力，例如像素比或可复用的 canvasFactory
 vglobal.setEnv('feishu', {
-  domref, // 容器节点的引用，用于获取宽高
   force: true,
-  canvasIdLists, // 可用的canvas id列表，小程序无法动态创建canvas，需要传递一个可用的canvas id列表
-  freeCanvasIdx: 0 // 有时候除了绘图的canvas，会额外需要多份canvas，这里传入可以额外使用的canvas，对应canvasIdLists的下标
+  pixelRatio,
+  canvasFactory: ({ id, width, height, dpr }) => {
+    // 返回当前宿主可绘制的 Canvas-like 对象；该能力必须对同一个 app 下任意 Stage 有效
+  }
+});
+
+// 具体 canvas id / 宽高 / dpr 属于 Stage 创建参数
+const stage = createStage({
+  canvas: 'chart-canvas',
+  width,
+  height,
+  dpr: pixelRatio
 });
 ```
 

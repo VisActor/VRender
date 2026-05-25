@@ -105,6 +105,14 @@ export class FeishuWindowHandlerContribution
     if (typeof params.canvas === 'string') {
       canvas = this.global.getElementById(params.canvas) as HTMLCanvasElement | null;
       if (!canvas) {
+        canvas = this.global.createCanvas({
+          id: params.canvas,
+          width: params.width,
+          height: params.height,
+          dpr: params.dpr
+        }) as HTMLCanvasElement | null;
+      }
+      if (!canvas) {
         throw new Error('canvasId 参数不正确，请确认canvas存在并插入dom');
       }
     } else {

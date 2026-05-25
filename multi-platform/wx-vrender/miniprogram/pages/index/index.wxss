@@ -81,14 +81,6 @@
   height: 760rpx;
 }
 
-.backup-canvas {
-  position: absolute;
-  left: -9999px;
-  top: -9999px;
-  width: 100rpx;
-  height: 100rpx;
-}
-
 .capabilities {
   display: flex;
   flex-wrap: wrap;

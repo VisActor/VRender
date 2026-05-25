@@ -179,7 +179,7 @@ Good `envParams` contents:
 - The node-canvas package in Node.
 - Lynx, Harmony, or other host runtimes.
 - A `canvasFactory` that can create Canvas objects for any Stage under the same app.
-- Mini-app host context that is valid for the whole app or page component.
+- Mini-app host runtime or `canvasFactory` that is valid for the whole app scope.
 
 Do not put the following into `envParams`:
 
@@ -188,6 +188,7 @@ Do not put the following into `envParams`:
 - A dpr override for one concrete Stage.
 - Event state private to one component instance.
 - A Canvas object that is valid for only one Stage.
+- Legacy mini-app fields such as `domref`, `canvasIdLists`, or `freeCanvasIdx`.
 
 Concrete view parameters belong to `app.createStage()`:
 
@@ -216,7 +217,9 @@ In Node, `envParams` are usually the node-canvas package capability. Reuse the `
 
 ### Mini-App / Taro / Feishu / TT / Wx
 
-Mini-app host canvas capabilities are usually tied to the page component lifecycle. Reuse the `App` by page or component instance, and create a separate `Stage` for each canvas view. If the host needs a canvas pool, that pool is an environment capability and must be valid for all consumers sharing the same `App`.
+Mini-app host canvas capabilities are usually tied to the page component lifecycle. Reuse the `App` by page or component instance, and create a separate `Stage` for each canvas view. Concrete Canvas nodes or canvas ids, width, height, and dpr belong to `app.createStage()`.
+
+Legacy mini-app fields such as `domref`, `canvasIdLists`, and `freeCanvasIdx` are no longer app-level parameters. On wx-like hosts, prefer passing the native Canvas node directly to the Stage when available. If the integration can only pass a string id, provide a `canvasFactory` or host runtime that is globally valid for the shared `App`, so VRender can lazily create Canvas objects from `{ id, width, height, dpr }` during Stage/Layer creation.
 
 ### Lynx
 

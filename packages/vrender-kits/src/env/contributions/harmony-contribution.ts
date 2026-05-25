@@ -27,10 +27,6 @@ type HarmonyRuntime = Partial<{
 }>;
 
 type HarmonyEnvParams = {
-  domref?: any;
-  canvasIdLists?: string[];
-  freeCanvasIdx?: number;
-  offscreen?: boolean;
   pixelRatio?: number;
   harmony?: HarmonyRuntime;
   runtime?: HarmonyRuntime;
@@ -94,13 +90,11 @@ function getHarmonyPixelRatio(params?: HarmonyEnvParams): number {
   return params?.pixelRatio ?? 1;
 }
 
-function getCanvasSize(domref: any, width?: number, height?: number) {
-  const resolvedWidth = width ?? domref?.width;
-  const resolvedHeight = height ?? domref?.height;
-  if (!isValidCoordinate(resolvedWidth) || !isValidCoordinate(resolvedHeight)) {
+function getCanvasSize(width?: number, height?: number) {
+  if (!isValidCoordinate(width) || !isValidCoordinate(height)) {
     throw new Error(HARMONY_CANVAS_SIZE_ERROR);
   }
-  return { width: resolvedWidth, height: resolvedHeight };
+  return { width, height };
 }
 
 function getGlobalOffscreenCanvasCtor() {
@@ -180,36 +174,6 @@ function createHarmonyNativeCanvas(
   throw new Error(HARMONY_CANVAS_BRIDGE_ERROR);
 }
 
-function makeUpCanvas(
-  params: HarmonyEnvParams = {},
-  canvasMap: Map<string, ILynxCanvas>,
-  freeCanvasList: ILynxCanvas[]
-) {
-  const runtime = getHarmonyRuntime(params);
-  const { domref, canvasIdLists = [], freeCanvasIdx = 0 } = params;
-  const offscreen = !!params.offscreen;
-  const dpr = getHarmonyPixelRatio(params);
-
-  canvasIdLists.forEach((id, i) => {
-    const size = getCanvasSize(domref);
-    const nativeCanvas = createHarmonyNativeCanvas(
-      String(id),
-      size.width,
-      size.height,
-      dpr,
-      offscreen,
-      params,
-      runtime
-    );
-    const canvas = wrapHarmonyNativeCanvas(nativeCanvas, String(id), size.width, size.height, dpr);
-
-    canvasMap.set(String(id), canvas);
-    if (i > freeCanvasIdx) {
-      freeCanvasList.push(canvas);
-    }
-  });
-}
-
 export class HarmonyEnvContribution extends BaseEnvContribution implements IEnvContribution {
   type: EnvType = 'harmony';
   supportEvent: boolean = true;
@@ -241,7 +205,6 @@ export class HarmonyEnvContribution extends BaseEnvContribution implements IEnvC
       service.setActiveEnvContribution(this);
       this.harmonyEnvParams = params;
       this.harmonyRuntime = getHarmonyRuntime(params);
-      makeUpCanvas(params, this.canvasMap, this.freeCanvasList);
 
       // loadFeishuContributions();
     }
@@ -301,7 +264,7 @@ export class HarmonyEnvContribution extends BaseEnvContribution implements IEnvC
     const envParams = this.harmonyEnvParams ?? {};
     const runtime = getHarmonyRuntime(envParams);
     const dpr = params.dpr ?? getHarmonyPixelRatio(envParams);
-    const size = getCanvasSize(envParams.domref, params.width, params.height);
+    const size = getCanvasSize(params.width, params.height);
 
     if (params.id != null) {
       const id = String(params.id);

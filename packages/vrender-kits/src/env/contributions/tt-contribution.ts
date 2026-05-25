@@ -8,102 +8,37 @@ import type {
   IGlobal,
   ITTCanvas
 } from '@visactor/vrender-core';
+import {
+  createCanvasWithFactory,
+  getMiniAppCanvasOptions,
+  type MiniAppCanvasEnvParams,
+  wrapMiniAppContextCanvas
+} from './miniapp-canvas';
 
 declare const tt: {
-  getSystemInfoSync: () => { pixelRatio: number };
-  createSelectorQuery: () => any;
+  getSystemInfoSync?: () => { pixelRatio: number };
+  createCanvasContext?: (id: string) => any;
 };
 
-// 飞书小程序canvas的wrap
-async function makeUpCanvas(
-  domref: any,
-  canvasIdLists: string[],
-  canvasMap: Map<string, ITTCanvas>,
-  freeCanvasIdx: number,
-  freeCanvasList: ITTCanvas[],
-  component: any
-) {
-  const dpr = tt.getSystemInfoSync().pixelRatio;
+type TTEnvParams = MiniAppCanvasEnvParams & {
+  tt?: typeof tt;
+  runtime?: typeof tt;
+};
 
-  for (let i = 0; i < canvasIdLists.length; i++) {
-    const id = canvasIdLists[i];
-    // if (canvasMap.has(id)) {
-    //   continue;
-    // }
-    await new Promise(resolve => {
-      let data = tt.createSelectorQuery();
-      if (component) {
-        data = data.in(component);
-      }
-      // @ts-ignore
-      data
-        .select(`#${id}`) // 在 WXML 中填入的 id
-        .node()
-        .exec((res: any) => {
-          const canvas = res[0].node;
-          const width = canvas.width;
-          const height = canvas.height;
-          canvas.width = width * dpr;
-          canvas.height = height * dpr;
-          canvasMap.set(id, canvas);
-          if (i >= freeCanvasIdx) {
-            freeCanvasList.push(canvas);
-          }
-          resolve(null);
-        });
-    });
+const TT_CANVAS_BRIDGE_ERROR =
+  'TT canvas bridge is unavailable. VRender tt env requires envParams.canvasFactory, ' +
+  'a Stage canvas object, or a tt runtime that exposes createCanvasContext(id).';
+
+function getTTRuntime(params?: TTEnvParams): any {
+  try {
+    return params?.tt ?? params?.runtime ?? (typeof tt !== 'undefined' ? tt : undefined);
+  } catch {
+    return params?.tt ?? params?.runtime;
   }
+}
 
-  // canvasIdLists.forEach((id, i) => {
-  //   const ctx = wx.createCanvasContext(id);
-  //   // TODO: 这里是一个临时方案，向 ctx 内部构造一个 canvas，传递宽高
-  //   ctx.canvas = {
-  //     width: domref.width * dpr,
-  //     height: domref.height * dpr
-  //   };
-
-  //   // 放到内容里
-  //   // // TODO: 这里是一个临时方案，兼容 createCircularGradient 方法
-  //   // ctx.createRadialGradient = (...cc) => ctx.createCircularGradient(...cc);
-
-  //   // // 封装 getImageData 为 promise
-  //   // ctx.getImageData = (x, y, width, height) =>
-  //   //   new Promise((resolve, reject) => {
-  //   //     try {
-  //   //       tt.canvasGetImageData({
-  //   //         canvasId: item.id,
-  //   //         x,
-  //   //         y,
-  //   //         width,
-  //   //         height,
-  //   //         success(res) {
-  //   //           resolve(res);
-  //   //         },
-  //   //       });
-  //   //     } catch (err) {
-  //   //       reject(err);
-  //   //     }
-  //   //   });
-
-  //   const canvas = {
-  //     width: domref.width,
-  //     height: domref.height,
-  //     offsetWidth: domref.width,
-  //     offsetHeight: domref.height,
-  //     id: id ?? '',
-  //     getContext: () => ctx,
-  //     // 构造 getBoundingClientRect 方法
-  //     getBoundingClientRect: () => ({
-  //       height: domref.height,
-  //       width: domref.width
-  //     })
-  //   };
-
-  //   canvasMap.set(id, canvas);
-  //   if (i >= freeCanvasIdx) {
-  //     freeCanvasList.push(canvas);
-  //   }
-  // });
+function getTTPixelRatio(params?: TTEnvParams, runtime: any = getTTRuntime(params)): number {
+  return params?.pixelRatio ?? runtime?.getSystemInfoSync?.()?.pixelRatio ?? 1;
 }
 
 export class TTEnvContribution extends BaseEnvContribution implements IEnvContribution {
@@ -111,9 +46,7 @@ export class TTEnvContribution extends BaseEnvContribution implements IEnvContri
   supportEvent: boolean = true;
   // 所有添加进来的canvas
   canvasMap: Map<string, ITTCanvas> = new Map();
-  // 所有可用的canvasList
-  freeCanvasList: ITTCanvas[] = [];
-  canvasIdx: number = 0;
+  private ttEnvParams: TTEnvParams = {};
 
   constructor() {
     super();
@@ -128,21 +61,11 @@ export class TTEnvContribution extends BaseEnvContribution implements IEnvContri
     this.applyStyles = true;
   }
 
-  // TODO：VGrammar在小程序环境会重复调用setEnv传入canvas，所以每次configure并不会释放
-  // 这里等待后续和VGrammar沟通
-  configure(service: IGlobal, params: { domref: any; canvasIdLists: string[]; freeCanvasIdx: number; component: any }) {
+  configure(service: IGlobal, params: TTEnvParams = {}) {
     if (service.env === this.type) {
       service.setActiveEnvContribution(this);
-      return makeUpCanvas(
-        params.domref,
-        params.canvasIdLists,
-        this.canvasMap,
-        params.freeCanvasIdx,
-        this.freeCanvasList,
-        params.component
-      ).then(() => {
-        // loadFeishuContributions();
-      });
+      this.ttEnvParams = params;
+      // loadFeishuContributions();
     }
   }
 
@@ -165,9 +88,22 @@ export class TTEnvContribution extends BaseEnvContribution implements IEnvContri
   }
 
   createCanvas(params: ICreateCanvasParams): ITTCanvas {
-    const result = this.freeCanvasList[this.canvasIdx] || this.freeCanvasList[this.freeCanvasList.length - 1];
-    this.canvasIdx++;
-    return result;
+    const envParams = this.ttEnvParams;
+    const runtime = getTTRuntime(envParams);
+    const dpr = params.dpr ?? getTTPixelRatio(envParams, runtime);
+    const factoryCanvas = createCanvasWithFactory(params, dpr, this.canvasMap, envParams.canvasFactory);
+    if (factoryCanvas) {
+      return factoryCanvas;
+    }
+
+    const options = getMiniAppCanvasOptions(params, dpr, false);
+    if (options.id == null || typeof runtime?.createCanvasContext !== 'function') {
+      throw new Error(TT_CANVAS_BRIDGE_ERROR);
+    }
+
+    const canvas = wrapMiniAppContextCanvas(runtime.createCanvasContext(options.id), options);
+    this.canvasMap.set(options.id, canvas);
+    return canvas;
   }
 
   createOffscreenCanvas(params: ICreateCanvasParams) {
@@ -179,7 +115,7 @@ export class TTEnvContribution extends BaseEnvContribution implements IEnvContri
   }
 
   getDevicePixelRatio(): number {
-    return tt.getSystemInfoSync().pixelRatio;
+    return getTTPixelRatio(this.ttEnvParams);
   }
 
   getRequestAnimationFrame(): (callback: FrameRequestCallback) => number {

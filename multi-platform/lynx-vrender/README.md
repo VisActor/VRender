@@ -203,7 +203,7 @@ http://10.3.134.196:3002/main/template.js
 - 测试页的 canvas 覆盖层同时转发普通 `bindtouch*`、`global-bindtouchmove/end/cancel`、`bindmouse*` 与 `global-bindmousemove/up`。Lynx PC/模拟器鼠标事件会合成为 VRender touch 事件，避免鼠标拖动只触发 `tap` 而没有 `touchmove`。
 - `createLynxVRenderApp({ envParams })` 只应承载 app scope 内全局有效的能力，例如模块作用域 `lynx` runtime、`pixelRatio` 或可为该 app 下任意 Canvas name 创建 native canvas 的 `canvasFactory`。具体 Canvas name/id 和尺寸由 Stage 或 Layer 创建时传入。
 - `acquireSharedVRenderApp()` 的相同 `env + key` 会复用第一个创建出来的 app，后续调用不会合并或校验 `envParams`。接入层需要保证同一个 key 下的 `lynx` runtime / `canvasFactory` 确实是全局能力；VChart、VTable 等上层库各自创建自己的 Stage 即可。
-- 旧的 `envParams.domref` / `canvasIdLists` / `freeCanvasIdx` 仍保留兼容，但新接入不应把主 Canvas view 绑定放在 app 初始化里。
+- `envParams.domref` / `canvasIdLists` / `freeCanvasIdx` 这类 Stage 级绑定不再属于 app 初始化参数；新接入必须把具体 Canvas name/id 和尺寸放到 Stage/Layer 创建路径。
 - VRender Lynx env 会在 Stage/Layer 需要 Canvas 时按以下顺序创建 Canvas element：
   - `envParams.canvasFactory({ id, width, height, dpr, offscreen })`，该 factory 必须对同一个 app scope 下的所有使用者全局有效
   - `lynx.krypton.createCanvas(name)`，该路径对应当前 Krypton `<canvas-ng name="...">` 绑定方式

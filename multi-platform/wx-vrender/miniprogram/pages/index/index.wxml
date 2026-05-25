@@ -29,9 +29,6 @@
       bindtouchend="forwardEvent"
       bindtouchcancel="forwardEvent"
     ></canvas>
-    <canvas id="vrender-buffer-0" type="2d" class="backup-canvas"></canvas>
-    <canvas id="vrender-buffer-1" type="2d" class="backup-canvas"></canvas>
-    <canvas id="vrender-buffer-2" type="2d" class="backup-canvas"></canvas>
   </view>
   <view class="capabilities">
     <text wx:for="{{capabilityChips}}" wx:key="*this" class="capability">{{item}}</text>

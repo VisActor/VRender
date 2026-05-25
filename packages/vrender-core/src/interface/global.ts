@@ -141,22 +141,14 @@ export interface IEnvContribution
 }
 
 export type IMiniAppEnvParams = {
-  /** dom 容器对象 */
-  domref?: Dict<any>;
   /**
    * 强行设置env，如果env重复设置也设置
    */
   force?: boolean;
-  /**
-   * 可用的canvas列表
-   */
-  canvasIdLists?: (string | number)[];
-  /**
-   * 表示可以自由使用的canvas索引
-   */
-  freeCanvasIdx?: string | number;
   /** taro 环境使用 */
   taro?: any;
+  /** app 级 canvas 工厂，必须能为该 app 下任意 stage canvas 参数创建宿主 canvas */
+  canvasFactory?: (options: { id?: string; width: number; height: number; dpr: number; offscreen: boolean }) => any;
   pixelRatio?: number;
   [key: string]: any;
 };

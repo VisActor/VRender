@@ -53,10 +53,6 @@ type LynxCanvasFactoryOptions = {
 type LynxCanvasFactory = (options: LynxCanvasFactoryOptions) => any;
 
 type LynxEnvParams = {
-  domref?: any;
-  canvasIdLists?: string[];
-  freeCanvasIdx?: number;
-  offscreen?: boolean;
   pixelRatio?: number;
   lynx?: LynxRuntime;
   runtime?: LynxRuntime;
@@ -177,13 +173,11 @@ function createBoundLynxCanvas(id: string, runtime?: LynxRuntime) {
   return null;
 }
 
-function getCanvasSize(domref: any, width?: number, height?: number) {
-  const resolvedWidth = width ?? domref?.width;
-  const resolvedHeight = height ?? domref?.height;
-  if (!isValidCoordinate(resolvedWidth) || !isValidCoordinate(resolvedHeight)) {
+function getCanvasSize(width?: number, height?: number) {
+  if (!isValidCoordinate(width) || !isValidCoordinate(height)) {
     throw new Error(LYNX_CANVAS_SIZE_ERROR);
   }
-  return { width: resolvedWidth, height: resolvedHeight };
+  return { width, height };
 }
 
 function wrapLynxNativeCanvas(nativeCanvas: any, id: string, width: number, height: number, dpr: number) {
@@ -225,45 +219,6 @@ function createLynxNativeCanvas(
   }
 
   throw new Error(LYNX_CANVAS_BRIDGE_ERROR);
-}
-
-// 飞书小程序canvas的wrap
-function makeUpCanvas(params: LynxEnvParams = {}, canvasMap: Map<string, ILynxCanvas>, freeCanvasList: ILynxCanvas[]) {
-  const runtime = getLynxRuntime(params);
-  const { domref, canvasIdLists = [], freeCanvasIdx = 0 } = params;
-  const offscreen = !!params.offscreen;
-  const dpr = getLynxPixelRatio(params, runtime);
-
-  canvasIdLists.forEach((id, i) => {
-    const size = getCanvasSize(domref);
-    const _canvas = createLynxNativeCanvas(id, size.width, size.height, dpr, offscreen, params, runtime);
-
-    // TODO: 这里是一个临时方案，向 ctx 内部构造一个 canvas，传递宽高
-    // ctx.canvas = {
-    //   width: size.width * dpr,
-    //   height: size.height * dpr
-    // };
-
-    const canvas = wrapLynxNativeCanvas(_canvas, id, size.width, size.height, dpr);
-
-    canvasMap.set(id, canvas);
-    if (i > freeCanvasIdx) {
-      freeCanvasList.push(canvas);
-    }
-  });
-
-  if (!freeCanvasList.length && domref && typeof runtime?.createOffscreenCanvas === 'function') {
-    const size = getCanvasSize(domref);
-    const _canvas = runtime.createOffscreenCanvas();
-    _canvas.width = size.width * dpr;
-    _canvas.height = size.height * dpr;
-    const ctx = _canvas.getContext('2d');
-
-    const id = Math.random().toString();
-    const canvas = new CanvasWrapEnableWH(_canvas, ctx, dpr, size.width, size.height, id);
-    canvasMap.set(id, canvas);
-    freeCanvasList.push(canvas);
-  }
 }
 
 export function createImageElement(
@@ -323,7 +278,6 @@ export class LynxEnvContribution extends BaseEnvContribution implements IEnvCont
       service.setActiveEnvContribution(this);
       this.lynxEnvParams = params;
       this.lynxRuntime = getLynxRuntime(params);
-      makeUpCanvas(params, this.canvasMap, this.freeCanvasList);
 
       // loadFeishuContributions();
     }
@@ -383,7 +337,7 @@ export class LynxEnvContribution extends BaseEnvContribution implements IEnvCont
       const envParams = this.lynxEnvParams ?? {};
       const runtime = getLynxRuntime(envParams);
       const dpr = params.dpr ?? getLynxPixelRatio(envParams, runtime);
-      const size = getCanvasSize(envParams.domref, params.width, params.height);
+      const size = getCanvasSize(params.width, params.height);
       const nativeCanvas = createLynxNativeCanvas(id, size.width, size.height, dpr, false, envParams, runtime);
       const canvas = wrapLynxNativeCanvas(nativeCanvas, id, size.width, size.height, dpr);
       this.canvasMap.set(id, canvas);
@@ -399,7 +353,7 @@ export class LynxEnvContribution extends BaseEnvContribution implements IEnvCont
     const envParams = this.lynxEnvParams ?? {};
     const runtime = getLynxRuntime(envParams);
     const dpr = params.dpr ?? getLynxPixelRatio(envParams, runtime);
-    const size = getCanvasSize(envParams.domref, params.width, params.height);
+    const size = getCanvasSize(params.width, params.height);
     const id = Math.random().toString();
     const nativeCanvas = createLynxNativeCanvas(id, size.width, size.height, dpr, true, envParams, runtime);
     const canvas = wrapLynxNativeCanvas(nativeCanvas, id, size.width, size.height, dpr);

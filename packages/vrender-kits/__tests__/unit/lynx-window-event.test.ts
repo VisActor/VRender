@@ -97,13 +97,17 @@ describe('lynx window event contribution', () => {
       setActiveEnvContribution: jest.fn()
     };
 
+    env.configure(service as any, {
+      pixelRatio: 1,
+      lynx: {}
+    });
+
     expect(() =>
-      env.configure(service as any, {
-        domref: { width: 100, height: 80 },
-        canvasIdLists: ['main'],
-        freeCanvasIdx: 0,
-        pixelRatio: 1,
-        lynx: {}
+      env.createCanvas({
+        id: 'main',
+        width: 100,
+        height: 80,
+        dpr: 1
       })
     ).toThrow(/Lynx canvas bridge is unavailable/);
   });
@@ -120,12 +124,16 @@ describe('lynx window event contribution', () => {
     const canvasFactory = jest.fn(() => nativeCanvas);
 
     env.configure(service as any, {
-      domref: { width: 100, height: 80 },
-      canvasIdLists: ['main'],
-      freeCanvasIdx: 0,
       pixelRatio: 2,
       lynx: {},
       canvasFactory
+    });
+
+    const canvas = env.createCanvas({
+      id: 'main',
+      width: 100,
+      height: 80,
+      dpr: 2
     });
 
     expect(canvasFactory).toHaveBeenCalledWith({
@@ -136,6 +144,7 @@ describe('lynx window event contribution', () => {
       offscreen: false
     });
     expect(nativeCanvas.getContext).toHaveBeenCalledWith('2d');
+    expect((canvas as any).nativeCanvas).toBe(nativeCanvas);
     expect((env.getElementById('main') as any).nativeCanvas).toBe(nativeCanvas);
     expect((env.getElementById('main') as any).width).toBe(200);
     expect((env.getElementById('main') as any).height).toBe(160);
@@ -220,15 +229,19 @@ describe('lynx window event contribution', () => {
     const createCanvasNG = jest.fn(() => nativeCanvas);
 
     env.configure(service as any, {
-      domref: { width: 120, height: 90 },
-      canvasIdLists: ['main'],
-      freeCanvasIdx: 0,
       pixelRatio: 3,
       lynx: {
         krypton: {
           createCanvasNG
         }
       } as any
+    });
+
+    env.createCanvas({
+      id: 'main',
+      width: 120,
+      height: 90,
+      dpr: 3
     });
 
     expect(createCanvasNG).toHaveBeenCalledTimes(1);
@@ -253,9 +266,6 @@ describe('lynx window event contribution', () => {
     const createCanvasNG = jest.fn();
 
     env.configure(service as any, {
-      domref: { width: 120, height: 90 },
-      canvasIdLists: ['main'],
-      freeCanvasIdx: 0,
       pixelRatio: 3,
       lynx: {
         krypton: {
@@ -263,6 +273,13 @@ describe('lynx window event contribution', () => {
           createCanvasNG
         }
       } as any
+    });
+
+    env.createCanvas({
+      id: 'main',
+      width: 120,
+      height: 90,
+      dpr: 3
     });
 
     expect(createCanvas).toHaveBeenCalledTimes(1);
@@ -287,15 +304,19 @@ describe('lynx window event contribution', () => {
     }));
 
     env.configure(service as any, {
-      domref: { width: 100, height: 80 },
-      canvasIdLists: ['main'],
-      freeCanvasIdx: 0,
       pixelRatio: 2,
       lynx: {
         krypton: {
           CanvasElement
         }
       } as any
+    });
+
+    env.createCanvas({
+      id: 'main',
+      width: 100,
+      height: 80,
+      dpr: 2
     });
 
     expect(CanvasElement).toHaveBeenCalledWith('main');

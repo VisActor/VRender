@@ -5,10 +5,14 @@ import type {
   ICreateCanvasParams,
   IEnvContribution,
   IGlobal,
-  IDomRef,
   ITTCanvas
 } from '@visactor/vrender-core';
-import { CanvasWrapDisableWH } from './canvas-wrap';
+import {
+  createCanvasWithFactory,
+  getMiniAppCanvasOptions,
+  type MiniAppCanvasEnvParams,
+  wrapMiniAppContextCanvas
+} from './miniapp-canvas';
 
 interface ITaro {
   createCanvasContext: (id: string) => any;
@@ -22,47 +26,21 @@ interface ITaro {
   }) => any;
 }
 
-function makeUpCanvas(
-  domref: IDomRef,
-  canvasIdLists: string[],
-  canvasMap: Map<string, ITTCanvas>,
-  freeCanvasIdx: number,
-  freeCanvasList: ITTCanvas[],
-  taro: ITaro,
-  dpr: number
-) {
-  canvasIdLists.forEach((id, i) => {
-    const ctx: any = taro.createCanvasContext(id);
-    // TODO: 这里是一个临时方案，向 ctx 内部构造一个 canvas，传递宽高
+type TaroEnvParams = MiniAppCanvasEnvParams & {
+  taro?: ITaro;
+};
 
-    const canvas = new CanvasWrapDisableWH(ctx.canvas || {}, ctx, dpr, domref.width, domref.height, id);
-    ctx.canvas = canvas;
-
-    canvasMap.set(id, canvas);
-    if (i >= freeCanvasIdx) {
-      freeCanvasList.push(canvas);
-    }
-
-    return canvas;
-  });
-}
-
-interface IConfigureParams {
-  domref: any;
-  canvasIdLists: string[];
-  freeCanvasIdx: number;
-  taro: ITaro;
-  pixelRatio: number; // taro需要小程序自己处理pixelRatio
-}
+const TARO_CANVAS_BRIDGE_ERROR =
+  'Taro canvas bridge is unavailable. VRender taro env requires envParams.canvasFactory, ' +
+  'a Stage canvas object, or envParams.taro.createCanvasContext(id).';
 
 export class TaroEnvContribution extends BaseEnvContribution implements IEnvContribution {
   type: EnvType = 'taro';
   supportEvent: boolean = true;
   canvasMap: Map<string, ITTCanvas> = new Map();
-  freeCanvasList: ITTCanvas[] = [];
-  canvasIdx: number = 0;
   taro: ITaro;
-  pixelRatio: number;
+  pixelRatio: number = 1;
+  private taroEnvParams: TaroEnvParams = {};
 
   constructor() {
     super();
@@ -81,7 +59,7 @@ export class TaroEnvContribution extends BaseEnvContribution implements IEnvCont
    * 获取动态canvas的数量，offscreenCanvas或者framebuffer
    */
   getDynamicCanvasCount(): number {
-    return this.freeCanvasList.length;
+    return 0;
   }
 
   /**
@@ -98,22 +76,12 @@ export class TaroEnvContribution extends BaseEnvContribution implements IEnvCont
     return event;
   }
 
-  // TODO：VGrammar在小程序环境会重复调用setEnv传入canvas，所以每次configure并不会释放
-  // 这里等待后续和VGrammar沟通
-  configure(service: IGlobal, params: IConfigureParams) {
+  configure(service: IGlobal, params: TaroEnvParams = {}) {
     if (service.env === this.type) {
       service.setActiveEnvContribution(this);
-      makeUpCanvas(
-        params.domref,
-        params.canvasIdLists,
-        this.canvasMap,
-        params.freeCanvasIdx,
-        this.freeCanvasList,
-        params.taro,
-        params.pixelRatio
-      );
+      this.taroEnvParams = params;
       this.taro = params.taro;
-      this.pixelRatio = params.pixelRatio;
+      this.pixelRatio = params.pixelRatio ?? 1;
 
       // loadTaroContributions();
     }
@@ -133,7 +101,7 @@ export class TaroEnvContribution extends BaseEnvContribution implements IEnvCont
     loadState: 'success' | 'fail';
     data: HTMLImageElement | ImageData | null;
   }> {
-    const _window = window || globalThis;
+    const _window = typeof window !== 'undefined' ? window : globalThis;
     if (_window.DOMParser) {
       const parser = new _window.DOMParser();
       const svg = parser.parseFromString(svgStr, 'image/svg+xml').children[0];
@@ -158,10 +126,21 @@ export class TaroEnvContribution extends BaseEnvContribution implements IEnvCont
   }
 
   createCanvas(params: ICreateCanvasParams): ITTCanvas {
-    // params不生效
-    const result = this.freeCanvasList[this.canvasIdx] || this.freeCanvasList[this.freeCanvasList.length - 1];
-    this.canvasIdx++;
-    return result;
+    const envParams = this.taroEnvParams;
+    const dpr = params.dpr ?? this.getDevicePixelRatio();
+    const factoryCanvas = createCanvasWithFactory(params, dpr, this.canvasMap, envParams.canvasFactory);
+    if (factoryCanvas) {
+      return factoryCanvas;
+    }
+
+    const options = getMiniAppCanvasOptions(params, dpr, false);
+    if (options.id == null || typeof envParams.taro?.createCanvasContext !== 'function') {
+      throw new Error(TARO_CANVAS_BRIDGE_ERROR);
+    }
+
+    const canvas = wrapMiniAppContextCanvas(envParams.taro.createCanvasContext(options.id), options);
+    this.canvasMap.set(options.id, canvas);
+    return canvas;
   }
 
   createOffscreenCanvas(params: ICreateCanvasParams) {

@@ -183,7 +183,8 @@ describe('vrender app-scoped entries', () => {
         const loadEnv = jest.fn();
         const installDefaultGraphicsToApp = jest.fn();
         const installMathPickersToApp = jest.fn();
-        const envParams = { domref: { width: 100, height: 80 }, canvasIdLists: ['main'], freeCanvasIdx: 0 };
+        const canvasFactory = jest.fn();
+        const envParams = { pixelRatio: 2, canvasFactory };
 
         jest.doMock('@visactor/vrender-core', () => ({
           createBrowserApp: jest.fn(),

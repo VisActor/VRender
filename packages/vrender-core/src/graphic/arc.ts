@@ -35,6 +35,7 @@ const ARC_UPDATE_TAG_KEY = [
   'cornerRadius',
   'padAngle',
   'padRadius',
+  'clipRange',
   'cap',
   ...GRAPHIC_UPDATE_TAG_KEY
 ];
@@ -146,15 +147,16 @@ export class Arc extends Graphic<IArcGraphicAttribute> implements IArc {
   getParsedAngle() {
     const arcTheme = this.getGraphicTheme();
     let { startAngle = arcTheme.startAngle, endAngle = arcTheme.endAngle } = this.attribute;
-    const { cap = arcTheme.cap } = this.attribute;
+    const { cap = arcTheme.cap, clipRange = arcTheme.clipRange } = this.attribute;
 
     const sign = endAngle - startAngle >= 0 ? 1 : -1;
-    const deltaAngle = endAngle - startAngle;
+    let deltaAngle = endAngle - startAngle;
+    deltaAngle *= Math.max(0, Math.min(clipRange, 1));
 
     startAngle = clampAngleByRadian(startAngle);
     endAngle = startAngle + deltaAngle;
 
-    if (cap && abs(deltaAngle) < pi2 - epsilon) {
+    if (cap && abs(deltaAngle) > epsilon && abs(deltaAngle) < pi2 - epsilon) {
       let startCap = 1;
       let endCap = 1;
       if ((cap as boolean[]).length) {

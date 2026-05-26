@@ -44,6 +44,13 @@
               }
             },
             {
+              "path": "Upgrade_to_1_1_0",
+              "title": {
+                "zh": "VRender 1.1.0 升级指南",
+                "en": "VRender 1.1.0 Upgrade Guide"
+              }
+            },
+            {
               "path": "Vrender_basic_tutorial",
               "title": {
                 "zh": "VRender基础教程",

@@ -1,8 +1,9 @@
 # D3 Stable Release Notes Draft
 
 > Status: draft for stable release
-> Target version: `0.3.0` or `1.0.0`, pending maintainer decision
+> Target version: `1.1.0`
 > Scope: VRender D3 state / animation / app-scoped runtime stable release
+> User-facing guide: [VRender 1.1.0 升级指南](/Users/bytedance/Documents/GitHub/VRender2/docs/assets/guide/zh/asd/Basic/Upgrade_to_1_1_0.md)
 
 ## Headline
 
@@ -25,6 +26,7 @@ Animation no longer acts as an implicit static truth source. Shared state defini
    - Same-state patch changes can animate from the old resolved patch to the new resolved patch.
    - Sibling update animations no longer let channel-specific custom animations prematurely commit keys owned by another update item.
    - `TagPointsUpdate` can read update targets from standard animation context instead of requiring upper layers to pre-maintain `finalAttribute`.
+   - `scaleIn` supports explicit start scale options: `fromScale`, `fromScaleX`, and `fromScaleY`; the default inferred-start behavior is unchanged.
    - Ordinary appear/fade should set the final static attributes first and use `animate().from(...)` for the starting pose; `animate().to(...)` does not commit the endpoint to `baseAttributes`.
 
 3. Component layout alignment

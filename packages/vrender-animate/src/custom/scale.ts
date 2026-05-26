@@ -4,6 +4,10 @@ import { applyAnimationFrameAttributes, applyAppearStartAttributes } from './tra
 
 export interface IScaleAnimationOptions {
   direction?: 'x' | 'y' | 'xy';
+  fromScale?: number;
+  fromScaleX?: number;
+  fromScaleY?: number;
+  options?: Pick<IScaleAnimationOptions, 'direction' | 'fromScale' | 'fromScaleX' | 'fromScaleY'>;
 }
 
 export class ScaleIn extends ACustomAnimate<Record<string, number>> {
@@ -21,21 +25,28 @@ export class ScaleIn extends ACustomAnimate<Record<string, number>> {
     let to: Record<string, number>;
     const attrs = this.target.getFinalAttribute();
     const fromAttrs = this.target.attribute ?? {};
+    const options = this.params?.options;
+    const direction = this.params?.direction ?? options?.direction;
+    const fromScaleX = this.params?.fromScaleX ?? options?.fromScaleX ?? this.params?.fromScale ?? options?.fromScale;
+    const fromScaleY = this.params?.fromScaleY ?? options?.fromScaleY ?? this.params?.fromScale ?? options?.fromScale;
 
-    switch (this.params?.direction) {
+    switch (direction) {
       case 'x':
-        from = { scaleX: fromAttrs.scaleX ?? 0 };
+        from = { scaleX: fromScaleX ?? fromAttrs.scaleX ?? 0 };
         to = { scaleX: attrs?.scaleX ?? 1 };
         this._updateFunction = this.updateX;
         break;
       case 'y':
-        from = { scaleY: fromAttrs.scaleY ?? 0 };
+        from = { scaleY: fromScaleY ?? fromAttrs.scaleY ?? 0 };
         to = { scaleY: attrs?.scaleY ?? 1 };
         this._updateFunction = this.updateY;
         break;
       case 'xy':
       default:
-        from = { scaleX: fromAttrs.scaleX ?? 0, scaleY: fromAttrs.scaleY ?? 0 };
+        from = {
+          scaleX: fromScaleX ?? fromAttrs.scaleX ?? 0,
+          scaleY: fromScaleY ?? fromAttrs.scaleY ?? 0
+        };
         to = {
           scaleX: attrs?.scaleX ?? 1,
           scaleY: attrs?.scaleY ?? 1

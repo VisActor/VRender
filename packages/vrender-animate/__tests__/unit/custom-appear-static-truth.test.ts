@@ -2,6 +2,7 @@ import { createGlyph, createRect, createRichText, createText } from '@visactor/v
 import { registerAnimate } from '../../src/register';
 import { GrowHeightIn } from '../../src/custom/growHeight';
 import { GrowWidthIn } from '../../src/custom/growWidth';
+import { ScaleIn } from '../../src/custom/scale';
 import { MotionPath } from '../../src/custom/motionPath';
 import { MorphingPath } from '../../src/custom/morphing';
 import { InputText } from '../../src/custom/input-text';
@@ -100,6 +101,100 @@ describe('custom appear static truth', () => {
     expect(rect.getFinalAttribute().x).toBe(40);
     expect(rect.getFinalAttribute().x1).toBe(260);
     expect(rect.getFinalAttribute().width).toBe(220);
+  });
+
+  test('ScaleIn keeps the inferred current scale as the default start frame', () => {
+    const final = {
+      x: 0,
+      y: 0,
+      width: 10,
+      height: 10,
+      scaleX: 2,
+      scaleY: 3,
+      visible: true
+    };
+    const rect = createRect(final);
+    rect.setFinalAttributes(final);
+
+    const animate = rect.animate({ slience: true });
+    animate.play(new ScaleIn(null, null, 1000, 'linear', { controlOptions: {} } as any));
+
+    expect((rect as any).baseAttributes.scaleX).toBe(2);
+    expect((rect as any).baseAttributes.scaleY).toBe(3);
+    expect(rect.attribute.scaleX).toBe(2);
+    expect(rect.attribute.scaleY).toBe(3);
+
+    animate.advance(500);
+
+    expect(rect.attribute.scaleX).toBe(2);
+    expect(rect.attribute.scaleY).toBe(3);
+    expect(rect.getFinalAttribute().scaleX).toBe(2);
+    expect(rect.getFinalAttribute().scaleY).toBe(3);
+  });
+
+  test('ScaleIn fromScale overrides inferred start attrs without polluting static truth', () => {
+    const final = {
+      x: 0,
+      y: 0,
+      width: 10,
+      height: 10,
+      scaleX: 2,
+      scaleY: 3,
+      visible: true
+    };
+    const rect = createRect(final);
+    rect.setFinalAttributes(final);
+
+    const animate = rect.animate({ slience: true });
+    animate.play(new ScaleIn(null, null, 1000, 'linear', { fromScale: 0, controlOptions: {} } as any));
+
+    expect((rect as any).baseAttributes.scaleX).toBe(2);
+    expect((rect as any).baseAttributes.scaleY).toBe(3);
+    expect(rect.attribute.scaleX).toBe(0);
+    expect(rect.attribute.scaleY).toBe(0);
+
+    animate.advance(500);
+
+    expect((rect as any).baseAttributes.scaleX).toBe(2);
+    expect((rect as any).baseAttributes.scaleY).toBe(3);
+    expect(rect.attribute.scaleX).toBeCloseTo(1, 5);
+    expect(rect.attribute.scaleY).toBeCloseTo(1.5, 5);
+
+    animate.advance(500);
+
+    expect((rect as any).baseAttributes.scaleX).toBe(2);
+    expect((rect as any).baseAttributes.scaleY).toBe(3);
+    expect(rect.attribute.scaleX).toBe(2);
+    expect(rect.attribute.scaleY).toBe(3);
+    expect(rect.getFinalAttribute().scaleX).toBe(2);
+    expect(rect.getFinalAttribute().scaleY).toBe(3);
+  });
+
+  test('ScaleIn reads fromScale from animation options', () => {
+    const final = {
+      x: 0,
+      y: 0,
+      width: 10,
+      height: 10,
+      scaleX: 2,
+      scaleY: 3,
+      visible: true
+    };
+    const rect = createRect(final);
+    rect.setFinalAttributes(final);
+
+    const animate = rect.animate({ slience: true });
+    animate.play(new ScaleIn(null, null, 1000, 'linear', { options: { fromScale: 0 }, controlOptions: {} } as any));
+
+    expect(rect.attribute.scaleX).toBe(0);
+    expect(rect.attribute.scaleY).toBe(0);
+
+    animate.advance(500);
+
+    expect(rect.attribute.scaleX).toBeCloseTo(1, 5);
+    expect(rect.attribute.scaleY).toBeCloseTo(1.5, 5);
+    expect((rect as any).baseAttributes.scaleX).toBe(2);
+    expect((rect as any).baseAttributes.scaleY).toBe(3);
   });
 
   test('MotionPath keeps path frames transient and commits the endpoint by default', () => {

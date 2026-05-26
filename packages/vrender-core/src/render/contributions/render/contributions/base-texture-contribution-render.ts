@@ -14,6 +14,18 @@ import type {
 } from '../../../../interface';
 import { pi2 } from '@visactor/vutils';
 
+// 仅这些内置纹理会通过程序绘制 tile，且会受 size/padding/color 影响
+const builtinProceduralTextureTypes = new Set([
+  'circle',
+  'diamond',
+  'rect',
+  'vertical-line',
+  'horizontal-line',
+  'bias-lr',
+  'bias-rl',
+  'grid'
+]);
+
 function formatRatio(ratio: number) {
   if (ratio <= 0.5) {
     return ratio * 4 - 1;
@@ -27,10 +39,10 @@ function drawWave(
   boundsWidth: number,
   boundsHeight: number,
   textureOptions: {
-    fill: string;
-    percent: number;
-    frequency: number;
-    amplitude: number;
+    fill?: string;
+    percent?: number;
+    frequency?: number;
+    amplitude?: number;
     opacity?: number;
     phi?: number;
   },
@@ -69,7 +81,7 @@ function drawWave(
 export class DefaultBaseTextureRenderContribution implements IBaseRenderContribution<IGraphic, IGraphicAttribute> {
   time: BaseRenderContributionTime = BaseRenderContributionTime.afterFillStroke;
   useStyle: boolean = true;
-  textureMap?: Map<string, CanvasPattern>;
+  textureMap?: Map<string | HTMLImageElement | HTMLCanvasElement, CanvasPattern>;
   order: number = 10;
   _tempSymbolGraphic: ISymbol | null = null;
 
@@ -236,7 +248,7 @@ export class DefaultBaseTextureRenderContribution implements IBaseRenderContribu
   }
 
   protected drawTexture(
-    texture: string,
+    texture: string | HTMLImageElement | HTMLCanvasElement,
     graphic: IGraphic,
     context: IContext2d,
     x: number,
@@ -247,38 +259,58 @@ export class DefaultBaseTextureRenderContribution implements IBaseRenderContribu
     texturePadding: number
   ) {
     const { textureRatio = graphicAttribute.textureRatio, textureOptions = null } = graphic.attribute;
-    let pattern: CanvasPattern = this.textureMap.get(texture);
+    let pattern: CanvasPattern = null;
+    const textureRadius = textureOptions?.radius ?? 0;
+    const patternKey = this.getPatternCacheKey(
+      texture,
+      textureSize,
+      texturePadding,
+      textureColor,
+      context.dpr,
+      textureRadius
+    );
+    if (patternKey !== null) {
+      pattern = this.textureMap.get(patternKey);
+    }
 
     if (!pattern) {
-      switch (texture) {
-        case 'circle':
-          pattern = this.createCirclePattern(textureSize, texturePadding, textureColor, context);
-          break;
-        case 'diamond':
-          pattern = this.createDiamondPattern(textureSize, texturePadding, textureColor, context);
-          break;
-        case 'rect':
-          pattern = this.createRectPattern(textureSize, texturePadding, textureColor, context);
-          break;
-        case 'vertical-line':
-          pattern = this.createVerticalLinePattern(textureSize, texturePadding, textureColor, context);
-          break;
-        case 'horizontal-line':
-          pattern = this.createHorizontalLinePattern(textureSize, texturePadding, textureColor, context);
-          break;
-        case 'bias-lr':
-          pattern = this.createBiasLRLinePattern(textureSize, texturePadding, textureColor, context);
-          break;
-        case 'bias-rl':
-          pattern = this.createBiasRLLinePattern(textureSize, texturePadding, textureColor, context);
-          break;
-        case 'grid':
-          pattern = this.createGridPattern(textureSize, texturePadding, textureColor, context);
-          break;
+      if (typeof texture === 'string') {
+        switch (texture) {
+          case 'circle':
+            pattern = this.createCirclePattern(textureSize, texturePadding, textureColor, context);
+            break;
+          case 'diamond':
+            pattern = this.createDiamondPattern(textureSize, texturePadding, textureColor, context);
+            break;
+          case 'rect':
+            pattern = this.createRectPattern(textureSize, texturePadding, textureColor, context);
+            break;
+          case 'vertical-line':
+            pattern = this.createVerticalLinePattern(textureSize, texturePadding, textureColor, context);
+            break;
+          case 'horizontal-line':
+            pattern = this.createHorizontalLinePattern(textureSize, texturePadding, textureColor, context);
+            break;
+          case 'bias-lr':
+            pattern = this.createBiasLRLinePattern(textureSize, texturePadding, textureColor, context);
+            break;
+          case 'bias-rl':
+            pattern = this.createBiasRLLinePattern(textureSize, texturePadding, textureColor, context);
+            break;
+          case 'grid':
+            pattern = this.createGridPattern(textureSize, texturePadding, textureColor, context);
+            break;
+        }
+      }
+      if (!pattern) {
+        pattern = this.createResourcePattern(texture, graphic, context, texturePadding, textureRadius);
+      }
+      if (pattern && patternKey !== null) {
+        this.textureMap.set(patternKey, pattern);
       }
     }
 
-    if (textureOptions && textureOptions.dynamicTexture) {
+    if (typeof texture === 'string' && textureOptions && textureOptions.dynamicTexture) {
       // 动态纹理
       const { gridConfig = {}, useNewCanvas } = textureOptions;
       const b = graphic.AABBBounds;
@@ -374,6 +406,29 @@ export class DefaultBaseTextureRenderContribution implements IBaseRenderContribu
 
       originalContext.restore();
     } else if (pattern) {
+      if (pattern.setTransform) {
+        const alignToGraphic = !!textureOptions?.alignToGraphic;
+        const alignOffsetX = textureOptions?.alignOffsetX ?? 0;
+        const alignOffsetY = textureOptions?.alignOffsetY ?? 0;
+        let translateX = 0;
+        let translateY = 0;
+        if (alignToGraphic) {
+          // 将 pattern 原点对齐到图形的绘制原点（当前 context 坐标系）
+          const m = context.currentMatrix;
+          const e = m?.e ?? 0;
+          const f = m?.f ?? 0;
+          // 直接在用户坐标系下对齐（包含 context 的平移）
+          const ux = e + x + alignOffsetX;
+          const uy = f + y + alignOffsetY;
+          translateX = ux;
+          translateY = uy;
+        } else if (alignOffsetX || alignOffsetY) {
+          translateX = alignOffsetX;
+          translateY = alignOffsetY;
+        }
+        // pattern 的 transform 使用用户坐标系单位（不再额外乘 dpr）
+        pattern.setTransform(new DOMMatrix([1 / context.dpr, 0, 0, 1 / context.dpr, translateX, translateY]));
+      }
       context.highPerformanceSave();
       context.setCommonStyle(graphic, graphic.attribute, x, y, graphicAttribute);
       context.fillStyle = pattern;
@@ -395,6 +450,90 @@ export class DefaultBaseTextureRenderContribution implements IBaseRenderContribu
       );
       context.restore();
     }
+  }
+
+  protected getPatternCacheKey(
+    texture: string | HTMLImageElement | HTMLCanvasElement,
+    textureSize: number,
+    texturePadding: number,
+    textureColor: string,
+    dpr: number,
+    textureRadius: number
+  ) {
+    if (typeof texture !== 'string') {
+      // 图片纹理在有 padding / 圆角时会生成新的 tile，避免缓存冲突
+      return texturePadding > 0 || textureRadius > 0 ? null : texture;
+    }
+    if (texture === 'wave') {
+      return null;
+    }
+    if (builtinProceduralTextureTypes.has(texture)) {
+      // 内置纹理：纹理参数变化会改变 pattern 内容，使用完整 key
+      return `builtin:${texture}|size:${textureSize}|padding:${texturePadding}|color:${textureColor}|dpr:${dpr}`;
+    }
+    // 资源纹理（url/svg/base64）：size/color 不参与 pattern 生成，避免冗余缓存；
+    // 但 padding/radius 会改变最终 tile，需要保留在 key 中
+    return `resource:${texture}|padding:${texturePadding}|radius:${textureRadius}|dpr:${dpr}`;
+  }
+
+  protected createResourcePattern(
+    texture: string | HTMLImageElement | HTMLCanvasElement,
+    graphic: IGraphic,
+    context: IContext2d,
+    texturePadding: number,
+    textureRadius: number
+  ) {
+    const resource = graphic.resources?.get(texture as any);
+    const data = resource?.state === 'success' ? resource.data : typeof texture === 'object' ? texture : null;
+    if (!data) {
+      return null;
+    }
+    if (texturePadding > 0 || textureRadius > 0) {
+      const w = (data as HTMLImageElement).naturalWidth || (data as HTMLCanvasElement).width;
+      const h = (data as HTMLImageElement).naturalHeight || (data as HTMLCanvasElement).height;
+      if (w > 0 && h > 0) {
+        const tileW = w + texturePadding * 2;
+        const tileH = h + texturePadding * 2;
+        const canvas = canvasAllocate.allocate({ width: tileW, height: tileH, dpr: context.dpr });
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.inuse = true;
+          ctx.clearMatrix();
+          ctx.setTransformForCurrent(true);
+          ctx.clearRect(0, 0, tileW, tileH);
+          if (textureRadius > 0) {
+            // 先裁剪出图案本身的圆角矩形（不包含四周 padding）
+            const r = Math.max(0, Math.min(textureRadius, Math.min(w, h) / 2));
+            const x0 = texturePadding;
+            const y0 = texturePadding;
+            const x1 = x0 + w;
+            const y1 = y0 + h;
+            ctx.beginPath();
+            ctx.moveTo(x0 + r, y0);
+            ctx.lineTo(x1 - r, y0);
+            ctx.quadraticCurveTo(x1, y0, x1, y0 + r);
+            ctx.lineTo(x1, y1 - r);
+            ctx.quadraticCurveTo(x1, y1, x1 - r, y1);
+            ctx.lineTo(x0 + r, y1);
+            ctx.quadraticCurveTo(x0, y1, x0, y1 - r);
+            ctx.lineTo(x0, y0 + r);
+            ctx.quadraticCurveTo(x0, y0, x0 + r, y0);
+            ctx.closePath();
+            ctx.clip();
+          }
+          // 在四周留出 padding 间隙
+          ctx.drawImage(data as any, texturePadding, texturePadding, w, h);
+          const pattern = context.createPattern(canvas.nativeCanvas as any, 'repeat');
+          pattern?.setTransform && pattern.setTransform(new DOMMatrix([1 / context.dpr, 0, 0, 1 / context.dpr, 0, 0]));
+          canvasAllocate.free(canvas);
+          return pattern;
+        }
+        canvasAllocate.free(canvas);
+      }
+    }
+    const pattern = context.createPattern(data as any, 'repeat');
+    pattern?.setTransform && pattern.setTransform(new DOMMatrix([1 / context.dpr, 0, 0, 1 / context.dpr, 0, 0]));
+    return pattern;
   }
 }
 

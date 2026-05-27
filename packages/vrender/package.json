@@ -104,6 +104,10 @@
     },
     "./entries/shared": {
       "types": "./es/entries/shared.d.ts",
+      "browser": {
+        "import": "./es/entries/shared-browser.js",
+        "require": "./cjs/entries/shared-browser.js"
+      },
       "import": "./es/entries/shared.js",
       "require": "./cjs/entries/shared.js"
     },

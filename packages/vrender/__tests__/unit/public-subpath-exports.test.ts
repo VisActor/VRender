@@ -15,6 +15,7 @@ const packagesRoot = path.resolve(packageRoot, '..');
 type ExpectedSubpath = {
   subpath: string;
   source: string;
+  browserSource?: string;
 };
 
 const expectedExports: Record<string, ExpectedSubpath[]> = {
@@ -53,7 +54,7 @@ const expectedExports: Record<string, ExpectedSubpath[]> = {
   ],
   vrender: [
     { subpath: './entries/shared-browser', source: 'src/entries/shared-browser.ts' },
-    { subpath: './entries/shared', source: 'src/entries/shared.ts' },
+    { subpath: './entries/shared', source: 'src/entries/shared.ts', browserSource: 'src/entries/shared-browser.ts' },
     { subpath: './entries/browser', source: 'src/entries/browser.ts' },
     { subpath: './entries/node', source: 'src/entries/node.ts' },
     { subpath: './entries/miniapp', source: 'src/entries/miniapp.ts' }
@@ -102,15 +103,33 @@ describe('published public subpath exports', () => {
     test(`${packageName} exposes stable narrow subpaths`, () => {
       const packageJson = readPackageJson(packageName);
 
-      subpaths.forEach(({ subpath, source }) => {
+      subpaths.forEach(({ subpath, source, browserSource }) => {
         const entry = packageJson.exports?.[subpath];
         const expectedImport = `./es/${source.replace(/^src\//, '').replace(/\.ts$/, '.js')}`;
         const expectedRequire = `./cjs/${source.replace(/^src\//, '').replace(/\.ts$/, '.js')}`;
         const expectedTypes = `./es/${source.replace(/^src\//, '').replace(/\.ts$/, '.d.ts')}`;
+        const expectedBrowserImport = browserSource
+          ? `./es/${browserSource.replace(/^src\//, '').replace(/\.ts$/, '.js')}`
+          : undefined;
+        const expectedBrowserRequire = browserSource
+          ? `./cjs/${browserSource.replace(/^src\//, '').replace(/\.ts$/, '.js')}`
+          : undefined;
 
         expect(fs.existsSync(path.join(packagesRoot, packageName, source))).toBe(true);
+        if (browserSource) {
+          expect(fs.existsSync(path.join(packagesRoot, packageName, browserSource))).toBe(true);
+          expect(Object.keys(entry)).toEqual(['types', 'browser', 'import', 'require']);
+        }
         expect(entry).toEqual({
           types: expectedTypes,
+          ...(browserSource
+            ? {
+                browser: {
+                  import: expectedBrowserImport,
+                  require: expectedBrowserRequire
+                }
+              }
+            : null),
           import: expectedImport,
           require: expectedRequire
         });

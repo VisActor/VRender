@@ -158,6 +158,16 @@
       "import": "./es/installers/app.js",
       "require": "./cjs/installers/app.js"
     },
+    "./installers/browser": {
+      "types": "./es/installers/browser.d.ts",
+      "import": "./es/installers/browser.js",
+      "require": "./cjs/installers/browser.js"
+    },
+    "./installers/graphics": {
+      "types": "./es/installers/graphics.d.ts",
+      "import": "./es/installers/graphics.js",
+      "require": "./cjs/installers/graphics.js"
+    },
     "./jsx/graphicType": {
       "types": "./es/jsx/graphicType.d.ts",
       "import": "./es/jsx/graphicType.js",

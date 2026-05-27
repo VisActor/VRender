@@ -163,10 +163,20 @@
       "import": "./es/installers/browser.js",
       "require": "./cjs/installers/browser.js"
     },
+    "./installers/browser-lite": {
+      "types": "./es/installers/browser-lite.d.ts",
+      "import": "./es/installers/browser-lite.js",
+      "require": "./cjs/installers/browser-lite.js"
+    },
     "./installers/graphics": {
       "types": "./es/installers/graphics.d.ts",
       "import": "./es/installers/graphics.js",
       "require": "./cjs/installers/graphics.js"
+    },
+    "./installers/graphics-lite": {
+      "types": "./es/installers/graphics-lite.d.ts",
+      "import": "./es/installers/graphics-lite.js",
+      "require": "./cjs/installers/graphics-lite.js"
     },
     "./jsx/graphicType": {
       "types": "./es/jsx/graphicType.d.ts",

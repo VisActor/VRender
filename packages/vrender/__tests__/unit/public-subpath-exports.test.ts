@@ -28,7 +28,9 @@ const expectedExports: Record<string, ExpectedSubpath[]> = {
     { subpath: './event/extension', source: 'src/event/extension/index.ts' },
     { subpath: './installers/app', source: 'src/installers/app.ts' },
     { subpath: './installers/browser', source: 'src/installers/browser.ts' },
+    { subpath: './installers/browser-lite', source: 'src/installers/browser-lite.ts' },
     { subpath: './installers/graphics', source: 'src/installers/graphics.ts' },
+    { subpath: './installers/graphics-lite', source: 'src/installers/graphics-lite.ts' },
     { subpath: './tools/dynamicTexture/effect', source: 'src/tools/dynamicTexture/effect.ts' }
   ],
   'vrender-components': [
@@ -54,6 +56,7 @@ const expectedExports: Record<string, ExpectedSubpath[]> = {
   ],
   vrender: [
     { subpath: './entries/shared-browser', source: 'src/entries/shared-browser.ts' },
+    { subpath: './entries/shared-browser-lite', source: 'src/entries/shared-browser-lite.ts' },
     { subpath: './entries/shared', source: 'src/entries/shared.ts', browserSource: 'src/entries/shared-browser.ts' },
     { subpath: './entries/browser', source: 'src/entries/browser.ts' },
     { subpath: './entries/node', source: 'src/entries/node.ts' },

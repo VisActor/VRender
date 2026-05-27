@@ -115,6 +115,11 @@
       "types": "./es/entries/shared-browser.d.ts",
       "import": "./es/entries/shared-browser.js",
       "require": "./cjs/entries/shared-browser.js"
+    },
+    "./entries/shared-browser-lite": {
+      "types": "./es/entries/shared-browser-lite.d.ts",
+      "import": "./es/entries/shared-browser-lite.js",
+      "require": "./cjs/entries/shared-browser-lite.js"
     }
   },
   "publishConfig": {

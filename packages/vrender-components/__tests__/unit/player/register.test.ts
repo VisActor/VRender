@@ -1,7 +1,10 @@
-declare var require: any;
+declare const require: any;
 
-jest.mock('@visactor/vrender-kits', () => ({
-  registerGroup: jest.fn(),
+jest.mock('@visactor/vrender-kits/register/register-group', () => ({
+  registerGroup: jest.fn()
+}));
+
+jest.mock('@visactor/vrender-kits/register/register-symbol', () => ({
   registerSymbol: jest.fn()
 }));
 
@@ -13,7 +16,8 @@ import { loadContinuousPlayerComponent, loadDiscretePlayerComponent } from '../.
 
 describe('player/register', () => {
   test('loadDiscretePlayerComponent and loadContinuousPlayerComponent call base registrations', () => {
-    const { registerGroup, registerSymbol } = require('@visactor/vrender-kits');
+    const { registerGroup } = require('@visactor/vrender-kits/register/register-group');
+    const { registerSymbol } = require('@visactor/vrender-kits/register/register-symbol');
     const { loadSliderComponent } = require('../../../src/slider/register');
 
     loadDiscretePlayerComponent();

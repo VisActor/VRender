@@ -6,6 +6,25 @@
   "main": "cjs/index.js",
   "module": "es/index.js",
   "types": "es/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "axis": ["es/axis/index.d.ts"],
+      "axis/*": ["es/axis/*"],
+      "crosshair": ["es/crosshair/index.d.ts"],
+      "crosshair/*": ["es/crosshair/*"],
+      "label": ["es/label/index.d.ts"],
+      "label/*": ["es/label/*"],
+      "legend/*": ["es/legend/*"],
+      "poptip": ["es/poptip/index.d.ts"],
+      "poptip/*": ["es/poptip/*"],
+      "tag": ["es/tag/index.d.ts"],
+      "tag/*": ["es/tag/*"],
+      "tooltip": ["es/tooltip/index.d.ts"],
+      "tooltip/*": ["es/tooltip/*"],
+      "util": ["es/util/index.d.ts"],
+      "util/*": ["es/util/*"]
+    }
+  },
   "files": [
     "cjs",
     "es",
@@ -74,6 +93,171 @@
     ".": {
       "import": "./es/index.js",
       "require": "./cjs/index.js"
+    },
+    "./axis": {
+      "types": "./es/axis/index.d.ts",
+      "import": "./es/axis/index.js",
+      "require": "./cjs/axis/index.js"
+    },
+    "./axis/animate/group-transition": {
+      "types": "./es/axis/animate/group-transition.d.ts",
+      "import": "./es/axis/animate/group-transition.js",
+      "require": "./cjs/axis/animate/group-transition.js"
+    },
+    "./axis/constant": {
+      "types": "./es/axis/constant.d.ts",
+      "import": "./es/axis/constant.js",
+      "require": "./cjs/axis/constant.js"
+    },
+    "./axis/grid/line": {
+      "types": "./es/axis/grid/line.d.ts",
+      "import": "./es/axis/grid/line.js",
+      "require": "./cjs/axis/grid/line.js"
+    },
+    "./axis/line": {
+      "types": "./es/axis/line.d.ts",
+      "import": "./es/axis/line.js",
+      "require": "./cjs/axis/line.js"
+    },
+    "./axis/tick-data": {
+      "types": "./es/axis/tick-data/index.d.ts",
+      "import": "./es/axis/tick-data/index.js",
+      "require": "./cjs/axis/tick-data/index.js"
+    },
+    "./axis/tick-data/continuous": {
+      "types": "./es/axis/tick-data/continuous.d.ts",
+      "import": "./es/axis/tick-data/continuous.js",
+      "require": "./cjs/axis/tick-data/continuous.js"
+    },
+    "./axis/tick-data/discrete/linear": {
+      "types": "./es/axis/tick-data/discrete/linear.d.ts",
+      "import": "./es/axis/tick-data/discrete/linear.js",
+      "require": "./cjs/axis/tick-data/discrete/linear.js"
+    },
+    "./axis/tick-data/util": {
+      "types": "./es/axis/tick-data/util.d.ts",
+      "import": "./es/axis/tick-data/util.js",
+      "require": "./cjs/axis/tick-data/util.js"
+    },
+    "./axis/type": {
+      "types": "./es/axis/type.d.ts",
+      "import": "./es/axis/type.js",
+      "require": "./cjs/axis/type.js"
+    },
+    "./axis/util": {
+      "types": "./es/axis/util.d.ts",
+      "import": "./es/axis/util.js",
+      "require": "./cjs/axis/util.js"
+    },
+    "./crosshair": {
+      "types": "./es/crosshair/index.d.ts",
+      "import": "./es/crosshair/index.js",
+      "require": "./cjs/crosshair/index.js"
+    },
+    "./crosshair/line": {
+      "types": "./es/crosshair/line.d.ts",
+      "import": "./es/crosshair/line.js",
+      "require": "./cjs/crosshair/line.js"
+    },
+    "./crosshair/rect": {
+      "types": "./es/crosshair/rect.d.ts",
+      "import": "./es/crosshair/rect.js",
+      "require": "./cjs/crosshair/rect.js"
+    },
+    "./crosshair/type": {
+      "types": "./es/crosshair/type.d.ts",
+      "import": "./es/crosshair/type.js",
+      "require": "./cjs/crosshair/type.js"
+    },
+    "./label": {
+      "types": "./es/label/index.d.ts",
+      "import": "./es/label/index.js",
+      "require": "./cjs/label/index.js"
+    },
+    "./label/data-label-register": {
+      "types": "./es/label/data-label-register.d.ts",
+      "import": "./es/label/data-label-register.js",
+      "require": "./cjs/label/data-label-register.js"
+    },
+    "./label/dataLabel": {
+      "types": "./es/label/dataLabel.d.ts",
+      "import": "./es/label/dataLabel.js",
+      "require": "./cjs/label/dataLabel.js"
+    },
+    "./label/line": {
+      "types": "./es/label/line.d.ts",
+      "import": "./es/label/line.js",
+      "require": "./cjs/label/line.js"
+    },
+    "./label/symbol": {
+      "types": "./es/label/symbol.d.ts",
+      "import": "./es/label/symbol.js",
+      "require": "./cjs/label/symbol.js"
+    },
+    "./label/type": {
+      "types": "./es/label/type.d.ts",
+      "import": "./es/label/type.js",
+      "require": "./cjs/label/type.js"
+    },
+    "./legend/discrete": {
+      "types": "./es/legend/discrete/index.d.ts",
+      "import": "./es/legend/discrete/index.js",
+      "require": "./cjs/legend/discrete/index.js"
+    },
+    "./legend/discrete/type": {
+      "types": "./es/legend/discrete/type.d.ts",
+      "import": "./es/legend/discrete/type.js",
+      "require": "./cjs/legend/discrete/type.js"
+    },
+    "./legend/constant": {
+      "types": "./es/legend/constant.d.ts",
+      "import": "./es/legend/constant.js",
+      "require": "./cjs/legend/constant.js"
+    },
+    "./poptip": {
+      "types": "./es/poptip/index.d.ts",
+      "import": "./es/poptip/index.js",
+      "require": "./cjs/poptip/index.js"
+    },
+    "./poptip/register": {
+      "types": "./es/poptip/register.d.ts",
+      "import": "./es/poptip/register.js",
+      "require": "./cjs/poptip/register.js"
+    },
+    "./poptip/type": {
+      "types": "./es/poptip/type.d.ts",
+      "import": "./es/poptip/type.js",
+      "require": "./cjs/poptip/type.js"
+    },
+    "./tag": {
+      "types": "./es/tag/index.d.ts",
+      "import": "./es/tag/index.js",
+      "require": "./cjs/tag/index.js"
+    },
+    "./tag/type": {
+      "types": "./es/tag/type.d.ts",
+      "import": "./es/tag/type.js",
+      "require": "./cjs/tag/type.js"
+    },
+    "./tooltip": {
+      "types": "./es/tooltip/index.d.ts",
+      "import": "./es/tooltip/index.js",
+      "require": "./cjs/tooltip/index.js"
+    },
+    "./tooltip/type": {
+      "types": "./es/tooltip/type.d.ts",
+      "import": "./es/tooltip/type.js",
+      "require": "./cjs/tooltip/type.js"
+    },
+    "./util": {
+      "types": "./es/util/index.d.ts",
+      "import": "./es/util/index.js",
+      "require": "./cjs/util/index.js"
+    },
+    "./util/text": {
+      "types": "./es/util/text.d.ts",
+      "import": "./es/util/text.js",
+      "require": "./cjs/util/text.js"
     }
   },
   "publishConfig": {

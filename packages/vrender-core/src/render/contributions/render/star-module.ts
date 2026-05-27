@@ -1,14 +1,14 @@
 import { createContributionProvider } from '../../../common/contribution-provider';
+import { isBindingContextLoaded } from '../../../common/module-guard';
 import { StarRenderContribution } from './contributions/constants';
 import { DefaultCanvasStarRender } from './star-render';
 import { GraphicRender, StarRender } from './symbol';
 
-let loadStarModule = false;
+const loadedStarModuleContexts = new WeakSet<object>();
 export function bindStarRenderModule({ bind }: { bind: any }) {
-  if (loadStarModule) {
+  if (isBindingContextLoaded(loadedStarModuleContexts, bind)) {
     return;
   }
-  loadStarModule = true;
   // Star renderer
   bind(DefaultCanvasStarRender)
     .toDynamicValue(

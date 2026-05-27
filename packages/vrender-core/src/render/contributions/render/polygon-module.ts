@@ -1,16 +1,15 @@
 import { bindContributionProvider } from '../../../common/contribution-provider';
+import { isBindingContextLoaded } from '../../../common/module-guard';
 import { DefaultBaseInteractiveRenderContribution } from './contributions';
-import { PathRenderContribution, PolygonRenderContribution } from './contributions/constants';
-import { DefaultCanvasPathRender } from './path-render';
+import { PolygonRenderContribution } from './contributions/constants';
 import { DefaultCanvasPolygonRender } from './polygon-render';
-import { GraphicRender, PathRender, PolygonRender } from './symbol';
+import { GraphicRender, PolygonRender } from './symbol';
 
-let loadPolygonModule = false;
+const loadedPolygonModuleContexts = new WeakSet<object>();
 export function bindPolygonRenderModule({ bind }: { bind: any }) {
-  if (loadPolygonModule) {
+  if (isBindingContextLoaded(loadedPolygonModuleContexts, bind)) {
     return;
   }
-  loadPolygonModule = true;
   // polygon渲染器
   bind(PolygonRender).to(DefaultCanvasPolygonRender).inSingletonScope();
   bind(GraphicRender).toService(PolygonRender);

@@ -1,12 +1,12 @@
+import { isBindingContextLoaded } from '../../../common/module-guard';
 import { DefaultCanvasRect3dRender } from './rect3d-render';
 import { GraphicRender, Rect3DRender } from './symbol';
 
-let loadRect3dModule = false;
+const loadedRect3dModuleContexts = new WeakSet<object>();
 export function bindRect3dRenderModule({ bind }: { bind: any }) {
-  if (loadRect3dModule) {
+  if (isBindingContextLoaded(loadedRect3dModuleContexts, bind)) {
     return;
   }
-  loadRect3dModule = true;
   // rect3d 渲染器
   bind(Rect3DRender).to(DefaultCanvasRect3dRender).inSingletonScope();
   bind(GraphicRender).toService(Rect3DRender);

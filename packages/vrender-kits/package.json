@@ -6,6 +6,19 @@
   "main": "cjs/index-node.js",
   "module": "es/index.js",
   "types": "es/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "env": ["es/env/index.d.ts"],
+      "env/*": ["es/env/*"],
+      "event/extension": ["es/event/extension/index.d.ts"],
+      "event/extension/*": ["es/event/extension/*"],
+      "installers/*": ["es/installers/*"],
+      "jsx/*": ["es/jsx/*"],
+      "picker/*": ["es/picker/*"],
+      "register/*": ["es/register/*"],
+      "tools/*": ["es/tools/*"]
+    }
+  },
   "files": [
     "cjs",
     "es",
@@ -79,6 +92,191 @@
     ".": {
       "import": "./es/index.js",
       "require": "./cjs/index-node.js"
+    },
+    "./env": {
+      "types": "./es/env/index.d.ts",
+      "import": "./es/env/index.js",
+      "require": "./cjs/env/index.js"
+    },
+    "./env/browser": {
+      "types": "./es/env/browser.d.ts",
+      "import": "./es/env/browser.js",
+      "require": "./cjs/env/browser.js"
+    },
+    "./env/feishu": {
+      "types": "./es/env/feishu.d.ts",
+      "import": "./es/env/feishu.js",
+      "require": "./cjs/env/feishu.js"
+    },
+    "./env/harmony": {
+      "types": "./es/env/harmony.d.ts",
+      "import": "./es/env/harmony.js",
+      "require": "./cjs/env/harmony.js"
+    },
+    "./env/lynx": {
+      "types": "./es/env/lynx.d.ts",
+      "import": "./es/env/lynx.js",
+      "require": "./cjs/env/lynx.js"
+    },
+    "./env/node": {
+      "types": "./es/env/node.d.ts",
+      "import": "./es/env/node.js",
+      "require": "./cjs/env/node.js"
+    },
+    "./env/taro": {
+      "types": "./es/env/taro.d.ts",
+      "import": "./es/env/taro.js",
+      "require": "./cjs/env/taro.js"
+    },
+    "./env/tt": {
+      "types": "./es/env/tt.d.ts",
+      "import": "./es/env/tt.js",
+      "require": "./cjs/env/tt.js"
+    },
+    "./env/wx": {
+      "types": "./es/env/wx.d.ts",
+      "import": "./es/env/wx.js",
+      "require": "./cjs/env/wx.js"
+    },
+    "./event/extension": {
+      "types": "./es/event/extension/index.d.ts",
+      "import": "./es/event/extension/index.js",
+      "require": "./cjs/event/extension/index.js"
+    },
+    "./event/extension/drag": {
+      "types": "./es/event/extension/drag.d.ts",
+      "import": "./es/event/extension/drag.js",
+      "require": "./cjs/event/extension/drag.js"
+    },
+    "./event/extension/gesture": {
+      "types": "./es/event/extension/gesture.d.ts",
+      "import": "./es/event/extension/gesture.js",
+      "require": "./cjs/event/extension/gesture.js"
+    },
+    "./installers/app": {
+      "types": "./es/installers/app.d.ts",
+      "import": "./es/installers/app.js",
+      "require": "./cjs/installers/app.js"
+    },
+    "./jsx/graphicType": {
+      "types": "./es/jsx/graphicType.d.ts",
+      "import": "./es/jsx/graphicType.js",
+      "require": "./cjs/jsx/graphicType.js"
+    },
+    "./picker/contributions/constants": {
+      "types": "./es/picker/contributions/constants.d.ts",
+      "import": "./es/picker/contributions/constants.js",
+      "require": "./cjs/picker/contributions/constants.js"
+    },
+    "./register/env": {
+      "types": "./es/register/env.d.ts",
+      "import": "./es/register/env.js",
+      "require": "./cjs/register/env.js"
+    },
+    "./register/register-arc": {
+      "types": "./es/register/register-arc.d.ts",
+      "import": "./es/register/register-arc.js",
+      "require": "./cjs/register/register-arc.js"
+    },
+    "./register/register-arc3d": {
+      "types": "./es/register/register-arc3d.d.ts",
+      "import": "./es/register/register-arc3d.js",
+      "require": "./cjs/register/register-arc3d.js"
+    },
+    "./register/register-area": {
+      "types": "./es/register/register-area.d.ts",
+      "import": "./es/register/register-area.js",
+      "require": "./cjs/register/register-area.js"
+    },
+    "./register/register-circle": {
+      "types": "./es/register/register-circle.d.ts",
+      "import": "./es/register/register-circle.js",
+      "require": "./cjs/register/register-circle.js"
+    },
+    "./register/register-gif": {
+      "types": "./es/register/register-gif.d.ts",
+      "import": "./es/register/register-gif.js",
+      "require": "./cjs/register/register-gif.js"
+    },
+    "./register/register-glyph": {
+      "types": "./es/register/register-glyph.d.ts",
+      "import": "./es/register/register-glyph.js",
+      "require": "./cjs/register/register-glyph.js"
+    },
+    "./register/register-group": {
+      "types": "./es/register/register-group.d.ts",
+      "import": "./es/register/register-group.js",
+      "require": "./cjs/register/register-group.js"
+    },
+    "./register/register-image": {
+      "types": "./es/register/register-image.d.ts",
+      "import": "./es/register/register-image.js",
+      "require": "./cjs/register/register-image.js"
+    },
+    "./register/register-line": {
+      "types": "./es/register/register-line.d.ts",
+      "import": "./es/register/register-line.js",
+      "require": "./cjs/register/register-line.js"
+    },
+    "./register/register-path": {
+      "types": "./es/register/register-path.d.ts",
+      "import": "./es/register/register-path.js",
+      "require": "./cjs/register/register-path.js"
+    },
+    "./register/register-polygon": {
+      "types": "./es/register/register-polygon.d.ts",
+      "import": "./es/register/register-polygon.js",
+      "require": "./cjs/register/register-polygon.js"
+    },
+    "./register/register-pyramid3d": {
+      "types": "./es/register/register-pyramid3d.d.ts",
+      "import": "./es/register/register-pyramid3d.js",
+      "require": "./cjs/register/register-pyramid3d.js"
+    },
+    "./register/register-rect": {
+      "types": "./es/register/register-rect.d.ts",
+      "import": "./es/register/register-rect.js",
+      "require": "./cjs/register/register-rect.js"
+    },
+    "./register/register-rect3d": {
+      "types": "./es/register/register-rect3d.d.ts",
+      "import": "./es/register/register-rect3d.js",
+      "require": "./cjs/register/register-rect3d.js"
+    },
+    "./register/register-richtext": {
+      "types": "./es/register/register-richtext.d.ts",
+      "import": "./es/register/register-richtext.js",
+      "require": "./cjs/register/register-richtext.js"
+    },
+    "./register/register-shadowRoot": {
+      "types": "./es/register/register-shadowRoot.d.ts",
+      "import": "./es/register/register-shadowRoot.js",
+      "require": "./cjs/register/register-shadowRoot.js"
+    },
+    "./register/register-star": {
+      "types": "./es/register/register-star.d.ts",
+      "import": "./es/register/register-star.js",
+      "require": "./cjs/register/register-star.js"
+    },
+    "./register/register-symbol": {
+      "types": "./es/register/register-symbol.d.ts",
+      "import": "./es/register/register-symbol.js",
+      "require": "./cjs/register/register-symbol.js"
+    },
+    "./register/register-text": {
+      "types": "./es/register/register-text.d.ts",
+      "import": "./es/register/register-text.js",
+      "require": "./cjs/register/register-text.js"
+    },
+    "./register/register-wraptext": {
+      "types": "./es/register/register-wraptext.d.ts",
+      "import": "./es/register/register-wraptext.js",
+      "require": "./cjs/register/register-wraptext.js"
+    },
+    "./tools/dynamicTexture/effect": {
+      "types": "./es/tools/dynamicTexture/effect.d.ts",
+      "import": "./es/tools/dynamicTexture/effect.js",
+      "require": "./cjs/tools/dynamicTexture/effect.js"
     }
   }
 }

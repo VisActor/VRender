@@ -5,6 +5,93 @@
 declare const require: any;
 export {};
 
+type BootstrapMockOptions = {
+  installers?: Record<string, any>;
+  loaders?: Record<string, any>;
+  registers?: Record<string, any>;
+  animate?: Record<string, any>;
+};
+
+const envLoaders = {
+  browser: 'loadBrowserEnv',
+  feishu: 'loadFeishuEnv',
+  harmony: 'loadHarmonyEnv',
+  lynx: 'loadLynxEnv',
+  node: 'loadNodeEnv',
+  taro: 'loadTaroEnv',
+  tt: 'loadTTEnv',
+  wx: 'loadWxEnv'
+};
+
+const graphicRegisters = {
+  registerArc: 'register-arc',
+  registerArc3d: 'register-arc3d',
+  registerArea: 'register-area',
+  registerCircle: 'register-circle',
+  registerGlyph: 'register-glyph',
+  registerGifImage: 'register-gif',
+  registerGroup: 'register-group',
+  registerImage: 'register-image',
+  registerLine: 'register-line',
+  registerPath: 'register-path',
+  registerPolygon: 'register-polygon',
+  registerPyramid3d: 'register-pyramid3d',
+  registerRect: 'register-rect',
+  registerRect3d: 'register-rect3d',
+  registerRichtext: 'register-richtext',
+  registerShadowRoot: 'register-shadowRoot',
+  registerStar: 'register-star',
+  registerSymbol: 'register-symbol',
+  registerText: 'register-text',
+  registerWrapText: 'register-wraptext'
+};
+
+function createEmptyLegacyBindingContext() {
+  return { getAll: jest.fn(() => []) };
+}
+
+function mockBootstrapSubpaths(options: BootstrapMockOptions = {}) {
+  jest.doMock('@visactor/vrender-kits/installers/app', () => ({
+    installBrowserEnvToApp: jest.fn(),
+    installBrowserPickersToApp: jest.fn(),
+    installDefaultGraphicsToApp: jest.fn(),
+    installFeishuEnvToApp: jest.fn(),
+    installHarmonyEnvToApp: jest.fn(),
+    installLynxEnvToApp: jest.fn(),
+    installMathPickersToApp: jest.fn(),
+    installNodeEnvToApp: jest.fn(),
+    installNodePickersToApp: jest.fn(),
+    installTaroEnvToApp: jest.fn(),
+    installTTEnvToApp: jest.fn(),
+    installWxEnvToApp: jest.fn(),
+    ...options.installers
+  }));
+
+  jest.doMock('@visactor/vrender-kits/picker/contributions/constants', () => ({
+    CanvasPickerContribution: 'CanvasPickerContribution',
+    MathPickerContribution: 'MathPickerContribution'
+  }));
+
+  Object.entries(envLoaders).forEach(([env, loaderName]) => {
+    jest.doMock(`@visactor/vrender-kits/env/${env}`, () => ({
+      [loaderName]: options.loaders?.[loaderName] ?? jest.fn()
+    }));
+  });
+
+  Object.entries(graphicRegisters).forEach(([registerName, fileName]) => {
+    jest.doMock(`@visactor/vrender-kits/register/${fileName}`, () => ({
+      [registerName]: options.registers?.[registerName] ?? jest.fn()
+    }));
+  });
+
+  jest.doMock('@visactor/vrender-animate/register', () => ({
+    registerAnimate: options.animate?.registerAnimate ?? jest.fn()
+  }));
+  jest.doMock('@visactor/vrender-animate/custom/register', () => ({
+    registerCustomAnimate: options.animate?.registerCustomAnimate ?? jest.fn()
+  }));
+}
+
 describe('vrender app-scoped entries', () => {
   beforeEach(() => {
     jest.resetModules();
@@ -29,7 +116,7 @@ describe('vrender app-scoped entries', () => {
       jest.doMock('@visactor/vrender-core', () => ({
         createBrowserApp,
         createNodeApp: jest.fn(),
-        getLegacyBindingContext: jest.fn(() => ({ getAll: jest.fn(() => []) })),
+        getLegacyBindingContext: jest.fn(createEmptyLegacyBindingContext),
         GraphicRender: 'GraphicRender',
         isBrowserEnv: () => true,
         isNodeEnv: () => false,
@@ -74,6 +161,17 @@ describe('vrender app-scoped entries', () => {
         registerAnimate,
         registerCustomAnimate
       }));
+      mockBootstrapSubpaths({
+        installers: {
+          installBrowserEnvToApp,
+          installBrowserPickersToApp,
+          installDefaultGraphicsToApp
+        },
+        animate: {
+          registerAnimate,
+          registerCustomAnimate
+        }
+      });
 
       const { createBrowserVRenderApp } = require('../../src/entries');
 
@@ -104,7 +202,7 @@ describe('vrender app-scoped entries', () => {
       jest.doMock('@visactor/vrender-core', () => ({
         createBrowserApp: jest.fn(),
         createNodeApp,
-        getLegacyBindingContext: jest.fn(() => ({ getAll: jest.fn(() => []) })),
+        getLegacyBindingContext: jest.fn(createEmptyLegacyBindingContext),
         GraphicRender: 'GraphicRender',
         isBrowserEnv: () => false,
         isNodeEnv: () => true,
@@ -149,6 +247,13 @@ describe('vrender app-scoped entries', () => {
         registerAnimate: jest.fn(),
         registerCustomAnimate: jest.fn()
       }));
+      mockBootstrapSubpaths({
+        installers: {
+          installDefaultGraphicsToApp,
+          installNodeEnvToApp,
+          installNodePickersToApp
+        }
+      });
 
       const { createNodeVRenderApp } = require('../../src/entries');
 
@@ -190,7 +295,7 @@ describe('vrender app-scoped entries', () => {
           createBrowserApp: jest.fn(),
           createMiniappApp,
           createNodeApp: jest.fn(),
-          getLegacyBindingContext: jest.fn(() => ({ getAll: jest.fn(() => []) })),
+          getLegacyBindingContext: jest.fn(createEmptyLegacyBindingContext),
           GraphicRender: 'GraphicRender',
           isBrowserEnv: () => false,
           isNodeEnv: () => false,
@@ -250,6 +355,16 @@ describe('vrender app-scoped entries', () => {
           registerAnimate: jest.fn(),
           registerCustomAnimate: jest.fn()
         }));
+        mockBootstrapSubpaths({
+          installers: {
+            installDefaultGraphicsToApp,
+            installMathPickersToApp,
+            [installName]: installEnv
+          },
+          loaders: {
+            [loadName]: loadEnv
+          }
+        });
 
         const entries = require('../../src/entries');
 
@@ -279,7 +394,7 @@ describe('vrender app-scoped entries', () => {
       jest.doMock('@visactor/vrender-core', () => ({
         createBrowserApp: jest.fn(),
         createNodeApp: jest.fn(),
-        getLegacyBindingContext: jest.fn(() => ({ getAll: jest.fn(() => []) })),
+        getLegacyBindingContext: jest.fn(createEmptyLegacyBindingContext),
         GraphicRender: 'GraphicRender',
         isBrowserEnv: () => true,
         isNodeEnv: () => false,
@@ -324,6 +439,13 @@ describe('vrender app-scoped entries', () => {
         registerAnimate: jest.fn(),
         registerCustomAnimate: jest.fn()
       }));
+      mockBootstrapSubpaths({
+        installers: {
+          installBrowserEnvToApp,
+          installBrowserPickersToApp,
+          installDefaultGraphicsToApp
+        }
+      });
 
       const { bootstrapVRenderBrowserApp } = require('../../src/entries');
 
@@ -435,6 +557,16 @@ describe('vrender app-scoped entries', () => {
         registerAnimate: jest.fn(),
         registerCustomAnimate: jest.fn()
       }));
+      mockBootstrapSubpaths({
+        installers: {
+          installBrowserEnvToApp,
+          installBrowserPickersToApp,
+          installDefaultGraphicsToApp
+        },
+        registers: {
+          registerRect
+        }
+      });
 
       const { bootstrapVRenderBrowserApp } = require('../../src/entries/bootstrap');
 

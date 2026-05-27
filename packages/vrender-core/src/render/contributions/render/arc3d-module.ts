@@ -1,15 +1,12 @@
-import { DefaultCanvasArcRender } from './arc-render';
+import { isBindingContextLoaded } from '../../../common/module-guard';
 import { DefaultCanvasArc3DRender } from './arc3d-render';
-import { DefaultBaseInteractiveRenderContribution } from './contributions';
-import { ArcRenderContribution } from './contributions/constants';
-import { Arc3dRender, ArcRender, GraphicRender } from './symbol';
+import { Arc3dRender, GraphicRender } from './symbol';
 
-let loadArc3dModule = false;
+const loadedArc3dModuleContexts = new WeakSet<object>();
 export function bindArc3dRenderModule({ bind }: { bind: any }) {
-  if (loadArc3dModule) {
+  if (isBindingContextLoaded(loadedArc3dModuleContexts, bind)) {
     return;
   }
-  loadArc3dModule = true;
   // arc3d 渲染器
   bind(Arc3dRender).to(DefaultCanvasArc3DRender).inSingletonScope();
   bind(GraphicRender).toService(Arc3dRender);

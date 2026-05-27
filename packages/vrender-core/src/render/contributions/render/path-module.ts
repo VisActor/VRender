@@ -1,15 +1,15 @@
 import { bindContributionProvider } from '../../../common/contribution-provider';
+import { isBindingContextLoaded } from '../../../common/module-guard';
 import { DefaultBaseInteractiveRenderContribution } from './contributions';
 import { PathRenderContribution } from './contributions/constants';
 import { DefaultCanvasPathRender } from './path-render';
 import { GraphicRender, PathRender } from './symbol';
 
-let loadPathModule = false;
+const loadedPathModuleContexts = new WeakSet<object>();
 export function bindPathRenderModule({ bind }: { bind: any }) {
-  if (loadPathModule) {
+  if (isBindingContextLoaded(loadedPathModuleContexts, bind)) {
     return;
   }
-  loadPathModule = true;
   // path 渲染器
   bind(DefaultCanvasPathRender).toSelf().inSingletonScope();
   bind(PathRender).to(DefaultCanvasPathRender).inSingletonScope();

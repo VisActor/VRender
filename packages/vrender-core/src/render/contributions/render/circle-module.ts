@@ -1,15 +1,15 @@
 import { bindContributionProvider } from '../../../common/contribution-provider';
+import { isBindingContextLoaded } from '../../../common/module-guard';
 import { DefaultCanvasCircleRender } from './circle-render';
 import { DefaultBaseInteractiveRenderContribution } from './contributions';
 import { CircleRenderContribution } from './contributions/constants';
 import { CircleRender, GraphicRender } from './symbol';
 
-let loadCircleModule = false;
+const loadedCircleModuleContexts = new WeakSet<object>();
 export function bindCircleRenderModule({ bind }: { bind: any }) {
-  if (loadCircleModule) {
+  if (isBindingContextLoaded(loadedCircleModuleContexts, bind)) {
     return;
   }
-  loadCircleModule = true;
   // circle 渲染器
   bind(DefaultCanvasCircleRender).toSelf().inSingletonScope();
   bind(CircleRender).to(DefaultCanvasCircleRender).inSingletonScope();

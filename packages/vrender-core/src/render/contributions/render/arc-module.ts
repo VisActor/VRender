@@ -1,15 +1,15 @@
 import { bindContributionProvider } from '../../../common/contribution-provider';
+import { isBindingContextLoaded } from '../../../common/module-guard';
 import { DefaultCanvasArcRender } from './arc-render';
 import { DefaultBaseInteractiveRenderContribution } from './contributions';
 import { ArcRenderContribution } from './contributions/constants';
 import { ArcRender, GraphicRender } from './symbol';
 
-let loadArcModule = false;
+const loadedArcModuleContexts = new WeakSet<object>();
 export function bindArcRenderModule({ bind }: { bind: any }) {
-  if (loadArcModule) {
+  if (isBindingContextLoaded(loadedArcModuleContexts, bind)) {
     return;
   }
-  loadArcModule = true;
   // arc 渲染器
   bind(DefaultCanvasArcRender).toSelf().inSingletonScope();
   bind(ArcRender).to(DefaultCanvasArcRender).inSingletonScope();

@@ -1,13 +1,13 @@
+import { isBindingContextLoaded } from '../../../common/module-guard';
 import { DefaultIncrementalCanvasLineRender } from './incremental-line-render';
 import { DefaultCanvasLineRender } from './line-render';
 import { GraphicRender, LineRender } from './symbol';
 
-let loadLineModule = false;
+const loadedLineModuleContexts = new WeakSet<object>();
 export function bindLineRenderModule({ bind }: { bind: any }) {
-  if (loadLineModule) {
+  if (isBindingContextLoaded(loadedLineModuleContexts, bind)) {
     return;
   }
-  loadLineModule = true;
   // line渲染器
   bind(DefaultCanvasLineRender).toSelf().inSingletonScope();
   bind(DefaultIncrementalCanvasLineRender).toSelf().inSingletonScope();

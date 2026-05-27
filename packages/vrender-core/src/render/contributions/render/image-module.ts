@@ -1,15 +1,15 @@
 import { bindContributionProvider } from '../../../common/contribution-provider';
+import { isBindingContextLoaded } from '../../../common/module-guard';
 import { DefaultBaseInteractiveRenderContribution } from './contributions';
 import { ImageRenderContribution } from './contributions/constants';
 import { DefaultCanvasImageRender } from './image-render';
 import { GraphicRender, ImageRender } from './symbol';
 
-let loadImageModule = false;
+const loadedImageModuleContexts = new WeakSet<object>();
 export function bindImageRenderModule({ bind }: { bind: any }) {
-  if (loadImageModule) {
+  if (isBindingContextLoaded(loadedImageModuleContexts, bind)) {
     return;
   }
-  loadImageModule = true;
   // image渲染器
   bind(ImageRender).to(DefaultCanvasImageRender).inSingletonScope();
   bind(GraphicRender).toService(ImageRender);

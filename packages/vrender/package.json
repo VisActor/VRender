@@ -6,6 +6,12 @@
   "main": "cjs/index.js",
   "module": "es/index.js",
   "types": "es/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "entries": ["es/entries/index.d.ts"],
+      "entries/*": ["es/entries/*"]
+    }
+  },
   "files": [
     "cjs",
     "es",
@@ -75,6 +81,31 @@
     ".": {
       "import": "./es/index.js",
       "require": "./cjs/index.js"
+    },
+    "./entries": {
+      "types": "./es/entries/index.d.ts",
+      "import": "./es/entries/index.js",
+      "require": "./cjs/entries/index.js"
+    },
+    "./entries/browser": {
+      "types": "./es/entries/browser.d.ts",
+      "import": "./es/entries/browser.js",
+      "require": "./cjs/entries/browser.js"
+    },
+    "./entries/miniapp": {
+      "types": "./es/entries/miniapp.d.ts",
+      "import": "./es/entries/miniapp.js",
+      "require": "./cjs/entries/miniapp.js"
+    },
+    "./entries/node": {
+      "types": "./es/entries/node.d.ts",
+      "import": "./es/entries/node.js",
+      "require": "./cjs/entries/node.js"
+    },
+    "./entries/shared": {
+      "types": "./es/entries/shared.d.ts",
+      "import": "./es/entries/shared.js",
+      "require": "./cjs/entries/shared.js"
     }
   },
   "publishConfig": {

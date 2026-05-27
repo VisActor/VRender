@@ -16,36 +16,50 @@ import {
   installBrowserEnvToApp,
   installBrowserPickersToApp,
   installDefaultGraphicsToApp,
+  installFeishuEnvToApp,
+  installHarmonyEnvToApp,
+  installLynxEnvToApp,
+  installMathPickersToApp,
   installNodeEnvToApp,
   installNodePickersToApp,
+  installTaroEnvToApp,
+  installTTEnvToApp,
+  installWxEnvToApp
+} from '@visactor/vrender-kits/installers/app';
+import { loadBrowserEnv } from '@visactor/vrender-kits/env/browser';
+import { loadFeishuEnv } from '@visactor/vrender-kits/env/feishu';
+import { loadHarmonyEnv } from '@visactor/vrender-kits/env/harmony';
+import { loadLynxEnv } from '@visactor/vrender-kits/env/lynx';
+import { loadNodeEnv } from '@visactor/vrender-kits/env/node';
+import { loadTaroEnv } from '@visactor/vrender-kits/env/taro';
+import { loadTTEnv } from '@visactor/vrender-kits/env/tt';
+import { loadWxEnv } from '@visactor/vrender-kits/env/wx';
+import {
   CanvasPickerContribution,
-  loadBrowserEnv,
-  MathPickerContribution,
-  loadNodeEnv,
-  registerArc,
-  registerArc3d,
-  registerArea,
-  registerCircle,
-  registerGlyph,
-  registerGifImage,
-  registerGroup,
-  registerImage,
-  registerLine,
-  registerPath,
-  registerPolygon,
-  registerPyramid3d,
-  registerRect,
-  registerRect3d,
-  registerRichtext,
-  registerShadowRoot,
-  registerStar,
-  registerSymbol,
-  registerText,
-  registerWrapText
-} from '@visactor/vrender-kits';
-// eslint-disable-next-line no-duplicate-imports
-import * as VRenderKitsRuntime from '@visactor/vrender-kits';
-import { registerCustomAnimate, registerAnimate } from '@visactor/vrender-animate';
+  MathPickerContribution
+} from '@visactor/vrender-kits/picker/contributions/constants';
+import { registerArc } from '@visactor/vrender-kits/register/register-arc';
+import { registerArc3d } from '@visactor/vrender-kits/register/register-arc3d';
+import { registerArea } from '@visactor/vrender-kits/register/register-area';
+import { registerCircle } from '@visactor/vrender-kits/register/register-circle';
+import { registerGlyph } from '@visactor/vrender-kits/register/register-glyph';
+import { registerGifImage } from '@visactor/vrender-kits/register/register-gif';
+import { registerGroup } from '@visactor/vrender-kits/register/register-group';
+import { registerImage } from '@visactor/vrender-kits/register/register-image';
+import { registerLine } from '@visactor/vrender-kits/register/register-line';
+import { registerPath } from '@visactor/vrender-kits/register/register-path';
+import { registerPolygon } from '@visactor/vrender-kits/register/register-polygon';
+import { registerPyramid3d } from '@visactor/vrender-kits/register/register-pyramid3d';
+import { registerRect } from '@visactor/vrender-kits/register/register-rect';
+import { registerRect3d } from '@visactor/vrender-kits/register/register-rect3d';
+import { registerRichtext } from '@visactor/vrender-kits/register/register-richtext';
+import { registerShadowRoot } from '@visactor/vrender-kits/register/register-shadowRoot';
+import { registerStar } from '@visactor/vrender-kits/register/register-star';
+import { registerSymbol } from '@visactor/vrender-kits/register/register-symbol';
+import { registerText } from '@visactor/vrender-kits/register/register-text';
+import { registerWrapText } from '@visactor/vrender-kits/register/register-wraptext';
+import { registerCustomAnimate } from '@visactor/vrender-animate/custom/register';
+import { registerAnimate } from '@visactor/vrender-animate/register';
 
 const BOOTSTRAP_STATE = Symbol.for('vrender.bootstrap.state');
 const installBrowserEnvToAppWithParams = installBrowserEnvToApp as (
@@ -62,14 +76,13 @@ type TAppScopedMiniEnvBootstrap<TEnv extends TAppScopedMiniEnv> = {
 type TAppScopedMiniEnvBootstraps = {
   [TEnv in TAppScopedMiniEnv]: TAppScopedMiniEnvBootstrap<TEnv>;
 };
-const runtimeKits = VRenderKitsRuntime as typeof VRenderKitsRuntime & Record<string, any>;
 const miniEnvBootstraps: TAppScopedMiniEnvBootstraps = {
-  taro: { installEnv: runtimeKits.installTaroEnvToApp, loadEnv: runtimeKits.loadTaroEnv },
-  feishu: { installEnv: runtimeKits.installFeishuEnvToApp, loadEnv: runtimeKits.loadFeishuEnv },
-  tt: { installEnv: runtimeKits.installTTEnvToApp, loadEnv: runtimeKits.loadTTEnv },
-  wx: { installEnv: runtimeKits.installWxEnvToApp, loadEnv: runtimeKits.loadWxEnv },
-  lynx: { installEnv: runtimeKits.installLynxEnvToApp, loadEnv: runtimeKits.loadLynxEnv },
-  harmony: { installEnv: runtimeKits.installHarmonyEnvToApp, loadEnv: runtimeKits.loadHarmonyEnv }
+  taro: { installEnv: installTaroEnvToApp, loadEnv: loadTaroEnv },
+  feishu: { installEnv: installFeishuEnvToApp, loadEnv: loadFeishuEnv },
+  tt: { installEnv: installTTEnvToApp, loadEnv: loadTTEnv },
+  wx: { installEnv: installWxEnvToApp, loadEnv: loadWxEnv },
+  lynx: { installEnv: installLynxEnvToApp, loadEnv: loadLynxEnv },
+  harmony: { installEnv: installHarmonyEnvToApp, loadEnv: loadHarmonyEnv }
 };
 
 type TBootstrapTarget = Record<string | symbol, unknown> & {
@@ -241,7 +254,7 @@ export function bootstrapVRenderMiniApp<TEnv extends TAppScopedMiniEnv, TApp ext
   const bootstrap = miniEnvBootstraps[env];
   bootstrap.installEnv(app as any, envParams);
   installDefaultGraphicsToApp(app as any);
-  runtimeKits.installMathPickersToApp(app as any);
+  installMathPickersToApp(app as any);
   bootstrap.loadEnv();
   legacyGraphicRegistrations.forEach(register => register());
   syncLegacyRenderersToApp(app as any);

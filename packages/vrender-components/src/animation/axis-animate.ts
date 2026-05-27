@@ -1,4 +1,6 @@
-import { AComponentAnimate, AnimateExecutor, createComponentAnimator } from '@visactor/vrender-animate';
+import { createComponentAnimator } from '@visactor/vrender-animate/component';
+import { AComponentAnimate } from '@visactor/vrender-animate/custom/custom-animate';
+import { AnimateExecutor } from '@visactor/vrender-animate/executor/animate-executor';
 import { commitUpdateAnimationTarget } from './static-truth';
 
 /**

@@ -1,12 +1,12 @@
+import { isBindingContextLoaded } from '../../../common/module-guard';
 import { DefaultCanvasPyramid3dRender } from './pyramid3d-render';
-import { GraphicRender, Pyramid3dRender, Rect3DRender } from './symbol';
+import { GraphicRender, Pyramid3dRender } from './symbol';
 
-let loadPyramid3dModule = false;
+const loadedPyramid3dModuleContexts = new WeakSet<object>();
 export function bindPyramid3dRenderModule({ bind }: { bind: any }) {
-  if (loadPyramid3dModule) {
+  if (isBindingContextLoaded(loadedPyramid3dModuleContexts, bind)) {
     return;
   }
-  loadPyramid3dModule = true;
   // pyramid3d 渲染器
   bind(Pyramid3dRender).to(DefaultCanvasPyramid3dRender).inSingletonScope();
   bind(GraphicRender).toService(Pyramid3dRender);

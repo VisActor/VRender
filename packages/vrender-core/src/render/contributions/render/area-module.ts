@@ -1,16 +1,16 @@
 import { bindContributionProvider } from '../../../common/contribution-provider';
+import { isBindingContextLoaded } from '../../../common/module-guard';
 import { DefaultCanvasAreaRender } from './area-render';
 import { DefaultBaseInteractiveRenderContribution } from './contributions';
 import { AreaRenderContribution } from './contributions/constants';
 import { DefaultIncrementalCanvasAreaRender } from './incremental-area-render';
 import { AreaRender, GraphicRender } from './symbol';
 
-let loadAreaModule = false;
+const loadedAreaModuleContexts = new WeakSet<object>();
 export function bindAreaRenderModule({ bind }: { bind: any }) {
-  if (loadAreaModule) {
+  if (isBindingContextLoaded(loadedAreaModuleContexts, bind)) {
     return;
   }
-  loadAreaModule = true;
   // area渲染器
   bind(DefaultCanvasAreaRender).toSelf().inSingletonScope();
   bind(AreaRender).to(DefaultCanvasAreaRender).inSingletonScope();

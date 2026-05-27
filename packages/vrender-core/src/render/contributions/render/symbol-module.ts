@@ -1,15 +1,15 @@
 import { bindContributionProvider } from '../../../common/contribution-provider';
+import { isBindingContextLoaded } from '../../../common/module-guard';
 import { DefaultBaseInteractiveRenderContribution } from './contributions';
 import { SymbolRenderContribution } from './contributions/constants';
 import { GraphicRender, SymbolRender } from './symbol';
 import { DefaultCanvasSymbolRender } from './symbol-render';
 
-let loadSymbolModule = false;
+const loadedSymbolModuleContexts = new WeakSet<object>();
 export function bindSymbolRenderModule({ bind }: { bind: any }) {
-  if (loadSymbolModule) {
+  if (isBindingContextLoaded(loadedSymbolModuleContexts, bind)) {
     return;
   }
-  loadSymbolModule = true;
   // symbol渲染器
   bind(DefaultCanvasSymbolRender).toSelf().inSingletonScope();
   bind(SymbolRender).to(DefaultCanvasSymbolRender).inSingletonScope();

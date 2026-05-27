@@ -1,12 +1,12 @@
+import { isBindingContextLoaded } from '../../../common/module-guard';
 import { DefaultCanvasGlyphRender } from './glyph-render';
 import { GlyphRender, GraphicRender } from './symbol';
 
-let loadGlyphModule = false;
+const loadedGlyphModuleContexts = new WeakSet<object>();
 export function bindGlyphRenderModule({ bind }: { bind: any }) {
-  if (loadGlyphModule) {
+  if (isBindingContextLoaded(loadedGlyphModuleContexts, bind)) {
     return;
   }
-  loadGlyphModule = true;
   // glyph渲染器
   bind(GlyphRender).to(DefaultCanvasGlyphRender).inSingletonScope();
   bind(GraphicRender).toService(GlyphRender);

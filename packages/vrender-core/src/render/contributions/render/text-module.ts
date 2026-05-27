@@ -1,16 +1,15 @@
 import { bindContributionProvider } from '../../../common/contribution-provider';
-import { DefaultCanvasCircleRender } from './circle-render';
+import { isBindingContextLoaded } from '../../../common/module-guard';
 import { DefaultBaseInteractiveRenderContribution } from './contributions';
-import { CircleRenderContribution, TextRenderContribution } from './contributions/constants';
-import { CircleRender, GraphicRender, TextRender } from './symbol';
+import { TextRenderContribution } from './contributions/constants';
+import { GraphicRender, TextRender } from './symbol';
 import { DefaultCanvasTextRender } from './text-render';
 
-let loadTextModule = false;
+const loadedTextModuleContexts = new WeakSet<object>();
 export function bindTextRenderModule({ bind }: { bind: any }) {
-  if (loadTextModule) {
+  if (isBindingContextLoaded(loadedTextModuleContexts, bind)) {
     return;
   }
-  loadTextModule = true;
   // text 渲染器
   bind(TextRender).to(DefaultCanvasTextRender).inSingletonScope();
   bind(GraphicRender).toService(TextRender);

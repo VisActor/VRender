@@ -1,4 +1,5 @@
 import { bindContributionProvider, createContributionProvider } from '../../../common/contribution-provider';
+import { isBindingContextLoaded } from '../../../common/module-guard';
 import {
   DefaultBaseInteractiveRenderContribution,
   SplitRectAfterRenderContribution,
@@ -8,12 +9,11 @@ import { RectRenderContribution } from './contributions/constants';
 import { DefaultCanvasRectRender } from './rect-render';
 import { GraphicRender, RectRender } from './symbol';
 
-let loadRectModule = false;
+const loadedRectModuleContexts = new WeakSet<object>();
 export function bindRectRenderModule({ bind }: { bind: any }) {
-  if (loadRectModule) {
+  if (isBindingContextLoaded(loadedRectModuleContexts, bind)) {
     return;
   }
-  loadRectModule = true;
   // rect 渲染器
   bind(DefaultCanvasRectRender)
     .toDynamicValue(

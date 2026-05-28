@@ -22,7 +22,7 @@ import type {
   IText,
   ITextGraphicAttribute
 } from '@visactor/vrender-core';
-import { createGraphic as createCoreGraphic } from '@visactor/vrender-core';
+import { createGraphic as createCoreGraphic } from '@visactor/vrender-core/graphic/creator';
 
 const createGraphic = createCoreGraphic as <TGraphic, TAttributes>(type: string, attributes: TAttributes) => TGraphic;
 

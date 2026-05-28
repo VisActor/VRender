@@ -1,4 +1,6 @@
-import { getLegacyBindingContext, registerTextGraphic, textModule } from '@visactor/vrender-core';
+import { getLegacyBindingContext } from '@visactor/vrender-core/legacy/bootstrap';
+import { registerTextGraphic } from '@visactor/vrender-core/register/graphic';
+import { textModule } from '@visactor/vrender-core/graphic/modules';
 import { browser } from './env';
 import { bindTextCanvasPickerContribution } from '../picker/contributions/canvas-picker/text-module';
 import { bindTextMathPickerContribution } from '../picker/contributions/math-picker/text-module';

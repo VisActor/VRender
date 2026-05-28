@@ -1,4 +1,6 @@
-import { getLegacyBindingContext, rectModule, registerRectGraphic } from '@visactor/vrender-core';
+import { getLegacyBindingContext } from '@visactor/vrender-core/legacy/bootstrap';
+import { registerRectGraphic } from '@visactor/vrender-core/register/graphic';
+import { rectModule } from '@visactor/vrender-core/graphic/modules';
 import { browser } from './env';
 import { bindRectCanvasPickerContribution } from '../picker/contributions/canvas-picker/rect-module';
 import { bindRectMathPickerContribution } from '../picker/contributions/math-picker/rect-module';

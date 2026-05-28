@@ -1,4 +1,5 @@
-import { AttributeUpdateType, type IAnimate, type IGraphic } from '@visactor/vrender-core';
+import type { IAnimate, IGraphic } from '@visactor/vrender-core';
+import { AttributeUpdateType } from '@visactor/vrender-core/event/constant';
 
 export function buildAnimationStaticCommitAttrs(
   target: IGraphic,

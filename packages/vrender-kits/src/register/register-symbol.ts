@@ -1,4 +1,6 @@
-import { getLegacyBindingContext, registerSymbolGraphic, symbolModule } from '@visactor/vrender-core';
+import { getLegacyBindingContext } from '@visactor/vrender-core/legacy/bootstrap';
+import { registerSymbolGraphic } from '@visactor/vrender-core/register/graphic';
+import { symbolModule } from '@visactor/vrender-core/graphic/modules';
 import { browser } from './env';
 import { bindSymbolCanvasPickerContribution } from '../picker/contributions/canvas-picker/symbol-module';
 import { bindSymbolMathPickerContribution } from '../picker/contributions/math-picker/symbol-module';

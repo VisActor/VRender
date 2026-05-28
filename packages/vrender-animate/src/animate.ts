@@ -1,16 +1,7 @@
 import { Step, WaitStep } from './step';
-import {
-  AttributeUpdateType,
-  Generator,
-  AnimateStatus,
-  AnimateStepType,
-  type IGraphic,
-  type IAnimate,
-  type IStep,
-  type ICustomAnimate,
-  type EasingType,
-  type ITimeline
-} from '@visactor/vrender-core';
+import type { EasingType, IAnimate, ICustomAnimate, IGraphic, IStep, ITimeline } from '@visactor/vrender-core';
+import { Generator } from '@visactor/vrender-core/common/generator';
+import { AnimateStatus, AnimateStepType, AttributeUpdateType } from '@visactor/vrender-core/event/constant';
 import { defaultTimeline } from './timeline';
 import { FromTo } from './custom/fromTo';
 import { applyAnimationTransientAttributes } from './custom/transient';

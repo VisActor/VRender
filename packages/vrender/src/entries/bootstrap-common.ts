@@ -1,13 +1,12 @@
 import {
-  getLegacyBindingContext,
-  GraphicRender,
   registerDirectionalLight,
-  registerFlexLayoutPlugin,
-  registerHtmlAttributePlugin,
   registerOrthoCamera,
-  registerReactAttributePlugin,
   registerViewTransform3dPlugin
-} from '@visactor/vrender-core';
+} from '@visactor/vrender-core/plugin/3d';
+import { getLegacyBindingContext } from '@visactor/vrender-core/legacy/bootstrap';
+import { GraphicRender } from '@visactor/vrender-core/render/symbol';
+import { registerHtmlAttributePlugin, registerReactAttributePlugin } from '@visactor/vrender-core/plugin/attribute';
+import { registerFlexLayoutPlugin } from '@visactor/vrender-core/plugin/flex-layout';
 import { registerArc } from '@visactor/vrender-kits/register/register-arc';
 import { registerArc3d } from '@visactor/vrender-kits/register/register-arc3d';
 import { registerArea } from '@visactor/vrender-kits/register/register-area';

@@ -1,3 +1,4 @@
+const path = require('path');
 const { createElectronPackageJestConfig } = require('../../share/jest-config/create-package-config');
 
 module.exports = createElectronPackageJestConfig({
@@ -27,5 +28,18 @@ module.exports = createElectronPackageJestConfig({
       lines: 80,
       statements: 80
     }
+  },
+  moduleNameMapper: {
+    '^@visactor/vrender-core/event/constant$': path.resolve(__dirname, './src/event/public-constant.ts'),
+    '^@visactor/vrender-core/render/draw-interceptor$': path.resolve(
+      __dirname,
+      './src/render/contributions/render/draw-interceptor.ts'
+    ),
+    '^@visactor/vrender-core/render/symbol$': path.resolve(
+      __dirname,
+      './src/render/contributions/render/symbol.ts'
+    ),
+    '^@visactor/vrender-core/(.*)$': path.resolve(__dirname, './src/$1'),
+    '^@visactor/vrender-core$': path.resolve(__dirname, './src/index.ts')
   }
 });

@@ -1,22 +1,22 @@
 import {
-  PickItemInterceptor,
-  PickServiceInterceptor,
-  DrawContribution,
-  PickerService,
-  application,
   configureRuntimeApplicationForApp,
-  EnvContribution,
   getRuntimeInstallerBindingContext,
   getRuntimeInstallerGlobal,
   installRuntimePickersToApp,
-  refreshRuntimeInstallerContributions,
-  type IApp,
-  type IContributionProvider,
-  type IEnvParamsMap,
-  type IGraphicPicker,
-  type IPickItemInterceptorContribution,
-  type IPickServiceInterceptorContribution
+  refreshRuntimeInstallerContributions
+} from '@visactor/vrender-core/entries/runtime-installer';
+import type {
+  IApp,
+  IContributionProvider,
+  IEnvParamsMap,
+  IGraphicPicker,
+  IPickItemInterceptorContribution,
+  IPickServiceInterceptorContribution
 } from '@visactor/vrender-core';
+import { application } from '@visactor/vrender-core/application';
+import { EnvContribution } from '@visactor/vrender-core/constants';
+import { PickItemInterceptor, PickerService, PickServiceInterceptor } from '@visactor/vrender-core/picker/constants';
+import { DrawContribution } from '@visactor/vrender-core/render/symbol';
 import { bindBrowserCanvasModules } from '../canvas/contributions/browser/modules';
 import { createContributionProvider, resolveContainerBinding } from '../common/explicit-binding';
 import { BrowserEnvContribution } from '../env/contributions/browser-contribution';

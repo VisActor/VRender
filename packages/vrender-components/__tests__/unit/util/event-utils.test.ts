@@ -9,7 +9,7 @@ describe('util/event', () => {
 
   test('browser env uses pointercancel', () => {
     jest.isolateModules(() => {
-      jest.doMock('@visactor/vrender-core', () => ({
+      jest.doMock('@visactor/vrender-core/global', () => ({
         vglobal: { env: 'browser' }
       }));
 
@@ -20,7 +20,7 @@ describe('util/event', () => {
 
   test('non-browser env uses pointerupoutside', () => {
     jest.isolateModules(() => {
-      jest.doMock('@visactor/vrender-core', () => ({
+      jest.doMock('@visactor/vrender-core/global', () => ({
         vglobal: { env: 'node' }
       }));
 

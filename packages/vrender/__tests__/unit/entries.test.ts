@@ -113,6 +113,9 @@ describe('vrender app-scoped entries', () => {
       const registerAnimate = jest.fn();
       const registerCustomAnimate = jest.fn();
 
+      jest.doMock('@visactor/vrender-core/entries/browser', () => ({
+        createBrowserApp
+      }));
       jest.doMock('@visactor/vrender-core', () => ({
         createBrowserApp,
         createNodeApp: jest.fn(),

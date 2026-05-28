@@ -1,4 +1,5 @@
-import { AttributeUpdateType, type EasingType } from '@visactor/vrender-core';
+import type { EasingType } from '@visactor/vrender-core';
+import { AttributeUpdateType } from '@visactor/vrender-core/event/constant';
 import { ACustomAnimate } from './custom-animate';
 
 export class FromTo extends ACustomAnimate<Record<string, number>> {

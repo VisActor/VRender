@@ -14,7 +14,7 @@ import type {
   IText
 } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
-import { diff } from '@visactor/vrender-core';
+import { diff } from '@visactor/vrender-core/common/diff';
 import { graphicCreator } from '../util/graphic-creator';
 import type { Dict } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports

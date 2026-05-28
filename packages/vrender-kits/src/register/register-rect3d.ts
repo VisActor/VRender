@@ -1,4 +1,6 @@
-import { getLegacyBindingContext, rect3dModule, registerRect3dGraphic } from '@visactor/vrender-core';
+import { getLegacyBindingContext } from '@visactor/vrender-core/legacy/bootstrap';
+import { registerRect3dGraphic } from '@visactor/vrender-core/register/graphic';
+import { rect3dModule } from '@visactor/vrender-core/graphic/modules';
 import { bindRect3dCanvasPickerContribution } from '../picker/contributions/canvas-picker/rect3d-module';
 
 function _registerRect3d() {

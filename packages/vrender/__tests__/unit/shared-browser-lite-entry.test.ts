@@ -23,16 +23,21 @@ describe('lite browser shared app entry', () => {
         release: jest.fn()
       }));
 
-      jest.doMock('@visactor/vrender-core', () => ({
-        createBrowserApp,
-        getLegacyBindingContext: jest.fn(() => legacyBindingContextMock),
-        GraphicRender: 'GraphicRender',
-        registerDirectionalLight: jest.fn(),
-        registerFlexLayoutPlugin: jest.fn(),
+      jest.doMock('@visactor/vrender-core/entries/browser', () => ({
+        createBrowserApp
+      }));
+      jest.doMock('@visactor/vrender-core/legacy/bootstrap', () => ({
+        getLegacyBindingContext: jest.fn(() => legacyBindingContextMock)
+      }));
+      jest.doMock('@visactor/vrender-core/render/symbol', () => ({
+        GraphicRender: 'GraphicRender'
+      }));
+      jest.doMock('@visactor/vrender-core/plugin/attribute', () => ({
         registerHtmlAttributePlugin: jest.fn(),
-        registerOrthoCamera: jest.fn(),
-        registerReactAttributePlugin: jest.fn(),
-        registerViewTransform3dPlugin: jest.fn()
+        registerReactAttributePlugin: jest.fn()
+      }));
+      jest.doMock('@visactor/vrender-core/plugin/flex-layout', () => ({
+        registerFlexLayoutPlugin: jest.fn()
       }));
       jest.doMock('@visactor/vrender-kits/installers/browser-lite', () => ({
         installBrowserLiteEnvToApp: jest.fn(),

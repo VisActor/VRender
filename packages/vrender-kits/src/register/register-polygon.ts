@@ -1,4 +1,6 @@
-import { getLegacyBindingContext, polygonModule, registerPolygonGraphic } from '@visactor/vrender-core';
+import { getLegacyBindingContext } from '@visactor/vrender-core/legacy/bootstrap';
+import { registerPolygonGraphic } from '@visactor/vrender-core/register/graphic';
+import { polygonModule } from '@visactor/vrender-core/graphic/modules';
 import { browser } from './env';
 import { bindPolygonCanvasPickerContribution } from '../picker/contributions/canvas-picker/polygon-module';
 import { bindPolygonMathPickerContribution } from '../picker/contributions/math-picker/polygon-module';

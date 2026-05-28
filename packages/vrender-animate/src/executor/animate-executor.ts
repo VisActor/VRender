@@ -1,4 +1,5 @@
-import { type IGraphic, type EasingType, type IAnimate, AnimateStatus } from '@visactor/vrender-core';
+import type { EasingType, IAnimate, IGraphic } from '@visactor/vrender-core';
+import { AnimateStatus } from '@visactor/vrender-core/event/constant';
 import type {
   IAnimationConfig,
   IAnimationTimeline,

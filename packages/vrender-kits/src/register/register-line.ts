@@ -1,4 +1,6 @@
-import { getLegacyBindingContext, lineModule, registerLineGraphic } from '@visactor/vrender-core';
+import { getLegacyBindingContext } from '@visactor/vrender-core/legacy/bootstrap';
+import { registerLineGraphic } from '@visactor/vrender-core/register/graphic';
+import { lineModule } from '@visactor/vrender-core/graphic/modules';
 import { browser } from './env';
 import { bindLineCanvasPickerContribution } from '../picker/contributions/canvas-picker/line-module';
 import { bindLineMathPickerContribution } from '../picker/contributions/math-picker/line-module';

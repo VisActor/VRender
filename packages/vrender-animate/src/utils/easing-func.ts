@@ -1,4 +1,4 @@
-import { CurveContext, CustomPath2D } from '@visactor/vrender-core';
+import { CurveContext, CustomPath2D } from '@visactor/vrender-core/path';
 
 export function generatorPathEasingFunc(path: string) {
   const customPath = new CustomPath2D();

@@ -1,8 +1,4 @@
 import {
-  AttributeUpdateType,
-  ColorStore,
-  ColorType,
-  Generator,
   type IGraphic,
   type IAnimate,
   type IStep,
@@ -10,6 +6,9 @@ import {
   type EasingTypeFunc,
   type IAnimateStepType
 } from '@visactor/vrender-core';
+import { ColorStore, ColorType } from '@visactor/vrender-core/color-string';
+import { Generator } from '@visactor/vrender-core/common/generator';
+import { AttributeUpdateType } from '@visactor/vrender-core/event/constant';
 import { Easing } from './utils/easing';
 import { commonInterpolateUpdate, interpolateUpdateStore } from './interpolate/store';
 import { isString } from '@visactor/vutils';

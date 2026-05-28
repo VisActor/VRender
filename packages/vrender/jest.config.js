@@ -33,6 +33,16 @@ module.exports = createStablePackageJestConfig({
     '^@visactor/vrender-kits/(.*)$': path.resolve(__dirname, '../vrender-kits/src/$1'),
     '^@visactor/vrender-kits$': path.resolve(__dirname, '../vrender-kits/src/index.ts'),
     '^@visactor/vrender-animate/(.*)$': path.resolve(__dirname, '../vrender-animate/src/$1'),
+    '^@visactor/vrender-core/event/constant$': path.resolve(__dirname, '../vrender-core/src/event/public-constant.ts'),
+    '^@visactor/vrender-core/render/draw-interceptor$': path.resolve(
+      __dirname,
+      '../vrender-core/src/render/contributions/render/draw-interceptor.ts'
+    ),
+    '^@visactor/vrender-core/render/symbol$': path.resolve(
+      __dirname,
+      '../vrender-core/src/render/contributions/render/symbol.ts'
+    ),
+    '^@visactor/vrender-core/(.*)$': path.resolve(__dirname, '../vrender-core/src/$1'),
     '^@visactor/vrender-core$': path.resolve(__dirname, '../vrender-core/src/index.ts'),
     '^@visactor/vrender-animate$': path.resolve(__dirname, '../vrender-animate/src/index.ts'),
     '^@visactor/vrender-components$': path.resolve(__dirname, '../vrender-components/src/index.ts')

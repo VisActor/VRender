@@ -10,8 +10,9 @@ import type {
   ITextGraphicAttribute,
   TextAlignType
 } from '@visactor/vrender-core';
-import { builtinSymbolsMap, calculateLineHeight } from '@visactor/vrender-core';
-import { merge, isValid, normalizePadding, isNil } from '@visactor/vutils';
+import { builtinSymbolsMap } from '@visactor/vrender-core/graphic/builtin-symbol';
+import { calculateLineHeight } from '@visactor/vrender-core/text';
+import { merge, isValid, normalizePadding, isNil, type TextMeasureInput } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import { alignTextInLine, initTextMeasure } from '../util/text';
 import { isVisible } from '../util';
@@ -19,7 +20,6 @@ import type { TooltipAttributes, TooltipRowAttrs, TooltipRowStyleAttrs, TooltipR
 import { getRichTextAttribute, mergeRowAttrs } from './util';
 import { defaultAttributes, TOOLTIP_POSITION_ATTRIBUTES } from './config';
 import type { ComponentOptions } from '../interface';
-import type { TextMeasureInput } from '@visactor/vutils';
 import { DEFAULT_HTML_TEXT_SPEC } from '../constant';
 import { loadTooltipComponent } from './register';
 

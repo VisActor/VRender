@@ -15,6 +15,7 @@ describe('browser-only shared app entry', () => {
   test('does not load non-browser env, full custom animate, or gif modules', () => {
     jest.isolateModules(() => {
       const legacyBindingContextMock = { getAll: jest.fn(emptyArray) };
+      const forbiddenLoads: string[] = [];
       const createBrowserApp = jest.fn(() => ({
         registry: {
           renderer: { getAll: jest.fn(emptyArray), clear: jest.fn(), register: jest.fn() },
@@ -23,16 +24,26 @@ describe('browser-only shared app entry', () => {
         release: jest.fn()
       }));
 
-      jest.doMock('@visactor/vrender-core', () => ({
-        createBrowserApp,
-        getLegacyBindingContext: jest.fn(() => legacyBindingContextMock),
-        GraphicRender: 'GraphicRender',
+      jest.doMock('@visactor/vrender-core/entries/browser', () => ({
+        createBrowserApp
+      }));
+      jest.doMock('@visactor/vrender-core/legacy/bootstrap', () => ({
+        getLegacyBindingContext: jest.fn(() => legacyBindingContextMock)
+      }));
+      jest.doMock('@visactor/vrender-core/render/symbol', () => ({
+        GraphicRender: 'GraphicRender'
+      }));
+      jest.doMock('@visactor/vrender-core/plugin/3d', () => ({
         registerDirectionalLight: jest.fn(),
-        registerFlexLayoutPlugin: jest.fn(),
-        registerHtmlAttributePlugin: jest.fn(),
         registerOrthoCamera: jest.fn(),
-        registerReactAttributePlugin: jest.fn(),
         registerViewTransform3dPlugin: jest.fn()
+      }));
+      jest.doMock('@visactor/vrender-core/plugin/attribute', () => ({
+        registerHtmlAttributePlugin: jest.fn(),
+        registerReactAttributePlugin: jest.fn()
+      }));
+      jest.doMock('@visactor/vrender-core/plugin/flex-layout', () => ({
+        registerFlexLayoutPlugin: jest.fn()
       }));
       jest.doMock('@visactor/vrender-kits/installers/browser', () => ({
         installBrowserEnvToApp: jest.fn(),
@@ -86,7 +97,8 @@ describe('browser-only shared app entry', () => {
         '@visactor/vrender-animate/custom/register'
       ].forEach(moduleName => {
         jest.doMock(moduleName, () => {
-          throw new Error(`${moduleName} should not be loaded by shared-browser`);
+          forbiddenLoads.push(moduleName);
+          return {};
         });
       });
 
@@ -96,6 +108,7 @@ describe('browser-only shared app entry', () => {
       expect(createBrowserApp).toHaveBeenCalledTimes(1);
       expect(createBrowserApp).toHaveBeenCalledWith({});
       expect(handle.env).toBe('browser');
+      expect(forbiddenLoads).toEqual([]);
       handle.release();
     });
   });

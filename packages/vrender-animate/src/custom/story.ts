@@ -1,5 +1,6 @@
 import { FadeIn } from './fade';
-import { interpolateColor, type EasingType } from '@visactor/vrender-core';
+import type { EasingType } from '@visactor/vrender-core';
+import { interpolateColor } from '@visactor/vrender-core/interpolate';
 import { ACustomAnimate } from './custom-animate';
 import { AnimateExecutor } from '../executor/animate-executor';
 import {

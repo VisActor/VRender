@@ -1,4 +1,6 @@
-import { getLegacyBindingContext, glyphModule, registerGlyphGraphic } from '@visactor/vrender-core';
+import { getLegacyBindingContext } from '@visactor/vrender-core/legacy/bootstrap';
+import { registerGlyphGraphic } from '@visactor/vrender-core/register/graphic';
+import { glyphModule } from '@visactor/vrender-core/graphic/modules';
 import { browser } from './env';
 import { bindGlyphCanvasPickerContribution } from '../picker/contributions/canvas-picker/glyph-module';
 import { bindGlyphMathPickerContribution } from '../picker/contributions/math-picker/glyph-module';

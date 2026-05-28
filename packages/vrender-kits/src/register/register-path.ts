@@ -1,4 +1,6 @@
-import { getLegacyBindingContext, pathModule, registerPathGraphic } from '@visactor/vrender-core';
+import { getLegacyBindingContext } from '@visactor/vrender-core/legacy/bootstrap';
+import { registerPathGraphic } from '@visactor/vrender-core/register/graphic';
+import { pathModule } from '@visactor/vrender-core/graphic/modules';
 import { browser } from './env';
 import { bindPathCanvasPickerContribution } from '../picker/contributions/canvas-picker/path-module';
 import { bindPathMathPickerContribution } from '../picker/contributions/math-picker/path-module';

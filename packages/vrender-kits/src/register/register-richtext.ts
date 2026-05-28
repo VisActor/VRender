@@ -1,4 +1,6 @@
-import { getLegacyBindingContext, registerRichtextGraphic, richtextModule } from '@visactor/vrender-core';
+import { getLegacyBindingContext } from '@visactor/vrender-core/legacy/bootstrap';
+import { registerRichtextGraphic } from '@visactor/vrender-core/register/graphic';
+import { richtextModule } from '@visactor/vrender-core/graphic/modules';
 import { browser } from './env';
 import { bindRichtextCanvasPickerContribution } from '../picker/contributions/canvas-picker/richtext-module';
 import { bindRichTextMathPickerContribution } from '../picker/contributions/math-picker/richtext-module';

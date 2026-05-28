@@ -1,4 +1,4 @@
-import { vglobal } from '@visactor/vrender-core';
+import { vglobal } from '@visactor/vrender-core/global';
 
 export function getEndTriggersOfDrag() {
   // 绑定到 canvas 上

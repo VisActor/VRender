@@ -1,11 +1,8 @@
-import {
-  getLegacyBindingContext,
-  GraphicRender,
-  registerFlexLayoutPlugin,
-  registerHtmlAttributePlugin,
-  registerReactAttributePlugin,
-  type IEnvParamsMap
-} from '@visactor/vrender-core';
+import type { IEnvParamsMap } from '@visactor/vrender-core';
+import { getLegacyBindingContext } from '@visactor/vrender-core/legacy/bootstrap';
+import { GraphicRender } from '@visactor/vrender-core/render/symbol';
+import { registerHtmlAttributePlugin, registerReactAttributePlugin } from '@visactor/vrender-core/plugin/attribute';
+import { registerFlexLayoutPlugin } from '@visactor/vrender-core/plugin/flex-layout';
 import { registerArea } from '@visactor/vrender-kits/register/register-area';
 import { registerCircle } from '@visactor/vrender-kits/register/register-circle';
 import { registerGlyph } from '@visactor/vrender-kits/register/register-glyph';

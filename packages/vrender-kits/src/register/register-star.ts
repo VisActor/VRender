@@ -1,4 +1,6 @@
-import { getLegacyBindingContext, starModule, registerStarGraphic } from '@visactor/vrender-core';
+import { getLegacyBindingContext } from '@visactor/vrender-core/legacy/bootstrap';
+import { registerStarGraphic } from '@visactor/vrender-core/register/graphic';
+import { starModule } from '@visactor/vrender-core/graphic/modules';
 import { bindStarCanvasPickerContribution } from '../picker/contributions/canvas-picker/star-module';
 
 function _registerStar() {

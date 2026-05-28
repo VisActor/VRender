@@ -1,5 +1,6 @@
 import { clamp, isValidNumber, Point, type IPointLike } from '@visactor/vutils';
-import { pointInterpolation, type EasingType, type IAnimate, type ISegment, type IStep } from '@visactor/vrender-core';
+import type { EasingType, IAnimate, ISegment, IStep } from '@visactor/vrender-core';
+import { pointInterpolation } from '@visactor/vrender-core/interpolate';
 import { ACustomAnimate } from './custom-animate';
 import { applyAnimationFrameAttributes, applyAnimationTransientAttributes } from './transient';
 import { commitAnimationStaticAttrs } from './static-truth';

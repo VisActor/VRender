@@ -1,5 +1,5 @@
-import * as VRenderCore from '@visactor/vrender-core';
 import type { IApp, IEntryOptions, IEnvParamsMap } from '@visactor/vrender-core';
+import { createBrowserApp } from '@visactor/vrender-core/entries/browser';
 import { bootstrapVRenderSharedBrowserLiteApp } from './bootstrap-browser-lite';
 import {
   acquireSharedApp,
@@ -23,10 +23,6 @@ export type TVRenderSharedBrowserLiteAppOptions = IEntryOptions & {
 
 export type TVRenderSharedBrowserLiteAppHandle = TVRenderSharedAppHandle<'browser'>;
 
-const { createBrowserApp } = VRenderCore as typeof VRenderCore & {
-  createBrowserApp: (options?: IEntryOptions) => IApp;
-};
-
 function createSharedBrowserLiteApp(options: TVRenderSharedBrowserLiteAppOptions): IApp {
   const { envParams } = options;
   const entryOptions = { ...options };
@@ -34,7 +30,7 @@ function createSharedBrowserLiteApp(options: TVRenderSharedBrowserLiteAppOptions
   delete entryOptions.envParams;
   delete entryOptions.key;
 
-  return bootstrapVRenderSharedBrowserLiteApp(createBrowserApp(entryOptions), envParams);
+  return bootstrapVRenderSharedBrowserLiteApp(createBrowserApp(entryOptions as any) as unknown as IApp, envParams);
 }
 
 export function acquireSharedBrowserLiteVRenderApp(

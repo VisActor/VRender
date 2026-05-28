@@ -1,4 +1,4 @@
-import { registerGroupGraphic } from '@visactor/vrender-core';
+import { registerGroupGraphic } from '@visactor/vrender-core/register/graphic';
 
 function _registerGroup() {
   if (_registerGroup.__loaded) {

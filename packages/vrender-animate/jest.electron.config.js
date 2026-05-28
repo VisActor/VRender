@@ -21,6 +21,16 @@ module.exports = createElectronPackageJestConfig({
     '!**/**.d.ts'
   ],
   moduleNameMapper: {
-    '@visactor/vrender-core': path.resolve(__dirname, '../vrender-core/src/index.ts')
+    '^@visactor/vrender-core/event/constant$': path.resolve(__dirname, '../vrender-core/src/event/public-constant.ts'),
+    '^@visactor/vrender-core/render/draw-interceptor$': path.resolve(
+      __dirname,
+      '../vrender-core/src/render/contributions/render/draw-interceptor.ts'
+    ),
+    '^@visactor/vrender-core/render/symbol$': path.resolve(
+      __dirname,
+      '../vrender-core/src/render/contributions/render/symbol.ts'
+    ),
+    '^@visactor/vrender-core/(.*)$': path.resolve(__dirname, '../vrender-core/src/$1'),
+    '^@visactor/vrender-core$': path.resolve(__dirname, '../vrender-core/src/index.ts')
   }
 });

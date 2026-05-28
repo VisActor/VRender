@@ -1,4 +1,5 @@
-import { AttributeUpdateType, type EasingType, type IAnimate, type IStep } from '@visactor/vrender-core';
+import type { EasingType, IAnimate, IStep } from '@visactor/vrender-core';
+import { AttributeUpdateType } from '@visactor/vrender-core/event/constant';
 import { ACustomAnimate } from './custom-animate';
 import {
   applyAnimationFrameAttributes,

@@ -1,4 +1,4 @@
-import { Graphic } from '@visactor/vrender-core';
+import { Graphic } from '@visactor/vrender-core/graphic/base';
 import { mixin } from '@visactor/vutils';
 import { GraphicStateExtension } from './state/graphic-extension';
 import { AnimateExtension } from './animate-extension';

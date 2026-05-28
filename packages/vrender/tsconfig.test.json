@@ -5,6 +5,18 @@
       "@visactor/vrender-core": [
         "../vrender-core/src"
       ],
+      "@visactor/vrender-core/event/constant": [
+        "../vrender-core/src/event/public-constant.ts"
+      ],
+      "@visactor/vrender-core/render/draw-interceptor": [
+        "../vrender-core/src/render/contributions/render/draw-interceptor.ts"
+      ],
+      "@visactor/vrender-core/render/symbol": [
+        "../vrender-core/src/render/contributions/render/symbol.ts"
+      ],
+      "@visactor/vrender-core/*": [
+        "../vrender-core/src/*"
+      ],
       "@visactor/vrender-kits": [
         "../vrender-kits/src"
       ],

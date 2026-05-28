@@ -1,4 +1,5 @@
-import { AttributeUpdateType, type IGraphic } from '@visactor/vrender-core';
+import type { IGraphic } from '@visactor/vrender-core';
+import { AttributeUpdateType } from '@visactor/vrender-core/event/constant';
 
 const animateUpdateContext = { type: AttributeUpdateType.ANIMATE_UPDATE };
 const animateBindContext = { type: AttributeUpdateType.ANIMATE_BIND };

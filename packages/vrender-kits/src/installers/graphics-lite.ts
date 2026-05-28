@@ -1,14 +1,11 @@
 import {
-  areaModule,
-  circleModule,
   configureRuntimeApplicationForApp,
   getRuntimeInstallerBindingContext,
-  glyphModule,
   installRuntimeDrawContributionsToApp,
   installRuntimeGraphicRenderersToApp,
-  lineModule,
-  rectModule,
-  refreshRuntimeInstallerContributions,
+  refreshRuntimeInstallerContributions
+} from '@visactor/vrender-core/entries/runtime-installer';
+import {
   registerAreaGraphic,
   registerCircleGraphic,
   registerGlyphGraphic,
@@ -18,11 +15,18 @@ import {
   registerShadowRootGraphic,
   registerSymbolGraphic,
   registerTextGraphic,
-  registerWrapTextGraphic,
+  registerWrapTextGraphic
+} from '@visactor/vrender-core/register/graphic';
+import {
+  areaModule,
+  circleModule,
+  glyphModule,
+  lineModule,
+  rectModule,
   symbolModule,
-  textModule,
-  type IApp
-} from '@visactor/vrender-core';
+  textModule
+} from '@visactor/vrender-core/graphic/modules';
+import type { IApp } from '@visactor/vrender-core';
 
 type RuntimeBindingContext = ReturnType<typeof getRuntimeInstallerBindingContext>;
 type RuntimeGraphicInstallStep = {

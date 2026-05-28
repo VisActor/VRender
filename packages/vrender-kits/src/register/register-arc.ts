@@ -1,4 +1,6 @@
-import { arcModule, getLegacyBindingContext, registerArcGraphic } from '@visactor/vrender-core';
+import { getLegacyBindingContext } from '@visactor/vrender-core/legacy/bootstrap';
+import { registerArcGraphic } from '@visactor/vrender-core/register/graphic';
+import { arcModule } from '@visactor/vrender-core/graphic/modules';
 import { browser } from './env';
 import { bindArcCanvasPickerContribution } from '../picker/contributions/canvas-picker/arc-module';
 import { bindArcMathPickerContribution } from '../picker/contributions/math-picker/arc-module';

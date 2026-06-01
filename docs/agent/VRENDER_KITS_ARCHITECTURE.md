@@ -122,7 +122,7 @@ React 和 JSX 层只做事件名映射；事件扩展能力归 kits。
 - 普通 image 图元：core `graphic/image.ts` + core renderer，kits register/installer 负责装配。
 - gif image：kits `graphic/gif-image.ts`、`interface/gif-image.ts`、`register/register-gif.ts`、`render/contributions/canvas/gif-image-*`、`picker/contributions/canvas-picker/gif-image-*`。
 - lottie：kits `graphic/Lottie.ts`、`graphic/interface/lottie.ts`、`render/contributions/canvas/lottie-*`、`picker/contributions/canvas-picker/lottie-*`。root `index.ts` 导出 lottie，`index-node.ts` 中 lottie 导出被注释。
-- texture / dynamic texture：`tools/dynamicTexture.ts`、`tools/dynamicTexture/effect.ts`，测试在 `packages/vrender-kits/__tests__/tools/dynamicTexture/effect.test.ts`。
+- texture / dynamic texture：正式导出在 `tools/dynamicTexture/effect.ts`，测试在 `packages/vrender-kits/__tests__/tools/dynamicTexture/effect.test.ts`。旧的全注释 `tools/dynamicTexture.ts` 草稿已删除。
 
 不要把 gif/lottie 默认可用性写死；是否可用取决于 entry/installer/register 路径。
 

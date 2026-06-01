@@ -446,7 +446,7 @@ Not-tested:
 
 ### 2026-06-01 / BS-P0-002 / Remove unused segment curve implementation stubs
 
-- Commit / branch: `98022b742 / remerge-d3`
+- Commit / branch: `b55d6ea35 / remerge-d3`
 - Package: `@visactor/vrender-core`
 - Build/source scope: `src` TypeScript files
 - Command: `node <<'NODE' ... filesystem size ledger with zlib.gzipSync(level=9) ... NODE`
@@ -482,6 +482,48 @@ Not-tested:
 
 - Did not run `rush build -t @visactor/vrender-core`; local ignored `es` / `cjs` artifacts were not regenerated.
 - Did not run full core unit suite; this slice deletes non-public unused implementation stubs and validates compile plus segment/public-subpath coverage.
+
+### 2026-06-01 / BS-P1-007 / Remove stale commented kits source shells
+
+- Commit / branch: `b55d6ea35 / remerge-d3`
+- Package: `@visactor/vrender-kits`
+- Build/source scope: `src` TypeScript files
+- Command: `node <<'NODE' ... filesystem size ledger with zlib.gzipSync(level=9) ... NODE`
+- Data source: local filesystem file sizes; gzip is per-file gzip summed by group, not bundled gzip
+
+Owner judgment:
+
+- 现象：kits 仍包含一组全注释、无 active source 入边、未由 package exports 暴露的旧壳文件；其中 `tools/dynamicTexture.ts` 是旧草稿，正式动态纹理能力在 `tools/dynamicTexture/effect.ts`。
+- 证据文件：`tools/dynamicTexture.ts`、`env/contributions/module.ts`、`window/contributions/native-contribution.ts`、`node-bind.ts`、`render/contributions/render-module.ts`、`picker/index.ts`、`index-node.ts`。
+- 为什么属于 VRender 自身内容大小问题：这些文件只增加 kits package source content，不参与 installers、register、env、picker、render 或 dynamicTexture effect 的运行时装配。
+- Root/default 影响：不影响；root 仍导出 `tools/dynamicTexture/effect`、register、picker contribution modules 和 full installers。
+- 预期收益：减少 kits source 内容 11,837 raw / 2,902 gzip；后续 clean build 后 ignored `es` / `cjs` 的对应 stub 产物会自然消失。
+- 风险：极少数绕过 package exports 的非公开 source deep import 会失败；这些路径不属于稳定 public API。
+
+Before / after:
+
+| group/file | before raw | after raw | before gzip | after gzip | delta gzip |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| `packages/vrender-kits/src` | 450,076 | 438,239 | 139,733 | 136,831 | -2,902 |
+| stale commented kits source shells | 11,698 | 0 | 2,830 | 0 | -2,830 |
+| `packages/vrender-kits/src/index-node.ts` stale comments | 4,041 | 3,902 | 684 | 612 | -72 |
+| `tools/dynamicTexture.ts` | 6,828 | 0 | 1,290 | 0 | -1,290 |
+| `env/contributions/module.ts` | 2,507 | 0 | 450 | 0 | -450 |
+| `window/contributions/native-contribution.ts` | 1,700 | 0 | 667 | 0 | -667 |
+| `node-bind.ts` | 410 | 0 | 221 | 0 | -221 |
+| `render/contributions/render-module.ts` | 183 | 0 | 137 | 0 | -137 |
+| `picker/index.ts` | 70 | 0 | 65 | 0 | -65 |
+
+Verification:
+
+- `rush compile -t @visactor/vrender-kits`
+- `cd packages/vrender-kits && rushx test --runInBand __tests__/tools/dynamicTexture/effect.test.ts`
+- Import graph scan: deleted files had no active VRender source in-edges and were not package export source entries.
+
+Not-tested:
+
+- Did not run `rush build -t @visactor/vrender-kits`; local ignored `es` / `cjs` artifacts were not regenerated.
+- Did not run full kits unit suite; this slice deletes non-public all-comment source shells and validates compile plus dynamicTexture effect coverage.
 
 ## 外部 Bundle Before / After 记录格式
 

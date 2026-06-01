@@ -337,6 +337,42 @@ Not-tested:
 - Did not rebuild `es` / `cjs`; existing local build artifacts were measured as-is.
 - Did not generate bundled/metafile analyzer output; this ledger is package content size, not reachable bundle graph size.
 
+### 2026-06-01 / BS-P0-002 / Remove unreferenced core Reflect metadata shim
+
+- Commit / branch: `db2943d47 / remerge-d3`
+- Package: `@visactor/vrender-core`
+- Build/source scope: `src` TypeScript files
+- Command: `node <<'NODE' ... filesystem size ledger with zlib.gzipSync(level=9) ... NODE`
+- Data source: local filesystem file sizes; gzip is per-file gzip summed by group, not bundled gzip
+
+Owner judgment:
+
+- 现象：BS-P0-001 source top files 显示 `packages/vrender-core/src/common/Reflect-metadata.ts` 为 36,396 raw / 5,865 gzip，但该文件不在 `package.json` exports 中，也没有被 VRender 源码 import。
+- 证据文件：`packages/vrender-core/src/common/Reflect-metadata.ts`、`packages/vrender-core/package.json`、`packages/vrender-core/src/index.ts`。
+- 为什么属于 VRender 自身内容大小问题：这是 core source/package content 中未引用、未公开的 legacy metadata shim，不属于 VChart bundler resolve 或上层 workaround。
+- Root/default 影响：不影响；root/default 没有加载该 shim，`@visactor/vrender-core` public subpath exports 也未暴露它。
+- 预期收益：减少 core source 内容 36,444 raw / 5,888 gzip；后续 rebuild 后对应 ignored `es` / `cjs` 产物会自然消失。
+- 风险：极少数绕过 package exports 的非公开 source deep import 会失败；该路径不属于稳定 public API。
+
+Before / after:
+
+| group/file | before raw | after raw | before gzip | after gzip | delta gzip |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| `packages/vrender-core/src` | 1,772,502 | 1,736,058 | 505,028 | 499,140 | -5,888 |
+| `packages/vrender-core/src/common/Reflect-metadata.ts` | 36,396 | 0 | 5,865 | 0 | -5,865 |
+| `packages/vrender-core/src/index.ts` stale comment | 48 | 0 | 23 | 0 | -23 |
+
+Verification:
+
+- `rg "Reflect-metadata|reflect-metadata|Reflect\\.defineMetadata|Reflect\\.getMetadata|Reflect\\.hasMetadata|Reflect\\.hasOwnMetadata" packages/vrender-core/src packages/vrender-animate/src packages/vrender-components/src packages/vrender-kits/src packages/vrender/src --glob '!**/*.map'`
+- `rush compile -t @visactor/vrender-core`
+- `cd packages/vrender-core && rushx test --runInBand __tests__/unit/public-subpath-exports.test.ts`
+
+Not-tested:
+
+- Did not run `rush build -t @visactor/vrender-core`; local ignored `es` / `cjs` artifacts were not regenerated.
+- Did not run full core unit suite; this slice deletes an unreferenced non-public source shim and validates compile plus public subpath exports.
+
 ## 外部 Bundle Before / After 记录格式
 
 涉及 VChart / VTable 外部场景时，再追加如下记录：

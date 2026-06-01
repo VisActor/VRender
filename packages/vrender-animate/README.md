@@ -22,6 +22,22 @@ This module provides a graph-based animation system for VRender.
 
 ## Usage
 
+### Runtime Registration
+
+```typescript
+import { registerAnimate } from '@visactor/vrender-animate/register';
+import { registerBasicCustomAnimate } from '@visactor/vrender-animate/custom/register-basic';
+
+registerAnimate();
+registerBasicCustomAnimate();
+```
+
+`registerAnimate()` installs the base graphic animation runtime. Use
+`@visactor/vrender-animate/custom/register-basic` when only the common built-in
+custom animations are needed. Full bootstraps that need story, rich text,
+poptip, motion path, and disappearance effects should continue to use
+`@visactor/vrender-animate/custom/register`.
+
 ### Basic Property Animation
 
 ```typescript

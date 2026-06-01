@@ -179,6 +179,11 @@
       "import": "./es/custom/register.js",
       "require": "./cjs/custom/register.js"
     },
+    "./custom/register-basic": {
+      "types": "./es/custom/register-basic.d.ts",
+      "import": "./es/custom/register-basic.js",
+      "require": "./cjs/custom/register-basic.js"
+    },
     "./custom/rotate": {
       "types": "./es/custom/rotate.d.ts",
       "import": "./es/custom/rotate.js",

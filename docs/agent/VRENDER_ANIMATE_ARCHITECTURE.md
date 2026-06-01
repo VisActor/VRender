@@ -16,6 +16,8 @@
 - `timeline.ts`：`DefaultTimeline`。
 - `ticker/default-ticker.ts`、`ticker/manual-ticker.ts`。
 - `executor/animate-executor.ts`。
+- `custom/register-basic.ts`：基础 built-in custom animation 注册入口。
+- `custom/register.ts`：full built-in custom animation 注册入口。
 - `custom/*`。
 - `state/*`。
 - `component/*`。
@@ -96,7 +98,8 @@ graphic.animate()
 custom animation 相关路径：
 
 - `custom/custom-animate.ts`：`ACustomAnimate`、`AComponentAnimate`、`AStageAnimate`。
-- `custom/register.ts`：注册内置 custom animation。
+- `custom/register-basic.ts`：`registerBasicCustomAnimate()`，注册 fromTo、scale、grow、clip、fade、move、rotate、update/state、increaseCount 等基础 custom 动画。
+- `custom/register.ts`：`registerCustomAnimate()`，先注册 basic custom，再注册 story、richtext、poptip、label item、motion path、streamLight、disappear effects 等 full custom 能力。
 - `custom/fade.ts`、`grow*`、`scale.ts`、`rotate.ts`、`move.ts`、`tag-points.ts`、`update.ts`、`morphing.ts`、`clip*`、`disappear/*`、`richtext/*`。
 
 分类：

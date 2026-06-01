@@ -485,7 +485,7 @@ Not-tested:
 
 ### 2026-06-01 / BS-P1-007 / Remove stale commented kits source shells
 
-- Commit / branch: `b55d6ea35 / remerge-d3`
+- Commit / branch: `b9b038520 / remerge-d3`
 - Package: `@visactor/vrender-kits`
 - Build/source scope: `src` TypeScript files
 - Command: `node <<'NODE' ... filesystem size ledger with zlib.gzipSync(level=9) ... NODE`
@@ -524,6 +524,53 @@ Not-tested:
 
 - Did not run `rush build -t @visactor/vrender-kits`; local ignored `es` / `cjs` artifacts were not regenerated.
 - Did not run full kits unit suite; this slice deletes non-public all-comment source shells and validates compile plus dynamicTexture effect coverage.
+
+### 2026-06-01 / BS-P0-004 / Split basic custom animate registration
+
+- Commit / branch: `this commit / remerge-d3`
+- Package: `@visactor/vrender-animate`
+- Build/source scope: `src` package files plus TypeScript import closures for custom register entries
+- Command: `node <<'NODE' ... filesystem size ledger and local TS import closure with zlib.gzipSync(level=9) ... NODE`
+- Data source: local filesystem file sizes; gzip is per-file gzip summed by group / closure, not bundled gzip
+
+Owner judgment:
+
+- 现象：`custom/register.ts` 是 full custom 入口，同时承载基础 built-in custom 动画与 story/richtext/poptip/label item/motion path/streamLight/disappear effects 等 optional 能力；只需要基础 custom 动画的调用方没有稳定窄入口。
+- 证据文件：`packages/vrender-animate/src/custom/register.ts`、`packages/vrender-animate/src/custom/*`、`packages/vrender-animate/package.json`、`packages/vrender/src/entries/bootstrap.ts`。
+- 为什么属于 VRender 自身内容大小问题：custom/register full closure 当前覆盖 51 个 TS 文件、380,334 raw / 97,497 gzip；其中 basic register 不需要的 optional custom 内容为 22 个文件、214,514 raw / 54,086 gzip。
+- Root/default 影响：不影响；`registerCustomAnimate()` 仍先注册 basic，再注册原有 optional built-in custom 动画；root/full bootstrap 行为保持。
+- Public API 影响：新增稳定 public subpath `@visactor/vrender-animate/custom/register-basic`，不删除 `custom/register` 或 root exports。
+- 预期收益：为 VChart / VTable 或其他上层提供标准基础 custom 注册入口；迁移后可避免 full custom optional closure。当前 package source 因新增入口净增加 614 raw / 238 gzip。
+- 风险：只有改用 basic register 的调用方不会自动获得 richtext/poptip/story/disappear/motionPath 等 optional built-in key；full register 无此风险。
+
+Before / after:
+
+| group/file | before raw | after raw | before gzip | after gzip | delta gzip |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| `packages/vrender-animate/src` | 489,228 | 489,842 | 127,682 | 127,920 | +238 |
+| `packages/vrender-animate/src/custom` | 349,478 | 350,092 | 89,737 | 89,975 | +238 |
+| `custom/register.ts` source | 7,409 | 4,637 | 1,482 | 1,069 | -413 |
+| `custom/register-basic.ts` source | 0 | 3,386 | 0 | 651 | +651 |
+
+Entry closure ledger:
+
+| entry closure | files | raw bytes | gzip bytes |
+| --- | ---: | ---: | ---: |
+| `custom/register.ts` before | 50 | 379,720 | 97,259 |
+| `custom/register.ts` after | 51 | 380,334 | 97,497 |
+| `custom/register-basic.ts` after | 29 | 165,820 | 43,411 |
+| optional custom content avoided by `custom/register-basic` vs full | 22 | 214,514 | 54,086 |
+
+Verification:
+
+- `rush compile -t @visactor/vrender-animate`
+- `cd packages/vrender-animate && rushx test --runInBand __tests__/unit/custom-register-split.test.ts __tests__/unit/custom-appear-static-truth.test.ts __tests__/unit/animation-runtime-attribute.test.ts __tests__/unit/animate-tracking.test.ts __tests__/unit/graphic-state-extension.test.ts`
+- `cd packages/vrender && rushx test --runInBand __tests__/unit/public-subpath-exports.test.ts`
+
+Not-tested:
+
+- Did not run `rush build -t @visactor/vrender-animate`; local ignored `es` / `cjs` artifacts were not regenerated.
+- Did not migrate VChart / VTable to `custom/register-basic`; this slice only provides the VRender-owned standard subpath and locks full/default behavior.
 
 ## 外部 Bundle Before / After 记录格式
 

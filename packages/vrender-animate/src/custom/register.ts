@@ -1,29 +1,12 @@
 import { AnimateExecutor } from '../executor/animate-executor';
-import { ClipIn, ClipOut } from './clip';
-import { FadeIn, FadeOut } from './fade';
-import { GrowAngleIn, GrowAngleOut } from './growAngle';
-import { GrowCenterIn, GrowCenterOut } from './growCenter';
-import { GrowHeightIn, GrowHeightOut } from './growHeight';
-import {
-  GrowPointsIn,
-  GrowPointsOut,
-  GrowPointsXIn,
-  GrowPointsXOut,
-  GrowPointsYIn,
-  GrowPointsYOut
-} from './growPoints';
-import { GrowRadiusIn, GrowRadiusOut } from './growRadius';
-import { GrowWidthIn, GrowWidthOut } from './growWidth';
+import { registerBasicCustomAnimate } from './register-basic';
 import { InputText } from './input-text';
 import { LabelItemAppear, LabelItemDisappear } from './label-item-animate';
-import { IncreaseCount } from './number';
 import { PoptipAppear, PoptipDisappear } from './poptip-animate';
 import { InputRichText } from './richtext/input-richtext';
 import { OutputRichText } from './richtext/output-richtext';
 import { SlideRichText } from './richtext/slide-richtext';
 import { SlideOutRichText } from './richtext/slide-out-richtext';
-import { ScaleIn, ScaleOut } from './scale';
-import { State } from './state';
 import {
   GrowIn,
   GrowOut,
@@ -39,11 +22,7 @@ import {
   StrokeIn,
   StrokeOut
 } from './story';
-import { Update } from './update';
-import { MoveIn, MoveOut } from './move';
-import { RotateIn, RotateOut } from './rotate';
 import { MotionPath } from './motionPath';
-import { FromTo } from './fromTo';
 import { GroupFadeIn, GroupFadeOut } from './groupFade';
 import { StreamLight } from './streamLight';
 import { Dissolve } from './disappear/dissolve';
@@ -55,39 +34,7 @@ import { GaussianBlur } from './disappear/gaussian-blur';
 import { Pixelation } from './disappear/pixelation';
 
 export const registerCustomAnimate = () => {
-  // 基础动画
-  AnimateExecutor.registerBuiltInAnimate('increaseCount', IncreaseCount);
-
-  AnimateExecutor.registerBuiltInAnimate('fromTo', FromTo);
-  AnimateExecutor.registerBuiltInAnimate('scaleIn', ScaleIn);
-  AnimateExecutor.registerBuiltInAnimate('scaleOut', ScaleOut);
-  AnimateExecutor.registerBuiltInAnimate('growHeightIn', GrowHeightIn);
-  AnimateExecutor.registerBuiltInAnimate('growHeightOut', GrowHeightOut);
-  AnimateExecutor.registerBuiltInAnimate('growWidthIn', GrowWidthIn);
-  AnimateExecutor.registerBuiltInAnimate('growWidthOut', GrowWidthOut);
-  AnimateExecutor.registerBuiltInAnimate('growCenterIn', GrowCenterIn);
-  AnimateExecutor.registerBuiltInAnimate('growCenterOut', GrowCenterOut);
-  AnimateExecutor.registerBuiltInAnimate('clipIn', ClipIn);
-  AnimateExecutor.registerBuiltInAnimate('clipOut', ClipOut);
-  AnimateExecutor.registerBuiltInAnimate('fadeIn', FadeIn);
-  AnimateExecutor.registerBuiltInAnimate('fadeOut', FadeOut);
-  AnimateExecutor.registerBuiltInAnimate('growPointsIn', GrowPointsIn);
-  AnimateExecutor.registerBuiltInAnimate('growPointsOut', GrowPointsOut);
-  AnimateExecutor.registerBuiltInAnimate('growPointsXIn', GrowPointsXIn);
-  AnimateExecutor.registerBuiltInAnimate('growPointsXOut', GrowPointsXOut);
-  AnimateExecutor.registerBuiltInAnimate('growPointsYIn', GrowPointsYIn);
-  AnimateExecutor.registerBuiltInAnimate('growPointsYOut', GrowPointsYOut);
-  AnimateExecutor.registerBuiltInAnimate('growAngleIn', GrowAngleIn);
-  AnimateExecutor.registerBuiltInAnimate('growAngleOut', GrowAngleOut);
-  AnimateExecutor.registerBuiltInAnimate('growRadiusIn', GrowRadiusIn);
-  AnimateExecutor.registerBuiltInAnimate('growRadiusOut', GrowRadiusOut);
-  AnimateExecutor.registerBuiltInAnimate('moveIn', MoveIn);
-  AnimateExecutor.registerBuiltInAnimate('moveOut', MoveOut);
-  AnimateExecutor.registerBuiltInAnimate('rotateIn', RotateIn);
-  AnimateExecutor.registerBuiltInAnimate('rotateOut', RotateOut);
-  // state和update共用一个自定义动画类
-  AnimateExecutor.registerBuiltInAnimate('update', Update);
-  AnimateExecutor.registerBuiltInAnimate('state', State);
+  registerBasicCustomAnimate();
   // Label item animations
   AnimateExecutor.registerBuiltInAnimate('labelItemAppear', LabelItemAppear);
   AnimateExecutor.registerBuiltInAnimate('labelItemDisappear', LabelItemDisappear);
@@ -137,37 +84,8 @@ export const registerCustomAnimate = () => {
 };
 
 export {
-  ClipIn,
-  ClipOut,
-  FadeIn,
-  FadeOut,
-  GrowAngleIn,
-  GrowAngleOut,
-  GrowCenterIn,
-  GrowCenterOut,
-  GrowHeightIn,
-  GrowHeightOut,
-  GrowPointsIn,
-  GrowPointsOut,
-  GrowPointsXIn,
-  GrowPointsXOut,
-  GrowPointsYIn,
-  GrowPointsYOut,
-  GrowRadiusIn,
-  GrowRadiusOut,
-  GrowWidthIn,
-  GrowWidthOut,
-  IncreaseCount,
   PoptipAppear,
   PoptipDisappear,
-  ScaleIn,
-  ScaleOut,
-  MoveIn,
-  MoveOut,
-  RotateIn,
-  RotateOut,
-  State,
-  Update,
   MotionPath,
   LabelItemAppear,
   LabelItemDisappear,
@@ -191,7 +109,6 @@ export {
   PulseAnimate,
   GroupFadeIn,
   GroupFadeOut,
-  FromTo,
   StreamLight,
   Dissolve,
   Grayscale,
@@ -201,3 +118,36 @@ export {
   GaussianBlur,
   Pixelation
 };
+
+export {
+  ClipIn,
+  ClipOut,
+  FadeIn,
+  FadeOut,
+  FromTo,
+  GrowAngleIn,
+  GrowAngleOut,
+  GrowCenterIn,
+  GrowCenterOut,
+  GrowHeightIn,
+  GrowHeightOut,
+  GrowPointsIn,
+  GrowPointsOut,
+  GrowPointsXIn,
+  GrowPointsXOut,
+  GrowPointsYIn,
+  GrowPointsYOut,
+  GrowRadiusIn,
+  GrowRadiusOut,
+  GrowWidthIn,
+  GrowWidthOut,
+  IncreaseCount,
+  MoveIn,
+  MoveOut,
+  RotateIn,
+  RotateOut,
+  ScaleIn,
+  ScaleOut,
+  State,
+  Update
+} from './register-basic';

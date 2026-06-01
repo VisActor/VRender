@@ -174,7 +174,7 @@ Current progress:
 
 - Stable support matrix 已明确为 Tier 1: `browser` / `node` / `wx` / `lynx` / `harmony`；Tier 2: `taro` / `feishu` / `tt`；Tier 3: `native`。
 - 历史 `text stateProxy` 与 memory P2 已从 follow-up 中收口，memory P2 关闭为 D3 stable release no-go；`stateProxy` 删除后的后续验证口径改为 text + dynamic `states.resolver`。
-- `graphic.states` missing-state fallback 告警策略已完成：绑定 shared scope 后由 `graphic.states` 补齐缺失 shared definition 时输出一次性 deprecated warning。
+- `graphic.states` shared-scope fallback 已在 release 前删除：绑定 shared scope 后不再由本地图元 `states` 补齐缺失 shared definition；本地图元状态只用于非 shared scope。
 - `Glyph ownership` 已关闭为文档化边界：稳定版不把 `Glyph` 并回 shared-state 主路径，`glyphStates` / `glyphStateProxy` 继续作为 Glyph 专属 surface。
 - legacy/custom sample cleanup 已完成 D3 stable scope 补强：`packages/vrender` browser `background.ts` 已纳入 deprecated root `createStage()` scan 并切到 app-scoped page stage helper。
 - VTable 侧 app/stage ownership 与 appear/fade 动画契约 prompt 已补充：[D3_VTABLE_APP_SCOPED_ADOPTION_PROMPT.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_VTABLE_APP_SCOPED_ADOPTION_PROMPT.md)。

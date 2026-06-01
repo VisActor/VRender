@@ -233,10 +233,10 @@ P2 是建议保留但不应挤占 P0/P1 的后续项。
 ### P2-2 `graphic.states` missing-state warning strategy
 
 - Owner: maintainers
-- Status: completed
+- Status: superseded by removal
 - Source: [D3_FOLLOWUPS.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_FOLLOWUPS.md)
 
-已在 VRender core 中补充 deprecated warning：只有绑定 shared scope 后由 `graphic.states` 补齐缺失 shared definition 的路径会提示，普通本地图元状态和 shared definition 命中路径不提示。
+release 前收口已删除 shared scope 下由 `graphic.states` 补齐缺失 shared definition 的 fallback。当前语义是：图元绑定 shared scope 后，状态定义来源由 shared scope 决定；本地图元 `states` 只在未绑定 shared scope 时作为本地状态定义入口。
 
 ### P2-3 Glyph ownership documentation split
 
@@ -268,7 +268,7 @@ P2 是建议保留但不应挤占 P0/P1 的后续项。
 | P1 | memory benchmark / VTable-lite P2 | `VRender-side` | 已关闭为 D3 stable release no-go |
 | P1 | multi-env / on-demand support matrix | `VRender-side` / maintainers | stable support matrix 已关闭，advanced on-demand 移出 D3 release |
 | P2 | full internal migration decision | `cross-repo integration` | 只有 app-provider-first 稳定后才值得决策 |
-| P2 | `graphic.states` warning strategy | maintainers | 已完成 deprecated warning |
+| P2 | `graphic.states` shared-scope fallback | maintainers | 已删除 fallback，shared scope 下忽略本地图元 states |
 | P2 | Glyph ownership docs | maintainers | 已关闭为文档化特例边界 |
 | P2 | legacy/custom samples cleanup | `VRender-side` | 已完成 D3 stable scope scan 补强 |
 

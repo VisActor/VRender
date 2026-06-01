@@ -18,19 +18,19 @@
 
 ## 2. 当前后续项
 
-### F-01 `graphic.states` missing-state fallback 告警策略
+### F-01 `graphic.states` shared-scope fallback 收口
 
 - 问题：
-  shared-state 主路径已经把 `graphic.states` 收口为 missing-state fallback，需要明确开发期提示策略，避免调用方继续把实例级状态定义当作推荐主路径。
+  Phase 3 历史设计曾把 `graphic.states` 收口为 shared scope 下的 missing-state fallback，并讨论过开发期提示策略。release 前收口后，该 fallback 已删除：图元一旦绑定 shared scope，状态定义来源由 shared scope 决定，不再由本地图元 `states` 补齐缺失 shared definition。
 - 当前状态：
-  completed。当前已在 VRender core 中对“绑定 shared scope 后，由 `graphic.states` 补齐缺失 shared definition”的路径输出一次性 deprecated warning；普通本地图元状态与命中 shared definition 的路径不告警。
+  superseded by removal。当前代码与 `shared-state-fallback.test.ts` 锁定的语义是：shared scope 下忽略本地图元 `states` fallback；普通未绑定 shared scope 的图元本地状态仍正常工作。
 - 为什么是非阻塞：
-  Phase 3 ownership、fallback 裁决语义和 Phase 4 主路径都已经闭环；这个问题只影响开发时提示策略，不影响当前 `closed` 阶段的运行时正确性。
+  Phase 3 ownership 和 Phase 4 主路径都已经闭环；release 前删除 fallback 后，调用方需要把共享状态补到 `sharedStateDefinitions`，不再依赖提示策略维持旧路径。
 - 证据入口：
   - `packages/vrender-core/src/graphic/graphic.ts`
   - `packages/vrender-core/__tests__/unit/graphic/shared-state-fallback.test.ts`
 - 是否影响现有 closed 结论：
-  否。不影响 Phase 3 / Phase 4 已 `closed` 的结论。
+  否。不影响 Phase 3 / Phase 4 已 `closed` 的结论；历史文档中关于 shared scope missing-state fallback warning 的表述已被当前 release 前删除项取代。
 
 ### F-02 `Glyph ownership` 文档拆分与归属
 

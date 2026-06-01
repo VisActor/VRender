@@ -63,7 +63,7 @@ Phase 1 以“实现完成并通过验证”作为阶段收口，没有单独走
 - 解决了什么：
   把共享状态定义正式收口到 `Theme -> stage.rootSharedStateScope -> Group scopes -> Graphic`，结束实例级状态定义作为主模型的设计方向。
 - 关键拍板：
-  `Group` 是 shared-state 主 owner；`Theme` 只做只读默认来源；`graphic.states` 只做 missing-state fallback；实例级 `stateProxy` 退出 shared-state 主路径；resolver 保留为实例 escape hatch。
+  `Group` 是 shared-state 主 owner；`Theme` 只做只读默认来源；阶段出口时 `graphic.states` 曾作为 missing-state fallback 处理；实例级 `stateProxy` 退出 shared-state 主路径；resolver 保留为实例 escape hatch。release 前收口后，shared scope 下的本地图元 `states` fallback 已删除。
 - 最终交付：
   `rootSharedStateScope`、`Group.sharedStateScope`、effective compiled view、多 scope active 注册、render 前 refresh 契约、shared-state invalidation / rebinding 主路径。
 - 留下的 follow-up：
@@ -105,7 +105,7 @@ Phase 1-4 关闭时曾保留 2 个非阻塞 follow-up：
 
 稳定正式版收尾阶段已经处理完毕：
 
-1. `graphic.states` missing-state fallback 已补 deprecated warning，并用 `shared-state-fallback.test.ts` 锁定告警边界。
+1. `graphic.states` shared-scope fallback 已从 warning 策略改为 release 前删除项，并用 `shared-state-fallback.test.ts` 锁定：绑定 shared scope 后忽略本地图元 `states` fallback；未绑定 shared scope 的本地状态仍可用。
 2. `Glyph ownership` 已关闭为文档化特例边界：不并回 D3 shared-state 主路径，继续保留 `glyphStates` / `glyphStateProxy` 专属 surface。
 
 这两项不再作为 D3 stable release follow-up 保留；历史阶段文档中的“留下的 follow-up”只记录当时阶段出口状态，不代表当前仍未处理。

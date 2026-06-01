@@ -19,7 +19,7 @@ Animation no longer acts as an implicit static truth source. Shared state defini
    - `sharedStateDefinitions` is the preferred group-first state definition surface.
    - `graphic.setStates(states, { animate, animateSameStatePatchChange })` supports same-state refresh and same-state patch changed animation.
    - Dynamic state resolvers receive a valid `graphic` in `StateResolveContext`.
-   - `graphic.states` is retained only as a missing-state fallback; fallback usage under shared-state scope now emits a deprecated warning.
+   - `graphic.states` remains the local graphic state-definition surface only outside shared-state scopes. Once a graphic is bound to a shared-state scope, local `graphic.states` definitions are ignored instead of being used as missing-state fallback.
 
 2. Animation and update target contract
    - State animation keeps `baseAttributes`, `finalAttribute`, `attribute`, and `resolvedStatePatch` aligned without flashing through normal attrs.

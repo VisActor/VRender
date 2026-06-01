@@ -308,6 +308,8 @@ rg "StateModel|state-model"
 - `setFinalAttributes?`、`applyAnimationTransientAttributes?`、`detachAttributeFromBaseAttributes?` 等可选调用 fallback。
 - 临时属性写入失败时直接 `Object.assign(target.attribute, attrs)`。
 
+注意：这里删除的是 animate runtime 对非标准 target 的 fallback 读取/写入路径，不表示 `graphic.animates` 这个兼容表象完全消失。当前 `AnimationStateManager` 仍会把内部 tracked animates map 暴露到 `graphic.animates`，用于兼容观察；标准操作路径仍是 `trackAnimate` / `untrackAnimate` / `forEachTrackedAnimate` / `getTrackedAnimates`。
+
 ### 删除前调用链
 
 ```text

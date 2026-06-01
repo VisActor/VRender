@@ -26,6 +26,60 @@ P0 必须同时满足：
 - VChart line/simple stats 只作为外部 smoke 或回归参照。
 - 入口 / 环境解析问题已完成主要梳理；除非出现回归，否则不作为 P0 领取优先项。
 
+## 分类任务视图
+
+本节只按后续执行类别重排任务，不替代下方 Backlog 表。后续逐步开展时，以 Backlog 表的 `当前状态` 和 [baseline](./VRENDER_BUNDLE_BASELINE.md) 的 before/after 记录跟踪进度，不新增分散任务文档。
+
+### A. 基线与度量
+
+| ID | 任务 | 状态 | 进度记录 |
+| --- | --- | --- | --- |
+| BS-P0-001 | 建立 VRender 自身 package/module/file size ledger | completed 2026-06-01 | 已记录 `src` 与现有 `es` / `cjs` raw/gzip 基线 |
+| BS-P2-012 | 验证 `@visactor/vutils` root import 与重复版本实际体积来源 | needs-stats | 先做 analyzer / version 分组，不直接改未公开 deep import |
+
+### B. Core 内容瘦身
+
+| ID | 任务 | 状态 | 进度记录 |
+| --- | --- | --- | --- |
+| BS-P0-002 | core graphic/common heavy path 内容瘦身审计 | in-progress | 已完成第一片：删除未引用 `Reflect-metadata.ts`，减少 core source 36,444 raw / 5,888 gzip |
+| BS-P1-009 | path/svg/xml parser 低频化 | needs-stats | 需先证明 `Graphic` base / root common 的真实可达链路 |
+| BS-P2-011 | builtin-symbol 子集化可行性研究 | candidate | 只做研究和 stats；不能破坏 `symbolType` 兼容 |
+
+### C. 图元 / Renderer / Picker 能力分层
+
+| ID | 任务 | 状态 | 进度记录 |
+| --- | --- | --- | --- |
+| BS-P0-003 | 图元实现按基础 / optional 能力拆分候选 | candidate | 重点 arc / path / image / richtext / 3D；full/root 行为保持 |
+| BS-P1-008 | 3D installer / register 分组与内容隔离 | candidate | lite/optional 不带 3D；full default 保持 |
+| BS-P2-013 | image/resource 链路 optional 化 | candidate | 需同时覆盖 image renderer/picker/resource 与组件依赖 |
+
+### D. Animate runtime / custom 分层
+
+| ID | 任务 | 状态 | 进度记录 |
+| --- | --- | --- | --- |
+| BS-P0-004 | animate custom/runtime 内容分层 | candidate | 先拆 basic / polar / richtext / story / component register 设计；保护 `scaleIn fromScale*` |
+
+### E. Components 子入口与 optional 组件
+
+| ID | 任务 | 状态 | 进度记录 |
+| --- | --- | --- | --- |
+| BS-P1-005 | root-only 组件补稳定 public subpath | candidate | data-zoom、marker、player、slider、scrollbar、title、brush、timeline、radio、checkbox、table-series-number |
+| BS-P1-006 | label / axis / legend 子入口宽度复核 | candidate | 优先新增更窄入口，不改变既有 root/family entry |
+| BS-P2-014 | richtext optional 化与 tooltip/title/label 拆分 | candidate | 需要 VChart visual/smoke 辅助确认默认外观 |
+
+### F. Kits / Env / Media optional 边界
+
+| ID | 任务 | 状态 | 进度记录 |
+| --- | --- | --- | --- |
+| BS-P1-007 | media optional installer 内容隔离 | candidate | gif/lottie/rough/dynamicTexture 分离；full default 保持 |
+| BS-P2-015 | drag / gesture extension 不进入基础 bundle 验证 | needs-stats | 先确认基础路径是否静态带入 |
+
+### G. 上层集成与迁移辅助
+
+| ID | 任务 | 状态 | 进度记录 |
+| --- | --- | --- | --- |
+| BS-P2-010 | 外部消费方 core root imports 替换为 public narrow entries | candidate | VRender 先提供稳定窄入口；VChart/VTable 后续单独迁移 |
+
 ## Backlog 表
 
 | ID | 标题 | 所属包 / 模块 | 现象 | 证据文件 | 疑似带入链路 | 是否影响 root/default 行为 | 预期收益 | 风险 | 优先级 | 推荐验证 | 是否需要 VChart / VTable 配合 | 当前状态 |

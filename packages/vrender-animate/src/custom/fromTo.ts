@@ -1,6 +1,7 @@
 import type { EasingType } from '@visactor/vrender-core';
 import { AttributeUpdateType } from '@visactor/vrender-core/event/constant';
 import { ACustomAnimate } from './custom-animate';
+import { applyAnimationTransientAttributes } from './transient';
 
 export class FromTo extends ACustomAnimate<Record<string, number>> {
   declare valid: boolean;
@@ -13,14 +14,7 @@ export class FromTo extends ACustomAnimate<Record<string, number>> {
   }
 
   protected applyTransientFromAttributes(): void {
-    const target = this.target as any;
-    if (typeof target.applyTransientAttributes === 'function') {
-      target.applyTransientAttributes(this.from, false, { type: AttributeUpdateType.ANIMATE_START });
-      return;
-    }
-
-    Object.assign(target.attribute ?? {}, this.from);
-    target.onAttributeUpdate?.({ type: AttributeUpdateType.ANIMATE_START });
+    applyAnimationTransientAttributes(this.target, this.from, AttributeUpdateType.ANIMATE_START);
   }
 
   onBind(): void {
@@ -35,7 +29,7 @@ export class FromTo extends ACustomAnimate<Record<string, number>> {
 
     // 如果入场动画，那么需要设置属性
     if (this.target.context?.animationState === 'appear') {
-      (this.target as any).applyFinalAttributeToAttribute?.();
+      (this.target as any).applyFinalAttributeToAttribute();
     }
     if (this.params?.controlOptions?.immediatelyApply !== false) {
       this.applyTransientFromAttributes();

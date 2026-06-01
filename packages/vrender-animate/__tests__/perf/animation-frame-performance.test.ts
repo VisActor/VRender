@@ -18,6 +18,9 @@ const fakeTimeline = {
 function createTarget() {
   return {
     attribute: { x: 0, width: 10 },
+    applyAnimationTransientAttributes(attrs: Record<string, any>) {
+      Object.assign(this.attribute, attrs);
+    },
     applyTransientAttributes(attrs: Record<string, any>) {
       Object.assign(this.attribute, attrs);
     },
@@ -141,6 +144,9 @@ function createCommitTarget() {
     context: { finalAttrs },
     getFinalAttribute() {
       return this.finalAttribute;
+    },
+    setFinalAttributes(attrs: Record<string, any>) {
+      Object.assign(this.finalAttribute, attrs);
     },
     setAttributes(attrs: Record<string, any>) {
       const baseAttributes = this.baseAttributes as Record<string, any>;

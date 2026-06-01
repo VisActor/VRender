@@ -59,11 +59,11 @@ describe('Graphic useStates', () => {
       }
     } as any;
 
-    const createStateModel = jest.spyOn(graphic as any, 'createStateModel');
+    const ensureStateEngine = jest.spyOn(graphic as any, 'ensureStateEngine');
 
     graphic.setStates(undefined, false);
 
-    expect(createStateModel).not.toHaveBeenCalled();
+    expect(ensureStateEngine).not.toHaveBeenCalled();
     expect(graphic.attribute.fill).toBe('blue');
 
     graphic.setStates(['hover'], false);
@@ -109,23 +109,23 @@ describe('Graphic useStates', () => {
     expect(graphic.normalAttrs).toEqual((graphic as any).baseAttributes);
   });
 
-  test('should use stateProxy instead of static states for dynamic attrs', () => {
+  test('should use state resolver for dynamic attrs', () => {
     const graphic = createGraphic();
+    const resolver = jest.fn((ctx: any) => ({
+      fill: `hover-${ctx.effectiveStates.join('+')}`,
+      stroke: 'orange'
+    }));
     graphic.states = {
       hover: {
-        fill: 'red'
+        patch: { fill: 'red' },
+        resolver,
+        declaredAffectedKeys: ['fill', 'stroke']
       }
     } as any;
 
-    const stateProxy = jest.fn((stateName: string, targetStates?: string[]) => ({
-      fill: `${stateName}-${targetStates?.join('+')}`,
-      stroke: 'orange'
-    }));
-    graphic.stateProxy = stateProxy as any;
-
     graphic.useStates(['hover'], false);
 
-    expect(stateProxy).toHaveBeenCalledWith('hover', ['hover']);
+    expect(resolver).toHaveBeenCalledTimes(1);
     expect(graphic.attribute.fill).toBe('hover-hover');
     expect(graphic.attribute.stroke).toBe('orange');
   });

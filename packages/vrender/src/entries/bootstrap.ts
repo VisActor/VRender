@@ -1,6 +1,4 @@
 import {
-  getLegacyBindingContext,
-  GraphicRender,
   vglobal,
   isBrowserEnv,
   isNodeEnv,
@@ -60,8 +58,13 @@ import { registerText } from '@visactor/vrender-kits/register/register-text';
 import { registerWrapText } from '@visactor/vrender-kits/register/register-wraptext';
 import { registerCustomAnimate } from '@visactor/vrender-animate/custom/register';
 import { registerAnimate } from '@visactor/vrender-animate/register';
+import {
+  ensureBootstrap,
+  syncLegacyPickersToApp,
+  syncLegacyRenderersToApp,
+  type TBootstrapTarget
+} from './bootstrap-utils';
 
-const BOOTSTRAP_STATE = Symbol.for('vrender.bootstrap.state');
 const installBrowserEnvToAppWithParams = installBrowserEnvToApp as (
   app: any,
   envParams?: IEnvParamsMap['browser']
@@ -83,10 +86,6 @@ const miniEnvBootstraps: TAppScopedMiniEnvBootstraps = {
   wx: { installEnv: installWxEnvToApp, loadEnv: loadWxEnv },
   lynx: { installEnv: installLynxEnvToApp, loadEnv: loadLynxEnv },
   harmony: { installEnv: installHarmonyEnvToApp, loadEnv: loadHarmonyEnv }
-};
-
-type TBootstrapTarget = Record<string | symbol, unknown> & {
-  [BOOTSTRAP_STATE]?: Set<string>;
 };
 
 const pluginRegistrations = [
@@ -123,68 +122,9 @@ const legacyGraphicRegistrations = [
   registerStar
 ];
 
-function ensureBootstrap(target: TBootstrapTarget, key: string): boolean {
-  const state = target[BOOTSTRAP_STATE] ?? new Set<string>();
-  target[BOOTSTRAP_STATE] = state;
-
-  if (state.has(key)) {
-    return false;
-  }
-
-  state.add(key);
-  return true;
-}
-
 function registerDefaultPipeline(): void {
   pluginRegistrations.forEach(register => register());
   animationRegistrations.forEach(register => register());
-}
-
-function createBootstrapEntryKey(
-  entry: { type?: string; numberType?: number; constructor?: { name?: string } },
-  prefix: string
-) {
-  const type = entry?.type ?? 'unknown';
-  const numberType = entry?.numberType ?? 'unknown';
-  const ctor = entry?.constructor?.name ?? 'anonymous';
-  return `${prefix}:${String(numberType)}:${String(type)}:${ctor}`;
-}
-
-function syncLegacyRenderersToApp(app: any): void {
-  const legacyContext = getLegacyBindingContext();
-  const existing = app.registry.renderer.getAll?.() ?? [];
-  const legacyRenderers = legacyContext.getAll(GraphicRender) ?? [];
-  const merged = [...existing, ...legacyRenderers];
-  const seen = new Set<string>();
-
-  app.registry.renderer.clear();
-  merged.forEach((renderer: any) => {
-    const key = createBootstrapEntryKey(renderer, 'renderer');
-    if (seen.has(key)) {
-      return;
-    }
-    seen.add(key);
-    renderer?.reInit?.();
-    app.registry.renderer.register(key, renderer);
-  });
-}
-
-function syncLegacyPickersToApp(app: any, pickerContribution: symbol): void {
-  const legacyContext = getLegacyBindingContext();
-  const existing = app.registry.picker.getAll?.() ?? [];
-  const legacyPickers = legacyContext.getAll(pickerContribution) ?? [];
-  const merged = [...existing, ...legacyPickers];
-  const seen = new Set<string>();
-
-  app.registry.picker.clear();
-  merged.forEach((picker: any) => {
-    const key = createBootstrapEntryKey(picker, 'picker');
-    if (seen.has(key)) {
-      return;
-    }
-    seen.add(key);
-    app.registry.picker.register(key, picker);
-  });
 }
 
 export function bootstrapVRenderBrowserApp<TApp extends object>(app: TApp, envParams?: IEnvParamsMap['browser']): TApp {

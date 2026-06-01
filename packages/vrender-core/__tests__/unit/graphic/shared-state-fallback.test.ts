@@ -2,12 +2,11 @@ import { createRect } from '../../../src/graphic/rect';
 import { createGroup } from '../../../src/graphic/group';
 import { createSharedStateTestStage } from './shared-state-test-utils';
 
-describe('shared state fallback', () => {
-  test('should compile missing local states into the same adjudication pipeline', () => {
+describe('shared state scope contract', () => {
+  test('should ignore local graphic states when a shared state scope is bound', () => {
     const stage = createSharedStateTestStage();
     const group = createGroup({});
     const rect = createRect({ x: 0, y: 0, width: 10, height: 10, fill: 'base', stroke: 'black' });
-    const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
 
     (group as any).sharedStateDefinitions = {
       hover: { fill: 'red' }
@@ -28,69 +27,55 @@ describe('shared state fallback', () => {
     rect.useStates(['hover', 'selected'], false);
 
     expect(rect.currentStates).toEqual(['hover', 'selected']);
-    expect(rect.effectiveStates).toEqual(['selected']);
-    expect(rect.attribute.fill).toBe('base');
-    expect(rect.attribute.stroke).toBe('blue');
-    expect(warnSpy).toHaveBeenCalledTimes(1);
-
-    warnSpy.mockRestore();
+    expect(rect.effectiveStates).toEqual(['hover', 'selected']);
+    expect(rect.resolvedStatePatch).toEqual({ fill: 'red' });
+    expect(rect.attribute.fill).toBe('red');
+    expect(rect.attribute.stroke).toBe('black');
   });
 
-  test('should warn once when graphic states fallback fills missing shared definitions', () => {
+  test('should keep local graphic states working outside shared scopes', () => {
+    const stage = createSharedStateTestStage();
+    const rect = createRect({ x: 20, y: 0, width: 10, height: 10, fill: 'base', stroke: 'black' });
+
+    rect.states = {
+      pressed: { stroke: 'blue' },
+      selected: {
+        name: 'selected',
+        priority: 10,
+        suppress: ['pressed'],
+        patch: { fill: 'green' }
+      }
+    };
+
+    stage.appendChild(rect);
+
+    rect.useStates(['pressed', 'selected'], false);
+
+    expect(rect.currentStates).toEqual(['pressed', 'selected']);
+    expect(rect.effectiveStates).toEqual(['selected']);
+    expect(rect.resolvedStatePatch).toEqual({ fill: 'green' });
+    expect(rect.attribute.fill).toBe('green');
+    expect(rect.attribute.stroke).toBe('black');
+  });
+
+  test('should apply shared definitions while ignoring same-name local definitions', () => {
     const stage = createSharedStateTestStage();
     const group = createGroup({});
-    const rect = createRect({ x: 0, y: 0, width: 10, height: 10, fill: 'base', stroke: 'black' });
-    const anotherRect = createRect({ x: 20, y: 0, width: 10, height: 10, fill: 'base', stroke: 'black' });
-    const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+    const rect = createRect({ x: 0, y: 0, width: 10, height: 10, fill: 'base' });
 
     (group as any).sharedStateDefinitions = {
       hover: { fill: 'red' }
     };
     rect.states = {
-      pressed: { stroke: 'blue' }
-    };
-    anotherRect.states = {
-      pressed: { stroke: 'green' }
+      hover: { fill: 'local-hover' }
     };
 
     stage.appendChild(group);
     group.appendChild(rect);
-    group.appendChild(anotherRect);
 
-    rect.useStates(['pressed'], false);
-    rect.clearStates(false);
-    rect.useStates(['pressed'], false);
-    anotherRect.useStates(['pressed'], false);
+    rect.useStates(['hover'], false);
 
-    expect(warnSpy).toHaveBeenCalledTimes(1);
-    expect(warnSpy.mock.calls[0][0]).toContain('graphic.states fallback');
-
-    warnSpy.mockRestore();
-  });
-
-  test('should not warn for shared definitions or local-only graphic states', () => {
-    const stage = createSharedStateTestStage();
-    const group = createGroup({});
-    const sharedRect = createRect({ x: 0, y: 0, width: 10, height: 10, fill: 'base' });
-    const localRect = createRect({ x: 20, y: 0, width: 10, height: 10, fill: 'base' });
-    const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
-
-    (group as any).sharedStateDefinitions = {
-      hover: { fill: 'red' }
-    };
-    localRect.states = {
-      selected: { fill: 'blue' }
-    };
-
-    stage.appendChild(group);
-    group.appendChild(sharedRect);
-    stage.appendChild(localRect);
-
-    sharedRect.useStates(['hover'], false);
-    localRect.useStates(['selected'], false);
-
-    expect(warnSpy).not.toHaveBeenCalled();
-
-    warnSpy.mockRestore();
+    expect(rect.resolvedStatePatch).toEqual({ fill: 'red' });
+    expect(rect.attribute.fill).toBe('red');
   });
 });

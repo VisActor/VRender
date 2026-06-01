@@ -51,7 +51,7 @@ const group = (
 
 ## API Support
 
-The graphic elements using jsx syntax all start with V, and accept an attribute property. The parameters of this attribute property refer to the configuration document, supporting name, id, and stateProxy configurations, which will be set to the graphic element in the end. The event naming is different, and the event map is as follows:
+The graphic elements using jsx syntax all start with V, and accept an attribute property. The parameters of this attribute property refer to the configuration document, supporting name, id, and states configurations, which will be set to the graphic element in the end. The event naming is different, and the event map is as follows:
 
 ```ts
 {

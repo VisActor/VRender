@@ -70,9 +70,7 @@ export class Update extends ACustomAnimate<Record<string, number>> {
     diffAttrs = filterExcludedChannels(diffAttrs, options?.excludeChannels);
 
     this.props = diffAttrs;
-    const consumeTransientFromAttrs = (this.target as any).consumeTransientFromAttrsBeforePreventAnimate;
-    this.updateFromAttrs =
-      typeof consumeTransientFromAttrs === 'function' ? consumeTransientFromAttrs.call(this.target, diffAttrs) : null;
+    this.updateFromAttrs = (this.target as any).consumeTransientFromAttrsBeforePreventAnimate(diffAttrs);
     this.clipPathSyncKeys = Object.keys(diffAttrs).filter(key => clipPathGeometryAttrs[key]);
     this.clipPathSyncDisabled = !this.clipPathSyncKeys.length;
     this.syncParentClipPathToTarget();
@@ -138,8 +136,8 @@ export class Update extends ACustomAnimate<Record<string, number>> {
     const syncAttrs = this.buildClipPathTransientAttrs(clipGraphic);
     if (syncAttrs) {
       applyAnimationFrameAttributes(clipGraphic, syncAttrs);
-      clipGraphic.addUpdatePositionTag?.();
-      clipGraphic.addUpdateShapeAndBoundsTag?.();
+      clipGraphic.addUpdatePositionTag();
+      clipGraphic.addUpdateShapeAndBoundsTag();
     }
   }
 
@@ -150,7 +148,7 @@ export class Update extends ACustomAnimate<Record<string, number>> {
 
     const target = this.target as any;
     let childIndex = -1;
-    parent.forEachChildren?.((child: unknown, index: number) => {
+    parent.forEachChildren((child: unknown, index: number) => {
       if (child === target) {
         childIndex = index;
         return true;
@@ -166,10 +164,7 @@ export class Update extends ACustomAnimate<Record<string, number>> {
   private isClipPathStaticTarget(clipGraphic: any): boolean {
     const target = this.target as any;
     const targetFinalAttrs = this.getTargetFinalAttrs();
-    const clipGraphicFinalAttrs =
-      typeof clipGraphic.getFinalAttribute === 'function'
-        ? clipGraphic.getFinalAttribute()
-        : clipGraphic.finalAttribute;
+    const clipGraphicFinalAttrs = clipGraphic.getFinalAttribute();
     const clipFinalAttrs = clipGraphicFinalAttrs ?? clipGraphic.baseAttributes ?? clipGraphic.attribute;
     const keys = this.clipPathSyncKeys ?? [];
     if (!keys.length || !targetFinalAttrs || !clipFinalAttrs) {
@@ -183,11 +178,7 @@ export class Update extends ACustomAnimate<Record<string, number>> {
 
   private getTargetFinalAttrs(): Record<string, any> | null {
     const target = this.target as any;
-    return (
-      target.context?.finalAttrs ??
-      (typeof target.getFinalAttribute === 'function' ? target.getFinalAttribute() : target.finalAttribute) ??
-      null
-    );
+    return target.context?.finalAttrs ?? target.getFinalAttribute() ?? null;
   }
 
   private isSameClipPathValue(a: any, b: any): boolean {

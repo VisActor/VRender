@@ -31,13 +31,13 @@ export class RotateBySphereAnimate extends ACustomAnimate<any> {
 
   onFirstRun(): void {
     super.onFirstRun();
-    (this.target as any).applyFinalAttributeToAttribute?.();
+    (this.target as any).applyFinalAttributeToAttribute();
   }
 
   onStart(): void {
     super.onStart();
     const { center, r } = typeof this.params === 'function' ? this.params() : this.params;
-    const source = (this.target as any).finalAttribute ?? this.target.attribute;
+    const source = this.target.getFinalAttribute() ?? this.target.attribute;
     const startX = source.x;
     const startY = source.y;
     const startZ = source.z ?? 0;

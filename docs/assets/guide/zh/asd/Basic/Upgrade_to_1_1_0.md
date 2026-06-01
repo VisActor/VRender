@@ -36,7 +36,7 @@ baseAttributes + resolvedStatePatch -> attribute
 2. `sharedStateDefinitions` 是推荐的共享状态定义入口。
 3. `graphic.setStates(states, { animate, animateSameStatePatchChange })` 支持同状态刷新和同状态 patch 变化动画。
 4. 动态 resolver 会收到有效的 `StateResolveContext.graphic`。
-5. `graphic.states` 仍作为兼容 fallback 保留，但在 shared state 缺失状态时会有 deprecated warning。新代码应迁移到 `sharedStateDefinitions` 或 `stateProxy`。
+5. `graphic.states` 是图元本地状态定义入口；共享状态优先使用 `sharedStateDefinitions`。动态状态属性应写成 `StateDefinition.resolver`，`graphic.stateProxy` 已移除。
 
 ### 动画系统
 
@@ -377,10 +377,15 @@ rg "initAllEnv|initBrowserEnv|loadBrowserEnv|loadNodeEnv|loadAllEnv"
 ```bash
 rg "clearStates\\("
 rg "normalAttrs"
+rg "stateProxy"
 rg "graphic\\.states|\\.states\\s*="
 ```
 
-避免在刷新相同状态前先 `clearStates()`；不要把 `normalAttrs` 当作 snapshot/restore 主路径。
+避免在刷新相同状态前先 `clearStates()`；不要把 `normalAttrs` 当作 snapshot/restore 主路径。将 `stateProxy` 迁移到 `states` + `StateDefinition.resolver` 或 `sharedStateDefinitions`。
+
+如果你维护 VChart、VTable 或其他上层集成，还需要查看 D3 删除接口与调用链路留档：
+
+- [D3_REMOVED_API_AND_CALL_CHAIN_LOG.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_REMOVED_API_AND_CALL_CHAIN_LOG.md)
 
 3. 检查 appear/fade：
 
@@ -457,4 +462,3 @@ graphic.setStates(nextStates, {
 5. 额外内存优化或构造期表示优化。
 
 这些方向可能在后续版本继续推进，但不应作为 1.1.0 的升级前提。
-

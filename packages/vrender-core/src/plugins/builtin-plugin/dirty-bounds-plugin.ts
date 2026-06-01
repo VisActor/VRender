@@ -11,31 +11,25 @@ export class DirtyBoundsPlugin implements IPlugin {
   pluginService: IPluginService;
   _uid: number = Generator.GenAutoIncrementId();
   key: string = this.name + this._uid;
-  protected dirtyBoundsHooksRegistered: boolean = false;
+  protected dirtyBoundsHooksRegistered = false;
 
   protected ensurePaintDirtyBoundsCache(graphic: IGraphic): IAABBBounds {
     const owner = graphic as any;
-    const hasLocalBounds =
-      owner._AABBBounds && typeof owner._AABBBounds.empty === 'function' && !owner._AABBBounds.empty();
-    if (!hasLocalBounds && typeof owner.doUpdateAABBBounds === 'function') {
+    if (owner._AABBBounds.empty()) {
       owner.doUpdateAABBBounds(owner.attribute?.boundsMode === 'imprecise');
     }
 
-    const hasGlobalBounds =
-      owner._globalAABBBounds &&
-      typeof owner._globalAABBBounds.empty === 'function' &&
-      !owner._globalAABBBounds.empty();
-    if (!hasGlobalBounds && typeof owner.tryUpdateGlobalAABBBounds === 'function') {
+    if (!owner._globalAABBBounds || owner._globalAABBBounds.empty()) {
       owner.tryUpdateGlobalAABBBounds();
     }
 
-    return owner._globalAABBBounds ?? owner.globalAABBBounds;
+    return owner._globalAABBBounds;
   }
 
   protected getRemoveDirtyBounds(graphic: IGraphic): IAABBBounds | undefined {
     const owner = (graphic.glyphHost ?? graphic) as any;
     const cachedBounds = owner._globalAABBBounds as IAABBBounds | undefined;
-    if (cachedBounds && typeof cachedBounds.empty === 'function' && !cachedBounds.empty()) {
+    if (cachedBounds && !cachedBounds.empty()) {
       return cachedBounds;
     }
   }
@@ -55,7 +49,7 @@ export class DirtyBoundsPlugin implements IPlugin {
     if (ownerBounds && !ownerBounds.empty()) {
       stage.dirty(ownerBounds);
     }
-    owner.clearUpdatePaintTag?.();
+    owner.clearUpdatePaintTag();
 
     const shadowRoot = owner.shadowRoot as IGraphic | undefined;
     if (!shadowRoot) {
@@ -66,7 +60,7 @@ export class DirtyBoundsPlugin implements IPlugin {
     if (shadowBounds && !shadowBounds.empty()) {
       stage.dirty(shadowBounds);
     }
-    (shadowRoot as any).clearUpdatePaintTag?.();
+    (shadowRoot as any).clearUpdatePaintTag();
   };
 
   protected registerDirtyBoundsHooks(stage: IStage): void {

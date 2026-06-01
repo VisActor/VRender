@@ -202,7 +202,7 @@ first round snapshot：
 | `createNodeVRenderApp()` node runtime | `VRender-side` | completed | 已由 stable closeout 覆盖：`createNodeVRenderApp({ envParams })` 与 legacy-compatible path 已验证，Node 20.19.6 native canvas smoke 通过 |
 | `VChart` app-provider-first / VChart-created-stage 源码级对齐尚未正式落仓 | `cross-repo integration` | follow-up | 当前已有 external-stage consumer harness 证据；下一步应按 `D3_VCHART_APP_SCOPED_ALIGNMENT_PLAN.md` 推进源码对齐 |
 | 是否继续做 full internal migration | `cross-repo integration` | follow-up | 当前不作为 alpha 先决条件，应在 app-provider-first 源码级路径稳定后再决定 |
-| 真实上层 `text stateProxy` 路径覆盖 | `cross-repo integration` | completed | 已补 VTable-lite text-stateProxy workload，sample 语义 `10/10` 通过 |
+| 真实上层 text dynamic-state 路径覆盖 | `cross-repo integration` | completed / superseded | 历史 VTable-lite text-stateProxy workload 已完成过样本验证；release 前 `stateProxy` 已删除，后续同类验证改用 text + dynamic `states.resolver`，删除链路见 `D3_REMOVED_API_AND_CALL_CHAIN_LOG.md` |
 | 外部传入 stage 的更完整 ownership 约束与治理沉淀 | `VChart-side` | follow-up | 当前 external-stage 路径已可用，但源码侧契约治理仍建议继续落档 |
 
 ---

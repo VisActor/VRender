@@ -226,13 +226,7 @@ export const page = () => {
   //         opacity: 0.1,
   //         alignItems: 'flex-end'
   //       }}
-  //       stateProxy={(stateName: string) => {
-  //         if (stateName === 'hover') {
-  //           return {
-  //             fill: '#080'
-  //           };
-  //         }
-  //       }}
+  //       states={{ hover: { fill: '#080' } }}
   //       onMouseEnter={(event: IFederatedEvent) => {
   //         event.currentTarget.addState('hover', true, true);
   //       }}
@@ -249,18 +243,7 @@ export const page = () => {
   //           height: 15,
   //           boundsPadding: [10, 0, 0, 0]
   //         }}
-  //         stateProxy={(stateName: string) => {
-  //           if (stateName === 'hover') {
-  //             return {
-  //               background: {
-  //                 fill: '#888',
-  //                 cornerRadius: 5,
-  //                 expandX: 2,
-  //                 expandY: 2
-  //               }
-  //             };
-  //           }
-  //         }}
+  //         states={{ hover: { background: { fill: '#888', cornerRadius: 5, expandX: 2, expandY: 2 } } }}
   //         onMouseEnter={(event: IFederatedEvent) => {
   //           event.currentTarget.addState('hover', true, true);
   //         }}

@@ -20,9 +20,8 @@ describe('plugin service migration', () => {
   test('should support install and uninstall by plugin name with explicit PluginRegistry', () => {
     const registry = new PluginRegistry();
     const plugin = new TestPlugin('auto-render');
-    const service = new DefaultPluginService(undefined as any, {
-      pluginRegistry: registry as any,
-      autoEnablePlugins: EMPTY_AUTO_ENABLE_PROVIDER as any
+    const service = new DefaultPluginService(EMPTY_AUTO_ENABLE_PROVIDER as any, {
+      pluginRegistry: registry as any
     });
 
     service.active({ id: 'stage-1' } as unknown as IStage, {});
@@ -43,12 +42,14 @@ describe('plugin service migration', () => {
     const registry = new PluginRegistry();
     const startup = new TestPlugin('startup-plugin', 'onStartupFinished');
     const register = new TestPlugin('register-plugin', 'onRegister');
-    const service = new DefaultPluginService(undefined as any, {
-      pluginRegistry: registry as any,
-      autoEnablePlugins: {
+    const service = new DefaultPluginService(
+      {
         getContributions: () => [startup, register]
-      } as any
-    });
+      } as any,
+      {
+        pluginRegistry: registry as any
+      }
+    );
 
     service.active({ id: 'stage-2' } as unknown as IStage, {
       pluginList: ['startup-plugin', 'register-plugin']
@@ -64,9 +65,8 @@ describe('plugin service migration', () => {
 
   test('should keep legacy register and unRegister behavior compatible', () => {
     const plugin = new TestPlugin('legacy-plugin');
-    const service = new DefaultPluginService(undefined as any, {
-      pluginRegistry: new PluginRegistry() as any,
-      autoEnablePlugins: EMPTY_AUTO_ENABLE_PROVIDER as any
+    const service = new DefaultPluginService(EMPTY_AUTO_ENABLE_PROVIDER as any, {
+      pluginRegistry: new PluginRegistry() as any
     });
     service.active({ id: 'stage-3' } as unknown as IStage, {});
 

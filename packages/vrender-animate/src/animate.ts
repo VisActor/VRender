@@ -152,30 +152,14 @@ export class Animate implements IAnimate {
   bind(target: IGraphic): this {
     this.target = target;
     const trackerTarget = this.target as any;
-    if (typeof trackerTarget.detachAttributeFromBaseAttributes === 'function') {
-      trackerTarget.detachAttributeFromBaseAttributes();
-    }
-    if (typeof trackerTarget.trackAnimate === 'function') {
-      trackerTarget.trackAnimate(this);
-    } else {
-      if (!this.target.animates) {
-        this.target.animates = new Map();
-      }
-      this.target.animates.set(this.id, this);
-    }
+    trackerTarget.detachAttributeFromBaseAttributes();
+    trackerTarget.trackAnimate(this);
     this.onRemove(() => {
       this.stop();
-      if (
-        !(this as any).__skipRestoreStaticAttributeOnRemove &&
-        typeof trackerTarget.restoreStaticAttribute === 'function'
-      ) {
+      if (!(this as any).__skipRestoreStaticAttributeOnRemove) {
         trackerTarget.restoreStaticAttribute();
       }
-      if (typeof trackerTarget.untrackAnimate === 'function') {
-        trackerTarget.untrackAnimate(this.id);
-      } else {
-        this.target.animates.delete(this.id);
-      }
+      trackerTarget.untrackAnimate(this.id);
     });
 
     if (this.target.onAnimateBind && !this.slience) {
@@ -657,9 +641,7 @@ export class Animate implements IAnimate {
       this.onEnd();
       this.status = AnimateStatus.END;
       const trackerTarget = this.target as any;
-      if (typeof trackerTarget?.restoreStaticAttribute === 'function') {
-        trackerTarget.restoreStaticAttribute();
-      }
+      trackerTarget.restoreStaticAttribute();
       (this as any).__skipRestoreStaticAttributeOnRemove = true;
       return;
     }

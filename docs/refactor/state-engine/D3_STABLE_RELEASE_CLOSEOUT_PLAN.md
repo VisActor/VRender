@@ -132,7 +132,7 @@ Owner: VRender-side + VChart/VTable-side
 1. VChart app-provider-first/source-level 对齐完成。
 2. VChart 不再通过 clearStates -> setStates 避免 state 问题；使用 public refresh/setStates options。
 3. VTable 图形动画 appear/fade 场景使用最终静态属性 + from 起始态的契约，或由 VRender 提供明确等价 API。
-4. Text stateProxy real-path 覆盖至少一个真实上层 workload。
+4. Text dynamic-state real-path 覆盖至少一个真实上层 workload。
 
 Current progress:
 
@@ -140,7 +140,7 @@ Current progress:
 - VRender line update 已修复 sibling channel ownership，`TagPointsUpdate` 可从标准 update target 来源读取目标 `points/segments`，不再要求 VChart 为该路径外部预写 `setFinalAttributes(finalAttrs)`。
 - VRender-components label layout 已移除 render 期间临时 `mark.initAttributes(finalAttrs)` / restore 原图元的路径，改为只读 `context.finalAttrs` / final-bounds layout context；VChart 侧 label 相关处理已完成，后续不再作为 VRender 当前执行片阻塞项。
 - VTable appear/fade 相关动画静态真值契约已由 VRender 单测锁住：普通 fade appear 应保持最终 `opacity` 为静态真值并使用 `animate().from({ opacity: 0 })` 表示起始态；`animate().to({ opacity: 1 })` 不会把终点写入 `baseAttributes`。
-- VTable-lite text-stateProxy workload 已存在并完成语义验证：`packages/vrender/__tests__/browser/src/pages/vtable-lite-text-stateproxy.ts` / `vtable-lite-shared.ts` 对 `10` 个 sample text 调用 `useStates(['hover'], false)`，`stateProxy` sample 语义 `10/10` 通过。
+- 历史 VTable-lite text-stateProxy workload 已在 release 前清理中迁移/删除；后续真实上层 text dynamic-state 验证统一使用 `states` + `StateDefinition.resolver` 口径，删除链路见 `D3_REMOVED_API_AND_CALL_CHAIN_LOG.md`。
 
 ### P0-6 Performance And Memory Closure
 
@@ -157,7 +157,7 @@ Owner: VRender-side
 Current decision:
 
 - `P1 accepted` 结论保持成立。
-- `P2` 已关闭为 D3 stable release no-go：上一轮 `Text.cache` lazy-init 对 `VTable-lite text-stateProxy cells` 有可见收益，且 `stateProxy` sample 语义保持 `10/10` 通过；但官方 `memory.ts run 100` no-trace gate 没有形成足够清晰改善，因此本轮不接受为 D3 P2。
+- `P2` 已关闭为 D3 stable release no-go：上一轮 `Text.cache` lazy-init 对历史 `VTable-lite text-stateProxy cells` 有可见收益，但官方 `memory.ts run 100` no-trace gate 没有形成足够清晰改善，因此本轮不接受为 D3 P2。`stateProxy` 已在 release 前删除，后续同类 workload 需改成 text + dynamic `states.resolver`。
 - 后续若继续追构造期固定成本，应作为独立性能专项重开，不再作为 D3 stable release follow-up。
 
 ### P0-7 Documentation And Release Contract
@@ -173,7 +173,7 @@ Owner: Coordinator / maintainers
 Current progress:
 
 - Stable support matrix 已明确为 Tier 1: `browser` / `node` / `wx` / `lynx` / `harmony`；Tier 2: `taro` / `feishu` / `tt`；Tier 3: `native`。
-- `text stateProxy` 与 memory P2 已从 follow-up 中收口，memory P2 关闭为 D3 stable release no-go。
+- 历史 `text stateProxy` 与 memory P2 已从 follow-up 中收口，memory P2 关闭为 D3 stable release no-go；`stateProxy` 删除后的后续验证口径改为 text + dynamic `states.resolver`。
 - `graphic.states` missing-state fallback 告警策略已完成：绑定 shared scope 后由 `graphic.states` 补齐缺失 shared definition 时输出一次性 deprecated warning。
 - `Glyph ownership` 已关闭为文档化边界：稳定版不把 `Glyph` 并回 shared-state 主路径，`glyphStates` / `glyphStateProxy` 继续作为 Glyph 专属 surface。
 - legacy/custom sample cleanup 已完成 D3 stable scope 补强：`packages/vrender` browser `background.ts` 已纳入 deprecated root `createStage()` scan 并切到 app-scoped page stage helper。

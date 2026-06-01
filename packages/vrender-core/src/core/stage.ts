@@ -60,13 +60,6 @@ import {
 } from '../graphic/state/shared-state-scope';
 import { flushStageSharedStateRefresh, markScopeActiveDescendantsDirty } from '../graphic/state/shared-state-refresh';
 import type { StateDefinitionsInput } from '../graphic/state/state-definition';
-import { StateBatchScheduler } from '../graphic/state/state-batch-scheduler';
-import {
-  ensureStageStatePerfMonitor,
-  type IDeferredStateOwnerConfig,
-  type IStatePerfConfig,
-  type IStatePerfSnapshot
-} from '../graphic/state/state-perf-monitor';
 
 const DefaultConfig = {
   WIDTH: 500,
@@ -191,8 +184,6 @@ export class Stage extends Group implements IStage {
 
   autoRender: boolean;
   autoRefresh: boolean;
-  declare statePerfConfig?: IStatePerfConfig;
-  declare deferredStateConfig?: IDeferredStateOwnerConfig;
   _enableLayout: boolean;
   htmlAttribute: boolean | string | any;
   reactAttribute: boolean | string | any;
@@ -226,7 +217,6 @@ export class Stage extends Group implements IStage {
   protected timeline: ITimeline;
   declare rootSharedStateScope?: SharedStateScope<Record<string, any>>;
   protected _pendingSharedStateRefreshGraphics?: Set<IGraphic>;
-  protected _stateBatchScheduler?: StateBatchScheduler;
 
   declare params: Partial<IStageParams>;
 
@@ -332,15 +322,14 @@ export class Stage extends Group implements IStage {
     this.willNextFrameRender = false;
     this.theme.onStateDefinitionsChange = () => {
       const definitions = this.theme?.stateDefinitions as StateDefinitionsInput<Record<string, any>> | undefined;
-      if (!definitions || !Object.keys(definitions).length) {
-        if (this.rootSharedStateScope) {
-          setRootSharedStateScopeThemeDefinitions(this.rootSharedStateScope, definitions);
-          markScopeActiveDescendantsDirty(this.rootSharedStateScope, this);
-        }
+      const rootScope =
+        definitions && Object.keys(definitions).length
+          ? this.ensureRootSharedStateScope(definitions)
+          : this.rootSharedStateScope;
+      if (!rootScope) {
         return;
       }
 
-      const rootScope = this.ensureRootSharedStateScope(definitions);
       setRootSharedStateScopeThemeDefinitions(rootScope, definitions);
       markScopeActiveDescendantsDirty(rootScope, this);
     };
@@ -929,25 +918,6 @@ export class Stage extends Group implements IStage {
     return this.rootSharedStateScope;
   }
 
-  protected getStateBatchScheduler(): StateBatchScheduler {
-    if (!this._stateBatchScheduler) {
-      this._stateBatchScheduler = new StateBatchScheduler(this, ensureStageStatePerfMonitor(this));
-    }
-    return this._stateBatchScheduler;
-  }
-
-  scheduleStateBatch(graphics: IGraphic[], targetStates: string[]): void {
-    this.getStateBatchScheduler().schedule(graphics, targetStates);
-  }
-
-  getStatePerfSnapshot(): IStatePerfSnapshot {
-    return ensureStageStatePerfMonitor(this).getSnapshot();
-  }
-
-  resetStatePerfSnapshot(): void {
-    ensureStageStatePerfMonitor(this).reset();
-  }
-
   _doRenderInThisFrame() {
     if (this.releaseStatus === 'released') {
       return;
@@ -1116,7 +1086,6 @@ export class Stage extends Group implements IStage {
   }
 
   release() {
-    this._stateBatchScheduler?.release();
     super.release();
 
     this.hooks.beforeRender.unTap('constructor', this.beforeRender);

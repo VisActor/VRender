@@ -64,7 +64,7 @@ describe('Graphic attribute layering', () => {
     expect(graphic.resolvedStatePatch).toBeUndefined();
   });
 
-  test('should restore attribute from current static truth on animation stop instead of committing props to base', () => {
+  test('should restore attribute from static truth on animation stop', () => {
     const graphic = createGraphic();
     graphic.states = {
       hover: {
@@ -252,7 +252,7 @@ describe('Graphic attribute layering', () => {
     expect((graphic as any).baseAttributes.x).toBe(12);
   });
 
-  test('should switch non-animated state styles without rebuilding a full static snapshot when static attrs are clean', () => {
+  test('should switch non-animated state styles without rebuilding static snapshot', () => {
     const graphic = createGraphic();
     graphic.states = {
       hover: {
@@ -263,14 +263,12 @@ describe('Graphic attribute layering', () => {
       }
     } as any;
     const snapshotSpy = jest.spyOn(graphic as any, 'buildStaticAttributeSnapshot');
-    const createStateModelSpy = jest.spyOn(graphic as any, 'createStateModel');
 
     graphic.useStates(['hover'], false);
     graphic.useStates(['selected'], false);
 
     expect(snapshotSpy).not.toHaveBeenCalled();
-    expect(createStateModelSpy).not.toHaveBeenCalled();
-    expect((graphic as any).stateEngine).toBeUndefined();
+    expect((graphic as any).stateEngine).toBeDefined();
     expect((graphic as any).baseAttributes.fill).toBe('blue');
     expect((graphic as any).baseAttributes.opacity).toBe(1);
     expect(graphic.attribute.fill).toBe('blue');

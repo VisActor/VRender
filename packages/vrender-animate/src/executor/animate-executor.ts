@@ -977,9 +977,8 @@ export class AnimateExecutor implements IAnimateExecutor {
 
   private syncFinalAttrsFromContext(graphic: IGraphic): void {
     const finalAttrs = graphic.context?.finalAttrs;
-    const setFinalAttributes = (graphic as any).setFinalAttributes;
-    if (finalAttrs && typeof setFinalAttributes === 'function') {
-      setFinalAttributes.call(graphic, finalAttrs);
+    if (finalAttrs) {
+      (graphic as any).setFinalAttributes(finalAttrs);
     }
   }
 

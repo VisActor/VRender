@@ -60,16 +60,19 @@ describe('Graphic state resolution', () => {
     expect(graphic.attribute.opacity).toBe(0.4);
   });
 
-  test('should prefer stateProxy over static states when both exist', () => {
+  test('should merge resolver results after static state patches', () => {
     const graphic = createGraphic();
     graphic.states = {
-      hover: { fill: 'red', stroke: 'purple' }
+      hover: {
+        patch: { fill: 'red', stroke: 'purple' },
+        resolver: () => ({ fill: 'dynamic', stroke: 'orange' }),
+        declaredAffectedKeys: ['fill', 'stroke']
+      }
     } as any;
-    graphic.stateProxy = jest.fn(() => ({ fill: 'proxy', stroke: 'orange' })) as any;
 
     graphic.useStates(['hover'], false);
 
-    expect(graphic.attribute.fill).toBe('proxy');
+    expect(graphic.attribute.fill).toBe('dynamic');
     expect(graphic.attribute.stroke).toBe('orange');
   });
 

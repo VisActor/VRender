@@ -1,16 +1,14 @@
 import type { IStageParams } from '../../../src/interface/stage';
 import type { IPlugin, IPluginContext } from '../../../src/plugins';
-import { BasePlugin } from '../../../src/plugins';
 import { BrowserEntry, MiniappEntry, NodeEntry, createApp } from '../../../src/entries';
 import { GraphicFactory, LayerFactory, StageFactory } from '../../../src/factory';
 import { ContributionRegistry, PickerRegistry, PluginRegistry, RendererRegistry } from '../../../src/registry';
 
-class TestPlugin extends BasePlugin {
+class TestPlugin implements IPlugin {
+  readonly version = '0.0.1';
   installedWith?: IPluginContext;
 
-  constructor(name = 'test-plugin') {
-    super(name, '0.0.1');
-  }
+  constructor(public readonly name = 'test-plugin') {}
 
   install(context: IPluginContext): void {
     this.installedWith = context;

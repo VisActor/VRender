@@ -1,9 +1,12 @@
 import { createText } from '@visactor/vrender-core';
 import { Animate } from '../../src/animate';
 import { RotateBySphereAnimate } from '../../src/custom/sphere';
+import { registerAnimate } from '../../src/register';
 
 describe('RotateBySphereAnimate', () => {
   test('onStart should fall back to target.attribute when finalAttribute is unavailable', () => {
+    registerAnimate();
+
     const target = createText({
       text: '1',
       x: 10,

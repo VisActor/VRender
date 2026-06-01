@@ -3,10 +3,8 @@ import { AttributeUpdateType } from '../../common/enums';
 import type { IAnimateConfig } from '../../interface/graphic';
 
 export interface IStateTransitionPlan<T> {
-  stateNames?: string[];
   targetAttrs: Partial<T>;
   animateAttrs: Partial<T>;
-  jumpAttrs: Partial<T>;
   noAnimateAttrs: Partial<T>;
 }
 
@@ -35,16 +33,14 @@ export interface IStateTransitionGraphic<T> {
   ) => void;
   stopStateAnimates: () => void;
   _emitCustomEvent: (type: string, context?: { type: AttributeUpdateType }) => void;
-  getNoWorkAnimateAttr?: () => Record<string, number>;
-  getDefaultAttribute?: (key: string) => unknown;
-  shouldSkipStateTransitionDefaultAttribute?: (key: string, targetAttrs?: Partial<T>) => boolean;
+  getNoWorkAnimateAttr: () => Record<string, number>;
+  getDefaultAttribute: (key: string) => unknown;
+  shouldSkipStateTransitionDefaultAttribute: (key: string, targetAttrs?: Partial<T>) => boolean;
 }
 
 export interface IStateTransitionOrchestrator<T> {
   analyzeTransition: (
-    currentAttrs: Partial<T>,
     targetAttrs: Partial<T>,
-    stateNames?: string[],
     hasAnimation?: boolean,
     options?: IStateTransitionAnalysisOptions
   ) => IStateTransitionPlan<T>;
@@ -58,7 +54,6 @@ export interface IStateTransitionOrchestrator<T> {
     graphic: IStateTransitionGraphic<T>,
     targetAttrs: Partial<T>,
     hasAnimation?: boolean,
-    stateNames?: string[],
     options?: IStateTransitionApplyOptions
   ) => IStateTransitionPlan<T>;
 }
@@ -91,17 +86,13 @@ export class StateTransitionOrchestrator<T extends Record<string, any> = Record<
   implements IStateTransitionOrchestrator<T>
 {
   analyzeTransition(
-    _currentAttrs: Partial<T>,
     targetAttrs: Partial<T>,
-    stateNames?: string[],
     hasAnimation?: boolean,
     options: IStateTransitionAnalysisOptions = {}
   ): IStateTransitionPlan<T> {
     const plan: IStateTransitionPlan<T> = {
-      stateNames,
       targetAttrs: { ...targetAttrs },
       animateAttrs: {},
-      jumpAttrs: {},
       noAnimateAttrs: {}
     };
 
@@ -115,11 +106,11 @@ export class StateTransitionOrchestrator<T extends Record<string, any> = Record<
     };
     const isClear = options.isClear === true;
     const getDefaultAttribute = options.getDefaultAttribute;
+    const readDefaultAttribute = getDefaultAttribute as (key: string) => unknown;
     const shouldSkipDefaultAttribute = options.shouldSkipDefaultAttribute;
 
     const assignTransitionAttr = (key: string, value: any): void => {
       if (noWorkAnimateAttr[key]) {
-        (plan.jumpAttrs as Record<string, any>)[key] = value;
         (plan.noAnimateAttrs as Record<string, any>)[key] = value;
         return;
       }
@@ -128,7 +119,7 @@ export class StateTransitionOrchestrator<T extends Record<string, any> = Record<
         if (shouldSkipDefaultAttribute?.(key, targetAttrs as Record<string, unknown>)) {
           return;
         }
-        (plan.animateAttrs as Record<string, any>)[key] = getDefaultAttribute ? getDefaultAttribute(key) : value;
+        (plan.animateAttrs as Record<string, any>)[key] = readDefaultAttribute(key);
         return;
       }
 
@@ -205,15 +196,14 @@ export class StateTransitionOrchestrator<T extends Record<string, any> = Record<
     graphic: IStateTransitionGraphic<T>,
     targetAttrs: Partial<T>,
     hasAnimation?: boolean,
-    stateNames?: string[],
     options: IStateTransitionApplyOptions = {}
   ): IStateTransitionPlan<T> {
-    const plan = this.analyzeTransition({}, targetAttrs, stateNames, hasAnimation, {
-      noWorkAnimateAttr: graphic.getNoWorkAnimateAttr?.(),
+    const plan = this.analyzeTransition(targetAttrs, hasAnimation, {
+      noWorkAnimateAttr: graphic.getNoWorkAnimateAttr(),
       isClear: true,
-      getDefaultAttribute: graphic.getDefaultAttribute?.bind(graphic),
+      getDefaultAttribute: graphic.getDefaultAttribute.bind(graphic),
       shouldSkipDefaultAttribute:
-        options.shouldSkipDefaultAttribute ?? graphic.shouldSkipStateTransitionDefaultAttribute?.bind(graphic),
+        options.shouldSkipDefaultAttribute ?? graphic.shouldSkipStateTransitionDefaultAttribute.bind(graphic),
       animateConfig: options.animateConfig,
       extraAnimateAttrs: options.extraAnimateAttrs
     });

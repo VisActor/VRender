@@ -21,45 +21,45 @@ describe('Graphic state helper lazy init', () => {
   test('should not allocate state helpers on plain construction or basic attribute updates', () => {
     const graphic = createGraphic();
 
-    expect((graphic as any).stateStyleResolver).toBeUndefined();
-    expect((graphic as any).deepStateStyleResolver).toBeUndefined();
+    expect((graphic as any).stateEngine).toBeUndefined();
     expect((graphic as any).stateTransitionOrchestrator).toBeUndefined();
 
     graphic.setAttribute('fill', 'green');
 
-    expect((graphic as any).stateStyleResolver).toBeUndefined();
-    expect((graphic as any).deepStateStyleResolver).toBeUndefined();
+    expect((graphic as any).stateEngine).toBeUndefined();
     expect((graphic as any).stateTransitionOrchestrator).toBeUndefined();
   });
 
-  test('should create the shallow resolver only when useStates first needs it', () => {
+  test('should create the state engine only when state resolution first needs it', () => {
     const graphic = createGraphic();
-    graphic.stateProxy = jest.fn(() => ({
-      fill: 'red'
-    }));
+    graphic.states = {
+      hover: {
+        fill: 'red'
+      }
+    } as any;
 
-    expect((graphic as any).stateStyleResolver).toBeUndefined();
+    expect((graphic as any).stateEngine).toBeUndefined();
 
     graphic.useStates(['hover'], false);
 
-    expect((graphic as any).stateStyleResolver).toBeDefined();
-    expect((graphic as any).deepStateStyleResolver).toBeUndefined();
+    expect((graphic as any).stateEngine).toBeDefined();
     expect((graphic as any).stateTransitionOrchestrator).toBeUndefined();
   });
 
-  test('should create the deep resolver only when deep merge mode is exercised', () => {
+  test('should use the state engine for deep merge resolution', () => {
     const graphic = createGraphic();
     (graphic as any).stateMergeMode = 'deep';
-    graphic.stateProxy = jest.fn(() => ({
-      fill: 'red'
-    }));
+    graphic.states = {
+      hover: {
+        fill: 'red'
+      }
+    } as any;
 
-    expect((graphic as any).deepStateStyleResolver).toBeUndefined();
+    expect((graphic as any).stateEngine).toBeUndefined();
 
     graphic.useStates(['hover'], false);
 
-    expect((graphic as any).stateStyleResolver).toBeUndefined();
-    expect((graphic as any).deepStateStyleResolver).toBeDefined();
+    expect((graphic as any).stateEngine).toBeDefined();
   });
 
   test('should create the transition orchestrator only when animated state transitions run', () => {

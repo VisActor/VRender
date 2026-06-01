@@ -14,13 +14,13 @@
 1. 新版本 VRender 现在**应该怎么创建 app / stage**
 2. 上层代码现在**还能依赖哪些语义**
 3. 哪些旧写法仍能跑，但**不该再写进新代码**
-4. 遇到状态、`stateProxy`、shared-state、React、browser smoke 时，**应该按什么边界理解**
+4. 遇到状态、已移除的 `stateProxy`、shared-state、React、browser smoke 时，**应该按什么边界理解**
 
 这份文档面向的是“要在上层仓库里继续开发”的 agent，不是面向 VRender 内核实现者的阶段设计文档。
 
 ---
 
-## 2. 先记住这 9 条
+## 2. 先记住这 10 条
 
 如果你只记住最关键的规则，记这些：
 
@@ -32,7 +32,8 @@
 6. 不要在已经走 root app creator 的 caller 里再混用 `initBrowserEnv()` / `initFeishuEnv()` / `initAllEnv()` 这类旧 env 初始化
 7. 状态静态真值现在按 `baseAttributes + resolvedStatePatch -> attribute` 理解，动画不是新的真值源
 8. `normalAttrs` 只剩 deprecated alias/view 语义，不要再把它当成 snapshot/restore 主路径
-9. `stateProxy` 仍可用于**实例级局部动态样式**，但不要把它当成 shared-state 主模型；当前对上层也只承诺顶层 `graphic.attribute.xxx = ...` 兼容，不承诺任意深层 nested mutation 完全隔离
+9. `stateProxy` 已移除；实例级动态样式改用 `states` + `StateDefinition.resolver`，跨图元共享状态改用 `sharedStateDefinitions`
+10. 当前对上层只承诺顶层 `graphic.attribute.xxx = ...` 兼容，不承诺任意深层 nested mutation 完全隔离
 
 ---
 
@@ -273,11 +274,17 @@ baseAttributes + resolvedStatePatch -> attribute
 
 ### 7.3 `stateProxy`
 
-`stateProxy` 仍然可用，但应按下面理解：
+`stateProxy` 已从普通 Graphic 和 JSX / React props 中移除。
+上层应按下面规则迁移：
 
-1. 它适合做实例级、局部、动态样式 escape hatch
-2. 它不是当前 shared-state 主模型
-3. 如果你在上层需要共享状态定义，优先按 Group-first / Theme root scope 模型理解，而不是继续把 `stateProxy` 当 shared ownership
+1. 实例级、局部、动态样式使用 `graphic.states` 中的 `StateDefinition.resolver`
+2. 跨图元共享状态使用 Group-first / Theme root scope 的 `sharedStateDefinitions`
+3. JSX / React 使用 `states` prop，不再使用 `stateProxy` prop
+4. `glyphStateProxy` 是 Glyph 专属 surface，不属于本项删除范围
+
+具体删除项、旧调用链和排查命令看：
+
+- [D3_REMOVED_API_AND_CALL_CHAIN_LOG.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_REMOVED_API_AND_CALL_CHAIN_LOG.md)
 
 ### 7.4 当前对上层仍成立的兼容边界
 
@@ -311,7 +318,7 @@ Theme -> stage.rootSharedStateScope -> Group scopes -> Graphic
 对上层的含义：
 
 1. 共享状态定义优先通过 Theme / Group scope 理解
-2. 不要再把实例级 `stateProxy` 设计成 shared-state 常规能力
+2. 不要再把实例级 resolver 设计成 shared-state 常规能力
 3. 如果你在 `vchart` 层要做跨图元共享状态，优先确认自己走的是 scope 模型，而不是实例补丁拼接
 
 ---
@@ -371,7 +378,7 @@ rg "registerRect\\(|registerArc\\(|registerLine\\(|registerPolygon\\(|registerTe
 
 1. 把 `normalAttrs` 当 snapshot/restore 主路径
 2. 深层 nested mutation 直接改 `graphic.attribute`
-3. 把 `stateProxy` 当 shared-state 常规能力
+3. 继续使用已移除的 `stateProxy`，或把实例级 resolver 当 shared-state 常规能力
 
 ### 10.3 最后补 smoke / integration
 
@@ -380,7 +387,7 @@ rg "registerRect\\(|registerArc\\(|registerLine\\(|registerPolygon\\(|registerTe
 1. Browser 下自动首帧渲染，不依赖人工点击后才创建 stage
 2. stage recreate 场景
 3. text + graphic 混合场景
-4. 如果上层使用 `stateProxy`，补一条 `text stateProxy` 验证
+4. 如果上层曾使用 `stateProxy`，迁移后补一条 text + dynamic `states.resolver` 验证
 5. 如果有 React 接入，补 mount / unmount 生命周期验证
 6. 如果你依赖 node / wx / lynx / harmony 或细粒度按需装配，补对应的专门 smoke，不要只靠 browser baseline；taro / feishu / tt 仍需真实端 smoke 后再升级承诺
 
@@ -436,13 +443,13 @@ rg "registerRect\\(|registerArc\\(|registerLine\\(|registerPolygon\\(|registerTe
 
 1. 先确认当前接入点是不是 deprecated `createStage()`
 2. 如果是新代码，直接改成当前环境对应的 stable Tier 1 app creator + `app.createStage()`
-3. 再确认状态逻辑里有没有继续依赖旧 `normalAttrs` 或深层 nested mutation
+3. 再确认状态逻辑里有没有继续依赖旧 `stateProxy`、`normalAttrs` 或深层 nested mutation
 4. 再确认当前 caller 是否还显式依赖额外 env loader 或 `register*()` 细粒度装配；如果是，先把它归类为高级自定义装配路径
 5. 再补最小 smoke：
    - 自动首帧
    - stage recreate
    - text + graphic
-   - 如有 `stateProxy`，补 text-stateProxy
+   - 如有旧 `stateProxy` 调用，迁移后补 text + dynamic `states.resolver`
 6. 如果路径涉及 node / wx / lynx / harmony / Tier 2 端环境 / 细粒度装配，追加专门 smoke，再决定是否继续迁移
 7. 只有在 smoke 稳定后，再继续放大到更复杂业务页面
 
@@ -468,5 +475,7 @@ rg "registerRect\\(|registerArc\\(|registerLine\\(|registerPolygon\\(|registerTe
    - 看 [D3_UPPER_LAYER_LOGIC_CHAIN_AUDIT.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_UPPER_LAYER_LOGIC_CHAIN_AUDIT.md)
 8. 想知道如何把 `VChart` 推到第一条真实 app-scoped 集成链：
    - 看 [D3_VCHART_APP_SCOPED_ALIGNMENT_PLAN.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_VCHART_APP_SCOPED_ALIGNMENT_PLAN.md)
+9. 想知道本轮删除了哪些接口、旧调用链是什么、上层应该怎么排查：
+   - 看 [D3_REMOVED_API_AND_CALL_CHAIN_LOG.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_REMOVED_API_AND_CALL_CHAIN_LOG.md)
 
 但如果你只是要在上层仓库里开始干活，这份文档应作为第一入口。

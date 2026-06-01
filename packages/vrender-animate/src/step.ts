@@ -181,9 +181,9 @@ export class Step implements IStep {
   }
 
   _syncAttributeUpdate = (): void => {
-    (this.target as any).addUpdateShapeAndBoundsTag?.();
-    (this.target as any).addUpdatePositionTag?.();
-    (this.target as any).onAttributeUpdate?.({ type: AttributeUpdateType.ANIMATE_UPDATE });
+    (this.target as any).addUpdateShapeAndBoundsTag();
+    (this.target as any).addUpdatePositionTag();
+    (this.target as any).onAttributeUpdate({ type: AttributeUpdateType.ANIMATE_UPDATE });
   };
 
   protected runInterpolateUpdate(fromProps: Record<string, any>, toProps: Record<string, any>, ratio: number): void {
@@ -238,14 +238,8 @@ export class Step implements IStep {
     // 屏蔽掉之前动画冲突的属性
     const animate = this.animate;
     const target = this.target;
-    const forEachTrackedAnimate =
-      (target as any).forEachTrackedAnimate?.bind(target) ??
-      ((cb: (a: any) => void) => {
-        target.animates?.forEach(cb);
-      });
-
     const propKeys = this.propKeys;
-    forEachTrackedAnimate((a: any) => {
+    (target as any).forEachTrackedAnimate((a: any) => {
       if (a === animate || a.priority > animate.priority || a.priority === Infinity) {
         return;
       }

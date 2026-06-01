@@ -58,9 +58,8 @@ describe('StateDefinitionCompiler', () => {
     expect(expectDefinition(compiled, 'beta').rank).toBe(2);
   });
 
-  test('should compute exclude and suppress transitive closures and warn on cycles', () => {
+  test('should compute exclude and suppress transitive closures and ignore cycles', () => {
     const compiler = new StateDefinitionCompiler<any>();
-    const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
 
     const compiled = compiler.compile({
       hover: { patch: { fill: 'red' }, exclude: ['active'] },
@@ -73,9 +72,6 @@ describe('StateDefinitionCompiler', () => {
     expect(Array.from(expectDefinition(compiled, 'active').suppress)).toEqual(['selected', 'pressed']);
     expect(Array.from(expectDefinition(compiled, 'hover').exclude)).toEqual(['active']);
     expect(Array.from(expectDefinition(compiled, 'active').exclude)).toEqual(['hover']);
-    expect(warnSpy).toHaveBeenCalled();
-
-    warnSpy.mockRestore();
   });
 
   test('should derive affected keys from static patch and declared resolver keys', () => {

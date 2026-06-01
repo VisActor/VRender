@@ -12,12 +12,7 @@ import type { IContainPointMode } from '../common/enums';
 import type { IFace3d } from './graphic/face3d';
 import type { IPickerService } from './picker';
 import type { ISymbolClass } from './graphic/symbol';
-import type {
-  CompiledStateDefinition,
-  StateDefinition,
-  StateDefinitionsInput
-} from '../graphic/state/state-definition';
-import type { StateMergeMode } from '../graphic/state/state-style-resolver';
+import type { StateDefinition, StateDefinitionsInput, StateMergeMode } from '../graphic/state/state-definition';
 import type { SharedStateScope } from '../graphic/state/shared-state-scope';
 
 type IStrokeSeg = {
@@ -772,9 +767,6 @@ export interface IGraphic<T extends Partial<IGraphicAttribute> = Partial<IGraphi
   boundSharedStateRevision?: number;
   sharedStateDirty?: boolean;
   registeredActiveScopes?: Set<SharedStateScope<T>>;
-  localFallbackCompiledDefinitions?: Map<string, CompiledStateDefinition<T>>;
-  localFallbackVersion?: number;
-  stateProxy?: (stateName: string, targetStates?: string[]) => Partial<T>;
   stateMergeMode?: StateMergeMode;
   findFace?: () => IFace3d;
   toggleState: (stateName: string, hasAnimation?: boolean) => void;

@@ -52,7 +52,7 @@
 - 问题：
   `memory.ts` benchmark 在已经改成“复用单 app、只重建 stage”之后，当前分支相较 `develop` 仍存在显著性能差距。进一步归因后，主因已经收敛到 `Graphic` 在 D3 重构后每实例固定成本上升，而不是 app/stage 重建策略。
 - 当前状态：
-  已从 follow-up 升级为独立性能专项；稳定版收尾阶段已关闭为 D3 stable release no-go。`Text.cache` lazy-init 尝试对 `VTable-lite text-stateProxy cells` 有可见收益，但官方 `memory.ts run 100` no-trace 未形成足够清晰改善，因此本轮 `P2` 不接受，后续如继续优化需作为独立性能专项重开。
+  已从 follow-up 升级为独立性能专项；稳定版收尾阶段已关闭为 D3 stable release no-go。`Text.cache` lazy-init 尝试对历史 `VTable-lite text-stateProxy cells` 有可见收益，但官方 `memory.ts run 100` no-trace 未形成足够清晰改善，因此本轮 `P2` 不接受。`stateProxy` 已在 release 前删除，后续如继续优化需作为独立性能专项重开，并将 text-heavy dynamic-state workload 改成 `states` + `StateDefinition.resolver`。
 - 为什么是非阻塞：
   这是一个极端构造 benchmark 的性能问题，不等于当前 handoff 主链不可用，也不直接推翻 Phase 1-4 或 legacy removal 的完成结论。
 - 证据入口：
@@ -109,6 +109,7 @@
 1. 先确认是否真的需要进入正式任务，而不是继续保持为文档级 follow-up。
 2. 若进入正式任务，新增独立文档或 implementation log 条目承接，不直接修改本文件为开放式讨论。
 3. 在正式任务启动前，默认保持当前 `closed` 结论不变，除非发现它们已经实际影响已关闭阶段的运行时正确性。
+4. 若正式任务删除、改名或收紧 public / semi-public / 上层敏感接口，必须同步更新 [D3_REMOVED_API_AND_CALL_CHAIN_LOG.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_REMOVED_API_AND_CALL_CHAIN_LOG.md)，写清旧调用链、替代路径、上层排查命令和验证证据。
 
 ---
 
@@ -142,7 +143,7 @@
 
 - Owner: `cross-repo integration`
 - 当前状态：completed
-- 说明：已补 VTable-lite text `stateProxy` workload。`packages/vrender/__tests__/browser/src/pages/vtable-lite-text-stateproxy.ts` 通过 `vtable-lite-shared.ts` 创建 text + stateProxy 场景，并对 `10` 个 sample text 执行 `useStates(['hover'], false)`；`D3_PHASE4_IMPLEMENTATION_LOG.md` 已记录 `stateProxy` sample 语义 `10/10` 通过。该项不再作为 D3 stable release follow-up 保留。
+- 说明：历史 VTable-lite text `stateProxy` workload 已完成过样本验证；release 前 `stateProxy` 已删除，旧页面已迁移/删除，后续同类 text-heavy dynamic-state 验证需使用 `states` + `StateDefinition.resolver`。该项不再作为 D3 stable release follow-up 保留。
 
 ### F-Alpha-05 external stage ownership governance hardening
 

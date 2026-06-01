@@ -10,7 +10,7 @@ const TEXT_INSET_X = 8;
 const TEXT_INSET_Y = 14;
 const SAMPLE_TEXT_COUNT = 10;
 
-type TVTableLiteScenario = 'basic' | 'text-stateproxy';
+type TVTableLiteScenario = 'basic' | 'text-state-resolver';
 
 declare global {
   interface Window {
@@ -57,23 +57,21 @@ function createBasicCell(index: number): IGraphic[] {
   return [background, text];
 }
 
-function createStateProxyCell(index: number, sampleTexts: IText[]): IGraphic[] {
+function createStateResolverCell(index: number, sampleTexts: IText[]): IGraphic[] {
   const graphics = createBasicCell(index);
   const text = graphics[1] as IText;
   text.states = {
     hover: {
-      fill: '#24292f'
+      patch: {
+        fill: '#24292f'
+      },
+      resolver: () =>
+        ({
+          fill: '#0057ff'
+        } as any),
+      declaredAffectedKeys: ['fill']
     }
   } as any;
-  text.stateProxy = (stateName: string) => {
-    if (stateName !== 'hover') {
-      return undefined;
-    }
-
-    return {
-      fill: '#0057ff'
-    } as any;
-  };
 
   if (sampleTexts.length < SAMPLE_TEXT_COUNT) {
     sampleTexts.push(text);
@@ -115,7 +113,7 @@ export function createVTableLitePage(scenario: TVTableLiteScenario) {
     const sampleTexts: IText[] = [];
 
     for (let i = 0; i < CELL_COUNT; i++) {
-      const cellGraphics = scenario === 'basic' ? createBasicCell(i) : createStateProxyCell(i, sampleTexts);
+      const cellGraphics = scenario === 'basic' ? createBasicCell(i) : createStateResolverCell(i, sampleTexts);
       graphics.push(...cellGraphics);
     }
 
@@ -123,9 +121,9 @@ export function createVTableLitePage(scenario: TVTableLiteScenario) {
       scenario,
       cellCount: CELL_COUNT,
       graphicCount: graphics.length,
-      sampleCount: scenario === 'text-stateproxy' ? sampleTexts.length : 0,
-      semanticPassed: scenario === 'text-stateproxy' ? false : undefined,
-      sampleResults: scenario === 'text-stateproxy' ? [] : undefined
+      sampleCount: scenario === 'text-state-resolver' ? sampleTexts.length : 0,
+      semanticPassed: scenario === 'text-state-resolver' ? false : undefined,
+      sampleResults: scenario === 'text-state-resolver' ? [] : undefined
     };
 
     stage = app.createStage({
@@ -139,7 +137,7 @@ export function createVTableLitePage(scenario: TVTableLiteScenario) {
       stage.defaultLayer.add(graphic);
     });
 
-    if (scenario === 'text-stateproxy') {
+    if (scenario === 'text-state-resolver') {
       const sampleResults = sampleTexts.map(text => {
         text.useStates(['hover'], false);
         return text.attribute.fill === '#0057ff' && text.currentStates?.includes('hover');

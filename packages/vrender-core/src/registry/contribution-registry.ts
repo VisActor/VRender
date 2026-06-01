@@ -9,12 +9,6 @@ export class ContributionRegistry<T = unknown> implements IContributionRegistry<
     this.entries.set(key, current);
   }
 
-  registerMany(entries: Iterable<[RegistryKey, T]>): void {
-    for (const [key, contribution] of entries) {
-      this.register(key, contribution);
-    }
-  }
-
   get(key: RegistryKey): T[] {
     return [...(this.entries.get(key) ?? [])];
   }

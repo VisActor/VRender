@@ -158,15 +158,15 @@ Node app-scoped runtime 已作为 stable Tier 1 关闭：`createNodeVRenderApp({
 
 完成标准：
 
-1. 至少一条上层或 VTable-lite 相关 workload 覆盖 text `stateProxy`
-2. 覆盖不改变现有 `stateProxy` 边界：只承诺顶层 `graphic.attribute.xxx = ...`
+1. 至少一条上层或 VTable-lite 相关 workload 覆盖 text dynamic-state
+2. 历史 `stateProxy` 边界已被删除；后续覆盖使用 `states` + `StateDefinition.resolver`
 3. 结果回填到 follow-up 或对应专项文档
 
 完成证据：
 
-1. `packages/vrender/__tests__/browser/src/pages/vtable-lite-text-stateproxy.ts`
+1. 历史 `packages/vrender/__tests__/browser/src/pages/vtable-lite-text-stateproxy.ts` 已在 release 前清理中迁移/删除
 2. `packages/vrender/__tests__/browser/src/pages/vtable-lite-shared.ts`
-3. `D3_PHASE4_IMPLEMENTATION_LOG.md` 中记录 `VTable-lite text-stateProxy cells run 100`，`stateProxy` sample 语义 `10/10` 通过
+3. `D3_PHASE4_IMPLEMENTATION_LOG.md` 中记录过 `VTable-lite text-stateProxy cells run 100`；后续同类验证统一改为 text + dynamic `states.resolver`
 
 ### P1-3 Memory benchmark / VTable-lite P2
 
@@ -174,7 +174,7 @@ Node app-scoped runtime 已作为 stable Tier 1 关闭：`createNodeVRenderApp({
 - Status: closed as no-go for D3 stable release
 - Source: [D3_MEMORY_BENCHMARK_P2_GUIDE.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_MEMORY_BENCHMARK_P2_GUIDE.md)
 
-`P2` 不影响 browser alpha。稳定版收尾阶段已基于现有 before / after 数据关闭为 D3 stable release no-go：`VTable-lite text-stateProxy cells` 有可见收益，但官方 `memory.ts run 100` no-trace 没有形成足够清晰改善。
+`P2` 不影响 browser alpha。稳定版收尾阶段已基于现有 before / after 数据关闭为 D3 stable release no-go：历史 `VTable-lite text-stateProxy cells` 有可见收益，但官方 `memory.ts run 100` no-trace 没有形成足够清晰改善。`stateProxy` 删除后，后续同类 workload 需改为 text + dynamic `states.resolver`。
 
 完成标准：
 
@@ -264,7 +264,7 @@ P2 是建议保留但不应挤占 P0/P1 的后续项。
 | P0 | VChart app-provider-first source-level alignment | `cross-repo integration` / `VChart-side` | 把 `/tmp` 证据沉淀成正式上层路径，同时降低普通用户对 app 的感知 |
 | P0 | external stage ownership contract hardening | `VChart-side` | 防止推荐路径的 ownership 再次被误用 |
 | P1 | node app-scoped runtime readiness | `VRender-side` | 已作为 D3 stable Tier 1 关闭 |
-| P1 | text stateProxy real-path coverage | `cross-repo integration` | 已由 VTable-lite text-stateProxy workload 补齐 |
+| P1 | text dynamic-state real-path coverage | `cross-repo integration` | 历史 text-stateProxy workload 已补齐；release 前 `stateProxy` 删除后，后续口径改为 text + dynamic `states.resolver` |
 | P1 | memory benchmark / VTable-lite P2 | `VRender-side` | 已关闭为 D3 stable release no-go |
 | P1 | multi-env / on-demand support matrix | `VRender-side` / maintainers | stable support matrix 已关闭，advanced on-demand 移出 D3 release |
 | P2 | full internal migration decision | `cross-repo integration` | 只有 app-provider-first 稳定后才值得决策 |

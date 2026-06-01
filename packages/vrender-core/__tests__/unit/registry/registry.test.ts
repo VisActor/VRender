@@ -45,15 +45,13 @@ describe('registry module', () => {
     expect(factory).toHaveBeenCalledTimes(1);
   });
 
-  test('RendererRegistry should support batch registration and getAll', () => {
+  test('RendererRegistry should collect registered renderers for getAll', () => {
     const registry = new RendererRegistry();
     const firstKey = Symbol('first');
     const secondKey = Symbol('second');
 
-    registry.registerMany([
-      [firstKey, createRenderer('rect')],
-      [secondKey, () => createRenderer('circle')]
-    ]);
+    registry.register(firstKey, createRenderer('rect'));
+    registry.register(secondKey, () => createRenderer('circle'));
 
     expect(registry.get(firstKey)?.type).toBe('rect');
     expect(registry.get(secondKey)?.type).toBe('circle');

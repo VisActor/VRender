@@ -16,6 +16,7 @@ import {
   type IRichTextCharacter,
   type IRichTextGraphicAttribute,
   type IRichTextImageCharacter,
+  type StateDefinitionsInput,
   type ISymbolGraphicAttribute,
   type ITextGraphicAttribute
 } from '@visactor/vrender-core';
@@ -76,7 +77,7 @@ export type IEventParamsType = {
 
 export type IDefaultGraphicParamsType<T> = {
   attribute?: T;
-  stateProxy?: (stateName: string, targetStates?: string[]) => Partial<T>;
+  states?: StateDefinitionsInput<T>;
   // react可能类型报错
   children?: any;
   name?: string;

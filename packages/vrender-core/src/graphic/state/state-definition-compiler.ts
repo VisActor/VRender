@@ -93,7 +93,6 @@ export class StateDefinitionCompiler<T extends Record<string, any> = Record<stri
       return {
         name: definition.name ?? name,
         priority: definition.priority ?? 0,
-        rank: definition.rank,
         patch: normalizePatch<T>(definition.patch),
         resolver: definition.resolver as ((ctx: StateResolveContext<T>) => Partial<T> | void) | undefined,
         declaredAffectedKeys: definition.declaredAffectedKeys,
@@ -121,37 +120,25 @@ export class StateDefinitionCompiler<T extends Record<string, any> = Record<stri
 
     compiled.forEach((definition, origin) => {
       const closure = new Set<string>();
-      const walk = (stateName: string, stack: string[]) => {
+      const walk = (stateName: string, visiting: Set<string>) => {
         const nextStates = rawRelationMap.get(stateName);
         if (!nextStates || !nextStates.size) {
           return;
         }
 
         nextStates.forEach(nextState => {
-          if (nextState === origin) {
-            console.warn(
-              `[StateDefinitionCompiler] circular ${relation} relation detected: ${stack.join(' -> ')} -> ${origin}`
-            );
-            return;
-          }
-
-          if (stack.includes(nextState)) {
-            console.warn(
-              `[StateDefinitionCompiler] circular ${relation} relation detected: ${stack.join(' -> ')} -> ${nextState}`
-            );
-            return;
-          }
-
-          if (closure.has(nextState)) {
+          if (nextState === origin || visiting.has(nextState) || closure.has(nextState)) {
             return;
           }
 
           closure.add(nextState);
-          walk(nextState, stack.concat(nextState));
+          visiting.add(nextState);
+          walk(nextState, visiting);
+          visiting.delete(nextState);
         });
       };
 
-      walk(origin, [origin]);
+      walk(origin, new Set([origin]));
       definition[relation] = closure;
     });
   }

@@ -4,7 +4,6 @@ import type { INode } from '../node-tree';
 import type { GraphicAttributeMap } from './creator';
 import type { StateDefinitionsInput } from '../../graphic/state/state-definition';
 import type { SharedStateScope } from '../../graphic/state/shared-state-scope';
-import type { IDeferredStateOwnerConfig } from '../../graphic/state/state-perf-monitor';
 
 export type IGroupAttribute = {
   /**
@@ -82,7 +81,6 @@ export interface IGroup extends IGraphic<IGroupGraphicAttribute> {
   theme?: ITheme;
   sharedStateDefinitions?: StateDefinitionsInput<Record<string, any>>;
   sharedStateScope?: SharedStateScope<Record<string, any>>;
-  deferredStateConfig?: IDeferredStateOwnerConfig;
 
   createTheme: () => void;
   hideAll: () => void;

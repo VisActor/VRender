@@ -29,17 +29,23 @@ describe('Graphic state edge cases', () => {
     expect(graphic.attribute.fill).toBe('blue');
   });
 
-  test('should ignore null and undefined results from stateProxy', () => {
+  test('should ignore null and undefined results from state resolvers', () => {
     const graphic = createGraphic();
-    graphic.stateProxy = jest
-      .fn()
-      .mockImplementationOnce(() => null)
-      .mockImplementationOnce(() => undefined) as any;
+    graphic.states = {
+      hover: {
+        resolver: (): any => null,
+        declaredAffectedKeys: ['fill']
+      },
+      active: {
+        resolver: (): any => undefined,
+        declaredAffectedKeys: ['stroke']
+      }
+    } as any;
 
     graphic.useStates(['hover', 'active'], false);
 
     expect(graphic.attribute.fill).toBe('blue');
-    expect(graphic.currentStates).toEqual(['hover', 'active']);
+    expect(graphic.currentStates).toEqual(['active', 'hover']);
     expect(graphic.normalAttrs).toEqual((graphic as any).baseAttributes);
   });
 
@@ -56,16 +62,19 @@ describe('Graphic state edge cases', () => {
     expect(graphic.normalAttrs).toEqual((graphic as any).baseAttributes);
   });
 
-  test('should use stateProxy when static states and stateProxy share the same state name', () => {
+  test('should let resolver override static patch for the same state name', () => {
     const graphic = createGraphic();
     graphic.states = {
-      hover: { fill: 'red' }
+      hover: {
+        patch: { fill: 'red' },
+        resolver: () => ({ fill: 'dynamic' }),
+        declaredAffectedKeys: ['fill']
+      }
     } as any;
-    graphic.stateProxy = jest.fn(() => ({ fill: 'proxy' })) as any;
 
     graphic.useStates(['hover'], false);
 
-    expect(graphic.attribute.fill).toBe('proxy');
+    expect(graphic.attribute.fill).toBe('dynamic');
   });
 
   test('should support very long state names', () => {

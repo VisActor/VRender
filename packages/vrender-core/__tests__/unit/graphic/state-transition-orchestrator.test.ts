@@ -6,14 +6,12 @@ describe('StateTransitionOrchestrator', () => {
     const orchestrator = new StateTransitionOrchestrator<any>();
 
     const plan = orchestrator.analyzeTransition(
-      {},
       {
         fill: 'red',
         opacity: 0.4,
         visible: false,
         zIndex: 9
       },
-      undefined,
       true,
       {
         noWorkAnimateAttr: {
@@ -32,10 +30,6 @@ describe('StateTransitionOrchestrator', () => {
     expect(plan.animateAttrs).toEqual({
       fill: 'red',
       opacity: 0.4
-    });
-    expect(plan.jumpAttrs).toEqual({
-      visible: false,
-      zIndex: 9
     });
     expect(plan.noAnimateAttrs).toEqual({
       visible: false,
@@ -67,9 +61,6 @@ describe('StateTransitionOrchestrator', () => {
         },
         animateAttrs: {
           fill: 'red'
-        },
-        jumpAttrs: {
-          visible: false
         },
         noAnimateAttrs: {
           visible: false
@@ -129,7 +120,6 @@ describe('StateTransitionOrchestrator', () => {
           opacity: 0.4
         },
         animateAttrs: {},
-        jumpAttrs: {},
         noAnimateAttrs: {}
       },
       false
@@ -163,6 +153,7 @@ describe('StateTransitionOrchestrator', () => {
         visible: 1
       }),
       getDefaultAttribute: (key: string) => (key === 'fill' ? 'blue' : undefined),
+      shouldSkipStateTransitionDefaultAttribute: () => false,
       _emitCustomEvent: jest.fn()
     };
 
@@ -177,9 +168,6 @@ describe('StateTransitionOrchestrator', () => {
 
     expect(plan.animateAttrs).toEqual({
       fill: 'blue'
-    });
-    expect(plan.jumpAttrs).toEqual({
-      visible: true
     });
     expect(applyAnimationState).toHaveBeenCalledWith(
       ['state'],
@@ -208,11 +196,9 @@ describe('StateTransitionOrchestrator', () => {
     const orchestrator = new StateTransitionOrchestrator<any>();
 
     const plan = orchestrator.analyzeTransition(
-      {},
       {
         height: undefined
       },
-      [],
       true,
       {
         isClear: true,
@@ -229,7 +215,6 @@ describe('StateTransitionOrchestrator', () => {
     const orchestrator = new StateTransitionOrchestrator<any>();
 
     const verticalPlan = orchestrator.analyzeTransition(
-      {},
       {
         lineWidth: 0,
         fillOpacity: undefined,
@@ -240,7 +225,6 @@ describe('StateTransitionOrchestrator', () => {
         x1: undefined,
         height: undefined
       },
-      [],
       true,
       {
         isClear: true,
@@ -260,7 +244,6 @@ describe('StateTransitionOrchestrator', () => {
     expect(verticalPlan.animateAttrs).toHaveProperty('x1', 0);
 
     const verticalRectPlan = orchestrator.analyzeTransition(
-      {},
       {
         lineWidth: 0,
         fillOpacity: undefined,
@@ -271,7 +254,6 @@ describe('StateTransitionOrchestrator', () => {
         x1: undefined,
         height: undefined
       },
-      [],
       true,
       {
         isClear: true,
@@ -311,7 +293,6 @@ describe('StateTransitionOrchestrator', () => {
     });
 
     const horizontalPlan = orchestrator.analyzeTransition(
-      {},
       {
         lineWidth: 0,
         fillOpacity: undefined,
@@ -322,7 +303,6 @@ describe('StateTransitionOrchestrator', () => {
         width: undefined,
         y1: undefined
       },
-      [],
       true,
       {
         isClear: true,
@@ -342,7 +322,6 @@ describe('StateTransitionOrchestrator', () => {
     expect(horizontalPlan.animateAttrs).toHaveProperty('y1', 0);
 
     const horizontalRectPlan = orchestrator.analyzeTransition(
-      {},
       {
         lineWidth: 0,
         fillOpacity: undefined,
@@ -353,7 +332,6 @@ describe('StateTransitionOrchestrator', () => {
         width: undefined,
         y1: undefined
       },
-      [],
       true,
       {
         isClear: true,
@@ -397,13 +375,11 @@ describe('StateTransitionOrchestrator', () => {
     const orchestrator = new StateTransitionOrchestrator<any>();
 
     const plan = orchestrator.analyzeTransition(
-      {},
       {
         fill: 'red',
         opacity: 0.4,
         visible: false
       },
-      undefined,
       true,
       {
         noWorkAnimateAttr: {
@@ -418,10 +394,6 @@ describe('StateTransitionOrchestrator', () => {
     expect(plan.animateAttrs).toEqual({
       opacity: 0.4
     });
-    expect(plan.jumpAttrs).toEqual({
-      fill: 'red',
-      visible: false
-    });
     expect(plan.noAnimateAttrs).toEqual({
       fill: 'red',
       visible: false
@@ -432,11 +404,9 @@ describe('StateTransitionOrchestrator', () => {
     const orchestrator = new StateTransitionOrchestrator<any>();
 
     const plan = orchestrator.analyzeTransition(
-      {},
       {
         lineWidth: 0
       },
-      [],
       true,
       {
         isClear: true,
@@ -460,11 +430,9 @@ describe('StateTransitionOrchestrator', () => {
     const orchestrator = new StateTransitionOrchestrator<any>();
 
     const plan = orchestrator.analyzeTransition(
-      {},
       {
         height: undefined
       },
-      [],
       true,
       {
         isClear: true,

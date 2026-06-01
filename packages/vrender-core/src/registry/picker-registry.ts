@@ -8,12 +8,6 @@ export class PickerRegistry implements IPickerRegistry {
     this.entries.set(key, picker);
   }
 
-  registerMany(entries: Iterable<[RegistryKey, IGraphicPicker]>): void {
-    for (const [key, picker] of entries) {
-      this.register(key, picker);
-    }
-  }
-
   get(key: RegistryKey): IGraphicPicker | undefined {
     return this.entries.get(key);
   }

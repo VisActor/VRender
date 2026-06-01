@@ -10,6 +10,7 @@ type BootstrapMockOptions = {
   loaders?: Record<string, any>;
   registers?: Record<string, any>;
   animate?: Record<string, any>;
+  legacy?: Record<string, any>;
 };
 
 const envLoaders = {
@@ -89,6 +90,12 @@ function mockBootstrapSubpaths(options: BootstrapMockOptions = {}) {
   }));
   jest.doMock('@visactor/vrender-animate/custom/register', () => ({
     registerCustomAnimate: options.animate?.registerCustomAnimate ?? jest.fn()
+  }));
+  jest.doMock('@visactor/vrender-core/legacy/bootstrap', () => ({
+    getLegacyBindingContext: options.legacy?.getLegacyBindingContext ?? jest.fn(createEmptyLegacyBindingContext)
+  }));
+  jest.doMock('@visactor/vrender-core/render/symbol', () => ({
+    GraphicRender: options.legacy?.GraphicRender ?? 'GraphicRender'
   }));
 }
 
@@ -568,6 +575,10 @@ describe('vrender app-scoped entries', () => {
         },
         registers: {
           registerRect
+        },
+        legacy: {
+          getLegacyBindingContext: jest.fn(() => ({ getAll })),
+          GraphicRender: 'GraphicRender'
         }
       });
 

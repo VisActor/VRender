@@ -9,11 +9,7 @@ export function buildAnimationStaticCommitAttrs(
 ): Record<string, any> | null {
   const commitTarget = target as any;
   const contextFinalAttrs = commitTarget.context?.finalAttrs as Record<string, any> | undefined;
-  const finalAttribute = (
-    typeof commitTarget.getFinalAttribute === 'function'
-      ? commitTarget.getFinalAttribute()
-      : commitTarget.finalAttribute
-  ) as Record<string, any> | undefined;
+  const finalAttribute = commitTarget.getFinalAttribute() as Record<string, any> | undefined;
   let commitAttrs: Record<string, any> | null = null;
 
   for (let i = 0; i < keys.length; i++) {
@@ -54,7 +50,7 @@ export function commitAnimationStaticAttrs(
     return false;
   }
 
-  (target as any).setFinalAttributes?.(commitAttrs);
+  (target as any).setFinalAttributes(commitAttrs);
   target.setAttributes(commitAttrs as any, false, { type: AttributeUpdateType.ANIMATE_END });
   return true;
 }

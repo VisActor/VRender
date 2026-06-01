@@ -64,7 +64,7 @@ describe('react-tree', () => {
       props: {
         attribute: graphic.attribute,
         onClick: clickHandler,
-        stateProxy: { s: 1 },
+        states: { hover: { fill: 'red' } },
         id: 'id-1',
         name: 'name-1',
         children: [childDom, [childDom]]
@@ -74,7 +74,7 @@ describe('react-tree', () => {
     const out = decodeReactDom(dom) as any;
 
     expect(out).toBe(graphic);
-    expect(graphic.stateProxy).toEqual({ s: 1 });
+    expect(graphic.states).toEqual({ hover: { fill: 'red' } });
     expect(graphic.id).toBe('id-1');
     expect(graphic.name).toBe('name-1');
 

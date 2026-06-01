@@ -29,7 +29,8 @@ Key changes:
 - `sharedStateDefinitions` is the recommended surface for shared state definitions.
 - `graphic.setStates(states, { animate, animateSameStatePatchChange })` supports same-state refresh and same-state patch change animation.
 - Dynamic resolvers receive a valid `StateResolveContext.graphic`.
-- `graphic.states` remains as a compatibility fallback, but missing shared states now emit a deprecated warning.
+- `graphic.states` is the local graphic state-definition surface. Shared states should use `sharedStateDefinitions`.
+- Dynamic state styles should be written as `StateDefinition.resolver`; `graphic.stateProxy` has been removed.
 
 ### Animation
 
@@ -316,10 +317,15 @@ Move new code to environment-specific `create*VRenderApp()` and `app.createStage
 ```bash
 rg "clearStates\\("
 rg "normalAttrs"
+rg "stateProxy"
 rg "graphic\\.states|\\.states\\s*="
 ```
 
-Avoid `clearStates()` before same-state refresh. Do not use `normalAttrs` as a snapshot or restore source.
+Avoid `clearStates()` before same-state refresh. Do not use `normalAttrs` as a snapshot or restore source. Replace `stateProxy` with `states` + `StateDefinition.resolver` or `sharedStateDefinitions`.
+
+If you maintain VChart, VTable, or another upper-layer integration, also check the D3 removal log for deleted pre-release APIs and old call chains:
+
+- [D3_REMOVED_API_AND_CALL_CHAIN_LOG.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_REMOVED_API_AND_CALL_CHAIN_LOG.md)
 
 3. Check appear/fade animations:
 
@@ -394,4 +400,3 @@ Check:
 - Fine-grained on-demand assembly as an equivalent replacement for root package defaults.
 - Moving glyph sub-graphic state into the shared-state main path.
 - Additional memory or constructor representation optimizations.
-

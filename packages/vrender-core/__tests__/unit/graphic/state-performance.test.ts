@@ -97,15 +97,21 @@ describe('Graphic state performance', () => {
     expect(graphic.currentStates).toEqual(stateNames);
   });
 
-  test('should call stateProxy for each resolution because no cache exists', () => {
+  test('should reuse resolver cache while state set is unchanged', () => {
     const graphic = createGraphic();
-    const stateProxy = jest.fn((stateName: string) => ({ fill: stateName }));
-    graphic.stateProxy = stateProxy as any;
+    const resolver = jest.fn(({ effectiveStates }: any) => ({ fill: effectiveStates[0] }));
+    graphic.states = {
+      hover: {
+        resolver,
+        declaredAffectedKeys: ['fill']
+      }
+    } as any;
 
+    graphic.useStates(['hover'], false);
     graphic.useStates(['hover'], false);
     graphic.useStates([], false);
     graphic.useStates(['hover'], false);
 
-    expect(stateProxy).toHaveBeenCalledTimes(2);
+    expect(resolver).toHaveBeenCalledTimes(2);
   });
 });

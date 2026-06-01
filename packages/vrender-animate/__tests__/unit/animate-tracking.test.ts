@@ -8,6 +8,8 @@ describe('Animate tracking bridge', () => {
     const target: any = {
       trackAnimate,
       untrackAnimate,
+      detachAttributeFromBaseAttributes: jest.fn(),
+      restoreStaticAttribute: jest.fn(),
       onAnimateBind: jest.fn(),
       animationAttribute: undefined
     };

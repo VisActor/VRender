@@ -90,23 +90,23 @@ describe('StateEngine', () => {
     expect(resolver).toHaveBeenCalledTimes(2);
   });
 
-  test('should let stateProxy fully decide per-state style contribution when it is present', () => {
-    const stateProxy = jest.fn((stateName: string) => ({ fill: `${stateName}-fill` }));
+  test('should merge static patches and resolver contributions in effective order', () => {
+    const resolver = jest.fn(({ activeStates }: any) => ({ fill: activeStates.join('+') }));
     const engine = new StateEngine<any>({
       compiledDefinitions: new StateDefinitionCompiler<any>().compile({
-        selected: { priority: 5, patch: { stroke: 'blue' } }
-      }),
-      stateProxy
+        selected: { priority: 5, patch: { stroke: 'blue' } },
+        hover: { priority: 10, resolver, declaredAffectedKeys: ['fill'] }
+      })
     });
 
     const transition = engine.applyStates(['hover', 'selected']);
 
     expect(transition.activeStates).toEqual(['selected', 'hover']);
     expect(transition.effectiveStates).toEqual(['selected', 'hover']);
-    expect(stateProxy).toHaveBeenCalledWith('selected', ['selected', 'hover']);
-    expect(stateProxy).toHaveBeenCalledWith('hover', ['selected', 'hover']);
+    expect(resolver).toHaveBeenCalledTimes(1);
     expect(engine.resolvedPatch).toEqual({
-      fill: 'hover-fill'
+      stroke: 'blue',
+      fill: 'selected+hover'
     });
   });
 });

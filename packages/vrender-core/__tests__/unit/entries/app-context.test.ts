@@ -2,7 +2,7 @@ import type { IGraphicRender } from '../../../src/interface/render';
 import type { IStageParams } from '../../../src/interface/stage';
 import { AppContext } from '../../../src/entries';
 import { GraphicFactory, LayerFactory, StageFactory } from '../../../src/factory';
-import { BasePlugin, type IPluginContext } from '../../../src/plugins';
+import type { IPlugin, IPluginContext } from '../../../src/plugins';
 import { ContributionRegistry, PickerRegistry, PluginRegistry, RendererRegistry } from '../../../src/registry';
 
 class StageStub {
@@ -17,13 +17,12 @@ class StageStub {
   }
 }
 
-class TrackingPlugin extends BasePlugin {
+class TrackingPlugin implements IPlugin {
+  readonly version = '0.0.1';
   installedWith?: IPluginContext;
   uninstallCount = 0;
 
-  constructor(name = 'tracking-plugin') {
-    super(name, '0.0.1');
-  }
+  constructor(public readonly name = 'tracking-plugin') {}
 
   install(context: IPluginContext): void {
     this.installedWith = context;

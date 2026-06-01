@@ -1,4 +1,4 @@
-> 状态：已归档。`P2` 已在 D3 stable release closeout 中关闭为 no-go；不要直接按本 prompt 继续执行。若后续要继续做构造期固定成本优化，应作为新的独立性能专项重开，并先更新 `D3_MEMORY_BENCHMARK_P2_GUIDE.md`。
+> 状态：已归档。`P2` 已在 D3 stable release closeout 中关闭为 no-go；不要直接按本 prompt 继续执行。若后续要继续做构造期固定成本优化，应作为新的独立性能专项重开，并先更新 `D3_MEMORY_BENCHMARK_P2_GUIDE.md`。历史 `stateProxy` workload 已被 release 前删除项 supersede，后续同类 text-heavy dynamic-state 验证应改用 `states` + `StateDefinition.resolver`。
 
 你现在负责执行 D3 memory benchmark 性能专项的 `P2`。
 
@@ -36,16 +36,16 @@
 - 推荐 `5000` 个 cell，使总图元量级约 `10000`
 - 只测基础构造成本，不引入额外状态切换
 
-2. `VTable-lite text-stateProxy cells`
+2. `VTable-lite text dynamic-state cells`
 - 同样以 `5000` 个 cell 为默认量级
 - 每个 cell 创建：
   - 1 个背景图元
   - 1 个 `text`
-- 每个 `text` 都带 `stateProxy`
+- 每个 `text` 都带 `states` + `StateDefinition.resolver`
 - 性能对比重点仍是构造期
 - 额外增加一个最小语义检查：
   - 对一小批 sample text 应用一次 state
-  - 确认 `stateProxy` 路径仍然成立
+  - 确认 dynamic `states.resolver` 路径仍然成立
 
 要求：
 - 先把 workload 定义清楚再动优化实现
@@ -62,7 +62,7 @@
 
 #### B. VTable 业务 gate
 3. `VTable-lite basic cells run 100` no-trace
-4. `VTable-lite text-stateProxy cells run 100` no-trace
+4. `VTable-lite text dynamic-state cells run 100` no-trace
 
 如环境允许，可再补一条 VTable-lite trace，但这不是强制门槛。
 
@@ -132,7 +132,7 @@
 3. `memory.ts run 100` no-trace
 4. `memory.ts run 100` trace
 5. `VTable-lite basic cells run 100` no-trace
-6. `VTable-lite text-stateProxy cells run 100` no-trace
+6. `VTable-lite text dynamic-state cells run 100` no-trace
 7. 如果你动到了 text 路径，再补最小相关定向测试
 
 ## 留档要求
@@ -167,11 +167,11 @@
 完成后，必须附一段可直接转发给架构师的 review prompt，至少覆盖：
 
 1. VTable-lite basic cells 的 workload 定义是什么
-2. VTable-lite text-stateProxy cells 的 workload 定义是什么
+2. VTable-lite text dynamic-state cells 的 workload 定义是什么
 3. 本轮是否仍只改了构造期相关路径
 4. 是否没有触碰 renderer / raf / deferred / shared-state 主链
 5. `memory.ts run 100` no-trace / trace before-after 数据是什么
 6. VTable-lite 业务 gate before-after 数据是什么
-7. `stateProxy` 路径是否仍然成立
+7. dynamic `states.resolver` 路径是否仍然成立
 8. 当前契约边界是否仍未扩大
 9. 本轮 `P2` 是否可以接受

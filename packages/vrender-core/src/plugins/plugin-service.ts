@@ -10,7 +10,6 @@ interface ILegacyPluginRegistry {
 
 interface IPluginServiceDeps {
   pluginRegistry?: ILegacyPluginRegistry;
-  autoEnablePlugins?: IContributionProvider<IPlugin>;
 }
 
 const EMPTY_AUTO_ENABLE_PROVIDER: IContributionProvider<IPlugin> = {
@@ -32,7 +31,6 @@ export class DefaultPluginService implements IPluginService {
     this.onRegisterPlugin = [];
     this.actived = false;
     this.pluginRegistry = deps.pluginRegistry ?? (new PluginRegistry() as unknown as ILegacyPluginRegistry);
-    this.autoEnablePlugins = deps.autoEnablePlugins ?? this.autoEnablePlugins ?? EMPTY_AUTO_ENABLE_PROVIDER;
   }
 
   active(stage: IStage, params: { pluginList?: string[] }) {

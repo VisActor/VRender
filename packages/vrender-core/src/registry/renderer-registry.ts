@@ -14,12 +14,6 @@ export class RendererRegistry implements IRendererRegistry {
     this.cache.delete(key);
   }
 
-  registerMany(entries: Iterable<[RegistryKey, IRendererRegistryEntry]>): void {
-    for (const [key, renderer] of entries) {
-      this.register(key, renderer);
-    }
-  }
-
   get(key: RegistryKey): IGraphicRender | undefined {
     if (this.cache.has(key)) {
       return this.cache.get(key);

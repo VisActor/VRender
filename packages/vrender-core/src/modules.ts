@@ -3,11 +3,6 @@
  * Prefer `createBrowserApp()`, `createNodeApp()`, or `createMiniappApp()` from `./entries`
  * instead of relying on the shared global container/module initialization path.
  */
-// import allocatorModule from './allocator/allocator-modules';
-// import loadPickContributions from './picker/contributions/modules';
-// import loadCanvasContributions from './canvas/contributions/modules';
-// import { IMat4Allocate, IMatrixAllocate, Mat4Allocate, MatrixAllocate } from './allocator/matrix-allocate';
-// import { GlobalPickerService } from './picker/constants';
 import type { IGraphicService, IPluginService, IRenderService, IWindowHandlerContribution } from './interface';
 import { application } from './application';
 import type { IGraphicUtil, ILayerService, ITransformUtil } from './interface/core';
@@ -33,8 +28,6 @@ import {
   resolveLegacyNamed,
   resolveLegacySingleton
 } from './legacy/bootstrap';
-// loadPickContributions(container);
-// loadCanvasContributions(container);
 
 export { vglobal } from './global';
 export {
@@ -97,15 +90,3 @@ export function configureLegacyApplication(): void {
 }
 
 configureLegacyApplication();
-// export const matrixAllocate = container.get<IMatrixAllocate>(MatrixAllocate);
-// export const mat4Allocate = container.get<IMat4Allocate>(Mat4Allocate);
-// export const canvasAllocate = container.get<ICanvasAllocate>(CanvasAllocate);
-// export const arcAllocate = container.get<IArcAllocate>(ArcAllocate);
-// export const areaAllocate = container.get<IAreaAllocate>(AreaAllocate);
-// export const circleAllocate = container.get<ICircleAllocate>(CircleAllocate);
-// export const lineAllocate = container.get<ILineAllocate>(LineAllocate);
-// export const pathAllocate = container.get<IPathAllocate>(PathAllocate);
-// export const rectAllocate = container.get<IRectAllocate>(RectAllocate);
-// export const symbolAllocate = container.get<ISymbolAllocate>(SymbolAllocate);
-// export const textAllocate = container.get<ITextAllocate>(TextAllocate);
-// export const pickerService = container.get<IPickerService>(GlobalPickerService);

@@ -98,17 +98,14 @@ export const page = () => {
   );
 
   shapes.forEach(shape => {
-    shape.stateProxy = (stateName: string) => {
-      if (stateName === 'hover') {
-        return {
-          radius: 100
-        };
-      }
-
-      return {
+    shape.states = {
+      hover: {
+        radius: 100
+      },
+      click: {
         fill: 'red'
-      };
-    };
+      }
+    } as any;
 
     // shape.animate().to({ fillOpacity: 0.5, fill: 'red' }, 5000, 'quadIn');
 

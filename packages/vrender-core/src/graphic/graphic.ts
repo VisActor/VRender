@@ -56,12 +56,16 @@ import { isSvg, XMLParser } from '../common/xml';
 import { SVG_PARSE_ATTRIBUTE_MAP, SVG_PARSE_ATTRIBUTE_MAP_KEYS } from './constants';
 import { DefaultStateAnimateConfig } from '../animate/config';
 import { EmptyContext2d } from '../canvas';
-import type { CompiledStateDefinition, StateDefinition, StateDefinitionsInput } from './state/state-definition';
+import type {
+  CompiledStateDefinition,
+  StateDefinition,
+  StateDefinitionsInput,
+  StateMergeMode,
+  StateTransitionResult
+} from './state/state-definition';
 import { StateDefinitionCompiler } from './state/state-definition-compiler';
 import { StateEngine } from './state/state-engine';
-import { StateModel } from './state/state-model';
 import { ATTRIBUTE_CATEGORY, UpdateCategory, classifyAttributeDelta } from './state/attribute-update-classifier';
-import { StateStyleResolver, type StateMergeMode } from './state/state-style-resolver';
 import { StateTransitionOrchestrator } from './state/state-transition-orchestrator';
 import {
   collectSharedStateScopeChain,
@@ -69,7 +73,6 @@ import {
   type SharedStateScope
 } from './state/shared-state-scope';
 import { enqueueGraphicSharedStateRefresh, scheduleStageSharedStateRefresh } from './state/shared-state-refresh';
-import { getActiveStageStatePerfMonitor } from './state/state-perf-monitor';
 
 declare const require: (id: string) => unknown;
 
@@ -152,19 +155,8 @@ const builtinTextureTypes = new Set([
   'wave'
 ]);
 
-const FULL_STATE_DEFINITION_KEYS = new Set([
-  'name',
-  'patch',
-  'priority',
-  'exclude',
-  'suppress',
-  'resolver',
-  'declaredAffectedKeys'
-]);
-
 const point = new Point();
 const EMPTY_STATE_NAMES: readonly string[] = [];
-const deprecatedLocalStateFallbackWarningStateNames = new Set<string>();
 const BROAD_UPDATE_CATEGORY =
   UpdateCategory.PAINT |
   UpdateCategory.SHAPE |
@@ -173,15 +165,15 @@ const BROAD_UPDATE_CATEGORY =
   UpdateCategory.LAYOUT;
 
 type AttributeDelta = Map<string, { prev: unknown; next: unknown }>;
+type GraphicStateTransition = {
+  changed: boolean;
+  states: string[];
+  effectiveStates?: string[];
+};
 type ResolvedGraphicStateTransition<T> = {
-  transition: {
-    changed: boolean;
-    states: string[];
-    effectiveStates?: string[];
-  };
+  transition: GraphicStateTransition;
   effectiveStates: string[];
   resolvedStateAttrs: Partial<T>;
-  isSimpleLocalTransition: boolean;
 };
 
 function isPlainObjectValue(value: unknown): value is Record<string, any> {
@@ -440,12 +432,8 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   declare boundSharedStateRevision?: number;
   declare sharedStateDirty?: boolean;
   declare registeredActiveScopes?: Set<SharedStateScope<T>>;
-  declare localFallbackCompiledDefinitions?: Map<string, CompiledStateDefinition<T>>;
-  declare localFallbackVersion?: number;
   /** TODO: state更新对应的动画配置 */
   declare stateAnimateConfig?: IAnimateConfig;
-  /** 获取state图形属性的方法 */
-  declare stateProxy?: (stateName: string, targetStates?: string[]) => Partial<T>;
   /** 状态样式合并模式，默认浅合并，可选深度合并 */
   declare stateMergeMode?: StateMergeMode;
   declare animates: Map<string | number, IAnimate>;
@@ -472,14 +460,11 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   protected compiledStateDefinitionsCacheKey?: string;
   protected stateEngine?: StateEngine<T>;
   protected stateEngineCompiledDefinitions?: Map<string, CompiledStateDefinition<T>>;
-  protected stateEngineStateProxy?: (stateName: string, targetStates?: string[]) => Partial<T>;
   protected stateEngineStateSort?: (stateA: string, stateB: string) => number;
   protected stateEngineMergeMode?: StateMergeMode;
-  protected stateEngineStateProxyModeKey?: string;
-  protected stateStyleResolver?: StateStyleResolver<T>;
-  protected deepStateStyleResolver?: StateStyleResolver<T>;
   protected stateTransitionOrchestrator?: StateTransitionOrchestrator<T>;
   protected localStateDefinitionsSource?: StateDefinitionsInput<T>;
+  protected localStateDefinitionsVersion?: number;
   protected resolverEpoch?: number;
   protected attributeMayContainTransientAttrs?: boolean;
 
@@ -522,21 +507,6 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     return this.attribute;
   }
 
-  protected getStateStyleResolver(mergeMode?: StateMergeMode): StateStyleResolver<T> {
-    if (mergeMode === 'deep') {
-      if (!this.deepStateStyleResolver) {
-        this.deepStateStyleResolver = new StateStyleResolver<T>({ mergeMode: 'deep' });
-      }
-      return this.deepStateStyleResolver;
-    }
-
-    if (!this.stateStyleResolver) {
-      this.stateStyleResolver = new StateStyleResolver<T>();
-    }
-
-    return this.stateStyleResolver;
-  }
-
   protected getStateTransitionOrchestrator(): StateTransitionOrchestrator<T> {
     if (!this.stateTransitionOrchestrator) {
       this.stateTransitionOrchestrator = new StateTransitionOrchestrator<T>();
@@ -567,12 +537,10 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
 
     this.boundSharedStateScope = nextScope as SharedStateScope<T> | undefined;
     this.boundSharedStateRevision = undefined;
-    this.localFallbackCompiledDefinitions = undefined;
     this.compiledStateDefinitions = undefined;
     this.compiledStateDefinitionsCacheKey = undefined;
     this.stateEngine = undefined;
     this.stateEngineCompiledDefinitions = undefined;
-    this.stateEngineStateProxyModeKey = undefined;
     this.syncSharedStateActiveRegistrations();
 
     if (markDirty && this.currentStates?.length) {
@@ -671,31 +639,14 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   protected getLocalStatesVersion(): number {
     if (this.localStateDefinitionsSource !== this.states) {
       this.localStateDefinitionsSource = this.states;
-      this.localFallbackVersion = (this.localFallbackVersion ?? 0) + 1;
+      this.localStateDefinitionsVersion = (this.localStateDefinitionsVersion ?? 0) + 1;
     }
 
-    return this.localFallbackVersion ?? 0;
-  }
-
-  protected warnDeprecatedLocalStatesFallback(stateNames: string[]): void {
-    for (let index = 0; index < stateNames.length; index++) {
-      const stateName = stateNames[index];
-      if (deprecatedLocalStateFallbackWarningStateNames.has(stateName)) {
-        continue;
-      }
-
-      deprecatedLocalStateFallbackWarningStateNames.add(stateName);
-      console.warn(
-        `[VRender] graphic.states fallback for missing shared state definition "${stateName}" is deprecated. ` +
-          'Move the state definition to sharedStateDefinitions or use stateProxy for dynamic per-graphic styles.'
-      );
-    }
+    return this.localStateDefinitionsVersion ?? 0;
   }
 
   protected resolveEffectiveCompiledDefinitions(): {
     compiledDefinitions?: Map<string, CompiledStateDefinition<T>>;
-    stateProxyModeKey: string;
-    stateProxyEligibility?: (stateName: string) => boolean;
   } {
     this.syncSharedStateScopeBindingFromTree(false);
     const boundScope = this.boundSharedStateScope;
@@ -708,8 +659,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     if (!boundScope) {
       if (!hasStates) {
         return {
-          compiledDefinitions: undefined,
-          stateProxyModeKey: 'none'
+          compiledDefinitions: undefined
         };
       }
 
@@ -721,8 +671,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       }
 
       return {
-        compiledDefinitions: this.compiledStateDefinitions,
-        stateProxyModeKey: this.stateProxy ? 'legacy-all' : 'none'
+        compiledDefinitions: this.compiledStateDefinitions
       };
     }
 
@@ -730,56 +679,8 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       string,
       CompiledStateDefinition<T>
     >;
-    const sharedStateProxyModeKey = this.stateProxy ? 'shared-missing-only' : 'none';
-    const sharedStateProxyEligibility = this.stateProxy
-      ? (stateName: string) => !sharedCompiledDefinitions.has(stateName)
-      : undefined;
-    if (!hasStates) {
-      this.localFallbackCompiledDefinitions = undefined;
-      return {
-        compiledDefinitions: sharedCompiledDefinitions,
-        stateProxyModeKey: sharedStateProxyModeKey,
-        stateProxyEligibility: sharedStateProxyEligibility
-      };
-    }
-
-    const localStates = this.states as StateDefinitionsInput<T>;
-    const missingLocalStateDefinitions = {} as StateDefinitionsInput<T>;
-    const missingStateNames: string[] = [];
-    Object.keys(localStates).forEach(stateName => {
-      if (sharedCompiledDefinitions.has(stateName)) {
-        return;
-      }
-      missingLocalStateDefinitions[stateName] = localStates[stateName];
-      missingStateNames.push(stateName);
-    });
-
-    if (!missingStateNames.length) {
-      this.localFallbackCompiledDefinitions = undefined;
-      return {
-        compiledDefinitions: sharedCompiledDefinitions,
-        stateProxyModeKey: sharedStateProxyModeKey,
-        stateProxyEligibility: sharedStateProxyEligibility
-      };
-    }
-
-    this.warnDeprecatedLocalStatesFallback(missingStateNames);
-
-    const localStatesVersion = this.getLocalStatesVersion();
-    const stateProxyModeKey = this.stateProxy ? `missing:${missingStateNames.sort().join('|')}` : 'none';
-    const cacheKey = `shared:${boundScope.revision}:fallback:${localStatesVersion}:${stateProxyModeKey}`;
-    if (!this.localFallbackCompiledDefinitions || this.compiledStateDefinitionsCacheKey !== cacheKey) {
-      this.localFallbackCompiledDefinitions = new StateDefinitionCompiler<T>().compile({
-        ...(boundScope.effectiveSourceDefinitions as StateDefinitionsInput<T>),
-        ...missingLocalStateDefinitions
-      });
-      this.compiledStateDefinitionsCacheKey = cacheKey;
-    }
-
     return {
-      compiledDefinitions: this.localFallbackCompiledDefinitions,
-      stateProxyModeKey,
-      stateProxyEligibility: sharedStateProxyEligibility
+      compiledDefinitions: sharedCompiledDefinitions
     };
   }
 
@@ -792,19 +693,10 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     }
 
     const stateResolveBaseAttrs = this.getStateResolveBaseAttrs();
-    const stateModel = this.createStateModel(stateResolveBaseAttrs);
-    const transition = stateModel.useStates(this.currentStates);
+    const transition = this.resolveUseStatesTransition(this.currentStates, stateResolveBaseAttrs);
     const effectiveStates = transition.effectiveStates ?? transition.states;
     const resolvedStateAttrs =
-      this.stateEngine && this.compiledStateDefinitions
-        ? { ...(this.stateEngine.resolvedPatch as Partial<T>) }
-        : this.getStateStyleResolver(this.stateMergeMode).resolve(
-            stateResolveBaseAttrs,
-            this.states as any,
-            this.stateProxy as any,
-            transition.states,
-            this.stateSort
-          );
+      this.stateEngine && this.compiledStateDefinitions ? { ...(this.stateEngine.resolvedPatch as Partial<T>) } : {};
 
     this.currentStates = transition.states;
     this.effectiveStates = [...effectiveStates];
@@ -948,13 +840,6 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       this.addUpdatePositionTag();
       this.addUpdateLayoutTag();
       return;
-    }
-
-    if (category !== UpdateCategory.NONE) {
-      const stage = this.stage;
-      if (stage) {
-        getActiveStageStatePerfMonitor(stage)?.recordCategory(category);
-      }
     }
 
     if ((category & BROAD_UPDATE_CATEGORY) === BROAD_UPDATE_CATEGORY) {
@@ -2102,196 +1987,180 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     return stateResolveBaseAttrs;
   }
 
-  protected createStateModel(stateResolveBaseAttrs: Partial<T> = this.getStateResolveBaseAttrs()) {
-    const { compiledDefinitions, stateProxyEligibility, stateProxyModeKey } =
-      this.resolveEffectiveCompiledDefinitions();
+  protected ensureStateEngine(stateResolveBaseAttrs: Partial<T> = this.getStateResolveBaseAttrs()) {
+    const { compiledDefinitions } = this.resolveEffectiveCompiledDefinitions();
     this.compiledStateDefinitions = compiledDefinitions;
 
     if (!compiledDefinitions) {
       this.stateEngine = undefined;
       this.stateEngineCompiledDefinitions = undefined;
-      this.stateEngineStateProxyModeKey = undefined;
     } else if (
       !this.stateEngine ||
       this.stateEngineCompiledDefinitions !== compiledDefinitions ||
-      this.stateEngineStateProxy !== this.stateProxy ||
       this.stateEngineStateSort !== this.stateSort ||
-      this.stateEngineMergeMode !== this.stateMergeMode ||
-      this.stateEngineStateProxyModeKey !== stateProxyModeKey
+      this.stateEngineMergeMode !== this.stateMergeMode
     ) {
       this.stateEngine = new StateEngine<T>({
         compiledDefinitions,
         stateSort: this.stateSort,
-        stateProxy: this.stateProxy as any,
-        stateProxyEligibility,
-        states: this.states,
         mergeMode: this.stateMergeMode
       });
       this.stateEngineCompiledDefinitions = compiledDefinitions;
-      this.stateEngineStateProxy = this.stateProxy as any;
       this.stateEngineStateSort = this.stateSort;
       this.stateEngineMergeMode = this.stateMergeMode;
-      this.stateEngineStateProxyModeKey = stateProxyModeKey;
     }
 
     this.syncStateResolveContext(stateResolveBaseAttrs);
 
-    return new StateModel<T>({
-      states: this.states,
-      currentStates: this.currentStates,
-      stateSort: this.stateSort,
-      stateProxy: this.stateProxy as any,
-      stateEngine: this.stateEngine
-    });
+    if (
+      this.stateEngine &&
+      this.currentStates &&
+      !this.sameStateNames(this.stateEngine.activeStates, this.currentStates)
+    ) {
+      this.stateEngine.applyStates(this.currentStates);
+    }
+
+    return this.stateEngine;
   }
 
-  protected resolveSimpleLocalStateTransition(
-    states: string[],
-    previousStates: readonly string[]
-  ): {
-    changed: boolean;
-    states: string[];
-    effectiveStates: string[];
-    resolvedStateAttrs: Partial<T>;
-  } | null {
-    if (
-      !this.states ||
-      this.stateProxy ||
-      this.stateSort ||
-      this.stateMergeMode === 'deep' ||
-      this.parent ||
-      this.stage?.rootSharedStateScope ||
-      this.boundSharedStateScope
-    ) {
-      return null;
+  protected toGraphicStateTransition(result: StateTransitionResult): GraphicStateTransition {
+    return {
+      changed: result.changed,
+      states: [...result.activeStates],
+      effectiveStates: [...result.effectiveStates]
+    };
+  }
+
+  protected sortLocalStates(states: readonly string[]): string[] {
+    return this.stateSort ? [...states].sort(this.stateSort) : [...states];
+  }
+
+  protected resolveLocalUseStatesTransition(states: readonly string[]): GraphicStateTransition {
+    if (!states.length) {
+      return this.resolveLocalClearStatesTransition();
     }
 
-    if (states.length === 1) {
-      const stateName = states[0];
-      const hasDefinition = Object.prototype.hasOwnProperty.call(this.states, stateName);
-      const nextStates = [stateName];
-      const changed = !this.sameStateNames(previousStates, nextStates);
-      const resolvedStateAttrs: Partial<T> = {};
-
-      if (hasDefinition) {
-        const attrs = (this.states as Record<string, any>)[stateName];
-        if (attrs != null) {
-          if (!isPlainObjectValue(attrs)) {
-            return null;
-          }
-          const keys = Object.keys(attrs);
-          for (let keyIndex = 0; keyIndex < keys.length; keyIndex++) {
-            const key = keys[keyIndex];
-            if (FULL_STATE_DEFINITION_KEYS.has(key)) {
-              return null;
-            }
-            const attrValue = attrs[key];
-            (resolvedStateAttrs as Record<string, any>)[key] = isPlainObjectValue(attrValue)
-              ? cloneAttributeValue(attrValue)
-              : attrValue;
-          }
-        }
-      }
-
-      return {
-        changed,
-        states: nextStates,
-        effectiveStates: nextStates,
-        resolvedStateAttrs
-      };
-    }
-
-    const uniqueStates = Array.from(new Set(states));
-    const withDefinition: string[] = [];
-    const withoutDefinition: string[] = [];
-
-    for (let i = 0; i < uniqueStates.length; i++) {
-      const stateName = uniqueStates[i];
-      if (Object.prototype.hasOwnProperty.call(this.states, stateName)) {
-        withDefinition.push(stateName);
-      } else {
-        withoutDefinition.push(stateName);
-      }
-    }
-
-    withDefinition.sort((left, right) => left.localeCompare(right));
-    const nextStates = withDefinition.concat(withoutDefinition);
-    const changed = !this.sameStateNames(previousStates, nextStates);
-    const resolvedStateAttrs: Partial<T> = {};
-
-    for (let i = 0; i < nextStates.length; i++) {
-      const stateName = nextStates[i];
-      const hasDefinition = Object.prototype.hasOwnProperty.call(this.states, stateName);
-      if (!hasDefinition) {
-        continue;
-      }
-      const attrs = (this.states as Record<string, any>)[stateName];
-      if (attrs == null) {
-        continue;
-      }
-      if (!isPlainObjectValue(attrs)) {
-        return null;
-      }
-
-      const keys = Object.keys(attrs);
-      for (let keyIndex = 0; keyIndex < keys.length; keyIndex++) {
-        const key = keys[keyIndex];
-        if (FULL_STATE_DEFINITION_KEYS.has(key)) {
-          return null;
-        }
-        const attrValue = attrs[key];
-        (resolvedStateAttrs as Record<string, any>)[key] = isPlainObjectValue(attrValue)
-          ? cloneAttributeValue(attrValue)
-          : attrValue;
-      }
-    }
+    const previousStates = this.currentStates ?? EMPTY_STATE_NAMES;
+    const changed =
+      previousStates.length !== states.length || states.some((stateName, index) => previousStates[index] !== stateName);
+    const nextStates = this.sortLocalStates(states);
 
     return {
       changed,
-      states: nextStates,
-      effectiveStates: nextStates,
-      resolvedStateAttrs
+      states: changed ? nextStates : [...previousStates]
     };
+  }
+
+  protected resolveLocalClearStatesTransition(): GraphicStateTransition {
+    return {
+      changed: this.hasState(),
+      states: []
+    };
+  }
+
+  protected resolveUseStatesTransition(
+    states: string[],
+    stateResolveBaseAttrs: Partial<T> = this.getStateResolveBaseAttrs()
+  ): GraphicStateTransition {
+    const stateEngine = this.ensureStateEngine(stateResolveBaseAttrs);
+    return stateEngine
+      ? this.toGraphicStateTransition(stateEngine.applyStates(states))
+      : this.resolveLocalUseStatesTransition(states);
+  }
+
+  protected resolveClearStatesTransition(): GraphicStateTransition {
+    const stateEngine = this.ensureStateEngine();
+    return stateEngine
+      ? this.toGraphicStateTransition(stateEngine.clearStates())
+      : this.resolveLocalClearStatesTransition();
+  }
+
+  protected resolveAddStateTransition(stateName: string, keepCurrentStates?: boolean): GraphicStateTransition {
+    const stateEngine = this.ensureStateEngine();
+    if (stateEngine) {
+      return this.toGraphicStateTransition(stateEngine.addState(stateName, keepCurrentStates));
+    }
+
+    if (
+      this.currentStates &&
+      this.currentStates.includes(stateName) &&
+      (keepCurrentStates || this.currentStates.length === 1)
+    ) {
+      return {
+        changed: false,
+        states: [...this.currentStates]
+      };
+    }
+
+    const nextStates =
+      keepCurrentStates && this.currentStates?.length ? this.currentStates.concat([stateName]) : [stateName];
+
+    return this.resolveLocalUseStatesTransition(nextStates);
+  }
+
+  protected resolveRemoveStateTransition(stateName: string | string[]): GraphicStateTransition {
+    const stateEngine = this.ensureStateEngine();
+    if (stateEngine) {
+      return this.toGraphicStateTransition(stateEngine.removeState(stateName));
+    }
+
+    if (!this.currentStates) {
+      return {
+        changed: false,
+        states: []
+      };
+    }
+
+    const filter = Array.isArray(stateName) ? (s: string) => !stateName.includes(s) : (s: string) => s !== stateName;
+    const nextStates = this.currentStates.filter(filter);
+
+    if (nextStates.length === this.currentStates.length) {
+      return {
+        changed: false,
+        states: [...this.currentStates]
+      };
+    }
+
+    return this.resolveLocalUseStatesTransition(nextStates);
+  }
+
+  protected resolveToggleStateTransition(stateName: string): GraphicStateTransition {
+    const stateEngine = this.ensureStateEngine();
+    if (stateEngine) {
+      return this.toGraphicStateTransition(stateEngine.toggleState(stateName));
+    }
+
+    if (this.hasState(stateName)) {
+      return this.resolveRemoveStateTransition(stateName);
+    }
+
+    const nextStates = this.currentStates ? this.currentStates.slice() : [];
+    nextStates.push(stateName);
+
+    return this.resolveLocalUseStatesTransition(nextStates);
   }
 
   protected resolveGraphicStateTransition(
     states: string[],
-    previousStates: readonly string[],
     forceResolverRefresh: boolean = false
   ): ResolvedGraphicStateTransition<T> {
-    let transition = this.resolveSimpleLocalStateTransition(states, previousStates);
-    const isSimpleLocalTransition = !!transition;
-    let resolvedStateAttrs: Partial<T>;
-
-    if (transition) {
-      resolvedStateAttrs = transition.resolvedStateAttrs;
-    } else {
-      const stateResolveBaseAttrs = this.getStateResolveBaseAttrs();
-      const stateModel = this.createStateModel(stateResolveBaseAttrs);
-      if (forceResolverRefresh) {
-        this.stateEngine?.invalidateResolverCache();
-      }
-      transition = stateModel.useStates(states) as typeof transition;
-
-      resolvedStateAttrs =
-        this.stateEngine && this.compiledStateDefinitions
-          ? { ...(this.stateEngine.resolvedPatch as Partial<T>) }
-          : this.getStateStyleResolver(this.stateMergeMode).resolve(
-              stateResolveBaseAttrs,
-              this.states as any,
-              this.stateProxy as any,
-              transition.states,
-              this.stateSort
-            );
+    const stateResolveBaseAttrs = this.getStateResolveBaseAttrs();
+    const stateEngine = this.ensureStateEngine(stateResolveBaseAttrs);
+    if (forceResolverRefresh) {
+      stateEngine?.invalidateResolverCache();
     }
+    const transition = stateEngine
+      ? this.toGraphicStateTransition(stateEngine.applyStates(states))
+      : this.resolveLocalUseStatesTransition(states);
+    const resolvedStateAttrs =
+      this.stateEngine && this.compiledStateDefinitions ? { ...(this.stateEngine.resolvedPatch as Partial<T>) } : {};
 
     const effectiveStates = transition.effectiveStates ?? transition.states;
 
     return {
       transition,
       effectiveStates: effectiveStates as string[],
-      resolvedStateAttrs,
-      isSimpleLocalTransition
+      resolvedStateAttrs
     };
   }
 
@@ -2341,8 +2210,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   ): void {
     const previousStates = this.currentStates ?? EMPTY_STATE_NAMES;
     const previousResolvedStatePatch = this.resolvedStatePatch;
-    const { transition, effectiveStates, resolvedStateAttrs, isSimpleLocalTransition } =
-      this.resolveGraphicStateTransition(states, previousStates, true);
+    const { transition, effectiveStates, resolvedStateAttrs } = this.resolveGraphicStateTransition(states, true);
     const patchChanged = !this.sameStatePatches(previousResolvedStatePatch, resolvedStateAttrs);
 
     if (
@@ -2353,22 +2221,13 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     }
 
     this.currentStates = transition.states;
-    this.effectiveStates = isSimpleLocalTransition ? effectiveStates : [...effectiveStates];
+    this.effectiveStates = [...effectiveStates];
     this.resolvedStatePatch = resolvedStateAttrs;
     this.sharedStateDirty = false;
     this.syncSharedStateActiveRegistrations();
 
     if (!patchChanged) {
       return;
-    }
-
-    if (this.stage) {
-      const perfMonitor = getActiveStageStatePerfMonitor(this.stage);
-      perfMonitor?.incrementCounter('stateCommits');
-      perfMonitor?.recordEvent('state-commit', {
-        graphicId: this._uid,
-        targetStates: [...transition.states]
-      });
     }
 
     if (hasAnimation && animateSameStatePatchChange) {
@@ -2419,17 +2278,11 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       : undefined;
 
     if (isClear) {
-      this.getStateTransitionOrchestrator().applyClearTransition(
-        this as any,
-        attrs,
-        hasAnimation,
-        stateNames,
-        transitionOptions
-      );
+      this.getStateTransitionOrchestrator().applyClearTransition(this as any, attrs, hasAnimation, transitionOptions);
       return;
     }
 
-    const plan = this.getStateTransitionOrchestrator().analyzeTransition({}, attrs, stateNames, hasAnimation, {
+    const plan = this.getStateTransitionOrchestrator().analyzeTransition(attrs, hasAnimation, {
       noWorkAnimateAttr: this.getNoWorkAnimateAttr(),
       animateConfig: resolvedAnimateConfig,
       extraAnimateAttrs: extraAnimateAttrs as Record<string, unknown>,
@@ -2473,29 +2326,10 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     stateAnimates.forEach(animate => animate.stop(type));
   }
 
-  private getNormalAttribute(key: string) {
-    const value = (this.attribute as any)[key];
-
-    if (this.hasAnyTrackedAnimate()) {
-      // this.animates.forEach(animate => {
-      //   if ((animate as any).stateNames) {
-      //     const endProps = animate.getEndProps();
-      //     if (has(endProps, key)) {
-      //       value = endProps[key];
-      //     }
-      //   }
-      // });
-      // console.log(this.finalAttrs);
-      return (this as any).finalAttribute?.[key];
-    }
-
-    return value ?? (this as any).finalAttribute?.[key];
-  }
-
   clearStates(hasAnimation?: boolean) {
     const previousStates = this.currentStates ?? EMPTY_STATE_NAMES;
     const previousResolvedStatePatch = this.resolvedStatePatch;
-    const transition = this.createStateModel().clearStates();
+    const transition = this.resolveClearStatesTransition();
     if (!transition.changed && previousStates.length === 0) {
       this.currentStates = [];
       this.effectiveStates = [];
@@ -2521,14 +2355,6 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     this.resolvedStatePatch = undefined;
     this.sharedStateDirty = false;
     this.clearSharedStateActiveRegistrations();
-    if (this.stage) {
-      const perfMonitor = getActiveStageStatePerfMonitor(this.stage);
-      perfMonitor?.incrementCounter('stateCommits');
-      perfMonitor?.recordEvent('state-commit', {
-        graphicId: this._uid,
-        targetStates: []
-      });
-    }
     if (hasAnimation) {
       this._syncFinalAttributeFromStaticTruth();
       this.applyStateAttrs(
@@ -2553,21 +2379,21 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   }
 
   removeState(stateName: string | string[], hasAnimation?: boolean) {
-    const transition = this.createStateModel().removeState(stateName);
+    const transition = this.resolveRemoveStateTransition(stateName);
     if (transition.changed) {
       this.useStates(transition.states, hasAnimation);
     }
   }
 
   toggleState(stateName: string, hasAnimation?: boolean) {
-    const transition = this.createStateModel().toggleState(stateName);
+    const transition = this.resolveToggleStateTransition(stateName);
     if (transition.changed) {
       this.useStates(transition.states, hasAnimation);
     }
   }
 
   addState(stateName: string, keepCurrentStates?: boolean, hasAnimation?: boolean) {
-    const transition = this.createStateModel().addState(stateName, keepCurrentStates);
+    const transition = this.resolveAddStateTransition(stateName, keepCurrentStates);
     if (!transition.changed) {
       return;
     }
@@ -2616,8 +2442,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
 
     const previousStates = this.currentStates ?? EMPTY_STATE_NAMES;
     const previousResolvedStatePatch = this.resolvedStatePatch;
-    const { transition, effectiveStates, resolvedStateAttrs, isSimpleLocalTransition } =
-      this.resolveGraphicStateTransition(states, previousStates);
+    const { transition, effectiveStates, resolvedStateAttrs } = this.resolveGraphicStateTransition(states);
     if (!transition.changed && this.sameStateNames(previousStates, transition.states)) {
       return;
     }
@@ -2627,18 +2452,10 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     }
 
     this.currentStates = transition.states;
-    this.effectiveStates = isSimpleLocalTransition ? (effectiveStates as string[]) : [...effectiveStates];
+    this.effectiveStates = [...effectiveStates];
     this.resolvedStatePatch = resolvedStateAttrs;
     this.sharedStateDirty = false;
     this.syncSharedStateActiveRegistrations();
-    if (this.stage) {
-      const perfMonitor = getActiveStageStatePerfMonitor(this.stage);
-      perfMonitor?.incrementCounter('stateCommits');
-      perfMonitor?.recordEvent('state-commit', {
-        graphicId: this._uid,
-        targetStates: [...transition.states]
-      });
-    }
     if (hasAnimation) {
       this._syncFinalAttributeFromStaticTruth();
       this.applyStateAttrs(
@@ -2982,12 +2799,10 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     }
     this.boundSharedStateScope = undefined;
     this.boundSharedStateRevision = undefined;
-    this.localFallbackCompiledDefinitions = undefined;
     this.compiledStateDefinitions = undefined;
     this.compiledStateDefinitionsCacheKey = undefined;
     this.stateEngine = undefined;
     this.stateEngineCompiledDefinitions = undefined;
-    this.stateEngineStateProxyModeKey = undefined;
     this.sharedStateDirty = false;
     this.stage = null as any;
     this.layer = null as any;

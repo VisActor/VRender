@@ -145,7 +145,7 @@ VRender 支持的事件包括：
 ## 状态系统
 
 我们传给图元的属性可以认为是一个默认状态，如果我们希望图元在不同状态下有不同的表现，可以通过状态系统来实现。
-可以给图元定义一个 states 的属性，该属性是一个对象，里面保存了不同状态时的配置。也可以通过`stateProxy`回调来动态的设置不同状态的配置。
+可以给图元定义一个 states 的属性，该属性是一个对象，里面保存了不同状态时的配置。动态状态配置请使用 `StateDefinition.resolver`。
 然后通过`useStates`方法来切换图元状态，通过`clearStates`方法来清空图元状态。
 接下来通过一段代码示例演示
 
@@ -165,22 +165,15 @@ rect.states = {
   },
   b: {
     cornerRadius: 100
+  },
+  // 需要动态配置时，使用 resolver 返回状态属性
+  c: {
+    resolver: () => ({
+      width: 300
+    }),
+    declaredAffectedKeys: ['width']
   }
 };
-
-// 也可以定义一个回调，根据状态名称返回不同的状态配置，效果和states属性一直
-// rect.stateProxy = (stateName: string, targetStates?: string[]) => {
-//   if (stateName === 'a') {
-//     return {
-//       width: 300
-//     };
-//   }
-//   if (stateName === 'b') {
-//     return {
-//       cornerRadius: 100
-//     };
-//   }
-// };
 
 // 被点击的时候，激活状态a
 rect.on('click', () => {

@@ -10,9 +10,17 @@ import {
   type TVRenderMiniAppEntryOptions
 } from './miniapp';
 import { createNodeVRenderApp, type TVRenderNodeAppEntryOptions } from './node';
+import {
+  acquireSharedApp,
+  DEFAULT_SHARED_APP_KEY,
+  getSharedApp,
+  releaseSharedApp,
+  type TVRenderSharedAppHandle as TSharedAppHandle,
+  type TVRenderSharedAppKey as TSharedAppKey
+} from './shared-registry';
 
 export type TVRenderSharedAppEnv = 'browser' | 'node' | 'taro' | 'feishu' | 'tt' | 'wx' | 'lynx' | 'harmony';
-export type TVRenderSharedAppKey = string | symbol;
+export type TVRenderSharedAppKey = TSharedAppKey;
 
 type TVRenderSharedAppEntryOptionsMap = {
   browser: TVRenderBrowserAppEntryOptions;
@@ -35,85 +43,7 @@ export type TVRenderSharedAppOptions<TEnv extends TVRenderSharedAppEnv = TVRende
     key?: TVRenderSharedAppKey;
   };
 
-export type TVRenderSharedAppHandle<TEnv extends TVRenderSharedAppEnv = TVRenderSharedAppEnv> = {
-  readonly app: IApp;
-  readonly env: TEnv;
-  readonly key: TVRenderSharedAppKey;
-  release: () => void;
-};
-
-type TSharedAppRecord = {
-  app: IApp;
-  refCount: number;
-  released: boolean;
-  releaseApp: () => void;
-};
-
-type TSharedAppRegistry = Map<TVRenderSharedAppEnv, Map<TVRenderSharedAppKey, TSharedAppRecord>>;
-type TGlobalSharedAppRegistry = typeof globalThis & Record<symbol, TSharedAppRegistry | undefined>;
-
-const SHARED_APP_REGISTRY_KEY = Symbol.for('visactor.vrender.sharedAppRegistry');
-const DEFAULT_SHARED_APP_KEY = 'default';
-
-function getSharedAppRegistry(): TSharedAppRegistry {
-  const target = globalThis as TGlobalSharedAppRegistry;
-  const registry = target[SHARED_APP_REGISTRY_KEY] ?? new Map();
-  target[SHARED_APP_REGISTRY_KEY] = registry;
-  return registry;
-}
-
-function getSharedAppEnvRegistry<TEnv extends TVRenderSharedAppEnv>(
-  env: TEnv,
-  create: boolean
-): Map<TVRenderSharedAppKey, TSharedAppRecord> | undefined {
-  const registry = getSharedAppRegistry();
-  const envRegistry = registry.get(env);
-
-  if (envRegistry || !create) {
-    return envRegistry;
-  }
-
-  const nextEnvRegistry = new Map<TVRenderSharedAppKey, TSharedAppRecord>();
-  registry.set(env, nextEnvRegistry);
-  return nextEnvRegistry;
-}
-
-function getOrCreateSharedAppEnvRegistry<TEnv extends TVRenderSharedAppEnv>(
-  env: TEnv
-): Map<TVRenderSharedAppKey, TSharedAppRecord> {
-  return getSharedAppEnvRegistry(env, true) as Map<TVRenderSharedAppKey, TSharedAppRecord>;
-}
-
-function removeSharedAppRecord<TEnv extends TVRenderSharedAppEnv>(
-  env: TEnv,
-  key: TVRenderSharedAppKey,
-  record: TSharedAppRecord
-) {
-  const registry = getSharedAppRegistry();
-  const envRegistry = registry.get(env);
-
-  if (envRegistry?.get(key) === record) {
-    envRegistry.delete(key);
-    if (!envRegistry.size) {
-      registry.delete(env);
-    }
-  }
-}
-
-function releaseSharedAppRecord<TEnv extends TVRenderSharedAppEnv>(
-  env: TEnv,
-  key: TVRenderSharedAppKey,
-  record: TSharedAppRecord
-) {
-  if (record.released) {
-    return;
-  }
-
-  record.released = true;
-  record.refCount = 0;
-  removeSharedAppRecord(env, key, record);
-  record.releaseApp();
-}
+export type TVRenderSharedAppHandle<TEnv extends TVRenderSharedAppEnv = TVRenderSharedAppEnv> = TSharedAppHandle<TEnv>;
 
 function createAppForSharedEnv<TEnv extends TVRenderSharedAppEnv>(options: TVRenderSharedAppOptions<TEnv>): IApp {
   const { env } = options;
@@ -145,92 +75,22 @@ function createAppForSharedEnv<TEnv extends TVRenderSharedAppEnv>(options: TVRen
   return createHarmonyVRenderApp(entryOptions as TVRenderMiniAppEntryOptions<'harmony'>);
 }
 
-function createSharedAppRecord<TEnv extends TVRenderSharedAppEnv>(
-  env: TEnv,
-  key: TVRenderSharedAppKey,
-  options: TVRenderSharedAppOptions<TEnv>
-): TSharedAppRecord {
-  const app = createAppForSharedEnv(options);
-  const originalRelease = app.release.bind(app);
-  const record: TSharedAppRecord = {
-    app,
-    refCount: 0,
-    released: false,
-    releaseApp: originalRelease
-  };
-
-  app.release = () => releaseSharedAppRecord(env, key, record);
-  return record;
-}
-
-function createSharedAppHandle<TEnv extends TVRenderSharedAppEnv>(
-  env: TEnv,
-  key: TVRenderSharedAppKey,
-  record: TSharedAppRecord
-): TVRenderSharedAppHandle<TEnv> {
-  let released = false;
-
-  return {
-    app: record.app,
-    env,
-    key,
-    release() {
-      if (released) {
-        return;
-      }
-      released = true;
-
-      const envRegistry = getSharedAppEnvRegistry(env, false);
-      if (envRegistry?.get(key) !== record || record.released) {
-        return;
-      }
-
-      record.refCount -= 1;
-      if (record.refCount <= 0) {
-        releaseSharedAppRecord(env, key, record);
-      }
-    }
-  };
-}
-
 export function acquireSharedVRenderApp<TEnv extends TVRenderSharedAppEnv>(
   options: TVRenderSharedAppOptions<TEnv>
 ): TVRenderSharedAppHandle<TEnv> {
-  const key = options.key ?? DEFAULT_SHARED_APP_KEY;
-  const envRegistry = getOrCreateSharedAppEnvRegistry(options.env);
-  let record = envRegistry.get(key);
-
-  if (record?.app.released) {
-    releaseSharedAppRecord(options.env, key, record);
-    record = undefined;
-  }
-
-  if (!record) {
-    record = createSharedAppRecord(options.env, key, options);
-    envRegistry.set(key, record);
-  }
-
-  record.refCount += 1;
-  return createSharedAppHandle(options.env, key, record);
+  return acquireSharedApp(options.env, options, createAppForSharedEnv, options.env);
 }
 
 export function getSharedVRenderApp<TEnv extends TVRenderSharedAppEnv>(
   env: TEnv,
   key: TVRenderSharedAppKey = DEFAULT_SHARED_APP_KEY
 ): IApp | null {
-  const record = getSharedAppEnvRegistry(env, false)?.get(key);
-  if (!record || record.released || record.app.released) {
-    return null;
-  }
-  return record.app;
+  return getSharedApp(env, key);
 }
 
 export function releaseSharedVRenderApp<TEnv extends TVRenderSharedAppEnv>(
   env: TEnv,
   key: TVRenderSharedAppKey = DEFAULT_SHARED_APP_KEY
 ): void {
-  const record = getSharedAppEnvRegistry(env, false)?.get(key);
-  if (record) {
-    releaseSharedAppRecord(env, key, record);
-  }
+  releaseSharedApp(env, key);
 }

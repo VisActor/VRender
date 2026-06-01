@@ -1,7 +1,6 @@
 import type { INode } from './node-tree';
 import type { ILayer, LayerMode } from './layer';
 import type { IColor } from './color';
-import type { IGraphic } from './graphic';
 import type { IAABBBounds, IBounds, IBoundsLike, IMatrix } from '@visactor/vutils';
 import type { ICamera } from './camera';
 import type { vec3 } from './matrix';
@@ -16,11 +15,6 @@ import type { ILayerService } from './core';
 import type { IFullThemeSpec } from './graphic/theme';
 import type { IGraphicService } from './graphic-service';
 import type { SharedStateScope } from '../graphic/state/shared-state-scope';
-import type {
-  IDeferredStateOwnerConfig,
-  IStatePerfConfig,
-  IStatePerfSnapshot
-} from '../graphic/state/state-perf-monitor';
 
 export type IExportType = 'canvas' | 'imageData';
 
@@ -166,8 +160,6 @@ export interface IStage extends INode {
 
   autoRender: boolean;
   renderCount: number;
-  statePerfConfig?: IStatePerfConfig;
-  deferredStateConfig?: IDeferredStateOwnerConfig;
 
   hooks: {
     beforeRender: ISyncHook<[IStage]>;
@@ -211,9 +203,6 @@ export interface IStage extends INode {
    * @returns
    */
   renderNextFrame: (layers?: ILayer[], force?: boolean) => void;
-  scheduleStateBatch: (graphics: IGraphic[], targetStates: string[]) => void;
-  getStatePerfSnapshot: () => IStatePerfSnapshot;
-  resetStatePerfSnapshot: () => void;
   tryInitInteractiveLayer: () => void;
 
   // 画布操作

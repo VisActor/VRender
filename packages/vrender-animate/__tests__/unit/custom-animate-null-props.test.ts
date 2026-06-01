@@ -1,6 +1,7 @@
 import { createRect } from '@visactor/vrender-core';
 import { Animate } from '../../src/animate';
 import { ACustomAnimate } from '../../src/custom/custom-animate';
+import { registerAnimate } from '../../src/register';
 
 class NullPropsAnimate extends ACustomAnimate<any> {
   onBind(): void {
@@ -17,6 +18,10 @@ class NullPropsAnimate extends ACustomAnimate<any> {
 }
 
 describe('custom animate null props', () => {
+  beforeAll(() => {
+    registerAnimate();
+  });
+
   test('play should not throw when custom animate is created with null to-props', () => {
     const target = createRect({
       x: 10,

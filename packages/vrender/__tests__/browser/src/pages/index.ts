@@ -52,8 +52,8 @@ export const pages = [
         path: 'vtable-lite-basic'
       },
       {
-        name: 'VTable-lite text-stateProxy',
-        path: 'vtable-lite-text-stateproxy'
+        name: 'VTable-lite text-state-resolver',
+        path: 'vtable-lite-text-state-resolver'
       },
       {
         name: '按需加载',
@@ -256,10 +256,6 @@ export const pages = [
         name: 'react',
         path: 'react',
         type: 'tsx'
-      },
-      {
-        name: 'shared-state/batch smoke',
-        path: 'shared-state-batch-smoke'
       },
       {
         name: 'gif-image',

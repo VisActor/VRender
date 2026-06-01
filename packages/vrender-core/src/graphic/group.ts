@@ -11,7 +11,6 @@ import type {
   GraphicType
 } from '../interface';
 import type { IGroup, IGroupGraphicAttribute } from '../interface/graphic/group';
-import type { IDeferredStateOwnerConfig } from './state/state-perf-monitor';
 import { Graphic, NOWORK_ANIMATE_ATTR } from './graphic';
 import { getTheme, Theme } from './theme';
 import { UpdateTag, IContainPointMode } from '../common/enums';
@@ -43,9 +42,7 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
 
   declare theme?: ITheme;
   protected _sharedStateDefinitions?: StateDefinitionsInput<Record<string, any>>;
-  protected _hasSharedStateDefinitions: boolean = false;
   declare sharedStateScope?: SharedStateScope<Record<string, any>>;
-  declare deferredStateConfig?: IDeferredStateOwnerConfig;
 
   static NOWORK_ANIMATE_ATTR = NOWORK_ANIMATE_ATTR;
 
@@ -67,7 +64,6 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
 
     const previousScope = this.sharedStateScope;
     this._sharedStateDefinitions = value;
-    this._hasSharedStateDefinitions = !!value && Object.keys(value).length > 0;
     this.ensureSharedStateScopeBound();
     if (this.sharedStateScope) {
       setSharedStateScopeLocalDefinitions(this.sharedStateScope, value);
@@ -288,14 +284,7 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
   incrementalAppendChild(node: INode): INode | null {
     const data = super.appendChild(node);
     if (data) {
-      if (
-        this.stage &&
-        ((data as unknown as this).stage !== this.stage || (data as unknown as this).layer !== this.layer)
-      ) {
-        (data as unknown as this).setStage(this.stage, this.layer);
-      } else if ((data as any).onParentSharedStateTreeChanged) {
-        (data as any).onParentSharedStateTreeChanged(this.stage, this.layer);
-      }
+      this.syncChildSharedStateTreeBinding(data);
     }
     this.addUpdateBoundTag();
     this.getGraphicService().onAddIncremental(node as unknown as IGraphic, this, this.stage);
@@ -310,11 +299,7 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
 
   protected _updateChildToStage(child: IGraphic) {
     if (child) {
-      if (this.stage && (child.stage !== this.stage || child.layer !== this.layer)) {
-        child.setStage(this.stage, this.layer);
-      } else if ((child as any).onParentSharedStateTreeChanged) {
-        (child as any).onParentSharedStateTreeChanged(this.stage, this.layer);
-      }
+      this.syncChildSharedStateTreeBinding(child);
     }
     this.addUpdateBoundTag();
     return child;
@@ -323,14 +308,8 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
   appendChild(node: INode, addStage: boolean = true): INode | null {
     const data = super.appendChild(node);
     if (data) {
-      if (
-        addStage &&
-        this.stage &&
-        ((data as unknown as this).stage !== this.stage || (data as unknown as this).layer !== this.layer)
-      ) {
-        (data as unknown as this).setStage(this.stage, this.layer);
-      } else if ((data as any).onParentSharedStateTreeChanged) {
-        (data as any).onParentSharedStateTreeChanged(this.stage, this.layer);
+      if (addStage) {
+        this.syncChildSharedStateTreeBinding(data);
       }
     }
     this.addUpdateBoundTag();
@@ -352,7 +331,7 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
       return data as IGraphic;
     }
     if (highPerformance) {
-      child.detachStageForRelease?.();
+      child.detachStageForRelease();
       return data as IGraphic;
     }
     this.getGraphicService().onRemove(child);
@@ -379,7 +358,7 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
   setStage(stage?: IStage, layer?: ILayer) {
     const graphicService = stage?.graphicService ?? this.stage?.graphicService ?? application.graphicService;
     const needsSharedStateTreeSync =
-      this._hasSharedStateDefinitions ||
+      this.hasSharedStateDefinitions() ||
       this.sharedStateScope ||
       this.currentStates?.length ||
       this.boundSharedStateScope ||
@@ -395,9 +374,7 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
       this.setStageToShadowRoot(stage, layer);
       this._onSetStage && this._onSetStage(this, stage, layer);
       graphicService?.onSetStage?.(this, stage);
-      this.forEachChildren(item => {
-        (item as any).setStage(stage, this.layer);
-      });
+      this.notifyChildrenSharedStateTreeChanged();
       return;
     }
 
@@ -410,11 +387,7 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
       this.syncSharedStateScopeBindingOnTreeChange(true);
       this.notifyChildrenSharedStateTreeChanged();
     } else if (layerChanged) {
-      this.forEachChildren(item => {
-        if ((item as any).onParentSharedStateTreeChanged) {
-          (item as any).onParentSharedStateTreeChanged(stage, this.layer);
-        }
-      });
+      this.notifyChildrenSharedStateTreeChanged();
     }
   }
   /**
@@ -519,7 +492,7 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
     super.detachStageForRelease();
     this.sharedStateScope = undefined;
     this.forEachChildren((item: IGraphic) => {
-      item.detachStageForRelease?.();
+      item.detachStageForRelease();
     });
   }
 
@@ -535,7 +508,6 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
       return;
     }
 
-    this.sharedStateScope.ownerGroup = this;
     this.sharedStateScope.ownerStage = this.stage;
     setSharedStateScopeParent(this.sharedStateScope, parentScope);
 
@@ -545,15 +517,17 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
   }
 
   protected hasSharedStateDefinitions(): boolean {
-    return this._hasSharedStateDefinitions;
+    return !!this._sharedStateDefinitions && Object.keys(this._sharedStateDefinitions).length > 0;
   }
 
   protected notifyChildrenSharedStateTreeChanged(): void {
     this.forEachChildren(item => {
-      if ((item as any).onParentSharedStateTreeChanged) {
-        (item as any).onParentSharedStateTreeChanged(this.stage, this.layer);
-      }
+      this.syncChildSharedStateTreeBinding(item);
     });
+  }
+
+  protected syncChildSharedStateTreeBinding(child: INode): void {
+    child.onParentSharedStateTreeChanged(this.stage, this.layer);
   }
 
   onParentSharedStateTreeChanged(stage?: IStage, layer?: ILayer): void {

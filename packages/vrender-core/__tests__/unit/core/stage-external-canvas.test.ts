@@ -41,6 +41,7 @@ function createWindowStub(): IWindow {
 function createLayerStub(): ILayer {
   return {
     setStage: jest.fn(),
+    onParentSharedStateTreeChanged: jest.fn(),
     combineSubLayer: jest.fn(),
     incrementalClear: jest.fn(),
     render: jest.fn(),

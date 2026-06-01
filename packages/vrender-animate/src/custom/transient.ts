@@ -23,10 +23,7 @@ function prepareAnimationFrameAttribute(target: IGraphic): Record<string, any> {
   if (!transientTarget.attribute) {
     transientTarget.attribute = {};
   }
-  if (
-    transientTarget.attribute === transientTarget.baseAttributes &&
-    typeof transientTarget.detachAttributeFromBaseAttributes === 'function'
-  ) {
+  if (transientTarget.attribute === transientTarget.baseAttributes) {
     transientTarget.detachAttributeFromBaseAttributes();
   }
   transientTarget.attributeMayContainTransientAttrs = true;
@@ -34,7 +31,7 @@ function prepareAnimationFrameAttribute(target: IGraphic): Record<string, any> {
 }
 
 function commitAnimationFrameAttribute(target: IGraphic): void {
-  (target as any).onAttributeUpdate?.(animateUpdateContext);
+  (target as any).onAttributeUpdate(animateUpdateContext);
 }
 
 export function applyAnimationFrameAttributes(target: IGraphic, attributes?: Record<string, any> | null): void {
@@ -76,27 +73,7 @@ export function applyAnimationTransientAttributes(
   }
 
   const context = getAnimationContext(type);
-  const transientTarget = target as any;
-  if (typeof transientTarget.applyAnimationTransientAttributes === 'function') {
-    transientTarget.applyAnimationTransientAttributes(attributes, false, context);
-    return;
-  }
-
-  if (typeof transientTarget.applyTransientAttributes === 'function') {
-    transientTarget.applyTransientAttributes(attributes, false, context);
-    return;
-  }
-
-  if (typeof transientTarget.setAttributesAndPreventAnimate === 'function') {
-    transientTarget.setAttributesAndPreventAnimate(attributes, false, context);
-    return;
-  }
-
-  if (!transientTarget.attribute) {
-    transientTarget.attribute = {};
-  }
-  Object.assign(transientTarget.attribute, attributes);
-  transientTarget.onAttributeUpdate?.(context);
+  (target as any).applyAnimationTransientAttributes(attributes, false, context);
 }
 
 export function applyAppearStartAttributes(target: IGraphic, attributes?: Record<string, any> | null): void {

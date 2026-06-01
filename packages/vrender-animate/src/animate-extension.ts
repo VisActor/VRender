@@ -21,12 +21,7 @@ export class AnimateExtension {
   declare animates: Map<string | number, IAnimate>;
 
   protected visitTrackedAnimates(cb: (animate: IAnimate) => void) {
-    const target = this as any;
-    if (typeof target.forEachTrackedAnimate === 'function') {
-      target.forEachTrackedAnimate(cb);
-      return;
-    }
-    target.animates && target.animates.forEach(cb);
+    (this as any).forEachTrackedAnimate(cb);
   }
 
   getAttributes(final: boolean = false) {
@@ -89,39 +84,11 @@ export class AnimateExtension {
     }
 
     const target = this as any;
-    if (typeof target.setAttributesAndPreventAnimate === 'function') {
-      target.setAttributesAndPreventAnimate(finalAttribute, false, { type: AttributeUpdateType.ANIMATE_BIND });
-      return;
-    }
-    console.warn(
-      '[AnimateExtension] applyFinalAttributeToAttribute requires ' +
-        'target.setAttributesAndPreventAnimate() to avoid committing ' +
-        'finalAttribute into base attributes.'
-    );
+    target.setAttributesAndPreventAnimate(finalAttribute, false, { type: AttributeUpdateType.ANIMATE_BIND });
   }
 
   restoreStaticAttribute(): void {
-    const target = this as any;
-    if (typeof target._restoreAttributeFromStaticTruth === 'function') {
-      target._restoreAttributeFromStaticTruth({ type: AttributeUpdateType.ANIMATE_END });
-      return;
-    }
-
-    if (typeof target.onStop === 'function') {
-      console.warn(
-        '[AnimateExtension] restoreStaticAttribute is using deprecated ' +
-          'target.onStop(); implement _restoreAttributeFromStaticTruth() ' +
-          'for explicit transient restore semantics.'
-      );
-      target.onStop();
-      return;
-    }
-
-    console.warn(
-      '[AnimateExtension] restoreStaticAttribute requires ' +
-        'target._restoreAttributeFromStaticTruth() or an equivalent ' +
-        'transient restore path.'
-    );
+    (this as any)._restoreAttributeFromStaticTruth({ type: AttributeUpdateType.ANIMATE_END });
   }
 
   /**

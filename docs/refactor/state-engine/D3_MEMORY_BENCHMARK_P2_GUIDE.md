@@ -11,7 +11,7 @@
 
 1. `P2` 不进入 D3 stable release 阻塞项。
 2. 已有一次低风险单目标尝试（`Text.cache` lazy-init）并完成 before / after 测量。
-3. `VTable-lite text-stateProxy cells` 业务 gate 有可见收益，且 `stateProxy` sample 语义保持 `10/10` 通过。
+3. 历史 `VTable-lite text-stateProxy cells` 业务 gate 有可见收益；release 前 `stateProxy` 已删除，后续同类 text-heavy dynamic-state gate 需改成 `states` + `StateDefinition.resolver`。
 4. 官方 gate `memory.ts run 100` no-trace 没有形成足够清晰的可见改善，因此本轮 `P2` 不接受。
 5. 后续若继续做性能优化，应作为独立性能专项重开，不再作为 D3 stable release follow-up 保留。
 
@@ -88,23 +88,23 @@
 2. construction
 3. heap delta
 
-### 4.2 VTable-lite text-stateProxy cells
+### 4.2 VTable-lite text dynamic-state cells
 
 目的：
-- 验证 VTable 的文本 `stateProxy` 路径仍被覆盖到，而且它不会被本轮优化忽略掉。
+- 验证 VTable 的文本 dynamic-state 路径仍被覆盖到，而且它不会被本轮优化忽略掉。
 
 建议 workload：
 1. 仍以 `5000` 个 cell 为默认量级
 2. 每个 cell 继续创建：
    - 1 个背景图元
    - 1 个 `text`
-3. 每个 `text` 都挂上与 VTable 透传语义一致的 `stateProxy`
+3. 每个 `text` 都挂上与 VTable 透传语义一致的 `states` + `StateDefinition.resolver`
 4. 性能对比仍然重点观察**构造阶段**
 5. 额外增加一条最小语义验证：
-   - 至少对一小批 sample text 应用一次 state，确认 `stateProxy` 路径仍然成立
+   - 至少对一小批 sample text 应用一次 state，确认 dynamic `states.resolver` 路径仍然成立
 
 这里的重点是：
-- `stateProxy` 要进入 workload
+- dynamic state resolver 要进入 workload
 - 但不能把 `P2` 变成 state 系统专项
 
 ### 4.3 这轮的正式验证口径
@@ -120,7 +120,7 @@
 #### B. VTable 业务 gate
 1. `VTable-lite basic cells run 100` no-trace
    - 业务相关 gate
-2. `VTable-lite text-stateProxy cells run 100` no-trace
+2. `VTable-lite text dynamic-state cells run 100` no-trace
    - 业务相关 gate
 3. 如环境允许，可对其中一个 workload 再补一条 trace
    - 只作补充证据

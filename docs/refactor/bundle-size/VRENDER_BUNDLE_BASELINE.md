@@ -373,6 +373,41 @@ Not-tested:
 - Did not run `rush build -t @visactor/vrender-core`; local ignored `es` / `cjs` artifacts were not regenerated.
 - Did not run full core unit suite; this slice deletes an unreferenced non-public source shim and validates compile plus public subpath exports.
 
+### 2026-06-01 / BS-P0-002 / Remove stale commented core source shells
+
+- Commit / branch: `1f67626ab / remerge-d3`
+- Package: `@visactor/vrender-core`
+- Build/source scope: `src` TypeScript files
+- Command: `node <<'NODE' ... filesystem size ledger with zlib.gzipSync(level=9) ... NODE`
+- Data source: local filesystem file sizes; gzip is per-file gzip summed by group, not bundled gzip
+
+Owner judgment:
+
+- 现象：core source 仍包含一组无源码入边、非 `package.json` exports、且仅保留注释或空壳符号的旧文件。
+- 证据文件：`allocator/constants.ts`、`common/store.ts`、`core/application.ts`、`core/global-module.ts`、`export.ts`、`interface/creator.ts`、`interface/graphic-utils.ts`、`interface/graphic/dynamic-path.ts`、`interface/theme-service.ts`、`plugins/builtin-plugin/poptip-plugin.ts`、`render/contributions/render/clear-screen.ts`、`render/contributions/render/render-slector.ts`。
+- 为什么属于 VRender 自身内容大小问题：这些文件只增加 core source/package content，当前运行时和 public subpath 都不依赖它们。
+- Root/default 影响：不影响；删除项不是 root/default bootstrap、renderer/picker binding、状态系统或 package exports。
+- 预期收益：在上一片基础上减少 core source 内容 8,810 raw / 3,468 gzip。
+- 风险：极少数绕过 package exports 的非公开 source deep import 会失败；这些路径不属于稳定 public API。
+
+Before / after:
+
+| group/file | before raw | after raw | before gzip | after gzip | delta gzip |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| `packages/vrender-core/src` | 1,736,058 | 1,727,248 | 499,140 | 495,672 | -3,468 |
+| stale commented / shell files | 8,810 | 0 | 3,468 | 0 | -3,468 |
+
+Verification:
+
+- `rush compile -t @visactor/vrender-core`
+- `cd packages/vrender-core && rushx test --runInBand __tests__/unit/public-subpath-exports.test.ts`
+- Import graph scan: deleted files had zero VRender source in-edges and were not package export source entries.
+
+Not-tested:
+
+- Did not run `rush build -t @visactor/vrender-core`; local ignored `es` / `cjs` artifacts were not regenerated.
+- Did not run full core unit suite; this slice removes non-public stale source shells and validates compile plus public subpath exports.
+
 ## 外部 Bundle Before / After 记录格式
 
 涉及 VChart / VTable 外部场景时，再追加如下记录：

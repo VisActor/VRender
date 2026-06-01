@@ -25,6 +25,8 @@
 
 这意味着：`registerAnimate()` 不是 custom 动画体积来源；full app bootstrap 的 `registerCustomAnimate()` 才是一次性带入 custom 的关键链路。2026-06-01 已新增 `custom/register-basic`、`custom/register-disappear` 和 `custom/register-richtext`，供只需要基础 built-in custom 动画、disappear effects 或 text/richtext 动画的调用方使用；full app 入口仍保持 `registerCustomAnimate()` 行为不变。
 
+上层按需迁移时，不应直接 deep import 内部文件。统一使用 public subpath，并参考 [VRENDER_ON_DEMAND_CAPABILITY_USAGE.md](./VRENDER_ON_DEMAND_CAPABILITY_USAGE.md) 将 VRender 能力映射到上层 bootstrap 和用户可选配置。
+
 ## 自定义动画清单
 
 | 能力 | 源码路径 | 是否由 `custom/register` 默认注册 | 基础图表常规动画需要 | optional 判断 |
@@ -91,6 +93,7 @@
    - `registerComponentAnimate`：poptip、label-item 等。
 3. full app 入口保持 `registerCustomAnimate()` 行为不变；lite / shared browser 不自动带 custom。
 4. VChart line/simple 侧如果需要 built-in type 动画，应明确通过标准窄入口注册，不要求上层 workaround deep import。
+5. 后续每新增一个 custom register 分组，都需要同步更新 [VRENDER_ON_DEMAND_CAPABILITY_USAGE.md](./VRENDER_ON_DEMAND_CAPABILITY_USAGE.md)，说明上层如何使用以及用户如何选择该能力。
 
 ## 验证方式
 

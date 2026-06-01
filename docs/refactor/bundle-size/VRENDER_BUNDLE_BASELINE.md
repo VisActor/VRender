@@ -408,6 +408,42 @@ Not-tested:
 - Did not run `rush build -t @visactor/vrender-core`; local ignored `es` / `cjs` artifacts were not regenerated.
 - Did not run full core unit suite; this slice removes non-public stale source shells and validates compile plus public subpath exports.
 
+### 2026-06-01 / BS-P0-004 / Remove stale commented component animate extension draft
+
+- Commit / branch: `e6b6f0385 / remerge-d3`
+- Package: `@visactor/vrender-animate`
+- Build/source scope: `src` TypeScript files
+- Command: `node <<'NODE' ... filesystem size ledger with zlib.gzipSync(level=9) ... NODE`
+- Data source: local filesystem file sizes; gzip is per-file gzip summed by group, not bundled gzip
+
+Owner judgment:
+
+- 现象：`packages/vrender-animate/src/component/component-animate-extension.ts` 是全注释旧草稿，`component/index.ts` 仅保留注释掉的 re-export；当前 component animation 的有效实现是 `ComponentAnimator` 和 `custom/custom-animate.ts` 中的 `AComponentAnimate`。
+- 证据文件：`packages/vrender-animate/src/component/component-animate-extension.ts`、`packages/vrender-animate/src/component/index.ts`、`packages/vrender-animate/src/index.ts`、`packages/vrender-animate/package.json`。
+- 为什么属于 VRender 自身内容大小问题：这是 animate package source 中未发布、未导出、不可执行的旧组件动画扩展草稿，只增加源码台账噪声；full/root runtime 没有加载它。
+- Root/default 影响：不影响；root 仍导出 `ComponentAnimator` 与现有 custom/component animate 能力，`registerAnimate()` 仍只 mixin `GraphicStateExtension` 和 `AnimateExtension`。
+- 预期收益：减少 animate source 内容 4,464 raw / 988 gzip；现有 ignored `es` / `cjs` 产物中该文件只是 56-byte sourcemap stub，需下次 clean build 才会消失。
+- 风险：极少数绕过 package exports 的非公开 source deep import 会失败；该草稿未在 `component/index.ts`、root index 或 package exports 中暴露，不属于稳定 public API。
+
+Before / after:
+
+| group/file | before raw | after raw | before gzip | after gzip | delta gzip |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| `packages/vrender-animate/src` | 492,628 | 488,164 | 127,821 | 126,833 | -988 |
+| `packages/vrender-animate/src/component` | 9,650 | 5,186 | 2,434 | 1,446 | -988 |
+| `component-animate-extension.ts` | 4,414 | 0 | 968 | 0 | -968 |
+| `component/index.ts` stale commented export | 88 | 38 | 78 | 58 | -20 |
+
+Verification:
+
+- `rush compile -t @visactor/vrender-animate`
+- Import graph scan: deleted file had no VRender source in-edges and was not package export source entry.
+
+Not-tested:
+
+- Did not run `rush build -t @visactor/vrender-animate`; local ignored `es` / `cjs` artifacts were not regenerated.
+- Did not run full animate unit suite; this slice deletes a non-public commented source draft and validates compile.
+
 ## 外部 Bundle Before / After 记录格式
 
 涉及 VChart / VTable 外部场景时，再追加如下记录：

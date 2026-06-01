@@ -112,10 +112,11 @@ custom animation 相关路径：
 路径：
 
 - `component/component-animator.ts`
-- `component/component-animate-extension.ts`
 - `component/index.ts`
 
 components 包通过 `packages/vrender-components/src/animation/*` 使用 animate 能力，例如 axis、label、marker、component update/exit 动画。组件层的静态目标提交辅助在 `packages/vrender-components/src/animation/static-truth.ts`。
+
+备注：未发布的 `component/component-animate-extension.ts` 注释草稿已删除；后续组件动画入口以 `ComponentAnimator`、`AComponentAnimate` 和 components 包内 animation helper 为准。
 
 ## 已确认能力：`scaleIn` 起点配置
 

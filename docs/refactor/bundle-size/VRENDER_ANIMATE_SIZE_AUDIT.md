@@ -11,7 +11,7 @@
 | `@visactor/vrender-animate/register` | `packages/vrender-animate/src/register.ts` | `registerAnimate()` 只 mixin `GraphicStateExtension` 和 `AnimateExtension` | 基础注册入口，当前不带入 custom/register |
 | `@visactor/vrender-animate/custom/register` | `packages/vrender-animate/src/custom/register.ts` | 一次性注册多类 built-in custom animate | full custom 入口，适合 optional / full bootstrap |
 | state | `packages/vrender-animate/src/state/*` | state animation manager / registry / graphic extension | 基础状态动画需要 |
-| component | `packages/vrender-animate/src/component/*` | component animator / extension | components 需要，基础图元动画不一定全量需要 |
+| component | `packages/vrender-animate/src/component/*` | `ComponentAnimator` 与 component index；未发布的 commented extension 草稿已删除 | components 需要，基础图元动画不一定全量需要 |
 | executor / timeline / ticker / step | `executor/*`、`timeline.ts`、`ticker/*`、`step.ts` | 动画执行核心 | 基础动画必需 |
 
 ## Bootstrap 关系

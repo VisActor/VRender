@@ -106,7 +106,26 @@ VRender 是底层可视化渲染库，工程基准应优先服务“正确调用
 
 本仓库中，项目级上下文说明和规范源要区分开。
 
-### 5.1 规范源
+### 5.1 Agent 项目知识库
+
+面向 agent / 维护者的长期项目知识库入口在：
+
+- [Agent 文档入口](/Users/bytedance/Documents/GitHub/VRender2/docs/agent/README.md)
+
+`docs/agent/` 用于快速了解当前代码结构、模块边界、owner 判断、运行时装配和验证入口。它不替代本文件的操作约束，也不承诺 public API；公开 API 仍以 package exports、README、用户文档和类型定义为准。
+
+按任务类型可从该入口继续阅读：
+
+- core / graphic：`VRENDER_CORE_ARCHITECTURE.md`、`VRENDER_GRAPHIC_PIPELINE.md`
+- runtime / entries：`VRENDER_RUNTIME_AND_ENTRIES.md`
+- renderer / picker：`VRENDER_RENDER_PICKER_REGISTRY.md`
+- animate：`VRENDER_ANIMATE_ARCHITECTURE.md`
+- components：`VRENDER_COMPONENTS_ARCHITECTURE.md`
+- kits / env：`VRENDER_KITS_ARCHITECTURE.md`
+- React 接入：`VRENDER_REACT_INTEGRATION.md`
+- 测试验证：`VRENDER_TEST_AND_VERIFICATION.md`
+
+### 5.2 规范源
 
 遇到重构、状态引擎、shared-state、性能调度相关问题时，优先查看：
 
@@ -118,7 +137,7 @@ VRender 是底层可视化渲染库，工程基准应优先服务“正确调用
 
 - [state-engine README](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/README.md)
 
-### 5.2 归档与后续项
+### 5.3 归档与后续项
 
 如果需要快速了解 D3 项目整体结论、归档入口和保留问题，可查看：
 

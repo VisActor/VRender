@@ -619,6 +619,53 @@ Not-tested:
 - Did not run `rush build -t @visactor/vrender-animate`; local ignored `es` / `cjs` artifacts were not regenerated.
 - Did not migrate VChart / VTable to `custom/register-disappear`; this slice only provides the VRender-owned standard subpath and locks full/default behavior.
 
+### 2026-06-01 / BS-P0-004 / Split richtext custom animate registration
+
+- Commit / branch: `this commit / remerge-d3`
+- Package: `@visactor/vrender-animate`
+- Build/source scope: `src` package files plus TypeScript import closures for custom register entries
+- Command: `node <<'NODE' ... filesystem size ledger and local TS import closure with zlib.gzipSync(level=9) ... NODE`
+- Data source: local filesystem file sizes; gzip is per-file gzip summed by group / closure, not bundled gzip
+
+Owner judgment:
+
+- 现象：`custom/register.ts` 仍直接注册 text/richtext input/output 动画；这组直接源码约 45,540 raw / 14,222 gzip，且对基础图表动画不是硬必需。
+- 证据文件：`packages/vrender-animate/src/custom/register.ts`、`packages/vrender-animate/src/custom/register-richtext.ts`、`packages/vrender-animate/src/custom/input-text.ts`、`packages/vrender-animate/src/custom/richtext/*`、`packages/vrender-animate/package.json`。
+- 为什么属于 VRender 自身内容大小问题：full custom register 当前把 text/richtext 动画和 story/poptip/disappear 等其他 optional 能力绑定在一起；只需要 text/richtext 动画的调用方没有稳定窄入口。
+- Root/default 影响：不影响；`registerCustomAnimate()` 仍注册原有 text/richtext built-in keys，只是改为调用 `registerRichTextCustomAnimate()`。
+- Public API 影响：新增稳定 public subpath `@visactor/vrender-animate/custom/register-richtext`，不删除 `custom/register` 或 root exports。
+- 预期收益：为只需要 text/richtext 动画的调用方提供标准入口；迁移后可避免非 richtext custom closure 36 files / 254,869 raw / 62,842 gzip。当前 package source 因新增入口净增加 348 raw / 194 gzip。
+- 风险：只有改用 richtext-only register 的调用方不会自动获得 basic/story/poptip/disappear/motionPath 等 built-in key；full register 无此风险。`poptip` / `label-item` 内部仍会间接依赖 `InputText`，本轮不试图从 full closure 中强行删除该实现。
+
+Before / after:
+
+| group/file | before raw | after raw | before gzip | after gzip | delta gzip |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| `packages/vrender-animate/src` | 490,168 | 490,516 | 128,104 | 128,298 | +194 |
+| `packages/vrender-animate/src/custom` | 350,418 | 350,766 | 90,159 | 90,353 | +194 |
+| `custom/register.ts` source | 3,932 | 3,405 | 952 | 885 | -67 |
+| `custom/register-richtext.ts` source | 0 | 875 | 0 | 261 | +261 |
+
+Entry closure ledger:
+
+| entry closure | files | raw bytes | gzip bytes |
+| --- | ---: | ---: | ---: |
+| `custom/register.ts` before | 52 | 380,660 | 97,681 |
+| `custom/register.ts` after | 53 | 381,008 | 97,875 |
+| `custom/register-richtext.ts` after | 17 | 126,139 | 35,033 |
+| non-richtext custom content avoided by `custom/register-richtext` vs full | 36 | 254,869 | 62,842 |
+
+Verification:
+
+- `rush compile -t @visactor/vrender-animate`
+- `cd packages/vrender-animate && rushx test --runInBand __tests__/unit/custom-register-split.test.ts __tests__/unit/custom-appear-static-truth.test.ts __tests__/unit/animation-runtime-attribute.test.ts`
+- `cd packages/vrender && rushx test --runInBand __tests__/unit/public-subpath-exports.test.ts`
+
+Not-tested:
+
+- Did not run `rush build -t @visactor/vrender-animate`; local ignored `es` / `cjs` artifacts were not regenerated.
+- Did not migrate VChart / VTable to `custom/register-richtext`; this slice only provides the VRender-owned standard subpath and locks full/default behavior.
+
 ## 外部 Bundle Before / After 记录格式
 
 涉及 VChart / VTable 外部场景时，再追加如下记录：

@@ -1,12 +1,7 @@
 import { AnimateExecutor } from '../executor/animate-executor';
 import { registerBasicCustomAnimate } from './register-basic';
-import { InputText } from './input-text';
 import { LabelItemAppear, LabelItemDisappear } from './label-item-animate';
 import { PoptipAppear, PoptipDisappear } from './poptip-animate';
-import { InputRichText } from './richtext/input-richtext';
-import { OutputRichText } from './richtext/output-richtext';
-import { SlideRichText } from './richtext/slide-richtext';
-import { SlideOutRichText } from './richtext/slide-out-richtext';
 import {
   GrowIn,
   GrowOut,
@@ -26,6 +21,7 @@ import { MotionPath } from './motionPath';
 import { GroupFadeIn, GroupFadeOut } from './groupFade';
 import { StreamLight } from './streamLight';
 import { registerDisappearCustomAnimate } from './register-disappear';
+import { registerRichTextCustomAnimate } from './register-richtext';
 
 export const registerCustomAnimate = () => {
   registerBasicCustomAnimate();
@@ -36,12 +32,7 @@ export const registerCustomAnimate = () => {
   AnimateExecutor.registerBuiltInAnimate('poptipAppear', PoptipAppear);
   AnimateExecutor.registerBuiltInAnimate('poptipDisappear', PoptipDisappear);
 
-  // Text input animations
-  AnimateExecutor.registerBuiltInAnimate('inputText', InputText);
-  AnimateExecutor.registerBuiltInAnimate('inputRichText', InputRichText);
-  AnimateExecutor.registerBuiltInAnimate('outputRichText', OutputRichText);
-  AnimateExecutor.registerBuiltInAnimate('slideRichText', SlideRichText);
-  AnimateExecutor.registerBuiltInAnimate('slideOutRichText', SlideOutRichText);
+  registerRichTextCustomAnimate();
 
   // 故事化动画 - 入场
   AnimateExecutor.registerBuiltInAnimate('slideIn', SlideIn);
@@ -76,11 +67,6 @@ export {
   MotionPath,
   LabelItemAppear,
   LabelItemDisappear,
-  InputText,
-  InputRichText,
-  OutputRichText,
-  SlideRichText,
-  SlideOutRichText,
   SlideIn,
   GrowIn,
   SpinIn,
@@ -100,6 +86,8 @@ export {
 };
 
 export { Dissolve, Grayscale, Distortion, Particle, Glitch, GaussianBlur, Pixelation } from './register-disappear';
+
+export { InputText, InputRichText, OutputRichText, SlideRichText, SlideOutRichText } from './register-richtext';
 
 export {
   ClipIn,

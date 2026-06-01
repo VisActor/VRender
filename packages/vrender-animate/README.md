@@ -39,6 +39,8 @@ text, poptip, motion path, and disappearance effect set should continue to use
 `@visactor/vrender-animate/custom/register`.
 Use `@visactor/vrender-animate/custom/register-disappear` when only the
 disappearance effect animations are needed.
+Use `@visactor/vrender-animate/custom/register-richtext` when only text and
+rich text input/output animations are needed.
 
 ### Basic Property Animation
 

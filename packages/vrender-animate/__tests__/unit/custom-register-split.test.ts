@@ -1,5 +1,6 @@
 import { registerBasicCustomAnimate } from '../../src/custom/register-basic';
 import { registerDisappearCustomAnimate } from '../../src/custom/register-disappear';
+import { registerRichTextCustomAnimate } from '../../src/custom/register-richtext';
 import { registerCustomAnimate } from '../../src/custom/register';
 import { AnimateExecutor } from '../../src/executor/animate-executor';
 
@@ -46,32 +47,30 @@ const disappearKeys = [
   'pixelation'
 ].sort();
 
+const richTextKeys = ['inputRichText', 'inputText', 'outputRichText', 'slideOutRichText', 'slideRichText'].sort();
+
 const optionalKeys = [
   'MotionPath',
   'growIn',
   'growOut',
-  'inputRichText',
-  'inputText',
   'labelItemAppear',
   'labelItemDisappear',
   'moveRotateIn',
   'moveRotateOut',
   'moveScaleIn',
   'moveScaleOut',
-  'outputRichText',
   'poptipAppear',
   'poptipDisappear',
   'pulse',
   'slideIn',
   'slideOut',
-  'slideOutRichText',
-  'slideRichText',
   'spinIn',
   'spinOut',
   'streamLight',
   'strokeIn',
   'strokeOut',
-  ...disappearKeys
+  ...disappearKeys,
+  ...richTextKeys
 ].sort();
 
 function registeredKeys() {
@@ -108,6 +107,16 @@ describe('custom animate register split', () => {
     expect(AnimateExecutor.builtInAnimateMap.gaussianBlur).toBeDefined();
     expect(AnimateExecutor.builtInAnimateMap.scaleIn).toBeUndefined();
     expect(AnimateExecutor.builtInAnimateMap.MotionPath).toBeUndefined();
+  });
+
+  test('registerRichTextCustomAnimate only installs text and richtext animations', () => {
+    registerRichTextCustomAnimate();
+
+    expect(registeredKeys()).toEqual(richTextKeys);
+    expect(AnimateExecutor.builtInAnimateMap.inputText).toBeDefined();
+    expect(AnimateExecutor.builtInAnimateMap.inputRichText).toBeDefined();
+    expect(AnimateExecutor.builtInAnimateMap.scaleIn).toBeUndefined();
+    expect(AnimateExecutor.builtInAnimateMap.dissolve).toBeUndefined();
   });
 
   test('registerCustomAnimate keeps the full custom animation surface', () => {

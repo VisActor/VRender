@@ -189,6 +189,11 @@
       "import": "./es/custom/register-disappear.js",
       "require": "./cjs/custom/register-disappear.js"
     },
+    "./custom/register-richtext": {
+      "types": "./es/custom/register-richtext.d.ts",
+      "import": "./es/custom/register-richtext.js",
+      "require": "./cjs/custom/register-richtext.js"
+    },
     "./custom/rotate": {
       "types": "./es/custom/rotate.d.ts",
       "import": "./es/custom/rotate.js",

@@ -114,6 +114,229 @@ Not-tested:
 - `<known gap>`
 ```
 
+## VRender 自身 Size Ledger
+
+### 2026-06-01 / BS-P0-001 / VRender package source and build-output size ledger
+
+- Commit / branch: `14bfab123 / remerge-d3`
+- Package: `@visactor/vrender-core`, `@visactor/vrender-animate`, `@visactor/vrender-components`, `@visactor/vrender-kits`, `@visactor/vrender` entries
+- Build/source scope: `src` TypeScript files and existing `es` / `cjs` runtime `.js` files
+- Command: `node <<'NODE' ... filesystem size ledger with zlib.gzipSync(level=9) ... NODE`
+- Data source: local filesystem file sizes; gzip is per-file gzip summed by group, not bundled gzip
+- Excluded from runtime totals: `.d.ts`, `.map`, and source Markdown notes
+
+Package / scope totals:
+
+| package | scope | path | files | raw bytes | gzip bytes | status |
+| --- | --- | --- | ---: | ---: | ---: | --- |
+| `@visactor/vrender-core` | `src` | `packages/vrender-core/src` | 407 | 1,772,502 | 505,028 | present |
+| `@visactor/vrender-core` | `cjs` | `packages/vrender-core/cjs` | 406 | 1,259,927 | 337,970 | present |
+| `@visactor/vrender-core` | `es` | `packages/vrender-core/es` | 406 | 1,119,595 | 294,607 | present |
+| `@visactor/vrender-components` | `src` | `packages/vrender-components/src` | 240 | 1,015,830 | 284,164 | present |
+| `@visactor/vrender-components` | `cjs` | `packages/vrender-components/cjs` | 239 | 867,831 | 226,470 | present |
+| `@visactor/vrender-components` | `es` | `packages/vrender-components/es` | 239 | 779,921 | 195,819 | present |
+| `@visactor/vrender-animate` | `src` | `packages/vrender-animate/src` | 70 | 492,628 | 127,821 | present |
+| `@visactor/vrender-kits` | `src` | `packages/vrender-kits/src` | 203 | 465,108 | 144,513 | present |
+| `@visactor/vrender-animate` | `cjs` | `packages/vrender-animate/cjs` | 70 | 409,674 | 90,496 | present |
+| `@visactor/vrender-kits` | `cjs` | `packages/vrender-kits/cjs` | 202 | 407,775 | 128,295 | present |
+| `@visactor/vrender-animate` | `es` | `packages/vrender-animate/es` | 70 | 372,840 | 82,404 | present |
+| `@visactor/vrender-kits` | `es` | `packages/vrender-kits/es` | 202 | 347,479 | 106,906 | present |
+| `@visactor/vrender` | `cjs/entries` | `packages/vrender/cjs/entries` | 13 | 34,598 | 9,809 | present |
+| `@visactor/vrender` | `src/entries` | `packages/vrender/src/entries` | 13 | 32,322 | 8,726 | present |
+| `@visactor/vrender` | `es/entries` | `packages/vrender/es/entries` | 13 | 25,826 | 7,473 | present |
+
+Top source modules:
+
+| package | module | files | raw bytes | gzip bytes |
+| --- | --- | ---: | ---: | ---: |
+| `@visactor/vrender-core` | `packages/vrender-core/src/graphic` | 74 | 472,276 | 134,383 |
+| `@visactor/vrender-animate` | `packages/vrender-animate/src/custom` | 45 | 348,414 | 88,933 |
+| `@visactor/vrender-core` | `packages/vrender-core/src/render` | 68 | 328,900 | 87,128 |
+| `@visactor/vrender-core` | `packages/vrender-core/src/common` | 58 | 288,290 | 85,018 |
+| `@visactor/vrender-core` | `packages/vrender-core/src/interface` | 66 | 182,721 | 58,461 |
+| `@visactor/vrender-components` | `packages/vrender-components/src/axis` | 33 | 178,234 | 54,339 |
+| `@visactor/vrender-core` | `packages/vrender-core/src/core` | 26 | 141,395 | 38,448 |
+| `@visactor/vrender-components` | `packages/vrender-components/src/label` | 19 | 141,296 | 40,229 |
+| `@visactor/vrender-core` | `packages/vrender-core/src/plugins` | 16 | 114,976 | 29,102 |
+| `@visactor/vrender-components` | `packages/vrender-components/src/marker` | 19 | 99,038 | 25,002 |
+| `@visactor/vrender-kits` | `packages/vrender-kits/src/canvas` | 36 | 84,382 | 25,837 |
+| `@visactor/vrender-components` | `packages/vrender-components/src/legend` | 15 | 83,855 | 22,383 |
+| `@visactor/vrender-kits` | `packages/vrender-kits/src/env` | 21 | 81,276 | 25,184 |
+| `@visactor/vrender-core` | `packages/vrender-core/src/event` | 13 | 72,255 | 21,144 |
+| `@visactor/vrender-kits` | `packages/vrender-kits/src/picker` | 75 | 70,485 | 29,701 |
+| `@visactor/vrender-kits` | `packages/vrender-kits/src/window` | 9 | 64,578 | 19,108 |
+| `@visactor/vrender-components` | `packages/vrender-components/src/data-zoom` | 8 | 64,057 | 14,837 |
+| `@visactor/vrender-components` | `packages/vrender-components/src/table-series-number` | 6 | 59,955 | 10,395 |
+| `@visactor/vrender-core` | `packages/vrender-core/src/canvas` | 6 | 57,566 | 16,216 |
+| `@visactor/vrender-kits` | `packages/vrender-kits/src/render` | 16 | 50,618 | 14,467 |
+| `@visactor/vrender-components` | `packages/vrender-components/src/player` | 22 | 45,794 | 13,907 |
+| `@visactor/vrender-animate` | `packages/vrender-animate/src/(root)` | 6 | 44,483 | 13,305 |
+| `@visactor/vrender-components` | `packages/vrender-components/src/slider` | 5 | 40,725 | 8,870 |
+| `@visactor/vrender-animate` | `packages/vrender-animate/src/executor` | 3 | 38,480 | 9,293 |
+| `@visactor/vrender-kits` | `packages/vrender-kits/src/installers` | 5 | 34,572 | 6,767 |
+| `@visactor/vrender` | `packages/vrender/src/entries/(root)` | 13 | 32,322 | 8,726 |
+| `@visactor/vrender-components` | `packages/vrender-components/src/poptip` | 8 | 30,734 | 9,102 |
+| `@visactor/vrender-components` | `packages/vrender-components/src/tooltip` | 6 | 28,775 | 7,225 |
+| `@visactor/vrender-components` | `packages/vrender-components/src/scrollbar` | 6 | 27,889 | 8,296 |
+| `@visactor/vrender-animate` | `packages/vrender-animate/src/state` | 5 | 24,828 | 6,368 |
+| `@visactor/vrender-components` | `packages/vrender-components/src/util` | 11 | 23,465 | 7,545 |
+| `@visactor/vrender-core` | `packages/vrender-core/src/picker` | 6 | 22,862 | 6,339 |
+| `@visactor/vrender-components` | `packages/vrender-components/src/brush` | 5 | 22,640 | 6,426 |
+| `@visactor/vrender-kits` | `packages/vrender-kits/src/tools` | 2 | 20,656 | 3,527 |
+| `@visactor/vrender-kits` | `packages/vrender-kits/src/event` | 4 | 19,089 | 6,104 |
+| `@visactor/vrender-components` | `packages/vrender-components/src/segment` | 5 | 18,115 | 5,912 |
+| `@visactor/vrender-kits` | `packages/vrender-kits/src/register` | 21 | 15,997 | 6,338 |
+| `@visactor/vrender-components` | `packages/vrender-components/src/title` | 4 | 15,552 | 3,736 |
+| `@visactor/vrender-components` | `packages/vrender-components/src/tag` | 4 | 14,559 | 4,202 |
+| `@visactor/vrender-components` | `packages/vrender-components/src/crosshair` | 10 | 14,540 | 5,686 |
+
+Top ES runtime JS modules:
+
+| package | module | files | raw bytes | gzip bytes |
+| --- | --- | ---: | ---: | ---: |
+| `@visactor/vrender-core` | `packages/vrender-core/es/graphic` | 74 | 342,841 | 85,615 |
+| `@visactor/vrender-animate` | `packages/vrender-animate/es/custom` | 45 | 281,856 | 61,352 |
+| `@visactor/vrender-core` | `packages/vrender-core/es/render` | 68 | 238,113 | 62,293 |
+| `@visactor/vrender-core` | `packages/vrender-core/es/common` | 58 | 174,814 | 49,235 |
+| `@visactor/vrender-components` | `packages/vrender-components/es/axis` | 33 | 132,086 | 36,839 |
+| `@visactor/vrender-components` | `packages/vrender-components/es/label` | 19 | 104,055 | 26,434 |
+| `@visactor/vrender-core` | `packages/vrender-core/es/core` | 26 | 101,044 | 24,740 |
+| `@visactor/vrender-core` | `packages/vrender-core/es/plugins` | 16 | 92,579 | 21,348 |
+| `@visactor/vrender-components` | `packages/vrender-components/es/marker` | 19 | 77,901 | 17,387 |
+| `@visactor/vrender-components` | `packages/vrender-components/es/legend` | 15 | 63,957 | 15,046 |
+| `@visactor/vrender-kits` | `packages/vrender-kits/es/env` | 21 | 59,483 | 18,180 |
+| `@visactor/vrender-kits` | `packages/vrender-kits/es/picker` | 75 | 58,448 | 25,690 |
+| `@visactor/vrender-components` | `packages/vrender-components/es/data-zoom` | 8 | 54,343 | 10,490 |
+| `@visactor/vrender-kits` | `packages/vrender-kits/es/window` | 9 | 51,664 | 14,443 |
+| `@visactor/vrender-kits` | `packages/vrender-kits/es/canvas` | 35 | 50,341 | 14,778 |
+| `@visactor/vrender-components` | `packages/vrender-components/es/table-series-number` | 6 | 48,044 | 7,650 |
+| `@visactor/vrender-core` | `packages/vrender-core/es/event` | 13 | 46,492 | 10,762 |
+| `@visactor/vrender-kits` | `packages/vrender-kits/es/render` | 16 | 40,093 | 10,408 |
+| `@visactor/vrender-components` | `packages/vrender-components/es/player` | 22 | 37,096 | 9,768 |
+| `@visactor/vrender-core` | `packages/vrender-core/es/canvas` | 6 | 34,189 | 8,805 |
+| `@visactor/vrender-components` | `packages/vrender-components/es/slider` | 5 | 33,049 | 6,102 |
+| `@visactor/vrender-kits` | `packages/vrender-kits/es/installers` | 5 | 30,079 | 5,963 |
+| `@visactor/vrender-animate` | `packages/vrender-animate/es/(root)` | 6 | 28,405 | 7,548 |
+| `@visactor/vrender` | `packages/vrender/es/entries/(root)` | 13 | 25,826 | 7,473 |
+| `@visactor/vrender-components` | `packages/vrender-components/es/poptip` | 8 | 24,873 | 6,526 |
+
+Top CJS runtime JS modules:
+
+| package | module | files | raw bytes | gzip bytes |
+| --- | --- | ---: | ---: | ---: |
+| `@visactor/vrender-core` | `packages/vrender-core/cjs/graphic` | 74 | 373,810 | 94,001 |
+| `@visactor/vrender-animate` | `packages/vrender-animate/cjs/custom` | 45 | 305,871 | 66,237 |
+| `@visactor/vrender-core` | `packages/vrender-core/cjs/render` | 68 | 262,663 | 69,629 |
+| `@visactor/vrender-core` | `packages/vrender-core/cjs/common` | 58 | 193,377 | 55,020 |
+| `@visactor/vrender-components` | `packages/vrender-components/cjs/axis` | 33 | 145,125 | 40,786 |
+| `@visactor/vrender-components` | `packages/vrender-components/cjs/label` | 19 | 111,435 | 28,683 |
+| `@visactor/vrender-core` | `packages/vrender-core/cjs/core` | 26 | 108,694 | 27,456 |
+| `@visactor/vrender-core` | `packages/vrender-core/cjs/plugins` | 16 | 97,218 | 22,846 |
+| `@visactor/vrender-components` | `packages/vrender-components/cjs/marker` | 19 | 85,935 | 19,562 |
+| `@visactor/vrender-kits` | `packages/vrender-kits/cjs/picker` | 75 | 75,094 | 32,140 |
+| `@visactor/vrender-components` | `packages/vrender-components/cjs/legend` | 15 | 70,131 | 17,011 |
+| `@visactor/vrender-kits` | `packages/vrender-kits/cjs/env` | 21 | 65,780 | 20,307 |
+| `@visactor/vrender-kits` | `packages/vrender-kits/cjs/canvas` | 35 | 62,619 | 19,988 |
+| `@visactor/vrender-components` | `packages/vrender-components/cjs/data-zoom` | 8 | 57,210 | 11,420 |
+| `@visactor/vrender-kits` | `packages/vrender-kits/cjs/window` | 9 | 54,168 | 15,062 |
+| `@visactor/vrender-core` | `packages/vrender-core/cjs/event` | 13 | 52,716 | 12,463 |
+| `@visactor/vrender-components` | `packages/vrender-components/cjs/table-series-number` | 6 | 50,002 | 8,408 |
+| `@visactor/vrender-kits` | `packages/vrender-kits/cjs/render` | 16 | 45,096 | 11,989 |
+| `@visactor/vrender-components` | `packages/vrender-components/cjs/player` | 22 | 44,168 | 12,546 |
+| `@visactor/vrender-core` | `packages/vrender-core/cjs/canvas` | 6 | 37,731 | 9,745 |
+| `@visactor/vrender-animate` | `packages/vrender-animate/cjs/(root)` | 6 | 35,751 | 8,831 |
+| `@visactor/vrender-components` | `packages/vrender-components/cjs/slider` | 5 | 35,267 | 6,793 |
+| `@visactor/vrender` | `packages/vrender/cjs/entries/(root)` | 13 | 34,598 | 9,809 |
+| `@visactor/vrender-kits` | `packages/vrender-kits/cjs/installers` | 5 | 32,217 | 6,448 |
+| `@visactor/vrender-components` | `packages/vrender-components/cjs/poptip` | 8 | 27,811 | 7,495 |
+
+Top source files:
+
+| package | file | raw bytes | gzip bytes |
+| --- | --- | ---: | ---: |
+| `@visactor/vrender-core` | `packages/vrender-core/src/graphic/graphic.ts` | 98,192 | 20,719 |
+| `@visactor/vrender-components` | `packages/vrender-components/src/legend/discrete/discrete.ts` | 55,197 | 12,046 |
+| `@visactor/vrender-core` | `packages/vrender-core/src/plugins/builtin-plugin/richtext-edit-plugin.ts` | 44,735 | 10,386 |
+| `@visactor/vrender-components` | `packages/vrender-components/src/label/base.ts` | 42,556 | 10,029 |
+| `@visactor/vrender-components` | `packages/vrender-components/src/table-series-number/table-series-number.ts` | 40,990 | 6,595 |
+| `@visactor/vrender-core` | `packages/vrender-core/src/core/stage.ts` | 38,189 | 9,504 |
+| `@visactor/vrender-core` | `packages/vrender-core/src/common/Reflect-metadata.ts` | 36,396 | 5,865 |
+| `@visactor/vrender-kits` | `packages/vrender-kits/src/canvas/contributions/browser/context.ts` | 36,329 | 7,997 |
+| `@visactor/vrender-components` | `packages/vrender-components/src/label/arc.ts` | 36,178 | 8,905 |
+| `@visactor/vrender-components` | `packages/vrender-components/src/slider/slider.ts` | 35,207 | 6,813 |
+| `@visactor/vrender-animate` | `packages/vrender-animate/src/custom/story.ts` | 33,705 | 5,246 |
+| `@visactor/vrender-animate` | `packages/vrender-animate/src/executor/animate-executor.ts` | 31,705 | 6,884 |
+| `@visactor/vrender-components` | `packages/vrender-components/src/axis/line.ts` | 31,067 | 7,054 |
+| `@visactor/vrender-animate` | `packages/vrender-animate/src/custom/disappear/dissolve.ts` | 30,411 | 4,571 |
+| `@visactor/vrender-components` | `packages/vrender-components/src/data-zoom/renderer.ts` | 30,172 | 5,170 |
+| `@visactor/vrender-core` | `packages/vrender-core/src/canvas/util.ts` | 27,460 | 6,903 |
+| `@visactor/vrender-core` | `packages/vrender-core/src/event/event-manager.ts` | 26,541 | 6,047 |
+| `@visactor/vrender-components` | `packages/vrender-components/src/axis/base.ts` | 26,458 | 6,686 |
+| `@visactor/vrender-core` | `packages/vrender-core/src/interface/graphic.ts` | 24,281 | 7,687 |
+| `@visactor/vrender-core` | `packages/vrender-core/src/common/custom-path2d.ts` | 23,700 | 4,926 |
+| `@visactor/vrender-core` | `packages/vrender-core/src/core/contributions/textMeasure/AtextMeasure.ts` | 23,675 | 4,488 |
+| `@visactor/vrender-core` | `packages/vrender-core/src/graphic/text.ts` | 23,242 | 5,584 |
+| `@visactor/vrender-core` | `packages/vrender-core/src/graphic/richtext.ts` | 22,943 | 5,836 |
+| `@visactor/vrender-core` | `packages/vrender-core/src/graphic/node-tree.ts` | 22,928 | 5,103 |
+| `@visactor/vrender-components` | `packages/vrender-components/src/marker/point.ts` | 22,247 | 5,459 |
+| `@visactor/vrender-core` | `packages/vrender-core/src/event/event-system.ts` | 22,139 | 5,067 |
+| `@visactor/vrender-animate` | `packages/vrender-animate/src/custom/morphing.ts` | 22,079 | 5,370 |
+| `@visactor/vrender-core` | `packages/vrender-core/src/render/contributions/render/base-render.ts` | 20,999 | 4,351 |
+| `@visactor/vrender-components` | `packages/vrender-components/src/tooltip/tooltip.ts` | 20,727 | 4,313 |
+| `@visactor/vrender-animate` | `packages/vrender-animate/src/animate.ts` | 20,186 | 5,755 |
+
+Top ES/CJS runtime JS files:
+
+| package | scope | file | raw bytes | gzip bytes |
+| --- | --- | --- | ---: | ---: |
+| `@visactor/vrender-core` | `cjs` | `packages/vrender-core/cjs/graphic/graphic.js` | 80,753 | 14,513 |
+| `@visactor/vrender-core` | `es` | `packages/vrender-core/es/graphic/graphic.js` | 78,863 | 14,293 |
+| `@visactor/vrender-components` | `cjs` | `packages/vrender-components/cjs/legend/discrete/discrete.js` | 48,231 | 9,243 |
+| `@visactor/vrender-components` | `es` | `packages/vrender-components/es/legend/discrete/discrete.js` | 46,532 | 9,150 |
+| `@visactor/vrender-components` | `cjs` | `packages/vrender-components/cjs/label/base.js` | 38,704 | 8,008 |
+| `@visactor/vrender-core` | `cjs` | `packages/vrender-core/cjs/plugins/builtin-plugin/richtext-edit-plugin.js` | 37,758 | 7,467 |
+| `@visactor/vrender-components` | `es` | `packages/vrender-components/es/label/base.js` | 37,662 | 7,882 |
+| `@visactor/vrender-core` | `es` | `packages/vrender-core/es/plugins/builtin-plugin/richtext-edit-plugin.js` | 37,073 | 7,352 |
+| `@visactor/vrender-components` | `cjs` | `packages/vrender-components/cjs/table-series-number/table-series-number.js` | 33,850 | 5,151 |
+| `@visactor/vrender-components` | `es` | `packages/vrender-components/es/table-series-number/table-series-number.js` | 33,613 | 5,053 |
+| `@visactor/vrender-components` | `cjs` | `packages/vrender-components/cjs/slider/slider.js` | 32,597 | 5,584 |
+| `@visactor/vrender-components` | `es` | `packages/vrender-components/es/slider/slider.js` | 31,655 | 5,474 |
+| `@visactor/vrender-components` | `cjs` | `packages/vrender-components/cjs/label/arc.js` | 31,433 | 6,645 |
+| `@visactor/vrender-components` | `es` | `packages/vrender-components/es/label/arc.js` | 30,615 | 6,508 |
+| `@visactor/vrender-core` | `cjs` | `packages/vrender-core/cjs/core/stage.js` | 29,857 | 6,374 |
+| `@visactor/vrender-components` | `cjs` | `packages/vrender-components/cjs/data-zoom/renderer.js` | 29,730 | 4,546 |
+| `@visactor/vrender-core` | `es` | `packages/vrender-core/es/core/stage.js` | 29,303 | 6,226 |
+| `@visactor/vrender-components` | `es` | `packages/vrender-components/es/data-zoom/renderer.js` | 29,193 | 4,454 |
+| `@visactor/vrender-animate` | `cjs` | `packages/vrender-animate/cjs/custom/story.js` | 28,883 | 3,525 |
+| `@visactor/vrender-components` | `cjs` | `packages/vrender-components/cjs/axis/line.js` | 28,039 | 5,921 |
+| `@visactor/vrender-animate` | `es` | `packages/vrender-animate/es/custom/story.js` | 27,739 | 3,284 |
+| `@visactor/vrender-components` | `es` | `packages/vrender-components/es/axis/line.js` | 27,388 | 5,803 |
+| `@visactor/vrender-kits` | `cjs` | `packages/vrender-kits/cjs/canvas/contributions/browser/context.js` | 25,515 | 4,869 |
+| `@visactor/vrender-kits` | `es` | `packages/vrender-kits/es/canvas/contributions/browser/context.js` | 24,932 | 4,815 |
+| `@visactor/vrender-animate` | `cjs` | `packages/vrender-animate/cjs/executor/animate-executor.js` | 24,466 | 4,506 |
+| `@visactor/vrender-animate` | `cjs` | `packages/vrender-animate/cjs/custom/disappear/dissolve.js` | 24,432 | 3,717 |
+| `@visactor/vrender-animate` | `es` | `packages/vrender-animate/es/custom/disappear/dissolve.js` | 24,098 | 3,638 |
+| `@visactor/vrender-animate` | `es` | `packages/vrender-animate/es/executor/animate-executor.js` | 24,098 | 4,411 |
+| `@visactor/vrender-components` | `cjs` | `packages/vrender-components/cjs/axis/base.js` | 23,572 | 5,322 |
+| `@visactor/vrender-components` | `es` | `packages/vrender-components/es/axis/base.js` | 22,651 | 5,170 |
+
+Initial owner notes:
+
+- `@visactor/vrender-core` is the largest covered package by source and build output. The largest source modules are `graphic`, `render`, `common`, `interface`, and `core`.
+- `@visactor/vrender-components` source is dominated by `axis`, `label`, `marker`, `legend`, and optional root-only components such as `data-zoom` / `table-series-number`, matching the components audit.
+- `@visactor/vrender-animate` source is dominated by `custom`, followed by `animate.ts`, `executor`, and `state`; `custom/register` 分层仍是 BS-P0-004 的合理候选.
+- `@visactor/vrender-kits` source/build output is dominated by `picker`, `env`, `window`, `register`, and `canvas`, so future media/env optional work needs module-level before/after, not only root import checks.
+
+Verification:
+
+- `git status --short --branch`
+- filesystem ledger command above
+
+Not-tested:
+
+- Did not rebuild `es` / `cjs`; existing local build artifacts were measured as-is.
+- Did not generate bundled/metafile analyzer output; this ledger is package content size, not reachable bundle graph size.
+
 ## 外部 Bundle Before / After 记录格式
 
 涉及 VChart / VTable 外部场景时，再追加如下记录：

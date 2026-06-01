@@ -1,4 +1,5 @@
 import { registerBasicCustomAnimate } from '../../src/custom/register-basic';
+import { registerDisappearCustomAnimate } from '../../src/custom/register-disappear';
 import { registerCustomAnimate } from '../../src/custom/register';
 import { AnimateExecutor } from '../../src/executor/animate-executor';
 
@@ -35,12 +36,18 @@ const basicKeys = [
   'update'
 ].sort();
 
-const optionalKeys = [
-  'MotionPath',
+const disappearKeys = [
   'dissolve',
   'distortion',
   'gaussianBlur',
   'glitch',
+  'grayscale',
+  'particle',
+  'pixelation'
+].sort();
+
+const optionalKeys = [
+  'MotionPath',
   'growIn',
   'growOut',
   'inputRichText',
@@ -52,8 +59,6 @@ const optionalKeys = [
   'moveScaleIn',
   'moveScaleOut',
   'outputRichText',
-  'particle',
-  'pixelation',
   'poptipAppear',
   'poptipDisappear',
   'pulse',
@@ -66,7 +71,7 @@ const optionalKeys = [
   'streamLight',
   'strokeIn',
   'strokeOut',
-  'grayscale'
+  ...disappearKeys
 ].sort();
 
 function registeredKeys() {
@@ -93,6 +98,16 @@ describe('custom animate register split', () => {
     expect(AnimateExecutor.builtInAnimateMap.inputRichText).toBeUndefined();
     expect(AnimateExecutor.builtInAnimateMap.poptipAppear).toBeUndefined();
     expect(AnimateExecutor.builtInAnimateMap.dissolve).toBeUndefined();
+  });
+
+  test('registerDisappearCustomAnimate only installs disappear effects', () => {
+    registerDisappearCustomAnimate();
+
+    expect(registeredKeys()).toEqual(disappearKeys);
+    expect(AnimateExecutor.builtInAnimateMap.dissolve).toBeDefined();
+    expect(AnimateExecutor.builtInAnimateMap.gaussianBlur).toBeDefined();
+    expect(AnimateExecutor.builtInAnimateMap.scaleIn).toBeUndefined();
+    expect(AnimateExecutor.builtInAnimateMap.MotionPath).toBeUndefined();
   });
 
   test('registerCustomAnimate keeps the full custom animation surface', () => {

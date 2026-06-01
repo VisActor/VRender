@@ -34,9 +34,11 @@ registerBasicCustomAnimate();
 
 `registerAnimate()` installs the base graphic animation runtime. Use
 `@visactor/vrender-animate/custom/register-basic` when only the common built-in
-custom animations are needed. Full bootstraps that need story, rich text,
-poptip, motion path, and disappearance effects should continue to use
+custom animations are needed. Full bootstraps that need the whole story, rich
+text, poptip, motion path, and disappearance effect set should continue to use
 `@visactor/vrender-animate/custom/register`.
+Use `@visactor/vrender-animate/custom/register-disappear` when only the
+disappearance effect animations are needed.
 
 ### Basic Property Animation
 

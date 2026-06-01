@@ -25,13 +25,7 @@ import {
 import { MotionPath } from './motionPath';
 import { GroupFadeIn, GroupFadeOut } from './groupFade';
 import { StreamLight } from './streamLight';
-import { Dissolve } from './disappear/dissolve';
-import { Grayscale } from './disappear/grayscale';
-import { Distortion } from './disappear/distortion';
-import { Particle } from './disappear/particle';
-import { Glitch } from './disappear/glitch';
-import { GaussianBlur } from './disappear/gaussian-blur';
-import { Pixelation } from './disappear/pixelation';
+import { registerDisappearCustomAnimate } from './register-disappear';
 
 export const registerCustomAnimate = () => {
   registerBasicCustomAnimate();
@@ -73,14 +67,7 @@ export const registerCustomAnimate = () => {
   // 流光动画
   AnimateExecutor.registerBuiltInAnimate('streamLight', StreamLight);
 
-  // 退场动画
-  AnimateExecutor.registerBuiltInAnimate('dissolve', Dissolve);
-  AnimateExecutor.registerBuiltInAnimate('grayscale', Grayscale);
-  AnimateExecutor.registerBuiltInAnimate('distortion', Distortion);
-  AnimateExecutor.registerBuiltInAnimate('particle', Particle);
-  AnimateExecutor.registerBuiltInAnimate('glitch', Glitch);
-  AnimateExecutor.registerBuiltInAnimate('gaussianBlur', GaussianBlur);
-  AnimateExecutor.registerBuiltInAnimate('pixelation', Pixelation);
+  registerDisappearCustomAnimate();
 };
 
 export {
@@ -109,15 +96,10 @@ export {
   PulseAnimate,
   GroupFadeIn,
   GroupFadeOut,
-  StreamLight,
-  Dissolve,
-  Grayscale,
-  Distortion,
-  Particle,
-  Glitch,
-  GaussianBlur,
-  Pixelation
+  StreamLight
 };
+
+export { Dissolve, Grayscale, Distortion, Particle, Glitch, GaussianBlur, Pixelation } from './register-disappear';
 
 export {
   ClipIn,

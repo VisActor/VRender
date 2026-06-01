@@ -572,6 +572,53 @@ Not-tested:
 - Did not run `rush build -t @visactor/vrender-animate`; local ignored `es` / `cjs` artifacts were not regenerated.
 - Did not migrate VChart / VTable to `custom/register-basic`; this slice only provides the VRender-owned standard subpath and locks full/default behavior.
 
+### 2026-06-01 / BS-P0-004 / Split disappear custom animate registration
+
+- Commit / branch: `this commit / remerge-d3`
+- Package: `@visactor/vrender-animate`
+- Build/source scope: `src` package files plus TypeScript import closures for custom register entries
+- Command: `node <<'NODE' ... filesystem size ledger and local TS import closure with zlib.gzipSync(level=9) ... NODE`
+- Data source: local filesystem file sizes; gzip is per-file gzip summed by group / closure, not bundled gzip
+
+Owner judgment:
+
+- 现象：`custom/register.ts` 的 remaining optional 内容中，disappear effects 是最大自包含分组；直接源码约 108,308 raw / 27,855 gzip，且包含 shader / image-process / stage-effect 类能力。
+- 证据文件：`packages/vrender-animate/src/custom/register.ts`、`packages/vrender-animate/src/custom/register-disappear.ts`、`packages/vrender-animate/src/custom/disappear/*`、`packages/vrender-animate/package.json`。
+- 为什么属于 VRender 自身内容大小问题：full custom register 当前把退场特效和 story/richtext/poptip 等其他 optional 能力绑定在一起；只需要 disappear effects 的调用方没有稳定窄入口。
+- Root/default 影响：不影响；`registerCustomAnimate()` 仍注册原有 disappear built-in keys，只是改为调用 `registerDisappearCustomAnimate()`。
+- Public API 影响：新增稳定 public subpath `@visactor/vrender-animate/custom/register-disappear`，不删除 `custom/register` 或 root exports。
+- 预期收益：为只需要 disappear effects 的调用方提供标准入口；迁移后可避免非 disappear custom closure 30 files / 191,597 raw / 48,975 gzip。当前 package source 因新增入口净增加 326 raw / 184 gzip。
+- 风险：只有改用 disappear-only register 的调用方不会自动获得 basic/story/richtext/poptip/motionPath 等 built-in key；full register 无此风险。
+
+Before / after:
+
+| group/file | before raw | after raw | before gzip | after gzip | delta gzip |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| `packages/vrender-animate/src` | 489,842 | 490,168 | 127,920 | 128,104 | +184 |
+| `packages/vrender-animate/src/custom` | 350,092 | 350,418 | 89,975 | 90,159 | +184 |
+| `custom/register.ts` source | 4,637 | 3,932 | 1,069 | 952 | -117 |
+| `custom/register-disappear.ts` source | 0 | 1,031 | 0 | 301 | +301 |
+
+Entry closure ledger:
+
+| entry closure | files | raw bytes | gzip bytes |
+| --- | ---: | ---: | ---: |
+| `custom/register.ts` before | 51 | 380,334 | 97,497 |
+| `custom/register.ts` after | 52 | 380,660 | 97,681 |
+| `custom/register-disappear.ts` after | 22 | 189,063 | 48,706 |
+| non-disappear custom content avoided by `custom/register-disappear` vs full | 30 | 191,597 | 48,975 |
+
+Verification:
+
+- `rush compile -t @visactor/vrender-animate`
+- `cd packages/vrender-animate && rushx test --runInBand __tests__/unit/custom-register-split.test.ts __tests__/unit/animation-runtime-attribute.test.ts`
+- `cd packages/vrender && rushx test --runInBand __tests__/unit/public-subpath-exports.test.ts`
+
+Not-tested:
+
+- Did not run `rush build -t @visactor/vrender-animate`; local ignored `es` / `cjs` artifacts were not regenerated.
+- Did not migrate VChart / VTable to `custom/register-disappear`; this slice only provides the VRender-owned standard subpath and locks full/default behavior.
+
 ## 外部 Bundle Before / After 记录格式
 
 涉及 VChart / VTable 外部场景时，再追加如下记录：

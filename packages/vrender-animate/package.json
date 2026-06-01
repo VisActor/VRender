@@ -184,6 +184,11 @@
       "import": "./es/custom/register-basic.js",
       "require": "./cjs/custom/register-basic.js"
     },
+    "./custom/register-disappear": {
+      "types": "./es/custom/register-disappear.d.ts",
+      "import": "./es/custom/register-disappear.js",
+      "require": "./cjs/custom/register-disappear.js"
+    },
     "./custom/rotate": {
       "types": "./es/custom/rotate.d.ts",
       "import": "./es/custom/rotate.js",

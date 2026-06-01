@@ -410,7 +410,7 @@ Not-tested:
 
 ### 2026-06-01 / BS-P0-004 / Remove stale commented component animate extension draft
 
-- Commit / branch: `e6b6f0385 / remerge-d3`
+- Commit / branch: `98022b742 / remerge-d3`
 - Package: `@visactor/vrender-animate`
 - Build/source scope: `src` TypeScript files
 - Command: `node <<'NODE' ... filesystem size ledger with zlib.gzipSync(level=9) ... NODE`
@@ -443,6 +443,45 @@ Not-tested:
 
 - Did not run `rush build -t @visactor/vrender-animate`; local ignored `es` / `cjs` artifacts were not regenerated.
 - Did not run full animate unit suite; this slice deletes a non-public commented source draft and validates compile.
+
+### 2026-06-01 / BS-P0-002 / Remove unused segment curve implementation stubs
+
+- Commit / branch: `98022b742 / remerge-d3`
+- Package: `@visactor/vrender-core`
+- Build/source scope: `src` TypeScript files
+- Command: `node <<'NODE' ... filesystem size ledger with zlib.gzipSync(level=9) ... NODE`
+- Data source: local filesystem file sizes; gzip is per-file gzip summed by group, not bundled gzip
+
+Owner judgment:
+
+- 现象：`common/segment/curve/arc.ts`、`ellipse.ts`、`move.ts` 没有 VRender production source 入边，且未被 `common/segment/index.ts` 或 public `path` 子入口 re-export；当前只剩直接测试这些实现草稿的单测。
+- 证据文件：`packages/vrender-core/src/common/segment/curve/{arc,ellipse,move}.ts`、`packages/vrender-core/src/common/segment/index.ts`、`packages/vrender-core/src/path.ts`、`packages/vrender-core/package.json`。
+- 为什么属于 VRender 自身内容大小问题：这三个类是未接入生产路径的曲线实现草稿，大部分方法直接抛出“不支持”；保留它们只增加 core source/package content。
+- Root/default 影响：不影响；root/common 仍导出实际使用的 `linear`、`basis`、`monotone`、`step`、`catmullRom`、`CurveContext`、`CubicBezierCurve` 等现有能力。
+- Public API 影响：不删除 `IArcCurve` / `IEllipseCurve` / `IMoveCurve` 类型和 `CurveTypeEnum` 成员，避免收窄稳定 type surface；只删除未导出的实现类文件。
+- 预期收益：减少 core source 内容 3,985 raw / 1,516 gzip；同时删除只覆盖这些死码实现的测试文件 2,832 raw / 1,219 gzip。
+- 风险：极少数绕过 package exports 的非公开 source deep import 会失败；这些实现文件没有稳定 public subpath。
+
+Before / after:
+
+| group/file | before raw | after raw | before gzip | after gzip | delta gzip |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| `packages/vrender-core/src` | 1,725,926 | 1,721,941 | 495,363 | 493,847 | -1,516 |
+| `packages/vrender-core/src/common/segment/curve` | 18,421 | 14,436 | 6,705 | 5,189 | -1,516 |
+| `common/segment/curve/arc.ts` | 1,214 | 0 | 467 | 0 | -467 |
+| `common/segment/curve/ellipse.ts` | 1,636 | 0 | 553 | 0 | -553 |
+| `common/segment/curve/move.ts` | 1,135 | 0 | 496 | 0 | -496 |
+
+Verification:
+
+- `rush compile -t @visactor/vrender-core`
+- `cd packages/vrender-core && rushx test --runInBand __tests__/unit/common/segment __tests__/unit/public-subpath-exports.test.ts`
+- Import graph scan: deleted implementation files had no VRender production source in-edges and were not package export source entries.
+
+Not-tested:
+
+- Did not run `rush build -t @visactor/vrender-core`; local ignored `es` / `cjs` artifacts were not regenerated.
+- Did not run full core unit suite; this slice deletes non-public unused implementation stubs and validates compile plus segment/public-subpath coverage.
 
 ## 外部 Bundle Before / After 记录格式
 

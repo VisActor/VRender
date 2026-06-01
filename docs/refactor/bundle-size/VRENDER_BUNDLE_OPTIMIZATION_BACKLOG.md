@@ -41,7 +41,7 @@ P0 必须同时满足：
 
 | ID | 任务 | 状态 | 进度记录 |
 | --- | --- | --- | --- |
-| BS-P0-002 | core graphic/common heavy path 内容瘦身审计 | in-progress | 已完成两片 dead-source 清理：累计减少 core source 45,254 raw / 9,356 gzip |
+| BS-P0-002 | core graphic/common heavy path 内容瘦身审计 | in-progress | 已完成三片 dead-source 清理：累计减少 core source 49,239 raw / 10,872 gzip |
 | BS-P1-009 | path/svg/xml parser 低频化 | needs-stats | 需先证明 `Graphic` base / root common 的真实可达链路 |
 | BS-P2-011 | builtin-symbol 子集化可行性研究 | candidate | 只做研究和 stats；不能破坏 `symbolType` 兼容 |
 
@@ -85,7 +85,7 @@ P0 必须同时满足：
 | ID | 标题 | 所属包 / 模块 | 现象 | 证据文件 | 疑似带入链路 | 是否影响 root/default 行为 | 预期收益 | 风险 | 优先级 | 推荐验证 | 是否需要 VChart / VTable 配合 | 当前状态 |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | BS-P0-001 | 建立 VRender 自身 package/module size ledger | 全包 / build output | 当前只有 VChart 外部 bundle 视角，缺少 VRender 自身 `src/es/cjs` 文件级内容大小基线 | `packages/*/src`、`packages/*/package.json`、构建产物 | VRender package content -> publish/build output | 不改变行为 | High | Low | P0 | 文件级 raw/gzip 统计；`rush build` 或现有产物；记录到 baseline | 不需要 | completed 2026-06-01 |
-| BS-P0-002 | core graphic/common heavy path 内容瘦身审计 | `@visactor/vrender-core` graphic/common | core 是最大内容 owner；Graphic 基类、path/svg/xml/text/richtext/3D 等可能包含可移出基础路径的代码 | `core/src/graphic/graphic.ts`、`common/xml/*`、`path/*`、`svg/*`、`text/*` | core graphic/common 真实代码内容 | 不应改变 root/default 行为；只删除死码或隔离 optional | High | Medium | P0 | core unit/compile；VRender size ledger before/after | 不需要，VChart 只做 smoke | in-progress: dead-source slices 2026-06-01 |
+| BS-P0-002 | core graphic/common heavy path 内容瘦身审计 | `@visactor/vrender-core` graphic/common | core 是最大内容 owner；Graphic 基类、path/svg/xml/text/richtext/3D 等可能包含可移出基础路径的代码 | `core/src/graphic/graphic.ts`、`common/xml/*`、`path/*`、`svg/*`、`text/*` | core graphic/common 真实代码内容 | 不应改变 root/default 行为；只删除死码或隔离 optional | High | Medium | P0 | core unit/compile；VRender size ledger before/after | 不需要，VChart 只做 smoke | in-progress: dead-source slices 2026-06-01; latest segment curve stubs removed |
 | BS-P0-003 | 图元实现按基础/optional 能力拆分候选 | `@visactor/vrender-core` graphics/render/picker | arc/path/image/richtext/3D 等图元内容对全包大小贡献高，需逐个确认是否有内部过度编码或 optional helper 静态绑定 | `graphic/*`、`render/contributions/render/*`、`picker/*`、kits `register-*` | graphic class -> renderer -> picker -> bounds/parser | full/root 能力保持；新增 lite/optional 或删除内部死码 | High | Medium | P0 | 图元专项 tests；renderer/picker tests；size ledger | 不需要，VChart 只做 smoke | candidate |
 | BS-P0-004 | animate custom/runtime 内容分层 | `@visactor/vrender-animate` | custom/register、story、richtext、poptip、grow* 等代码量可观；需区分基础 runtime 与 optional custom 内容 | `animate/src/index.ts`、`register.ts`、`custom/register.ts`、`custom/*` | animate runtime -> custom implementations | full/root 行为保持；可新增分层 register 或删除死码 | High | Medium | P0 | animate tests；scaleIn fromScale 回归；size ledger | 不需要，VChart 只做 smoke | in-progress: commented component extension draft removed 2026-06-01 |
 | BS-P1-005 | components root-only 组件补稳定 public subpath | `@visactor/vrender-components` package exports | data-zoom、marker、player、slider、scrollbar、title、brush、timeline、radio、checkbox、table-series-number 等缺 package export | `packages/vrender-components/package.json`、`src/index.ts`、各组件 `src/*/index.ts` | root components -> all component content | 不改变 root/default，只新增 exports | Medium | Low-Medium | P1 | components compile/test；可选 VChart 替换后 stats | VChart/VTable 可选配合 | candidate |

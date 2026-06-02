@@ -836,6 +836,61 @@ Not-tested:
 - Did not regenerate local ignored `es` / `cjs` build output.
 - Did not run VChart stats; root/full still re-exports XML, so VChart only benefits after adopting narrower VRender entries or profiles.
 
+### 2026-06-02 / BS-P1-009 / Defer path-svg parser split after morph reachability check
+
+- Commit / branch: `this commit / remerge-d3`
+- Package: `@visactor/vrender-core`, `@visactor/vrender-animate`
+- Build/source scope: stats-only owner decision; no production code change
+- Command: read-only `rg` plus local static TS import closure script using `fs.readFileSync` + `zlib.gzipSync`
+- Data source: local filesystem source sizes; gzip is per-file gzip summed by file / closure, not bundled gzip
+
+Owner judgment:
+
+- 现象：`common/path-svg.ts` 看起来像 SVG 解析能力，但它实际承载 `enumCommandMap` 和 path string command tokenizer，是 `CustomPath2D` 的基础依赖。
+- 证据文件：`packages/vrender-core/src/common/path-svg.ts`、`packages/vrender-core/src/common/custom-path2d.ts`、`packages/vrender-core/src/common/morphing-utils.ts`、`packages/vrender-core/src/common/split-path.ts`、`packages/vrender-animate/src/custom/morphing.ts`、`packages/vrender-animate/src/custom/motionPath.ts`、`packages/vrender-animate/src/custom/streamLight.ts`。
+- morph / animation 证据：`morphing-utils.pathToBezierCurves()` 会通过 `CustomPath2D.fromString()` 复用 path string 解析；`MotionPath`、`streamLight`、`easing-func` 和 animate morphing 都以 `CustomPath2D` / path curve 为基础能力。
+- 为什么暂不作为 VRender P0 代码优化：`path-svg.ts` 直接大小只有 3,569 raw / 1,735 gzip；拆它会碰到 `CustomPath2D` command enum、path string 解析、morphing-utils、split-path 和 path/symbol 图元基础行为，收益不清晰但风险跨 core/animate。
+- Root/default 影响：本轮不改代码，不影响 root/default。
+- Public API 影响：不新增或删除 subpath；`@visactor/vrender-core/path` 仍提供 `CustomPath2D` / `CurveContext` / `divideCubic`。
+- 结论：暂停 `path-svg` / `CustomPath2D.fromString()` 拆分。后续只有在证明某个基础 entry 静态带入 path parser 但无需 path string / morph / MotionPath / streamLight 时，再重新领取；否则优先转向 3D、builtin-symbol、components/media optional 等更清晰候选。
+
+Direct file ledger:
+
+| file | raw bytes | gzip bytes |
+| --- | ---: | ---: |
+| `common/path-svg.ts` | 3,569 | 1,735 |
+| `common/custom-path2d.ts` | 23,700 | 4,959 |
+| `common/morphing-utils.ts` | 14,716 | 4,761 |
+| `common/split-path.ts` | 11,458 | 3,007 |
+| `src/path.ts` | 255 | 156 |
+| `src/svg.ts` | 55 | 75 |
+| `animate/custom/morphing.ts` | 22,079 | 5,368 |
+| `animate/custom/motionPath.ts` | 2,250 | 829 |
+| `animate/custom/streamLight.ts` | 10,318 | 2,818 |
+| `animate/utils/easing-func.ts` | 333 | 224 |
+
+Static closure ledger:
+
+| entry closure | files | raw bytes | gzip bytes | path parser / morph note |
+| --- | ---: | ---: | ---: | --- |
+| `@visactor/vrender-core/path` (`src/path.ts`) | 24 | 103,224 | 34,113 | includes `CustomPath2D` and `path-svg` |
+| `common/custom-path2d.ts` | 23 | 102,969 | 33,957 | includes `path-svg` as base command parser |
+| `common/morphing-utils.ts` | 24 | 117,685 | 38,718 | includes `CustomPath2D` + `path-svg` |
+| `common/split-path.ts` | 26 | 129,873 | 42,050 | includes morphing-utils + `CustomPath2D` |
+| `graphic/path.ts` | 156 | 714,736 | 215,885 | path graphic naturally includes `CustomPath2D` |
+| `graphic/symbol.ts` | 156 | 716,248 | 216,305 | custom symbol strings naturally include `CustomPath2D` |
+| `src/svg.ts` | 2 | 13,363 | 3,920 | current subpath is `GradientParser`, not path parser |
+
+Verification:
+
+- Read-only source scan for `path-svg`, `CustomPath2D`, morphing, MotionPath and streamLight usage.
+- Local static import closure ledger for path / custom-path / morphing / split-path / path graphic / symbol graphic / svg subpath.
+
+Not-tested:
+
+- No compile or unit test run for this docs-only owner decision.
+- Did not run VChart stats; this decision explicitly avoids VChart as owner evidence.
+
 ## 外部 Bundle Before / After 记录格式
 
 涉及 VChart / VTable 外部场景时，再追加如下记录：

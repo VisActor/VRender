@@ -86,16 +86,17 @@
 ## 后续可拆建议
 
 1. 保留 `registerAnimate()` 轻量语义，禁止加入 custom/register。
-2. 新增 custom 分组 register 候选：
+2. 已落地 custom 分组 register：
    - 已落地 `registerBasicCustomAnimate`（`@visactor/vrender-animate/custom/register-basic`）：fade、scale、move、rotate、fromTo、update、state、growWidth/Height/Center/Points/Angle/Radius、clip、increaseCount。
-   - `registerPolarAnimate`：growAngle、growRadius。
    - 已落地 `registerRichTextCustomAnimate`（`@visactor/vrender-animate/custom/register-richtext`）：inputText、inputRichText、outputRichText、slideRichText、slideOutRichText。
    - 已落地 `registerDisappearCustomAnimate`（`@visactor/vrender-animate/custom/register-disappear`）：dissolve、grayscale、distortion、particle、glitch、gaussianBlur、pixelation。
    - 已落地 `registerStoryCustomAnimate`（`@visactor/vrender-animate/custom/register-story`）：slide/grow/spin/moveScale/moveRotate/stroke in/out、pulse、MotionPath、streamLight。
-   - `registerComponentAnimate`：poptip、label-item 等。
-3. full app 入口保持 `registerCustomAnimate()` 行为不变；lite / shared browser 不自动带 custom。
-4. VChart line/simple 侧如果需要 built-in type 动画，应明确通过标准窄入口注册，不要求上层 workaround deep import。
-5. 后续每新增一个 custom register 分组，都需要同步更新 [VRENDER_ON_DEMAND_CAPABILITY_USAGE.md](./VRENDER_ON_DEMAND_CAPABILITY_USAGE.md)，说明上层如何使用以及用户如何选择该能力。
+3. 后续新增数量控制：animate custom 维度预计只剩 `0-1` 个窄 register。
+   - `registerComponentAnimate`：poptip、label-item 等，仅作为 stats-first 候选；当前直接源码约 9,057 raw / 1,710 gzip，假想 closure 约 13 files / 22,238 gzip，只有上层有明确 component-only optional profile 时才新增。
+   - `registerPolarAnimate` 暂缓，不作为默认新增项；growAngle / growRadius 当前属于常规 basic custom，拆出会增加 full wrapper 成本并扩大上层配置复杂度。
+4. full app 入口保持 `registerCustomAnimate()` 行为不变；lite / shared browser 不自动带 custom。
+5. VChart line/simple 侧如果需要 built-in type 动画，应明确通过标准窄入口注册，不要求上层 workaround deep import。
+6. 后续每新增一个 custom register 分组，都需要同步更新 [VRENDER_ON_DEMAND_CAPABILITY_USAGE.md](./VRENDER_ON_DEMAND_CAPABILITY_USAGE.md)，说明上层如何使用以及用户如何选择该能力。
 
 ## 验证方式
 

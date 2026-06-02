@@ -44,6 +44,17 @@ rich text input/output animations are needed.
 Use `@visactor/vrender-animate/custom/register-story` when only story effects,
 motion path, and stream light animations are needed.
 
+Current custom register entries:
+
+| Entry | Function | Scope |
+| --- | --- | --- |
+| `@visactor/vrender-animate/register` | `registerAnimate()` | Base animation runtime only |
+| `@visactor/vrender-animate/custom/register-basic` | `registerBasicCustomAnimate()` | Common built-in custom animations |
+| `@visactor/vrender-animate/custom/register-richtext` | `registerRichTextCustomAnimate()` | Text and rich text custom animations |
+| `@visactor/vrender-animate/custom/register-disappear` | `registerDisappearCustomAnimate()` | Disappearance effect animations |
+| `@visactor/vrender-animate/custom/register-story` | `registerStoryCustomAnimate()` | Story effects, `MotionPath`, and `streamLight` |
+| `@visactor/vrender-animate/custom/register` | `registerCustomAnimate()` | Full custom animation compatibility |
+
 ### Basic Property Animation
 
 ```typescript

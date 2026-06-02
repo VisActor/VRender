@@ -41,6 +41,8 @@ Use `@visactor/vrender-animate/custom/register-disappear` when only the
 disappearance effect animations are needed.
 Use `@visactor/vrender-animate/custom/register-richtext` when only text and
 rich text input/output animations are needed.
+Use `@visactor/vrender-animate/custom/register-story` when only story effects,
+motion path, and stream light animations are needed.
 
 ### Basic Property Animation
 

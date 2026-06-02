@@ -1,6 +1,7 @@
 import { registerBasicCustomAnimate } from '../../src/custom/register-basic';
 import { registerDisappearCustomAnimate } from '../../src/custom/register-disappear';
 import { registerRichTextCustomAnimate } from '../../src/custom/register-richtext';
+import { registerStoryCustomAnimate } from '../../src/custom/register-story';
 import { registerCustomAnimate } from '../../src/custom/register';
 import { AnimateExecutor } from '../../src/executor/animate-executor';
 
@@ -49,18 +50,14 @@ const disappearKeys = [
 
 const richTextKeys = ['inputRichText', 'inputText', 'outputRichText', 'slideOutRichText', 'slideRichText'].sort();
 
-const optionalKeys = [
+const storyKeys = [
   'MotionPath',
   'growIn',
   'growOut',
-  'labelItemAppear',
-  'labelItemDisappear',
   'moveRotateIn',
   'moveRotateOut',
   'moveScaleIn',
   'moveScaleOut',
-  'poptipAppear',
-  'poptipDisappear',
   'pulse',
   'slideIn',
   'slideOut',
@@ -68,7 +65,15 @@ const optionalKeys = [
   'spinOut',
   'streamLight',
   'strokeIn',
-  'strokeOut',
+  'strokeOut'
+].sort();
+
+const optionalKeys = [
+  ...storyKeys,
+  'labelItemAppear',
+  'labelItemDisappear',
+  'poptipAppear',
+  'poptipDisappear',
   ...disappearKeys,
   ...richTextKeys
 ].sort();
@@ -117,6 +122,19 @@ describe('custom animate register split', () => {
     expect(AnimateExecutor.builtInAnimateMap.inputRichText).toBeDefined();
     expect(AnimateExecutor.builtInAnimateMap.scaleIn).toBeUndefined();
     expect(AnimateExecutor.builtInAnimateMap.dissolve).toBeUndefined();
+  });
+
+  test('registerStoryCustomAnimate only installs story effect animations', () => {
+    registerStoryCustomAnimate();
+
+    expect(registeredKeys()).toEqual(storyKeys);
+    expect(AnimateExecutor.builtInAnimateMap.slideIn).toBeDefined();
+    expect(AnimateExecutor.builtInAnimateMap.MotionPath).toBeDefined();
+    expect(AnimateExecutor.builtInAnimateMap.streamLight).toBeDefined();
+    expect(AnimateExecutor.builtInAnimateMap.scaleIn).toBeUndefined();
+    expect(AnimateExecutor.builtInAnimateMap.inputRichText).toBeUndefined();
+    expect(AnimateExecutor.builtInAnimateMap.dissolve).toBeUndefined();
+    expect(AnimateExecutor.builtInAnimateMap.poptipAppear).toBeUndefined();
   });
 
   test('registerCustomAnimate keeps the full custom animation surface', () => {

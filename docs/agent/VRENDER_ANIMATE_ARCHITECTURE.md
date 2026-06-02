@@ -19,6 +19,7 @@
 - `custom/register-basic.ts`：基础 built-in custom animation 注册入口。
 - `custom/register-disappear.ts`：disappear effects 注册入口。
 - `custom/register-richtext.ts`：text / richtext custom animation 注册入口。
+- `custom/register-story.ts`：story / motion path / streamLight effect custom animation 注册入口。
 - `custom/register.ts`：full built-in custom animation 注册入口。
 - `custom/*`。
 - `state/*`。
@@ -103,6 +104,7 @@ custom animation 相关路径：
 - `custom/register-basic.ts`：`registerBasicCustomAnimate()`，注册 fromTo、scale、grow、clip、fade、move、rotate、update/state、increaseCount 等基础 custom 动画。
 - `custom/register-disappear.ts`：`registerDisappearCustomAnimate()`，注册 dissolve、grayscale、distortion、particle、glitch、gaussianBlur、pixelation 等退场特效。
 - `custom/register-richtext.ts`：`registerRichTextCustomAnimate()`，注册 inputText、inputRichText、outputRichText、slideRichText、slideOutRichText。
+- `custom/register-story.ts`：`registerStoryCustomAnimate()`，注册 slide/grow/spin/moveScale/moveRotate/stroke in/out、pulse、MotionPath、streamLight。
 - `custom/register.ts`：`registerCustomAnimate()`，先注册 basic custom，再注册 story、richtext、poptip、label item、motion path、streamLight、disappear effects 等 full custom 能力。
 - `custom/fade.ts`、`grow*`、`scale.ts`、`rotate.ts`、`move.ts`、`tag-points.ts`、`update.ts`、`morphing.ts`、`clip*`、`disappear/*`、`richtext/*`。
 

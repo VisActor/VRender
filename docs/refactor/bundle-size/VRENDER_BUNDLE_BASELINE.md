@@ -530,7 +530,7 @@ Not-tested:
 - Commit / branch: `this commit / remerge-d3`
 - Package: `@visactor/vrender-animate`
 - Build/source scope: `src` package files plus TypeScript import closures for custom register entries
-- Command: `node <<'NODE' ... filesystem size ledger and local TS import closure with zlib.gzipSync(level=9) ... NODE`
+- Command: `node <<'NODE' ... filesystem size ledger and local TS import closure with zlib.gzipSync(default) ... NODE`
 - Data source: local filesystem file sizes; gzip is per-file gzip summed by group / closure, not bundled gzip
 
 Owner judgment:
@@ -665,6 +665,54 @@ Not-tested:
 
 - Did not run `rush build -t @visactor/vrender-animate`; local ignored `es` / `cjs` artifacts were not regenerated.
 - Did not migrate VChart / VTable to `custom/register-richtext`; this slice only provides the VRender-owned standard subpath and locks full/default behavior.
+
+### 2026-06-02 / BS-P0-004 / Split story custom animate registration
+
+- Commit / branch: `this commit / remerge-d3`
+- Package: `@visactor/vrender-animate`
+- Build/source scope: `src` package files plus TypeScript import closures for custom register entries
+- Command: `node <<'NODE' ... filesystem size ledger and local TS import closure with zlib.gzipSync(level=9) ... NODE`
+- Data source: local filesystem file sizes; gzip is per-file gzip summed by group / closure, not bundled gzip
+
+Owner judgment:
+
+- 现象：`custom/register.ts` 仍直接注册 story effects、`MotionPath` 和 `streamLight`；这组直接源码约 46,273 raw / 8,933 gzip，且对基础图表动画不是硬必需。
+- 证据文件：`packages/vrender-animate/src/custom/register.ts`、`packages/vrender-animate/src/custom/register-story.ts`、`packages/vrender-animate/src/custom/story.ts`、`packages/vrender-animate/src/custom/motionPath.ts`、`packages/vrender-animate/src/custom/streamLight.ts`、`packages/vrender-animate/package.json`。
+- 为什么属于 VRender 自身内容大小问题：full custom register 当前把 story/effect 动画和 basic/richtext/disappear/poptip/label item 等其他 custom 能力绑定在一起；只需要 story effects、MotionPath 或 streamLight 的调用方没有稳定窄入口。
+- Root/default 影响：不影响；`registerCustomAnimate()` 仍注册原有 story/effect built-in keys，只是改为调用 `registerStoryCustomAnimate()`。
+- Public API 影响：新增稳定 public subpath `@visactor/vrender-animate/custom/register-story`，不删除 `custom/register` 或 root exports。
+- 预期收益：为只需要 story/effect 动画的调用方提供标准入口；迁移后可避免非 story custom closure 39 files / 254,740 raw / 68,298 gzip。当前 package source 因新增入口净增加 314 raw / 143 gzip。
+- 风险：只有改用 story-only register 的调用方不会自动获得 basic/richtext/disappear/poptip/label item 等 built-in key；full register 无此风险。`GroupFadeIn` / `GroupFadeOut` 在 full register 中仍保持导出表象，但不是 `register-story` 的 built-in key 注册范围。
+
+Before / after:
+
+| group/file | before raw | after raw | before gzip | after gzip | delta gzip |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| `packages/vrender-animate/src` | 489,418 | 489,732 | 127,648 | 127,791 | +143 |
+| `packages/vrender-animate/src/custom` | 349,668 | 349,982 | 89,703 | 89,846 | +143 |
+| `custom/register.ts` source | 3,381 | 2,089 | 883 | 629 | -254 |
+| `custom/register-story.ts` source | 0 | 1,606 | 0 | 397 | +397 |
+
+Entry closure ledger:
+
+| entry closure | files | raw bytes | gzip bytes |
+| --- | ---: | ---: | ---: |
+| `custom/register.ts` before | 52 | 375,383 | 96,132 |
+| `custom/register.ts` after | 53 | 375,697 | 96,275 |
+| `custom/register-story.ts` after | 14 | 120,957 | 27,977 |
+| non-story custom content avoided by `custom/register-story` vs full | 39 | 254,740 | 68,298 |
+
+Verification:
+
+- RED: `cd packages/vrender-animate && rushx test --runInBand __tests__/unit/custom-register-split.test.ts` failed with missing `../../src/custom/register-story`.
+- RED: `cd packages/vrender && rushx test --runInBand __tests__/unit/public-subpath-exports.test.ts` failed because `src/custom/register-story.ts` / package export did not exist.
+- GREEN: `cd packages/vrender-animate && rushx test --runInBand __tests__/unit/custom-register-split.test.ts`
+- GREEN: `cd packages/vrender && rushx test --runInBand __tests__/unit/public-subpath-exports.test.ts`
+
+Not-tested:
+
+- Did not run `rush build -t @visactor/vrender-animate`; local ignored `es` / `cjs` artifacts were not regenerated.
+- Did not migrate VChart / VTable to `custom/register-story`; this slice only provides the VRender-owned standard subpath and locks full/default behavior.
 
 ## 外部 Bundle Before / After 记录格式
 

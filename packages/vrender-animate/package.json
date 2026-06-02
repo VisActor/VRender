@@ -194,6 +194,11 @@
       "import": "./es/custom/register-richtext.js",
       "require": "./cjs/custom/register-richtext.js"
     },
+    "./custom/register-story": {
+      "types": "./es/custom/register-story.d.ts",
+      "import": "./es/custom/register-story.js",
+      "require": "./cjs/custom/register-story.js"
+    },
     "./custom/rotate": {
       "types": "./es/custom/rotate.d.ts",
       "import": "./es/custom/rotate.js",

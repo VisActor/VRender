@@ -52,6 +52,7 @@ const expectedExports: Record<string, ExpectedSubpath[]> = {
     { subpath: './custom/register-basic', source: 'src/custom/register-basic.ts' },
     { subpath: './custom/register-disappear', source: 'src/custom/register-disappear.ts' },
     { subpath: './custom/register-richtext', source: 'src/custom/register-richtext.ts' },
+    { subpath: './custom/register-story', source: 'src/custom/register-story.ts' },
     { subpath: './custom/scale', source: 'src/custom/scale.ts' },
     { subpath: './custom/groupFade', source: 'src/custom/groupFade.ts' },
     { subpath: './custom/tag-points', source: 'src/custom/tag-points.ts' },

@@ -12,7 +12,8 @@
 | `@visactor/vrender-animate/custom/register-basic` | `packages/vrender-animate/src/custom/register-basic.ts` | 注册基础 built-in custom animate：fromTo、scale、grow、clip、fade、move、rotate、update/state、increaseCount | 标准窄入口；只需要基础 custom 动画时避免带入 story/richtext/poptip/disappear |
 | `@visactor/vrender-animate/custom/register-disappear` | `packages/vrender-animate/src/custom/register-disappear.ts` | 注册 disappear effects：dissolve、grayscale、distortion、particle、glitch、gaussianBlur、pixelation | 标准窄入口；只需要退场特效时避免带入 full custom |
 | `@visactor/vrender-animate/custom/register-richtext` | `packages/vrender-animate/src/custom/register-richtext.ts` | 注册 text/richtext animations：inputText、inputRichText、outputRichText、slideRichText、slideOutRichText | 标准窄入口；只需要 text / richtext 输入输出动画时避免带入 full custom |
-| `@visactor/vrender-animate/custom/register` | `packages/vrender-animate/src/custom/register.ts` | 调用 `registerBasicCustomAnimate()`、`registerDisappearCustomAnimate()`、`registerRichTextCustomAnimate()`，再注册 story、poptip、label item、motion path、streamLight | full custom 入口，适合 optional / full bootstrap |
+| `@visactor/vrender-animate/custom/register-story` | `packages/vrender-animate/src/custom/register-story.ts` | 注册 story effects、MotionPath、streamLight | 标准窄入口；只需要故事化/路径/流光效果时避免带入 full custom |
+| `@visactor/vrender-animate/custom/register` | `packages/vrender-animate/src/custom/register.ts` | 调用 basic / disappear / richtext / story 分组 register，再注册 poptip、label item | full custom 入口，适合 optional / full bootstrap |
 | state | `packages/vrender-animate/src/state/*` | state animation manager / registry / graphic extension | 基础状态动画需要 |
 | component | `packages/vrender-animate/src/component/*` | `ComponentAnimator` 与 component index；未发布的 commented extension 草稿已删除 | components 需要，基础图元动画不一定全量需要 |
 | executor / timeline / ticker / step | `executor/*`、`timeline.ts`、`ticker/*`、`step.ts` | 动画执行核心 | 基础动画必需 |
@@ -23,7 +24,7 @@
 - `packages/vrender/src/entries/bootstrap-browser.ts` shared browser full 当前只调用 `registerAnimate`，没有调用 `registerCustomAnimate`。
 - `packages/vrender/src/entries/bootstrap-browser-lite.ts` lite 当前只调用 `registerAnimate`，没有调用 `registerCustomAnimate`。
 
-这意味着：`registerAnimate()` 不是 custom 动画体积来源；full app bootstrap 的 `registerCustomAnimate()` 才是一次性带入 custom 的关键链路。2026-06-01 已新增 `custom/register-basic`、`custom/register-disappear` 和 `custom/register-richtext`，供只需要基础 built-in custom 动画、disappear effects 或 text/richtext 动画的调用方使用；full app 入口仍保持 `registerCustomAnimate()` 行为不变。
+这意味着：`registerAnimate()` 不是 custom 动画体积来源；full app bootstrap 的 `registerCustomAnimate()` 才是一次性带入 custom 的关键链路。2026-06-01 已新增 `custom/register-basic`、`custom/register-disappear` 和 `custom/register-richtext`，供只需要基础 built-in custom 动画、disappear effects 或 text/richtext 动画的调用方使用；2026-06-02 已新增 `custom/register-story`，供只需要 story effects / MotionPath / streamLight 的调用方使用；full app 入口仍保持 `registerCustomAnimate()` 行为不变。
 
 上层按需迁移时，不应直接 deep import 内部文件。统一使用 public subpath，并参考 [VRENDER_ON_DEMAND_CAPABILITY_USAGE.md](./VRENDER_ON_DEMAND_CAPABILITY_USAGE.md) 将 VRender 能力映射到上层 bootstrap 和用户可选配置。
 
@@ -76,6 +77,7 @@
 | `custom/register-basic.ts` | Medium | 标准窄入口，closure 仍包含基础 grow/scale/clip/fade/update/state 等常用 custom 内容 |
 | `custom/register-disappear.ts` | Medium | 标准窄入口，closure 包含 disappear 图像处理与 stage effect 能力 |
 | `custom/register-richtext.ts` | Medium | 标准窄入口，closure 包含 text/richtext 输入输出动画能力 |
+| `custom/register-story.ts` | Medium | 标准窄入口，closure 包含 story effects、MotionPath、streamLight |
 | story / disappear / richtext | High | 对基础 line/simple 不是硬必需，且效果类多 |
 | growPoints / growWidth / growHeight | Medium | 常规 chart 需要，不能简单 optional |
 | state animation | Medium | D3 状态动画主路径，不建议为体积重开语义 |
@@ -89,7 +91,7 @@
    - `registerPolarAnimate`：growAngle、growRadius。
    - 已落地 `registerRichTextCustomAnimate`（`@visactor/vrender-animate/custom/register-richtext`）：inputText、inputRichText、outputRichText、slideRichText、slideOutRichText。
    - 已落地 `registerDisappearCustomAnimate`（`@visactor/vrender-animate/custom/register-disappear`）：dissolve、grayscale、distortion、particle、glitch、gaussianBlur、pixelation。
-   - `registerStoryAnimate`：story / streamLight。
+   - 已落地 `registerStoryCustomAnimate`（`@visactor/vrender-animate/custom/register-story`）：slide/grow/spin/moveScale/moveRotate/stroke in/out、pulse、MotionPath、streamLight。
    - `registerComponentAnimate`：poptip、label-item 等。
 3. full app 入口保持 `registerCustomAnimate()` 行为不变；lite / shared browser 不自动带 custom。
 4. VChart line/simple 侧如果需要 built-in type 动画，应明确通过标准窄入口注册，不要求上层 workaround deep import。
@@ -104,5 +106,5 @@ cd packages/vrender-animate && rushx test --runInBand
 
 体积验证：
 
-- `@visactor/vrender-animate` root vs `@visactor/vrender-animate/register` vs `custom/register-basic` vs `custom/register-disappear` vs `custom/register-richtext` vs `custom/register` metafile。
+- `@visactor/vrender-animate` root vs `@visactor/vrender-animate/register` vs `custom/register-basic` vs `custom/register-disappear` vs `custom/register-richtext` vs `custom/register-story` vs `custom/register` metafile。
 - VChart line/simple 开启动画场景 before/after；重点确认 `scaleIn fromScale/fromScaleX/fromScaleY` 未回退。

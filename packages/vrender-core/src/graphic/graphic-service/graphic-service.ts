@@ -16,9 +16,6 @@ import type {
 import { textDrawOffsetX, textLayoutOffsetY } from '../../common/text';
 import { boundStroke } from '../tools';
 import { mat4Allocate } from '../../allocator/matrix-allocate';
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { BoundsContext } from '../../common/bounds-context';
-import { renderCommandList } from '../../common/render-command-list';
 import { identityMat4, multiplyMat4Mat4, rotateX, rotateY, rotateZ, scaleMat4, translate } from '../../common/matrix';
 import { graphicCreator } from '../graphic-creator';
 
@@ -260,17 +257,6 @@ export class DefaultGraphicService implements IGraphicService {
       this.hooks.clearAABBBounds.call(graphic, stage, b);
     }
   }
-  // TODO delete
-  updatePathProxyAABBBounds(aabbBounds: IAABBBounds, graphic?: IGraphic): boolean {
-    const path = typeof graphic.pathProxy === 'function' ? graphic.pathProxy(graphic.attribute) : graphic.pathProxy;
-    if (!path) {
-      return false;
-    }
-    const boundsContext = new BoundsContext(aabbBounds);
-    renderCommandList(path.commandList, boundsContext, 0, 0);
-    return true;
-  }
-
   updateHTMLTextAABBBounds(
     attribute: ITextGraphicAttribute,
     textTheme: Required<ITextGraphicAttribute>,

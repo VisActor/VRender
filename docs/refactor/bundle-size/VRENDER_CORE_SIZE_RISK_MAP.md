@@ -59,6 +59,7 @@
 - `registry`、基础 `render service`、基础 `event`、`bounds`、`matrix` 是运行时骨架，不应通过删除行为降体积。
 - plain `text` 对 axis/label/tooltip 和基础 chart 都是常规能力，不宜整体 optional。
 - D3 状态引擎相关文件不是本轮主要嫌疑；除非 analyzer 证明状态模块异常占比，否则不要重开 D3 语义。
+- `DefaultGraphicService.updatePathProxyAABBBounds()` 已在 2026-06-02 删除；后续 path proxy bounds 仍由 `Graphic.updatePathProxyAABBBounds()` 承担，不要把旧 service helper 作为兼容 fallback 加回。
 
 ## 需要重点复核的模块
 

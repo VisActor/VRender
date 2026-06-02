@@ -743,6 +743,41 @@ Not-tested:
 
 - Did not run VChart bundle stats; this was a stats-first owner decision, not an implementation slice.
 
+### 2026-06-02 / BS-P0-002 / Remove unused graphic service path proxy bounds helper
+
+- Commit / branch: `this commit / remerge-d3`
+- Package: `@visactor/vrender-core`
+- Build/source scope: `packages/vrender-core/src/graphic/graphic-service/graphic-service.ts`
+- Command: `node <<'NODE' ... fs.readFileSync + zlib.gzipSync ... NODE`
+- Data source: local filesystem file size; gzip is per-file gzip, not bundled gzip
+
+Owner judgment:
+
+- 现象：`DefaultGraphicService.updatePathProxyAABBBounds()` 带有 `TODO delete`，但 `IGraphicService` 接口不声明该方法，内部图元使用的是 `Graphic.updatePathProxyAABBBounds()`。
+- 证据文件：`packages/vrender-core/src/graphic/graphic-service/graphic-service.ts`、`packages/vrender-core/src/interface/graphic-service.ts`、`packages/vrender-core/src/graphic/graphic.ts`。
+- 为什么属于 VRender 自身内容大小问题：这是 core graphic service 中未被内部调用、未纳入 service interface 的旧 helper；删除后同时移除 `BoundsContext` / `renderCommandList` 在该文件中的无效依赖。
+- Root/default 影响：不影响；图元 bounds 仍走 `Graphic.updatePathProxyAABBBounds()`。
+- Public API 影响：不删除 package export；仅删除 `DefaultGraphicService` 上未接口化的旧 helper。该方法不属于 `IGraphicService` 契约。
+- 预期收益：减少 core source 604 raw / 187 gzip。
+- 风险：如果外部用户绕过 `IGraphicService`，直接实例化 `DefaultGraphicService` 并调用这个未接口化 helper，会失效；当前内部源码无该调用链。
+
+Before / after:
+
+| file | before raw | after raw | before gzip | after gzip | delta gzip |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| `graphic/graphic-service/graphic-service.ts` | 13,862 | 13,258 | 3,316 | 3,129 | -187 |
+
+Verification:
+
+- RED: `cd packages/vrender-core && rushx test --runInBand __tests__/unit/graphic/graphic-factory-migration.test.ts` failed because `DefaultGraphicService` still exposed `updatePathProxyAABBBounds`.
+- GREEN: `cd packages/vrender-core && rushx test --runInBand __tests__/unit/graphic/graphic-factory-migration.test.ts`
+- `rush compile -t @visactor/vrender-core`
+
+Not-tested:
+
+- Did not run full vrender-core unit suite.
+- Did not regenerate local ignored `es` / `cjs` build output.
+
 ## 外部 Bundle Before / After 记录格式
 
 涉及 VChart / VTable 外部场景时，再追加如下记录：

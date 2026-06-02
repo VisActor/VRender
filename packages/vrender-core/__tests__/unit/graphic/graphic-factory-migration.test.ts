@@ -43,4 +43,10 @@ describe('graphic factory migration', () => {
     expect(service.creator).toBe(graphicCreator);
     expect(service.creator.rect).toBeDefined();
   });
+
+  test('DefaultGraphicService should not expose the old path proxy bounds helper', () => {
+    const service = new DefaultGraphicService();
+
+    expect('updatePathProxyAABBBounds' in service).toBe(false);
+  });
 });

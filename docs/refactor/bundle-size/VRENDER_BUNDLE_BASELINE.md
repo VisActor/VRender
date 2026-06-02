@@ -778,6 +778,64 @@ Not-tested:
 - Did not run full vrender-core unit suite.
 - Did not regenerate local ignored `es` / `cjs` build output.
 
+### 2026-06-02 / BS-P0-002 / Move XML parser out of base graphic static closures
+
+- Commit / branch: `this commit / remerge-d3`
+- Package: `@visactor/vrender-core`
+- Build/source scope: `packages/vrender-core/src/graphic/graphic.ts`, `packages/vrender-core/src/graphic/tools.ts`, `packages/vrender-core/src/common/xml/*`
+- Command: local static TS import closure script using `fs.readFileSync` + `zlib.gzipSync`
+- Data source: local filesystem source sizes; gzip is per-file gzip summed by closure, not bundled gzip
+
+Owner judgment:
+
+- 现象：`Graphic.parsePath()` 为低频 SVG `symbolType` / `clipConfig.shape` 字符串静态导入完整 XML parser；`graphic/tools.ts` 为 `xul()` 静态导入完整 XML parser，导致普通 `boundStroke` / `verticalLayout` / `genNumberType` 使用也带入 `common/xml`。
+- 证据文件：`packages/vrender-core/src/graphic/graphic.ts`、`packages/vrender-core/src/graphic/tools.ts`、`packages/vrender-core/src/common/xml/parser.ts`、`packages/vrender-core/src/common/xml/OrderedObjParser.ts`。
+- 为什么属于 VRender 自身内容大小问题：这是 core 基础图元 / 基础工具静态闭包误承载低频 XML/SVG parser 能力；能力属于 VRender 自身 parser 边界，不依赖 VChart bundler workaround。
+- Root/default 影响：不影响运行时行为；`@visactor/vrender-core` root 仍 re-export `common/xml`，full/root 仍保留 XMLParser 公共能力。本 slice 的收益主要面向 `graphic/*` 等窄入口和内部基础闭包。
+- Public API 影响：不删除 `XMLParser`、`isSvg`、`isXML`；`common/xml/parser` 和 `common/xml` 继续 re-export 原 API。
+- 预期收益：`graphic.ts` / `tools.ts` / `text.ts` / `constants.ts` 的基础静态闭包避免完整 XML parser，XML 静态部分从 5 files / 14,263 raw / 5,760 gzip 收缩到轻量判断 1 file / 169 raw / 112 gzip。
+- 风险：SVG symbol / clipPath 和 `xul()` 首次实际解析时通过同步 runtime loader 取 `XMLParser`；该路径沿用 core 已有低频 `require()` 模式，需要 build/test 覆盖。
+
+Before / after static XML content in base closures:
+
+| entry closure | before XML files | after XML files | before raw | after raw | before gzip | after gzip | delta gzip |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| `graphic/graphic.ts` static imports | 5 | 1 | 14,263 | 169 | 5,760 | 112 | -5,648 |
+| `graphic/tools.ts` static imports | 5 | 1 | 14,263 | 169 | 5,760 | 112 | -5,648 |
+| `graphic/text.ts` static imports | 5 | 1 | 14,263 | 169 | 5,760 | 112 | -5,648 |
+| `graphic/constants.ts` static imports | 5 | 1 | 14,263 | 169 | 5,760 | 112 | -5,648 |
+
+Full runtime capability ledger:
+
+| closure | files | raw bytes | gzip bytes |
+| --- | ---: | ---: | ---: |
+| `graphic/graphic.ts` before, including runtime `require()` edges | 160 | 743,129 | 225,263 |
+| `graphic/graphic.ts` after, including runtime `require()` edges | 160 | 743,600 | 225,462 |
+| `graphic/graphic.ts` after, static imports only | 153 | 700,991 | 211,724 |
+| `graphic/tools.ts` after, static imports only | 3 | 7,197 | 2,602 |
+| `common/xml/index.ts` after, full parser public entry | 6 | 14,329 | 5,846 |
+
+Changed production source direct sizes:
+
+| file | before raw | after raw | before gzip | after gzip | delta gzip |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| `common/xml/parser.ts` | 2,035 | 1,932 | 1,077 | 1,051 | -26 |
+| `common/xml/is-xml.ts` | 0 | 169 | 0 | 112 | +112 |
+| `graphic/graphic.ts` | 98,192 | 98,403 | 20,850 | 20,908 | +58 |
+| `graphic/tools.ts` | 5,613 | 5,833 | 1,980 | 2,081 | +101 |
+
+Verification:
+
+- Baseline lock: `cd packages/vrender-core && rushx test --runInBand __tests__/unit/graphic/xml-parser-boundary.test.ts`
+- GREEN: `cd packages/vrender-core && rushx test --runInBand __tests__/unit/graphic/xml-parser-boundary.test.ts`
+- GREEN: `cd packages/vrender-core && rushx test --runInBand __tests__/unit/common/xml/parser.test.ts`
+
+Not-tested:
+
+- Did not run full vrender-core unit suite yet.
+- Did not regenerate local ignored `es` / `cjs` build output.
+- Did not run VChart stats; root/full still re-exports XML, so VChart only benefits after adopting narrower VRender entries or profiles.
+
 ## 外部 Bundle Before / After 记录格式
 
 涉及 VChart / VTable 外部场景时，再追加如下记录：

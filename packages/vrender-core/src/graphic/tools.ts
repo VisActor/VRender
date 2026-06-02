@@ -1,8 +1,14 @@
 import { application } from '../application';
-import { isXML } from '../common/xml/parser';
+import { isXML } from '../common/xml/is-xml';
 import type { IGraphic, IGroup, ILayer, IRichTextCharacter, IRichTextImageCharacter, IStage } from '../interface';
 import { isArray, type IAABBBounds } from '@visactor/vutils';
-import { XMLParser } from '../common/xml';
+
+declare const require: (id: string) => unknown;
+
+type TXMLParserModule = {
+  XMLParser: new () => { parse: (xmlData: string) => any };
+};
+const loadXMLParser = () => require('../common/xml/parser') as TXMLParserModule;
 
 // 不触发外部的render
 export function incrementalAddTo(group: IGroup, graphic: IGraphic) {
@@ -143,6 +149,7 @@ export function xul(str: string | string[]): IRichTextCharacter[] {
   }
   const valid = isXML(xmlStr);
   if (valid === true) {
+    const { XMLParser } = loadXMLParser();
     const parser = new XMLParser();
     const data = parser.parse(xmlStr);
     data.tc &&

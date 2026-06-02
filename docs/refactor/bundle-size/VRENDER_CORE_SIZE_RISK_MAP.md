@@ -26,7 +26,7 @@
 | render | render service、renderer module、draw contribution | 图元 register、bootstrap、stage render | 是，基础 renderer 必需 | 各图元 renderer 可分组 | root 导出多类 renderer；基础 register 也真实依赖 | 保持基础 render service；按图元拆 register / module，不从 root 引入全 render | render registry tests、line/rect/text smoke |
 | picker | core 定义接口，kits 提供实现 | kits picker、stage pick、event | 是，事件/pick 场景必需 | 图元 picker 可按 full/lite 分组 | 多为真实依赖，root 也暴露接口 | 避免 full canvas/math picker 同时入基础 browser | picker registry tests、VChart tooltip/crosshair 交互 |
 | common | text、color、bezier、custom path、render util 等 | graphic base、renderer、bounds、parser、components | 部分必需 | path/svg/xml/segment 等可选 | root `src/index.ts` 全量导出 | 给 heavy common 建子入口，内部引用按能力收窄 | compile + metafile |
-| common/xml | XML parser / node util | `graphic/graphic.ts`、root 导出；历史 XML/SVG 相关路径 | 基础 line 是否真实必需待验证 | 应偏 optional | `Graphic` base 当前引用导致风险高 | 先确认当前 base 是否必须静态依赖；如仅特定场景需要，后续拆低频入口 | core tests + analyzer |
+| common/xml | XML parser / node util | root 导出；`graphic/graphic.ts` / `graphic/tools.ts` 仅在 SVG symbol / clipPath、`xul()` 实际解析时 runtime 加载 parser | 基础 line 不需要完整 XML parser 静态依赖 | 已低频化；root/full 仍保留公共能力 | root barrel 仍导出完整 parser；base graphic/tools 静态闭包只保留轻量 `is-xml` 判断 | 后续继续看 path/svg parser 与 root barrel；不要把 XMLParser 静态 import 加回基础 tools | core XML/parser + graphic boundary tests |
 | path | 自定义 Path2D、path command、bounds | `graphic/path.ts`、path renderer/picker、symbol/path tool | 非纯 line 必需 | optional | root 和 `@visactor/vrender-core/path` subpath 都存在 | parser 与 path graphic 分层；基础 register 不带 path | path render/pick/bounds tests |
 | svg | SVG parser / transform | `@visactor/vrender-core/svg` subpath、path/svg usage | 否 | optional | root 导出 svg | 保持 subpath，避免基础 entry re-export 触发 | svg parser tests + analyzer |
 | text | text measure、font、wrap/rich text基础 | text/wrapText/richtext、axis/label/tooltip | 是 | richtext 可选，plain text 必需 | root 和 `@visactor/vrender-core/text` subpath | plain text 保持；richtext 分离 | text bounds/render tests |
@@ -63,10 +63,13 @@
 
 ## 需要重点复核的模块
 
-1. `common/xml` 是否被 `Graphic` base 静态带入基础 line 路径。若只是低频 XML/SVG 功能需要，后续可考虑延迟或下沉到专用入口。
-2. path/svg parser 是否通过 root barrel 或 path graphic 进入 line/simple。
-3. 3D camera/light/interceptor 是否只在 full/shared full 中出现，lite 和 line-only 路径不能静态带入。
-4. builtin-symbol 是否全量带入，是否存在可兼容的 symbol set 切分点。
+1. path/svg parser 是否通过 root barrel 或 path graphic 进入 line/simple。
+2. 3D camera/light/interceptor 是否只在 full/shared full 中出现，lite 和 line-only 路径不能静态带入。
+3. builtin-symbol 是否全量带入，是否存在可兼容的 symbol set 切分点。
+
+已处理：
+
+- `common/xml` 不再被 `Graphic` base / `graphic/tools.ts` 静态带入基础闭包；SVG symbol / clipPath 和 `xul()` 的 XMLParser 能力保留在低频 runtime 分支。root barrel 仍公开导出 XMLParser，所以 full/root 兼容不变。
 
 ## 验证方式
 

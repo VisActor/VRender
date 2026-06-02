@@ -714,6 +714,35 @@ Not-tested:
 - Did not run `rush build -t @visactor/vrender-animate`; local ignored `es` / `cjs` artifacts were not regenerated.
 - Did not migrate VChart / VTable to `custom/register-story`; this slice only provides the VRender-owned standard subpath and locks full/default behavior.
 
+### 2026-06-02 / BS-P0-004 / Defer component custom animate registration split
+
+- Commit / branch: `this commit / remerge-d3`
+- Package: `@visactor/vrender-animate`
+- Build/source scope: stats-only owner decision; no production code change
+- Command: local filesystem size ledger and read-only `rg` over VRender / VChart source
+- Data source: local filesystem file sizes; gzip is per-file gzip summed by group / closure, not bundled gzip
+
+Owner judgment:
+
+- 现象：full `custom/register.ts` 仍直接注册 `poptipAppear` / `poptipDisappear` / `labelItemAppear` / `labelItemDisappear`。
+- 证据文件：`packages/vrender-animate/src/custom/register.ts`、`packages/vrender-animate/src/custom/poptip-animate.ts`、`packages/vrender-animate/src/custom/label-item-animate.ts`、`packages/vrender-components/__tests__/browser/examples/poptip.ts`、`packages/vrender-components/__tests__/browser/examples/story-label-item.ts`。
+- Size ledger：component custom 直接源码约 2 files / 9,057 raw / 1,710 gzip；假想 component register closure 约 13 files / 87,939 raw / 22,238 gzip。
+- 上层证据：VChart 有 `poptip` 用户开关与 `registerPoptip()` 组件注册，但当前未发现 VChart 源码直接使用 `poptipAppear` / `poptipDisappear` / `labelItemAppear` / `labelItemDisappear` built-in type。
+- 为什么属于 VRender 自身内容大小问题：component custom 确实是 full custom register 的 optional tail，但收益需要上层存在 component animate-only profile 才能兑现；当前只新增 register 会继续增加 full/default wrapper 成本。
+- Root/default 影响：本轮不改代码，不影响。
+- Public API 影响：本轮不新增 `@visactor/vrender-animate/custom/register-component`。
+- 结论：暂缓 `register-component`。后续只有在 VChart / VTable 先定义 component animate-only optional profile，或 VRender components 提供明确 component animate bootstrap 时，再按 full 增量 / narrow closure gate 重新领取。
+
+Verification:
+
+- `git diff --check`
+- Read-only source scan for VRender component animate type usage.
+- Read-only VChart source scan for component animate type usage.
+
+Not-tested:
+
+- Did not run VChart bundle stats; this was a stats-first owner decision, not an implementation slice.
+
 ## 外部 Bundle Before / After 记录格式
 
 涉及 VChart / VTable 外部场景时，再追加如下记录：

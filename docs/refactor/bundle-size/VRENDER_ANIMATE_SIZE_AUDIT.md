@@ -91,8 +91,8 @@
    - 已落地 `registerRichTextCustomAnimate`（`@visactor/vrender-animate/custom/register-richtext`）：inputText、inputRichText、outputRichText、slideRichText、slideOutRichText。
    - 已落地 `registerDisappearCustomAnimate`（`@visactor/vrender-animate/custom/register-disappear`）：dissolve、grayscale、distortion、particle、glitch、gaussianBlur、pixelation。
    - 已落地 `registerStoryCustomAnimate`（`@visactor/vrender-animate/custom/register-story`）：slide/grow/spin/moveScale/moveRotate/stroke in/out、pulse、MotionPath、streamLight。
-3. 后续新增数量控制：animate custom 维度预计只剩 `0-1` 个窄 register。
-   - `registerComponentAnimate`：poptip、label-item 等，仅作为 stats-first 候选；当前直接源码约 9,057 raw / 1,710 gzip，假想 closure 约 13 files / 22,238 gzip，只有上层有明确 component-only optional profile 时才新增。
+3. 后续新增数量控制：animate custom 维度预计不再新增窄 register，除非上层先定义出新的 component-only optional profile。
+   - `registerComponentAnimate`：poptip、label-item 等暂缓；当前直接源码约 9,057 raw / 1,710 gzip，假想 closure 约 13 files / 22,238 gzip。VChart 只读检查发现有 `poptip` 用户开关与 `registerPoptip()` 组件注册，但未发现直接使用 `poptipAppear` / `poptipDisappear` / `labelItemAppear` / `labelItemDisappear` built-in type，暂不证明需要 component animate-only register。
    - `registerPolarAnimate` 暂缓，不作为默认新增项；growAngle / growRadius 当前属于常规 basic custom，拆出会增加 full wrapper 成本并扩大上层配置复杂度。
 4. full app 入口保持 `registerCustomAnimate()` 行为不变；lite / shared browser 不自动带 custom。
 5. VChart line/simple 侧如果需要 built-in type 动画，应明确通过标准窄入口注册，不要求上层 workaround deep import。

@@ -54,7 +54,7 @@
 - pie / empty 的 analyzer group 表：待验证。
 - bare stage 入口：待验证。
 - line/simple 的 raw-data 或 metafile 明细：待验证。
-- VTable 基础场景：待验证。
+- VTable 基础场景：先以 VChart 场景作为 proxy；仅 table-only 链路需要专门 stats。
 
 ## 2026-06-03 场景收益 Gate
 
@@ -88,7 +88,7 @@ Owner判断：
 
 - components / kits / animate 在 VChart `full - line` 中分别多出约 75KB / 30KB / 38KB analyzer gzip，是后续 optional 拆分的主要场景价值来源。
 - core 在 empty / line / pie / simple / full 中都接近 237KB analyzer gzip，说明常规图表场景已带入 core 主闭包；后续 core 优化应优先删真实内容或建立可验证 lite profile，不能只看单个小 parser。
-- VTable 本轮没有 ready-made stats / gzip；源码显示存在 components root re-export 和多端 env loader 静态导入。表格收益需要先补 VTable stats 后再作为 P0 owner 证据。
+- VTable 本轮没有 ready-made stats / gzip，但常规表格和透视图场景可先由 VChart line / pie / simple / full 代理；源码中的 components root re-export 和多端 env loader 只作为 table-only 补充线索。
 
 ## 口径说明
 

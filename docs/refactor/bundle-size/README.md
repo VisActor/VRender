@@ -19,7 +19,7 @@ VRender 1.1.0 / D3 状态动画重构发布前，状态语义已经收敛，rele
 | `@visactor/vutils` | 129.9k | 41.1k |
 | `@visactor/vrender-kits` | 113.1k | 37.8k |
 
-这些数据说明后续不能只排查 import / barrel / exports。入口和环境解析问题已经完成主要梳理，下一轮主线应转向 VRender 自身内容大小：core / graphic / render / picker / animate / components / kits 中真实代码量、可选能力、图元内部工具链、parser、text / richtext、path / svg / xml、3D、image / gif / texture，以及 `@visactor/vutils` 的引入方式。VChart bundler stats 只作为外部 smoke 和回归辅助，不再作为 owner 判断的主依据。
+这些数据说明后续不能只排查 import / barrel / exports。入口和环境解析问题已经完成主要梳理，下一轮主线应转向 VRender 自身内容大小：core / graphic / render / picker / animate / components / kits 中真实代码量、可选能力、图元内部工具链、parser、text / richtext、path / svg / xml、3D、image / gif / texture，以及 `@visactor/vutils` 的引入方式。VChart bundler stats 不作为 VRender owner 的唯一证据，但它是当前图表和 VTable 常规场景收益的主要代理样本。
 
 ## 与 `docs/agent/` 的关系
 
@@ -77,4 +77,4 @@ D3 语义不重开。本专项只记录包体积优化上下文。
 
 ## 当前边界
 
-本目录是优化上下文和 backlog，不代表优化已经完成。所有“建议”“候选”“P0”都需要后续编码 agent 用 VRender 自身 size ledger、bundle analyzer 或 build 产物数据、targeted tests 证明；VChart stats 仅作为外部回归补充。
+本目录是优化上下文和 backlog，不代表优化已经完成。所有“建议”“候选”“P0”都需要后续编码 agent 用 VRender 自身 size ledger、bundle analyzer 或 build 产物数据、targeted tests 证明；场景收益优先用 VChart line / pie / simple / full stats 验证，table-only 链路再补 VTable stats。

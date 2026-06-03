@@ -67,7 +67,7 @@ P0 必须同时满足：
 
 | ID | 任务 | 状态 | 进度记录 |
 | --- | --- | --- | --- |
-| BS-P1-005 | root-only 组件补稳定 public subpath | candidate | data-zoom、marker、player、slider、scrollbar、title、brush、timeline、radio、checkbox、table-series-number |
+| BS-P1-005 | root-only 组件补稳定 public subpath | completed 2026-06-03 | 已补 data-zoom、marker、player、slider、scrollbar、title、brush、timeline、radio、checkbox、table-series-number；marker 额外补 line/area/point/arc-line/arc-area 窄入口 |
 | BS-P1-006 | label / axis / legend 子入口宽度复核 | candidate | 优先新增更窄入口，不改变既有 root/family entry |
 | BS-P2-014 | richtext optional 化与 tooltip/title/label 拆分 | candidate | 需要 VChart visual/smoke 辅助确认默认外观 |
 
@@ -95,7 +95,7 @@ P0 必须同时满足：
 | BS-P0-004 | animate custom/runtime 内容分层 | `@visactor/vrender-animate` | custom/register、story、richtext、poptip、grow* 等代码量可观；需区分基础 runtime 与 optional custom 内容 | `animate/src/index.ts`、`register.ts`、`custom/register.ts`、`custom/register-basic.ts`、`custom/register-disappear.ts`、`custom/register-richtext.ts`、`custom/register-story.ts`、`custom/*` | animate runtime -> custom implementations | full/root 行为保持；可新增分层 register 或删除死码 | High | Medium | P0 | animate tests；scaleIn fromScale 回归；size ledger | 不需要，VChart 只做 smoke；后续上层可迁移到 basic/disappear/richtext/story register；`register-component` 仅在上层先定义 component animate-only optional profile 时再做 | in-progress: component draft removed; `custom/register-basic` / `custom/register-disappear` / `custom/register-richtext` added 2026-06-01; `custom/register-story` added 2026-06-02; `register-component` stats-first decision deferred 2026-06-02; remaining animate custom narrow register estimate 0 by default |
 | BS-P0-005 | optional 能力拆分与上层按需加载文档契约 | docs / bundle-size | 需要上层按场景迁移才能拿到收益的拆分，如果没有使用指南和用户选择语义，收益无法闭环 | `VRENDER_OPTIONAL_CAPABILITY_CONTRACT.md`、`VRENDER_ON_DEMAND_CAPABILITY_USAGE.md` | VRender public capability -> VChart/VTable bootstrap -> user runtime option | 不影响 root/default；只定义迁移和 review gate | Medium | Low | P0 | 文档 review；后续每个 optional slice 更新 usage guide | 需要 VChart/VTable 后续按配置落地 | completed 2026-06-01 |
 | BS-P0-006 | 建立图表 / 表格常规场景收益 gate | docs / bundle-size | 只做功能拆解会让 full 兼容层持续变厚，必须先判断常规场景是否能实际获得收益 | `VRENDER_SCENARIO_SIZE_VALUE_ASSESSMENT.md`、`VRENDER_BUNDLE_BASELINE.md`、VChart `stats-*.html`、VTable `src/vrender*.ts` | VRender package content -> VChart proxy scenario bundle -> user opt-in profile | 不改变行为 | High | Low | P0 | 只读 stats 解析；baseline 文档记录；`git diff --check` | 后续优先用 VChart 同口径 stats 验证；table-only 再补 VTable stats | completed 2026-06-03 |
-| BS-P1-005 | components root-only 组件补稳定 public subpath | `@visactor/vrender-components` package exports | data-zoom、marker、player、slider、scrollbar、title、brush、timeline、radio、checkbox、table-series-number 等缺 package export | `packages/vrender-components/package.json`、`src/index.ts`、各组件 `src/*/index.ts` | root components -> all component content | 不改变 root/default，只新增 exports | Medium | Low-Medium | P1 | components compile/test；可选 VChart 替换后 stats | VChart/VTable 可选配合 | candidate |
+| BS-P1-005 | components root-only 组件补稳定 public subpath | `@visactor/vrender-components` package exports | data-zoom、marker、player、slider、scrollbar、title、brush、timeline、radio、checkbox、table-series-number 等原缺 package export | `packages/vrender-components/package.json`、`src/index.ts`、各组件 `src/*/index.ts` | root components -> all component content | 不改变 root/default，只新增 exports | Medium | Low-Medium | P1 | components compile/test；可选 VChart 替换后 stats | VChart/VTable 可选配合迁移到 public subpath | completed 2026-06-03 |
 | BS-P1-006 | components label / axis / legend 子入口宽度复核 | `@visactor/vrender-components` | 现有子入口仍可能 re-export 过宽，如 axis root、label root、legend root | `src/axis/index.ts`、`src/label/index.ts`、`src/legend/index.ts` | component family root -> family all modules | 不改变 root/default，新增更窄子入口 | Medium | Medium | P1 | 单组件 metafile；components tests | VChart 可选 smoke | candidate |
 | BS-P1-007 | media optional installer 内容隔离 | `@visactor/vrender-kits` gif/lottie/rough/dynamicTexture | gif/lottie/rough/dynamicTexture 是可选能力，但源码仍在 kits/full 内容中形成高风险区 | `kits/src/index.ts`、`index-node.ts`、`register-gif.ts`、`render/contributions/rough/*` | kits root/full app -> media optional modules | full default 需保持；新增 optional 推荐路径 | Medium | Medium | P1 | kits tests；media demos；size ledger | VChart 可选 smoke | in-progress: stale commented kits source shells removed 2026-06-01 |
 | BS-P1-008 | 3D installer / register 分组与内容隔离 | core/kits 3D | 3D 图元、camera、light、draw interceptor 对 2D 基础能力非必需，但 full/default 需要保持 | `core/src/graphic/*3d.ts`、`core/src/core/camera.ts`、`core/src/core/light.ts`、entries bootstrap | full standard pipeline；root barrel | full default 需保持；lite/optional 不带 | Medium | Medium | P1 | 3D tests；shared/lite tests；size ledger | VChart 视 3D 场景而定 | candidate |
@@ -111,9 +111,10 @@ P0 必须同时满足：
 
 1. 先以 VChart line / pie / simple / full 作为图表与 VTable 常规场景 proxy，继续从 VChart stats 选择下一个 slice。
 2. 新增 optional 拆分前必须引用 BS-P0-006 的收益 gate：常规图表 / 表格预估 analyzer gzip 小于 5KB 的任务默认不进 P0。
-3. 下一候选优先从 components root-only optional subpath 或 kits env-selected installer 中选一个小 slice；它们在 VChart full-line 中已有较高 owner 信号。
-4. Animate custom 后续只在 VChart 能按动画效果选择加载时继续，不默认新增更多窄 register。
-5. VTable stats 只在领取 table-only env/component 链路时补；`path-svg`、builtin-symbol、单个小 register 暂缓，除非 VChart stats 证明场景收益超过 gate。
+3. Components 下一步转为 VChart 迁移验证或 axis/label/legend 子入口宽度复核；不要继续只补低价值 root-only exports。
+4. Kits env-selected installer 仍是下一候选高价值 slice。
+5. Animate custom 后续只在 VChart 能按动画效果选择加载时继续，不默认新增更多窄 register。
+6. VTable stats 只在领取 table-only env/component 链路时补；`path-svg`、builtin-symbol、单个小 register 暂缓，除非 VChart stats 证明场景收益超过 gate。
 
 ## Rejected / 暂缓
 

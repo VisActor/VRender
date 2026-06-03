@@ -925,6 +925,58 @@ Not-tested:
 - No compile or unit test run for this docs-only owner decision.
 - Did not run VChart stats; this decision explicitly avoids VChart as owner evidence.
 
+### 2026-06-03 / BS-P1-005 / Components optional public subpaths
+
+- Commit / branch: `this commit / remerge-d3`
+- Package: `@visactor/vrender-components`
+- Build/source scope: package public exports and existing `es` / `cjs` output
+- Command: `node <<'NODE' ... verify package exports point to existing es/cjs/types files ... NODE`
+- Data source: package.json raw/gzip, VChart existing `stats-full.html` and `stats-line.html`
+
+Owner judgment:
+
+- 现象：VChart full 相比 line 额外带入 `marker` 15,334 gzip、`data-zoom` 9,817 gzip、`player` 7,951 gzip、`slider` 5,638 gzip、`brush` 3,331 gzip、`title` 2,199 gzip。这些是 optional components，但此前多数只能从 `@visactor/vrender-components` root 或未公开 deep import 获取。
+- 证据文件：`packages/vrender-components/package.json`、`packages/vrender-components/src/index.ts`、`packages/vrender-components/src/marker/index.ts`、VChart `stats-full.html` / `stats-line.html`。
+- 为什么属于 VRender 自身能力边界问题：VChart / VTable 要做按需加载时，VRender 必须先提供稳定 public subpath；否则上层只能继续 root import 或依赖内部 `es/*` 文件。
+- Root/default 影响：不改变 `@visactor/vrender-components` root export；full/default 行为不变。
+- VChart / VTable 配合：需要上层把 value import 从 root 改到对应 public subpath，并把用户选择映射到 component profile。
+- 预期收益：本提交不直接降低 VChart line/final gzip；迁移后可按场景避开 root components 或 marker 全族闭包。VChart full-line 中可作为优先验证的 components analyzer gzip owner 为 `marker` 15.3KB、`data-zoom` 9.8KB、`player` 8.0KB、`slider` 5.6KB。
+- 风险：新增 public surface 后需要保持稳定；未新增 package version。
+
+Package metadata ledger:
+
+| file | before raw | after raw | before gzip | after gzip | delta gzip |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| `packages/vrender-components/package.json` | 8,409 | 15,780 | 1,668 | 2,400 | +732 |
+
+New public subpath groups:
+
+| group | entries |
+| --- | --- |
+| `data-zoom` | root / register / type |
+| `marker` | root / line / area / point / arc-line / arc-area / register / type |
+| `player` | root / register / type |
+| `slider` | root / constant / register / type |
+| `scrollbar` | root / module / register / type |
+| `title` | root / register / type |
+| `brush` | root / register / type |
+| `timeline` | root / register / type |
+| `radio` / `checkbox` | root / register / type |
+| `table-series-number` | root / register / type |
+
+Verification:
+
+- `node -e "const pkg=require('./packages/vrender-components/package.json'); console.log(Object.keys(pkg.exports).length);"`
+- Export target check for every `types` / `import` / `require` path in `packages/vrender-components/package.json`.
+- CJS self-reference smoke from `packages/vrender-components` for representative new subpaths.
+- `rush compile -t @visactor/vrender-components`
+
+Not-tested:
+
+- Did not migrate VChart imports in this repo.
+- Did not rebuild VChart stats; expected savings require upper-layer migration.
+- Node native ESM smoke is not used as evidence because existing `es/*` files use extensionless relative imports that require bundler / TS resolution.
+
 ## 外部 Bundle Before / After 记录格式
 
 涉及 VChart / VTable 外部场景时，再追加如下记录：

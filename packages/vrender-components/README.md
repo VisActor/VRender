@@ -5,7 +5,15 @@
 ## Usage
 
 ```typescript
-import { xxx } from '@visactor/components';
+import { Tooltip } from '@visactor/vrender-components';
+```
+
+For bundle-size-sensitive profiles, prefer public component subpaths instead of the package root:
+
+```typescript
+import { DataZoom } from '@visactor/vrender-components/data-zoom';
+import { MarkLine } from '@visactor/vrender-components/marker/line';
+import { ScrollBar } from '@visactor/vrender-components/scrollbar';
 ```
 
 ## Develop

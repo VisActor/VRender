@@ -6,7 +6,7 @@
 ## 当前入口事实
 
 - root：`packages/vrender-components/src/index.ts` 导出全组件。
-- package exports：`packages/vrender-components/package.json` 只暴露 axis、crosshair、label、legend、poptip、tag、tooltip、util 等少量子路径。
+- package exports：`packages/vrender-components/package.json` 已暴露 axis、crosshair、label、legend、poptip、tag、tooltip、util，以及一组 root-only optional 组件子路径。
 - `sideEffects: false`，但多个组件 class 文件会在模块顶层调用 `load*Component()`，因此 root barrel 和过宽子入口仍要用 bundle analyzer 验证。
 
 ## 组件风险表
@@ -19,16 +19,16 @@
 | tooltip | `./tooltip` | `tooltip/register.ts` | group/rect/symbol/text/richtext | VChart line 常见 | richtext tooltip 可选但默认 tooltip 需要 | subpath 已有，但内部 richtext 成本需 stats | tooltip interaction |
 | crosshair | `./crosshair`、`./crosshair/line`、`./crosshair/rect`、type | `crosshair/register.ts` | line: group/line；rect: group/rect；circle/sector: arc；polygon: path | line/rect crosshair 常见 | circle/sector/polygon optional | `crosshair/index.ts` 全形态，建议继续使用 line/rect 子入口并补其他显式子入口 | crosshair interaction |
 | poptip | `./poptip` | `poptip/register.ts` | group/text/symbol/rect，module/plugin/contribution | 非基础 line 必需 | optional | `poptip/index.ts` 导出 module/plugin，建议拆 module/plugin 子入口 | poptip tests |
-| data-zoom | 无 package export，root-only | `data-zoom/register.ts` | tag、rect/symbol/area/line | 非基础 line 必需 | optional | 建议新增 `./data-zoom` 子入口，避免 root components | data-zoom interaction |
-| marker | 无 package export，root-only | `marker/register.ts` | group/tag/segment/arcSegment/polygon/arc/symbol/image/line + `registerAnimate` | 非基础 line 必需 | optional heavy | 建议拆 line/area/point/arc 子入口；marker root 全族较宽 | marker tests |
-| player | 无 package export，root-only | `player/register.ts` | slider、group、symbol、controller | 否 | optional | 新增 `./player` 子入口；避免 slider/player 互相进入基础路径 | player tests |
-| slider | 无 package export，root-only | `slider/register.ts` | group/text/rect/symbol | 否 | optional | 新增 `./slider`，legend/data-zoom 需要时显式依赖 | slider tests |
-| scrollbar | 无 package export，root-only | `scrollbar/register.ts` | group/rect；legend discrete 可能带入 pager/scrollbar | legend scroll 时需要 | optional | 新增 `./scrollbar`，legend discrete 内部依赖保持显式 | scrollbar tests |
-| title | 无 package export，root-only | `title/register.ts` | group/text/richtext | VChart 常见但可配置 | richtext optional | 新增 `./title`；评估 title plain/richtext 拆分 | title tests |
-| brush | 无 package export，root-only | `brush/register.ts` | group/polygon | 否 | optional | 新增 `./brush` | brush interaction |
-| timeline | 无 package export，root-only | `timeline/register.ts` | group/text/symbol/line | 否 | optional | 新增 `./timeline` | timeline tests |
-| radio / checkbox | 无 package export，root-only | `radio/register.ts`、`checkbox/register.ts` | radio: group/rect/wrapText/image；checkbox: group/rect/text/image | 否 | optional，image 链路风险 | 新增 `./radio` / `./checkbox`；避免 image 进入基础图表 | radio/checkbox tests |
-| table-series-number | 无 package export，root-only | `table-series-number/register.ts` | group/text/image；event-manager | 否 | optional | 新增 `./table-series-number`；确认 image 是否必要 | table-series-number tests |
+| data-zoom | `./data-zoom`、`./data-zoom/register`、`./data-zoom/type` | `data-zoom/register.ts` | tag、rect/symbol/area/line | 非基础 line 必需 | optional | 已有 public subpath；上层应从 root 迁移到该入口 | data-zoom interaction |
+| marker | `./marker`、`./marker/line`、`./marker/area`、`./marker/point`、`./marker/arc-line`、`./marker/arc-area`、type/register | `marker/register.ts` | group/tag/segment/arcSegment/polygon/arc/symbol/image/line + `registerAnimate` | 非基础 line 必需 | optional heavy | 已有 family public subpath；优先用 line/area/point/arc 窄入口，避免 marker root 全族 | marker tests |
+| player | `./player`、`./player/register`、`./player/type` | `player/register.ts` | slider、group、symbol、controller | 否 | optional | 已有 public subpath；避免 root components | player tests |
+| slider | `./slider`、constant/register/type | `slider/register.ts` | group/text/rect/symbol | 否 | optional | 已有 public subpath；legend/data-zoom 需要时显式依赖 | slider tests |
+| scrollbar | `./scrollbar`、module/register/type | `scrollbar/register.ts` | group/rect；legend discrete 可能带入 pager/scrollbar | legend scroll 时需要 | optional | 已有 public subpath；legend discrete 内部依赖保持显式 | scrollbar tests |
+| title | `./title`、`./title/register`、`./title/type` | `title/register.ts` | group/text/richtext | VChart 常见但可配置 | richtext optional | 已有 public subpath；后续评估 title plain/richtext 拆分 | title tests |
+| brush | `./brush`、`./brush/register`、`./brush/type` | `brush/register.ts` | group/polygon | 否 | optional | 已有 public subpath；避免 root components | brush interaction |
+| timeline | `./timeline`、`./timeline/register`、`./timeline/type` | `timeline/register.ts` | group/text/symbol/line | 否 | optional | 已有 public subpath；避免 root components | timeline tests |
+| radio / checkbox | `./radio` / `./checkbox`、register/type | `radio/register.ts`、`checkbox/register.ts` | radio: group/rect/wrapText/image；checkbox: group/rect/text/image | 否 | optional，image 链路风险 | 已有 public subpath；避免 image 进入基础图表 | radio/checkbox tests |
+| table-series-number | `./table-series-number`、register/type | `table-series-number/register.ts` | group/text/image；event-manager | 否 | optional | 已有 public subpath；后续确认 image 是否必要 | table-series-number tests |
 
 ## 其他已存在但本轮未列为必填的组件
 
@@ -53,10 +53,10 @@
 
 ## 后续优化建议
 
-1. 优先补齐 root-only 组件 public subpath：data-zoom、marker、player、slider、scrollbar、title、brush、timeline、radio、checkbox、table-series-number。
+1. VChart 优先替换到稳定 public subpath，不使用未公开 deep import。
 2. 对已有子入口做宽度复核：axis/label/legend/crosshair/marker。
 3. 对 richtext / image / path / arc 依赖做 optional 化：优先在组件内部拆 plain vs rich / line vs polar / text vs image。
-4. VChart 替换到稳定 public subpath，不使用未公开 deep import。
+4. 继续观察未列入首轮的 root-only 组件：indicator、empty-tip、weather、switch、label-item、link-path、pager、segment。
 
 ## 验证方式
 

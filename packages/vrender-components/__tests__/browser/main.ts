@@ -320,19 +320,34 @@ const specs = [
   }
 ];
 
-const createSidebar = (node: HTMLDivElement) => {
-  const specsHtml = specs.map(entry => {
-    return `<p class="menu-item" data-path="${entry.path}">${entry.name}</p>`;
-  });
+const buildMenuHtml = (filter?: string) => {
+  const keyword = filter?.toLowerCase() ?? '';
+  return specs
+    .filter(
+      entry => !keyword || entry.name.toLowerCase().includes(keyword) || entry.path.toLowerCase().includes(keyword)
+    )
+    .map(entry => {
+      return `<p class="menu-item" data-path="${entry.path}">${entry.name}</p>`;
+    })
+    .join('');
+};
 
+const createSidebar = (node: HTMLDivElement) => {
   node.innerHTML = `
     <div>
       <p class="sidebar-title">组件列表</p>
+      <input class="sidebar-search" placeholder="搜索..." />
       <div class="menu-list">
-        ${specsHtml.join('')}
+        ${buildMenuHtml()}
       </div>
     </div>
   `;
+
+  const searchInput = node.querySelector<HTMLInputElement>('.sidebar-search')!;
+  searchInput.addEventListener('input', () => {
+    const menuList = node.querySelector<HTMLDivElement>('.menu-list')!;
+    menuList.innerHTML = buildMenuHtml(searchInput.value);
+  });
 };
 
 const ACTIVE_ITEM_CLS = 'menu-item-active';
@@ -350,7 +365,10 @@ const handleClick = (e: { target: any }, isInit?: boolean) => {
   }
 
   if (triggerNode) {
-    const path = triggerNode.dataset.path;
+    const path = triggerNode.dataset?.path;
+    if (!path) {
+      return;
+    }
 
     triggerNode.classList.add(ACTIVE_ITEM_CLS);
     if (!isInit) {

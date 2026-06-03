@@ -35,6 +35,14 @@ export const pages = [
   {
     title: 'circle绘制',
     path: 'circle'
+  },
+  {
+    title: '富文本列表&链接',
+    path: 'richtext-list-link'
+  },
+  {
+    title: '富文本编辑器',
+    path: 'richtext-editor'
   }
   // {
   //   title: 'rect绘制',

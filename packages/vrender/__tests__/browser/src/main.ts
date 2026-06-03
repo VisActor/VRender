@@ -3,27 +3,56 @@ import { pages } from './pages/';
 
 const LOCAL_STORAGE_KEY = 'CANOPUS_DEMOS';
 
+const buildMenuHtml = (filter?: string) => {
+  const keyword = filter?.toLowerCase() ?? '';
+  return pages
+    .map(entry => {
+      if (entry.menu && entry.children && entry.children.length) {
+        const childrenItems = entry.children
+          .filter(
+            child =>
+              !keyword || child.name.toLowerCase().includes(keyword) || child.path.toLowerCase().includes(keyword)
+          )
+          .map(child => {
+            return `<p class="menu-item" data-path="${child.path}"data-type="${child.type ?? 'spec'}">${
+              child.name
+            }</p>`;
+          });
+
+        if (!childrenItems.length) {
+          return '';
+        }
+        return `<p class="menu-item menu-title">${entry.menu}</p>${childrenItems.join('')}`;
+      }
+
+      if (
+        keyword &&
+        !entry.name.toLowerCase().includes(keyword) &&
+        !(entry as any).path?.toLowerCase().includes(keyword)
+      ) {
+        return '';
+      }
+      return `<p class="menu-item" data-path="${(entry as any).path}">${entry.name}</p>`;
+    })
+    .join('');
+};
+
 const createSidebar = (node: HTMLDivElement) => {
-  const specsHtml = pages.map(entry => {
-    if (entry.menu && entry.children && entry.children.length) {
-      const childrenItems = entry.children.map(child => {
-        return `<p class="menu-item" data-path="${child.path}"data-type="${child.type ?? 'spec'}">${child.name}</p>`;
-      });
-
-      return `<p class="menu-item menu-title">${entry.menu}</p>${childrenItems.join('')}`;
-    }
-
-    return `<p class="menu-item" data-path="${entry.path}">${entry.name}</p>`;
-  });
-
   node.innerHTML = `
     <div>
       <p class="sidebar-title">组件列表</p>
+      <input class="sidebar-search" placeholder="搜索..." />
       <div class="menu-list">
-        ${specsHtml.join('')}
+        ${buildMenuHtml()}
       </div>
     </div>
   `;
+
+  const searchInput = node.querySelector<HTMLInputElement>('.sidebar-search')!;
+  searchInput.addEventListener('input', () => {
+    const menuList = node.querySelector<HTMLDivElement>('.menu-list')!;
+    menuList.innerHTML = buildMenuHtml(searchInput.value);
+  });
 };
 
 const ACTIVE_ITEM_CLS = 'menu-item-active';
@@ -43,7 +72,10 @@ const handleClick = (e: { target: any }, isInit?: boolean) => {
   }
 
   if (triggerNode) {
-    const path = triggerNode.dataset.path;
+    const path = triggerNode.dataset?.path;
+    if (!path) {
+      return;
+    }
 
     triggerNode.classList.add(ACTIVE_ITEM_CLS);
     if (!isInit) {

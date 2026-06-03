@@ -6,6 +6,19 @@ import type {
   IRichTextParagraphCharacter
 } from '../../interface';
 
+const LIST_PROPERTIES = ['listType', 'listLevel', 'listIndex', 'listMarker', 'listIndentPerLevel', 'markerColor'];
+
+/**
+ * 从配置中剥离列表语义属性，防止新插入的字符继承列表结构
+ */
+function stripListProperties(config: any): any {
+  const result = { ...config };
+  for (const key of LIST_PROPERTIES) {
+    delete result[key];
+  }
+  return result;
+}
+
 // function getMaxConfigIndexIgnoreLinebreak(textConfig: IRichTextCharacter[]) {
 //   let idx = 0;
 //   for (let i = 0; i < textConfig.length; i++) {
@@ -59,8 +72,12 @@ export function findConfigIndexByCursorIdx(textConfig: IRichTextCharacter[], cur
   let lineBreak = (textConfig?.[0] as any)?.text === '\n';
   let configIdx = 0;
   for (configIdx = 0; configIdx < textConfig.length && tempCursorIndex >= 0; configIdx++) {
-    const c = textConfig[configIdx] as IRichTextParagraphCharacter;
-    if (c.text === '\n') {
+    const c = textConfig[configIdx] as any;
+    if ('listType' in c) {
+      // 列表项在布局中展开为 marker + content 两个段落，占用 2 个光标位
+      tempCursorIndex -= 2;
+      lineBreak = false;
+    } else if (c.text === '\n') {
       tempCursorIndex -= Number(lineBreak);
       lineBreak = true;
     } else {
@@ -97,8 +114,12 @@ export function findCursorIdxByConfigIndex(textConfig: IRichTextCharacter[], con
   let lastLineBreak = (textConfig?.[0] as any)?.text === '\n';
 
   for (let i = 0; i <= configIndex && i < textConfig.length; i++) {
-    const c = textConfig[i] as IRichTextParagraphCharacter;
-    if (c.text === '\n') {
+    const c = textConfig[i] as any;
+    if ('listType' in c) {
+      // 列表项占用 2 个光标位（marker + content）
+      cursorIndex += 2;
+      lastLineBreak = false;
+    } else if (c.text === '\n') {
       cursorIndex += Number(lastLineBreak);
       lastLineBreak = true;
     } else {
@@ -152,7 +173,22 @@ export class EditModule {
 
   constructor(container?: HTMLElement) {
     this.container = container ?? document.body;
+    this.textAreaDom = null;
+    this.isComposing = false;
+    this.composingConfigIdx = -1;
+    this.onInputCbList = [];
+    this.onChangeCbList = [];
+    this.onFocusInList = [];
+    this.onFocusOutList = [];
+  }
 
+  /**
+   * 确保 textarea 已创建并挂载到 DOM，仅在真正需要时创建
+   */
+  ensureTextArea() {
+    if (this.textAreaDom) {
+      return;
+    }
     const textAreaDom = document.createElement('textarea');
     textAreaDom.autocomplete = 'off';
     textAreaDom.spellcheck = false;
@@ -160,12 +196,6 @@ export class EditModule {
     this.applyStyle(textAreaDom);
     this.container.append(textAreaDom);
     this.textAreaDom = textAreaDom;
-    this.isComposing = false;
-    this.composingConfigIdx = -1;
-    this.onInputCbList = [];
-    this.onChangeCbList = [];
-    this.onFocusInList = [];
-    this.onFocusOutList = [];
   }
 
   onInput(cb: (text: string, isComposing: boolean, cursorIdx: number, rt: IRichText) => void) {
@@ -329,12 +359,37 @@ export class EditModule {
     const startIdx = findConfigIndexByCursorIdx(textConfig, this.selectionStartCursorIdx);
     const endIdx = findConfigIndexByCursorIdx(textConfig, this.cursorIndex);
 
+    // 列表项中按回车：在当前列表项后插入同类型新列表项
+    if (str === '\n' && !this.isComposing) {
+      const listConfig = textConfig[startIdx] as any;
+      if (listConfig && 'listType' in listConfig) {
+        const newListItem = {
+          ...listConfig,
+          text: '',
+          listIndex: undefined // 自动计算编号
+        };
+        textConfig.splice(startIdx + 1, 0, newListItem);
+        this.currRt.setAttributes({ textConfig });
+        const cursorIndex = findCursorIdxByConfigIndex(textConfig, startIdx + 1);
+        this.cursorIndex = cursorIndex;
+        this.selectionStartCursorIdx = cursorIndex;
+        this.onChangeCbList.forEach(cb => {
+          cb(str, false, cursorIndex, this.currRt);
+        });
+        return;
+      }
+    }
+
     // composing的话会插入一个字符，所以往右加一个
     const lastConfigIdx = this.isComposing ? this.composingConfigIdx : Math.max(startIdx - 1, 0);
     // 算一个默认属性
     let lastConfig: any = textConfig[lastConfigIdx];
     if (!lastConfig) {
       lastConfig = getDefaultCharacterConfig(rest);
+    }
+    // 剥离列表属性，避免新插入的普通字符继承列表语义
+    if (lastConfig && 'listType' in lastConfig) {
+      lastConfig = stripListProperties(lastConfig);
     }
     let nextConfig = lastConfig;
 
@@ -404,11 +459,14 @@ export class EditModule {
   };
 
   moveTo(x: number, y: number, rt: IRichText, cursorIndex: number, selectionStartCursorIdx: number) {
+    this.ensureTextArea();
     this.textAreaDom.style.left = `${x}px`;
     this.textAreaDom.style.top = `${y}px`;
     setTimeout(() => {
-      this.textAreaDom.focus();
-      this.textAreaDom.setSelectionRange(0, 0);
+      if (this.textAreaDom) {
+        this.textAreaDom.focus();
+        this.textAreaDom.setSelectionRange(0, 0);
+      }
     });
     this.currRt = rt;
 
@@ -417,14 +475,15 @@ export class EditModule {
   }
 
   release() {
-    this.textAreaDom.removeEventListener('input', this.handleInput);
-    this.textAreaDom.removeEventListener('compositionstart', this.handleCompositionStart);
-    this.textAreaDom.removeEventListener('compositionend', this.handleCompositionEnd);
-    this.textAreaDom.removeEventListener('focusin', this.handleFocusOut);
-    this.textAreaDom.removeEventListener('focusout', this.handleFocusOut);
+    if (this.textAreaDom) {
+      this.textAreaDom.removeEventListener('input', this.handleInput);
+      this.textAreaDom.removeEventListener('compositionstart', this.handleCompositionStart);
+      this.textAreaDom.removeEventListener('compositionend', this.handleCompositionEnd);
+      this.textAreaDom.removeEventListener('focusin', this.handleFocusIn);
+      this.textAreaDom.removeEventListener('focusout', this.handleFocusOut);
+      this.textAreaDom.parentElement?.removeChild(this.textAreaDom);
+      this.textAreaDom = null;
+    }
     application.global.removeEventListener('keydown', this.handleKeyDown);
-
-    this.textAreaDom.parentElement?.removeChild(this.textAreaDom);
-    this.textAreaDom = null;
   }
 }

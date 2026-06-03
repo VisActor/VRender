@@ -77,6 +77,8 @@ export default class Paragraph {
   space?: number;
   dx?: number;
   dy?: number;
+  _listIndent?: number;
+  _linkId?: string;
 
   constructor(
     text: string,
@@ -435,6 +437,16 @@ export function seperateParagraph(paragraph: Paragraph, index: number) {
   const text2 = paragraph.text.slice(index);
   const p1 = new Paragraph(text1, paragraph.newLine, paragraph.character, paragraph.ascentDescentMode);
   const p2 = new Paragraph(text2, true, paragraph.character, paragraph.ascentDescentMode);
+
+  // 保留列表缩进和链接标识
+  if (paragraph._listIndent != null) {
+    p1._listIndent = paragraph._listIndent;
+    p2._listIndent = paragraph._listIndent;
+  }
+  if (paragraph._linkId != null) {
+    p1._linkId = paragraph._linkId;
+    p2._linkId = paragraph._linkId;
+  }
 
   return [p1, p2];
 }

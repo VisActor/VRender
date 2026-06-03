@@ -40,8 +40,24 @@ body p {
   line-height: 5em;
 }
 
+#app .sidebar .sidebar-search {
+  box-sizing: border-box;
+  width: calc(100% - 1em);
+  margin: 0 0.5em 0.5em;
+  padding: 4px 8px;
+  font-size: 13px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  outline: none;
+}
+
+#app .sidebar .sidebar-search:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px var(--primary-color-outline);
+}
+
 #app .sidebar .menu-list {
-  height: calc(100% - 5em);
+  height: calc(100% - 5em - 2.5em);
   overflow-y: scroll;
 }
 

@@ -1,16 +1,7 @@
 import type { IAABBBounds, IPointLike } from '@visactor/vutils';
-import { isObject, isString, max, merge } from '@visactor/vutils';
+import { isObject, merge } from '@visactor/vutils';
 import { Generator } from '../../common/generator';
-import {
-  createGroup,
-  createLine,
-  createRect,
-  createRichText,
-  createText,
-  getRichTextBounds,
-  Graphic,
-  RichText
-} from '../../graphic';
+import { createGroup, createLine, createRect, createRichText, getRichTextBounds, RichText } from '../../graphic';
 import type {
   IGraphic,
   IGroup,
@@ -31,7 +22,6 @@ import type {
 import { EditModule, findConfigIndexByCursorIdx, getDefaultCharacterConfig } from './edit-module';
 import { application } from '../../application';
 import { getWordStartEndIdx } from '../../graphic/richtext/utils';
-// import { testLetter, testLetter2 } from '../../graphic/richtext/utils';
 
 type UpdateType =
   | 'input'
@@ -117,7 +107,7 @@ class Selection {
     }
     for (let i = Math.ceil(minCursorIdx); i <= Math.floor(maxCursorIdx); i++) {
       const val = supportOutAttr
-        ? (this._getFormat(key, i) ?? (this.rt?.attribute as any)[key])
+        ? this._getFormat(key, i) ?? (this.rt?.attribute as any)[key]
         : this._getFormat(key, i);
       val && valSet.add(val);
     }
@@ -128,6 +118,8 @@ class Selection {
 export const FORMAT_TEXT_COMMAND = 'FORMAT_TEXT_COMMAND';
 export const FORMAT_ALL_TEXT_COMMAND = 'FORMAT_ALL_TEXT_COMMAND';
 export const FORMAT_ELEMENT_COMMAND = 'FORMAT_ELEMENT_COMMAND';
+export const FORMAT_LINK_COMMAND = 'FORMAT_LINK_COMMAND';
+export const REMOVE_LINK_COMMAND = 'REMOVE_LINK_COMMAND';
 export class RichTextEditPlugin implements IPlugin {
   name: 'RichTextEditPlugin' = 'RichTextEditPlugin';
   activeEvent: 'onRegister' = 'onRegister';
@@ -166,30 +158,13 @@ export class RichTextEditPlugin implements IPlugin {
   protected updateCbs: Array<(type: UpdateType, p: RichTextEditPlugin, params?: any) => void>;
 
   // 富文本外部有align或者baseline的时候，需要对光标做偏移
-  declare protected deltaX: number;
-  declare protected deltaY: number;
-
-  // static splitText(text: string) {
-  //   // 😁这种emoji长度算两个，所以得处理一下
-  //   return Array.from(text);
-  // }
+  protected declare deltaX: number;
+  protected declare deltaY: number;
 
   static tryUpdateRichtext(richtext: IRichText) {
     const cache = richtext.getFrameCache();
     if (!RichText.AllSingleCharacter(cache)) {
       const tc = RichText.TransformTextConfig2SingleCharacter(richtext.attribute.textConfig);
-      // richtext.attribute.textConfig.forEach((item: IRichTextParagraphCharacter) => {
-      //   const textList = RichTextEditPlugin.splitText(item.text.toString());
-      //   if (isString(item.text) && textList.length > 1) {
-      //     // 拆分
-      //     for (let i = 0; i < textList.length; i++) {
-      //       const t = textList[i];
-      //       tc.push({ ...item, text: t });
-      //     }
-      //   } else {
-      //     tc.push(item);
-      //   }
-      // });
       richtext.setAttributes({ textConfig: tc });
       richtext.doUpdateFrameCache(tc);
     }
@@ -207,6 +182,8 @@ export class RichTextEditPlugin implements IPlugin {
     this.commandCbs = new Map();
     this.commandCbs.set(FORMAT_TEXT_COMMAND, [this.formatTextCommandCb]);
     this.commandCbs.set(FORMAT_ALL_TEXT_COMMAND, [this.formatAllTextCommandCb]);
+    this.commandCbs.set(FORMAT_LINK_COMMAND, [this.formatLinkCommandCb]);
+    this.commandCbs.set(REMOVE_LINK_COMMAND, [this.removeLinkCommandCb]);
     this.updateCbs = [];
     this.deltaX = 0;
     this.deltaY = 0;
@@ -239,6 +216,82 @@ export class RichTextEditPlugin implements IPlugin {
     this._formatTextCommand(payload, config, rt);
   };
 
+  /**
+   * 为选中文本添加链接
+   * payload: { href: string; linkColor?: string }
+   */
+  formatLinkCommandCb = (payload: { href: string; linkColor?: string }, p: RichTextEditPlugin) => {
+    const rt = p.currRt;
+    if (!rt) {
+      return;
+    }
+    const selectionData = p.getSelection();
+    if (!selectionData || selectionData.isEmpty()) {
+      return;
+    }
+    const { selectionStartCursorIdx, curCursorIdx } = selectionData;
+    const minCursorIdx = Math.min(selectionStartCursorIdx, curCursorIdx);
+    const maxCursorIdx = Math.max(selectionStartCursorIdx, curCursorIdx);
+    const minConfigIdx = findConfigIndexByCursorIdx(rt.attribute.textConfig, minCursorIdx);
+    const maxConfigIdx = findConfigIndexByCursorIdx(rt.attribute.textConfig, maxCursorIdx);
+    for (let i = minConfigIdx; i <= maxConfigIdx; i++) {
+      const item = rt.attribute.textConfig[i] as any;
+      if (item && item.text != null) {
+        item.href = payload.href;
+        if (payload.linkColor) {
+          item.linkColor = payload.linkColor;
+        }
+        // 默认链接样式
+        if (item.fill === undefined || item.fill === true || item.fill === 'black') {
+          item.fill = payload.linkColor || '#3073F2';
+        }
+        if (item.underline === undefined) {
+          item.underline = true;
+        }
+      }
+    }
+    rt.setAttributes(rt.attribute);
+    const cache = rt.getFrameCache();
+    if (cache) {
+      this.selectionRangeByCursorIdx(this.selectionStartCursorIdx, this.curCursorIdx, cache);
+    }
+    this.updateCbs.forEach(cb => cb('dispatch', this));
+  };
+
+  /**
+   * 移除选中文本的链接
+   */
+  removeLinkCommandCb = (_payload: any, p: RichTextEditPlugin) => {
+    const rt = p.currRt;
+    if (!rt) {
+      return;
+    }
+    const selectionData = p.getSelection();
+    if (!selectionData || selectionData.isEmpty()) {
+      return;
+    }
+    const { selectionStartCursorIdx, curCursorIdx } = selectionData;
+    const minCursorIdx = Math.min(selectionStartCursorIdx, curCursorIdx);
+    const maxCursorIdx = Math.max(selectionStartCursorIdx, curCursorIdx);
+    const minConfigIdx = findConfigIndexByCursorIdx(rt.attribute.textConfig, minCursorIdx);
+    const maxConfigIdx = findConfigIndexByCursorIdx(rt.attribute.textConfig, maxCursorIdx);
+    for (let i = minConfigIdx; i <= maxConfigIdx; i++) {
+      const item = rt.attribute.textConfig[i] as any;
+      if (item) {
+        delete item.href;
+        delete item.linkColor;
+        delete item.linkHoverColor;
+        item.underline = false;
+      }
+    }
+    rt.setAttributes(rt.attribute);
+    const cache = rt.getFrameCache();
+    if (cache) {
+      this.selectionRangeByCursorIdx(this.selectionStartCursorIdx, this.curCursorIdx, cache);
+    }
+    this.updateCbs.forEach(cb => cb('dispatch', this));
+  };
+
   _formatTextCommand(payload: string, config: IRichTextCharacter[], rt: IRichText) {
     if (payload === 'bold') {
       config.forEach((item: IRichTextParagraphCharacter) => (item.fontWeight = 'bold'));
@@ -269,7 +322,11 @@ export class RichTextEditPlugin implements IPlugin {
   }
 
   registerCommand(command: string, cb: (payload: any, p: RichTextEditPlugin) => void) {
-    const cbs: Array<(payload: any, p: RichTextEditPlugin) => void> = this.commandCbs.get(command) || [];
+    let cbs = this.commandCbs.get(command);
+    if (!cbs) {
+      cbs = [];
+      this.commandCbs.set(command, cbs);
+    }
     cbs.push(cb);
   }
 
@@ -297,7 +354,6 @@ export class RichTextEditPlugin implements IPlugin {
   activate(context: IPluginService): void {
     this.pluginService = context;
     this.editModule = new EditModule();
-    // context.stage.on('click', this.handleClick);
     context.stage.on('pointermove', this.handleMove, { capture: true });
     context.stage.on('pointerdown', this.handlePointerDown, { capture: true });
     context.stage.on('pointerup', this.handlePointerUp, { capture: true });
@@ -414,7 +470,6 @@ export class RichTextEditPlugin implements IPlugin {
       x = 1;
     }
 
-    // const pos = this.computedCursorPosByCursorIdx(this.curCursorIdx, this.currRt);
     const { lineInfo, columnInfo } = this.getColumnByIndex(cache, Math.round(this.curCursorIdx));
     const { lines } = cache;
     const totalCursorCount = lines.reduce((total, line) => total + line.paragraphs.length, 0) - 1;
@@ -518,11 +573,7 @@ export class RichTextEditPlugin implements IPlugin {
     this.tryShowShadowPlaceholder();
     this.tryShowInputBounds();
 
-    // 修改cursor的位置，但并不同步到curIdx，因为这可能是临时的
-    // const p = this.getPointByColumnIdx(cursorIdx, rt, orient);
-    // console.log(this.curCursorIdx, cursorIdx);
     this.hideSelection();
-    // this.setCursor(p.x, p.y1, p.y2);
     this.updateCbs.forEach(cb => cb('input', this));
   };
 
@@ -620,14 +671,9 @@ export class RichTextEditPlugin implements IPlugin {
     }
     // 得先偏移，不然上一次的Bounds会影响后续的计算
     this.offsetShadowRoot();
-    // const { attribute } = this.currRt;
     const b = this.getRichTextAABBBounds(this.currRt);
     const height = b.height();
     const width = b.width();
-    // if (!attribute.textConfig.length && this.editLine) {
-    //   const { points } = this.editLine.attribute;
-    //   height = points[1].y - points[0].y;
-    // }
     this.shadowBounds = this.shadowBounds || createRect({});
     this.shadowBounds.setAttributes({
       x: 0,
@@ -643,7 +689,6 @@ export class RichTextEditPlugin implements IPlugin {
     });
     const shadow = this.getShadow(this.currRt);
     this.addEditLineOrBgOrBounds(this.shadowBounds, shadow);
-    // shadow.add(this.shadowBounds);
 
     this.offsetLineBgAndShadowBounds();
   }
@@ -671,29 +716,27 @@ export class RichTextEditPlugin implements IPlugin {
   }
 
   handleFocusIn = () => {
-    throw new Error('不会走到这里 handleFocusIn');
-    // this.updateCbs.forEach(cb => cb(this.editing ? 'onfocus' : 'defocus', this));
+    // no-op: focus is managed by EditModule
   };
 
   handleFocusOut = () => {
-    throw new Error('不会走到这里 handleFocusOut');
-    // console.log('abc')
-    // this.editing = false;
-    // this.deFocus();
-    // this.pointerDown = false;
-    // this.triggerRender();
-    // this.updateCbs.forEach(cb => cb('defocus', this));
+    // no-op: defocus is managed by handlePointerDown/deFocus
   };
 
   deactivate(context: IPluginService): void {
-    // context.stage.off('pointerdown', this.handleClick);
     context.stage.off('pointermove', this.handleMove, { capture: true });
     context.stage.off('pointerdown', this.handlePointerDown, { capture: true });
     context.stage.off('pointerup', this.handlePointerUp, { capture: true });
     context.stage.off('pointerleave', this.handlePointerUp, { capture: true });
     context.stage.off('dblclick', this.handleDBLClick, { capture: true });
 
-    application.global.addEventListener('keydown', this.handleKeyDown);
+    application.global.removeEventListener('keydown', this.handleKeyDown);
+
+    // 清理 editModule，移除 textarea
+    if (this.editModule) {
+      this.editModule.release();
+      this.editModule = null;
+    }
   }
 
   handleMove = (e: PointerEvent) => {
@@ -701,11 +744,17 @@ export class RichTextEditPlugin implements IPlugin {
     if (this.currRt && !this.currRt.attribute.editable) {
       this.deFocus(true);
     }
+
+    // 拖选过程中（pointerDown且已聚焦），即使鼠标移出richtext区域也要继续处理选区
+    if (this.pointerDown && this.focusing && this.currRt) {
+      this.tryShowSelectionWithRt(e, this.currRt);
+      return;
+    }
+
     if (!this.isEditableRichtext(e)) {
       this.handleLeave();
       return;
     }
-    // this.currRt = e.target as IRichText;
     this.handleEnter();
     (e.target as any).once('pointerleave', this.handleLeave, { capture: true });
 
@@ -778,7 +827,6 @@ export class RichTextEditPlugin implements IPlugin {
     }
     this.currRt = target as IRichText;
 
-    // 创建shadowGraphic
     RichTextEditPlugin.tryUpdateRichtext(target);
     const shadowRoot = this.getShadow(target);
     const cache = target.getFrameCache();
@@ -802,8 +850,6 @@ export class RichTextEditPlugin implements IPlugin {
       this.editBg = g;
       this.addEditLineOrBgOrBounds(this.editLine, shadowRoot);
       this.addEditLineOrBgOrBounds(this.editBg, shadowRoot);
-      // shadowRoot.add(this.editLine);
-      // shadowRoot.add(this.editBg);
     }
 
     data = data || this.computedCursorPosByEvent(e, cache);
@@ -920,18 +966,7 @@ export class RichTextEditPlugin implements IPlugin {
     }
     this.focusing = false;
 
-    // 清理textConfig，不让最后有换行符
-    // const textConfig = currRt.attribute.textConfig;
-    // let lastConfig = textConfig[textConfig.length - 1];
-    // let cleared = false;
-    // while (lastConfig && (lastConfig as any).text === '\n') {
-    //   textConfig.pop();
-    //   lastConfig = textConfig[textConfig.length - 1];
-    //   cleared = true;
-    // }
-    // cleared && currRt.setAttributes({ textConfig });
-
-    // TODO 因为handlerLeave可能不会执行，所以这里需要手动清除
+    // handlerLeave可能不会执行，这里需要手动清除
     currRt.removeEventListener('pointerleave', this.handleLeave);
   }
 
@@ -972,7 +1007,6 @@ export class RichTextEditPlugin implements IPlugin {
       if (!currCursorData) {
         return;
       }
-      // const curCursorIdx = currCursorData.cursorIndex;
       const lineInfo = currCursorData.lineInfo;
       const columnIndex = lineInfo.paragraphs.findIndex(item => item === currCursorData.columnInfo);
       if (columnIndex < 0) {
@@ -995,6 +1029,51 @@ export class RichTextEditPlugin implements IPlugin {
 
       this.selectionRange(idx + startIdx - 0.1, idx + endIdx - 0.1);
     }
+  }
+
+  /**
+   * 拖选时使用指定的richtext（而非e.target），支持鼠标移出richtext区域后继续选区
+   */
+  tryShowSelectionWithRt(e: PointerEvent, rt: IRichText) {
+    const cache = rt.getFrameCache();
+    if (!(cache && this.editBg && this.startCursorPos)) {
+      return;
+    }
+    if (!this.pointerDown) {
+      return;
+    }
+    const p = this.pluginService.stage.eventPointTransform(e);
+    const p1 = { x: 0, y: 0 };
+    rt.globalTransMatrix.transformPoint(p, p1);
+    p1.x -= this.deltaX;
+    p1.y -= this.deltaY;
+
+    const { textBaseline } = rt.attribute;
+    if (textBaseline === 'middle') {
+      const b = getRichTextBounds({ ...rt.attribute, scaleX: 1, scaleY: 1 });
+      p1.y += b.height() / 2;
+    } else if (textBaseline === 'bottom') {
+      const b = getRichTextBounds({ ...rt.attribute, scaleX: 1, scaleY: 1 });
+      p1.y += b.height();
+    }
+
+    const lineInfo = this.getLineByPoint(cache, p1);
+    if (!lineInfo) {
+      return;
+    }
+    const { columnInfo, delta } = this.getColumnAndIndexByLinePoint(lineInfo, p1);
+    if (!columnInfo) {
+      return;
+    }
+    const y1 = lineInfo.top;
+    const y2 = lineInfo.top + lineInfo.height;
+    let cursorIndex = this.getColumnIndex(cache, columnInfo);
+    cursorIndex += delta;
+    const x = columnInfo.left + (delta > 0 ? columnInfo.width : 0);
+
+    this.curCursorIdx = cursorIndex;
+    this._tryShowSelection({ x, y1, y2 }, cache);
+    this.updateCbs.forEach(cb => cb('selection', this));
   }
 
   _tryShowSelection(
@@ -1104,10 +1183,10 @@ export class RichTextEditPlugin implements IPlugin {
   protected getLineByPoint(cache: IRichTextFrame, p1: IPointLike): IRichTextLine {
     let lineInfo = cache.lines[0];
     for (let i = 0; i < cache.lines.length; i++) {
+      lineInfo = cache.lines[i];
       if (lineInfo.top <= p1.y && lineInfo.top + lineInfo.height >= p1.y) {
         break;
       }
-      lineInfo = cache.lines[i + 1];
     }
 
     return lineInfo;
@@ -1240,7 +1319,6 @@ export class RichTextEditPlugin implements IPlugin {
     this.addAnimateToLine(this.editLine);
     const out = { x: 0, y: 0 };
     rt.globalTransMatrix.getInverse().transformPoint({ x, y: y1 }, out);
-    // TODO 考虑stage变换
     const { left, top } = this.pluginService.stage.window.getBoundingClientRect();
     out.x += left;
     out.y += top;
@@ -1354,7 +1432,6 @@ export class RichTextEditPlugin implements IPlugin {
 
   release() {
     this.deactivate(this.pluginService);
-    this.editModule.release();
   }
 
   /**
@@ -1366,11 +1443,7 @@ export class RichTextEditPlugin implements IPlugin {
     if (!this.currRt) {
       return null;
     }
-    if (
-      this.selectionStartCursorIdx != null &&
-      this.curCursorIdx != null
-      // this.selectionStartCursorIdx !== this.curCursorIdx &&
-    ) {
+    if (this.selectionStartCursorIdx != null && this.curCursorIdx != null) {
       return new Selection(this.selectionStartCursorIdx, this.curCursorIdx, this.currRt);
     } else if (defaultAll) {
       return RichTextEditPlugin.CreateSelection(this.currRt);

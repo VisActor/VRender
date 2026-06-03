@@ -10,6 +10,7 @@ import type {
   IRichTextGraphicAttribute,
   IRichTextImageCharacter,
   IRichTextParagraphCharacter,
+  IRichTextListItemCharacter,
   IStage,
   ILayer,
   IRichTextIcon,
@@ -29,8 +30,12 @@ import { application } from '../application';
 import { RICHTEXT_NUMBER_TYPE } from './constants';
 
 let supportIntl = false;
+let cachedSegmenter: any = null;
 try {
   supportIntl = Intl && typeof (Intl as any).Segmenter === 'function';
+  if (supportIntl) {
+    cachedSegmenter = new (Intl as any).Segmenter(undefined, { granularity: 'grapheme' });
+  }
 } catch (e) {
   supportIntl = false;
 }
@@ -65,6 +70,7 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
 
   _frameCache: Frame; // 富文本布局画布
   _currentHoverIcon: IRichTextIcon | null = null;
+  _currentHoverLink: Paragraph | null = null;
 
   static NOWORK_ANIMATE_ATTR = {
     ellipsis: 1,
@@ -200,24 +206,26 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
     if ((cache as IRichTextFrame).lines) {
       const frame = cache as IRichTextFrame;
       return frame.lines.every(line =>
-        line.paragraphs.every(item => !(item.text && isString(item.text) && RichText.splitText(item.text).length > 1))
+        line.paragraphs.every(
+          item =>
+            !(item.text && isString(item.text) && item.text.length > 1 && RichText.splitText(item.text).length > 1)
+        )
       );
     }
     // isComposing的不算
     const tc = cache as IRichTextGraphicAttribute['textConfig'];
-    return tc.every(
-      item =>
-        (item as any).isComposing ||
-        !((item as any).text && isString((item as any).text) && RichText.splitText((item as any).text).length > 1)
-    );
+    return tc.every(item => {
+      const a = item as any;
+      return (
+        a.isComposing || !(a.text && isString(a.text) && a.text.length > 1 && RichText.splitText(a.text).length > 1)
+      );
+    });
   }
 
   static splitText(text: string) {
-    if (supportIntl) {
-      // 不传入具体语言标签，使用默认设置
-      const segmenter = new (Intl as any).Segmenter(undefined, { granularity: 'grapheme' });
+    if (supportIntl && cachedSegmenter) {
       const segments = [];
-      for (const { segment } of segmenter.segment(text)) {
+      for (const { segment } of cachedSegmenter.segment(text)) {
         segments.push(segment);
       }
       return segments;
@@ -229,12 +237,45 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
   static TransformTextConfig2SingleCharacter(textConfig: IRichTextGraphicAttribute['textConfig']) {
     const tc: IRichTextGraphicAttribute['textConfig'] = [];
     textConfig.forEach((item: IRichTextParagraphCharacter) => {
-      const textList = RichText.splitText(item.text.toString());
-      if (isString(item.text) && textList.length > 1) {
+      // 列表项：拆分文本内容为单字符，第一个字符保留 listType 等列表属性，后续字符为普通文本
+      if ('listType' in (item as any)) {
+        const listItem = item as any;
+        const textStr = `${listItem.text}`;
+        const textList = RichText.splitText(textStr);
+        if (textList.length <= 1) {
+          tc.push(item);
+        } else {
+          // 第一个字符保留完整列表属性
+          tc.push({ ...listItem, text: textList[0] });
+          // 后续字符去除列表属性，变为普通文本 - 创建一次基础配置并复用
+          const plainConfig: any = {};
+          const keys = Object.keys(listItem);
+          for (let k = 0; k < keys.length; k++) {
+            const key = keys[k];
+            if (
+              key !== 'listType' &&
+              key !== 'listLevel' &&
+              key !== 'listIndex' &&
+              key !== 'listMarker' &&
+              key !== 'listIndentPerLevel' &&
+              key !== 'markerColor'
+            ) {
+              plainConfig[key] = listItem[key];
+            }
+          }
+          for (let i = 1; i < textList.length; i++) {
+            tc.push({ ...plainConfig, text: textList[i] });
+          }
+        }
+        return;
+      }
+      const text = item.text;
+      const textStr = text != null ? text.toString() : '';
+      const textList = RichText.splitText(textStr);
+      if (isString(text) && textList.length > 1) {
         // 拆分
         for (let i = 0; i < textList.length; i++) {
-          const t = textList[i];
-          tc.push({ ...item, text: t });
+          tc.push({ ...item, text: textList[i] });
         }
       } else {
         tc.push(item);
@@ -436,6 +477,10 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
 
     const textConfig = tc ?? _tc;
 
+    // 列表自动编号跟踪
+    const orderedCounters: Map<number, number> = new Map(); // level -> current count
+    let linkIdCounter = 0;
+
     for (let i = 0; i < textConfig.length; i++) {
       if ('image' in textConfig[i]) {
         const config = this.combinedStyleToCharacter(
@@ -456,6 +501,88 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
           icon.richtextId = config.id;
           paragraphs.push(icon);
         }
+      } else if ('listType' in textConfig[i]) {
+        // 列表项处理
+        const listConfig = textConfig[i] as IRichTextListItemCharacter;
+        const level = listConfig.listLevel ?? 1;
+        const indentPerLevel = listConfig.listIndentPerLevel ?? 20;
+        const totalIndent = indentPerLevel * level;
+
+        // 生成 marker 文本
+        let markerText: string;
+        if (listConfig.listMarker) {
+          markerText = listConfig.listMarker;
+        } else if (listConfig.listType === 'ordered') {
+          // 有序列表：自动编号
+          if (listConfig.listIndex != null) {
+            orderedCounters.set(level, listConfig.listIndex);
+            markerText = `${listConfig.listIndex}.`;
+          } else {
+            const current = (orderedCounters.get(level) ?? 0) + 1;
+            orderedCounters.set(level, current);
+            markerText = `${current}.`;
+          }
+          // 重置更深层级的计数
+          orderedCounters.forEach((_, k) => {
+            if (k > level) {
+              orderedCounters.delete(k);
+            }
+          });
+        } else {
+          // 无序列表：按层级选择默认marker
+          const defaultMarkers = ['•', '◦', '▪'];
+          markerText = defaultMarkers[(level - 1) % defaultMarkers.length];
+        }
+
+        // 创建 marker paragraph 的样式配置
+        const markerCharConfig = this.combinedStyleToCharacter({
+          ...listConfig,
+          text: markerText + ' ',
+          listType: undefined,
+          listLevel: undefined,
+          listIndex: undefined,
+          listMarker: undefined,
+          listIndentPerLevel: undefined,
+          markerColor: undefined,
+          fill: listConfig.markerColor ?? listConfig.fill
+        } as any as IRichTextParagraphCharacter) as IRichTextParagraphCharacter;
+        // marker的space属性用于缩进
+        markerCharConfig.space = (totalIndent - indentPerLevel) * 2; // space是每侧分一半
+
+        const markerParagraph = new Paragraph(
+          markerText + ' ',
+          true, // newLine: 列表项占新行
+          markerCharConfig,
+          ascentDescentMode
+        );
+        // measureTextCanvas 会将 space 全部计入 width，但 draw 时只使用 space/2 作为左偏移，
+        // 剩余的 space/2 会变成 marker 与内容之间的多余间距，需要扣除。
+        if (markerCharConfig.space) {
+          markerParagraph.width -= markerCharConfig.space / 2;
+        }
+
+        // 创建 content paragraph
+        const contentCharConfig = this.combinedStyleToCharacter({
+          ...listConfig,
+          listType: undefined,
+          listLevel: undefined,
+          listIndex: undefined,
+          listMarker: undefined,
+          listIndentPerLevel: undefined,
+          markerColor: undefined
+        } as any as IRichTextParagraphCharacter) as IRichTextParagraphCharacter;
+
+        let contentText = listConfig.text;
+        if (isNumber(contentText)) {
+          contentText = `${contentText}`;
+        }
+
+        const contentParagraph = new Paragraph(contentText as string, false, contentCharConfig, ascentDescentMode);
+        // 续行缩进跟随 marker 的实际布局宽度，避免双位数编号和自定义 marker 错位。
+        contentParagraph._listIndent = markerParagraph.width;
+
+        paragraphs.push(markerParagraph);
+        paragraphs.push(contentParagraph);
       } else {
         const richTextConfig = this.combinedStyleToCharacter(
           textConfig[i] as IRichTextParagraphCharacter
@@ -463,14 +590,37 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
         if (isNumber(richTextConfig.text)) {
           richTextConfig.text = `${richTextConfig.text}`;
         }
+
+        // 链接默认样式处理
+        const hasHref = !!(richTextConfig as any).href;
+        if (hasHref) {
+          const linkChar = richTextConfig as any;
+          // 默认链接颜色
+          if (richTextConfig.fill === undefined || richTextConfig.fill === true) {
+            richTextConfig.fill = linkChar.linkColor ?? '#3073F2';
+          }
+          // 默认下划线
+          if (richTextConfig.underline === undefined && richTextConfig.textDecoration === undefined) {
+            richTextConfig.underline = true;
+          }
+        }
+
+        const createParagraphWithLink = (text: string, newLine: boolean) => {
+          const p = new Paragraph(text, newLine, richTextConfig, ascentDescentMode);
+          if (hasHref) {
+            p._linkId = `link_${linkIdCounter++}`;
+          }
+          return p;
+        };
+
         if (richTextConfig.text && richTextConfig.text.includes('\n')) {
           // 如果有文字内有换行符，将该段文字切为多段，并在后一段加入newLine标记
           const textParts = richTextConfig.text.split('\n');
           for (let j = 0; j < textParts.length; j++) {
             if (j === 0) {
-              paragraphs.push(new Paragraph(textParts[j], false, richTextConfig, ascentDescentMode));
+              paragraphs.push(createParagraphWithLink(textParts[j], false));
             } else if (textParts[j] || i === textConfig.length - 1) {
-              paragraphs.push(new Paragraph(textParts[j], true, richTextConfig, ascentDescentMode));
+              paragraphs.push(createParagraphWithLink(textParts[j], true));
             } else {
               // 空行的话，config应该要和下一行对齐
               const nextRichTextConfig = this.combinedStyleToCharacter(
@@ -478,10 +628,9 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
               ) as IRichTextParagraphCharacter;
               paragraphs.push(new Paragraph(textParts[j], true, nextRichTextConfig, ascentDescentMode));
             }
-            // paragraphs.push(new Paragraph(textParts[j], j !== 0, richTextConfig, ascentDescentMode));
           }
         } else if (richTextConfig.text) {
-          paragraphs.push(new Paragraph(richTextConfig.text, false, richTextConfig, ascentDescentMode));
+          paragraphs.push(createParagraphWithLink(richTextConfig.text, false));
         }
       }
     }
@@ -633,35 +782,57 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
   // richtext绑定icon交互事件，供外部调用
   bindIconEvent() {
     this.addEventListener('pointermove', (e: FederatedMouseEvent) => {
-      const pickedIcon = this.pickIcon(e.global);
+      const picked = this.pickElement(e.global);
+
+      // 处理icon hover
+      const pickedIcon = picked && picked.type === 'icon' ? (picked.element as IRichTextIcon) : undefined;
       if (pickedIcon && pickedIcon === this._currentHoverIcon) {
         // do nothing
       } else if (pickedIcon) {
         this.setAttribute('hoverIconId', pickedIcon.richtextId);
-
-        // this._currentHoverIcon?.setHoverState(false);
-        // this._currentHoverIcon = pickedIcon;
-        // this._currentHoverIcon.setHoverState(true);
-        // this.stage?.setCursor(pickedIcon.attribute.cursor);
-        // this.stage?.renderNextFrame();
       } else if (!pickedIcon && this._currentHoverIcon) {
         this.setAttribute('hoverIconId', undefined);
+      }
 
-        // this._currentHoverIcon.setHoverState(false);
-        // this._currentHoverIcon = null;
-        // this.stage?.setCursor();
-        // this.stage?.renderNextFrame();
+      // 处理link hover
+      const pickedLink = picked && picked.type === 'link' ? (picked.element as Paragraph) : undefined;
+      if (pickedLink && pickedLink === this._currentHoverLink) {
+        // do nothing
+      } else if (pickedLink) {
+        this._currentHoverLink = pickedLink;
+        this.stage?.setCursor('pointer');
+      } else if (!pickedLink && this._currentHoverLink) {
+        this._currentHoverLink = null;
+        if (!this._currentHoverIcon) {
+          this.stage?.setCursor();
+        }
       }
     });
 
     this.addEventListener('pointerleave', (e: FederatedMouseEvent) => {
       if (this._currentHoverIcon) {
         this.setAttribute('hoverIconId', undefined);
+      }
+      if (this._currentHoverLink) {
+        this._currentHoverLink = null;
+        this.stage?.setCursor();
+      }
+    });
 
-        // this._currentHoverIcon.setHoverState(false);
-        // this._currentHoverIcon = null;
-        // this.stage?.setCursor();
-        // this.stage?.renderNextFrame();
+    // 链接点击事件
+    this.addEventListener('pointerup', (e: FederatedMouseEvent) => {
+      const picked = this.pickElement(e.global);
+      if (picked && picked.type === 'link') {
+        const linkParagraph = picked.element as Paragraph;
+        const href = (linkParagraph.character as any).href as string;
+        if (href) {
+          this._emitCustomEvent('richtext-link-click', {
+            href,
+            text: linkParagraph.text,
+            character: linkParagraph.character,
+            event: e
+          });
+        }
       }
     });
   }
@@ -682,27 +853,69 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
   }
 
   pickIcon(point: EventPoint): IRichTextIcon | undefined {
+    const result = this.pickElement(point);
+    if (result && result.type === 'icon') {
+      return result.element as IRichTextIcon;
+    }
+    return undefined;
+  }
+
+  pickElement(
+    point: EventPoint
+  ): { type: 'icon'; element: IRichTextIcon } | { type: 'link'; element: Paragraph; href: string } | undefined {
     const frameCache = this.getFrameCache();
     const { e: x, f: y } = this.globalTransMatrix;
-    // for (let i = 0; i < frameCache.icons.length; i++) {
-    //   const icon = frameCache.icons[i];
-    //   if (icon.containsPoint(point.x - x, point.y - y)) {
-    //     return icon;
-    //   }
-    // }
-    let pickIcon: IRichTextIcon | undefined;
+
+    // 1. 检查icons（优先级更高）
+    let pickedIcon: IRichTextIcon | undefined;
     frameCache.icons.forEach((icon, key) => {
       const bounds = icon.AABBBounds.clone();
       bounds.translate(icon._marginArray[3], icon._marginArray[0]);
       if (bounds.containsPoint({ x: point.x - x, y: point.y - y })) {
-        pickIcon = icon;
-
-        pickIcon.globalX = (pickIcon.attribute.x ?? 0) + x + icon._marginArray[3];
-        pickIcon.globalY = (pickIcon.attribute.y ?? 0) + y + icon._marginArray[0];
+        pickedIcon = icon;
+        pickedIcon.globalX = (pickedIcon.attribute.x ?? 0) + x + icon._marginArray[3];
+        pickedIcon.globalY = (pickedIcon.attribute.y ?? 0) + y + icon._marginArray[0];
       }
     });
+    if (pickedIcon) {
+      return { type: 'icon', element: pickedIcon };
+    }
 
-    return pickIcon;
+    // 2. 检查链接段落
+    if (frameCache.links.size > 0) {
+      const localX = point.x - x;
+      const localY = point.y - y;
+
+      let pickedLink: Paragraph | undefined;
+      let pickedHref: string | undefined;
+      // Use for..of with early exit for better performance
+      for (const regions of frameCache.links.values()) {
+        if (pickedLink) {
+          break;
+        }
+        for (let ri = 0; ri < regions.length; ri++) {
+          const { paragraph, line, lineIndex } = regions[ri];
+          const position = frameCache.getLineDrawingPosition(lineIndex);
+          if (!position.visible) {
+            continue;
+          }
+          const pLeft = paragraph.left + position.x;
+          const pTop = paragraph.top + position.y;
+          const pWidth = paragraph.width;
+          const pHeight = line.height;
+          if (localX >= pLeft && localX <= pLeft + pWidth && localY >= pTop && localY <= pTop + pHeight) {
+            pickedLink = paragraph as unknown as Paragraph;
+            pickedHref = (paragraph.character as any).href;
+            break;
+          }
+        }
+      }
+      if (pickedLink && pickedHref) {
+        return { type: 'link', element: pickedLink, href: pickedHref };
+      }
+    }
+
+    return undefined;
   }
 
   getNoWorkAnimateAttr(): Record<string, number> {

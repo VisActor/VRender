@@ -210,6 +210,19 @@ export type IRichTextParagraphCharacter = IRichTextBasicCharacter & {
    */
   dy?: number;
   // direction?: RichTextLayoutDirectionType;
+
+  /**
+   * 链接URL，设置后文本渲染为可点击链接
+   */
+  href?: string;
+  /**
+   * 链接颜色，默认 '#3073F2'
+   */
+  linkColor?: IColor;
+  /**
+   * 链接hover时颜色
+   */
+  linkHoverColor?: IColor;
 };
 
 export type IRichTextImageCharacter = IRichTextBasicCharacter & {
@@ -285,9 +298,77 @@ export type IRichTextImageCharacter = IRichTextBasicCharacter & {
   hoverImage?: string | HTMLImageElement | HTMLCanvasElement;
 };
 /**
+ * 富文本段落为列表项类型时候的配置
+ */
+export type IRichTextListItemCharacter = IRichTextBasicCharacter & {
+  /**
+   * 列表类型
+   * ordered: 有序列表
+   * unordered: 无序列表
+   */
+  listType: 'ordered' | 'unordered';
+  /**
+   * 文本内容
+   */
+  text: string | number;
+  /**
+   * 嵌套层级，1-based，默认1
+   */
+  listLevel?: number;
+  /**
+   * 有序列表显式序号，省略时自动计算
+   */
+  listIndex?: number;
+  /**
+   * 自定义标记符（如 '◦', 'a.', 'i.'）
+   */
+  listMarker?: string;
+  /**
+   * 每级缩进量，默认20px
+   */
+  listIndentPerLevel?: number;
+  /**
+   * 标记颜色，默认跟随fill
+   */
+  markerColor?: IColor;
+
+  // 文本样式属性
+  fontSize?: number;
+  fontFamily?: string;
+  fill?: IColor | boolean;
+  stroke?: IColor | boolean;
+  fontWeight?: string;
+  lineWidth?: number;
+  fontStyle?: RichTextFontStyle;
+  textDecoration?: RichTextTextDecoration;
+  script?: RichTextScript;
+  underline?: boolean;
+  lineThrough?: boolean;
+  opacity?: number;
+  fillOpacity?: number;
+  strokeOpacity?: number;
+  background?: string;
+  backgroundOpacity?: number;
+  space?: number;
+  dx?: number;
+  dy?: number;
+  lineHeight?: number | string;
+};
+
+/**
+ * 富文本链接点击事件
+ */
+export type IRichTextLinkClickEvent = {
+  href: string;
+  text: string;
+  character: IRichTextParagraphCharacter;
+  event: any;
+};
+
+/**
  * 富文本的字符类型
  */
-export type IRichTextCharacter = IRichTextParagraphCharacter | IRichTextImageCharacter;
+export type IRichTextCharacter = IRichTextParagraphCharacter | IRichTextImageCharacter | IRichTextListItemCharacter;
 
 export type IRichTextIconGraphicAttribute = IImageGraphicAttribute & {
   /**
@@ -375,6 +456,8 @@ export interface IRichTextParagraph {
   ellipsisWidth: number;
   ellipsisOtherParagraphWidth: number;
   verticalEllipsis?: boolean;
+  _listIndent?: number;
+  _linkId?: string;
   updateWidth: () => void;
   draw: (ctx: IContext2d, baseline: number, deltaLeft: number, isLineFirst: boolean, textAlign: string) => void;
   getWidthWithEllips: (direction: string) => number;
@@ -411,6 +494,12 @@ export interface IRichTextLine {
   getWidthWithEllips: (ellipsis: string) => number;
 }
 
+export interface IRichTextLinkRegion {
+  paragraph: IRichTextParagraph;
+  line: IRichTextLine;
+  lineIndex: number;
+}
+
 export interface IRichTextFrame {
   left: number;
   top: number;
@@ -437,10 +526,16 @@ export interface IRichTextFrame {
   isHeightMax: boolean;
   singleLine: boolean;
   icons: Map<string, IRichTextIcon>;
+  links: Map<string, IRichTextLinkRegion[]>;
   draw: (
     ctx: IContext2d,
     drawIcon: (icon: IRichTextIcon, context: IContext2d, x: number, y: number, baseline: number) => void
   ) => boolean;
+  getLineDrawingPosition: (lineIndex: number) => {
+    x: number;
+    y: number;
+    visible: boolean;
+  };
   getActualSize: () => {
     width: number;
     height: number;

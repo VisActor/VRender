@@ -1,5 +1,5 @@
 // import { IContext2d } from '../../IContext';
-import type { IContext2d, IRichTextIcon } from '../../interface';
+import type { IContext2d, IRichTextIcon, IRichTextLinkRegion } from '../../interface';
 import type Line from './line';
 import { DIRECTION_KEY } from './utils';
 
@@ -54,6 +54,7 @@ export default class Frame {
   singleLine: boolean;
 
   icons: Map<string, IRichTextIcon>;
+  links: Map<string, IRichTextLinkRegion[]>;
 
   constructor(
     left: number,
@@ -100,6 +101,119 @@ export default class Frame {
     } else {
       this.icons = new Map();
     }
+    this.links = new Map();
+  }
+
+  getLineDrawingPosition(lineIndex: number): { x: number; y: number; visible: boolean } {
+    const line = this.lines[lineIndex];
+    if (!line) {
+      return { x: 0, y: 0, visible: false };
+    }
+
+    const { width: actualWidth, height: actualHeight } = this.getActualSize();
+    const width = this.isWidthMax ? Math.min(this.width, actualWidth) : this.width || actualWidth || 0;
+    let height = this.isHeightMax ? Math.min(this.height, actualHeight) : this.height || actualHeight || 0;
+    height = Math.min(height, actualHeight);
+
+    let deltaY = 0;
+    switch (this.globalBaseline) {
+      case 'top':
+        deltaY = 0;
+        break;
+      case 'middle':
+        deltaY = -height / 2;
+        break;
+      case 'bottom':
+        deltaY = -height;
+        break;
+      default:
+        break;
+    }
+
+    let deltaX = 0;
+    if (this.globalAlign === 'right' || this.globalAlign === 'end') {
+      deltaX = -width;
+    } else if (this.globalAlign === 'center') {
+      deltaX = -width / 2;
+    }
+
+    let frameHeight = this[this.directionKey.height];
+    if (this.singleLine && this.lines.length) {
+      frameHeight = this.lines[0].height + 1;
+    }
+
+    if (this.verticalDirection === 'middle') {
+      if (this.actualHeight >= frameHeight && frameHeight !== 0) {
+        const { top, height: lineHeight } = line;
+        if (
+          top + lineHeight < this[this.directionKey.top] ||
+          top + lineHeight > this[this.directionKey.top] + frameHeight
+        ) {
+          return { x: 0, y: 0, visible: false };
+        }
+        return {
+          x: (this.layoutDirection === 'horizontal' ? 0 : line[this.directionKey.left]) + deltaX,
+          y: line[this.directionKey.top] + deltaY,
+          visible: true
+        };
+      }
+
+      const detailHeight = Math.floor((frameHeight - this.actualHeight) / 2);
+      if (this.layoutDirection === 'vertical') {
+        deltaX += detailHeight;
+      } else {
+        deltaY += detailHeight;
+      }
+
+      return {
+        x: (this.layoutDirection === 'horizontal' ? 0 : line[this.directionKey.left]) + deltaX,
+        y: line[this.directionKey.top] + deltaY,
+        visible: true
+      };
+    }
+
+    if (this.verticalDirection === 'bottom' && this.layoutDirection !== 'vertical') {
+      const y = frameHeight - line.top - line.height;
+      if (
+        frameHeight !== 0 &&
+        (y + line.height > this[this.directionKey.top] + frameHeight || y < this[this.directionKey.top])
+      ) {
+        return { x: 0, y: 0, visible: false };
+      }
+      return {
+        x: deltaX,
+        y: y + deltaY,
+        visible: true
+      };
+    }
+
+    if (
+      this.verticalDirection === 'bottom' &&
+      this.layoutDirection === 'vertical' &&
+      this.singleLine &&
+      this.isWidthMax
+    ) {
+      deltaX += this.lines[0].height + 1;
+    }
+    if (this.verticalDirection === 'bottom' && this.layoutDirection === 'vertical') {
+      for (let i = 0; i <= lineIndex; i++) {
+        deltaX -= this.lines[i].height + this.lines[i].top;
+      }
+    }
+
+    const { top, height: lineHeight } = line;
+    if (
+      frameHeight !== 0 &&
+      (top + lineHeight < this[this.directionKey.top] || top + lineHeight > this[this.directionKey.top] + frameHeight)
+    ) {
+      return { x: 0, y: 0, visible: false };
+    }
+
+    return {
+      x: (this.layoutDirection === 'horizontal' ? 0 : line[this.directionKey.left]) + deltaX,
+      y: line[this.directionKey.top] + deltaY,
+      visible: true
+    };
   }
 
   draw(
@@ -160,14 +274,8 @@ export default class Frame {
             lastLine = true;
             lastLineTag = true;
           }
-          this.lines[i].draw(
-            ctx,
-            lastLine,
-            this.lines[i][this.directionKey.left] + deltaX,
-            this.lines[i][this.directionKey.top] + deltaY,
-            this.ellipsis,
-            drawIcon
-          );
+          const position = this.getLineDrawingPosition(i);
+          this.lines[i].draw(ctx, lastLine, position.x, position.y, this.ellipsis, drawIcon);
         }
       } else {
         const detalHeight = Math.floor((frameHeight - this.actualHeight) / 2);
@@ -177,14 +285,8 @@ export default class Frame {
           deltaY += detalHeight;
         }
         for (let i = 0; i < this.lines.length; i++) {
-          this.lines[i].draw(
-            ctx,
-            false,
-            this.lines[i][this.directionKey.left] + deltaX,
-            this.lines[i][this.directionKey.top] + deltaY,
-            this.ellipsis,
-            drawIcon
-          );
+          const position = this.getLineDrawingPosition(i);
+          this.lines[i].draw(ctx, false, position.x, position.y, this.ellipsis, drawIcon);
         }
       }
 
@@ -195,7 +297,8 @@ export default class Frame {
         const y = frameHeight - this.lines[i].top - this.lines[i].height;
         // if (y + height < this.top || y + height > this.bottom) {
         if (frameHeight === 0) {
-          this.lines[i].draw(ctx, false, deltaX, y + deltaY, this.ellipsis, drawIcon);
+          const position = this.getLineDrawingPosition(i);
+          this.lines[i].draw(ctx, false, position.x, position.y, this.ellipsis, drawIcon);
         } else if (y + height > this[this.directionKey.top] + frameHeight || y < this[this.directionKey.top]) {
           return lastLineTag; // 不在展示范围内的line不绘制
         } else {
@@ -205,7 +308,8 @@ export default class Frame {
             lastLine = true;
             lastLineTag = true;
           }
-          this.lines[i].draw(ctx, lastLine, deltaX, y + deltaY, this.ellipsis, drawIcon);
+          const position = this.getLineDrawingPosition(i);
+          this.lines[i].draw(ctx, lastLine, position.x, position.y, this.ellipsis, drawIcon);
         }
       }
     } else {
@@ -223,14 +327,8 @@ export default class Frame {
         }
         const { top, height } = this.lines[i];
         if (frameHeight === 0) {
-          this.lines[i].draw(
-            ctx,
-            false,
-            this.lines[i][this.directionKey.left] + deltaX,
-            this.lines[i][this.directionKey.top] + deltaY,
-            this.ellipsis,
-            drawIcon
-          );
+          const position = this.getLineDrawingPosition(i);
+          this.lines[i].draw(ctx, false, position.x, position.y, this.ellipsis, drawIcon);
         } else if (
           top + height < this[this.directionKey.top] ||
           top + height > this[this.directionKey.top] + frameHeight
@@ -247,14 +345,8 @@ export default class Frame {
             lastLine = true;
             lastLineTag = true;
           }
-          this.lines[i].draw(
-            ctx,
-            lastLine,
-            this.lines[i][this.directionKey.left] + deltaX,
-            this.lines[i][this.directionKey.top] + deltaY,
-            this.ellipsis,
-            drawIcon
-          );
+          const position = this.getLineDrawingPosition(i);
+          this.lines[i].draw(ctx, lastLine, position.x, position.y, this.ellipsis, drawIcon);
         }
       }
     }

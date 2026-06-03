@@ -50,15 +50,16 @@ D3 语义不重开。本专项只记录包体积优化上下文。
 ## 推荐阅读顺序
 
 1. [VRENDER_BUNDLE_BASELINE.md](./VRENDER_BUNDLE_BASELINE.md)：先确认数据口径和已知 baseline。
-2. [VRENDER_IMPORT_AND_ENTRY_AUDIT.md](./VRENDER_IMPORT_AND_ENTRY_AUDIT.md)：确认 exports、barrel、sideEffects 和 root / subpath 风险。
-3. [VRENDER_OPTIONAL_CAPABILITY_CONTRACT.md](./VRENDER_OPTIONAL_CAPABILITY_CONTRACT.md)：确认 optional 能力拆分必须交付的 VRender / 上层 / 用户三层契约。
-4. [VRENDER_ON_DEMAND_CAPABILITY_USAGE.md](./VRENDER_ON_DEMAND_CAPABILITY_USAGE.md)：查看上层如何使用 public narrow entry，以及如何给用户暴露按需加载选择。
-5. [VRENDER_RUNTIME_BOOTSTRAP_SIZE_AUDIT.md](./VRENDER_RUNTIME_BOOTSTRAP_SIZE_AUDIT.md)：按 bootstrap -> installer -> register 看默认装配。
-6. [VRENDER_GRAPHIC_BUNDLE_COST_INVENTORY.md](./VRENDER_GRAPHIC_BUNDLE_COST_INVENTORY.md)：按图元内部功能层看成本。
-7. [VRENDER_CORE_SIZE_RISK_MAP.md](./VRENDER_CORE_SIZE_RISK_MAP.md)：看 core 非图元模块风险。
-8. 按 owner 阅读 animate / components / kits / vutils 专项文档；VChart 文档仅作外部消费参考。
-9. [VRENDER_BUNDLE_OPTIMIZATION_BACKLOG.md](./VRENDER_BUNDLE_OPTIMIZATION_BACKLOG.md)：领取后续优化候选。
-10. [VRENDER_BUNDLE_AGENT_HANDOFF_TEMPLATE.md](./VRENDER_BUNDLE_AGENT_HANDOFF_TEMPLATE.md)：编码 agent 接手模板。
+2. [VRENDER_SCENARIO_SIZE_VALUE_ASSESSMENT.md](./VRENDER_SCENARIO_SIZE_VALUE_ASSESSMENT.md)：确认图表 / 表格常规场景收益 gate，再决定是否继续拆 optional 能力。
+3. [VRENDER_IMPORT_AND_ENTRY_AUDIT.md](./VRENDER_IMPORT_AND_ENTRY_AUDIT.md)：确认 exports、barrel、sideEffects 和 root / subpath 风险。
+4. [VRENDER_OPTIONAL_CAPABILITY_CONTRACT.md](./VRENDER_OPTIONAL_CAPABILITY_CONTRACT.md)：确认 optional 能力拆分必须交付的 VRender / 上层 / 用户三层契约。
+5. [VRENDER_ON_DEMAND_CAPABILITY_USAGE.md](./VRENDER_ON_DEMAND_CAPABILITY_USAGE.md)：查看上层如何使用 public narrow entry，以及如何给用户暴露按需加载选择。
+6. [VRENDER_RUNTIME_BOOTSTRAP_SIZE_AUDIT.md](./VRENDER_RUNTIME_BOOTSTRAP_SIZE_AUDIT.md)：按 bootstrap -> installer -> register 看默认装配。
+7. [VRENDER_GRAPHIC_BUNDLE_COST_INVENTORY.md](./VRENDER_GRAPHIC_BUNDLE_COST_INVENTORY.md)：按图元内部功能层看成本。
+8. [VRENDER_CORE_SIZE_RISK_MAP.md](./VRENDER_CORE_SIZE_RISK_MAP.md)：看 core 非图元模块风险。
+9. 按 owner 阅读 animate / components / kits / vutils 专项文档；VChart 文档仅作外部消费参考。
+10. [VRENDER_BUNDLE_OPTIMIZATION_BACKLOG.md](./VRENDER_BUNDLE_OPTIMIZATION_BACKLOG.md)：领取后续优化候选。
+11. [VRENDER_BUNDLE_AGENT_HANDOFF_TEMPLATE.md](./VRENDER_BUNDLE_AGENT_HANDOFF_TEMPLATE.md)：编码 agent 接手模板。
 
 ## 后续 Agent 分工建议
 

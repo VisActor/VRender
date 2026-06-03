@@ -56,6 +56,40 @@
 - line/simple 的 raw-data 或 metafile 明细：待验证。
 - VTable 基础场景：待验证。
 
+## 2026-06-03 场景收益 Gate
+
+- Commit / branch: `10a5d5177 / remerge-d3`
+- Scope: VRender source ledger plus existing VChart scenario stats
+- Command: `node <<'NODE' ... parse VChart stats HTML and zlib.gzipSync VRender src files ... NODE`
+- Data source: local VRender source files; existing VChart `stats-*.html` and `index-*.min.js.gz`
+- Scenario assessment: [VRENDER_SCENARIO_SIZE_VALUE_ASSESSMENT.md](./VRENDER_SCENARIO_SIZE_VALUE_ASSESSMENT.md)
+
+Current source package totals after recent P0 slices:
+
+| package path | files | raw bytes | gzip bytes |
+| --- | ---: | ---: | ---: |
+| `packages/vrender-core/src` | 392 | 1,723,156 | 495,105 |
+| `packages/vrender-components/src` | 240 | 1,015,830 | 284,741 |
+| `packages/vrender-kits/src` | 197 | 453,271 | 141,711 |
+| `packages/vrender-animate/src` | 73 | 489,724 | 127,784 |
+| `packages/vrender/src/entries` | 13 | 32,322 | 8,741 |
+
+Existing VChart scenario sample:
+
+| scenario | final min gzip | core analyzer gzip | components | kits | animate | `@visactor/vutils` |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| empty | 234,952 | 236,829 | 944 | 38,752 | 24,692 | 32,589 |
+| line | 366,123 | 237,096 | 73,784 | 38,752 | 36,855 | 42,125 |
+| pie | 322,864 | 236,882 | 49,315 | 38,752 | 28,916 | 40,995 |
+| simple | 388,141 | 237,096 | 81,575 | 38,752 | 42,256 | 42,839 |
+| full | 646,668 | 237,499 | 149,228 | 69,250 | 74,760 | 85,846 |
+
+Owner判断：
+
+- components / kits / animate 在 VChart `full - line` 中分别多出约 75KB / 30KB / 38KB analyzer gzip，是后续 optional 拆分的主要场景价值来源。
+- core 在 empty / line / pie / simple / full 中都接近 237KB analyzer gzip，说明常规图表场景已带入 core 主闭包；后续 core 优化应优先删真实内容或建立可验证 lite profile，不能只看单个小 parser。
+- VTable 本轮没有 ready-made stats / gzip；源码显示存在 components root re-export 和多端 env loader 静态导入。表格收益需要先补 VTable stats 后再作为 P0 owner 证据。
+
 ## 口径说明
 
 | 口径 | 含义 | 常见来源 | 使用方式 |

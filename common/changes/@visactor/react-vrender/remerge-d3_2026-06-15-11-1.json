@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "Remove the temporary React DevTools inspector console output.",
+      "type": "patch",
+      "packageName": "@visactor/react-vrender"
+    }
+  ],
+  "packageName": "@visactor/react-vrender",
+  "email": "lixuef1313@163.com"
+}

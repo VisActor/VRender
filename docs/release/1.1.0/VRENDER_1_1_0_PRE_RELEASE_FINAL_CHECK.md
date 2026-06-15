@@ -68,6 +68,7 @@
 | package version | 未修改 | 符合本阶段约束 |
 | 线上包对比 | 已完成 pack 对比 | 见代码与包体积报告 |
 | VChart/VTable 迁移 | VRender 能力已提供，迁移尚未在本仓库落地 | 需要上层按需 profile 才能拿到 optional 收益 |
+| release notes / changelog | 已明确最终口径 | release body 使用 D3 release notes + 本目录报告；package/site changelog 由 release workflow 生成 |
 | compile smoke | 已通过 | `rush compile -t @visactor/vrender` 覆盖 core/animate/kits/components/vrender |
 | full test | 需要 release-day 重跑 | 本报告生成阶段未重跑所有单测 |
 
@@ -87,6 +88,21 @@ cd packages/vrender-kits && rushx test --runInBand
 ```
 
 如果 release 环境包含 Node 出图能力，Node lane 需要使用与 `canvas` native ABI 匹配的 Node 版本。当前 D3 release notes 中记录的本地发布验证 Node 是 `20.19.6`。
+
+## Release Notes And Changelog
+
+正式 1.1.0 的发布说明来源为：
+
+- [D3 Stable Release Notes](../../refactor/state-engine/D3_STABLE_RELEASE_NOTES_DRAFT.md)
+- [升级功能报告](./VRENDER_1_1_0_UPGRADE_FUNCTION_REPORT.md)
+- [业务使用报告](./VRENDER_1_1_0_BUSINESS_USAGE_REPORT.md)
+- [代码增加说明与包体积报告](./VRENDER_1_1_0_CODE_AND_BUNDLE_SIZE_REPORT.md)
+
+自动生成内容的边界：
+
+- package 级 `CHANGELOG.md` 由 release workflow 的 Rush changelog 步骤生成，不手改。
+- 站点 `docs/assets/changelog` 由 GitHub Release 发布后的 `release-changelog.yml` 生成 PR。
+- 如果正式 release commit 不再是本报告记录的提交，需要先刷新本目录报告和 release notes。
 
 ## 需要同步给上层的结论
 

@@ -51,7 +51,7 @@
 | `D3_ALPHA_COORDINATION.md` | **alpha 协作文档**（给 `VRender agent` / `VChart agent` / 协调者的当前 alpha gate、blocker 和 handoff 状态面） |
 | `D3_POST_ALPHA_WRAPUP_PLAN.md` | **alpha 后收尾优先级计划**（browser alpha gate 关闭后的必要收尾、owner、优先级与完成标准） |
 | `D3_STABLE_RELEASE_CLOSEOUT_PLAN.md` | **稳定正式版收敛计划**（将 node / multi-env / 上层接入 / 性能尾项提升为正式 release gate，目标是 D3 全环境完成且无 D3 follow-up） |
-| `D3_STABLE_RELEASE_NOTES_DRAFT.md` | **稳定正式版 release notes 草案**（版本号确定前的发布日志底稿，覆盖状态系统、动画、app-scoped runtime、多端矩阵和迁移说明） |
+| `D3_STABLE_RELEASE_NOTES_DRAFT.md` | **稳定正式版 release notes 来源**（覆盖状态系统、动画、app-scoped runtime、多端矩阵、迁移说明和 changelog 生成口径） |
 | `D3_REMOVED_API_AND_CALL_CHAIN_LOG.md` | **删除接口与调用链路留档**（记录 release 前已删除接口、旧调用链、替代路径、上层排查命令和后续删除项留档规范） |
 | `D3_MEMORY_BENCHMARK_PERF_CONTEXT.md` | **memory benchmark 性能问题上下文**（`memory.ts` 与 `develop` 的性能差距归因与后续优化边界） |
 | `D3_MEMORY_BENCHMARK_P2_GUIDE.md` | **memory benchmark P2 实施任务文档**（面向 VTable-lite 业务场景的构造期固定成本优化） |
@@ -90,7 +90,7 @@
 | `D3_ALPHA_COORDINATION.md` | `VRender` / `VChart` 双 agent 和协调者共用的 alpha gate / blocker / handoff 状态面 |
 | `D3_POST_ALPHA_WRAPUP_PLAN.md` | browser alpha gate 关闭后，统一整理 alpha 后必要收尾事项、优先级、owner 与完成标准 |
 | `D3_STABLE_RELEASE_CLOSEOUT_PLAN.md` | 稳定正式版收敛入口；browser alpha 之后的新 release gate，以全环境可用和 D3 follow-up 清零为目标 |
-| `D3_STABLE_RELEASE_NOTES_DRAFT.md` | 稳定正式版 release notes 草案；版本号确定后整理正式 changelog 的底稿 |
+| `D3_STABLE_RELEASE_NOTES_DRAFT.md` | 稳定正式版 release notes 来源；package changelog 与站点 changelog 由 release workflow 生成 |
 | `D3_REMOVED_API_AND_CALL_CHAIN_LOG.md` | release 前删除接口、调用链路和上层排查动作台账；后续删除 public / semi-public / 上层敏感接口时必须同步更新 |
 | `D3_MEMORY_BENCHMARK_PERF_CONTEXT.md` | `memory.ts` benchmark 性能问题的归因与后续优化上下文 |
 | `D3_MEMORY_BENCHMARK_P2_GUIDE.md` | memory benchmark `P2` 的实施文档（补 VTable-lite 业务验证口径与单目标优化边界） |

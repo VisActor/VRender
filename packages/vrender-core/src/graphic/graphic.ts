@@ -52,7 +52,7 @@ import { BoundsContext } from '../common/bounds-context';
 import { renderCommandList } from '../common/render-command-list';
 import { parsePadding } from '../common/utils';
 import { builtinSymbolsMap, builtInSymbolStrMap, CustomSymbolClass } from './builtin-symbol';
-import { isSvg } from '../common/xml/is-xml';
+import { isSvg, XMLParser } from '../common/xml';
 import { SVG_PARSE_ATTRIBUTE_MAP, SVG_PARSE_ATTRIBUTE_MAP_KEYS } from './constants';
 import { DefaultStateAnimateConfig } from '../animate/config';
 import { EmptyContext2d } from '../canvas';
@@ -80,11 +80,7 @@ const _tempBounds = new AABBBounds();
 type TShadowRootModule = {
   createShadowRoot: (graphic?: IGraphic) => IShadowRoot;
 };
-type TXMLParserModule = {
-  XMLParser: new () => { parse: (xmlData: string) => any };
-};
 const loadShadowRootFactory = () => require('./shadow-root') as TShadowRootModule;
-const loadXMLParser = () => require('../common/xml/parser') as TXMLParserModule;
 /**
  * pathProxy参考自zrender
  * BSD 3-Clause License
@@ -1347,7 +1343,6 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     symbolType = _symbolType || symbolType;
     const valid = isSvg(symbolType);
     if (valid === true) {
-      const { XMLParser } = loadXMLParser();
       const parser = new XMLParser();
       const { svg } = parser.parse(symbolType);
       if (!svg) {

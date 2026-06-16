@@ -38,6 +38,35 @@ describe('app-scoped bootstrap binding context', () => {
     });
   });
 
+  test('createNodeVRenderApp keeps arc renderer selected after default graphics bootstrap', () => {
+    jest.isolateModules(() => {
+      const { createArc, createNodeVRenderApp } = require('../../src');
+      const app = createNodeVRenderApp({
+        envParams: {
+          createCanvas: () => ({
+            getContext: () => ({}),
+            getBoundingClientRect: () => ({ left: 0, top: 0, width: 0, height: 0 })
+          }),
+          createImageData: (data: Uint8ClampedArray, width: number, height?: number) => ({
+            data,
+            width,
+            height: height ?? data.length / width / 4
+          }),
+          loadImage: jest.fn()
+        }
+      });
+
+      const arc = createArc({ x: 0, y: 0, outerRadius: 10, startAngle: 0, endAngle: Math.PI });
+      const rendererByNumberType = new Map(
+        app.registry.renderer.getAll().map((renderer: any) => [renderer.numberType, renderer])
+      );
+
+      expect(rendererByNumberType.get(arc.numberType)?.constructor.name).toBe('DefaultCanvasArcRender');
+
+      app.release();
+    });
+  });
+
   test.each([
     ['area', '@visactor/vrender-kits/register/register-area', 'registerArea'],
     ['circle', '@visactor/vrender-kits/register/register-circle', 'registerCircle'],

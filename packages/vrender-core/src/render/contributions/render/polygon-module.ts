@@ -1,4 +1,4 @@
-import { bindContributionProvider } from '../../../common/contribution-provider';
+import { bindContributionProvider, createContributionProvider } from '../../../common/contribution-provider';
 import { isBindingContextLoaded } from '../../../common/module-guard';
 import { DefaultBaseInteractiveRenderContribution } from './contributions';
 import { PolygonRenderContribution } from './contributions/constants';
@@ -11,7 +11,12 @@ export function bindPolygonRenderModule({ bind }: { bind: any }) {
     return;
   }
   // polygon渲染器
-  bind(PolygonRender).to(DefaultCanvasPolygonRender).inSingletonScope();
+  bind(PolygonRender)
+    .toDynamicValue(
+      ({ container }: { container: any }) =>
+        new DefaultCanvasPolygonRender(createContributionProvider(PolygonRenderContribution, container))
+    )
+    .inSingletonScope();
   bind(GraphicRender).toService(PolygonRender);
   bind(PolygonRenderContribution).toService(DefaultBaseInteractiveRenderContribution);
 

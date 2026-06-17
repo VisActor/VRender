@@ -1,4 +1,4 @@
-import { bindContributionProvider } from '../../../common/contribution-provider';
+import { bindContributionProvider, createContributionProvider } from '../../../common/contribution-provider';
 import { isBindingContextLoaded } from '../../../common/module-guard';
 import { DefaultCanvasArcRender } from './arc-render';
 import { DefaultBaseInteractiveRenderContribution } from './contributions';
@@ -11,8 +11,13 @@ export function bindArcRenderModule({ bind }: { bind: any }) {
     return;
   }
   // arc 渲染器
-  bind(DefaultCanvasArcRender).toSelf().inSingletonScope();
-  bind(ArcRender).to(DefaultCanvasArcRender).inSingletonScope();
+  bind(DefaultCanvasArcRender)
+    .toDynamicValue(
+      ({ container }: { container: any }) =>
+        new DefaultCanvasArcRender(createContributionProvider(ArcRenderContribution, container))
+    )
+    .inSingletonScope();
+  bind(ArcRender).toService(DefaultCanvasArcRender);
   bind(GraphicRender).toService(ArcRender);
   bind(ArcRenderContribution).toService(DefaultBaseInteractiveRenderContribution);
   // arc 渲染器注入contributions

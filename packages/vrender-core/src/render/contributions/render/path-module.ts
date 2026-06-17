@@ -1,4 +1,4 @@
-import { bindContributionProvider } from '../../../common/contribution-provider';
+import { bindContributionProvider, createContributionProvider } from '../../../common/contribution-provider';
 import { isBindingContextLoaded } from '../../../common/module-guard';
 import { DefaultBaseInteractiveRenderContribution } from './contributions';
 import { PathRenderContribution } from './contributions/constants';
@@ -11,8 +11,13 @@ export function bindPathRenderModule({ bind }: { bind: any }) {
     return;
   }
   // path 渲染器
-  bind(DefaultCanvasPathRender).toSelf().inSingletonScope();
-  bind(PathRender).to(DefaultCanvasPathRender).inSingletonScope();
+  bind(DefaultCanvasPathRender)
+    .toDynamicValue(
+      ({ container }: { container: any }) =>
+        new DefaultCanvasPathRender(createContributionProvider(PathRenderContribution, container))
+    )
+    .inSingletonScope();
+  bind(PathRender).toService(DefaultCanvasPathRender);
   bind(GraphicRender).toService(PathRender);
   bind(PathRenderContribution).toService(DefaultBaseInteractiveRenderContribution);
 

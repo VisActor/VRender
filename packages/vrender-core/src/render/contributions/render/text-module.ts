@@ -1,4 +1,4 @@
-import { bindContributionProvider } from '../../../common/contribution-provider';
+import { bindContributionProvider, createContributionProvider } from '../../../common/contribution-provider';
 import { isBindingContextLoaded } from '../../../common/module-guard';
 import { DefaultBaseInteractiveRenderContribution } from './contributions';
 import { TextRenderContribution } from './contributions/constants';
@@ -11,7 +11,12 @@ export function bindTextRenderModule({ bind }: { bind: any }) {
     return;
   }
   // text 渲染器
-  bind(TextRender).to(DefaultCanvasTextRender).inSingletonScope();
+  bind(TextRender)
+    .toDynamicValue(
+      ({ container }: { container: any }) =>
+        new DefaultCanvasTextRender(createContributionProvider(TextRenderContribution, container))
+    )
+    .inSingletonScope();
   bind(GraphicRender).toService(TextRender);
   bind(TextRenderContribution).toService(DefaultBaseInteractiveRenderContribution);
 

@@ -8,7 +8,10 @@ export function bindRect3dRenderModule({ bind }: { bind: any }) {
     return;
   }
   // rect3d 渲染器
-  bind(Rect3DRender).to(DefaultCanvasRect3dRender).inSingletonScope();
+  bind(DefaultCanvasRect3dRender)
+    .toDynamicValue(() => new DefaultCanvasRect3dRender())
+    .inSingletonScope();
+  bind(Rect3DRender).toService(DefaultCanvasRect3dRender);
   bind(GraphicRender).toService(Rect3DRender);
 }
 

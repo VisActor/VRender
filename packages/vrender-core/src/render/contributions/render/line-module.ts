@@ -1,5 +1,4 @@
 import { isBindingContextLoaded } from '../../../common/module-guard';
-import { DefaultIncrementalCanvasLineRender } from './incremental-line-render';
 import { DefaultCanvasLineRender } from './line-render';
 import { GraphicRender, LineRender } from './symbol';
 
@@ -9,9 +8,10 @@ export function bindLineRenderModule({ bind }: { bind: any }) {
     return;
   }
   // line渲染器
-  bind(DefaultCanvasLineRender).toSelf().inSingletonScope();
-  bind(DefaultIncrementalCanvasLineRender).toSelf().inSingletonScope();
-  bind(LineRender).to(DefaultCanvasLineRender).inSingletonScope();
+  bind(DefaultCanvasLineRender)
+    .toDynamicValue(() => new DefaultCanvasLineRender())
+    .inSingletonScope();
+  bind(LineRender).toService(DefaultCanvasLineRender);
   bind(GraphicRender).toService(LineRender);
 }
 

@@ -1,4 +1,4 @@
-import { bindContributionProvider } from '../../../common/contribution-provider';
+import { bindContributionProvider, createContributionProvider } from '../../../common/contribution-provider';
 import { isBindingContextLoaded } from '../../../common/module-guard';
 import { DefaultBaseInteractiveRenderContribution } from './contributions';
 import { ImageRenderContribution } from './contributions/constants';
@@ -11,7 +11,12 @@ export function bindImageRenderModule({ bind }: { bind: any }) {
     return;
   }
   // image渲染器
-  bind(ImageRender).to(DefaultCanvasImageRender).inSingletonScope();
+  bind(ImageRender)
+    .toDynamicValue(
+      ({ container }: { container: any }) =>
+        new DefaultCanvasImageRender(createContributionProvider(ImageRenderContribution, container))
+    )
+    .inSingletonScope();
   bind(GraphicRender).toService(ImageRender);
   bind(ImageRenderContribution).toService(DefaultBaseInteractiveRenderContribution);
   // image 渲染器注入contributions

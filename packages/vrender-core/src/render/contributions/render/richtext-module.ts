@@ -8,7 +8,10 @@ export function bindRichtextRenderModule({ bind }: { bind: any }) {
     return;
   }
   // richtext渲染器
-  bind(RichTextRender).to(DefaultCanvasRichTextRender).inSingletonScope();
+  bind(DefaultCanvasRichTextRender)
+    .toDynamicValue(() => new DefaultCanvasRichTextRender())
+    .inSingletonScope();
+  bind(RichTextRender).toService(DefaultCanvasRichTextRender);
   bind(GraphicRender).toService(RichTextRender);
 }
 

@@ -1,4 +1,4 @@
-import { bindContributionProvider } from '../../../common/contribution-provider';
+import { bindContributionProvider, createContributionProvider } from '../../../common/contribution-provider';
 import { isBindingContextLoaded } from '../../../common/module-guard';
 import { DefaultCanvasCircleRender } from './circle-render';
 import { DefaultBaseInteractiveRenderContribution } from './contributions';
@@ -11,8 +11,13 @@ export function bindCircleRenderModule({ bind }: { bind: any }) {
     return;
   }
   // circle 渲染器
-  bind(DefaultCanvasCircleRender).toSelf().inSingletonScope();
-  bind(CircleRender).to(DefaultCanvasCircleRender).inSingletonScope();
+  bind(DefaultCanvasCircleRender)
+    .toDynamicValue(
+      ({ container }: { container: any }) =>
+        new DefaultCanvasCircleRender(createContributionProvider(CircleRenderContribution, container))
+    )
+    .inSingletonScope();
+  bind(CircleRender).toService(DefaultCanvasCircleRender);
   bind(GraphicRender).toService(CircleRender);
   bind(CircleRenderContribution).toService(DefaultBaseInteractiveRenderContribution);
 

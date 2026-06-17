@@ -8,7 +8,10 @@ export function bindGlyphRenderModule({ bind }: { bind: any }) {
     return;
   }
   // glyph渲染器
-  bind(GlyphRender).to(DefaultCanvasGlyphRender).inSingletonScope();
+  bind(DefaultCanvasGlyphRender)
+    .toDynamicValue(() => new DefaultCanvasGlyphRender())
+    .inSingletonScope();
+  bind(GlyphRender).toService(DefaultCanvasGlyphRender);
   bind(GraphicRender).toService(GlyphRender);
 }
 

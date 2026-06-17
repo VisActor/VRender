@@ -8,7 +8,10 @@ export function bindArc3dRenderModule({ bind }: { bind: any }) {
     return;
   }
   // arc3d 渲染器
-  bind(Arc3dRender).to(DefaultCanvasArc3DRender).inSingletonScope();
+  bind(DefaultCanvasArc3DRender)
+    .toDynamicValue(() => new DefaultCanvasArc3DRender())
+    .inSingletonScope();
+  bind(Arc3dRender).toService(DefaultCanvasArc3DRender);
   bind(GraphicRender).toService(Arc3dRender);
 }
 

@@ -20,10 +20,10 @@ export class DefaultCanvasStarRender extends BaseRender<IStar> implements IGraph
   type: 'star';
   numberType: number = STAR_NUMBER_TYPE;
 
-  constructor(protected readonly starRenderContribitions: IContributionProvider<IStarRenderContribution>) {
+  constructor(protected readonly graphicRenderContributions: IContributionProvider<IStarRenderContribution>) {
     super();
     this.builtinContributions = [defaultStarBackgroundRenderContribution, defaultStarTextureRenderContribution];
-    this.init(starRenderContribitions);
+    this.init(graphicRenderContributions);
   }
 
   drawShape(

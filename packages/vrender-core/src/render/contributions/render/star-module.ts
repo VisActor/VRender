@@ -1,4 +1,4 @@
-import { createContributionProvider } from '../../../common/contribution-provider';
+import { bindContributionProvider, createContributionProvider } from '../../../common/contribution-provider';
 import { isBindingContextLoaded } from '../../../common/module-guard';
 import { StarRenderContribution } from './contributions/constants';
 import { DefaultCanvasStarRender } from './star-render';
@@ -18,6 +18,7 @@ export function bindStarRenderModule({ bind }: { bind: any }) {
     .inSingletonScope();
   bind(StarRender).toService(DefaultCanvasStarRender);
   bind(GraphicRender).toService(StarRender);
+  bindContributionProvider(bind, StarRenderContribution);
 }
 
 export const starModule = bindStarRenderModule;

@@ -8,7 +8,10 @@ export function bindPyramid3dRenderModule({ bind }: { bind: any }) {
     return;
   }
   // pyramid3d 渲染器
-  bind(Pyramid3dRender).to(DefaultCanvasPyramid3dRender).inSingletonScope();
+  bind(DefaultCanvasPyramid3dRender)
+    .toDynamicValue(() => new DefaultCanvasPyramid3dRender())
+    .inSingletonScope();
+  bind(Pyramid3dRender).toService(DefaultCanvasPyramid3dRender);
   bind(GraphicRender).toService(Pyramid3dRender);
 }
 

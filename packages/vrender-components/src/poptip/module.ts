@@ -27,6 +27,10 @@ function bindPoptip(container: Pick<ReturnType<typeof getRuntimeInstallerBinding
 }
 
 export function installPoptipToApp(app: IApp): void {
+  if (!app) {
+    throw new Error('installPoptipToApp requires an app instance');
+  }
+
   configureRuntimeApplicationForApp(app);
   bindPoptip(getRuntimeInstallerBindingContext());
   refreshRuntimeInstallerContributions();
@@ -35,4 +39,6 @@ export function installPoptipToApp(app: IApp): void {
 
 export function loadPoptip() {
   bindPoptip(getLegacyBindingContext());
+  bindPoptip(getRuntimeInstallerBindingContext());
+  refreshRuntimeInstallerContributions();
 }

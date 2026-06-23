@@ -14,7 +14,7 @@ import type { IWindow } from './window';
 import type { ILayerService } from './core';
 import type { IFullThemeSpec } from './graphic/theme';
 import type { IGraphicService } from './graphic-service';
-import type { IGraphicAttribute } from './graphic';
+import type { SharedStateScope } from '../graphic/state/shared-state-scope';
 
 export type IExportType = 'canvas' | 'imageData';
 
@@ -35,7 +35,7 @@ export interface IStageParams {
   height: number;
   dpr: number;
   // stage的背景
-  background: IGraphicAttribute['background'] | IColor;
+  background: string | IColor;
   // 外部的canvas
   canvas: string | HTMLCanvasElement;
   // canvas的container容器，如果不传入canvas，那就会在容器中创建canvas
@@ -177,7 +177,7 @@ export interface IStage extends INode {
   dpr: number;
 
   viewBox: IBoundsLike;
-  background: IGraphicAttribute['background'] | IColor;
+  background: string | IColor;
   ticker: ITicker;
   increaseAutoRender: boolean;
   readonly renderService: IRenderService;
@@ -185,6 +185,7 @@ export interface IStage extends INode {
   getPickerService: () => IPickerService;
   readonly pluginService: IPluginService;
   readonly layerService: ILayerService;
+  rootSharedStateScope?: SharedStateScope<Record<string, any>>;
   // 如果传入CanvasId，如果存在相同Id，说明这两个图层使用相同的Canvas绘制
   // 但需要注意的是依然是两个图层（用于解决Table嵌入ChartSpace不影响Table的绘制）
   createLayer: (canvasId?: string, layerMode?: LayerMode) => ILayer;

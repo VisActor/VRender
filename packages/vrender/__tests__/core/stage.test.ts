@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-nocheck
-import { createStage, createGroup, createText } from '../../src/index';
+import { createGroup, createText } from '../../src/index';
+import { createBrowserStage } from '../util';
 
 describe('stage', () => {
   let stage;
@@ -10,7 +11,7 @@ describe('stage', () => {
   });
 
   it('resize', () => {
-    stage = createStage({
+    stage = createBrowserStage({
       width: 100,
       height: 100
     });
@@ -20,7 +21,7 @@ describe('stage', () => {
     expect(stage.viewWidth).toEqual(200);
     expect(stage.viewHeight).toEqual(200);
 
-    stage = createStage({
+    stage = createBrowserStage({
       width: 100,
       height: 100,
       viewBox: { x1: 0, y1: 0, x2: 100, y2: 100 }
@@ -31,7 +32,7 @@ describe('stage', () => {
     expect(stage.viewWidth).toEqual(300);
     expect(stage.viewHeight).toEqual(300);
 
-    stage = createStage({
+    stage = createBrowserStage({
       width: 100,
       height: 100,
       viewBox: { x1: 0, y1: 0, x2: 60, y2: 60 }
@@ -54,7 +55,7 @@ describe('stage', () => {
   });
 
   it('pick', () => {
-    const stage = createStage({
+    const stage = createBrowserStage({
       width: 1200,
       height: 600,
       background: 'yellow',

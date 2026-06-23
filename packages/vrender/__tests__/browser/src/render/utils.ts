@@ -1,5 +1,6 @@
-import { createStage, IGraphic } from '@visactor/vrender';
+import type { IGraphic } from '@visactor/vrender';
 import * as zrender from 'zrender';
+import { createBrowserAppStage } from '../app-stage';
 
 export function renderElement(num: number, type: string, canopusCb: Function, zrenderCb: Function) {
   const container = document.querySelector<HTMLDivElement>('#container')!;
@@ -20,7 +21,13 @@ export function renderElement(num: number, type: string, canopusCb: Function, zr
     for (let i = 0; i < num; i++) {
       arr.push(canopusCb());
     }
-    const stage = createStage({ canvas: 'main', width: 600, height: 600, viewWidth: 600, viewHeight: 600 });
+    const stage = createBrowserAppStage({
+      canvas: 'main',
+      width: 600,
+      height: 600,
+      viewWidth: 600,
+      viewHeight: 600
+    });
     arr.forEach(g => {
       stage.defaultLayer.add(g as any);
     });

@@ -1,6 +1,5 @@
 import type { vec3 } from '@visactor/vutils';
 import { abs, cos, epsilon, sin, pi2, pi } from '@visactor/vutils';
-import { injectable } from '../../../common/inversify-lite';
 import { getTheme } from '../../../graphic/theme';
 import type {
   IContext2d,
@@ -164,7 +163,6 @@ function drawInnerOuterArcPath(
   return collapsedToLine;
 }
 
-@injectable()
 export class DefaultCanvasArc3DRender extends BaseRender<IArc3d> implements IGraphicRender {
   type: 'arc3d';
   numberType: number = ARC3D_NUMBER_TYPE;

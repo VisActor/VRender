@@ -1,5 +1,6 @@
-import { createStage, createCircle, createRect, createGroup } from '@visactor/vrender';
+import { createCircle, createRect, createGroup } from '@visactor/vrender';
 import { addShapesToStage, colorPools } from '../utils';
+import { createBrowserPageStage } from '../page-stage';
 
 // container.load(roughModule);
 
@@ -14,7 +15,8 @@ export const page = () => {
       height: 100,
 
       y: i * 10,
-      x: 0
+      x: 0,
+      fill: colorPools[i % colorPools.length]
     });
     containerGroup.add(rect);
 
@@ -38,7 +40,7 @@ export const page = () => {
 
   console.timeEnd('create-mark');
 
-  const stage = createStage({
+  const stage = createBrowserPageStage({
     canvas: 'main',
     width: 1200,
     height: 600

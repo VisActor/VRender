@@ -1,14 +1,18 @@
-import { ContainerModule } from '../../../common/inversify';
+import { isBindingContextLoaded } from '../../../common/module-guard';
 import { DefaultCanvasGlyphRender } from './glyph-render';
 import { GlyphRender, GraphicRender } from './symbol';
 
-let loadGlyphModule = false;
-export const glyphModule = new ContainerModule(bind => {
-  if (loadGlyphModule) {
+const loadedGlyphModuleContexts = new WeakSet<object>();
+export function bindGlyphRenderModule({ bind }: { bind: any }) {
+  if (isBindingContextLoaded(loadedGlyphModuleContexts, bind)) {
     return;
   }
-  loadGlyphModule = true;
   // glyph渲染器
-  bind(GlyphRender).to(DefaultCanvasGlyphRender).inSingletonScope();
+  bind(DefaultCanvasGlyphRender)
+    .toDynamicValue(() => new DefaultCanvasGlyphRender())
+    .inSingletonScope();
+  bind(GlyphRender).toService(DefaultCanvasGlyphRender);
   bind(GraphicRender).toService(GlyphRender);
-});
+}
+
+export const glyphModule = bindGlyphRenderModule;

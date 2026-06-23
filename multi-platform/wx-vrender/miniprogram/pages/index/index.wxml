@@ -1,18 +1,42 @@
-<!--index.wxml-->
-<view class="container">
-  <view class="userinfo">
-    <block>
-      <view class="userinfo-title-content">
-        <image class="userinfo-avatar" src="https://avatars.githubusercontent.com/u/126661221?s=96&v=4" mode="cover"></image>
-        <text class="userinfo-title">VisActor</text>
-      </view>
-      <text class="userinfo-content">A data visualization solution for narrative and AI.</text>
-    </block>
+<view class="page">
+  <view class="toolbar">
+    <text class="title">VRender WX Smoke</text>
+    <text class="status">{{status}}</text>
   </view>
-  <view class="gallary-container">
-    <view wx:key="name" wx:for="{{gallaryData}}" class="gallary-item">
-      <image bindtap="bindViewTap" id="{{item.name}}" class="gallary-image" src="../gallery/images/{{item.image}}" mode="cover"></image>
-      <text class="gallary-name">{{item.name}}</text>
-    </view>
+  <view class="scene-tabs">
+    <button
+      wx:for="{{scenes}}"
+      wx:key="key"
+      class="scene-tab {{sceneKey == item.key ? 'active' : ''}}"
+      data-key="{{item.key}}"
+      bindtap="switchScene"
+    >
+      {{item.label}}
+    </button>
   </view>
+  <view class="scene-copy">
+    <text class="scene-title">{{sceneTitle}}</text>
+    <text class="scene-hint">{{sceneHint}}</text>
+  </view>
+  <view class="canvas-panel">
+    <canvas
+      id="vrender-main"
+      type="2d"
+      class="vrender-canvas"
+      disable-scroll
+      bindtouchstart="forwardEvent"
+      bindtouchmove="forwardEvent"
+      bindtouchend="forwardEvent"
+      bindtouchcancel="forwardEvent"
+    ></canvas>
+  </view>
+  <view class="capabilities">
+    <text wx:for="{{capabilityChips}}" wx:key="*this" class="capability">{{item}}</text>
+  </view>
+  <view class="actions">
+    <button class="button" bindtap="updateGraphic">切换图元颜色</button>
+    <button class="button secondary" bindtap="toggleStateCircle">切换状态样式</button>
+    <button class="button ghost" bindtap="rerenderScene">重绘场景</button>
+  </view>
+  <text class="action-status">{{actionStatus}}</text>
 </view>

@@ -1,0 +1,14 @@
+/node_modules
+/oh_modules
+/local.properties
+oh-package-lock.json5
+/entry/src/main/ets/vendor/vrender/index.js
+/.idea
+**/build
+/.hvigor
+.cxx
+/.clangd
+/.clang-format
+/.clang-tidy
+**/.test
+/.appanalyzer

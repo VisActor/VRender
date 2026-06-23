@@ -1,2 +1,11 @@
-import { Container } from './common/inversify-lite';
-export const container = new Container();
+export {
+  configureLegacyApplication,
+  container,
+  getLegacyBindingContext,
+  graphicService,
+  graphicUtil,
+  layerService,
+  preLoadAllModule,
+  transformUtil
+} from './modules';
+export type { ILegacyBindContext, ILegacyBindingContext } from './legacy/bootstrap';

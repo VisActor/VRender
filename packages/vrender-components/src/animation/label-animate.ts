@@ -1,4 +1,7 @@
-import { AComponentAnimate, AnimateExecutor, createComponentAnimator, IncreaseCount } from '@visactor/vrender-animate';
+import { createComponentAnimator } from '@visactor/vrender-animate/component';
+import { AComponentAnimate } from '@visactor/vrender-animate/custom/custom-animate';
+import { IncreaseCount } from '@visactor/vrender-animate/custom/number';
+import { AnimateExecutor } from '@visactor/vrender-animate/executor/animate-executor';
 
 /**
  * LabelUpdate class handles the update animation for Label components
@@ -19,7 +22,8 @@ export class LabelUpdate extends AComponentAnimate<any> {
       }
     }
 
-    const { text, ...rest } = diff;
+    const rest = { ...diff };
+    delete rest.text;
 
     animator.animate(prevText, {
       type: 'to',

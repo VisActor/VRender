@@ -1,15 +1,18 @@
-import { container, registerTextGraphic, textModule } from '@visactor/vrender-core';
+import { getLegacyBindingContext } from '@visactor/vrender-core/legacy/bootstrap';
+import { registerTextGraphic } from '@visactor/vrender-core/register/graphic';
+import { textModule } from '@visactor/vrender-core/graphic/modules';
 import { browser } from './env';
-import { textCanvasPickModule } from '../picker/contributions/canvas-picker/text-module';
-import { textMathPickModule } from '../picker/contributions/math-picker/text-module';
+import { bindTextCanvasPickerContribution } from '../picker/contributions/canvas-picker/text-module';
+import { bindTextMathPickerContribution } from '../picker/contributions/math-picker/text-module';
 function _registerText() {
   if (_registerText.__loaded) {
     return;
   }
   _registerText.__loaded = true;
+  const legacyContext = getLegacyBindingContext();
   registerTextGraphic();
-  container.load(textModule);
-  container.load(browser ? textCanvasPickModule : textMathPickModule);
+  (textModule as any)({ bind: legacyContext.bind });
+  browser ? bindTextCanvasPickerContribution(legacyContext) : bindTextMathPickerContribution(legacyContext);
 }
 
 _registerText.__loaded = false;

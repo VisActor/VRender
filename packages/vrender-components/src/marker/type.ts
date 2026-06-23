@@ -8,14 +8,13 @@ import type {
   IPolygonAttribute,
   IPolygonGraphicAttribute,
   IRectGraphicAttribute,
-  IRichTextGraphicAttribute,
   ISymbol,
   ISymbolGraphicAttribute,
   ITextGraphicAttribute
 } from '@visactor/vrender-core';
 import type { CommonSegmentAttributes, ILineGraphicWithCornerRadius, SegmentAttributes } from '../segment/type';
 import type { TagAttributes } from '../tag/type';
-import type { Point, State } from '../core/type';
+import type { ComponentExitReleaseOptions, Point, State } from '../core/type';
 
 export enum IMarkLineLabelPosition {
   start = 'start',
@@ -195,14 +194,14 @@ export type BaseMarkerAnimation<T> = {
    */
   animationExit?: MarkerExitAnimation;
 };
-export type MarkerAnimation<T> = MarkerUpdateAnimation<T> | MarkerUpdateAnimation<T>;
+export type MarkerAnimation<T> = MarkerUpdateAnimation<T> | MarkerExitAnimation;
 
 export type MarkerUpdateAnimation<T> = {
   /**
    * 设置动画的类型
    */
   type: T;
-} & MarkerExitAnimation;
+} & MarkerAnimationBase;
 
 export type MarkCommonLineAnimationType = 'clipIn' | 'fadeIn';
 
@@ -210,11 +209,7 @@ export type CommonMarkAreaAnimationType = 'fadeIn';
 
 export type MarkPointAnimationType = 'callIn' | 'fadeIn';
 
-export type MarkerExitAnimation = {
-  /**
-   * 设置离场动画的类型为fadeOut，即淡出
-   */
-  type: 'fadeOut';
+export type MarkerAnimationBase = {
   /**
    * 动画的时长
    */
@@ -229,7 +224,16 @@ export type MarkerExitAnimation = {
   easing?: EasingType;
 };
 
+export type MarkerExitAnimation = MarkerAnimationBase & {
+  /**
+   * 设置离场动画的类型为fadeOut，即淡出
+   */
+  type: 'fadeOut';
+};
+
 export type MarkerAnimationState = 'enter' | 'update' | 'exit';
+
+export type MarkerExitReleaseOptions = ComponentExitReleaseOptions;
 
 /** state type */
 export type MarkCommonLineState<LineAttr> = {

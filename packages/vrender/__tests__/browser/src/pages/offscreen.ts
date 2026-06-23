@@ -1,6 +1,7 @@
-import { createStage, createRect, IGraphic, createPath } from '@visactor/vrender';
+import { createRect, IGraphic, createPath } from '@visactor/vrender';
 import { roughModule } from '@visactor/vrender-kits';
 import { addShapesToStage, colorPools } from '../utils';
+import { createBrowserPageStage } from '../page-stage';
 
 // container.load(roughModule);
 export const page = () => {
@@ -19,7 +20,7 @@ export const page = () => {
 
   const canvas = new OffscreenCanvas(100, 100);
 
-  const stage = createStage({
+  const stage = createBrowserPageStage({
     canvas: canvas,
     width: 200,
     height: 200,

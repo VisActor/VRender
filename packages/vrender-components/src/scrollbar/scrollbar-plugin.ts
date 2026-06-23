@@ -1,5 +1,5 @@
 import type { IGraphic, IGroup, IPlugin, IPluginService } from '@visactor/vrender-core';
-import { Generator, injectable } from '@visactor/vrender-core';
+import { Generator } from '@visactor/vrender-core';
 import { ScrollBar } from './scrollbar';
 import type { IAABBBounds } from '@visactor/vutils';
 import { AABBBounds, abs, Bounds } from '@visactor/vutils';
@@ -14,7 +14,6 @@ type IParams = {
   bufferH?: number; // 判定是否出现滚动条的buffer
 };
 
-@injectable()
 export class ScrollBarPlugin implements IPlugin {
   name: 'scrollbar' = 'scrollbar';
   activeEvent: 'onRegister' = 'onRegister';

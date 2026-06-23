@@ -1,5 +1,5 @@
 const CanvasPkg = require('canvas');
-const { global, createStage, container, Path, Arc, Rect, Symbol, Circle, Image } = require('@visactor/vrender');
+const { global, createNodeVRenderApp, Path, Arc, Rect, Symbol, Circle, Image } = require('@visactor/vrender');
 // const { nodeLoader, roughModule } = require('@visactor/vrender-kits');
 const fs = require('fs');
 
@@ -28,14 +28,15 @@ const colorPools = [
 ];
 
 // 加载node环境的loader
-// nodeLoader(container);
+// loadNodeEnv(getLegacyBindingContext());
 // 加载rough的module
-// container.load(roughModule)
+// roughModule(getLegacyBindingContext())
 
 global.setEnv('node', CanvasPkg);
 
 function run() {
-  const stage = createStage({ width: 0, height: 0, title: '这是title', dpr: 2 });
+  const app = createNodeVRenderApp();
+  const stage = app.createStage({ width: 0, height: 0, title: '这是title', dpr: 2 });
   stage.resize(1200, 1200)
   stage.defaultLayer.add(new Path({
     x: 200,
@@ -92,6 +93,8 @@ function run() {
     // TODO 增加资源加载完成回调
     const buffer = stage.window.getImageBuffer();
     fs.writeFileSync(`./image.png`, buffer);
+    stage.release();
+    app.release();
   // }, 1000);
 }
 

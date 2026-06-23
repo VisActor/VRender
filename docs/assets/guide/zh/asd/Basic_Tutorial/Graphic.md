@@ -150,8 +150,8 @@ interface IGraphic<T extends Partial<IGraphicAttribute> = Partial<IGraphicAttrib
   /** 用于实现morph动画场景，转换成bezier曲线渲染 */
   pathProxy?: ICustomPath2D | ((attrs: T) => ICustomPath2D);
 
-  // 获取state图形属性的方法
-  stateProxy?: (stateName: string, targetStates?: string[]) => Partial<T>;
+  // state 图形属性配置，动态配置可使用 StateDefinition.resolver
+  states?: StateDefinitionsInput<T>;
 
   /* 状态相关方法 */
   toggleState: (stateName: string, hasAnimation?: boolean) => void;

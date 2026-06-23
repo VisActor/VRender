@@ -1,5 +1,4 @@
 import {
-  createStage,
   createRect,
   createLine,
   createCircle,
@@ -18,6 +17,7 @@ import {
   defaultTicker
 } from '@visactor/vrender';
 import { colorPools } from '../utils';
+import { createBrowserPageStage } from '../page-stage';
 
 // container.load(roughModule);
 
@@ -165,7 +165,7 @@ export const page = () => {
     stroke: colorPools[7]
   });
 
-  const stage = createStage({
+  const stage = createBrowserPageStage({
     canvas: 'main',
     width: 1200,
     height: 600,

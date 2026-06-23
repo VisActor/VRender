@@ -1,6 +1,7 @@
-import { createStage, createCircle, FederatedEvent } from '@visactor/vrender';
+import { createCircle, FederatedEvent } from '@visactor/vrender';
 import { registerAnimate } from '@visactor/vrender-animate';
 import { addShapesToStage, colorPools } from '../utils';
+import { createBrowserPageStage } from '../page-stage';
 
 registerAnimate();
 // container.load(roughModule);
@@ -99,17 +100,14 @@ export const page = () => {
   );
 
   shapes.forEach(shape => {
-    shape.stateProxy = (stateName: string) => {
-      if (stateName === 'hover') {
-        return {
-          radius: 100
-        };
-      }
-
-      return {
+    shape.states = {
+      hover: {
+        radius: 100
+      },
+      click: {
         fill: 'red'
-      };
-    };
+      }
+    } as any;
 
     // shape.animate().to({ fillOpacity: 0.5, fill: 'red' }, 5000, 'quadIn');
 
@@ -141,7 +139,7 @@ export const page = () => {
     });
   });
 
-  const stage = createStage({
+  const stage = createBrowserPageStage({
     canvas: 'main',
     width: 1200,
     height: 600,

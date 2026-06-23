@@ -10,7 +10,7 @@ function flatten(list: any, out: any[]): void {
 }
 
 export function jsx(type: string | any, config: Record<string, any>, ...children: any) {
-  const { key, name, id, attribute, stateProxy, animation, timeline, ...props } = config || {};
+  const { name, id, attribute, states, animation, timeline, ...props } = config || {};
 
   let c = type;
   if (isString(type)) {
@@ -25,12 +25,16 @@ export function jsx(type: string | any, config: Record<string, any>, ...children
   const g = c.name === 'Group' ? new c(attribute) : c(config);
   parseToGraphic(g, childrenList, props);
 
-  if (stateProxy) {
-    g.stateProxy = stateProxy;
-  }
-
   if (name) {
     g.name = name;
+  }
+
+  if (id) {
+    g.id = id;
+  }
+
+  if (states) {
+    g.states = states;
   }
 
   if (isArray(animation)) {

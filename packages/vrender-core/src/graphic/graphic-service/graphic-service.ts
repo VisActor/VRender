@@ -1,6 +1,4 @@
-import { inject, injectable } from '../../common/inversify-lite';
-import type { IAABBBounds } from '@visactor/vutils';
-import { AABBBounds, isNumber, transformBoundsWithMatrix } from '@visactor/vutils';
+import { AABBBounds, isNumber, transformBoundsWithMatrix, type IAABBBounds } from '@visactor/vutils';
 import { SyncHook } from '../../tapable';
 import type {
   mat4,
@@ -18,11 +16,8 @@ import type {
 import { textDrawOffsetX, textLayoutOffsetY } from '../../common/text';
 import { boundStroke } from '../tools';
 import { mat4Allocate } from '../../allocator/matrix-allocate';
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { BoundsContext } from '../../common/bounds-context';
-import { renderCommandList } from '../../common/render-command-list';
-import { GraphicCreator } from '../constants';
 import { identityMat4, multiplyMat4Mat4, rotateX, rotateY, rotateZ, scaleMat4, translate } from '../../common/matrix';
+import { graphicCreator } from '../graphic-creator';
 
 export function getExtraModelMatrix(dx: number, dy: number, graphic: IGraphic): mat4 | null {
   const { alpha, beta } = graphic.attribute;
@@ -164,7 +159,6 @@ export function shouldUseMat4(graphic: IGraphic) {
 }
 
 // 管理graphic
-@injectable()
 export class DefaultGraphicService implements IGraphicService {
   declare hooks: {
     onAttributeUpdate: ISyncHook<[IGraphic]>;
@@ -181,7 +175,8 @@ export class DefaultGraphicService implements IGraphicService {
   // 临时bounds，用作缓存
   protected tempAABBBounds1: AABBBounds;
   protected tempAABBBounds2: AABBBounds;
-  constructor(@inject(GraphicCreator) public readonly creator: IGraphicCreator) {
+  protected tempAABBBoundsResult: { tb1: AABBBounds; tb2: AABBBounds };
+  constructor(public readonly creator: IGraphicCreator = graphicCreator as unknown as IGraphicCreator) {
     this.hooks = {
       onAttributeUpdate: new SyncHook<[IGraphic]>(['graphic']),
       onSetStage: new SyncHook<[IGraphic, IStage]>(['graphic', 'stage']),
@@ -206,6 +201,10 @@ export class DefaultGraphicService implements IGraphicService {
     };
     this.tempAABBBounds1 = new AABBBounds();
     this.tempAABBBounds2 = new AABBBounds();
+    this.tempAABBBoundsResult = {
+      tb1: this.tempAABBBounds1,
+      tb2: this.tempAABBBounds2
+    };
   }
   onAttributeUpdate(graphic: IGraphic) {
     if (this.hooks.onAttributeUpdate.taps.length) {
@@ -258,17 +257,6 @@ export class DefaultGraphicService implements IGraphicService {
       this.hooks.clearAABBBounds.call(graphic, stage, b);
     }
   }
-  // TODO delete
-  updatePathProxyAABBBounds(aabbBounds: IAABBBounds, graphic?: IGraphic): boolean {
-    const path = typeof graphic.pathProxy === 'function' ? graphic.pathProxy(graphic.attribute) : graphic.pathProxy;
-    if (!path) {
-      return false;
-    }
-    const boundsContext = new BoundsContext(aabbBounds);
-    renderCommandList(path.commandList, boundsContext, 0, 0);
-    return true;
-  }
-
   updateHTMLTextAABBBounds(
     attribute: ITextGraphicAttribute,
     textTheme: Required<ITextGraphicAttribute>,
@@ -394,6 +382,6 @@ export class DefaultGraphicService implements IGraphicService {
     tb1.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
     tb2.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
 
-    return { tb1, tb2 };
+    return this.tempAABBBoundsResult;
   }
 }

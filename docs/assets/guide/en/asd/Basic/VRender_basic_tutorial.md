@@ -145,7 +145,7 @@ The events supported by VRender include:
 ## State System
 
 The attributes we pass to the graphics can be considered as a default state. If we want the graphics to have different performances in different states, we can implement it through the state system.
-You can define a states attribute for the graphics. This attribute is an object, which contains the configuration when in different states. You can also set different state configurations dynamically through the `stateProxy` callback.
+You can define a states attribute for the graphics. This attribute is an object, which contains the configuration when in different states. Use `StateDefinition.resolver` for dynamic state attributes.
 Then use the `useStates` method to switch the graphic state, and use the `clearStates` method to clear the graphic state.
 Next, demonstrate through a piece of code
 
@@ -165,22 +165,15 @@ rect.states = {
   },
   b: {
     cornerRadius: 100
+  },
+  // Use resolver when the state attributes need to be computed dynamically
+  c: {
+    resolver: () => ({
+      width: 300
+    }),
+    declaredAffectedKeys: ['width']
   }
 };
-
-// You can also define a callback, return different state configurations according to the state name, the effect is the same as the states attribute
-// rect.stateProxy = (stateName: string, targetStates?: string[]) => {
-//   if (stateName === 'a') {
-//     return {
-//       width: 300
-//     };
-//   }
-//   if (stateName === 'b') {
-//     return {
-//       cornerRadius: 100
-//     };
-//   }
-// };
 
 // When clicked, activate state a
 rect.on('click', () => {
@@ -241,7 +234,7 @@ VRender supports running in browsers, mini-programs and Node.js environments, an
 ### Registration & Use Environment
 
 ```ts
-import { vglobal, loadTTEnv, initTaroEnv, initWxEnv, initNodeEnv, initHarmonyEnv, container } from '@visactor/vrender';
+import { vglobal, createStage, loadTTEnv, initTaroEnv, initWxEnv, initNodeEnv, initHarmonyEnv, container } from '@visactor/vrender';
 const CanvasPkg = require('canvas');
 
 // Register the logic of the relevant environment according to your own product environment
@@ -254,12 +247,23 @@ initFeishuEnv();
 
 // After registration, you can call setEnv to use the corresponding environment
 vglobal.setEnv('node', CanvasPkg);
-// The content required by the mini program will be more
+// Mini-app app-level params should only contain environment-level capabilities,
+// such as pixel ratio or a reusable canvasFactory.
 vglobal.setEnv('feishu', {
-  domref, // The reference of the container node, used to get the width and height
   force: true,
-  canvasIdLists, // The list of available canvas ids, the mini program cannot create canvas dynamically, you need to pass a list of available canvas ids
-  freeCanvasIdx: 0 // Sometimes in addition to the drawing canvas, additional canvases are needed, here pass in the canvas that can be used additionally, corresponding to the subscript of canvasIdLists
+  pixelRatio,
+  canvasFactory: ({ id, width, height, dpr }) => {
+    // Return a drawable Canvas-like object for the host.
+    // This capability must be valid for any Stage under the same app.
+  }
+});
+
+// Concrete canvas id / width / height / dpr belong to Stage creation.
+const stage = createStage({
+  canvas: 'chart-canvas',
+  width,
+  height,
+  dpr: pixelRatio
 });
 ```
 

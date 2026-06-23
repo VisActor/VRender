@@ -1,14 +1,13 @@
-const CanvasPkg = require('canvas');
 const path = require('path');
-const { vglobal, createStage, createGroup, createRect, createCircle, createText } = require('../../../cjs/index.js');
+const { createGroup, createRect, createCircle, createText } = require('../../../cjs/index.js');
+const { createNodeTestStage } = require('../create-stage');
 const { ensureDir, renderAndExportPNG } = require('../export-image/utils');
 
 function main() {
-  vglobal.setEnv('node', CanvasPkg);
   const outDir = path.resolve(__dirname, '../export-image');
   ensureDir(outDir);
 
-  const stage = createStage({ width: 600, height: 400, autoRender: false });
+  const stage = createNodeTestStage({ width: 600, height: 400, autoRender: false });
 
   const group = createGroup({ x: 60, y: 60, width: 240, height: 180, stroke: '#333', lineWidth: 2 });
   const rect = createRect({ x: 20, y: 20, width: 100, height: 60, fill: '#4a90e2' });

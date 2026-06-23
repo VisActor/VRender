@@ -1,6 +1,13 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Wed, 15 Apr 2026 07:05:39 GMT and should not be manually modified.
+This log was last generated on Tue, 23 Jun 2026 04:01:55 GMT and should not be manually modified.
+
+## 1.1.0
+Tue, 23 Jun 2026 04:01:55 GMT
+
+### Minor changes
+
+- Stabilize the D3 state engine and app-scoped runtime foundations, including explicit static truth, sharedStateDefinitions, same-state refresh, runtime installer context, and legacy path cleanup.
 
 ## 1.0.46
 Wed, 15 Apr 2026 07:05:39 GMT

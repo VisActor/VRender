@@ -1,5 +1,4 @@
 import {
-  createStage,
   createText,
   global,
   getTextBounds,
@@ -10,6 +9,7 @@ import {
   createWrapText
 } from '@visactor/vrender';
 import { addShapesToStage, colorPools } from '../utils';
+import { createBrowserPageStage } from '../page-stage';
 
 // global.setEnv('browser');
 
@@ -103,7 +103,7 @@ export const page = () => {
   });
   graphics.push(rect);
 
-  const stage = createStage({
+  const stage = createBrowserPageStage({
     canvas: 'main',
     autoRender: true
   });

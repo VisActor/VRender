@@ -1,13 +1,9 @@
 import type { IPoint } from '@visactor/vutils';
-import { injectable, GROUP_NUMBER_TYPE } from '@visactor/vrender-core';
-import type { IGraphicPicker, IPickParams, IGroup } from '@visactor/vrender-core';
+import { GROUP_NUMBER_TYPE, type IGraphicPicker, type IPickParams, type IGroup } from '@visactor/vrender-core';
 
-@injectable()
 export class DefaultCanvasGroupPicker implements IGraphicPicker {
   type: string = 'group';
   numberType: number = GROUP_NUMBER_TYPE;
-
-  // constructor(@inject(RectRender) public readonly canvasRenderer: IGraphicRender) {}
 
   contains(group: IGroup, point: IPoint, params?: IPickParams): boolean {
     // Group作为特殊节点，本身不支持被pick

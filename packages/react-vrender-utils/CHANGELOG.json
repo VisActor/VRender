@@ -2,6 +2,18 @@
   "name": "@visactor/react-vrender-utils",
   "entries": [
     {
+      "version": "1.1.0",
+      "tag": "@visactor/react-vrender-utils_v1.1.0",
+      "date": "Tue, 23 Jun 2026 04:01:55 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "Align React DOM utility behavior and release verification with the VRender 1.1.0 app-scoped runtime contract."
+          }
+        ]
+      }
+    },
+    {
       "version": "1.0.46",
       "tag": "@visactor/react-vrender-utils_v1.0.46",
       "date": "Wed, 15 Apr 2026 07:05:39 GMT",

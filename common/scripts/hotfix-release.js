@@ -9,6 +9,7 @@ const checkAndUpdateNextBump = require('./version-policies');
 const getPackageJson = require('./get-package-json');
 const writePrereleaseVersion = require('./set-prerelease-version');
 const parseVersion = require('./parse-version');
+const { buildTagPackages } = require('./build-tag-packages');
 
 
 function run() {
@@ -60,10 +61,7 @@ function run() {
     writePrereleaseVersion('', '', currentVersion, hotfixName)
 
     // 2. build all the packages
-    spawnSync('sh', ['-c', `rush build --only tag:package`], {
-      stdio: 'inherit',
-      shell: false,
-    });
+    buildTagPackages();
 
     // 3. publish to npm
     spawnSync('sh', ['-c', `rush publish --publish --include-all --tag ${hotfixType}`], {

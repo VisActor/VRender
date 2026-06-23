@@ -1,4 +1,6 @@
-import { Generator, type IAnimate, type ITimeline, AnimateStatus } from '@visactor/vrender-core';
+import type { IAnimate, ITimeline } from '@visactor/vrender-core';
+import { Generator } from '@visactor/vrender-core/common/generator';
+import { AnimateStatus } from '@visactor/vrender-core/event/constant';
 import { EventEmitter } from '@visactor/vutils';
 
 // 定义链表节点

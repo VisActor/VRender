@@ -51,7 +51,7 @@ const group = (
 
 ## API 支持
 
-使用 jsx 语法的图元都以`V`开头，接受一个 attribute 属性，这个 attribute 属性的参数具体参考配置文档，支持 name、id、stateProxy 配置，最终都会被设置到图元上
+使用 jsx 语法的图元都以`V`开头，接受一个 attribute 属性，这个 attribute 属性的参数具体参考配置文档，支持 name、id、states 配置，最终都会被设置到图元上
 事件命名有所不同，事件的 Map 如下所示：
 
 ```ts

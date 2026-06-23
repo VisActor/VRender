@@ -8,18 +8,18 @@ export function decodeReactDom(dom: any) {
     return dom;
   }
   const type = dom.type;
-  const { attribute, children, stateProxy, id, name } = dom.props;
+  const { attribute, children, states, id, name } = dom.props;
   const g = type({ attribute });
   const out = parseToGraphic(g, dom.props, children);
   if (out) {
     return out;
   }
-  if (stateProxy) {
-    g.stateProxy = stateProxy;
-  }
 
   g.id = id;
   g.name = name;
+  if (states) {
+    g.states = states;
+  }
   parseChildren(children, g);
   return g;
 }

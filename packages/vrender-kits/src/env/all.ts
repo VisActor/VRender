@@ -1,4 +1,4 @@
-import { container, vglobal, type Container } from '@visactor/vrender-core';
+import { getLegacyBindingContext, vglobal } from '@visactor/vrender-core';
 import { loadBrowserEnv } from './browser';
 import { loadFeishuEnv } from './feishu';
 import { loadLynxEnv } from './lynx';
@@ -7,13 +7,14 @@ import { loadTaroEnv } from './taro';
 import { loadWxEnv } from './wx';
 import { loadCanvasPicker } from '../picker/canvas-module';
 import { loadMathPicker } from '../picker/math-module';
+import type { LegacyContainer } from '../common/legacy-container';
 // import { loadMathPicker } from '../picker';
 
-export function loadAllEnv(container: Container) {
+export function loadAllEnv(container: LegacyContainer = getLegacyBindingContext()) {
   loadAllModule(container);
 }
 
-export function loadAllModule(container: Container) {
+export function loadAllModule(container: LegacyContainer = getLegacyBindingContext()) {
   if (!loadAllModule.__loaded) {
     loadAllModule.__loaded = true;
     loadBrowserEnv(container, false);
@@ -32,5 +33,5 @@ export function loadAllModule(container: Container) {
 loadAllModule.__loaded = false;
 
 export function initAllEnv() {
-  loadAllEnv(container);
+  loadAllEnv();
 }

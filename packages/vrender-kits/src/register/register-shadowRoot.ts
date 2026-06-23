@@ -1,4 +1,4 @@
-import { registerShadowRootGraphic } from '@visactor/vrender-core';
+import { registerShadowRootGraphic } from '@visactor/vrender-core/register/graphic';
 
 function _registerShadowRoot() {
   if (_registerShadowRoot.__loaded) {

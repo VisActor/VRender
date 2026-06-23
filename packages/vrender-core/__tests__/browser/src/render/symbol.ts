@@ -1,4 +1,4 @@
-import { Symbol, container, SymbolType } from '@visactor/vrender';
+import { Symbol, SymbolType } from '@visactor/vrender';
 import { Star } from 'zrender';
 import { renderElement } from './utils';
 

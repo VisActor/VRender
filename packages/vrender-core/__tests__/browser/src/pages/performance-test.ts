@@ -35,7 +35,7 @@ import { renderMapPath } from '../render/path-map';
 
 export const page = () => {
   console.time('stage');
-  // createStage(40);
+  // createBrowserPageStage(40);
   console.timeEnd('stage');
   createNode(100000);
   createCircle(100000);

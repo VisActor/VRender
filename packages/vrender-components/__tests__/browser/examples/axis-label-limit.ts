@@ -1,11 +1,8 @@
-import { createStage } from '@visactor/vrender-core';
-import { initBrowserEnv } from '@visactor/vrender-kits';
-initBrowserEnv();
+import { createRenderer } from '../../util/render';
 import { PointScale } from '@visactor/vscale';
 import { LineAxis } from '../../../src';
 
-const stage = createStage({
-  canvas: 'main',
+const stage = createRenderer('main', {
   width: 2000,
   height: 1200,
   autoRender: true,

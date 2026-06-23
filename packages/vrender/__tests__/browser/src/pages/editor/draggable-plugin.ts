@@ -1,9 +1,8 @@
 import type { FederatedPointerEvent, IGraphic, IPlugin, IPluginService } from '@visactor/vrender';
-import { Generator, DragNDrop, injectable } from '@visactor/vrender';
+import { Generator, DragNDrop } from '@visactor/vrender';
 
 // _showPoptip: 0-没有，1-添加，2-删除
 
-@injectable()
 export class DraggablePlugin implements IPlugin {
   name: 'DraggablePlugin' = 'DraggablePlugin';
   activeEvent: 'onRegister' = 'onRegister';

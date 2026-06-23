@@ -1,8 +1,7 @@
-import { injectable, BaseCanvas } from '@visactor/vrender-core';
+import { BaseCanvas } from '@visactor/vrender-core';
 import type { ICanvas, CanvasConfigType, EnvType } from '@visactor/vrender-core';
 import { TTContext2d } from './context';
 
-@injectable()
 export class TTCanvas extends BaseCanvas implements ICanvas {
   static env: EnvType = 'tt';
 

@@ -1,6 +1,4 @@
-import type { IAABBBounds, Matrix } from '@visactor/vutils';
-// eslint-disable-next-line no-duplicate-imports
-import { Point } from '@visactor/vutils';
+import { Point, type IAABBBounds, type Matrix } from '@visactor/vutils';
 import { application } from '../application';
 import type {
   IStage,
@@ -18,6 +16,14 @@ import { getTheme, Theme } from './theme';
 import { UpdateTag, IContainPointMode } from '../common/enums';
 import { GROUP_NUMBER_TYPE } from './constants';
 import { DefaultTransform } from './config';
+import type { StateDefinitionsInput } from './state/state-definition';
+import {
+  type SharedStateScope,
+  createGroupSharedStateScope,
+  setSharedStateScopeLocalDefinitions,
+  setSharedStateScopeParent
+} from './state/shared-state-scope';
+import { markScopeActiveDescendantsDirty } from './state/shared-state-refresh';
 
 // Group更新AABBBounds的策略
 export enum GroupUpdateAABBBoundsMode {
@@ -35,6 +41,8 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
   declare _childUpdateTag: number;
 
   declare theme?: ITheme;
+  protected _sharedStateDefinitions?: StateDefinitionsInput<Record<string, any>>;
+  declare sharedStateScope?: SharedStateScope<Record<string, any>>;
 
   static NOWORK_ANIMATE_ATTR = NOWORK_ANIMATE_ATTR;
 
@@ -43,6 +51,27 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
     this.numberType = GROUP_NUMBER_TYPE;
     this._childUpdateTag = UpdateTag.UPDATE_BOUNDS;
     // this.theme = new Theme();
+  }
+
+  get sharedStateDefinitions(): StateDefinitionsInput<Record<string, any>> | undefined {
+    return this._sharedStateDefinitions;
+  }
+
+  set sharedStateDefinitions(value: StateDefinitionsInput<Record<string, any>> | undefined) {
+    if (this._sharedStateDefinitions === value) {
+      return;
+    }
+
+    const previousScope = this.sharedStateScope;
+    this._sharedStateDefinitions = value;
+    this.ensureSharedStateScopeBound();
+    if (this.sharedStateScope) {
+      setSharedStateScopeLocalDefinitions(this.sharedStateScope, value);
+      markScopeActiveDescendantsDirty(this.sharedStateScope, this.stage);
+    }
+    if (previousScope !== this.sharedStateScope) {
+      this.notifyChildrenSharedStateTreeChanged();
+    }
   }
 
   setMode(mode: '2d' | '3d') {
@@ -254,9 +283,8 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
   /* 场景树结构 */
   incrementalAppendChild(node: INode): INode | null {
     const data = super.appendChild(node);
-    if (this.stage && data) {
-      (data as unknown as this).stage = this.stage;
-      (data as unknown as this).layer = this.layer;
+    if (data) {
+      this.syncChildSharedStateTreeBinding(data);
     }
     this.addUpdateBoundTag();
     this.getGraphicService().onAddIncremental(node as unknown as IGraphic, this, this.stage);
@@ -270,8 +298,8 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
   }
 
   protected _updateChildToStage(child: IGraphic) {
-    if (this.stage && child) {
-      child.setStage(this.stage, this.layer);
+    if (child) {
+      this.syncChildSharedStateTreeBinding(child);
     }
     this.addUpdateBoundTag();
     return child;
@@ -279,8 +307,10 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
   // TODO 代码优化
   appendChild(node: INode, addStage: boolean = true): INode | null {
     const data = super.appendChild(node);
-    if (addStage && this.stage && data) {
-      (data as unknown as this).setStage(this.stage, this.layer);
+    if (data) {
+      if (addStage) {
+        this.syncChildSharedStateTreeBinding(data);
+      }
     }
     this.addUpdateBoundTag();
     return data;
@@ -295,15 +325,23 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
     return this._updateChildToStage(super.insertInto(newNode, idx) as undefined as IGraphic);
   }
 
-  removeChild(child: IGraphic): IGraphic {
+  removeChild(child: IGraphic, highPerformance: boolean = false): IGraphic {
     const data = super.removeChild(child);
+    if (!data) {
+      return data as IGraphic;
+    }
+    if (highPerformance) {
+      child.detachStageForRelease();
+      return data as IGraphic;
+    }
     this.getGraphicService().onRemove(child);
-    child.stage = null;
+    child.setStage(null as any, null as any);
     this.addUpdateBoundTag();
     return data as IGraphic;
   }
 
   removeAllChild(deep: boolean = false): void {
+    const children = this.children.slice() as IGraphic[];
     this.forEachChildren((child: IGraphic) => {
       this.getGraphicService().onRemove(child);
       if (deep && child.isContainer) {
@@ -311,19 +349,45 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
       }
     });
     super.removeAllChild();
+    children.forEach(child => {
+      child.setStage(null as any, null as any);
+    });
     this.addUpdateBoundTag();
   }
 
   setStage(stage?: IStage, layer?: ILayer) {
+    const graphicService = stage?.graphicService ?? this.stage?.graphicService ?? application.graphicService;
+    const needsSharedStateTreeSync =
+      this.hasSharedStateDefinitions() ||
+      this.sharedStateScope ||
+      this.currentStates?.length ||
+      this.boundSharedStateScope ||
+      this.registeredActiveScopes?.size ||
+      this.sharedStateDirty;
     if (this.stage !== stage) {
       this.stage = stage;
       this.layer = layer;
+      if (needsSharedStateTreeSync) {
+        this.ensureSharedStateScopeBound();
+        this.syncSharedStateScopeBindingOnTreeChange(true);
+      }
       this.setStageToShadowRoot(stage, layer);
       this._onSetStage && this._onSetStage(this, stage, layer);
-      this.getGraphicService().onSetStage(this, stage);
-      this.forEachChildren(item => {
-        (item as any).setStage(stage, this.layer);
-      });
+      graphicService?.onSetStage?.(this, stage);
+      this.notifyChildrenSharedStateTreeChanged();
+      return;
+    }
+
+    const layerChanged = this.layer !== layer;
+    if (layerChanged) {
+      this.layer = layer;
+    }
+    if (needsSharedStateTreeSync) {
+      this.ensureSharedStateScopeBound();
+      this.syncSharedStateScopeBindingOnTreeChange(true);
+      this.notifyChildrenSharedStateTreeChanged();
+    } else if (layerChanged) {
+      this.notifyChildrenSharedStateTreeChanged();
     }
   }
   /**
@@ -422,6 +486,59 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
       });
     }
     super.release();
+  }
+
+  detachStageForRelease() {
+    super.detachStageForRelease();
+    this.sharedStateScope = undefined;
+    this.forEachChildren((item: IGraphic) => {
+      item.detachStageForRelease();
+    });
+  }
+
+  protected ensureSharedStateScopeBound(): void {
+    if (!this.hasSharedStateDefinitions()) {
+      this.sharedStateScope = undefined;
+      return;
+    }
+
+    const parentScope = (this.parent as any)?.sharedStateScope ?? this.stage?.rootSharedStateScope;
+    if (!this.sharedStateScope) {
+      this.sharedStateScope = createGroupSharedStateScope(this, parentScope, this._sharedStateDefinitions);
+      return;
+    }
+
+    this.sharedStateScope.ownerStage = this.stage;
+    setSharedStateScopeParent(this.sharedStateScope, parentScope);
+
+    if (this.sharedStateScope.localStateDefinitions !== this._sharedStateDefinitions) {
+      setSharedStateScopeLocalDefinitions(this.sharedStateScope, this._sharedStateDefinitions);
+    }
+  }
+
+  protected hasSharedStateDefinitions(): boolean {
+    return !!this._sharedStateDefinitions && Object.keys(this._sharedStateDefinitions).length > 0;
+  }
+
+  protected notifyChildrenSharedStateTreeChanged(): void {
+    this.forEachChildren(item => {
+      this.syncChildSharedStateTreeBinding(item);
+    });
+  }
+
+  protected syncChildSharedStateTreeBinding(child: INode): void {
+    child.onParentSharedStateTreeChanged(this.stage, this.layer);
+  }
+
+  onParentSharedStateTreeChanged(stage?: IStage, layer?: ILayer): void {
+    if (this.stage !== stage || this.layer !== layer) {
+      this.setStage(stage, layer);
+      return;
+    }
+
+    this.ensureSharedStateScopeBound();
+    this.syncSharedStateScopeBindingOnTreeChange(!!this.currentStates?.length);
+    this.notifyChildrenSharedStateTreeChanged();
   }
 }
 

@@ -1,9 +1,8 @@
-import { injectable, BaseCanvas } from '@visactor/vrender-core';
+import { BaseCanvas } from '@visactor/vrender-core';
 import type { ICanvas, CanvasConfigType, EnvType } from '@visactor/vrender-core';
 import { NodeContext2d } from './context';
 import { isFunction } from '@visactor/vutils';
 
-@injectable()
 export class NodeCanvas extends BaseCanvas implements ICanvas {
   static env: EnvType = 'node';
 

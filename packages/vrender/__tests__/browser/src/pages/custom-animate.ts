@@ -1,6 +1,7 @@
-import { createStage, createGroup } from '@visactor/vrender';
+import { createGroup } from '@visactor/vrender';
 import { createText, createRichText } from '@visactor/vrender';
 import { AnimateExecutor, registerAnimate, registerCustomAnimate } from '@visactor/vrender-animate';
+import { createBrowserPageStage } from '../page-stage';
 
 registerAnimate();
 registerCustomAnimate();
@@ -67,7 +68,7 @@ function addCase(name: string, container: HTMLElement, cb: (stage: any) => void)
   container.appendChild(button);
   button.addEventListener('click', () => {
     stage && stage.release();
-    stage = createStage({
+    stage = createBrowserPageStage({
       canvas: 'main',
       width: 900,
       height: 600,

@@ -1,32 +1,25 @@
 import {
-  inject,
-  injectable,
-  getTheme,
-  TextRender,
   textDrawOffsetX,
   textLayoutOffsetY,
   mat4Allocate,
-  TEXT_NUMBER_TYPE
+  TEXT_NUMBER_TYPE,
+  type IGraphicAttribute,
+  type IContext2d,
+  type IMarkAttribute,
+  type IText,
+  type IThemeAttribute,
+  type IGraphicPicker,
+  type IGraphicRender,
+  type IPickParams
 } from '@visactor/vrender-core';
 import type { IPoint } from '@visactor/vutils';
-import type {
-  IGraphicAttribute,
-  IContext2d,
-  IMarkAttribute,
-  IText,
-  IThemeAttribute,
-  IGraphicPicker,
-  IGraphicRender,
-  IPickParams
-} from '@visactor/vrender-core';
 import { Base3dPicker } from '../common/base-3d-picker';
 
-@injectable()
 export class DefaultCanvasTextPicker extends Base3dPicker<IText> implements IGraphicPicker {
   type: string = 'text';
   numberType: number = TEXT_NUMBER_TYPE;
 
-  constructor(@inject(TextRender) public readonly canvasRenderer: IGraphicRender) {
+  constructor(public readonly canvasRenderer: IGraphicRender) {
     super();
   }
 

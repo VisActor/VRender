@@ -3,14 +3,30 @@ import _roughModule from './render/contributions/rough/module';
 
 export const roughModule = _roughModule;
 export * from './picker/contributions/constants';
+export {
+  installBrowserEnvToApp,
+  installFeishuEnvToApp,
+  installHarmonyEnvToApp,
+  installLynxEnvToApp,
+  installMathPickersToApp,
+  installNodeEnvToApp,
+  installTaroEnvToApp,
+  installTTEnvToApp,
+  installWxEnvToApp,
+  installDefaultGraphicsToApp,
+  installBrowserPickersToApp,
+  installNodePickersToApp
+} from './installers/app';
 
 export * from './jsx';
 export * from './react-tree';
 export * from './event/extension';
+export * from './installers/app';
 // export * from './env/browser';
 export * from './env';
 export * from './picker/contributions/canvas-picker/arc-module';
 export * from './picker/contributions/math-picker/arc-module';
+export * from './picker/math-module';
 
 export * from './picker/contributions/canvas-picker/rect-module';
 export * from './picker/contributions/math-picker/rect-module';
@@ -81,5 +97,3 @@ export * from './register/register-star';
 export * from './register/register-wraptext';
 export * from './register/register-gif';
 export * from './tools/dynamicTexture/effect';
-// export const canvasModuleLoader = _canvasModuleLoader;
-// export { nodeLoader } from './node-bind'; // nodeLoader只在node入口暴露

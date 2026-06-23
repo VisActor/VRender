@@ -1,12 +1,11 @@
 import {
-  createStage,
   createRect,
   createLine,
   createText,
   IncreaseCount,
   Stage,
   InputText,
-  FadeInPlus,
+  FadeIn,
   defaultTicker,
   createGroup,
   createCircle,
@@ -18,7 +17,6 @@ import {
   createArea,
   StreamLight,
   createSymbol,
-  Meteor,
   AttributeUpdateType,
   IStage,
   Easing,
@@ -26,17 +24,23 @@ import {
   DefaultTimeline
 } from '@visactor/vrender';
 import { addShapesToStage, colorPools } from '../utils';
+import { setHarnessStage } from '../harness';
+import { createBrowserPageApp } from '../page-stage';
 
 let stage: any;
+let app: ReturnType<typeof createBrowserPageApp> | null = null;
+const caseButtons = new Map<string, HTMLButtonElement>();
 
 defaultTicker.start();
 function addCase(name: string, container: HTMLElement, cb: (stage: Stage) => void) {
   const button = document.createElement('button');
   button.innerText = name;
+  caseButtons.set(name, button);
   container.appendChild(button);
   button.addEventListener('click', () => {
-    stage && stage.release();
-    stage = createStage({
+    app?.release();
+    app = createBrowserPageApp();
+    stage = app.createStage({
       canvas: document.getElementById('main') as HTMLCanvasElement,
       width: 900,
       height: 600,
@@ -44,6 +48,7 @@ function addCase(name: string, container: HTMLElement, cb: (stage: Stage) => voi
       canvasControled: false,
       autoRender: true
     });
+    setHarnessStage(stage);
     cb(stage);
   });
 }
@@ -444,7 +449,7 @@ export const page = () => {
       symbol
         .animate()
         .startAt(i * 600)
-        .play(new Meteor(10, 10000, 'quadIn'));
+        .wait(10);
       stage.defaultLayer.add(symbol);
     }
   });
@@ -481,7 +486,7 @@ export const page = () => {
       fill: 'red'
     });
     symbol.animate().to({ size: 1000 }, 1000, 'linear');
-    const stage2 = createStage({ container: 'container', width: 500, height: 500, autoRender: true });
+    const stage2 = app!.createStage({ container: 'container', width: 500, height: 500, autoRender: true });
     stage.defaultLayer.add(symbol);
     console.time();
     new Array(6000000).fill(0).forEach(item => {
@@ -592,7 +597,7 @@ export const page = () => {
     text
       .animate()
       // .wait(4000)
-      .play(new FadeInPlus(0, null, 2000, 'quadIn'));
+      .play(new FadeIn(0, null, 2000, 'quadIn'));
 
     // text.onBeforeAttributeUpdate = (val: any, attributes: any, key: null | string | string[], context?: any) => {
     //   if (
@@ -611,6 +616,8 @@ export const page = () => {
     });
     stage.defaultLayer.add(text as any);
   });
+
+  caseButtons.get('text')?.click();
 
   // addCase('defaultAttr', container, stage => {
   //   const text = createText({

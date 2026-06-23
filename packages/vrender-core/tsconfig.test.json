@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "./",
+    "paths": {
+      "@visactor/vrender-core": ["src"],
+      "@visactor/vrender-core/event/constant": ["src/event/public-constant.ts"],
+      "@visactor/vrender-core/render/draw-interceptor": ["src/render/contributions/render/draw-interceptor.ts"],
+      "@visactor/vrender-core/render/symbol": ["src/render/contributions/render/symbol.ts"],
+      "@visactor/vrender-core/*": ["src/*"]
+    }
+  },
+  "references": []
+}

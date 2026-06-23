@@ -233,7 +233,7 @@ export class DataZoomRenderer {
         cursor: brushSelect ? 'crosshair' : 'auto',
         zIndex: LAYOUT_LEVEL.background,
         ...backgroundStyle,
-        pickable: zoomLock ? false : (backgroundStyle.pickable ?? true)
+        pickable: zoomLock ? false : backgroundStyle.pickable ?? true
       },
       'rect'
     ) as IRect;
@@ -268,7 +268,7 @@ export class DataZoomRenderer {
             height: middleHandlerBackgroundSize,
             zIndex: LAYOUT_LEVEL.handler,
             ...middleHandlerStyle.background?.style,
-            pickable: zoomLock ? false : (middleHandlerStyle.background?.style?.pickable ?? true)
+            pickable: zoomLock ? false : middleHandlerStyle.background?.style?.pickable ?? true
           },
           'rect'
         ) as IRect;
@@ -282,7 +282,7 @@ export class DataZoomRenderer {
             symbolType: middleHandlerStyle.icon?.symbolType ?? 'square',
             zIndex: LAYOUT_LEVEL.handler,
             ...middleHandlerStyle.icon,
-            pickable: zoomLock ? false : (middleHandlerStyle.icon.pickable ?? true)
+            pickable: zoomLock ? false : middleHandlerStyle.icon.pickable ?? true
           },
           'symbol'
         ) as ISymbol;
@@ -297,7 +297,7 @@ export class DataZoomRenderer {
           ...(DEFAULT_HANDLER_ATTR_MAP.horizontal as any),
           zIndex: LAYOUT_LEVEL.handler,
           ...startHandlerStyle,
-          pickable: zoomLock ? false : (startHandlerStyle.pickable ?? true)
+          pickable: zoomLock ? false : startHandlerStyle.pickable ?? true
         },
         'symbol'
       ) as ISymbol;
@@ -311,7 +311,7 @@ export class DataZoomRenderer {
           ...(DEFAULT_HANDLER_ATTR_MAP.horizontal as any),
           zIndex: LAYOUT_LEVEL.handler,
           ...endHandlerStyle,
-          pickable: zoomLock ? false : (endHandlerStyle.pickable ?? true)
+          pickable: zoomLock ? false : endHandlerStyle.pickable ?? true
         },
         'symbol'
       ) as ISymbol;
@@ -365,7 +365,7 @@ export class DataZoomRenderer {
             height: (end - start) * height,
             zIndex: LAYOUT_LEVEL.handler,
             ...middleHandlerStyle.background?.style,
-            pickable: zoomLock ? false : (middleHandlerStyle.background?.style?.pickable ?? true)
+            pickable: zoomLock ? false : middleHandlerStyle.background?.style?.pickable ?? true
           },
           'rect'
         ) as IRect;
@@ -383,7 +383,7 @@ export class DataZoomRenderer {
             strokeBoundsBuffer: 0,
             zIndex: LAYOUT_LEVEL.handler,
             ...middleHandlerStyle.icon,
-            pickable: zoomLock ? false : (middleHandlerStyle.icon?.pickable ?? true)
+            pickable: zoomLock ? false : middleHandlerStyle.icon?.pickable ?? true
           },
           'symbol'
         ) as ISymbol;
@@ -398,7 +398,7 @@ export class DataZoomRenderer {
           ...(DEFAULT_HANDLER_ATTR_MAP.vertical as any),
           zIndex: LAYOUT_LEVEL.handler,
           ...startHandlerStyle,
-          pickable: zoomLock ? false : (startHandlerStyle.pickable ?? true)
+          pickable: zoomLock ? false : startHandlerStyle.pickable ?? true
         },
         'symbol'
       ) as ISymbol;
@@ -413,7 +413,7 @@ export class DataZoomRenderer {
           zIndex: LAYOUT_LEVEL.handler,
           ...(DEFAULT_HANDLER_ATTR_MAP.vertical as any),
           ...endHandlerStyle,
-          pickable: zoomLock ? false : (endHandlerStyle.pickable ?? true)
+          pickable: zoomLock ? false : endHandlerStyle.pickable ?? true
         },
         'symbol'
       ) as ISymbol;
@@ -484,7 +484,7 @@ export class DataZoomRenderer {
           cursor: brushSelect ? 'crosshair' : 'move',
           zIndex: LAYOUT_LEVEL.selectedBackground,
           ...selectedBackgroundStyle,
-          pickable: zoomLock ? false : ((selectedBackgroundChartStyle as any).pickable ?? true)
+          pickable: zoomLock ? false : (selectedBackgroundChartStyle as any).pickable ?? true
         },
         'rect'
       ) as IRect;
@@ -500,7 +500,7 @@ export class DataZoomRenderer {
           cursor: brushSelect ? 'crosshair' : 'move',
           zIndex: LAYOUT_LEVEL.selectedBackground,
           ...selectedBackgroundStyle,
-          pickable: zoomLock ? false : (selectedBackgroundStyle.pickable ?? true)
+          pickable: zoomLock ? false : selectedBackgroundStyle.pickable ?? true
         },
         'rect'
       ) as IRect;

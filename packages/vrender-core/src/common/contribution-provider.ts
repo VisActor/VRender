@@ -1,14 +1,17 @@
-import type { interfaces } from '../common/inversify-lite';
+import type { IBindingResolver, ServiceIdentifier } from './explicit-binding';
 import type { IContributionProvider } from '../interface';
 
 export const ContributionProvider = Symbol('ContributionProvider');
 
 class ContributionProviderCache<T> implements IContributionProvider<T> {
   protected caches?: T[];
-  protected serviceIdentifier: interfaces.ServiceIdentifier<T>;
-  protected container: interfaces.Container;
+  protected serviceIdentifier: ServiceIdentifier<T>;
+  protected container: IBindingResolver & { isBound: (serviceIdentifier: ServiceIdentifier<T>) => boolean };
 
-  constructor(serviceIdentifier: interfaces.ServiceIdentifier<T>, container: interfaces.Container) {
+  constructor(
+    serviceIdentifier: ServiceIdentifier<T>,
+    container: IBindingResolver & { isBound: (serviceIdentifier: ServiceIdentifier<T>) => boolean }
+  ) {
     this.serviceIdentifier = serviceIdentifier;
     this.container = container;
     ContributionStore.setStore(this.serviceIdentifier, this);
@@ -35,27 +38,38 @@ class ContributionProviderCache<T> implements IContributionProvider<T> {
   }
 }
 
-export function bindContributionProvider(bind: interfaces.Bind, id: any): void {
+type IContributionProviderFactoryContext = {
+  container: IBindingResolver & { isBound: (serviceIdentifier: ServiceIdentifier) => boolean };
+};
+
+export function createContributionProvider<T>(
+  serviceIdentifier: ServiceIdentifier<T>,
+  container: IBindingResolver & { isBound: (serviceIdentifier: ServiceIdentifier<T>) => boolean }
+): IContributionProvider<T> {
+  return new ContributionProviderCache(serviceIdentifier, container);
+}
+
+export function bindContributionProvider(bind: any, id: ServiceIdentifier): void {
   bind(ContributionProvider)
-    .toDynamicValue(({ container }) => new ContributionProviderCache(id, container))
+    .toDynamicValue(({ container }: IContributionProviderFactoryContext) => createContributionProvider(id, container))
     .inSingletonScope()
     .whenTargetNamed(id);
 }
 
-export function bindContributionProviderNoSingletonScope(bind: interfaces.Bind, id: any): void {
+export function bindContributionProviderNoSingletonScope(bind: any, id: ServiceIdentifier): void {
   bind(ContributionProvider)
-    .toDynamicValue(({ container }) => new ContributionProviderCache(id, container))
+    .toDynamicValue(({ container }: IContributionProviderFactoryContext) => createContributionProvider(id, container))
     .whenTargetNamed(id);
 }
 
 export class ContributionStore {
-  static store: Map<interfaces.ServiceIdentifier<any>, ContributionProviderCache<any>> = new Map();
+  static store: Map<ServiceIdentifier<any>, ContributionProviderCache<any>> = new Map();
 
-  static getStore(id: interfaces.ServiceIdentifier<any>): ContributionProviderCache<any> {
+  static getStore(id: ServiceIdentifier<any>): ContributionProviderCache<any> {
     return this.store.get(id);
   }
 
-  static setStore(id: interfaces.ServiceIdentifier<any>, cache: ContributionProviderCache<any>): void {
+  static setStore(id: ServiceIdentifier<any>, cache: ContributionProviderCache<any>): void {
     this.store.set(id, cache);
   }
 

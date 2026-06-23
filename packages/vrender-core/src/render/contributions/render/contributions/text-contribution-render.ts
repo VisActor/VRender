@@ -1,5 +1,4 @@
-import type { IAABBBounds, IMatrix } from '@visactor/vutils';
-import { isObject } from '@visactor/vutils';
+import { isObject, type IAABBBounds, type IMatrix } from '@visactor/vutils';
 import { BaseRenderContributionTime } from '../../../../common/enums';
 import type {
   IContext2d,
@@ -158,7 +157,6 @@ export class DefaultTextBackgroundRenderContribution
 
 export const defaultTextBackgroundRenderContribution = new DefaultTextBackgroundRenderContribution();
 
-// @injectable()
 // export class DefaultTextPopTipRenderContribution
 //   extends DefaultBasePopTipRenderContribution
 //   implements ITextRenderContribution

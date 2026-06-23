@@ -1,6 +1,17 @@
 # Change Log - @visactor/react-vrender
 
-This log was last generated on Wed, 15 Apr 2026 07:05:39 GMT and should not be manually modified.
+This log was last generated on Tue, 23 Jun 2026 04:01:55 GMT and should not be manually modified.
+
+## 1.1.0
+Tue, 23 Jun 2026 04:01:55 GMT
+
+### Minor changes
+
+- Align React Stage lifecycle and host bindings with the VRender 1.1.0 app-scoped runtime contract.
+
+### Updates
+
+- Covered by the consolidated VRender 1.1.0 app-scoped runtime release entry.
 
 ## 1.0.46
 Wed, 15 Apr 2026 07:05:39 GMT

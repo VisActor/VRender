@@ -1,8 +1,7 @@
-import { injectable, BaseCanvas } from '@visactor/vrender-core';
+import { BaseCanvas } from '@visactor/vrender-core';
 import type { ICanvas, CanvasConfigType, EnvType } from '@visactor/vrender-core';
 import { HarmonyContext2d } from './context';
 
-@injectable()
 export class HarmonyCanvas extends BaseCanvas implements ICanvas {
   static env: EnvType = 'harmony';
 
@@ -19,6 +18,16 @@ export class HarmonyCanvas extends BaseCanvas implements ICanvas {
   }
 
   resize(width: number, height: number): void {
+    if (!this.controled) {
+      return;
+    }
+    this._pixelWidth = width * this._dpr;
+    this._pixelHeight = height * this._dpr;
+    this._displayWidth = width;
+    this._displayHeight = height;
+    this._nativeCanvas.width = this._pixelWidth;
+    this._nativeCanvas.height = this._pixelHeight;
+    this._context.dpr = this._dpr;
     return;
   }
 

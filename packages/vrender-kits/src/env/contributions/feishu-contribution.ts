@@ -1,4 +1,4 @@
-import { injectable, BaseEnvContribution, rafBasedSto } from '@visactor/vrender-core';
+import { BaseEnvContribution, rafBasedSto } from '@visactor/vrender-core';
 // import { loadFeishuContributions } from '../../../kits';
 import type {
   ICanvasLike,
@@ -8,48 +8,46 @@ import type {
   IGlobal,
   ITTCanvas
 } from '@visactor/vrender-core';
-import { CanvasWrapDisableWH } from './canvas-wrap';
+import {
+  createCanvasWithFactory,
+  getMiniAppCanvasOptions,
+  type MiniAppCanvasEnvParams,
+  wrapMiniAppContextCanvas
+} from './miniapp-canvas';
 
 declare const tt: {
-  getSystemInfoSync: () => { pixelRatio: number };
-  createCanvasContext: (id: string) => any;
+  getSystemInfoSync?: () => { pixelRatio: number };
+  createCanvasContext?: (id: string) => any;
 };
 
-// 飞书小程序canvas的wrap
-function makeUpCanvas(
-  domref: any,
-  canvasIdLists: string[],
-  canvasMap: Map<string, ITTCanvas>,
-  freeCanvasIdx: number,
-  freeCanvasList: ITTCanvas[],
-  pixelRatio?: number
-) {
-  const dpr = pixelRatio ?? tt.getSystemInfoSync().pixelRatio;
+type FeishuEnvParams = MiniAppCanvasEnvParams & {
+  tt?: typeof tt;
+  feishu?: typeof tt;
+  runtime?: typeof tt;
+};
 
-  canvasIdLists.forEach((id, i) => {
-    // if (canvasMap.has(id)) {
-    //   return;
-    // }
-    const ctx = tt.createCanvasContext(id);
+const FEISHU_CANVAS_BRIDGE_ERROR =
+  'Feishu canvas bridge is unavailable. VRender feishu env requires envParams.canvasFactory, ' +
+  'a Stage canvas object, or a feishu/tt runtime that exposes createCanvasContext(id).';
 
-    const canvas = new CanvasWrapDisableWH(ctx.canvas || {}, ctx, dpr, domref.width, domref.height, id);
-    ctx.canvas = canvas;
-    canvasMap.set(id, canvas);
-    if (i >= freeCanvasIdx) {
-      freeCanvasList.push(canvas);
-    }
-  });
+function getFeishuRuntime(params?: FeishuEnvParams): any {
+  try {
+    return params?.feishu ?? params?.tt ?? params?.runtime ?? (typeof tt !== 'undefined' ? tt : undefined);
+  } catch {
+    return params?.feishu ?? params?.tt ?? params?.runtime;
+  }
 }
 
-@injectable()
+function getFeishuPixelRatio(params?: FeishuEnvParams, runtime: any = getFeishuRuntime(params)): number {
+  return params?.pixelRatio ?? runtime?.getSystemInfoSync?.()?.pixelRatio ?? 1;
+}
+
 export class FeishuEnvContribution extends BaseEnvContribution implements IEnvContribution {
   type: EnvType = 'feishu';
   supportEvent: boolean = true;
   // 所有添加进来的canvas
   canvasMap: Map<string, ITTCanvas> = new Map();
-  // 所有可用的canvasList
-  freeCanvasList: ITTCanvas[] = [];
-  canvasIdx: number = 0;
+  private feishuEnvParams: FeishuEnvParams = {};
 
   constructor() {
     super();
@@ -68,7 +66,7 @@ export class FeishuEnvContribution extends BaseEnvContribution implements IEnvCo
    * 获取动态canvas的数量，offscreenCanvas或者framebuffer
    */
   getDynamicCanvasCount(): number {
-    return this.freeCanvasList.length;
+    return 0;
   }
 
   /**
@@ -78,22 +76,10 @@ export class FeishuEnvContribution extends BaseEnvContribution implements IEnvCo
     return 9999;
   }
 
-  // TODO：VGrammar在小程序环境会重复调用setEnv传入canvas，所以每次configure并不会释放
-  // 这里等待后续和VGrammar沟通
-  configure(
-    service: IGlobal,
-    params: { domref: any; canvasIdLists: string[]; freeCanvasIdx: number; pixelRatio?: number }
-  ) {
+  configure(service: IGlobal, params: FeishuEnvParams = {}) {
     if (service.env === this.type) {
       service.setActiveEnvContribution(this);
-      makeUpCanvas(
-        params.domref,
-        params.canvasIdLists,
-        this.canvasMap,
-        params.freeCanvasIdx,
-        this.freeCanvasList,
-        params.pixelRatio
-      );
+      this.feishuEnvParams = params;
 
       // loadFeishuContributions();
     }
@@ -118,9 +104,22 @@ export class FeishuEnvContribution extends BaseEnvContribution implements IEnvCo
   }
 
   createCanvas(params: ICreateCanvasParams): ITTCanvas {
-    const result = this.freeCanvasList[this.canvasIdx] || this.freeCanvasList[this.freeCanvasList.length - 1];
-    this.canvasIdx++;
-    return result;
+    const envParams = this.feishuEnvParams;
+    const runtime = getFeishuRuntime(envParams);
+    const dpr = params.dpr ?? getFeishuPixelRatio(envParams, runtime);
+    const factoryCanvas = createCanvasWithFactory(params, dpr, this.canvasMap, envParams.canvasFactory);
+    if (factoryCanvas) {
+      return factoryCanvas;
+    }
+
+    const options = getMiniAppCanvasOptions(params, dpr, false);
+    if (options.id == null || typeof runtime?.createCanvasContext !== 'function') {
+      throw new Error(FEISHU_CANVAS_BRIDGE_ERROR);
+    }
+
+    const canvas = wrapMiniAppContextCanvas(runtime.createCanvasContext(options.id), options);
+    this.canvasMap.set(options.id, canvas);
+    return canvas;
   }
 
   createOffscreenCanvas(params: ICreateCanvasParams) {
@@ -132,7 +131,7 @@ export class FeishuEnvContribution extends BaseEnvContribution implements IEnvCo
   }
 
   getDevicePixelRatio(): number {
-    return tt.getSystemInfoSync().pixelRatio;
+    return getFeishuPixelRatio(this.feishuEnvParams);
   }
 
   getRequestAnimationFrame(): (callback: FrameRequestCallback) => number {

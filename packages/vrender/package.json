@@ -1,11 +1,17 @@
 {
   "name": "@visactor/vrender",
-  "version": "1.0.46",
+  "version": "1.1.0",
   "description": "",
   "sideEffects": true,
   "main": "cjs/index.js",
   "module": "es/index.js",
   "types": "es/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "entries": ["es/entries/index.d.ts"],
+      "entries/*": ["es/entries/*"]
+    }
+  },
   "files": [
     "cjs",
     "es",
@@ -18,16 +24,17 @@
     "build-umd": "cross-env DEBUG='Bundler*' bundle --clean -f umd",
     "dev": "cross-env DEBUG='Bundler*' bundle --clean -f es -w",
     "start": "vite ./__tests__/browser --host",
-    "test": "jest 2>&1",
-    "test-cov": "jest -w 16 --coverage",
+    "test": "jest -c jest.config.js",
+    "test:electron": "jest -c jest.electron.config.js --runInBand --passWithNoTests --testPathPattern='__tests__/(browser|electron)/'",
+    "test-cov": "jest -c jest.config.js -w 16 --coverage",
     "test-live": "npm run test-watch __tests__/unit/theme/line.test.ts",
-    "test-watch": "cross-env DEBUG_MODE=1 jest --watch"
+    "test-watch": "cross-env DEBUG_MODE=1 jest --watch -c jest.config.js"
   },
   "dependencies": {
-    "@visactor/vrender-core": "workspace:1.0.46",
-    "@visactor/vrender-kits": "workspace:1.0.46",
-    "@visactor/vrender-animate": "workspace:1.0.46",
-    "@visactor/vrender-components": "workspace:1.0.46"
+    "@visactor/vrender-core": "workspace:1.1.0",
+    "@visactor/vrender-kits": "workspace:1.1.0",
+    "@visactor/vrender-animate": "workspace:1.1.0",
+    "@visactor/vrender-components": "workspace:1.1.0"
   },
   "devDependencies": {
     "@internal/bundler": "workspace:*",
@@ -43,12 +50,13 @@
     "@vitejs/plugin-react": "3.1.0",
     "@types/jest": "^26.0.0",
     "jest": "^26.0.0",
-    "jest-electron": "^0.1.12",
+    "jest-electron": "npm:@pixi/jest-electron@26.1.0",
     "jest-extended": "^1.2.1",
     "ts-jest": "^26.0.0",
     "eslint": "~8.18.0",
     "vite": "3.2.6",
     "typescript": "4.9.5",
+    "zrender": "5.4.0",
     "cross-env": "^7.0.3"
   },
   "keywords": [
@@ -73,6 +81,45 @@
     ".": {
       "import": "./es/index.js",
       "require": "./cjs/index.js"
+    },
+    "./entries": {
+      "types": "./es/entries/index.d.ts",
+      "import": "./es/entries/index.js",
+      "require": "./cjs/entries/index.js"
+    },
+    "./entries/browser": {
+      "types": "./es/entries/browser.d.ts",
+      "import": "./es/entries/browser.js",
+      "require": "./cjs/entries/browser.js"
+    },
+    "./entries/miniapp": {
+      "types": "./es/entries/miniapp.d.ts",
+      "import": "./es/entries/miniapp.js",
+      "require": "./cjs/entries/miniapp.js"
+    },
+    "./entries/node": {
+      "types": "./es/entries/node.d.ts",
+      "import": "./es/entries/node.js",
+      "require": "./cjs/entries/node.js"
+    },
+    "./entries/shared": {
+      "types": "./es/entries/shared.d.ts",
+      "browser": {
+        "import": "./es/entries/shared-browser.js",
+        "require": "./cjs/entries/shared-browser.js"
+      },
+      "import": "./es/entries/shared.js",
+      "require": "./cjs/entries/shared.js"
+    },
+    "./entries/shared-browser": {
+      "types": "./es/entries/shared-browser.d.ts",
+      "import": "./es/entries/shared-browser.js",
+      "require": "./cjs/entries/shared-browser.js"
+    },
+    "./entries/shared-browser-lite": {
+      "types": "./es/entries/shared-browser-lite.d.ts",
+      "import": "./es/entries/shared-browser-lite.js",
+      "require": "./cjs/entries/shared-browser-lite.js"
     }
   },
   "publishConfig": {

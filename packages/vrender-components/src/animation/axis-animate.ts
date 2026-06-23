@@ -1,4 +1,7 @@
-import { AComponentAnimate, AnimateExecutor, createComponentAnimator } from '@visactor/vrender-animate';
+import { createComponentAnimator } from '@visactor/vrender-animate/component';
+import { AComponentAnimate } from '@visactor/vrender-animate/custom/custom-animate';
+import { AnimateExecutor } from '@visactor/vrender-animate/executor/animate-executor';
+import { commitUpdateAnimationTarget } from './static-truth';
 
 /**
  * AxisEnter class handles the enter animation for Axis components
@@ -21,7 +24,7 @@ export class AxisEnter extends AComponentAnimate<any> {
       const newX = this.target.attribute.x;
       const newY = this.target.attribute.y;
 
-      this.target.setAttributes({ x: point.x, y: point.y });
+      commitUpdateAnimationTarget(this.target, { x: newX, y: newY }, { x: point.x, y: point.y });
       animator.animate(this.target, {
         type: 'to',
         to: { x: newX, y: newY },
@@ -79,7 +82,7 @@ export class AxisUpdate extends AComponentAnimate<any> {
     this._animator = animator;
     const duration = this.duration;
     const easing = this.easing;
-    const { config, diffAttrs } = this.params;
+    const { diffAttrs } = this.params;
     // this.target.applyAnimationState(
     //   ['update'],
     //   [
@@ -98,6 +101,7 @@ export class AxisUpdate extends AComponentAnimate<any> {
     //   ]
     // );
     // console.log('this.props', this.props, { ...this.target.attribute });
+    commitUpdateAnimationTarget(this.target, { ...diffAttrs });
     animator.animate(this.target, {
       type: 'to',
       to: { ...diffAttrs },
@@ -112,8 +116,12 @@ export class AxisUpdate extends AComponentAnimate<any> {
 
   // 轴动画本身没有逻辑，具体通过animator中执行，所以当需要屏蔽自身属性时，需要通过animator中执行
   deleteSelfAttr(key: string): void {
-    super.deleteSelfAttr(key);
-    this._animator.deleteSelfAttr(key);
+    this.deleteSelfAttrs([key]);
+  }
+
+  deleteSelfAttrs(keys: string[]): void {
+    super.deleteSelfAttrs(keys);
+    this._animator.deleteSelfAttrs(keys);
   }
 
   // 轴动画本身没有逻辑，具体通过animator中执行，所以本身不需要屏蔽冲突

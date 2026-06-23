@@ -1,5 +1,4 @@
 import {
-  createStage,
   createText,
   global,
   getTextBounds,
@@ -13,6 +12,7 @@ import {
 } from '@visactor/vrender';
 import { addShapesToStage, colorPools } from '../utils';
 import { loadPoptip } from '@visactor/vrender-components';
+import { createBrowserPageStage } from '../page-stage';
 
 // global.setEnv('browser');
 
@@ -390,7 +390,7 @@ export const page = () => {
     })
   );
 
-  const stage = createStage({
+  const stage = createBrowserPageStage({
     canvas: 'main',
     autoRender: true,
     disableDirtyBounds: false,

@@ -69,6 +69,10 @@ export type IArcAttribute = {
    * 当cap = true 并且 使用了渐变填充的时候，自动实现conical渐变，也就是环形的渐变
    */
   forceShowCap: boolean;
+  /**
+   * 按角度范围裁剪绘制比例，0 表示不绘制，1 表示完整绘制。
+   */
+  clipRange: number;
 };
 /**
  * 内部缓存，用于存储一些内部变量

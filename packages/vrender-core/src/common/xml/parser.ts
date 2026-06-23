@@ -27,6 +27,7 @@ SOFTWARE.
 
 import { OrderedObjParser } from './OrderedObjParser';
 import { prettify } from './node2json';
+import { isSvg, isXML } from './is-xml';
 import type { X2jOptions } from './type';
 
 export class XMLParser {
@@ -51,10 +52,4 @@ export class XMLParser {
   }
 }
 
-export function isSvg(str: string) {
-  return str.startsWith('<svg') || str.startsWith('<?xml');
-}
-
-export function isXML(str: string) {
-  return str.startsWith('<');
-}
+export { isSvg, isXML };

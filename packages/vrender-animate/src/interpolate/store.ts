@@ -1,5 +1,9 @@
 import type { IGraphic, IStep } from '@visactor/vrender-core';
-import { interpolateColor, interpolatePureColorArrayToStr, pointsInterpolation } from '@visactor/vrender-core';
+import {
+  interpolateColor,
+  interpolatePureColorArrayToStr,
+  pointsInterpolation
+} from '@visactor/vrender-core/interpolate';
 import { interpolateNumber } from './number';
 import type { IPointLike } from '@visactor/vutils';
 

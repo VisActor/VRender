@@ -7,6 +7,42 @@ function isIdentityMatrix(matrix: Matrix): boolean {
   return matrix.a === 1 && matrix.b === 0 && matrix.c === 0 && matrix.d === 1 && matrix.e === 0 && matrix.f === 0;
 }
 
+function cloneTouchList(touchList?: ArrayLike<any>): any[] {
+  if (!touchList || touchList.length === 0) {
+    return [];
+  }
+
+  return Array.from(touchList, touch => ({ ...touch }));
+}
+
+function cloneTouchEvent(event: TouchEvent): TouchEvent {
+  const transformedEvent = Object.create(Object.getPrototypeOf(event) ?? Object.prototype);
+
+  Object.defineProperties(transformedEvent, {
+    type: { value: event.type, configurable: true },
+    touches: { value: cloneTouchList(event.touches), configurable: true },
+    changedTouches: { value: cloneTouchList(event.changedTouches), configurable: true }
+  });
+
+  return transformedEvent;
+}
+
+function cloneNativeEvent(event: Event): Event {
+  if (event instanceof TouchEvent) {
+    return cloneTouchEvent(event);
+  }
+
+  return new (event.constructor as any)(event.type, event);
+}
+
+function getSafeEventProperty(event: Event, key: 'target' | 'currentTarget') {
+  try {
+    return event[key];
+  } catch (error) {
+    return undefined;
+  }
+}
+
 /**
  * Create an event transformer that corrects event coordinates based on container transformations
  * @param containerElement The container element
@@ -38,24 +74,29 @@ export function createEventTransformer(
     const containerRect = getRect();
 
     // Create a copy of the event to modify
-    const transformedEvent = new (event.constructor as any)(event.type, event);
+    const transformedEvent = cloneNativeEvent(event);
+    const target = getSafeEventProperty(event, 'target');
+    const currentTarget = getSafeEventProperty(event, 'currentTarget');
+
     Object.defineProperties(transformedEvent, {
-      target: { value: event.target },
-      currentTarget: { value: event.currentTarget }
+      target: { value: target },
+      currentTarget: { value: currentTarget }
     });
 
     if (event instanceof MouseEvent || event instanceof PointerEvent) {
       transformPoint(event.clientX, event.clientY, transformMatrix, containerRect, transformedEvent);
     } else if (event instanceof TouchEvent) {
+      const transformedTouchEvent = transformedEvent as TouchEvent;
+
       // For touch events, we need to transform each touch point
       // This is a simplified version that assumes we're only using the first touch
       if (event.touches.length > 0) {
-        const touch = transformedEvent.touches[0];
-        transformPoint(touch.clientX, touch.clientY, transformMatrix, containerRect, touch);
+        const touch = transformedTouchEvent.touches[0];
+        transformPoint(touch.clientX, touch.clientY, transformMatrix, containerRect, touch as unknown as Event);
       }
       if (event.changedTouches.length > 0) {
-        const touch = transformedEvent.changedTouches[0];
-        transformPoint(touch.clientX, touch.clientY, transformMatrix, containerRect, touch);
+        const touch = transformedTouchEvent.changedTouches[0];
+        transformPoint(touch.clientX, touch.clientY, transformMatrix, containerRect, touch as unknown as Event);
       }
     }
 

@@ -9,7 +9,6 @@ import type {
   ISetAttributeContext
 } from '../interface';
 import { getTheme } from './theme';
-import { application } from '../application';
 import { GLYPH_NUMBER_TYPE } from './constants';
 
 export class Glyph extends Graphic<IGlyphGraphicAttribute> implements IGlyph {
@@ -195,6 +194,7 @@ export class Glyph extends Graphic<IGlyphGraphicAttribute> implements IGlyph {
       this.clearStates(hasAnimation);
       return;
     }
+    const previousStates = this.currentStates ? this.currentStates.slice() : [];
 
     const isChange =
       this.currentStates?.length !== states.length ||
@@ -209,44 +209,34 @@ export class Glyph extends Graphic<IGlyphGraphicAttribute> implements IGlyph {
       states = states.sort(this.stateSort);
     }
     const stateAttrs = {};
-    const subAttrs = this.subGraphic.map(() => ({}));
     states.forEach(stateName => {
       const attrs = this.glyphStateProxy ? this.glyphStateProxy(stateName, states) : this.glyphStates[stateName];
 
       if (attrs) {
         Object.assign(stateAttrs, attrs.attributes);
-
-        if (attrs.subAttributes?.length) {
-          subAttrs.forEach((subAttrs, index) => {
-            Object.assign(subAttrs, attrs.subAttributes[index]);
-          });
-        }
       }
     });
 
-    // this.subGraphic.forEach((graphic, index) => {
-    //   graphic.updateNormalAttrs(subAttrs[index]);
-    //   graphic.applyStateAttrs(subAttrs[index], states, hasAnimation);
-    // });
+    if (!this.beforeStateUpdate(stateAttrs, previousStates, states, hasAnimation, false)) {
+      return;
+    }
 
-    this.updateNormalAttrs(stateAttrs);
     this.currentStates = states;
     this.applyStateAttrs(stateAttrs, states, hasAnimation);
   }
 
   clearStates(hasAnimation?: boolean) {
     this.stopStateAnimates();
+    const previousStates = this.currentStates ? this.currentStates.slice() : [];
     if (this.hasState() && this.normalAttrs) {
+      if (!this.beforeStateUpdate(this.normalAttrs, previousStates, [], hasAnimation, true)) {
+        return;
+      }
       this.currentStates = [];
-      // this.subGraphic.forEach(graphic => {
-      //   graphic.applyStateAttrs(graphic.normalAttrs, this.currentStates, hasAnimation, true);
-      //   graphic.normalAttrs = null;
-      // });
       this.applyStateAttrs(this.normalAttrs, this.currentStates, hasAnimation, true);
     } else {
       this.currentStates = [];
     }
-    this.normalAttrs = null;
   }
 
   clone(): IGraphic<Partial<IGlyphGraphicAttribute>> {

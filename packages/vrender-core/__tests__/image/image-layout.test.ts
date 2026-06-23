@@ -18,6 +18,10 @@ function createContext() {
     fillStyle: '',
     beginPath: jest.fn(),
     rect: jest.fn(),
+    moveTo: jest.fn(),
+    lineTo: jest.fn(),
+    arc: jest.fn(),
+    closePath: jest.fn(),
     save: jest.fn(),
     restore: jest.fn(),
     clip: jest.fn(),
@@ -211,5 +215,43 @@ describe('image layout', () => {
         imagePosition: 'center'
       })
     ).toBe(true);
+  });
+
+  test('clips image with native cornerRadius', () => {
+    const render = new DefaultCanvasImageRender({ getContributions: (): any[] => [] } as any);
+    const context = createContext();
+    const image = prepareRenderableImage(
+      new Image({
+        width: 30,
+        height: 30,
+        image: createImageData(60, 60) as any,
+        cornerRadius: 15
+      })
+    );
+
+    render.drawShape(image, context as any, 0, 0, {} as any);
+
+    expect(context.arc).toHaveBeenCalledTimes(4);
+    expect(context.clip).toHaveBeenCalledTimes(1);
+    expect(context.drawImage).toHaveBeenCalledWith(expect.anything(), 0, 0, 30, 30);
+  });
+
+  test('does not treat image shape circle as a native clipping alias', () => {
+    const render = new DefaultCanvasImageRender({ getContributions: (): any[] => [] } as any);
+    const context = createContext();
+    const image = prepareRenderableImage(
+      new Image({
+        width: 30,
+        height: 30,
+        image: createImageData(60, 60) as any,
+        shape: 'circle'
+      } as any)
+    );
+
+    render.drawShape(image, context as any, 0, 0, {} as any);
+
+    expect(context.arc).not.toHaveBeenCalled();
+    expect(context.clip).not.toHaveBeenCalled();
+    expect(context.drawImage).toHaveBeenCalledWith(expect.anything(), 0, 0, 30, 30);
   });
 });

@@ -1,9 +1,12 @@
-import { createStage, createCircle, IGraphic, vglobal, createSymbol } from '@visactor/vrender';
+import { createCircle, IGraphic, vglobal, createSymbol } from '@visactor/vrender';
 import { colorPools } from '../utils';
 import { createGroup } from '@visactor/vrender';
 import { Matrix } from '@visactor/vutils';
+import { createBrowserPageApp } from '../page-stage';
 
 export const page = () => {
+  const app = createBrowserPageApp();
+
   function addSymbol(num: number, type: string, stage: any) {
     for (let i = 0; i < num; i++) {
       const symbol = createSymbol({
@@ -30,7 +33,7 @@ export const page = () => {
     }
   }
 
-  const stage1 = createStage({
+  const stage1 = app.createStage({
     canvas: 'main',
     viewBox: {
       x1: 100,
@@ -44,7 +47,7 @@ export const page = () => {
 
   addSymbol(100, 'circle', stage1);
 
-  const stage2 = createStage({
+  const stage2 = app.createStage({
     canvas: 'main',
     width: 100,
     height: 100,
@@ -55,7 +58,7 @@ export const page = () => {
 
   addSymbol(100, 'star', stage2);
 
-  const stage3 = createStage({
+  const stage3 = app.createStage({
     canvas: 'main',
     width: 100,
     height: 100,
@@ -76,10 +79,11 @@ export const page = () => {
 
   addSymbol(100, 'square', stage3);
 
-  const stage = createStage({
+  const stage = app.createStage({
     width: 100,
     height: 300
   });
+  window.stage = stage3;
   stage.resize(200, 200);
   console.log();
   // expect(stage.width).toEqual(300);

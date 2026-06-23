@@ -1,16 +1,19 @@
-import { container, registerSymbolGraphic, symbolModule } from '@visactor/vrender-core';
+import { getLegacyBindingContext } from '@visactor/vrender-core/legacy/bootstrap';
+import { registerSymbolGraphic } from '@visactor/vrender-core/register/graphic';
+import { symbolModule } from '@visactor/vrender-core/graphic/modules';
 import { browser } from './env';
-import { symbolCanvasPickModule } from '../picker/contributions/canvas-picker/symbol-module';
-import { symbolMathPickModule } from '../picker/contributions/math-picker/symbol-module';
+import { bindSymbolCanvasPickerContribution } from '../picker/contributions/canvas-picker/symbol-module';
+import { bindSymbolMathPickerContribution } from '../picker/contributions/math-picker/symbol-module';
 
 function _registerSymbol() {
   if (_registerSymbol.__loaded) {
     return;
   }
   _registerSymbol.__loaded = true;
+  const legacyContext = getLegacyBindingContext();
   registerSymbolGraphic();
-  container.load(symbolModule);
-  container.load(browser ? symbolCanvasPickModule : symbolMathPickModule);
+  (symbolModule as any)({ bind: legacyContext.bind });
+  browser ? bindSymbolCanvasPickerContribution(legacyContext) : bindSymbolMathPickerContribution(legacyContext);
 }
 
 _registerSymbol.__loaded = false;

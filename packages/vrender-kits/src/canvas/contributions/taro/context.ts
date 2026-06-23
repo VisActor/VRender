@@ -1,5 +1,5 @@
 // 参考konva
-import { injectable, createColor, getScaledStroke } from '@visactor/vrender-core';
+import { createColor, getScaledStroke } from '@visactor/vrender-core';
 import type {
   ICommonStyleParams,
   IContext2d,
@@ -29,7 +29,6 @@ interface ITTContext {
   font: string;
 }
 
-@injectable()
 export class TaroContext2d extends BrowserContext2d implements IContext2d {
   static env: EnvType = 'taro';
 

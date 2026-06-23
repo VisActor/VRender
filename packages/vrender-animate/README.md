@@ -22,6 +22,39 @@ This module provides a graph-based animation system for VRender.
 
 ## Usage
 
+### Runtime Registration
+
+```typescript
+import { registerAnimate } from '@visactor/vrender-animate/register';
+import { registerBasicCustomAnimate } from '@visactor/vrender-animate/custom/register-basic';
+
+registerAnimate();
+registerBasicCustomAnimate();
+```
+
+`registerAnimate()` installs the base graphic animation runtime. Use
+`@visactor/vrender-animate/custom/register-basic` when only the common built-in
+custom animations are needed. Full bootstraps that need the whole story, rich
+text, poptip, motion path, and disappearance effect set should continue to use
+`@visactor/vrender-animate/custom/register`.
+Use `@visactor/vrender-animate/custom/register-disappear` when only the
+disappearance effect animations are needed.
+Use `@visactor/vrender-animate/custom/register-richtext` when only text and
+rich text input/output animations are needed.
+Use `@visactor/vrender-animate/custom/register-story` when only story effects,
+motion path, and stream light animations are needed.
+
+Current custom register entries:
+
+| Entry | Function | Scope |
+| --- | --- | --- |
+| `@visactor/vrender-animate/register` | `registerAnimate()` | Base animation runtime only |
+| `@visactor/vrender-animate/custom/register-basic` | `registerBasicCustomAnimate()` | Common built-in custom animations |
+| `@visactor/vrender-animate/custom/register-richtext` | `registerRichTextCustomAnimate()` | Text and rich text custom animations |
+| `@visactor/vrender-animate/custom/register-disappear` | `registerDisappearCustomAnimate()` | Disappearance effect animations |
+| `@visactor/vrender-animate/custom/register-story` | `registerStoryCustomAnimate()` | Story effects, `MotionPath`, and `streamLight` |
+| `@visactor/vrender-animate/custom/register` | `registerCustomAnimate()` | Full custom animation compatibility |
+
 ### Basic Property Animation
 
 ```typescript

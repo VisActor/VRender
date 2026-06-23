@@ -1,9 +1,6 @@
 import { abs, atan2, cos, epsilon, min, sin, pi2, isBoolean } from '@visactor/vutils';
-import { inject, injectable, named } from '../../../common/inversify-lite';
 import { getTheme } from '../../../graphic/theme';
 import { parseStroke } from '../../../common/utils';
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { ContributionProvider } from '../../../common/contribution-provider';
 import { calculateArcCornerRadius } from '../render/utils';
 import type {
   IContext2d,
@@ -49,16 +46,11 @@ import {
   THIS SOFTWARE.
  */
 
-@injectable()
 export class DefaultCanvasArcRender extends BaseRender<IArc> implements IGraphicRender {
   type: 'arc';
   numberType: number = ARC_NUMBER_TYPE;
 
-  constructor(
-    @inject(ContributionProvider)
-    @named(ArcRenderContribution)
-    protected readonly graphicRenderContributions: IContributionProvider<IArcRenderContribution>
-  ) {
+  constructor(protected readonly graphicRenderContributions: IContributionProvider<IArcRenderContribution>) {
     super();
     this.builtinContributions = [
       defaultArcRenderContribution,

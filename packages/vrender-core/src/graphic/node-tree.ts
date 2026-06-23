@@ -1,7 +1,6 @@
-import type { Dict, LooseFunction } from '@visactor/vutils';
-import { EventEmitter, Logger, isBoolean, isFunction, isObject } from '@visactor/vutils';
+import { EventEmitter, Logger, isBoolean, isFunction, isObject, type Dict, type LooseFunction } from '@visactor/vutils';
 import { Generator } from '../common/generator';
-import type { INode, IGroup } from '../interface';
+import type { ILayer, INode, IGroup, IStage } from '../interface';
 
 export class Node extends EventEmitter<any, any> implements INode {
   parent: any;
@@ -58,6 +57,10 @@ export class Node extends EventEmitter<any, any> implements INode {
     this._lastChild = null;
     this.parent = null;
     this._count = 1;
+  }
+
+  onParentSharedStateTreeChanged(_stage?: IStage, _layer?: ILayer): void {
+    return;
   }
 
   forEachChildren<T extends INode = INode>(cb: (item: T, index: number) => void | boolean, reverse: boolean = false) {

@@ -1,9 +1,8 @@
 // 参考konva
-import { injectable, createColor, getScaledStroke, application } from '@visactor/vrender-core';
+import { createColor, getScaledStroke, application } from '@visactor/vrender-core';
 import type { IContext2d, EnvType, ISetStrokeStyleParams, IStrokeStyleParams } from '@visactor/vrender-core';
 import { BrowserContext2d } from '../browser';
 
-@injectable()
 export class LynxContext2d extends BrowserContext2d implements IContext2d {
   static env: EnvType = 'lynx';
 

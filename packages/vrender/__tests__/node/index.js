@@ -1,7 +1,4 @@
-const CanvasPkg = require('canvas');
 const {
-  vglobal,
-  createStage,
   createGroup,
   createLine,
   createText,
@@ -13,6 +10,7 @@ const {
   createCircle
 } = require('../../cjs/index.js');
 const fs = require('fs');
+const { createNodeTestStage } = require('./create-stage');
 
 const vchartStageJson = require('./vchart-stage.json');
 /**
@@ -59,11 +57,8 @@ const loadVChartStage = (stage, json) => {
 };
 
 function main() {
-  // 注册 Node 环境与 node-canvas
-  vglobal.setEnv('node', CanvasPkg);
-
   // 创建舞台
-  const stage = createStage({ width: 340, height: 300, autoRender: false, dpr: 2 });
+  const stage = createNodeTestStage({ width: 340, height: 300, autoRender: false, dpr: 2 });
 
   // 添加图形
   loadVChartStage(stage, vchartStageJson);

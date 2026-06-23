@@ -1,8 +1,13 @@
 import type { EasingType, IAnimate, IStep } from '@visactor/vrender-core';
 import { ACustomAnimate } from './custom-animate';
+import { applyAnimationFrameAttributes, applyAppearStartAttributes } from './transient';
 
 export interface IScaleAnimationOptions {
   direction?: 'x' | 'y' | 'xy';
+  fromScale?: number;
+  fromScaleX?: number;
+  fromScaleY?: number;
+  options?: Pick<IScaleAnimationOptions, 'direction' | 'fromScale' | 'fromScaleX' | 'fromScaleY'>;
 }
 
 export class ScaleIn extends ACustomAnimate<Record<string, number>> {
@@ -20,21 +25,28 @@ export class ScaleIn extends ACustomAnimate<Record<string, number>> {
     let to: Record<string, number>;
     const attrs = this.target.getFinalAttribute();
     const fromAttrs = this.target.attribute ?? {};
+    const options = this.params?.options;
+    const direction = this.params?.direction ?? options?.direction;
+    const fromScaleX = this.params?.fromScaleX ?? options?.fromScaleX ?? this.params?.fromScale ?? options?.fromScale;
+    const fromScaleY = this.params?.fromScaleY ?? options?.fromScaleY ?? this.params?.fromScale ?? options?.fromScale;
 
-    switch (this.params?.direction) {
+    switch (direction) {
       case 'x':
-        from = { scaleX: fromAttrs.scaleX ?? 0 };
+        from = { scaleX: fromScaleX ?? fromAttrs.scaleX ?? 0 };
         to = { scaleX: attrs?.scaleX ?? 1 };
         this._updateFunction = this.updateX;
         break;
       case 'y':
-        from = { scaleY: fromAttrs.scaleY ?? 0 };
+        from = { scaleY: fromScaleY ?? fromAttrs.scaleY ?? 0 };
         to = { scaleY: attrs?.scaleY ?? 1 };
         this._updateFunction = this.updateY;
         break;
       case 'xy':
       default:
-        from = { scaleX: fromAttrs.scaleX ?? 0, scaleY: fromAttrs.scaleY ?? 0 };
+        from = {
+          scaleX: fromScaleX ?? fromAttrs.scaleX ?? 0,
+          scaleY: fromScaleY ?? fromAttrs.scaleY ?? 0
+        };
         to = {
           scaleX: attrs?.scaleX ?? 1,
           scaleY: attrs?.scaleY ?? 1
@@ -43,16 +55,13 @@ export class ScaleIn extends ACustomAnimate<Record<string, number>> {
     }
 
     // 用于入场的时候设置属性（因为有动画的时候VChart不会再设置属性了）
-    const finalAttribute = this.target.getFinalAttribute();
-    if (finalAttribute) {
-      this.target.setAttributes(finalAttribute);
-    }
+    (this.target as any).applyFinalAttributeToAttribute();
 
     this.props = to;
     this.from = from;
     this.to = to;
     if (this.params.controlOptions?.immediatelyApply !== false) {
-      this.target.setAttributes(from);
+      applyAppearStartAttributes(this.target, from);
     }
   }
 
@@ -61,35 +70,43 @@ export class ScaleIn extends ACustomAnimate<Record<string, number>> {
   }
 
   updateX(ratio: number): void {
-    this.target.attribute.scaleX = this.from.scaleX + (this.to.scaleX - this.from.scaleX) * ratio;
+    this.applyScaleTransientAttrs(ratio, true, false);
   }
 
   updateY(ratio: number): void {
-    this.target.attribute.scaleY = this.from.scaleY + (this.to.scaleY - this.from.scaleY) * ratio;
+    this.applyScaleTransientAttrs(ratio, false, true);
   }
 
   updateXY(ratio: number): void {
-    this.updateX(ratio);
-    this.updateY(ratio);
+    this.applyScaleTransientAttrs(ratio, true, true);
+  }
+
+  private applyScaleTransientAttrs(ratio: number, scaleX: boolean, scaleY: boolean): void {
+    const attrs: Record<string, number> = {};
+    if (scaleX) {
+      attrs.scaleX = this.from.scaleX + (this.to.scaleX - this.from.scaleX) * ratio;
+    }
+    if (scaleY) {
+      attrs.scaleY = this.from.scaleY + (this.to.scaleY - this.from.scaleY) * ratio;
+    }
+    applyAnimationFrameAttributes(this.target, attrs);
   }
 
   /**
    * 删除自身属性，会直接从props等内容里删除掉
    */
   deleteSelfAttr(key: string): void {
-    delete this.props[key];
-    // fromProps在动画开始时才会计算，这时可能不在
-    this.fromProps && delete this.fromProps[key];
-    const index = this.propKeys.indexOf(key);
-    if (index !== -1) {
-      this.propKeys.splice(index, 1);
-    }
+    this.deleteSelfAttrs([key]);
+  }
 
+  deleteSelfAttrs(keys: string[]): void {
+    super.deleteSelfAttrs(keys);
+    const firstKey = this.propKeys?.[0];
     if (this.propKeys && this.propKeys.length > 1) {
       this._updateFunction = this.updateXY;
-    } else if (this.propKeys[0] === 'scaleX') {
+    } else if (firstKey === 'scaleX') {
       this._updateFunction = this.updateX;
-    } else if (this.propKeys[0] === 'scaleY') {
+    } else if (firstKey === 'scaleY') {
       this._updateFunction = this.updateY;
     } else {
       this._updateFunction = null;
@@ -145,10 +162,11 @@ export class ScaleOut extends ACustomAnimate<Record<string, number>> {
   }
 
   onUpdate(end: boolean, ratio: number, out: Record<string, any>): void {
-    const attribute: Record<string, any> = this.target.attribute;
+    const attrs: Record<string, any> = {};
     this.propKeys.forEach(key => {
-      attribute[key] = this.from[key] + (this.to[key] - this.from[key]) * ratio;
+      attrs[key] = this.from[key] + (this.to[key] - this.from[key]) * ratio;
     });
+    applyAnimationFrameAttributes(this.target, attrs);
     this.target.addUpdatePositionTag();
     this.target.addUpdateBoundTag();
   }

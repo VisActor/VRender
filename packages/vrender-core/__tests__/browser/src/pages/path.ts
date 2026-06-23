@@ -1,5 +1,6 @@
-import { createStage, createRect, IGraphic, createPath } from '@visactor/vrender';
+import { createRect, IGraphic, createPath } from '@visactor/vrender';
 import { roughModule } from '@visactor/vrender-kits';
+import { createBrowserPageStage } from '../page-stage';
 import { addShapesToStage, colorPools } from '../utils';
 
 // container.load(roughModule);
@@ -17,7 +18,7 @@ export const page = () => {
     })
   );
 
-  const stage = createStage({
+  const stage = createBrowserPageStage({
     canvas: 'main',
     autoRender: true
   });

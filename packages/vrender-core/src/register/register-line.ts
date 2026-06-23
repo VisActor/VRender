@@ -1,6 +1,6 @@
 import { createLine } from '../graphic/line';
-import { graphicCreator } from '../graphic/graphic-creator';
+import { registerGraphic } from '../graphic/graphic-creator';
 
 export function registerLineGraphic() {
-  graphicCreator.RegisterGraphicCreator('line', createLine);
+  registerGraphic('line', createLine);
 }

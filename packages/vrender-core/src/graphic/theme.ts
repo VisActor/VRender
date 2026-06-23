@@ -1,5 +1,6 @@
 import { Logger } from '@visactor/vutils';
 import type { IFullThemeSpec, IGraphic, IGroup, ITheme, IThemeSpec } from '../interface';
+import type { StateDefinitionsInput } from './state/state-definition';
 import {
   DefaultArcAttribute,
   DefaultAreaAttribute,
@@ -122,6 +123,8 @@ export class Theme implements ITheme {
   combinedTheme: IFullThemeSpec;
   // 记录累计应用的所有用户设置上的theme
   userTheme?: IThemeSpec;
+  protected _stateDefinitions?: StateDefinitionsInput<Record<string, any>>;
+  onStateDefinitionsChange?: (() => void) | undefined;
 
   protected _defaultTheme: IFullThemeSpec;
 
@@ -130,6 +133,19 @@ export class Theme implements ITheme {
   constructor() {
     this.initTheme();
     this.dirty = false;
+  }
+
+  get stateDefinitions(): StateDefinitionsInput<Record<string, any>> | undefined {
+    return this._stateDefinitions;
+  }
+
+  set stateDefinitions(value: StateDefinitionsInput<Record<string, any>> | undefined) {
+    if (this._stateDefinitions === value) {
+      return;
+    }
+
+    this._stateDefinitions = value;
+    this.onStateDefinitionsChange?.();
   }
 
   initTheme() {

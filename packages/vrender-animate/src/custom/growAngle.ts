@@ -1,6 +1,7 @@
 import { type IGraphic, type IGroup, type EasingType } from '@visactor/vrender-core';
 import { ACustomAnimate } from './custom-animate';
 import { isNumber } from '@visactor/vutils';
+import { applyAnimationFrameAttributes, applyAppearStartAttributes } from './transient';
 
 interface IAnimationParameters {
   width: number;
@@ -171,19 +172,17 @@ export class GrowAngleBase extends ACustomAnimate<Record<string, number>> {
    * 删除自身属性，会直接从props等内容里删除掉
    */
   deleteSelfAttr(key: string): void {
-    delete this.props[key];
-    // fromProps在动画开始时才会计算，这时可能不在
-    this.fromProps && delete this.fromProps[key];
-    const index = this.propKeys.indexOf(key);
-    if (index !== -1) {
-      this.propKeys.splice(index, 1);
-    }
+    this.deleteSelfAttrs([key]);
+  }
 
+  deleteSelfAttrs(keys: string[]): void {
+    super.deleteSelfAttrs(keys);
+    const firstKey = this.propKeys?.[0];
     if (this.propKeys && this.propKeys.length > 1) {
       this._updateFunction = this.updateAngle;
-    } else if (this.propKeys[0] === 'startAngle') {
+    } else if (firstKey === 'startAngle') {
       this._updateFunction = this.updateStartAngle;
-    } else if (this.propKeys[0] === 'endAngle') {
+    } else if (firstKey === 'endAngle') {
       this._updateFunction = this.updateEndAngle;
     } else {
       this._updateFunction = null;
@@ -191,12 +190,15 @@ export class GrowAngleBase extends ACustomAnimate<Record<string, number>> {
   }
 
   updateStartAngle(ratio: number): void {
-    (this.target.attribute as any).startAngle =
-      this.from.startAngle + (this.to.startAngle - this.from.startAngle) * ratio;
+    applyAnimationFrameAttributes(this.target, {
+      startAngle: this.from.startAngle + (this.to.startAngle - this.from.startAngle) * ratio
+    });
   }
 
   updateEndAngle(ratio: number): void {
-    (this.target.attribute as any).endAngle = this.from.endAngle + (this.to.endAngle - this.from.endAngle) * ratio;
+    applyAnimationFrameAttributes(this.target, {
+      endAngle: this.from.endAngle + (this.to.endAngle - this.from.endAngle) * ratio
+    });
   }
 
   updateAngle(ratio: number): void {
@@ -226,13 +228,10 @@ export class GrowAngleIn extends GrowAngleBase {
     this.to = to;
 
     // 用于入场的时候设置属性（因为有动画的时候VChart不会再设置属性了）
-    const finalAttribute = this.target.getFinalAttribute();
-    if (finalAttribute) {
-      this.target.setAttributes(finalAttribute);
-    }
+    (this.target as any).applyFinalAttributeToAttribute();
 
     if (this.params.controlOptions?.immediatelyApply !== false) {
-      this.target.setAttributes(fromAttrs);
+      applyAppearStartAttributes(this.target, fromAttrs);
     }
     this.determineUpdateFunction();
   }

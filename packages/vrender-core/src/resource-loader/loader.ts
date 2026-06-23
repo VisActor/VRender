@@ -84,22 +84,30 @@ export class ResourceLoader {
         // 资源padding队列加入mark信息
         data.waitingMark = [mark];
 
-        data.dataPromise.then(res => {
-          data.loadState = res?.data ? 'success' : 'fail';
-          data.data = res?.data;
-          // 遍历资源padding队列，更新mark信息
-          data.waitingMark?.map((mark: IImage, index) => {
-            if (res?.data) {
-              data.loadState = 'success';
-              data.data = res.data;
-              mark.imageLoadSuccess(svgStr, res.data as HTMLImageElement);
-            } else {
-              data.loadState = 'fail';
+        data.dataPromise
+          .then(res => {
+            data.loadState = res?.data ? 'success' : 'fail';
+            data.data = res?.data;
+            // 遍历资源padding队列，更新mark信息
+            data.waitingMark?.map((mark: IImage, index) => {
+              if (res?.data) {
+                data.loadState = 'success';
+                data.data = res.data;
+                mark.imageLoadSuccess(svgStr, res.data as HTMLImageElement);
+              } else {
+                data.loadState = 'fail';
+                mark.imageLoadFail(svgStr);
+              }
+            });
+            data.waitingMark && (data.waitingMark = []);
+          })
+          .catch(() => {
+            data.loadState = 'fail';
+            data.waitingMark?.map((mark: IImage) => {
               mark.imageLoadFail(svgStr);
-            }
+            });
+            data.waitingMark && (data.waitingMark = []);
           });
-          data.waitingMark && (data.waitingMark = []);
-        });
       }
     }
   }

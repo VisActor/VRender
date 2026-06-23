@@ -1,6 +1,14 @@
 import type { EasingType, IGraphic } from '@visactor/vrender-core';
 import type { ArcSegment, Segment } from '../../segment';
 import type { Tag } from '../../tag';
+import { commitUpdateAnimationTarget } from '../../animation/static-truth';
+
+export function getSegmentLineGraphics(segment: Segment | ArcSegment): IGraphic[] {
+  if (!segment) {
+    return [];
+  }
+  return [...(segment.lines ?? []), (segment as ArcSegment).line].filter(Boolean) as IGraphic[];
+}
 
 /** fade-in */
 export function graphicFadeIn(graphic: IGraphic, delay: number, duration: number, easing: EasingType) {
@@ -11,10 +19,17 @@ export function graphicFadeIn(graphic: IGraphic, delay: number, duration: number
   const fillOpacityConfig = graphic.attribute?.fillOpacity ?? 1;
   const strokeOpacityConfig = graphic.attribute?.strokeOpacity ?? 1;
 
-  graphic.setAttributes({
-    fillOpacity: 0,
-    strokeOpacity: 0
-  });
+  commitUpdateAnimationTarget(
+    graphic,
+    {
+      fillOpacity: fillOpacityConfig,
+      strokeOpacity: strokeOpacityConfig
+    },
+    {
+      fillOpacity: 0,
+      strokeOpacity: 0
+    }
+  );
 
   graphic.animate().wait(delay).to(
     {
@@ -35,8 +50,7 @@ export function segmentFadeIn(segment: Segment, delay: number, duration: number,
   graphicFadeIn(segment.startSymbol, delay, duration, easing);
 
   // line
-  segment.lines.forEach(line => graphicFadeIn(line, delay, duration, easing));
-  graphicFadeIn((segment as ArcSegment).line, delay, duration, easing);
+  getSegmentLineGraphics(segment).forEach(line => graphicFadeIn(line, delay, duration, easing));
 
   // end symbol
   graphicFadeIn(segment.endSymbol, delay, duration, easing);
@@ -60,10 +74,17 @@ export function graphicFadeOut(graphic: IGraphic, delay: number, duration: numbe
     return;
   }
 
-  graphic.setAttributes({
-    fillOpacity: graphic.attribute?.fillOpacity ?? 1,
-    strokeOpacity: graphic.attribute?.strokeOpacity ?? 1
-  });
+  commitUpdateAnimationTarget(
+    graphic,
+    {
+      fillOpacity: 0,
+      strokeOpacity: 0
+    },
+    {
+      fillOpacity: graphic.attribute?.fillOpacity ?? 1,
+      strokeOpacity: graphic.attribute?.strokeOpacity ?? 1
+    }
+  );
 
   graphic.animate().wait(delay).to({ fillOpacity: 0, strokeOpacity: 0 }, duration, easing);
 }
@@ -77,8 +98,7 @@ export function segmentFadeOut(segment: Segment | ArcSegment, delay: number, dur
   graphicFadeOut(segment.startSymbol, delay, duration, easing);
 
   // line
-  segment.lines.forEach(line => graphicFadeOut(line, delay, duration, easing));
-  graphicFadeOut((segment as ArcSegment).line, delay, duration, easing);
+  getSegmentLineGraphics(segment).forEach(line => graphicFadeOut(line, delay, duration, easing));
 
   // end symbol
   graphicFadeOut(segment.endSymbol, delay, duration, easing);

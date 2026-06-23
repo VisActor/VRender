@@ -1,6 +1,7 @@
 import type { EasingType, IGraphic } from '@visactor/vrender-core';
 import { isNumberClose, isValidNumber } from '@visactor/vutils';
 import { ACustomAnimate } from './custom-animate';
+import { applyAnimationFrameAttributes, applyAppearStartAttributes } from './transient';
 
 export interface IRotateAnimationOptions {
   orient?: 'clockwise' | 'anticlockwise';
@@ -54,10 +55,11 @@ export class RotateBase extends ACustomAnimate<Record<string, number>> {
   }
 
   onUpdate(end: boolean, ratio: number, out: Record<string, any>): void {
-    const attribute: Record<string, any> = this.target.attribute;
+    const attrs: Record<string, any> = {};
     this.propKeys.forEach(key => {
-      attribute[key] = this.from[key] + (this.to[key] - this.from[key]) * ratio;
+      attrs[key] = this.from[key] + (this.to[key] - this.from[key]) * ratio;
     });
+    applyAnimationFrameAttributes(this.target, attrs);
     this.target.addUpdatePositionTag();
     this.target.addUpdateShapeAndBoundsTag();
   }
@@ -78,13 +80,10 @@ export class RotateIn extends RotateBase {
     this.to = to;
 
     // 用于入场的时候设置属性（因为有动画的时候VChart不会再设置属性了）
-    const finalAttribute = this.target.getFinalAttribute();
-    if (finalAttribute) {
-      this.target.setAttributes(finalAttribute);
-    }
+    (this.target as any).applyFinalAttributeToAttribute();
 
     if (this.params.controlOptions?.immediatelyApply !== false) {
-      this.target.setAttributes(from);
+      applyAppearStartAttributes(this.target, from);
     }
   }
 }

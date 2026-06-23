@@ -1,13 +1,17 @@
-import { ContainerModule } from '@visactor/vrender-core';
-import { DefaultCanvasArcPicker } from './arc-picker';
+import { ArcRender } from '@visactor/vrender-core';
+import { resolveContainerBinding } from '../../../common/explicit-binding';
 import { CanvasArcPicker, CanvasPickerContribution } from '../constants';
+import { DefaultCanvasArcPicker } from './arc-picker';
 
 let loadArcPick = false;
-export const arcCanvasPickModule = new ContainerModule((bind, unbind, isBound, rebind) => {
+export function bindArcCanvasPickerContribution(container: any) {
   if (loadArcPick) {
     return;
   }
   loadArcPick = true;
-  bind(CanvasArcPicker).to(DefaultCanvasArcPicker).inSingletonScope();
-  bind(CanvasPickerContribution).toService(CanvasArcPicker);
-});
+  container
+    .bind(CanvasArcPicker)
+    .toDynamicValue(() => new DefaultCanvasArcPicker(resolveContainerBinding(container, ArcRender)))
+    .inSingletonScope();
+  container.bind(CanvasPickerContribution).toService(CanvasArcPicker);
+}

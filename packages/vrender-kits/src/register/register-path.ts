@@ -1,16 +1,19 @@
-import { container, pathModule, registerPathGraphic } from '@visactor/vrender-core';
+import { getLegacyBindingContext } from '@visactor/vrender-core/legacy/bootstrap';
+import { registerPathGraphic } from '@visactor/vrender-core/register/graphic';
+import { pathModule } from '@visactor/vrender-core/graphic/modules';
 import { browser } from './env';
-import { pathCanvasPickModule } from '../picker/contributions/canvas-picker/path-module';
-import { pathMathPickModule } from '../picker/contributions/math-picker/path-module';
+import { bindPathCanvasPickerContribution } from '../picker/contributions/canvas-picker/path-module';
+import { bindPathMathPickerContribution } from '../picker/contributions/math-picker/path-module';
 
 function _registerPath() {
   if (_registerPath.__loaded) {
     return;
   }
   _registerPath.__loaded = true;
+  const legacyContext = getLegacyBindingContext();
   registerPathGraphic();
-  container.load(pathModule);
-  container.load(browser ? pathCanvasPickModule : pathMathPickModule);
+  (pathModule as any)({ bind: legacyContext.bind });
+  browser ? bindPathCanvasPickerContribution(legacyContext) : bindPathMathPickerContribution(legacyContext);
 }
 
 _registerPath.__loaded = false;

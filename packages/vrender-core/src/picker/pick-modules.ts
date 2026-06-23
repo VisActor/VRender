@@ -1,4 +1,3 @@
-import { ContainerModule } from '../common/inversify-lite';
 import { PickerService, GlobalPickerService, PickItemInterceptor, PickServiceInterceptor } from './constants';
 import { DefaultGlobalPickerService } from './global-picker-service';
 // import { DefaultCanvasPickerService } from './canvas-picker-service';
@@ -11,7 +10,7 @@ import {
 } from './pick-interceptor';
 import { bindContributionProvider } from '../common/contribution-provider';
 
-export default new ContainerModule((bind, unbind, isBound) => {
+export function bindPickModules({ bind, isBound }: { bind: any; isBound: (token: any) => boolean }) {
   if (!isBound(PickerService)) {
     bind(GlobalPickerService).toSelf();
     bind(PickerService).toService(GlobalPickerService);
@@ -38,4 +37,6 @@ export default new ContainerModule((bind, unbind, isBound) => {
   bind(PickServiceInterceptor).toService(ShadowPickServiceInterceptorContribution);
 
   bindContributionProvider(bind, PickServiceInterceptor);
-});
+}
+
+export default bindPickModules;

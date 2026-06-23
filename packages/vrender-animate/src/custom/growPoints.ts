@@ -1,7 +1,7 @@
 import { pointInterpolation, type IGraphic, type IGroup, type EasingType } from '@visactor/vrender-core';
-import type { IPointLike } from '@visactor/vutils';
-import { isValidNumber } from '@visactor/vutils';
+import { isValidNumber, type IPointLike } from '@visactor/vutils';
 import { ACustomAnimate } from './custom-animate';
+import { applyAnimationFrameAttributes, applyAppearStartAttributes } from './transient';
 
 interface IAnimationParameters {
   width: number;
@@ -96,9 +96,11 @@ export class GworPointsBase extends ACustomAnimate<Record<string, number>> {
       return;
     }
 
-    (this.target.attribute as any).points = fromPoints.map((point, index) => {
-      const newPoint = pointInterpolation(fromPoints[index], toPoints[index], ratio);
-      return newPoint;
+    applyAnimationFrameAttributes(this.target, {
+      points: fromPoints.map((point, index) => {
+        const newPoint = pointInterpolation(fromPoints[index], toPoints[index], ratio);
+        return newPoint;
+      })
     });
     this.target.addUpdatePositionTag();
     this.target.addUpdateShapeAndBoundsTag();
@@ -119,12 +121,9 @@ export class GrowPointsIn extends GworPointsBase {
       this.to = to;
 
       // 用于入场的时候设置属性（因为有动画的时候VChart不会再设置属性了）
-      const finalAttribute = this.target.getFinalAttribute();
-      if (finalAttribute) {
-        this.target.setAttributes(finalAttribute);
-      }
+      (this.target as any).applyFinalAttributeToAttribute();
       if (this.params.controlOptions?.immediatelyApply !== false) {
-        this.target.setAttributes(from);
+        applyAppearStartAttributes(this.target, from);
       }
     } else {
       this.valid = false;
@@ -218,12 +217,9 @@ export class GrowPointsXIn extends GworPointsBase {
       this.to = to;
 
       // 用于入场的时候设置属性（因为有动画的时候VChart不会再设置属性了）
-      const finalAttribute = this.target.getFinalAttribute();
-      if (finalAttribute) {
-        this.target.setAttributes(finalAttribute);
-      }
+      (this.target as any).applyFinalAttributeToAttribute();
       if (this.params.controlOptions?.immediatelyApply !== false) {
-        this.target.setAttributes(from);
+        applyAppearStartAttributes(this.target, from);
       }
     } else {
       this.valid = false;
@@ -316,13 +312,10 @@ export class GrowPointsYIn extends GworPointsBase {
       this.to = to;
 
       // 用于入场的时候设置属性（因为有动画的时候VChart不会再设置属性了）
-      const finalAttribute = this.target.getFinalAttribute();
-      if (finalAttribute) {
-        this.target.setAttributes(finalAttribute);
-      }
+      (this.target as any).applyFinalAttributeToAttribute();
 
       if (this.params.controlOptions?.immediatelyApply !== false) {
-        this.target.setAttributes(from);
+        applyAppearStartAttributes(this.target, from);
       }
     } else {
       this.valid = false;

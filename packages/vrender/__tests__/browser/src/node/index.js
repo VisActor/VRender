@@ -1,8 +1,9 @@
+/** @deprecated Legacy DI browser fixture retained for major-migration tracking. Prefer app-scoped entries/plugins. */
 const CanvasPkg = require('canvas');
 const {
   vglobal,
-  createStage,
-  container,
+  createNodeVRenderApp,
+  getLegacyBindingContext,
   Path,
   Arc,
   Rect,
@@ -40,14 +41,15 @@ const colorPools = [
 ];
 
 // 加载node环境的loader
-// nodeLoader(container);
+// loadNodeEnv(getLegacyBindingContext());
 // 加载rough的module
-container.load(roughModule);
+roughModule(getLegacyBindingContext());
 
 vglobal.setEnv('node', CanvasPkg);
 
 function run() {
-  const stage = createStage({ width: 1800, height: 1800, title: '这是title', dpr: 2 });
+  const app = createNodeVRenderApp();
+  const stage = app.createStage({ width: 1800, height: 1800, title: '这是title', dpr: 2 });
   stage.resize(1200, 1200);
   stage.defaultLayer.add(
     new Path({
@@ -127,6 +129,8 @@ function run() {
     stage.render();
     const buffer = stage.window.getImageBuffer();
     fs.writeFileSync(`./image.png`, buffer);
+    stage.release();
+    app.release();
   };
 }
 

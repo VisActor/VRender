@@ -16,7 +16,9 @@ import type {
   IRectGraphicAttribute
 } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
-import { graphicCreator, AttributeUpdateType, IContainPointMode, CustomPath2D } from '@visactor/vrender-core';
+import { AttributeUpdateType } from '@visactor/vrender-core/event/constant';
+import { CustomPath2D } from '@visactor/vrender-core/path';
+import { graphicCreator } from '../util/graphic-creator';
 import type { IAABBBounds, IBoundsLike, IPointLike } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports
 import {
@@ -32,7 +34,7 @@ import {
   pointInRect,
   isBoolean
 } from '@visactor/vutils';
-import type { PointLocationCfg } from '../core/type';
+import type { ComponentExitReleaseOptions, PointLocationCfg } from '../core/type';
 import { labelSmartInvert, contrastAccessibilityChecker, smartInvertStrategy } from '../util/label-smartInvert';
 import { createTextGraphicByType, getMarksByName, getNoneGroupMarksByName, traverseGroup } from '../util';
 import { StateValue } from '../constant';
@@ -57,8 +59,19 @@ import type { ComponentOptions } from '../interface';
 import { loadLabelComponent } from './register';
 import { shiftY } from './overlap/shiftY';
 import { AnimateComponent } from '../animation/animate-component';
+import { commitUpdateAnimationTarget } from '../animation/static-truth';
+import {
+  appendExitReleaseCallback,
+  bindExitReleaseAnimates,
+  collectTrackedAnimates,
+  runExitReleaseCallbacks,
+  type AnimateExitReleaseState
+} from '../animation/exit-release';
 
 loadLabelComponent();
+
+type LabelExitReleaseState = AnimateExitReleaseState;
+
 export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
   name = 'label';
 
@@ -108,6 +121,8 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
   private _lastSelect: IGraphic;
 
   private _enableAnimation: boolean;
+  private _exitReleaseState?: LabelExitReleaseState;
+  private _finalLayoutBoundsCache?: Map<IGraphic, IAABBBounds>;
 
   constructor(attributes: BaseLabelAttrs, options?: ComponentOptions) {
     const { data, ...restAttributes } = attributes;
@@ -133,7 +148,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
   }
 
   protected _getLabelLinePoints(text: IText | IRichText, baseMark?: IGraphic) {
-    return connectLineBetweenBounds(text.AABBBounds, baseMark?.AABBBounds);
+    return connectLineBetweenBounds(text.AABBBounds, this.getGraphicFinalLayoutBounds(baseMark));
   }
 
   protected _createLabelLine(text: IText | IRichText, baseMark?: IGraphic): ILine | undefined {
@@ -159,8 +174,9 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
         };
       }
 
-      if (baseMark && baseMark.getAttributes(true).fill) {
-        lineGraphic.setAttribute('stroke', baseMark.getAttributes(true).fill);
+      const baseMarkAttrs = baseMark && this.getGraphicFinalLayoutAttributes(baseMark);
+      if (baseMarkAttrs?.fill) {
+        lineGraphic.setAttribute('stroke', baseMarkAttrs.fill);
       }
 
       if (this.attribute.line && !isEmpty(this.attribute.line.style)) {
@@ -171,19 +187,129 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
     }
   }
 
+  private _finalizeExitRelease() {
+    const state = this._exitReleaseState;
+    if (state?.finalized) {
+      return;
+    }
+
+    if (state) {
+      state.finalized = true;
+    }
+
+    const parent = this.parent;
+    const removeFromParent = !!state?.removeFromParent;
+    const callbacks = state?.onComplete ?? [];
+
+    this._exitReleaseState = undefined;
+    this._graphicToText = new Map();
+    this._idToGraphic?.clear();
+    this._idToPoint?.clear();
+    this._baseMarks = undefined;
+    this.removeAllChild(true);
+    super.release(true);
+    if (removeFromParent) {
+      (parent ?? this.parent)?.removeChild(this);
+    }
+
+    runExitReleaseCallbacks(callbacks);
+  }
+
+  private _runExitAnimationBeforeRelease(options: ComponentExitReleaseOptions = {}) {
+    if (this._exitReleaseState && !this._exitReleaseState.finalized) {
+      this._exitReleaseState.removeFromParent = this._exitReleaseState.removeFromParent || !!options.removeFromParent;
+      appendExitReleaseCallback(this._exitReleaseState, options.onComplete);
+      return true;
+    }
+
+    if (
+      !this.stage ||
+      this.attribute.animation === false ||
+      this.attribute.animationExit === false ||
+      !this._graphicToText?.size
+    ) {
+      return false;
+    }
+
+    this._prepareAnimate(DefaultLabelAnimation);
+    if (!this._animationConfig?.exit) {
+      return false;
+    }
+
+    const exitTargets = new Set<IGraphic>();
+    this._graphicToText.forEach(label => {
+      label?.text && exitTargets.add(label.text);
+      label?.labelLine && exitTargets.add(label.labelLine);
+    });
+
+    if (!exitTargets.size) {
+      return false;
+    }
+
+    const existingAnimates = collectTrackedAnimates(this as unknown as IGraphic);
+
+    exitTargets.forEach(target => {
+      target.applyAnimationState(
+        ['exit'],
+        [
+          {
+            name: 'exit',
+            animation: {
+              ...this._animationConfig.exit,
+              type: (this._animationConfig.exit as any).type ?? 'fadeOut',
+              selfOnly: true
+            }
+          }
+        ]
+      );
+    });
+
+    const animates = collectTrackedAnimates(this as unknown as IGraphic);
+    const exitAnimates = animates.filter(animate => !existingAnimates.includes(animate));
+
+    if (!exitAnimates.length) {
+      return false;
+    }
+
+    this.setAttribute('childrenPickable', false);
+    this.releaseStatus = 'willRelease';
+
+    const pendingAnimates = new Set(exitAnimates);
+    this._exitReleaseState = {
+      pendingAnimates,
+      finalized: false,
+      removeFromParent: !!options.removeFromParent,
+      onComplete: options.onComplete ? [options.onComplete] : []
+    };
+
+    bindExitReleaseAnimates(
+      exitAnimates,
+      () => this._exitReleaseState,
+      () => this._finalizeExitRelease()
+    );
+
+    return true;
+  }
+
+  releaseWithExitAnimation(options: ComponentExitReleaseOptions = {}): boolean {
+    if (this.releaseStatus === 'released') {
+      return false;
+    }
+
+    return this._runExitAnimationBeforeRelease(options);
+  }
+
   protected render() {
+    if (this._exitReleaseState) {
+      return;
+    }
+
+    this._finalLayoutBoundsCache = undefined;
     this._prepare();
     if (isNil(this._idToGraphic) || (this._isCollectionBase && isNil(this._idToPoint))) {
       return;
     }
-    // 如果有动画的话，需要先设置入场的最终属性，否则无法计算放重叠、反色之类的逻辑
-    const markAttributeList: any[] = [];
-    if (this._enableAnimation !== false) {
-      this._baseMarks.forEach(mark => {
-        markAttributeList.push(mark.attribute);
-        mark.initAttributes(mark.getAttributes(true));
-      });
-    }
+    this._finalLayoutBoundsCache = new Map();
 
     const { overlap, smartInvert, dataFilter, customLayoutFunc, customOverlapFunc } = this.attribute;
     let data = this.attribute.data;
@@ -261,12 +387,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
     }
 
     this._renderLabels(labels);
-
-    if (this._enableAnimation !== false) {
-      this._baseMarks.forEach((mark, index) => {
-        mark.initAttributes(markAttributeList[index]);
-      });
-    }
+    this._finalLayoutBoundsCache = undefined;
   }
 
   private _bindEvent(target: IGraphic) {
@@ -451,6 +572,47 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
     return this._idToGraphic.get(item.id);
   }
 
+  protected getGraphicFinalLayoutAttributes<TAttrs extends Record<string, any> = Record<string, any>>(
+    graphic: IGraphic
+  ): TAttrs {
+    return ((graphic.context as Record<string, any> | undefined)?.finalAttrs ?? graphic.getAttributes(true)) as TAttrs;
+  }
+
+  protected hasGraphicContextFinalLayoutAttributes(graphic?: IGraphic): boolean {
+    return !!(graphic?.context as Record<string, any> | undefined)?.finalAttrs;
+  }
+
+  protected shouldUseGraphicFinalLayoutAttributes(graphic?: IGraphic): boolean {
+    return !!graphic && (!!graphic.context?.animationState || this.hasGraphicContextFinalLayoutAttributes(graphic));
+  }
+
+  protected getGraphicFinalLayoutBounds(graphic?: IGraphic): IAABBBounds | undefined {
+    if (!graphic) {
+      return;
+    }
+
+    const useFinalAttrs = this.shouldUseGraphicFinalLayoutAttributes(graphic);
+    const graphicAttrs = useFinalAttrs ? this.getGraphicFinalLayoutAttributes(graphic) : graphic.attribute;
+    if (graphicAttrs?.visible === false) {
+      return;
+    }
+
+    if (!useFinalAttrs) {
+      return graphic.AABBBounds;
+    }
+
+    const cachedBounds = this._finalLayoutBoundsCache?.get(graphic);
+    if (cachedBounds) {
+      return cachedBounds;
+    }
+
+    const clonedGraphic = graphic.clone();
+    clonedGraphic.initAttributes({ ...clonedGraphic.attribute, ...graphicAttrs });
+    const bounds = clonedGraphic.AABBBounds;
+    this._finalLayoutBoundsCache?.set(graphic, bounds);
+    return bounds;
+  }
+
   protected _initText(data: LabelItem[] = []): (IText | IRichText)[] {
     const { textStyle = {} } = this.attribute;
     const labels = [];
@@ -461,7 +623,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
         continue;
       }
 
-      const graphicAttribute = baseMark.getAttributes(true);
+      const graphicAttribute = this.getGraphicFinalLayoutAttributes(baseMark);
       const labelAttribute = {
         fill: this._isCollectionBase
           ? isArray(graphicAttribute.stroke)
@@ -663,7 +825,8 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
     // 躲避关联的基础图元
     if (avoidBaseMark) {
       this._baseMarks?.forEach(mark => {
-        mark.AABBBounds && bitmap.setRange(boundToRange(bmpTool, mark.AABBBounds, true));
+        const markBounds = this.getGraphicFinalLayoutBounds(mark);
+        markBounds && bitmap.setRange(boundToRange(bmpTool, markBounds, true));
       });
     }
 
@@ -703,8 +866,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
         if (
           checkBounds &&
           baseMark &&
-          baseMark.AABBBounds &&
-          this._canPlaceInside(text.AABBBounds, baseMark.AABBBounds)
+          this._canPlaceInside(text.AABBBounds, this.getGraphicFinalLayoutBounds(baseMark))
         ) {
           bitmap.setRange(boundToRange(bmpTool, text.AABBBounds, true));
           result.push(text);
@@ -760,13 +922,18 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
   }
 
   protected isMarkInsideRect(baseMark: IGraphic, bmpTool: BitmapTool) {
+    if (!baseMark) {
+      return false;
+    }
     const { left, right, top, bottom } = bmpTool.padding;
     const rect: IBoundsLike = { x1: -left, x2: bmpTool.width + right, y1: -top, y2: bmpTool.height + bottom };
-    const bounds = baseMark.AABBBounds;
-    if (bounds.width() !== 0 && bounds.height() !== 0) {
-      return isRectIntersect(baseMark.AABBBounds, rect, true);
+    const bounds = this.getGraphicFinalLayoutBounds(baseMark);
+    if (bounds && bounds.width() !== 0 && bounds.height() !== 0) {
+      return isRectIntersect(bounds, rect, true);
     }
-    const { attribute } = baseMark;
+    const attribute = this.shouldUseGraphicFinalLayoutAttributes(baseMark)
+      ? this.getGraphicFinalLayoutAttributes(baseMark)
+      : baseMark.attribute;
     if (baseMark.type === 'rect') {
       const { x, x1, y, y1 } = attribute as IRectGraphicAttribute;
       return pointInRect({ x: x ?? x1, y: y ?? y1 }, rect, true);
@@ -790,16 +957,13 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
     position?: string
   ): IBoundsLike {
     if (graphic) {
-      if (graphic.attribute.visible !== false) {
-        // TODO 这里有些hack 如果有动画，需要使用finalAttribute
-        if (graphic.context?.animationState) {
-          const clonedGraphic = graphic.clone();
-          Object.assign(clonedGraphic.attribute, graphic.getAttributes(true));
-          return clonedGraphic.AABBBounds;
-        }
-        return graphic.AABBBounds;
+      const graphicAttrs = this.shouldUseGraphicFinalLayoutAttributes(graphic)
+        ? this.getGraphicFinalLayoutAttributes(graphic)
+        : graphic.attribute;
+      if (graphicAttrs.visible !== false) {
+        return this.getGraphicFinalLayoutBounds(graphic) as IBoundsLike;
       }
-      const { x, y } = graphic.attribute;
+      const { x, y } = graphicAttrs;
       return { x1: x, x2: x, y1: y, y2: y } as IBoundsLike;
     }
     if (point && position && position === 'inside-middle') {
@@ -893,6 +1057,9 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
     const { text: prevText, labelLine: prevLabelLine } = prevLabel;
     const { text: curText, labelLine: curLabelLine } = currentLabel;
 
+    commitUpdateAnimationTarget(prevText, curText?.attribute as Record<string, any>);
+    commitUpdateAnimationTarget(prevLabelLine, curLabelLine?.attribute as Record<string, any>);
+
     prevText.applyAnimationState(
       ['update'],
       [
@@ -941,7 +1108,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
   }
 
   protected _updateLabel(prevLabel: LabelContent, currentLabel: LabelContent) {
-    const { text: prevText, labelLine: prevLabelLine } = prevLabel;
+    const { labelLine: prevLabelLine } = prevLabel;
     const { text: curText, labelLine: curLabelLine } = currentLabel;
 
     if (this._enableAnimation === false || this._animationConfig.update === false) {
@@ -1056,8 +1223,9 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
        * similarBase（智能反色的补色），
        * null（不执行智能反色，保持fill设置的颜色）
        * */
-      let backgroundColor = baseMark.getAttributes(true).fill as IColor;
-      const backgroundOpacity = baseMark.getAttributes(true).fillOpacity as number;
+      const baseMarkAttrs = this.getGraphicFinalLayoutAttributes(baseMark);
+      let backgroundColor = baseMarkAttrs.fill as IColor;
+      const backgroundOpacity = baseMarkAttrs.fillOpacity as number;
       let foregroundColor = label.attribute.fill as IColor;
 
       if (isObject(backgroundColor) && backgroundColor.gradient) {
@@ -1078,9 +1246,10 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
         mode
       );
       const similarColor = contrastAccessibilityChecker(invertColor, brightColor) ? brightColor : darkColor;
-      const isInside = this._canPlaceInside(label.AABBBounds, baseMark.AABBBounds);
+      const baseMarkBounds = this.getGraphicFinalLayoutBounds(baseMark);
+      const isInside = this._canPlaceInside(label.AABBBounds, baseMarkBounds);
       const isIntersect =
-        !isInside && label.AABBBounds && baseMark.AABBBounds && baseMark.AABBBounds.intersects(label.AABBBounds);
+        !isInside && label.AABBBounds && baseMarkBounds && baseMarkBounds.intersects(label.AABBBounds);
 
       if (isInside || outsideEnable || (isIntersect && interactInvertType === 'inside')) {
         // 按照标签展示在柱子内部的情况，执行反色逻辑
@@ -1143,11 +1312,27 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
    * @param shapeBound
    * @returns
    */
-  protected _canPlaceInside(textBound: IBoundsLike, shapeBound: IAABBBounds) {
+  protected _canPlaceInside(textBound: IBoundsLike, shapeBound?: IAABBBounds) {
     if (!textBound || !shapeBound) {
       return false;
     }
     return shapeBound.encloses(textBound);
+  }
+
+  release(all?: boolean): void {
+    if (this._exitReleaseState) {
+      this._finalizeExitRelease();
+      return;
+    }
+
+    if (all) {
+      this.removeAllChild(true);
+    }
+    super.release(all);
+    this._graphicToText = new Map();
+    this._idToGraphic?.clear();
+    this._idToPoint?.clear();
+    this._baseMarks = undefined;
   }
 
   setLocation(point: PointLocationCfg) {

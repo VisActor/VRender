@@ -1,90 +1,238 @@
-import { injectable, BaseEnvContribution, rafBasedSto } from '@visactor/vrender-core';
-// import { loadFeishuContributions } from '../../../kits';
-import type {
-  ICanvasLike,
-  EnvType,
-  ICreateCanvasParams,
-  IEnvContribution,
-  IGlobal,
-  ILynxCanvas
+import {
+  BaseEnvContribution,
+  rafBasedSto,
+  type EnvType,
+  type ICanvasLike,
+  type ICreateCanvasParams,
+  type IEnvContribution,
+  type IGlobal,
+  type ILynxCanvas
 } from '@visactor/vrender-core';
+// import { loadFeishuContributions } from '../../../kits';
 import { CanvasWrapEnableWH } from './canvas-wrap';
 
 declare const lynx: {
   getSystemInfoSync: () => { pixelRatio: number };
   createCanvas: (id: string) => any;
-  createCanvasNG: (id: string) => any;
+  createCanvasNG: (id?: string) => any;
   createImage: (id: string) => any;
   createOffscreenCanvas: () => any;
+  krypton?: {
+    createCanvas?: (id: string) => any;
+    createCanvasNG?: () => any;
+    CanvasElement?: new (name: string) => any;
+  };
 };
 declare const SystemInfo: {
   pixelRatio: number;
 };
 
-let ng = false;
-try {
-  ng = !!lynx.createCanvasNG;
-} catch (err) {
-  // do nothing
+type LynxKryptonRuntime = Partial<{
+  createCanvas: (id: string) => any;
+  createCanvasNG: () => any;
+  CanvasElement: new (name: string) => any;
+}>;
+
+type LynxRuntime = Partial<{
+  getSystemInfoSync: () => { pixelRatio?: number };
+  createCanvas: (id: string) => any;
+  createCanvasNG: (id?: string) => any;
+  createImage: (id: string) => any;
+  createOffscreenCanvas: () => any;
+  krypton: LynxKryptonRuntime;
+}>;
+
+type LynxCanvasFactoryOptions = {
+  id: string;
+  width: number;
+  height: number;
+  dpr: number;
+  offscreen: boolean;
+};
+
+type LynxCanvasFactory = (options: LynxCanvasFactoryOptions) => any;
+
+type LynxEnvParams = {
+  pixelRatio?: number;
+  lynx?: LynxRuntime;
+  runtime?: LynxRuntime;
+  canvasFactory?: LynxCanvasFactory;
+};
+
+const LYNX_CANVAS_BRIDGE_ERROR =
+  'Lynx canvas bridge is unavailable. VRender Lynx env requires envParams.canvasFactory ' +
+  'or a Lynx runtime that exposes createCanvasNG/createCanvas/createOffscreenCanvas/krypton canvas APIs.';
+const LYNX_CANVAS_SIZE_ERROR =
+  'Lynx canvas size is unavailable. Pass stage width/height when creating a Lynx stage canvas.';
+
+function isValidCoordinate(value: unknown): value is number {
+  return typeof value === 'number' && Number.isFinite(value);
 }
 
-// 飞书小程序canvas的wrap
-function makeUpCanvas(
-  domref: any,
-  canvasIdLists: string[],
-  canvasMap: Map<string, ILynxCanvas>,
-  freeCanvasIdx: number,
-  freeCanvasList: ILynxCanvas[],
-  offscreen: boolean,
-  pixelRatio?: number
-) {
-  const dpr = pixelRatio ?? SystemInfo.pixelRatio;
-
-  canvasIdLists.forEach((id, i) => {
-    let _canvas;
-    if (offscreen) {
-      _canvas = lynx.createOffscreenCanvas();
-    } else {
-      _canvas = ng ? lynx.createCanvasNG(id) : lynx.createCanvas(id);
-      ng && _canvas.attachToCanvasView(id);
+function pickCoordinate(...values: unknown[]): number | undefined {
+  for (let i = 0; i < values.length; i++) {
+    if (isValidCoordinate(values[i])) {
+      return values[i] as number;
     }
+  }
+  return undefined;
+}
 
-    _canvas.width = domref.width * dpr;
-    _canvas.height = domref.height * dpr;
+function getPrimaryTouch(event: any) {
+  return event?.changedTouches?.[0] ?? event?.touches?.[0];
+}
 
-    const ctx = _canvas.getContext('2d');
-    // TODO: 这里是一个临时方案，向 ctx 内部构造一个 canvas，传递宽高
-    // ctx.canvas = {
-    //   width: domref.width * dpr,
-    //   height: domref.height * dpr
-    // };
+function getLynxEventPoint(event: any) {
+  const touch = getPrimaryTouch(event);
+  const x = pickCoordinate(
+    event?.x,
+    event?.offsetX,
+    event?.clientX,
+    event?.pageX,
+    touch?.x,
+    touch?.offsetX,
+    touch?.clientX,
+    touch?.pageX
+  );
+  const y = pickCoordinate(
+    event?.y,
+    event?.offsetY,
+    event?.clientY,
+    event?.pageY,
+    touch?.y,
+    touch?.offsetY,
+    touch?.clientY,
+    touch?.pageY
+  );
 
-    const canvas = new CanvasWrapEnableWH(_canvas, ctx, dpr, domref.width, domref.height, id);
+  return x == null || y == null ? null : { x, y };
+}
 
-    canvasMap.set(id, canvas);
-    if (i > freeCanvasIdx) {
-      freeCanvasList.push(canvas);
-    }
-  });
-
-  if (!freeCanvasList.length && lynx.createOffscreenCanvas) {
-    const _canvas = lynx.createOffscreenCanvas();
-    _canvas.width = domref.width * dpr;
-    _canvas.height = domref.height * dpr;
-    const ctx = _canvas.getContext('2d');
-
-    const id = Math.random().toString();
-    const canvas = new CanvasWrapEnableWH(_canvas, ctx, dpr, domref.width, domref.height, id);
-    canvasMap.set(id, canvas);
-    freeCanvasList.push(canvas);
+function getGlobalLynxRuntime(): LynxRuntime | undefined {
+  try {
+    return typeof lynx !== 'undefined' ? lynx : undefined;
+  } catch (err) {
+    return undefined;
   }
 }
 
-export function createImageElement(src: string, isSvg: boolean = false): Promise<HTMLImageElement> {
+function getGlobalSystemPixelRatio(): number | undefined {
+  try {
+    return typeof SystemInfo !== 'undefined' ? SystemInfo.pixelRatio : undefined;
+  } catch (err) {
+    return undefined;
+  }
+}
+
+function getLynxRuntime(params?: LynxEnvParams): LynxRuntime | undefined {
+  return params?.lynx ?? params?.runtime ?? getGlobalLynxRuntime();
+}
+
+function getLynxPixelRatio(params?: LynxEnvParams, runtime?: LynxRuntime): number {
+  return params?.pixelRatio ?? runtime?.getSystemInfoSync?.()?.pixelRatio ?? getGlobalSystemPixelRatio() ?? 1;
+}
+
+function attachLynxCanvasToView(canvas: any, id: string) {
+  canvas?.attachToCanvasView?.(id);
+  return canvas;
+}
+
+function createBoundLynxCanvas(id: string, runtime?: LynxRuntime) {
+  if (typeof runtime?.krypton?.createCanvas === 'function') {
+    const canvas = runtime.krypton.createCanvas(id);
+    if (canvas) {
+      return canvas;
+    }
+  }
+
+  if (typeof runtime?.createCanvasNG === 'function') {
+    const canvas = runtime.createCanvasNG(id);
+    if (canvas) {
+      return attachLynxCanvasToView(canvas, id);
+    }
+  }
+
+  if (typeof runtime?.krypton?.createCanvasNG === 'function') {
+    const canvas = runtime.krypton.createCanvasNG();
+    if (canvas) {
+      return attachLynxCanvasToView(canvas, id);
+    }
+  }
+
+  if (typeof runtime?.krypton?.CanvasElement === 'function') {
+    return new runtime.krypton.CanvasElement(id);
+  }
+
+  if (typeof runtime?.createCanvas === 'function') {
+    const canvas = runtime.createCanvas(id);
+    if (canvas) {
+      return canvas;
+    }
+  }
+
+  return null;
+}
+
+function getCanvasSize(width?: number, height?: number) {
+  if (!isValidCoordinate(width) || !isValidCoordinate(height)) {
+    throw new Error(LYNX_CANVAS_SIZE_ERROR);
+  }
+  return { width, height };
+}
+
+function wrapLynxNativeCanvas(nativeCanvas: any, id: string, width: number, height: number, dpr: number) {
+  nativeCanvas.width = width * dpr;
+  nativeCanvas.height = height * dpr;
+
+  const ctx = nativeCanvas.getContext('2d');
+  return new CanvasWrapEnableWH(nativeCanvas, ctx, dpr, width, height, id);
+}
+
+function createLynxNativeCanvas(
+  id: string,
+  width: number,
+  height: number,
+  dpr: number,
+  offscreen: boolean,
+  params: LynxEnvParams,
+  runtime?: LynxRuntime
+) {
+  if (params.canvasFactory) {
+    return params.canvasFactory({
+      id,
+      width,
+      height,
+      dpr,
+      offscreen
+    });
+  }
+
+  if (offscreen) {
+    if (typeof runtime?.createOffscreenCanvas === 'function') {
+      return runtime.createOffscreenCanvas();
+    }
+  } else {
+    const canvas = createBoundLynxCanvas(id, runtime);
+    if (canvas) {
+      return canvas;
+    }
+  }
+
+  throw new Error(LYNX_CANVAS_BRIDGE_ERROR);
+}
+
+export function createImageElement(
+  src: string,
+  isSvg: boolean = false,
+  runtime: LynxRuntime | undefined = getGlobalLynxRuntime()
+): Promise<HTMLImageElement> {
   if (isSvg) {
     return Promise.reject();
   }
-  const img = lynx.createImage(src);
+  if (typeof runtime?.createImage !== 'function') {
+    return Promise.reject(new Error('Lynx image bridge is unavailable.'));
+  }
+  const img = runtime.createImage(src);
   // if (img.complete) {
   //   return Promise.resolve(img);
   // }
@@ -99,7 +247,6 @@ export function createImageElement(src: string, isSvg: boolean = false): Promise
   return promise;
 }
 
-@injectable()
 export class LynxEnvContribution extends BaseEnvContribution implements IEnvContribution {
   type: EnvType = 'lynx';
   supportEvent: boolean = true;
@@ -108,6 +255,8 @@ export class LynxEnvContribution extends BaseEnvContribution implements IEnvCont
   // 所有可用的canvasList
   freeCanvasList: ILynxCanvas[] = [];
   canvasIdx: number = 0;
+  private lynxRuntime?: LynxRuntime;
+  private lynxEnvParams?: LynxEnvParams;
 
   constructor() {
     super();
@@ -124,21 +273,11 @@ export class LynxEnvContribution extends BaseEnvContribution implements IEnvCont
 
   // TODO：VGrammar在小程序环境会重复调用setEnv传入canvas，所以每次configure并不会释放
   // 这里等待后续和VGrammar沟通
-  configure(
-    service: IGlobal,
-    params: { domref: any; canvasIdLists: string[]; freeCanvasIdx: number; offscreen?: boolean; pixelRatio?: number }
-  ) {
+  configure(service: IGlobal, params: LynxEnvParams = {}) {
     if (service.env === this.type) {
       service.setActiveEnvContribution(this);
-      makeUpCanvas(
-        params.domref,
-        params.canvasIdLists,
-        this.canvasMap,
-        params.freeCanvasIdx,
-        this.freeCanvasList,
-        !!params.offscreen,
-        params.pixelRatio
-      );
+      this.lynxEnvParams = params;
+      this.lynxRuntime = getLynxRuntime(params);
 
       // loadFeishuContributions();
     }
@@ -161,7 +300,7 @@ export class LynxEnvContribution extends BaseEnvContribution implements IEnvCont
     loadState: 'success' | 'fail';
     data: HTMLImageElement | ImageData | null;
   }> {
-    const imagePromise = createImageElement(url, false);
+    const imagePromise = createImageElement(url, false, this.lynxRuntime);
     return imagePromise
       .then((img: HTMLImageElement) => {
         return {
@@ -181,14 +320,46 @@ export class LynxEnvContribution extends BaseEnvContribution implements IEnvCont
     loadState: 'success' | 'fail';
     data: HTMLImageElement | ImageData | null;
   }> {
-    // 飞书小组件不支持DOMParser和URL.createObjectURL，无法解析svg字符串，可以通过url使用svg资源
-    return Promise.reject();
+    // Lynx 不支持 DOMParser 和 URL.createObjectURL，无法解析 svg 字符串，可以通过 url 使用 svg 资源
+    return Promise.resolve({
+      data: null,
+      loadState: 'fail'
+    });
   }
 
   createCanvas(params: ICreateCanvasParams): ILynxCanvas {
+    if (params.id != null) {
+      const id = String(params.id);
+      const existing = this.canvasMap.get(id);
+      if (existing) {
+        return existing;
+      }
+      const envParams = this.lynxEnvParams ?? {};
+      const runtime = getLynxRuntime(envParams);
+      const dpr = params.dpr ?? getLynxPixelRatio(envParams, runtime);
+      const size = getCanvasSize(params.width, params.height);
+      const nativeCanvas = createLynxNativeCanvas(id, size.width, size.height, dpr, false, envParams, runtime);
+      const canvas = wrapLynxNativeCanvas(nativeCanvas, id, size.width, size.height, dpr);
+      this.canvasMap.set(id, canvas);
+      return canvas;
+    }
+
     const result = this.freeCanvasList[this.canvasIdx] || this.freeCanvasList[this.freeCanvasList.length - 1];
     this.canvasIdx++;
-    return result;
+    if (result) {
+      return result;
+    }
+
+    const envParams = this.lynxEnvParams ?? {};
+    const runtime = getLynxRuntime(envParams);
+    const dpr = params.dpr ?? getLynxPixelRatio(envParams, runtime);
+    const size = getCanvasSize(params.width, params.height);
+    const id = Math.random().toString();
+    const nativeCanvas = createLynxNativeCanvas(id, size.width, size.height, dpr, true, envParams, runtime);
+    const canvas = wrapLynxNativeCanvas(nativeCanvas, id, size.width, size.height, dpr);
+    this.canvasMap.set(id, canvas);
+    this.freeCanvasList.push(canvas);
+    return canvas;
   }
 
   createOffscreenCanvas(params: ICreateCanvasParams) {
@@ -200,7 +371,7 @@ export class LynxEnvContribution extends BaseEnvContribution implements IEnvCont
   }
 
   getDevicePixelRatio(): number {
-    return SystemInfo.pixelRatio;
+    return getLynxPixelRatio(undefined, this.lynxRuntime);
   }
 
   getRequestAnimationFrame(): (callback: FrameRequestCallback) => number {
@@ -224,10 +395,7 @@ export class LynxEnvContribution extends BaseEnvContribution implements IEnvCont
   }
 
   mapToCanvasPoint(event: any) {
-    if (event?.type?.startsWith('mouse')) {
-      return event;
-    }
-    return event;
+    return getLynxEventPoint(event) ?? event;
   }
 
   addEventListener<K extends keyof DocumentEventMap>(

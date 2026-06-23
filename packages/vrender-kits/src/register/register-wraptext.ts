@@ -1,4 +1,4 @@
-import { registerWrapTextGraphic } from '@visactor/vrender-core';
+import { registerWrapTextGraphic } from '@visactor/vrender-core/register/graphic';
 
 function _registerWrapText() {
   if (_registerWrapText.__loaded) {

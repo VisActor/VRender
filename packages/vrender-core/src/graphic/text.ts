@@ -1,5 +1,12 @@
-import type { IAABBBounds, IOBBBounds } from '@visactor/vutils';
-import { max, isArray, getContextFont, transformBoundsWithMatrix, rotatePoint } from '@visactor/vutils';
+import {
+  max,
+  isArray,
+  getContextFont,
+  transformBoundsWithMatrix,
+  rotatePoint,
+  type IAABBBounds,
+  type IOBBBounds
+} from '@visactor/vutils';
 import { textDrawOffsetX, textLayoutOffsetY } from '../common/text';
 import { CanvasTextLayout } from '../core/contributions/textMeasure/layout';
 import { application } from '../application';
@@ -45,7 +52,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
     ...NOWORK_ANIMATE_ATTR
   };
 
-  cache: ITextCache;
+  cache?: ITextCache;
   _font: string;
 
   protected declare obbText?: Text;
@@ -69,12 +76,12 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       return (attribute.text ?? textTheme.text).toString();
     }
     this.tryUpdateAABBBounds();
-    return this.cache.clipedText;
+    return this.cache?.clipedText;
   }
 
   get clipedWidth(): number | undefined {
     this.tryUpdateAABBBounds();
-    return this.cache.clipedWidth;
+    return this.cache?.clipedWidth;
   }
 
   /**
@@ -99,7 +106,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
 
       return originText.toString() !== mergedText;
     }
-    if (attribute.direction === 'vertical' && this.cache.verticalList && this.cache.verticalList[0]) {
+    if (attribute.direction === 'vertical' && this.cache?.verticalList && this.cache.verticalList[0]) {
       return this.cache.verticalList[0].map(item => item.text).join('') !== attribute.text.toString();
     }
     if (this.clipedText == null) {
@@ -110,7 +117,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
 
   get multilineLayout(): LayoutType | undefined {
     this.tryUpdateAABBBounds();
-    return this.cache.layoutData;
+    return this.cache?.layoutData;
   }
   /**
    * 是否是多行文本
@@ -122,7 +129,14 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
   constructor(params: ITextGraphicAttribute = { text: '', fontSize: 16 }) {
     super(params);
     this.numberType = TEXT_NUMBER_TYPE;
-    this.cache = {};
+  }
+
+  protected getOrCreateCache(): ITextCache {
+    if (!this.cache) {
+      this.cache = {};
+    }
+
+    return this.cache;
   }
 
   /**
@@ -214,11 +228,12 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
    */
   updateSingallineAABBBounds(text: number | string): IAABBBounds {
     this.updateMultilineAABBBounds([text]);
-    const layoutData = this.cache.layoutData;
+    const cache = this.getOrCreateCache();
+    const layoutData = cache.layoutData;
     if (layoutData && layoutData.lines && layoutData.lines.length) {
       const line = layoutData.lines[0];
-      this.cache.clipedText = line.str;
-      this.cache.clipedWidth = line.width;
+      cache.clipedText = line.str;
+      cache.clipedWidth = line.width;
     }
     return this._AABBBounds;
   }
@@ -305,7 +320,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       }
     );
     const { bbox } = layoutData;
-    this.cache.layoutData = layoutData;
+    this.getOrCreateCache().layoutData = layoutData;
     this.clearUpdateShapeTag();
 
     this._AABBBounds.set(bbox.xOffset, bbox.yOffset, bbox.xOffset + bbox.width, bbox.yOffset + bbox.height);
@@ -512,7 +527,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
 
     const layoutData = layoutObj.layoutWithBBox(bbox, linesLayout, textAlign, textBaseline as any, lineHeight);
 
-    this.cache.layoutData = layoutData;
+    this.getOrCreateCache().layoutData = layoutData;
     this.clearUpdateShapeTag();
     this._AABBBounds.set(bbox.xOffset, bbox.yOffset, bbox.xOffset + bbox.width, bbox.yOffset + bbox.height);
 
@@ -611,16 +626,17 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
         });
       }
     });
-    this.cache.verticalList = verticalLists;
+    const cache = this.getOrCreateCache();
+    cache.verticalList = verticalLists;
     this.clearUpdateShapeTag();
 
-    this.cache.verticalList.forEach(item => {
+    cache.verticalList.forEach(item => {
       const w = item.reduce((a, b) => a + b.width, 0);
       width = max(w, width);
     });
 
     const dx = textDrawOffsetX(textAlign, width);
-    const height = this.cache.verticalList.length * lineHeight;
+    const height = cache.verticalList.length * lineHeight;
     const dy = textLayoutOffsetY(textBaseline, height, fontSize);
     this._AABBBounds.set(dy, dx, dy + height, dx + width);
 

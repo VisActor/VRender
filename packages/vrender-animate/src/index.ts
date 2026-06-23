@@ -1,9 +1,14 @@
 // 导出实现
 export { Animate } from './animate';
-export { DefaultTimeline } from './timeline';
+export { DefaultTimeline, defaultTimeline } from './timeline';
 export { ManualTicker } from './ticker/manual-ticker';
 export { DefaultTicker } from './ticker/default-ticker';
 export { Step as AnimateStep } from './step';
+import { DefaultTicker } from './ticker/default-ticker';
+import { defaultTimeline } from './timeline';
+
+export const defaultTicker = new DefaultTicker();
+defaultTicker.addTimeline(defaultTimeline);
 
 // 导出工具函数
 export * from './utils/easing-func';

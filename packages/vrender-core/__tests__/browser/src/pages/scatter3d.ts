@@ -1,11 +1,9 @@
 import {
-  createStage,
   createArea,
   Rect,
   Group,
   Line,
   Text,
-  container,
   Rect3d,
   createGroup,
   IGroup,
@@ -14,6 +12,7 @@ import {
 } from '@visactor/vrender';
 import { pi } from '@visactor/vrender-common';
 import { colorPools } from '../utils';
+import { createBrowserPageStage } from '../page-stage';
 
 const xLabels = [0, 1000, 2000, 3000, 18000, 5000, 20000, 7000, 8000, 9000, 10000];
 const yLabels = [0, 1000, 2000, 3000, 18000, 5000, 20000, 7000, 8000, 9000, 10000];
@@ -24,7 +23,7 @@ for (let i = 0; i < 10; i++) {
 
 function drawChartCanopus() {
   // 创建stage
-  const stage = createStage({ canvas: 'main', autoRender: true });
+  const stage = createBrowserPageStage({ canvas: 'main', autoRender: true });
   stage.set3dOptions({
     alpha: 0.9,
     beta: 0.3,
@@ -356,7 +355,7 @@ export const page = () => {
   // ctx.fillStyle = 'red';
   // ctx.fillRect(-2000, -2000, 8000, 8000);
 
-  // const stage = createStage({
+  // const stage = createBrowserPageStage({
   //   canvas: c as HTMLCanvasElement,
   //   canvasControled: false
   // });

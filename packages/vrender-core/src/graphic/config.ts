@@ -232,6 +232,7 @@ export const DefaultArcAttribute: Required<IArcGraphicAttribute> = {
   cornerRadius: 0,
   padRadius: 0,
   padAngle: 0,
+  clipRange: 1,
   cap: false,
   forceShowCap: false
 };

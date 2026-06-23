@@ -1,16 +1,17 @@
-import { ContainerModule } from '@visactor/vrender-core';
-import { CanvasCirclePicker, CanvasLinePicker, CanvasPickerContribution, CanvasTextPicker } from '../constants';
-import { DefaultCanvasLinePicker } from './line-picker';
-import { DefaultCanvasTextPicker } from './text-picker';
+import { CircleRender } from '@visactor/vrender-core';
+import { resolveContainerBinding } from '../../../common/explicit-binding';
+import { CanvasCirclePicker, CanvasPickerContribution } from '../constants';
 import { DefaultCanvasCirclePicker } from './circle-picker';
 
 let loadCirclePick = false;
-export const circleCanvasPickModule = new ContainerModule((bind, unbind, isBound, rebind) => {
+export function bindCircleCanvasPickerContribution(container: any) {
   if (loadCirclePick) {
     return;
   }
   loadCirclePick = true;
-  // circle picker
-  bind(CanvasCirclePicker).to(DefaultCanvasCirclePicker).inSingletonScope();
-  bind(CanvasPickerContribution).toService(CanvasCirclePicker);
-});
+  container
+    .bind(CanvasCirclePicker)
+    .toDynamicValue(() => new DefaultCanvasCirclePicker(resolveContainerBinding(container, CircleRender)))
+    .inSingletonScope();
+  container.bind(CanvasPickerContribution).toService(CanvasCirclePicker);
+}

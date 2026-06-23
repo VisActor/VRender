@@ -1,6 +1,5 @@
 import type { IPointLike } from '@visactor/vutils';
 import { min, isArray } from '@visactor/vutils';
-import { injectable } from '../../../common/inversify-lite';
 import type {
   IContext2d,
   ILine,
@@ -25,7 +24,6 @@ import { calcLineCache } from '../../../common/segment';
  * 默认的基于canvas的line渲染器
  * 单例
  */
-@injectable()
 export class DefaultCanvasLineRender extends BaseRender<ILine> implements IGraphicRender {
   type: 'line';
   numberType: number = LINE_NUMBER_TYPE;

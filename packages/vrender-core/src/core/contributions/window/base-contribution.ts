@@ -1,4 +1,3 @@
-import { injectable } from '../../../common/inversify-lite';
 import { Generator } from '../../../common/generator';
 import type {
   ICanvas,
@@ -14,7 +13,6 @@ import { AABBBounds, Matrix, type IBounds, type IBoundsLike, type IMatrix } from
 
 type OnchangeCbType = (params?: { x?: number; y?: number; width?: number; height?: number }) => void;
 
-@injectable()
 export abstract class BaseWindowHandlerContribution implements IWindowHandlerContribution {
   declare type: EnvType;
 

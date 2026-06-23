@@ -2,9 +2,9 @@
  * @description 组件基类
  */
 import type { FederatedPointerEvent, IGroupGraphicAttribute, ISetAttributeContext } from '@visactor/vrender-core';
-import { Group, CustomEvent } from '@visactor/vrender-core';
-import type { Dict } from '@visactor/vutils';
-import { merge, isFunction, isPlainObject, isNil } from '@visactor/vutils';
+import { CustomEvent } from '@visactor/vrender-core/event/constant';
+import { Group } from '@visactor/vrender-core/graphic/group';
+import { type Dict, merge, isFunction, isPlainObject, isNil } from '@visactor/vutils';
 import type { ComponentOptions } from '../interface';
 
 const GROUP_ATTRIBUTES = [
@@ -54,7 +54,10 @@ export abstract class AbstractComponent<T extends IGroupGraphicAttribute = IGrou
     });
     this.attribute = attributes;
     // 这里调用渲染和事件绑定逻辑
-    this.onSetStage(() => {
+    this.onSetStage((_, stage) => {
+      if (!stage) {
+        return;
+      }
       this.render();
       this.bindEvents();
     });

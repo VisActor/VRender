@@ -1,0 +1,27 @@
+{
+  "name": "lynx-vrender-local-smoke",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "VRender smoke test for Lynx.",
+  "scripts": {
+    "prepare:local": "pnpm install && pnpm run sync:local",
+    "sync:local": "node scripts/sync-local-vrender.cjs",
+    "dev": "rspeedy dev",
+    "build": "DEBUG=rspeedy rspeedy build",
+    "lint": "biome check src lynx.config.ts scripts/sync-local-vrender.cjs package.json tsconfig.json",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@byted-lynx/react": "0.109.3",
+    "@visactor/vrender": "1.1.0-alpha.21"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1.9.4",
+    "@byted-lynx/hdt-rsbuild-plugin": "0.3.6",
+    "@byted-lynx/rspeedy": "0.9.9",
+    "@byted-lynx/type-lynx": "3.3.0",
+    "@types/react": "^18.3.0",
+    "typescript": "~5.8.3"
+  }
+}

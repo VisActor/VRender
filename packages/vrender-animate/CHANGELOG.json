@@ -2,6 +2,18 @@
   "name": "@visactor/vrender-animate",
   "entries": [
     {
+      "version": "1.1.0",
+      "tag": "@visactor/vrender-animate_v1.1.0",
+      "date": "Tue, 23 Jun 2026 04:01:55 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "Stabilize animation static-truth ownership and expose optional custom animation registers for basic, richtext, disappear, and story profiles while keeping the full register compatible."
+          }
+        ]
+      }
+    },
+    {
       "version": "1.0.46",
       "tag": "@visactor/vrender-animate_v1.0.46",
       "date": "Wed, 15 Apr 2026 07:05:39 GMT",

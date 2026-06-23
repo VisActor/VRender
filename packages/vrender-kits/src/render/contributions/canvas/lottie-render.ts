@@ -7,11 +7,10 @@ import type {
   IMarkAttribute,
   IThemeAttribute
 } from '@visactor/vrender-core';
-import { DefaultCanvasRectRender, getTheme, injectable } from '@visactor/vrender-core';
+import { DefaultCanvasRectRender, getTheme } from '@visactor/vrender-core';
 import { LOTTIE_NUMBER_TYPE } from '../../../graphic/constants';
 import type { ILottie } from '../../../graphic/interface/lottie';
 
-@injectable()
 export class DefaultCanvasLottieRender extends DefaultCanvasRectRender implements IGraphicRender {
   type: 'glyph';
   numberType: number = LOTTIE_NUMBER_TYPE;

@@ -131,9 +131,13 @@ export class ComponentAnimator {
   }
 
   deleteSelfAttr(key: string): void {
+    this.deleteSelfAttrs([key]);
+  }
+
+  deleteSelfAttrs(keys: string[]): void {
     this.tasks.forEach(task => {
       if (task.animate) {
-        task.animate.forEach(animate => animate.preventAttr(key));
+        task.animate.forEach(animate => animate.preventAttrs(keys));
       }
     });
   }

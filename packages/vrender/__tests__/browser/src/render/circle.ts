@@ -1,4 +1,4 @@
-import { Circle, container } from '@visactor/vrender';
+import { Circle } from '@visactor/vrender';
 import { roughModule } from '@visactor/vrender-kits';
 import { Circle as ZCircle } from 'zrender';
 import { renderElement } from './utils';

@@ -12,6 +12,7 @@ export const MathSymbolPicker = Symbol.for('MathSymbolPicker');
 export const MathTextPicker = Symbol.for('MathTextPicker');
 export const MathPolygonPicker = Symbol.for('MathPolygonPicker');
 export const MathGlyphPicker = Symbol.for('MathGlyphPicker');
+export const MathRichTextPicker = Symbol.for('MathRichTextPicker');
 
 // canvas
 export const CanvasArcPicker = Symbol.for('CanvasArcPicker');

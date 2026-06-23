@@ -1,11 +1,6 @@
 import type { ComponentAnimator } from '../component';
-import {
-  AnimateStatus,
-  type EasingType,
-  type IAnimateStepType,
-  type ICustomAnimate,
-  type Stage
-} from '@visactor/vrender-core';
+import type { EasingType, IAnimateStepType, ICustomAnimate, IStage } from '@visactor/vrender-core';
+import { AnimateStatus } from '@visactor/vrender-core/event/constant';
 import { Step } from '../step';
 
 export abstract class ACustomAnimate<T> extends Step implements ICustomAnimate {
@@ -19,7 +14,7 @@ export abstract class ACustomAnimate<T> extends Step implements ICustomAnimate {
   // 为了兼容旧的api，from和to是可选的，且尽量不需要From，因为为了避免突变，From都应该从当前位置开始
   // 所以From并不会真正设置到fromProps中，而是作为customFrom参数
   constructor(customFrom: T, customTo: T, duration: number, easing: EasingType, params?: any) {
-    super('customAnimate', customTo, duration, easing);
+    super('customAnimate', (customTo ?? ({} as T)) as Record<string, any>, duration, easing);
     this.customFrom = customFrom;
     this.params = params;
     this.from = customFrom;
@@ -69,12 +64,12 @@ export abstract class AStageAnimate<T> extends ACustomAnimate<T> {
   }
 
   // 用户重载
-  protected beforeStageRender(stage: Stage, canvas: HTMLCanvasElement): HTMLCanvasElement | void | null | false {
+  protected beforeStageRender(stage: IStage, canvas: HTMLCanvasElement): HTMLCanvasElement | void | null | false {
     return false;
   }
 
   // 用户重载
-  protected afterStageRender(stage: Stage, canvas: HTMLCanvasElement): HTMLCanvasElement | void | null | false {
+  protected afterStageRender(stage: IStage, canvas: HTMLCanvasElement): HTMLCanvasElement | void | null | false {
     return false;
   }
 
@@ -127,7 +122,7 @@ export abstract class AStageAnimate<T> extends ACustomAnimate<T> {
     }
   };
 
-  protected renderToStage(stage: Stage, canvas: HTMLCanvasElement): HTMLCanvasElement | void | null | false {
+  protected renderToStage(stage: IStage, canvas: HTMLCanvasElement): HTMLCanvasElement | void | null | false {
     const stageCanvas = stage.window.getContext().canvas.nativeCanvas;
     const ctx = stageCanvas.getContext('2d');
     if (!ctx) {

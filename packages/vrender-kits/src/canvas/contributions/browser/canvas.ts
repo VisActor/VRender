@@ -1,8 +1,7 @@
-import { injectable, application, BaseCanvas } from '@visactor/vrender-core';
+import { application, BaseCanvas } from '@visactor/vrender-core';
 import type { CanvasConfigType, ICanvas, EnvType } from '@visactor/vrender-core';
 import { BrowserContext2d } from './context';
 
-@injectable()
 export class BrowserCanvas extends BaseCanvas implements ICanvas {
   static env: EnvType = 'browser';
 

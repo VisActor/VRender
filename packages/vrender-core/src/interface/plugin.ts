@@ -2,6 +2,8 @@ import type { Releaseable } from './common';
 import type { IStage } from './stage';
 
 export interface IPluginService extends Releaseable {
+  install?: (plugin: IPlugin) => void;
+  uninstall?: (name: string) => void;
   register: (plugin: IPlugin) => void;
   unRegister: (plugin: IPlugin) => void;
   active: (stage: IStage, params: { pluginList?: string[] }) => void;

@@ -1,6 +1,6 @@
 import { ACustomAnimate } from '../custom-animate';
-import type { IRichTextCharacter, IAnimate, IStep, EasingType } from '@visactor/vrender-core';
-import { RichText } from '@visactor/vrender-core';
+import { RichText, type EasingType, type IAnimate, type IRichTextCharacter, type IStep } from '@visactor/vrender-core';
+import { applyAnimationTransientAttributes } from '../transient';
 
 /**
  * 滑动富文本动画，结合打字效果和方向滑动效果
@@ -215,7 +215,7 @@ export class SlideRichText extends ACustomAnimate<{ textConfig: IRichTextCharact
     }
 
     // 更新富文本的textConfig属性
-    this.target.setAttribute('textConfig', updatedTextConfig);
+    applyAnimationTransientAttributes(this.target, { textConfig: updatedTextConfig });
   }
 
   // 按单词更新文本配置

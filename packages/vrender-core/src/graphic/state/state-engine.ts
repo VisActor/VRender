@@ -72,6 +72,9 @@ export class StateEngine<T extends Record<string, any> = Record<string, any>> {
   }
 
   setResolveContext(graphic: any, baseAttributes: Partial<T>): void {
+    if (this.graphic !== graphic || this.baseAttributes !== baseAttributes) {
+      this.invalidateResolverCache();
+    }
     this.graphic = graphic;
     this.baseAttributes = baseAttributes;
   }

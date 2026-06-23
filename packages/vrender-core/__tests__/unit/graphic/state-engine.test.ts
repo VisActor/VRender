@@ -90,6 +90,43 @@ describe('StateEngine', () => {
     expect(resolver).toHaveBeenCalledTimes(2);
   });
 
+  test('should recompute patches after resolve context base attributes change', () => {
+    const compiledDefinitions = new StateDefinitionCompiler<any>().compile({
+      active: {
+        patch: {
+          shadowBlur: {
+            value: 2
+          }
+        }
+      }
+    });
+    const engine = new StateEngine<any>({
+      compiledDefinitions,
+      mergeMode: 'deep'
+    });
+    const graphic = {};
+
+    engine.setResolveContext(graphic, { shadowBlur: { value: 1, color: 'black' } });
+    engine.applyStates(['active']);
+
+    expect(engine.resolvedPatch).toEqual({
+      shadowBlur: {
+        value: 2,
+        color: 'black'
+      }
+    });
+
+    engine.setResolveContext(graphic, { shadowBlur: { value: 1, color: 'green' } });
+    engine.applyStates(['active']);
+
+    expect(engine.resolvedPatch).toEqual({
+      shadowBlur: {
+        value: 2,
+        color: 'green'
+      }
+    });
+  });
+
   test('should merge static patches and resolver contributions in effective order', () => {
     const resolver = jest.fn(({ activeStates }: any) => ({ fill: activeStates.join('+') }));
     const engine = new StateEngine<any>({

@@ -6,7 +6,6 @@ import type {
   IThemeAttribute,
   IDrawContext
 } from '@visactor/vrender-core';
-import { injectable } from '@visactor/vrender-core';
 import { PopTip } from './poptip';
 import { merge } from '@visactor/vutils';
 import { theme } from './theme';
@@ -16,7 +15,6 @@ function wrapPoptip(target: Record<string, any>, source: Record<string, any>) {
   return target;
 }
 
-@injectable()
 export class PopTipRenderContribution implements IInteractiveSubRenderContribution {
   declare poptipComponent: PopTip;
   render(

@@ -1,14 +1,18 @@
-import { ContainerModule } from '../../../common/inversify';
+import { isBindingContextLoaded } from '../../../common/module-guard';
 import { DefaultCanvasRichTextRender } from './richtext-render';
 import { GraphicRender, RichTextRender } from './symbol';
 
-let loadRichtextModule = false;
-export const richtextModule = new ContainerModule(bind => {
-  if (loadRichtextModule) {
+const loadedRichtextModuleContexts = new WeakSet<object>();
+export function bindRichtextRenderModule({ bind }: { bind: any }) {
+  if (isBindingContextLoaded(loadedRichtextModuleContexts, bind)) {
     return;
   }
-  loadRichtextModule = true;
   // richtext渲染器
-  bind(RichTextRender).to(DefaultCanvasRichTextRender).inSingletonScope();
+  bind(DefaultCanvasRichTextRender)
+    .toDynamicValue(() => new DefaultCanvasRichTextRender())
+    .inSingletonScope();
+  bind(RichTextRender).toService(DefaultCanvasRichTextRender);
   bind(GraphicRender).toService(RichTextRender);
-});
+}
+
+export const richtextModule = bindRichtextRenderModule;

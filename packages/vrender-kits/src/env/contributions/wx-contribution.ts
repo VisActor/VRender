@@ -1,125 +1,53 @@
-import { injectable, BaseEnvContribution, rafBasedSto } from '@visactor/vrender-core';
-// import { loadFeishuContributions } from '../../../kits';
-import type {
-  ICanvasLike,
-  EnvType,
-  ICreateCanvasParams,
-  IEnvContribution,
-  IGlobal,
-  ITTCanvas
+import {
+  BaseEnvContribution,
+  rafBasedSto,
+  type ICanvasLike,
+  type EnvType,
+  type ICreateCanvasParams,
+  type IEnvContribution,
+  type IGlobal,
+  type ITTCanvas
 } from '@visactor/vrender-core';
+import {
+  createCanvasWithFactory,
+  getMiniAppCanvasOptions,
+  type MiniAppCanvasEnvParams,
+  wrapMiniAppContextCanvas
+} from './miniapp-canvas';
+// import { loadFeishuContributions } from '../../../kits';
 
 declare const wx: {
-  getSystemInfoSync: () => { pixelRatio: number };
-  createCanvasContext: (id: string) => any;
-  createSelectorQuery: () => any;
+  getSystemInfoSync?: () => { pixelRatio: number };
+  createCanvasContext?: (id: string) => any;
 };
 
-// 飞书小程序canvas的wrap
-async function makeUpCanvas(
-  domref: any,
-  canvasIdLists: string[],
-  canvasMap: Map<string, ITTCanvas>,
-  freeCanvasIdx: number,
-  freeCanvasList: ITTCanvas[],
-  component: any,
-  forceUpdate?: boolean
-) {
-  const dpr = wx.getSystemInfoSync().pixelRatio;
+type WxEnvParams = MiniAppCanvasEnvParams & {
+  wx?: typeof wx;
+  runtime?: typeof wx;
+};
 
-  for (let i = 0; i < canvasIdLists.length; i++) {
-    const id = canvasIdLists[i];
-    if (!forceUpdate && canvasMap.has(id)) {
-      continue;
-    }
-    await new Promise(resolve => {
-      let data = wx.createSelectorQuery();
-      if (component) {
-        data = data.in(component);
-      }
-      // @ts-ignore
-      data
-        .select(`#${id}`) // 在 WXML 中填入的 id
-        .fields({ node: true, size: true })
-        .exec((res: any) => {
-          if (!res[0]) {
-            return;
-          }
-          const canvas = res[0].node;
-          const width = res[0].width;
-          const height = res[0].height;
-          canvas.width = width * dpr;
-          canvas.height = height * dpr;
-          canvasMap.set(id, canvas);
-          if (i >= freeCanvasIdx) {
-            freeCanvasList.push(canvas);
-          }
-          resolve(null);
-        });
-    });
+const WX_CANVAS_BRIDGE_ERROR =
+  'Wx canvas bridge is unavailable. VRender wx env requires envParams.canvasFactory, ' +
+  'a Stage canvas object, or a wx runtime that exposes createCanvasContext(id).';
+
+function getWxRuntime(params?: WxEnvParams): any {
+  try {
+    return params?.wx ?? params?.runtime ?? (typeof wx !== 'undefined' ? wx : undefined);
+  } catch {
+    return params?.wx ?? params?.runtime;
   }
-
-  // canvasIdLists.forEach((id, i) => {
-  //   const ctx = wx.createCanvasContext(id);
-  //   // TODO: 这里是一个临时方案，向 ctx 内部构造一个 canvas，传递宽高
-  //   ctx.canvas = {
-  //     width: domref.width * dpr,
-  //     height: domref.height * dpr
-  //   };
-
-  //   // 放到内容里
-  //   // // TODO: 这里是一个临时方案，兼容 createCircularGradient 方法
-  //   // ctx.createRadialGradient = (...cc) => ctx.createCircularGradient(...cc);
-
-  //   // // 封装 getImageData 为 promise
-  //   // ctx.getImageData = (x, y, width, height) =>
-  //   //   new Promise((resolve, reject) => {
-  //   //     try {
-  //   //       tt.canvasGetImageData({
-  //   //         canvasId: item.id,
-  //   //         x,
-  //   //         y,
-  //   //         width,
-  //   //         height,
-  //   //         success(res) {
-  //   //           resolve(res);
-  //   //         },
-  //   //       });
-  //   //     } catch (err) {
-  //   //       reject(err);
-  //   //     }
-  //   //   });
-
-  //   const canvas = {
-  //     width: domref.width,
-  //     height: domref.height,
-  //     offsetWidth: domref.width,
-  //     offsetHeight: domref.height,
-  //     id: id ?? '',
-  //     getContext: () => ctx,
-  //     // 构造 getBoundingClientRect 方法
-  //     getBoundingClientRect: () => ({
-  //       height: domref.height,
-  //       width: domref.width
-  //     })
-  //   };
-
-  //   canvasMap.set(id, canvas);
-  //   if (i >= freeCanvasIdx) {
-  //     freeCanvasList.push(canvas);
-  //   }
-  // });
 }
 
-@injectable()
+function getWxPixelRatio(params?: WxEnvParams, runtime: any = getWxRuntime(params)): number {
+  return params?.pixelRatio ?? runtime?.getSystemInfoSync?.()?.pixelRatio ?? 1;
+}
+
 export class WxEnvContribution extends BaseEnvContribution implements IEnvContribution {
   type: EnvType = 'wx';
   supportEvent: boolean = true;
   // 所有添加进来的canvas
   canvasMap: Map<string, ITTCanvas> = new Map();
-  // 所有可用的canvasList
-  freeCanvasList: ITTCanvas[] = [];
-  canvasIdx: number = 0;
+  private wxEnvParams: WxEnvParams = {};
 
   constructor() {
     super();
@@ -134,25 +62,11 @@ export class WxEnvContribution extends BaseEnvContribution implements IEnvContri
     this.applyStyles = true;
   }
 
-  // TODO：VGrammar在小程序环境会重复调用setEnv传入canvas，所以每次configure并不会释放
-  // 这里等待后续和VGrammar沟通
-  configure(
-    service: IGlobal,
-    params: { domref: any; canvasIdLists: string[]; freeCanvasIdx: number; component: any; forceUpdate?: boolean }
-  ) {
+  configure(service: IGlobal, params: WxEnvParams = {}) {
     if (service.env === this.type) {
       service.setActiveEnvContribution(this);
-      return makeUpCanvas(
-        params.domref,
-        params.canvasIdLists,
-        this.canvasMap,
-        params.freeCanvasIdx,
-        this.freeCanvasList,
-        params.component,
-        params.forceUpdate
-      ).then(() => {
-        // loadFeishuContributions();
-      });
+      this.wxEnvParams = params;
+      // loadFeishuContributions();
     }
   }
 
@@ -170,14 +84,30 @@ export class WxEnvContribution extends BaseEnvContribution implements IEnvContri
     loadState: 'success' | 'fail';
     data: HTMLImageElement | ImageData | null;
   }> {
-    // 飞书小组件不支持DOMParser和URL.createObjectURL，无法解析svg字符串，可以通过url使用svg资源
-    return Promise.reject();
+    // 微信小程序不支持 DOMParser 和 URL.createObjectURL，无法解析 svg 字符串，可以通过 url 使用 svg 资源
+    return Promise.resolve({
+      data: null,
+      loadState: 'fail'
+    });
   }
 
   createCanvas(params: ICreateCanvasParams): ITTCanvas {
-    const result = this.freeCanvasList[this.canvasIdx] || this.freeCanvasList[this.freeCanvasList.length - 1];
-    this.canvasIdx++;
-    return result;
+    const envParams = this.wxEnvParams;
+    const runtime = getWxRuntime(envParams);
+    const dpr = params.dpr ?? getWxPixelRatio(envParams, runtime);
+    const factoryCanvas = createCanvasWithFactory(params, dpr, this.canvasMap, envParams.canvasFactory);
+    if (factoryCanvas) {
+      return factoryCanvas;
+    }
+
+    const options = getMiniAppCanvasOptions(params, dpr, false);
+    if (options.id == null || typeof runtime?.createCanvasContext !== 'function') {
+      throw new Error(WX_CANVAS_BRIDGE_ERROR);
+    }
+
+    const canvas = wrapMiniAppContextCanvas(runtime.createCanvasContext(options.id), options);
+    this.canvasMap.set(options.id, canvas);
+    return canvas;
   }
 
   createOffscreenCanvas(params: ICreateCanvasParams) {
@@ -189,7 +119,7 @@ export class WxEnvContribution extends BaseEnvContribution implements IEnvContri
   }
 
   getDevicePixelRatio(): number {
-    return wx.getSystemInfoSync().pixelRatio;
+    return getWxPixelRatio(this.wxEnvParams);
   }
 
   getRequestAnimationFrame(): (callback: FrameRequestCallback) => number {

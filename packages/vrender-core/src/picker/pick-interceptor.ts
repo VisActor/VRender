@@ -1,6 +1,5 @@
 import type { IMatrix, IPointLike } from '@visactor/vutils';
 import { Point } from '@visactor/vutils';
-import { injectable } from '../common/inversify-lite';
 import type {
   IContext2d,
   IGraphic,
@@ -15,7 +14,6 @@ import { matrixAllocate } from '../allocator/matrix-allocate';
 import { draw3dItem } from '../common/3d-interceptor';
 import { getTheme } from '../graphic';
 
-@injectable()
 export class ShadowPickServiceInterceptorContribution implements IPickServiceInterceptorContribution {
   order: number = 1;
   afterPickItem(
@@ -46,7 +44,6 @@ export class ShadowPickServiceInterceptorContribution implements IPickServiceInt
 /**
  * 影子节点拦截器，用于渲染影子节点
  */
-@injectable()
 export class ShadowRootPickItemInterceptorContribution implements IPickItemInterceptorContribution {
   order: number = 1;
   afterPickItem(
@@ -131,7 +128,6 @@ export class ShadowRootPickItemInterceptorContribution implements IPickItemInter
   }
 }
 
-@injectable()
 export class InteractivePickItemInterceptorContribution implements IPickItemInterceptorContribution {
   order: number = 1;
 
@@ -165,7 +161,6 @@ export class InteractivePickItemInterceptorContribution implements IPickItemInte
 /**
  * 3d拦截器，用于渲染3d视角
  */
-@injectable()
 export class Canvas3DPickItemInterceptor implements IPickItemInterceptorContribution {
   // canvas?: ICanvas;
   order: number = 1;

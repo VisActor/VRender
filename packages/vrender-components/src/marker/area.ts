@@ -1,6 +1,6 @@
 import type { IGroup, IPolygon } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
-import { graphicCreator } from '@visactor/vrender-core';
+import { graphicCreator } from '../util/graphic-creator';
 import { isValidNumber, merge, mixin } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports
 import type { Tag, TagAttributes } from '../tag';

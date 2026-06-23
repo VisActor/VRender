@@ -1,4 +1,3 @@
-import { injectable } from '../../../common/inversify-lite';
 import { createRectPath } from '../../../common/shape/rect';
 import { getTheme } from '../../../graphic/theme';
 import { RICHTEXT_NUMBER_TYPE } from '../../../graphic/constants';
@@ -14,7 +13,6 @@ import { fillVisible } from './utils';
 import { BaseRender } from './base-render';
 import { defaultTextBackgroundRenderContribution } from './contributions/text-contribution-render';
 
-@injectable()
 export class DefaultCanvasRichTextRender extends BaseRender<IRichText> implements IGraphicRender {
   type: 'richtext';
   numberType: number = RICHTEXT_NUMBER_TYPE;

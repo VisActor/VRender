@@ -37,6 +37,21 @@ export type State<T> = {
   [key: string]: T;
 };
 
+export type ComponentExitReleaseOptions = {
+  /**
+   * Whether to remove the component itself from its parent after the exit animation finishes.
+   */
+  removeFromParent?: boolean;
+  /**
+   * Called once after the component has finished its exit cleanup.
+   */
+  onComplete?: () => void;
+};
+
+export type ComponentExitReleasable = {
+  releaseWithExitAnimation?: (options?: ComponentExitReleaseOptions) => boolean;
+};
+
 export type BaseGraphicAttributes<T> = {
   /**
    * 基础样式设置

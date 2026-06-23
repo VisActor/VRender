@@ -1,24 +1,14 @@
 {
   "compilerOptions": {
-    "strictNullChecks": true,
-    "noImplicitAny": true,
+    "target": "ES2020",
     "module": "CommonJS",
-    "target": "ES2016",
-    "allowJs": true,
+    "moduleResolution": "Node",
+    "strict": true,
+    "noImplicitAny": false,
+    "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-    "experimentalDecorators": true,
-    "noImplicitThis": true,
-    "noImplicitReturns": true,
-    "alwaysStrict": true,
-    "noFallthroughCasesInSwitch": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "strict": true,
-    "strictPropertyInitialization": true,
-    "lib": ["ES2020"],
-    "typeRoots": ["./typings"]
+    "types": ["miniprogram-api-typings"]
   },
-  "include": ["./**/*.ts"],
-  "exclude": ["node_modules"]
+  "include": ["miniprogram/**/*.ts"]
 }

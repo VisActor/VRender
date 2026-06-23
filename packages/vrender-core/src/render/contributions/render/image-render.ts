@@ -1,6 +1,3 @@
-import { inject, injectable, named } from '../../../common/inversify-lite';
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { ContributionProvider } from '../../../common/contribution-provider';
 import { getTheme } from '../../../graphic/theme';
 import type {
   IGraphicAttribute,
@@ -19,7 +16,9 @@ import type {
   IRenderService
 } from '../../../interface';
 import { ImageRenderContribution } from './contributions/constants';
+import { fillVisible, runFill } from './utils';
 import { IMAGE_NUMBER_TYPE } from '../../../graphic/constants';
+import { BaseRenderContributionTime } from '../../../common/enums';
 import { isArray, isString } from '@visactor/vutils';
 import { createRectPath } from '../../../common/shape/rect';
 import { BaseRender } from './base-render';
@@ -34,6 +33,20 @@ export type IImageLayoutDrawParams = Pick<
   'repeatX' | 'repeatY' | 'imageMode' | 'imageScale' | 'imageOffsetX' | 'imageOffsetY' | 'imagePosition'
 >;
 
+export function resolveImageRepeatMode(
+  repeatX: IImageGraphicAttribute['repeatX'],
+  repeatY: IImageGraphicAttribute['repeatY']
+): 'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat' {
+  let repeat = 0;
+  if (repeatX === 'repeat') {
+    repeat |= 0b0001;
+  }
+  if (repeatY === 'repeat') {
+    repeat |= 0b0010;
+  }
+  return repeat ? (repeatStr[repeat] as 'repeat' | 'repeat-x' | 'repeat-y') : 'no-repeat';
+}
+
 export function resolveImageMode({
   repeatX = 'no-repeat',
   repeatY = 'no-repeat',
@@ -43,7 +56,6 @@ export function resolveImageMode({
   sizingMode: BackgroundSizing;
 } {
   const repeatMode = resolveImageRepeatMode(repeatX, repeatY);
-
   return {
     repeatMode,
     sizingMode: repeatMode === 'no-repeat' ? imageMode ?? 'fill' : 'fill'
@@ -69,28 +81,13 @@ export function resolveBackgroundParamsByImageSizing(sizingMode: BackgroundSizin
   };
 }
 
-export function resolveImageRepeatMode(
-  repeatX: IImageGraphicAttribute['repeatX'],
-  repeatY: IImageGraphicAttribute['repeatY']
-): 'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat' {
-  let repeat = 0;
-  if (repeatX === 'repeat') {
-    repeat |= 0b0001;
-  }
-  if (repeatY === 'repeat') {
-    repeat |= 0b0010;
-  }
-  return repeat ? (repeatStr[repeat] as 'repeat' | 'repeat-x' | 'repeat-y') : 'no-repeat';
-}
-
 export function shouldClipImageByLayout({
   repeatX = 'no-repeat',
   repeatY = 'no-repeat',
   imageMode,
   imageScale = 1,
   imageOffsetX = 0,
-  imageOffsetY = 0,
-  imagePosition = 'top-left'
+  imageOffsetY = 0
 }: IImageLayoutDrawParams): boolean {
   const { repeatMode, sizingMode } = resolveImageMode({
     repeatX,
@@ -133,6 +130,7 @@ export function drawImageWithLayout(
           backgroundFit: false,
           backgroundKeepAspectRatio: false
         };
+
   drawBackgroundImage(
     context,
     data,
@@ -156,16 +154,11 @@ export function drawImageWithLayout(
   );
 }
 
-@injectable()
 export class DefaultCanvasImageRender extends BaseRender<IImage> implements IGraphicRender {
   type: 'image';
   numberType: number = IMAGE_NUMBER_TYPE;
 
-  constructor(
-    @inject(ContributionProvider)
-    @named(ImageRenderContribution)
-    protected readonly graphicRenderContributions: IContributionProvider<IImageRenderContribution>
-  ) {
+  constructor(protected readonly graphicRenderContributions: IContributionProvider<IImageRenderContribution>) {
     super();
     this.builtinContributions = [defaultImageRenderContribution, defaultImageBackgroundRenderContribution];
     this.init(graphicRenderContributions);

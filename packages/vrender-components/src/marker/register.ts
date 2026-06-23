@@ -1,14 +1,12 @@
-import {
-  registerArc,
-  registerGroup,
-  registerImage,
-  registerLine,
-  registerPolygon,
-  registerSymbol
-} from '@visactor/vrender-kits';
+import { registerArc } from '@visactor/vrender-kits/register/register-arc';
+import { registerGroup } from '@visactor/vrender-kits/register/register-group';
+import { registerImage } from '@visactor/vrender-kits/register/register-image';
+import { registerLine } from '@visactor/vrender-kits/register/register-line';
+import { registerPolygon } from '@visactor/vrender-kits/register/register-polygon';
+import { registerSymbol } from '@visactor/vrender-kits/register/register-symbol';
 import { loadTagComponent } from '../tag/register';
 import { loadArcSegmentComponent, loadSegmentComponent } from '../segment/register';
-import { registerAnimate } from '@visactor/vrender-animate';
+import { registerAnimate } from '@visactor/vrender-animate/register';
 function loadBaseMarker() {
   registerGroup();
   loadTagComponent();

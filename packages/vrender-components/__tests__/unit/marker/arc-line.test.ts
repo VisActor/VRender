@@ -4,15 +4,13 @@ import type { ArcSegment, Tag } from '../../../src';
 // eslint-disable-next-line no-duplicate-imports
 import { MarkArcLine } from '../../../src';
 import { createCanvas } from '../../util/dom';
-import { createStage } from '../../util/vrender';
-import { initBrowserEnv } from '@visactor/vrender-kits';
-initBrowserEnv();
+import { createTestStage } from '../../util/vrender';
 
 describe('Marker', () => {
   let stage: Stage;
   beforeAll(() => {
     createCanvas(document.body, 'main');
-    stage = createStage('main');
+    stage = createTestStage('main');
   });
 
   // afterAll(() => {

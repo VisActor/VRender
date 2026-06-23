@@ -1,7 +1,6 @@
-import { injectable } from '../../../common/inversify-lite';
 import { AABBBounds } from '@visactor/vutils';
 import { mat3Tomat4, multiplyMat4Mat4 } from '../../../common/matrix';
-import { graphicCreator } from '../../../graphic/graphic-creator';
+import { createGraphic } from '../../../graphic/graphic-creator';
 import type {
   IContext2d,
   IDrawContext,
@@ -19,7 +18,6 @@ import { draw3dItem } from '../../../common/3d-interceptor';
 // 拦截器
 export const DrawItemInterceptor = Symbol.for('DrawItemInterceptor');
 
-// @injectable()
 // export class DefaultDrawItemInterceptor implements IDrawItemInterceptor {
 //   drawItem(graphic: IGraphic, renderService: IRenderService, params?: IGraphicRenderDrawParams): boolean {
 //     return false;
@@ -31,7 +29,6 @@ const tempBackupDirtyBounds = new AABBBounds();
 /**
  * 影子节点拦截器，用于渲染影子节点
  */
-// @injectable()
 export class ShadowRootDrawItemInterceptorContribution implements IDrawItemInterceptorContribution {
   order: number = 1;
   afterDrawItem(
@@ -119,7 +116,6 @@ export class ShadowRootDrawItemInterceptorContribution implements IDrawItemInter
   }
 }
 
-// @injectable()
 export class DebugDrawItemInterceptorContribution implements IDrawItemInterceptorContribution {
   order: number = 1;
 
@@ -168,7 +164,6 @@ export class DebugDrawItemInterceptorContribution implements IDrawItemIntercepto
   }
 }
 
-@injectable()
 export class CommonDrawItemInterceptorContribution implements IDrawItemInterceptorContribution {
   order: number = 1;
   interceptors: IDrawItemInterceptorContribution[];
@@ -240,7 +235,6 @@ export class CommonDrawItemInterceptorContribution implements IDrawItemIntercept
 /**
  * 交互层节点拦截器，用于支持交互层图元
  */
-// @injectable()
 export class InteractiveDrawItemInterceptorContribution implements IDrawItemInterceptorContribution {
   order: number = 1;
   processing: boolean;
@@ -388,7 +382,7 @@ export class InteractiveDrawItemInterceptorContribution implements IDrawItemInte
     // 获取绑定影子节点的group
     let group = interactiveLayer.getElementById('_interactive_group') as IGroup;
     if (!group) {
-      group = graphicCreator.CreateGraphic('group', {});
+      group = createGraphic('group', {});
       group.id = '_interactive_group';
       interactiveLayer.add(group);
     }
@@ -399,7 +393,6 @@ export class InteractiveDrawItemInterceptorContribution implements IDrawItemInte
 /**
  * 3d拦截器，用于渲染3d视角
  */
-// @injectable()
 export class Canvas3DDrawItemInterceptor implements IDrawItemInterceptorContribution {
   // canvas?: ICanvas;
   order: number = 1;
@@ -417,7 +410,6 @@ export class Canvas3DDrawItemInterceptor implements IDrawItemInterceptorContribu
 
     drawContext.in3dInterceptor = true;
     const { context, stage } = renderService.drawParams;
-    const canvas = context.canvas;
 
     // 使用3d模式渲染
     context.save();

@@ -1,3 +1,4 @@
+/** @deprecated Legacy DI browser fixture retained for major-migration tracking. Prefer app-scoped entries/plugins. */
 import 'core-js/proposals/reflect-metadata';
 import { ContainerModule, inject, injectable, Container, multiInject } from 'inversify';
 @injectable()

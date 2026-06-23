@@ -124,7 +124,3 @@
 #${prefix} animate()()
 
 添加动画
-
-#${prefix} stateProxy()()
-
-状态配置函数

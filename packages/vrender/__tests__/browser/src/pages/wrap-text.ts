@@ -1,5 +1,6 @@
-import { createGroup, createStage, createWrapText, vglobal } from '@visactor/vrender';
+import { createGroup, createWrapText, vglobal } from '@visactor/vrender';
 import { addShapesToStage, colorPools } from '../utils';
+import { createBrowserPageStage } from '../page-stage';
 
 vglobal.setEnv('browser');
 
@@ -23,7 +24,7 @@ export const page = () => {
       lineHeight: 14,
       ellipsis: '...',
       text: ['back-end engineer 这是什么 what is this abcdefg'],
-      maxLineWidth: 0,
+      maxLineWidth: 80,
       // autoWrapText: true,
       heightLimit: 60,
       pickable: false,
@@ -142,7 +143,7 @@ export const page = () => {
   //   })
   // );
 
-  const stage = createStage({
+  const stage = createBrowserPageStage({
     canvas: 'main',
     width: 1200,
     height: 600,

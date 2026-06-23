@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-nocheck
-import { createStage, Circle, Rect, EventManager, FederatedPointerEvent, Group } from '../../src/index';
-import { createCanvas, removeDom } from '../util';
+import { Circle, Rect, EventManager, FederatedPointerEvent, Group } from '../../src/index';
+import { createBrowserStage, createCanvas, removeDom } from '../util';
 
 describe('EventManager', () => {
   // let layer;
@@ -26,7 +26,7 @@ describe('EventManager', () => {
     //   system.destroy();
     // });
 
-    stage = createStage({
+    stage = createBrowserStage({
       canvas: canvasDom,
       width: 1000,
       height: 1000,
@@ -55,7 +55,7 @@ describe('EventManager', () => {
     // circle.fill = VRender.createPureColor('red');
     // layer.appendChild(circle);
 
-    const circle = new Circle({
+    new Circle({
       radius: 50,
       startAngle: 0,
       endAngle: Math.PI * 2,

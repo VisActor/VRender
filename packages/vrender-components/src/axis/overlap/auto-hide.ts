@@ -2,8 +2,7 @@
  * @description 自动隐藏
  */
 
-import { createRect, type IText } from '@visactor/vrender-core';
-// eslint-disable-next-line no-duplicate-imports
+import type { IText } from '@visactor/vrender-core';
 import { isEmpty, isFunction, last } from '@visactor/vutils';
 import type { CustomMethod } from '../type';
 import { textIntersect as intersect, hasOverlap } from '../util';

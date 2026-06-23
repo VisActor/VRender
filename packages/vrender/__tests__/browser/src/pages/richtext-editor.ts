@@ -1,23 +1,26 @@
+/** @deprecated Legacy DI browser fixture retained for major-migration tracking. Prefer app-scoped entries/plugins. */
 import {
-  createStage,
   createRichText,
   createGroup,
   createCircle,
   xul,
-  ContainerModule,
   RichTextEditPlugin,
   AutoEnablePlugins,
-  container,
+  getLegacyBindingContext,
   XMLParser
 } from '@visactor/vrender';
 import { addShapesToStage, colorPools } from '../utils';
+import { createBrowserPageStage } from '../page-stage';
+
+let richTextPluginLoaded = false;
 
 export const page = () => {
-  const c = new ContainerModule(bind => {
-    bind(RichTextEditPlugin).toSelf();
-    bind(AutoEnablePlugins).toService(RichTextEditPlugin);
-  });
-  container.load(c);
+  if (!richTextPluginLoaded) {
+    richTextPluginLoaded = true;
+    const legacyContext = getLegacyBindingContext();
+    legacyContext.bind(RichTextEditPlugin).toSelf();
+    legacyContext.bind(AutoEnablePlugins).toService(RichTextEditPlugin);
+  }
 
   const shapes = [];
 
@@ -86,7 +89,7 @@ export const page = () => {
     shapes[0].setAttributes({ editable: true });
   }, 1000);
 
-  const stage = createStage({
+  const stage = createBrowserPageStage({
     canvas: 'main',
     width: 1200,
     height: 700,

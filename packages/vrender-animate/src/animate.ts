@@ -1,16 +1,44 @@
 import { Step, WaitStep } from './step';
-import {
-  Generator,
-  AnimateStatus,
-  AnimateStepType,
-  type IGraphic,
-  type IAnimate,
-  type IStep,
-  type ICustomAnimate,
-  type EasingType,
-  type ITimeline
-} from '@visactor/vrender-core';
+import type { EasingType, IAnimate, ICustomAnimate, IGraphic, IStep, ITimeline } from '@visactor/vrender-core';
+import { Generator } from '@visactor/vrender-core/common/generator';
+import { AnimateStatus, AnimateStepType, AttributeUpdateType } from '@visactor/vrender-core/event/constant';
 import { defaultTimeline } from './timeline';
+import { FromTo } from './custom/fromTo';
+import { applyAnimationTransientAttributes } from './custom/transient';
+
+function includesKey(keys: string[], key: string): boolean {
+  for (let i = 0; i < keys.length; i++) {
+    if (keys[i] === key) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function removeKeysFromRecord<T extends Record<string, any> | undefined>(record: T, keys: string[]): T {
+  if (!record) {
+    return record;
+  }
+
+  let hasBlockedKey = false;
+  for (const key in record) {
+    if (Object.prototype.hasOwnProperty.call(record, key) && includesKey(keys, key)) {
+      hasBlockedKey = true;
+      break;
+    }
+  }
+  if (!hasBlockedKey) {
+    return record;
+  }
+
+  const nextRecord: Record<string, any> = {};
+  for (const key in record) {
+    if (Object.prototype.hasOwnProperty.call(record, key) && !includesKey(keys, key)) {
+      nextRecord[key] = record[key];
+    }
+  }
+  return nextRecord as T;
+}
 
 export class Animate implements IAnimate {
   readonly id: string | number;
@@ -123,14 +151,15 @@ export class Animate implements IAnimate {
    */
   bind(target: IGraphic): this {
     this.target = target;
-
-    if (!this.target.animates) {
-      this.target.animates = new Map();
-    }
-    this.target.animates.set(this.id, this);
+    const trackerTarget = this.target as any;
+    trackerTarget.detachAttributeFromBaseAttributes();
+    trackerTarget.trackAnimate(this);
     this.onRemove(() => {
       this.stop();
-      this.target.animates.delete(this.id);
+      if (!(this as any).__skipRestoreStaticAttributeOnRemove) {
+        trackerTarget.restoreStaticAttribute();
+      }
+      trackerTarget.untrackAnimate(this.id);
     });
 
     if (this.target.onAnimateBind && !this.slience) {
@@ -260,20 +289,10 @@ export class Animate implements IAnimate {
    * 【注意】这可能会导致动画跳变，请谨慎使用
    */
   from(props: Record<string, any>, duration: number = 300, easing: EasingType = 'linear'): this {
-    // 创建新的step
-    const step = new Step(AnimateStepType.from, props, duration, easing);
+    const step = new FromTo(props as any, {} as any, duration, easing);
 
-    // 如果是第一个step
-    if (!this._firstStep) {
-      this._firstStep = step;
-      this._lastStep = step;
-    } else {
-      // 添加到链表末尾
-      this._lastStep.append(step);
-      this._lastStep = step;
-    }
-
-    this.updateDuration();
+    step.bind(this.target, this);
+    this.updateStepAfterAppend(step);
 
     return this;
   }
@@ -368,22 +387,30 @@ export class Animate implements IAnimate {
    * 屏蔽单个属性
    */
   preventAttr(key: string): void {
-    this._preventAttrs.add(key);
-    // 从所有step中移除该属性，并从自身的_startProps和_endProps中移除该属性
-    delete this._startProps[key];
-    delete this._endProps[key];
-    let step = this._firstStep;
-    while (step) {
-      step.deleteSelfAttr(key);
-      step = step.next;
-    }
+    this.preventAttrs([key]);
   }
 
   /**
    * 屏蔽多个属性
    */
   preventAttrs(keys: string[]): void {
-    keys.forEach(key => this._preventAttrs.add(key));
+    if (!keys?.length) {
+      return;
+    }
+
+    for (let i = 0; i < keys.length; i++) {
+      this._preventAttrs.add(keys[i]);
+    }
+    // 从自身的_startProps和_endProps中移除该属性。这里不用 delete，
+    // 避免大量图元频繁切换动画时破坏对象形状并放大 GC 压力。
+    this._startProps = removeKeysFromRecord(this._startProps, keys);
+    this._endProps = removeKeysFromRecord(this._endProps, keys);
+
+    let step = this._firstStep;
+    while (step) {
+      step.deleteSelfAttrs(keys);
+      step = step.next;
+    }
   }
 
   /**
@@ -465,13 +492,16 @@ export class Animate implements IAnimate {
     }
 
     if (type === 'start') {
-      // 设置为开始状态
+      // Explicit stop targets are static commit APIs, unlike automatic
+      // animation frames which must use transient attributes.
       this.target.setAttributes(this._startProps);
     } else if (type === 'end') {
-      // 设置为结束状态
+      // Explicit stop targets are static commit APIs, unlike automatic
+      // animation frames which must use transient attributes.
       this.target.setAttributes(this._endProps);
     } else if (type) {
-      // 设置为自定义状态
+      // Explicit stop targets are static commit APIs, unlike automatic
+      // animation frames which must use transient attributes.
       this.target.setAttributes(type);
     }
   }
@@ -610,6 +640,9 @@ export class Animate implements IAnimate {
       this._lastStep?.onEnd();
       this.onEnd();
       this.status = AnimateStatus.END;
+      const trackerTarget = this.target as any;
+      trackerTarget.restoreStaticAttribute();
+      (this as any).__skipRestoreStaticAttributeOnRemove = true;
       return;
     }
 
@@ -638,7 +671,7 @@ export class Animate implements IAnimate {
 
     // 如果是新的循环，重置为初始状态
     if (newLoop && !bounceTime) {
-      this.target.setAttributes(this._startProps);
+      applyAnimationTransientAttributes(this.target, this._startProps, AttributeUpdateType.ANIMATE_START);
     }
 
     // 选择起始步骤和遍历方向

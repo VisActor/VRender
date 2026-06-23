@@ -1,0 +1,481 @@
+# D3 上层业务接入指南
+
+> **文档类型**：上层接入指南
+> **用途**：给在 `vchart` / `vtable` 等上层仓库里工作的 agent 提供一份可以直接执行的 VRender 新版本接入说明
+> **当前状态**：基于当前已确认基线编写：`P0 accepted`、`P1 accepted`、`legacy removal completed`、`browser alpha gate closed`、`multi-env stable matrix closed`
+> **重要说明**：本文件只总结当前对上层已经稳定的使用口径，不重开 D3 主架构，也不把已关闭为 no-go 的 `P2` 性能尝试写成上层契约
+
+---
+
+## 1. 这份文档解决什么问题
+
+如果你正在 `vchart` 仓库里做事，这份文档回答的是：
+
+1. 新版本 VRender 现在**应该怎么创建 app / stage**
+2. 上层代码现在**还能依赖哪些语义**
+3. 哪些旧写法仍能跑，但**不该再写进新代码**
+4. 遇到状态、已移除的 `stateProxy`、shared-state、React、browser smoke 时，**应该按什么边界理解**
+
+这份文档面向的是“要在上层仓库里继续开发”的 agent，不是面向 VRender 内核实现者的阶段设计文档。
+
+---
+
+## 2. 先记住这 10 条
+
+如果你只记住最关键的规则，记这些：
+
+1. 新代码优先使用当前环境对应的 stable Tier 1 app creator，不要继续写 deprecated `createStage()`
+2. `app.createStage()` 是当前推荐入口；如果同一页面里会重建 stage，优先复用同一个 app
+3. `app.release()` 会释放它仍然拥有的 stage；单 stage 场景里，仍建议显式先 `stage.release()`，再 `app.release()`
+4. 根包 stable Tier 1 app creator 是 **default bootstrap 入口**，不是细粒度按需装配入口
+5. 当前 browser / node / wx / lynx / harmony 是 app-scoped 一等路径；taro / feishu / tt 保留 public creator 与代码路径，但真实端 smoke 前仍按 Tier 2 理解
+6. 不要在已经走 root app creator 的 caller 里再混用 `initBrowserEnv()` / `initFeishuEnv()` / `initAllEnv()` 这类旧 env 初始化
+7. 状态静态真值现在按 `baseAttributes + resolvedStatePatch -> attribute` 理解，动画不是新的真值源
+8. `normalAttrs` 只剩 deprecated alias/view 语义，不要再把它当成 snapshot/restore 主路径
+9. `stateProxy` 已移除；实例级动态样式改用 `states` + `StateDefinition.resolver`，跨图元共享状态改用 `sharedStateDefinitions`
+10. 当前对上层只承诺顶层 `graphic.attribute.xxx = ...` 兼容，不承诺任意深层 nested mutation 完全隔离
+
+---
+
+## 3. 当前稳定状态
+
+截至当前基线，面向上层可依赖的状态是：
+
+1. `P0 accepted`
+   - 构造期固定成本优化第一轮已落地
+2. `P1 accepted`
+   - `simple attrs fast path` 已落地
+3. `legacy removal completed`
+   - 正式 runtime 主链与 repo 内主 caller 已不再依赖旧 `legacy -> app registry sync`
+4. `handoff ready`
+   - 当前仓库已恢复到可以交给上层使用的状态
+5. `browser alpha gate closed`
+   - browser binding / installer、functional、perf 和 external-stage app-scoped consumer rerun 均已通过
+6. root app creator public typing 已补齐
+   - stable Tier 1 root app creator 当前对外类型应返回 `IApp`
+7. multi-env stable matrix 已收口
+   - Tier 1: `browser` / `node` / `wx` / `lynx` / `harmony`
+   - Tier 2: `taro` / `feishu` / `tt`
+   - Tier 3: `native`
+
+当前**不应**把下面这些写成上层契约：
+
+1. 已关闭为 no-go 的 `P2` 性能尝试
+2. 任意更深层的构造期表示优化
+3. 对 `graphic.attribute` 深层 nested mutation 的额外隔离保证
+4. 同一 JS runtime 内多 env 完全隔离
+
+---
+
+## 4. 推荐入口
+
+### 4.1 Browser
+
+如果你在浏览器环境里工作，优先使用根包 `@visactor/vrender` 的显式 app-scoped 入口：
+
+```ts
+import { createBrowserVRenderApp } from '@visactor/vrender';
+
+const app = createBrowserVRenderApp();
+
+const stage = app.createStage({
+  width: 800,
+  height: 600,
+  autoRender: true,
+  canvas: 'main'
+});
+```
+
+生命周期建议：
+
+1. 一页内如果会反复销毁/重建 stage，优先复用同一个 `app`
+2. 页面彻底结束时再 `app.release()`
+3. 普通单 stage 场景中，仍建议保持 “`stage.release()` 后再 `app.release()`” 的顺序
+
+ownership 规则：
+
+1. `app.createStage()` 创建出的 stage 默认由该 `app` 跟踪
+2. `app.release()` 会释放它仍然跟踪的 stage，再释放 app 级 registry/plugin 资源
+3. 如果你自己先 `stage.release()`，再 `app.release()`，这是允许且推荐的显式顺序
+4. 如果 stage 不是这个 `app` 创建的，不要假设 `app.release()` 应该替你释放它
+
+### 4.1.1 VChart 场景下的 app / stage ownership
+
+对 `VChart` 这类上层库，`app` 多数场景下不应该成为普通 `VChart` 用户必须考虑的概念。推荐把 ownership 明确拆成三种模式：
+
+| 场景 | app 创建/提供者 | stage 创建者 | release 责任 | 建议 |
+|------|------|------|------|------|
+| 普通 `new VChart(spec, { dom })` | `VChart` 先尝试从场景/上下文获取 app，失败时创建或复用 VChart-managed shared app | `VChart` | `chart.release()` 释放自己创建的 stage；shared app 按引用计数或等价机制清理 | 普通用户不需要感知 app |
+| 同页多个 `VChart` | 页面/场景/上层运行时提供 app singleton | 每个 `VChart` 用该 app 创建自己的 stage | 每个 `chart.release()` 释放自己的 stage；app 由场景提供者释放 | 推荐模式，减少接入方心智并避免重复 bootstrap |
+| `new VChart(spec, { stage })` | 外部调用方 | 外部调用方 | 外部调用方 | advanced 模式；`VChart` 只借用 stage，`chart.release()` 不应释放外部 stage/app |
+
+推荐解析顺序：
+
+```text
+if option.stage exists:
+  borrow the external stage
+else:
+  app = resolve app from scene/context/provider
+     ?? getOrCreateVChartManagedSharedApp(runtime/env scope)
+  stage = app.createStage(...)
+```
+
+注意：
+
+1. `VChart` 创建的 stage 应由 `VChart` 在 `chart.release()` 中释放
+2. 场景/上下文提供的 app 不应由单个 `chart.release()` 释放
+3. `VChart` fallback 不应每个 chart 创建一份 app；应复用 VChart-managed shared app，避免同页多 chart 重复 bootstrap
+4. VChart-managed shared app 必须有明确作用域和生命周期，最后一个使用者释放后应清理
+5. 不建议 `VChart` 私下维护 process-wide 永久 singleton app；如果需要共享 app，应是 runtime/env 或 scene/container scoped
+
+### 4.2 Node
+
+Node 侧同理：
+
+```ts
+import { createNodeVRenderApp } from '@visactor/vrender';
+
+const app = createNodeVRenderApp({ envParams: CanvasPkg });
+const stage = app.createStage({
+  width: 800,
+  height: 600
+});
+```
+
+额外提醒：
+
+1. Node 需要传入 node-canvas 兼容包作为 `envParams`
+2. 旧兼容路径 `vglobal.setEnv('node', CanvasPkg)` 后再 `createNodeVRenderApp()` 仍可用，但新代码优先显式传 `envParams`
+3. CI / 本地测试需要保证 Node 版本与 native `canvas` ABI 匹配；当前已验证 Node 20.19.6
+
+### 4.3 Miniapp / Lynx / Harmony
+
+已进入 stable Tier 1 的端侧环境：
+
+```ts
+import { createWxVRenderApp, createLynxVRenderApp, createHarmonyVRenderApp } from '@visactor/vrender';
+```
+
+推荐用法：
+
+1. 微信小程序使用 `createWxVRenderApp({ envParams })`
+2. Lynx 使用 `createLynxVRenderApp({ envParams })`
+3. Harmony 使用 `createHarmonyVRenderApp({ envParams })`
+4. 具体 canvas id/name、宽高、dpr 仍属于 stage/layer 创建参数，不要长期塞进 app 级共享状态
+5. app 级 `envParams` 只放对整个 app scope 都有效的端能力，例如 runtime、可复用的 canvasFactory、pixelRatio
+
+仍按 Tier 2 理解的端侧环境：
+
+1. `createTaroVRenderApp`
+2. `createFeishuVRenderApp`
+3. `createTTVRenderApp`
+
+这些入口和代码路径保留，但真实端 smoke 前不要在上层 release note 中写成稳定版一等承诺。
+
+### 4.4 React
+
+如果你在上层用的是 `react-vrender`，当前 `Stage` 组件内部已经切到 app-scoped `createBrowserVRenderApp() + app.createStage()` 模型。
+对上层来说，重点是：
+
+1. 不要再围绕 deprecated root `createStage()` 补 React 层 workaround
+2. 重点关注 mount / update / unmount 生命周期是否符合你自己的上层约束
+
+---
+
+## 5. 旧入口现在怎么理解
+
+`createStage()` 仍然存在，但它现在属于 **compat surface**：
+
+```ts
+import { createStage } from '@visactor/vrender';
+```
+
+当前理解方式应是：
+
+1. 它还是可以工作
+2. 但它已经是 deprecated 入口
+3. 新代码不要再继续写它
+4. 上层仓库如果已有大量旧 caller，可以分批迁移，但不要再新增
+
+更直接地说：
+
+- **允许旧代码继续跑**
+- **不允许新代码继续扩 legacy usage**
+
+---
+
+## 6. 根包与 core 包怎么选
+
+### 6.1 上层业务默认优先 `@visactor/vrender`
+
+如果你在 `vchart` 这类上层仓库里工作，默认优先使用根包：
+
+```ts
+import { createBrowserVRenderApp, createNodeVRenderApp } from '@visactor/vrender';
+```
+
+原因：
+
+1. 根包已经走默认 browser/node bootstrap
+2. 默认 env / graphics / pickers / animations 会一起装好
+3. 这是当前最接近“上层业务直接用”的稳定路径
+
+### 6.2 只有在你明确需要自定义装配时才直接用 `@visactor/vrender-core`
+
+如果你直接使用 `@visactor/vrender-core`，要意识到这更偏底层装配面。
+这意味着你需要自己负责 app/context 级安装链，而不是假设 core 会像根包一样自动完成默认装配。
+
+### 6.3 多环境与按需装配怎么选
+
+当前建议直接按下面路由理解：
+
+| 场景 | 当前推荐路径 | 说明 |
+|------|------|------|
+| browser 默认接入 | `@visactor/vrender` + `createBrowserVRenderApp()` | 当前一等路径 |
+| node 默认接入 | `@visactor/vrender` + `createNodeVRenderApp({ envParams })` | 当前一等路径，注意 Node ABI |
+| wx 默认接入 | `@visactor/vrender` + `createWxVRenderApp({ envParams })` | 当前一等路径 |
+| lynx 默认接入 | `@visactor/vrender` + `createLynxVRenderApp({ envParams })` | 当前一等路径 |
+| harmony 默认接入 | `@visactor/vrender` + `createHarmonyVRenderApp({ envParams })` | 当前一等路径 |
+| taro / feishu / tt | 对应 root public creator 或更底层 env loader | Tier 2，待真实端 smoke 后升级 |
+| 细粒度按需装配 | 更底层 installer / register surface | 当前 root app creator 不是细粒度按需装配接口 |
+
+额外边界：
+
+1. 当前 app-scoped 更接近 “app registry + lifecycle + bootstrap timing” 的显式化
+2. 不要默认把它理解成完全隔离的 per-app/per-env runtime container
+3. 如果你真的需要同进程混合多环境，必须单独验证，而不是直接套 browser/node 默认指南
+
+---
+
+## 7. 状态系统：上层必须知道的语义
+
+### 7.1 静态真值
+
+当前静态状态真值统一按下面理解：
+
+```text
+baseAttributes + resolvedStatePatch -> attribute
+```
+
+对上层的含义：
+
+1. `attribute` 是当前生效结果
+2. `baseAttributes` 是静态真值
+3. 动画不再偷偷把最终结果回写成新的静态真值
+
+### 7.2 `normalAttrs`
+
+`normalAttrs` 现在只剩 deprecated alias/view 语义。
+不要再在上层代码里把它当成：
+
+1. 旧 snapshot
+2. clear/restore 主路径
+3. 动画结束后的 authoritative source
+
+### 7.3 `stateProxy`
+
+`stateProxy` 已从普通 Graphic 和 JSX / React props 中移除。
+上层应按下面规则迁移：
+
+1. 实例级、局部、动态样式使用 `graphic.states` 中的 `StateDefinition.resolver`
+2. 跨图元共享状态使用 Group-first / Theme root scope 的 `sharedStateDefinitions`
+3. JSX / React 使用 `states` prop，不再使用 `stateProxy` prop
+4. `glyphStateProxy` 是 Glyph 专属 surface，不属于本项删除范围
+
+具体删除项、旧调用链和排查命令看：
+
+- [D3_REMOVED_API_AND_CALL_CHAIN_LOG.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_REMOVED_API_AND_CALL_CHAIN_LOG.md)
+
+### 7.4 当前对上层仍成立的兼容边界
+
+当前仍只承诺：
+
+```ts
+graphic.attribute.xxx = nextValue
+```
+
+这种**顶层**属性赋值兼容成立。
+
+当前不承诺：
+
+```ts
+graphic.attribute.nested.deep.value = nextValue
+```
+
+这种任意深层 nested mutation 具备完全隔离语义。
+如果上层代码严重依赖这种写法，应先收口成顶层替换式写法。
+
+---
+
+## 8. shared-state：上层如何理解
+
+当前 shared-state 主模型已经收口为：
+
+```text
+Theme -> stage.rootSharedStateScope -> Group scopes -> Graphic
+```
+
+对上层的含义：
+
+1. 共享状态定义优先通过 Theme / Group scope 理解
+2. 不要再把实例级 resolver 设计成 shared-state 常规能力
+3. 如果你在 `vchart` 层要做跨图元共享状态，优先确认自己走的是 scope 模型，而不是实例补丁拼接
+
+---
+
+## 9. 组件 / 插件 / 安装链
+
+如果你只使用根包 `@visactor/vrender` 的默认 Tier 1 app 入口，通常不需要自己再手动补 env/graphics/picker 安装。
+
+如果你在更底层做装配，当前 repo 已经存在 app-scoped installer surface，例如：
+
+1. `installBrowserEnvToApp`
+2. `installNodeEnvToApp`
+3. `installWxEnvToApp`
+4. `installLynxEnvToApp`
+5. `installHarmonyEnvToApp`
+6. `installDefaultGraphicsToApp`
+7. `installBrowserPickersToApp`
+8. `installNodePickersToApp`
+9. `installMathPickersToApp`
+10. `installPoptipToApp`
+11. `installScrollbarToApp`
+
+上层仓库的原则是：
+
+1. 能走根包默认入口就不要自己再拼 legacy bootstrap
+2. 真要自定义装配，也优先找 app-scoped installer，不要再回到旧 `ContainerModule` / legacy binding 路径
+3. 当前 app-scoped public installer surface 已覆盖 stable Tier 1 env、默认 graphics/pickers 和少量组件插件；它仍不是细粒度按需装配 surface
+4. 如果你发现 caller 仍显式依赖 `registerRect()` / `registerArc()` / `loadFeishuEnv()` / `initAllEnv()` 这类能力，请先把它归类为“高级自定义装配路径”，不要直接套 root app creator 迁移模板
+
+---
+
+## 10. 上层仓库里的迁移清单
+
+如果你要在 `vchart` 仓库里接入这版 VRender，建议按下面顺序做：
+
+### 10.1 先查启动入口
+
+优先 grep：
+
+```bash
+rg "createStage\\(" src test packages
+rg "preLoadAllModule|loadBrowserEnv|loadNodeEnv|getLegacyBindingContext" src test packages
+rg "initAllEnv|initBrowserEnv|initFeishuEnv|initWxEnv|initTaroEnv|initHarmonyEnv|loadAllEnv|loadFeishuEnv|loadWxEnv|loadTaroEnv" src test packages
+rg "registerRect\\(|registerArc\\(|registerLine\\(|registerPolygon\\(|registerText\\(" src test packages
+```
+
+处理原则：
+
+1. 新代码不再新增 deprecated `createStage()`
+2. 如果已有旧 caller，优先迁到当前环境对应的 stable Tier 1 app creator + `app.createStage()`
+3. 不再假设 import 副作用会自动补完运行时装配
+4. 如果命中了额外 env loader 或 `register*()` 细粒度装配点，先把该 caller 标记为“高级自定义装配路径”，不要直接按默认 Tier 1 模板替换
+
+### 10.2 再查状态写法
+
+重点看有没有：
+
+1. 把 `normalAttrs` 当 snapshot/restore 主路径
+2. 深层 nested mutation 直接改 `graphic.attribute`
+3. 继续使用已移除的 `stateProxy`，或把实例级 resolver 当 shared-state 常规能力
+
+### 10.3 最后补 smoke / integration
+
+至少建议补这些上层验证：
+
+1. Browser 下自动首帧渲染，不依赖人工点击后才创建 stage
+2. stage recreate 场景
+3. text + graphic 混合场景
+4. 如果上层曾使用 `stateProxy`，迁移后补一条 text + dynamic `states.resolver` 验证
+5. 如果有 React 接入，补 mount / unmount 生命周期验证
+6. 如果你依赖 node / wx / lynx / harmony 或细粒度按需装配，补对应的专门 smoke，不要只靠 browser baseline；taro / feishu / tt 仍需真实端 smoke 后再升级承诺
+
+---
+
+## 11. 对 `vchart` agent 最有用的 smoke 结论
+
+从当前 VRender 仓库的 smoke triage 里，最值得上层 agent 直接采用的结论有：
+
+1. baseline smoke 页面不要依赖“点击之后才创建 stage”的旧 demo 形态
+2. shared-state / batch-state 要有独立最小 smoke，不要指望大而杂的历史 demo 间接覆盖
+3. 部分历史页面仍是 triage/migration 样本，不应直接等价为 D3 主链 blocker
+4. 远程脚本驱动的 `vchart` / `vtable` demo 不能直接当成稳定 handoff baseline
+
+换句话说：
+
+- **上层仓库请补自己的最小 smoke**
+- **不要把历史 demo 页面当成唯一验收依据**
+
+---
+
+## 12. 当前哪些内容还不是上层契约
+
+当前不要把下面这些写进上层依赖假设：
+
+1. 已关闭为 no-go 的 memory/VTable `P2` 性能尝试
+2. 任意新的构造期 lazy-init 候选
+3. `_AABBBounds lazy-init` 这类还没单独拍板的更宽边界方案
+4. taro / feishu / tt 已经具备 stable Tier 1 端侧验证
+5. 存在细粒度的 app-scoped public on-demand installer family
+6. 当前 app-scoped 已经天然提供完整的 per-app/per-env 隔离
+
+当前可对上层明确说的是：
+
+1. `P0 accepted`
+2. `P1 accepted`
+3. `legacy removal completed`
+4. 可以基于这版 VRender 继续开发/验证
+5. stable Tier 1 root-package 默认路径当前是主推荐入口：browser / node / wx / lynx / harmony
+
+当前不能对上层说的是：
+
+1. `P2 accepted`
+2. “所有高数量场景都已进一步优化完成”
+3. “所有历史多端环境都已成为 Tier 1”
+4. “细粒度按需装配已经由 root app creator 等价承接”
+
+---
+
+## 13. 给 `vchart` agent 的推荐操作顺序
+
+如果你现在就在 `vchart` 目录工作，建议按下面顺序行动：
+
+1. 先确认当前接入点是不是 deprecated `createStage()`
+2. 如果是新代码，直接改成当前环境对应的 stable Tier 1 app creator + `app.createStage()`
+3. 再确认状态逻辑里有没有继续依赖旧 `stateProxy`、`normalAttrs` 或深层 nested mutation
+4. 再确认当前 caller 是否还显式依赖额外 env loader 或 `register*()` 细粒度装配；如果是，先把它归类为高级自定义装配路径
+5. 再补最小 smoke：
+   - 自动首帧
+   - stage recreate
+   - text + graphic
+   - 如有旧 `stateProxy` 调用，迁移后补 text + dynamic `states.resolver`
+6. 如果路径涉及 node / wx / lynx / harmony / Tier 2 端环境 / 细粒度装配，追加专门 smoke，再决定是否继续迁移
+7. 只有在 smoke 稳定后，再继续放大到更复杂业务页面
+
+---
+
+## 14. 文档关系
+
+如果你需要更细的背景，而不仅是上层接入动作：
+
+1. 想知道当前 overall 结论：
+   - 看 [D3_FINAL_SUMMARY.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_FINAL_SUMMARY.md)
+2. 想知道 legacy/createStage 收口到了哪里：
+   - 看 [D3_LEGACY_PATH_REMOVAL_STATUS.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_LEGACY_PATH_REMOVAL_STATUS.md)
+3. 想知道 browser smoke 对上层迁移给了哪些结论：
+   - 看 [D3_PRE_HANDOFF_SMOKE_TRIAGE.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_PRE_HANDOFF_SMOKE_TRIAGE.md)
+4. 想知道 memory benchmark 为什么还要单独做性能专项：
+   - 看 [D3_MEMORY_BENCHMARK_PERF_CONTEXT.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_MEMORY_BENCHMARK_PERF_CONTEXT.md)
+5. 想知道当前接入方式的摩擦点分层判断：
+   - 看 [D3_UPPER_LAYER_INTEGRATION_FRICTION_REVIEW.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_UPPER_LAYER_INTEGRATION_FRICTION_REVIEW.md)
+6. 想知道 multi-env / on-demand 是否继续作为正式承诺保留，以及对应治理任务：
+   - 看 [D3_MULTI_ENV_ON_DEMAND_GOVERNANCE.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_MULTI_ENV_ON_DEMAND_GOVERNANCE.md)
+7. 想知道“推荐接入链”和“当前真实上层链”是否已经一致：
+   - 看 [D3_UPPER_LAYER_LOGIC_CHAIN_AUDIT.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_UPPER_LAYER_LOGIC_CHAIN_AUDIT.md)
+8. 想知道如何把 `VChart` 推到第一条真实 app-scoped 集成链：
+   - 看 [D3_VCHART_APP_SCOPED_ALIGNMENT_PLAN.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_VCHART_APP_SCOPED_ALIGNMENT_PLAN.md)
+9. 想知道本轮删除了哪些接口、旧调用链是什么、上层应该怎么排查：
+   - 看 [D3_REMOVED_API_AND_CALL_CHAIN_LOG.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_REMOVED_API_AND_CALL_CHAIN_LOG.md)
+
+但如果你只是要在上层仓库里开始干活，这份文档应作为第一入口。

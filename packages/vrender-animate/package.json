@@ -6,6 +6,19 @@
   "main": "cjs/index.js",
   "module": "es/index.js",
   "types": "es/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "animate": ["es/animate.d.ts"],
+      "component": ["es/component/index.d.ts"],
+      "custom/*": ["es/custom/*"],
+      "executor/*": ["es/executor/*"],
+      "register": ["es/register.d.ts"],
+      "state": ["es/state/index.d.ts"],
+      "state/*": ["es/state/*"],
+      "ticker/*": ["es/ticker/*"],
+      "timeline": ["es/timeline.d.ts"]
+    }
+  },
   "files": [
     "cjs",
     "es",
@@ -17,7 +30,10 @@
     "build": "cross-env DEBUG='Bundler*' bundle",
     "dev": "cross-env DEBUG='Bundler*' bundle --clean -f es -w",
     "start": "vite ./vite",
-    "test": ""
+    "test": "jest -c jest.config.js",
+    "test:electron": "jest -c jest.electron.config.js --runInBand --passWithNoTests --testPathPattern='__tests__/(browser|electron)/'",
+    "test-cov": "jest -c jest.config.js --coverage",
+    "test-watch": "cross-env DEBUG_MODE=1 jest --watch -c jest.config.js"
   },
   "dependencies": {
     "@visactor/vutils": "~1.0.12",
@@ -36,6 +52,11 @@
     "@types/react-dom": "^18.0.0",
     "@types/node-fetch": "2.6.4",
     "@vitejs/plugin-react": "3.1.0",
+    "@types/jest": "^26.0.0",
+    "jest": "^26.0.0",
+    "jest-electron": "npm:@pixi/jest-electron@26.1.0",
+    "jest-extended": "^1.2.1",
+    "ts-jest": "^26.0.0",
     "eslint": "~8.18.0",
     "vite": "3.2.6",
     "typescript": "4.9.5",
@@ -67,6 +88,186 @@
     ".": {
       "import": "./es/index.js",
       "require": "./cjs/index.js"
+    },
+    "./animate": {
+      "types": "./es/animate.d.ts",
+      "import": "./es/animate.js",
+      "require": "./cjs/animate.js"
+    },
+    "./component": {
+      "types": "./es/component/index.d.ts",
+      "import": "./es/component/index.js",
+      "require": "./cjs/component/index.js"
+    },
+    "./custom/clip": {
+      "types": "./es/custom/clip.d.ts",
+      "import": "./es/custom/clip.js",
+      "require": "./cjs/custom/clip.js"
+    },
+    "./custom/clip-graphic": {
+      "types": "./es/custom/clip-graphic.d.ts",
+      "import": "./es/custom/clip-graphic.js",
+      "require": "./cjs/custom/clip-graphic.js"
+    },
+    "./custom/custom-animate": {
+      "types": "./es/custom/custom-animate.d.ts",
+      "import": "./es/custom/custom-animate.js",
+      "require": "./cjs/custom/custom-animate.js"
+    },
+    "./custom/fade": {
+      "types": "./es/custom/fade.d.ts",
+      "import": "./es/custom/fade.js",
+      "require": "./cjs/custom/fade.js"
+    },
+    "./custom/fromTo": {
+      "types": "./es/custom/fromTo.d.ts",
+      "import": "./es/custom/fromTo.js",
+      "require": "./cjs/custom/fromTo.js"
+    },
+    "./custom/groupFade": {
+      "types": "./es/custom/groupFade.d.ts",
+      "import": "./es/custom/groupFade.js",
+      "require": "./cjs/custom/groupFade.js"
+    },
+    "./custom/growAngle": {
+      "types": "./es/custom/growAngle.d.ts",
+      "import": "./es/custom/growAngle.js",
+      "require": "./cjs/custom/growAngle.js"
+    },
+    "./custom/growCenter": {
+      "types": "./es/custom/growCenter.d.ts",
+      "import": "./es/custom/growCenter.js",
+      "require": "./cjs/custom/growCenter.js"
+    },
+    "./custom/growHeight": {
+      "types": "./es/custom/growHeight.d.ts",
+      "import": "./es/custom/growHeight.js",
+      "require": "./cjs/custom/growHeight.js"
+    },
+    "./custom/growPoints": {
+      "types": "./es/custom/growPoints.d.ts",
+      "import": "./es/custom/growPoints.js",
+      "require": "./cjs/custom/growPoints.js"
+    },
+    "./custom/growRadius": {
+      "types": "./es/custom/growRadius.d.ts",
+      "import": "./es/custom/growRadius.js",
+      "require": "./cjs/custom/growRadius.js"
+    },
+    "./custom/growWidth": {
+      "types": "./es/custom/growWidth.d.ts",
+      "import": "./es/custom/growWidth.js",
+      "require": "./cjs/custom/growWidth.js"
+    },
+    "./custom/morphing": {
+      "types": "./es/custom/morphing.d.ts",
+      "import": "./es/custom/morphing.js",
+      "require": "./cjs/custom/morphing.js"
+    },
+    "./custom/move": {
+      "types": "./es/custom/move.d.ts",
+      "import": "./es/custom/move.js",
+      "require": "./cjs/custom/move.js"
+    },
+    "./custom/number": {
+      "types": "./es/custom/number.d.ts",
+      "import": "./es/custom/number.js",
+      "require": "./cjs/custom/number.js"
+    },
+    "./custom/register": {
+      "types": "./es/custom/register.d.ts",
+      "import": "./es/custom/register.js",
+      "require": "./cjs/custom/register.js"
+    },
+    "./custom/register-basic": {
+      "types": "./es/custom/register-basic.d.ts",
+      "import": "./es/custom/register-basic.js",
+      "require": "./cjs/custom/register-basic.js"
+    },
+    "./custom/register-disappear": {
+      "types": "./es/custom/register-disappear.d.ts",
+      "import": "./es/custom/register-disappear.js",
+      "require": "./cjs/custom/register-disappear.js"
+    },
+    "./custom/register-richtext": {
+      "types": "./es/custom/register-richtext.d.ts",
+      "import": "./es/custom/register-richtext.js",
+      "require": "./cjs/custom/register-richtext.js"
+    },
+    "./custom/register-story": {
+      "types": "./es/custom/register-story.d.ts",
+      "import": "./es/custom/register-story.js",
+      "require": "./cjs/custom/register-story.js"
+    },
+    "./custom/rotate": {
+      "types": "./es/custom/rotate.d.ts",
+      "import": "./es/custom/rotate.js",
+      "require": "./cjs/custom/rotate.js"
+    },
+    "./custom/scale": {
+      "types": "./es/custom/scale.d.ts",
+      "import": "./es/custom/scale.js",
+      "require": "./cjs/custom/scale.js"
+    },
+    "./custom/sphere": {
+      "types": "./es/custom/sphere.d.ts",
+      "import": "./es/custom/sphere.js",
+      "require": "./cjs/custom/sphere.js"
+    },
+    "./custom/state": {
+      "types": "./es/custom/state.d.ts",
+      "import": "./es/custom/state.js",
+      "require": "./cjs/custom/state.js"
+    },
+    "./custom/streamLight": {
+      "types": "./es/custom/streamLight.d.ts",
+      "import": "./es/custom/streamLight.js",
+      "require": "./cjs/custom/streamLight.js"
+    },
+    "./custom/tag-points": {
+      "types": "./es/custom/tag-points.d.ts",
+      "import": "./es/custom/tag-points.js",
+      "require": "./cjs/custom/tag-points.js"
+    },
+    "./custom/update": {
+      "types": "./es/custom/update.d.ts",
+      "import": "./es/custom/update.js",
+      "require": "./cjs/custom/update.js"
+    },
+    "./executor/animate-executor": {
+      "types": "./es/executor/animate-executor.d.ts",
+      "import": "./es/executor/animate-executor.js",
+      "require": "./cjs/executor/animate-executor.js"
+    },
+    "./register": {
+      "types": "./es/register.d.ts",
+      "import": "./es/register.js",
+      "require": "./cjs/register.js"
+    },
+    "./state": {
+      "types": "./es/state/index.d.ts",
+      "import": "./es/state/index.js",
+      "require": "./cjs/state/index.js"
+    },
+    "./state/animation-states-registry": {
+      "types": "./es/state/animation-states-registry.d.ts",
+      "import": "./es/state/animation-states-registry.js",
+      "require": "./cjs/state/animation-states-registry.js"
+    },
+    "./ticker/default-ticker": {
+      "types": "./es/ticker/default-ticker.d.ts",
+      "import": "./es/ticker/default-ticker.js",
+      "require": "./cjs/ticker/default-ticker.js"
+    },
+    "./ticker/manual-ticker": {
+      "types": "./es/ticker/manual-ticker.d.ts",
+      "import": "./es/ticker/manual-ticker.js",
+      "require": "./cjs/ticker/manual-ticker.js"
+    },
+    "./timeline": {
+      "types": "./es/timeline.d.ts",
+      "import": "./es/timeline.js",
+      "require": "./cjs/timeline.js"
     }
   }
 }

@@ -1,5 +1,6 @@
-import { createGroup, createStage, createWrapText, vglobal } from '@visactor/vrender';
+import { createGroup, createWrapText, vglobal } from '@visactor/vrender';
 import { addShapesToStage, colorPools } from '../utils';
+import { createBrowserPageStage } from '../page-stage';
 
 vglobal.setEnv('browser');
 
@@ -142,7 +143,7 @@ export const page = () => {
   //   })
   // );
 
-  const stage = createStage({
+  const stage = createBrowserPageStage({
     canvas: 'main',
     width: 1200,
     height: 600,

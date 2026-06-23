@@ -1,13 +1,9 @@
-import { createStage } from '@visactor/vrender-core';
-import { initBrowserEnv } from '@visactor/vrender-kits';
-initBrowserEnv();
-import render from '../../util/render';
+import { createRenderer } from '../../util/render';
 import { LineAxis } from '../../../src';
 
 const autoRotate = false;
 
-const stage = createStage({
-  canvas: 'main',
+const stage = createRenderer('main', {
   width: 1800,
   height: 1800,
   autoRender: true,

@@ -8,7 +8,6 @@ import type { TitleAttrs } from './type';
 import type { ComponentOptions } from '../interface';
 import { DEFAULT_HTML_TEXT_SPEC } from '../constant';
 import { loadTitleComponent } from './register';
-import { Text } from '@visactor/vrender-core';
 
 loadTitleComponent();
 export class Title extends AbstractComponent<Required<TitleAttrs>> {
@@ -239,9 +238,11 @@ export class Title extends AbstractComponent<Required<TitleAttrs>> {
       }
     }
 
-    group.attribute.width = totalWidth;
-    group.attribute.height = totalHeight;
-    group.attribute.boundsPadding = parsedPadding;
+    group.setAttributes({
+      width: totalWidth,
+      height: totalHeight,
+      boundsPadding: parsedPadding
+    });
 
     // 设置对齐
     if (this._mainTitle) {

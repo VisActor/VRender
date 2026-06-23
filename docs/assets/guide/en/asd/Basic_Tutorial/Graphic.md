@@ -151,8 +151,8 @@ interface IGraphic<T extends Partial<IGraphicAttribute> = Partial<IGraphicAttrib
   /** Used to implement morph animation scenes, converted to bezier curve rendering */
   pathProxy?: ICustomPath2D | ((attrs: T) => ICustomPath2D);
 
-  // Method to get state graphic attributes
-  stateProxy?: (stateName: string, targetStates?: string[]) => Partial<T>;
+  // State graphic attribute definitions. Use StateDefinition.resolver for dynamic state attributes.
+  states?: StateDefinitionsInput<T>;
 
   /* State-related methods */
   toggleState: (stateName: string, hasAnimation?: boolean) => void;

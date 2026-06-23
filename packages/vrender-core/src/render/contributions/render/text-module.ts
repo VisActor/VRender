@@ -1,21 +1,26 @@
-import { bindContributionProvider } from '../../../common/contribution-provider';
-import { ContainerModule } from '../../../common/inversify';
-import { DefaultCanvasCircleRender } from './circle-render';
+import { bindContributionProvider, createContributionProvider } from '../../../common/contribution-provider';
+import { isBindingContextLoaded } from '../../../common/module-guard';
 import { DefaultBaseInteractiveRenderContribution } from './contributions';
-import { CircleRenderContribution, TextRenderContribution } from './contributions/constants';
-import { CircleRender, GraphicRender, TextRender } from './symbol';
+import { TextRenderContribution } from './contributions/constants';
+import { GraphicRender, TextRender } from './symbol';
 import { DefaultCanvasTextRender } from './text-render';
 
-let loadTextModule = false;
-export const textModule = new ContainerModule(bind => {
-  if (loadTextModule) {
+const loadedTextModuleContexts = new WeakSet<object>();
+export function bindTextRenderModule({ bind }: { bind: any }) {
+  if (isBindingContextLoaded(loadedTextModuleContexts, bind)) {
     return;
   }
-  loadTextModule = true;
   // text 渲染器
-  bind(TextRender).to(DefaultCanvasTextRender).inSingletonScope();
+  bind(TextRender)
+    .toDynamicValue(
+      ({ container }: { container: any }) =>
+        new DefaultCanvasTextRender(createContributionProvider(TextRenderContribution, container))
+    )
+    .inSingletonScope();
   bind(GraphicRender).toService(TextRender);
   bind(TextRenderContribution).toService(DefaultBaseInteractiveRenderContribution);
 
   bindContributionProvider(bind, TextRenderContribution);
-});
+}
+
+export const textModule = bindTextRenderModule;

@@ -1,31 +1,15 @@
 const path = require('path');
+const { createStablePackageJestConfig } = require('../../share/jest-config/create-package-config');
 
-module.exports = {
-  runner: 'jest-electron/runner',
-  testEnvironment: 'jest-electron/environment',
-  testTimeout: 30000,
-  maxWorkers: 1,
+module.exports = createStablePackageJestConfig({
+  environment: 'jsdom',
   testRegex: '/__tests__/.*test\\.ts?$',
   moduleFileExtensions: ['ts', 'js', 'json'],
   setupFilesAfterEnv: ['jest-extended/all'],
-  preset: 'ts-jest',
-  silent: true,
-  useStderr: false,
-  globals: {
-    'ts-jest': {
-      resolveJsonModule: true,
-      esModuleInterop: true,
-      experimentalDecorators: true,
-      module: 'ESNext',
-      tsconfig: './tsconfig.test.json'
-    },
-    __DEV__: true
-  },
-  setupFiles: ['./setup-mock.js'],
-  verbose: true,
-  coverageReporters: ['json-summary', 'lcov', 'text'],
+  setupFiles: ['../../share/jest-config/browser-globals.js', './setup-mock.js'],
+  tsconfig: './tsconfig.test.json',
   coveragePathIgnorePatterns: ['node_modules', '__tests__', 'interface.ts', '.d.ts', 'typings'],
-  testPathIgnorePatterns: ['__tests__/browser'],
+  testPathIgnorePatterns: ['__tests__/browser', '__tests__/electron'],
   collectCoverageFrom: [
     '**/src/**',
     '!**/cjs/**',
@@ -46,9 +30,21 @@ module.exports = {
     }
   },
   moduleNameMapper: {
-    '@visactor/vrender-kits': path.resolve(__dirname, '../vrender-kits/src/index.ts'),
-    '@visactor/vrender-core': path.resolve(__dirname, '../vrender-core/src/index.ts'),
-    '@visactor/vrender-animate': path.resolve(__dirname, '../vrender-animate/src/index.ts'),
-    '@visactor/vrender-components': path.resolve(__dirname, '../vrender-components/src/index.ts')
+    '^@visactor/vrender-kits/(.*)$': path.resolve(__dirname, '../vrender-kits/src/$1'),
+    '^@visactor/vrender-kits$': path.resolve(__dirname, '../vrender-kits/src/index.ts'),
+    '^@visactor/vrender-animate/(.*)$': path.resolve(__dirname, '../vrender-animate/src/$1'),
+    '^@visactor/vrender-core/event/constant$': path.resolve(__dirname, '../vrender-core/src/event/public-constant.ts'),
+    '^@visactor/vrender-core/render/draw-interceptor$': path.resolve(
+      __dirname,
+      '../vrender-core/src/render/contributions/render/draw-interceptor.ts'
+    ),
+    '^@visactor/vrender-core/render/symbol$': path.resolve(
+      __dirname,
+      '../vrender-core/src/render/contributions/render/symbol.ts'
+    ),
+    '^@visactor/vrender-core/(.*)$': path.resolve(__dirname, '../vrender-core/src/$1'),
+    '^@visactor/vrender-core$': path.resolve(__dirname, '../vrender-core/src/index.ts'),
+    '^@visactor/vrender-animate$': path.resolve(__dirname, '../vrender-animate/src/index.ts'),
+    '^@visactor/vrender-components$': path.resolve(__dirname, '../vrender-components/src/index.ts')
   }
-};
+});

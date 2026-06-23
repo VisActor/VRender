@@ -1,9 +1,11 @@
-import { createStage, createLine, container, IGraphic, flatten_simplify } from '@visactor/vrender';
+/** @deprecated Legacy DI browser fixture retained for major-migration tracking. Prefer app-scoped entries/plugins. */
+import { createLine, getLegacyBindingContext, IGraphic, flatten_simplify } from '@visactor/vrender';
 import { roughModule } from '@visactor/vrender-kits';
 import { addShapesToStage, colorPools } from '../utils';
 import { createSymbol } from '@visactor/vrender';
+import { createBrowserPageStage } from '../page-stage';
 
-container.load(roughModule);
+roughModule(getLegacyBindingContext());
 
 const subP1 = [
   [0, 100],
@@ -196,7 +198,7 @@ export const page = () => {
     item.animate().to({ clipRange: 0 }, 0, 'linear').to({ clipRange: 1 }, 1000, 'linear');
   });
 
-  const stage = createStage({
+  const stage = createBrowserPageStage({
     canvas: 'main',
     autoRender: true
   });

@@ -1,4 +1,3 @@
-import { inject, injectable, named } from '../../../common/inversify-lite';
 import { getTheme } from '../../../graphic/theme';
 import { TEXT_NUMBER_TYPE } from '../../../graphic/constants';
 import type {
@@ -16,23 +15,17 @@ import type {
 import { textDrawOffsetX, textDrawOffsetY, textLayoutOffsetY } from '../../../common/text';
 import type { IText, ITextGraphicAttribute } from '../../../interface/graphic/text';
 import { BaseRender } from './base-render';
-import { ContributionProvider } from '../../../common/contribution-provider';
 import { TextRenderContribution } from './contributions/constants';
 import { matrixAllocate } from '../../../allocator/matrix-allocate';
 import { isNil, max } from '@visactor/vutils';
 import { calculateLineHeight } from '../../../common/utils';
 import { defaultTextBackgroundRenderContribution } from './contributions/text-contribution-render';
 
-@injectable()
 export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraphicRender {
   type: 'text';
   numberType: number = TEXT_NUMBER_TYPE;
 
-  constructor(
-    @inject(ContributionProvider)
-    @named(TextRenderContribution)
-    protected readonly graphicRenderContributions: IContributionProvider<ITextRenderContribution>
-  ) {
+  constructor(protected readonly graphicRenderContributions: IContributionProvider<ITextRenderContribution>) {
     super();
     this.builtinContributions = [defaultTextBackgroundRenderContribution as any];
     this.init(graphicRenderContributions);

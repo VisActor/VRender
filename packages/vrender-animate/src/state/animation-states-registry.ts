@@ -147,6 +147,13 @@ export class AnimationTransitionRegistry {
       allowTransition: true,
       stopOriginalTransition: false
     }));
+    // graphic state changes reuse the synthetic "state" animation state. A newer
+    // resolved state patch must take over from the current visual frame instead
+    // of letting the stale patch write one more frame on the next tick.
+    this.registerTransition('state', 'state', () => ({
+      allowTransition: true,
+      stopOriginalTransition: true
+    }));
     // state动画碰到disappear动画，会停止，也会被覆盖
     this.registerTransition('state', 'disappear', () => ({
       allowTransition: true,

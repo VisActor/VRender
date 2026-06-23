@@ -1,6 +1,14 @@
-import type { IArcGraphicAttribute, IGraphic, IGroup, IRectGraphicAttribute } from '@visactor/vrender-core';
-import { application, AttributeUpdateType, type EasingType } from '@visactor/vrender-core';
+import {
+  application,
+  AttributeUpdateType,
+  type EasingType,
+  type IArcGraphicAttribute,
+  type IGraphic,
+  type IGroup,
+  type IRectGraphicAttribute
+} from '@visactor/vrender-core';
 import { ACustomAnimate } from './custom-animate';
+import { applyAppearStartAttributes } from './transient';
 
 export class ClipGraphicAnimate extends ACustomAnimate<any> {
   private _group?: IGroup;
@@ -30,14 +38,10 @@ export class ClipGraphicAnimate extends ACustomAnimate<any> {
     if (this._group && this._clipGraphic) {
       this._lastClip = this._group.attribute.clip;
       this._lastPath = this._group.attribute.path;
-      this._group.setAttributes(
-        {
-          clip: true,
-          path: [this._clipGraphic]
-        },
-        false,
-        { type: AttributeUpdateType.ANIMATE_BIND }
-      );
+      applyAppearStartAttributes(this._group, {
+        clip: true,
+        path: [this._clipGraphic]
+      });
     }
   }
 

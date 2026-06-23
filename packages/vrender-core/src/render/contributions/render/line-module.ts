@@ -1,17 +1,18 @@
-import { ContainerModule } from '../../../common/inversify';
-import { DefaultIncrementalCanvasLineRender } from './incremental-line-render';
+import { isBindingContextLoaded } from '../../../common/module-guard';
 import { DefaultCanvasLineRender } from './line-render';
 import { GraphicRender, LineRender } from './symbol';
 
-let loadLineModule = false;
-export const lineModule = new ContainerModule(bind => {
-  if (loadLineModule) {
+const loadedLineModuleContexts = new WeakSet<object>();
+export function bindLineRenderModule({ bind }: { bind: any }) {
+  if (isBindingContextLoaded(loadedLineModuleContexts, bind)) {
     return;
   }
-  loadLineModule = true;
   // line渲染器
-  bind(DefaultCanvasLineRender).toSelf().inSingletonScope();
-  bind(DefaultIncrementalCanvasLineRender).toSelf().inSingletonScope();
-  bind(LineRender).to(DefaultCanvasLineRender).inSingletonScope();
+  bind(DefaultCanvasLineRender)
+    .toDynamicValue(() => new DefaultCanvasLineRender())
+    .inSingletonScope();
+  bind(LineRender).toService(DefaultCanvasLineRender);
   bind(GraphicRender).toService(LineRender);
-});
+}
+
+export const lineModule = bindLineRenderModule;

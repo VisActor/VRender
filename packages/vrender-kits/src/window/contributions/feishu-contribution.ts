@@ -1,12 +1,4 @@
-import {
-  inject,
-  injectable,
-  Generator,
-  BaseWindowHandlerContribution,
-  VGlobal,
-  ContainerModule,
-  WindowHandlerContribution
-} from '@visactor/vrender-core';
+import { Generator, BaseWindowHandlerContribution, WindowHandlerContribution } from '@visactor/vrender-core';
 import type {
   EnvType,
   IGlobal,
@@ -18,6 +10,7 @@ import type {
 } from '@visactor/vrender-core';
 import type { IBoundsLike } from '@visactor/vutils';
 import { FeishuCanvas } from '../../canvas/contributions/feishu';
+import { application } from '@visactor/vrender-core';
 
 class MiniAppEventManager {
   addEventListener(type: string, func: EventListenerOrEventListenerObject) {
@@ -47,7 +40,6 @@ class MiniAppEventManager {
   cache: Record<string, { listener: EventListenerOrEventListenerObject[] }> = {};
 }
 
-@injectable()
 export class FeishuWindowHandlerContribution
   extends BaseWindowHandlerContribution
   implements IWindowHandlerContribution
@@ -62,7 +54,7 @@ export class FeishuWindowHandlerContribution
     return null;
   }
 
-  constructor(@inject(VGlobal) private readonly global: IGlobal) {
+  constructor(private readonly global: IGlobal = application.global) {
     super();
   }
 
@@ -112,6 +104,14 @@ export class FeishuWindowHandlerContribution
     let canvas: HTMLCanvasElement | null;
     if (typeof params.canvas === 'string') {
       canvas = this.global.getElementById(params.canvas) as HTMLCanvasElement | null;
+      if (!canvas) {
+        canvas = this.global.createCanvas({
+          id: params.canvas,
+          width: params.width,
+          height: params.height,
+          dpr: params.dpr
+        }) as HTMLCanvasElement | null;
+      }
       if (!canvas) {
         throw new Error('canvasId 参数不正确，请确认canvas存在并插入dom');
       }
@@ -241,10 +241,14 @@ export class FeishuWindowHandlerContribution
   }
 }
 
-export const feishuWindowModule = new ContainerModule(bind => {
-  // feishu
-  bind(FeishuWindowHandlerContribution).toSelf();
-  bind(WindowHandlerContribution)
-    .toDynamicValue(ctx => ctx.container.get(FeishuWindowHandlerContribution))
-    .whenTargetNamed(FeishuWindowHandlerContribution.env);
-});
+export function bindFeishuWindowContribution(container: any) {
+  if (!container.isBound?.(FeishuWindowHandlerContribution)) {
+    container.bind(FeishuWindowHandlerContribution).toSelf();
+  }
+  if (!container.getNamed?.(WindowHandlerContribution, FeishuWindowHandlerContribution.env)) {
+    container
+      .bind(WindowHandlerContribution)
+      .toService(FeishuWindowHandlerContribution)
+      .whenTargetNamed(FeishuWindowHandlerContribution.env);
+  }
+}

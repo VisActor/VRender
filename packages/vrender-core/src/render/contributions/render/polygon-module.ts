@@ -1,22 +1,27 @@
-import { bindContributionProvider } from '../../../common/contribution-provider';
-import { ContainerModule } from '../../../common/inversify';
+import { bindContributionProvider, createContributionProvider } from '../../../common/contribution-provider';
+import { isBindingContextLoaded } from '../../../common/module-guard';
 import { DefaultBaseInteractiveRenderContribution } from './contributions';
-import { PathRenderContribution, PolygonRenderContribution } from './contributions/constants';
-import { DefaultCanvasPathRender } from './path-render';
+import { PolygonRenderContribution } from './contributions/constants';
 import { DefaultCanvasPolygonRender } from './polygon-render';
-import { GraphicRender, PathRender, PolygonRender } from './symbol';
+import { GraphicRender, PolygonRender } from './symbol';
 
-let loadPolygonModule = false;
-export const polygonModule = new ContainerModule(bind => {
-  if (loadPolygonModule) {
+const loadedPolygonModuleContexts = new WeakSet<object>();
+export function bindPolygonRenderModule({ bind }: { bind: any }) {
+  if (isBindingContextLoaded(loadedPolygonModuleContexts, bind)) {
     return;
   }
-  loadPolygonModule = true;
   // polygon渲染器
-  bind(PolygonRender).to(DefaultCanvasPolygonRender).inSingletonScope();
+  bind(PolygonRender)
+    .toDynamicValue(
+      ({ container }: { container: any }) =>
+        new DefaultCanvasPolygonRender(createContributionProvider(PolygonRenderContribution, container))
+    )
+    .inSingletonScope();
   bind(GraphicRender).toService(PolygonRender);
   bind(PolygonRenderContribution).toService(DefaultBaseInteractiveRenderContribution);
 
   // polygon 渲染器注入contributions
   bindContributionProvider(bind, PolygonRenderContribution);
-});
+}
+
+export const polygonModule = bindPolygonRenderModule;

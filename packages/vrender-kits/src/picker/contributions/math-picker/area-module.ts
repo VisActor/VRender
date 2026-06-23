@@ -1,15 +1,17 @@
-import { ContainerModule } from '@visactor/vrender-core';
-import { MathAreaPicker, MathLinePicker, MathPickerContribution } from '../constants';
-import { DefaultMathLinePicker } from './line-picker';
+import { AreaRender } from '@visactor/vrender-core';
+import { resolveContainerBinding } from '../../../common/explicit-binding';
+import { MathAreaPicker, MathPickerContribution } from '../constants';
 import { DefaultMathAreaPicker } from './area-picker';
 
 let loadAreaPick = false;
-export const areaMathPickModule = new ContainerModule((bind, unbind, isBound, rebind) => {
+export function bindAreaMathPickerContribution(container: any) {
   if (loadAreaPick) {
     return;
   }
   loadAreaPick = true;
-  // area picker
-  bind(MathAreaPicker).to(DefaultMathAreaPicker).inSingletonScope();
-  bind(MathPickerContribution).toService(MathAreaPicker);
-});
+  container
+    .bind(MathAreaPicker)
+    .toDynamicValue(() => new DefaultMathAreaPicker(resolveContainerBinding(container, AreaRender)))
+    .inSingletonScope();
+  container.bind(MathPickerContribution).toService(MathAreaPicker);
+}

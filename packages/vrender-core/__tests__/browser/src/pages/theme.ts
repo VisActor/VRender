@@ -1,5 +1,6 @@
-import { createStage, createArc, createLine, createGroup, createRect, createText } from '@visactor/vrender';
+import { createArc, createLine, createGroup, createRect, createText } from '@visactor/vrender';
 import { addShapesToStage, colorPools } from '../utils';
+import { createBrowserPageStage } from '../page-stage';
 
 export const page = () => {
   const root = createGroup({
@@ -185,9 +186,8 @@ export const page = () => {
 
   l11.hideAll();
 
-  const c = document.getElementById('main') as HTMLCanvasElement;
-  const stage = createStage({
-    canvas: c as HTMLCanvasElement,
+  const stage = createBrowserPageStage({
+    canvas: 'main',
     width: 1200,
     height: 600,
     canvasControled: false

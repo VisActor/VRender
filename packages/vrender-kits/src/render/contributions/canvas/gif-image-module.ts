@@ -1,13 +1,19 @@
-import { ContainerModule, GraphicRender } from '@visactor/vrender-core';
+import { GraphicRender, ImageRenderContribution } from '@visactor/vrender-core';
+import { createContributionProvider } from '../../../common/explicit-binding';
 import { DefaultCanvasGifImageRender } from './gif-image-render';
 
 let loadGifImageModule = false;
-export const gifImageModule = new ContainerModule(bind => {
+export function bindGifImageRenderContribution(container: any) {
   if (loadGifImageModule) {
     return;
   }
   loadGifImageModule = true;
   // gifImage渲染器
-  bind(DefaultCanvasGifImageRender).toSelf().inSingletonScope();
-  bind(GraphicRender).toService(DefaultCanvasGifImageRender);
-});
+  container
+    .bind(DefaultCanvasGifImageRender)
+    .toDynamicValue(
+      () => new DefaultCanvasGifImageRender(createContributionProvider(ImageRenderContribution, container))
+    )
+    .inSingletonScope();
+  container.bind(GraphicRender).toService(DefaultCanvasGifImageRender);
+}

@@ -1,12 +1,15 @@
-import { container, AutoEnablePlugins } from '@visactor/vrender';
-import { ContainerModule } from 'inversify';
+/** @deprecated Legacy DI browser fixture retained for major-migration tracking. Prefer app-scoped entries/plugins. */
+import { AutoEnablePlugins, getLegacyBindingContext } from '@visactor/vrender';
 import { DraggablePlugin } from './draggable-plugin';
 
-export const editableModule = new ContainerModule(bind => {
-  bind(DraggablePlugin).toSelf().inSingletonScope();
-  bind(AutoEnablePlugins).toService(DraggablePlugin);
-});
+let loaded = false;
 
 export function loadEditable() {
-  container.load(editableModule);
+  if (loaded) {
+    return;
+  }
+  loaded = true;
+  const legacyContext = getLegacyBindingContext();
+  legacyContext.bind(DraggablePlugin).toSelf().inSingletonScope();
+  legacyContext.bind(AutoEnablePlugins).toService(DraggablePlugin);
 }

@@ -1,6 +1,6 @@
+/** @deprecated Legacy DI browser fixture retained for major-migration tracking. Prefer app-scoped entries/plugins. */
 import { createImage, createPyramid3d } from '@visactor/vrender';
 import {
-  createStage,
   createGroup,
   createLine,
   createText,
@@ -12,14 +12,15 @@ import {
   createArea,
   createCircle,
   IArc,
-  container,
   IGroup,
   GroupFadeIn,
   GroupFadeOut,
   AnimateGroup,
-  AttributeAnimate
+  AttributeAnimate,
+  getLegacyBindingContext
 } from '@visactor/vrender';
 import { graphicUtil } from '@visactor/vrender-core';
+import { createBrowserPageStage } from '../page-stage';
 // import { json } from './json';
 // import { json3 } from './xtable';
 import { roughModule } from '@visactor/vrender-kits';
@@ -1744,7 +1745,7 @@ const json = {
     }
   ]
 };
-container.load(roughModule);
+roughModule(getLegacyBindingContext());
 
 let arcList = [];
 let tlist = [];
@@ -1800,7 +1801,7 @@ function _add(group, json) {
 export const page = () => {
   const c = document.getElementById('main') as HTMLCanvasElement;
 
-  const stage = createStage({
+  const stage = createBrowserPageStage({
     canvas: c as HTMLCanvasElement,
     width: 802,
     height: 500,

@@ -12,7 +12,8 @@ import type { IContainPointMode } from '../common/enums';
 import type { IFace3d } from './graphic/face3d';
 import type { IPickerService } from './picker';
 import type { ISymbolClass } from './graphic/symbol';
-import type { IContext2d } from './context';
+import type { StateDefinition, StateDefinitionsInput, StateMergeMode } from '../graphic/state/state-definition';
+import type { SharedStateScope } from '../graphic/state/shared-state-scope';
 
 type IStrokeSeg = {
   /**
@@ -280,18 +281,7 @@ export type IStrokeStyle = {
   stroke: IStrokeType[] | IStrokeType;
 };
 
-type TextureType =
-  | 'circle'
-  | 'diamond'
-  | 'rect'
-  | 'vertical-line'
-  | 'horizontal-line'
-  | 'bias-lr'
-  | 'bias-rl'
-  | 'grid'
-  | 'wave';
-
-type ITextureSource = string | HTMLImageElement | HTMLCanvasElement;
+type TextureType = 'circle' | 'diamond' | 'rect' | 'vertical-line' | 'horizontal-line' | 'bias-lr' | 'bias-rl' | 'grid';
 
 export type IConnectedStyle = {
   /**
@@ -439,9 +429,7 @@ export type IGraphicStyle = ILayout &
      */
     shadowGraphic?: IGraphic | undefined;
     /**
-     * 背景图绘制模式。
-     * - repeat/repeat-x/repeat-y/no-repeat: 原有平铺语义
-     * - no-repeat-cover/no-repeat-contain/no-repeat-fill/no-repeat-auto: no-repeat 下的尺寸简写
+     * 背景填充模式（与具体图元有关）
      */
     backgroundMode: BackgroundMode;
     /**
@@ -466,12 +454,6 @@ export type IGraphicStyle = ILayout &
     backgroundOffsetY: number;
     /**
      * 背景图锚定位置（类似 CSS background-position），仅在 no-repeat 的图片背景下生效。
-     * 默认值为 'top-left'，当前公开支持以下几类配置：
-     * - 单关键字：'left' | 'center' | 'right' | 'top' | 'bottom'
-     * - 预设位置：'top-left'、'top-center'、'top-right'、'center-left'、'center'、
-     *   'center-right'、'bottom-left'、'bottom-center'、'bottom-right'
-     * - 元组写法：[x, y]，其中 x/y 支持 number、关键字、百分比字符串（如 ['25%', '75%']）
-     * 运行时仍兼容 CSS 风格空格字符串，但不再作为公开类型暴露。
      */
     backgroundPosition: BackgroundPosition;
     /**
@@ -493,69 +475,7 @@ export type IGraphicStyle = ILayout &
     autoAnimateTexture: boolean;
     // 如果做动画的话，这里代表ratio
     textureRatio: number;
-    textureOptions: {
-      /**
-       * 是否将纹理的 pattern 原点对齐到图元的绘制原点
-       */
-      alignToGraphic?: boolean;
-      /**
-       * 纹理在 x 方向的额外偏移量（用户坐标系）
-       */
-      alignOffsetX?: number;
-      /**
-       * 纹理在 y 方向的额外偏移量（用户坐标系）
-       */
-      alignOffsetY?: number;
-      /**
-       * 图片/SVG 纹理图案本身的圆角半径（用户坐标系）
-       */
-      radius?: number;
-      /**
-       * 是否使用动态纹理绘制（由调用方提供绘制回调）
-       */
-      dynamicTexture?: (
-        ctx: IContext2d,
-        row: number,
-        column: number,
-        rowCount: number,
-        columnCount: number,
-        ratio: number,
-        graphic: IGraphic,
-        width?: number,
-        height?: number
-      ) => void;
-      /**
-       * 动态纹理绘制前回调
-       */
-      beforeDynamicTexture?: (
-        ctx: IContext2d,
-        row: number,
-        column: number,
-        rowCount: number,
-        columnCount: number,
-        ratio: number,
-        graphic: IGraphic,
-        width?: number,
-        height?: number
-      ) => void;
-      /**
-       * 动态纹理网格配置
-       */
-      gridConfig?: {
-        columns?: number;
-        rows?: number;
-        gutterColumn?: number;
-        gutterRow?: number;
-      };
-      /**
-       * 是否使用新 canvas 绘制动态纹理
-       */
-      useNewCanvas?: boolean;
-      /**
-       * 其他纹理选项
-       */
-      [key: string]: any;
-    };
+    textureOptions: any;
     background:
       | IBackgroundType
       | {
@@ -592,7 +512,7 @@ export type IGraphicStyle = ILayout &
     /**
      * 纹理的类型
      */
-    texture: TextureType | ITextureSource;
+    texture: TextureType | string;
     /**
      * 纹理的颜色
      */
@@ -760,6 +680,7 @@ export type IGraphicAttribute = IDebugType &
 
 export interface IGraphicJson<T extends Partial<IGraphicAttribute> = Partial<IGraphicAttribute>> {
   attribute: Partial<T>;
+  baseAttributes?: Partial<T>;
   _uid: number;
   type: string;
   name: string;
@@ -837,24 +758,42 @@ export interface IGraphic<T extends Partial<IGraphicAttribute> = Partial<IGraphi
   incrementalAt?: number;
 
   /** 记录state对应的图形属性 */
-  states?: Record<string, Partial<T>>;
+  states?: StateDefinitionsInput<T>;
+  effectiveStates?: string[];
+  resolvedStatePatch?: Partial<T>;
   normalAttrs?: Partial<T>;
-  stateProxy?: (stateName: string, targetStates?: string[]) => Partial<T>;
+  baseAttributes?: Partial<T>;
+  boundSharedStateScope?: SharedStateScope<T>;
+  boundSharedStateRevision?: number;
+  sharedStateDirty?: boolean;
+  registeredActiveScopes?: Set<SharedStateScope<T>>;
+  stateMergeMode?: StateMergeMode;
   findFace?: () => IFace3d;
   toggleState: (stateName: string, hasAnimation?: boolean) => void;
   removeState: (stateName: string | string[], hasAnimation?: boolean) => void;
   clearStates: (hasAnimation?: boolean) => void;
+  setStates: {
+    (states?: string[] | null, hasAnimation?: boolean): void;
+    (states?: string[] | null, options?: ISetStatesOptions): void;
+  };
   useStates: (states: string[], hasAnimation?: boolean) => void;
   addState: (stateName: string, keepCurrentStates?: boolean, hasAnimation?: boolean) => void;
+  invalidateResolver: () => void;
   hasState: (stateName?: string) => boolean;
-  getState: (stateName: string) => Partial<T>;
+  getState: (stateName: string) => Partial<T> | StateDefinition<T>;
   onBeforeAttributeUpdate?: (
     val: any,
     attributes: Partial<T>,
     key: null | string | string[],
     context?: ISetAttributeContext
   ) => T | undefined;
-  applyStateAttrs: (attrs: Partial<T>, stateNames: string[], hasAnimation?: boolean, isClear?: boolean) => void;
+  applyStateAttrs: (
+    attrs: Partial<T>,
+    stateNames: string[],
+    hasAnimation?: boolean,
+    isClear?: boolean,
+    animateConfig?: IAnimateConfig
+  ) => void;
   updateNormalAttrs: (stateAttrs: Partial<T>) => void;
 
   // get
@@ -884,6 +823,7 @@ export interface IGraphic<T extends Partial<IGraphicAttribute> = Partial<IGraphi
   rotateTo: (angle: number) => this;
   skewTo: (b: number, c: number) => this;
   addUpdateBoundTag: () => void;
+  addUpdatePaintTag: () => void;
   addUpdateShapeAndBoundsTag: () => void;
   addUpdateLayoutTag: () => void;
 
@@ -913,6 +853,7 @@ export interface IGraphic<T extends Partial<IGraphicAttribute> = Partial<IGraphi
   setAttribute: (key: string, value: any, forceUpdateTag?: boolean, context?: ISetAttributeContext) => void;
 
   setStage: (stage?: IStage, layer?: ILayer) => void;
+  detachStageForRelease: () => void;
   onSetStage: (cb: (g: IGraphic, stage: IStage) => void) => void;
 
   shouldUpdateAABBBounds: () => boolean;
@@ -962,6 +903,12 @@ export interface IRoot extends IGraphic {
 export type IAnimateConfig = {
   duration?: number;
   easing?: EasingType;
+  noAnimateAttrs?: string[] | Record<string, boolean | number>;
+};
+
+export type ISetStatesOptions = {
+  animate?: boolean;
+  animateSameStatePatchChange?: boolean;
 };
 
 export type GraphicReleaseStatus = 'released' | 'willRelease';

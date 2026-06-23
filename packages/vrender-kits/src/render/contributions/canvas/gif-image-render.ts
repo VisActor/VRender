@@ -12,28 +12,19 @@ import type {
 } from '@visactor/vrender-core';
 import {
   BaseRenderContributionTime,
-  ContributionProvider,
   DefaultCanvasImageRender,
   DefaultRectRenderContribution,
   getTheme,
-  ImageRenderContribution,
-  inject,
-  injectable,
-  named
+  ImageRenderContribution
 } from '@visactor/vrender-core';
 import { GIFIMAGE_NUMBER_TYPE } from '../../../graphic/constants';
 import type { IGifImage } from '../../../interface/gif-image';
 
-@injectable()
 export class DefaultCanvasGifImageRender extends DefaultCanvasImageRender implements IGraphicRender {
   type: 'image';
   numberType: number = GIFIMAGE_NUMBER_TYPE;
 
-  constructor(
-    @inject(ContributionProvider)
-    @named(ImageRenderContribution)
-    protected readonly imageRenderContribitions: IContributionProvider<IImageRenderContribution>
-  ) {
+  constructor(protected readonly imageRenderContribitions: IContributionProvider<IImageRenderContribution>) {
     super(imageRenderContribitions);
     this._renderContribitions = undefined;
     this.builtinContributions = [defaultGifImageRenderContribution];

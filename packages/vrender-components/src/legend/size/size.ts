@@ -2,7 +2,7 @@
  * @description 连续尺寸图例
  */
 import type { FederatedEvent, INode } from '@visactor/vrender-core';
-import { graphicCreator } from '@visactor/vrender-core';
+import { graphicCreator } from '../../util/graphic-creator';
 import { merge, get } from '@visactor/vutils';
 import { LegendBase } from '../base';
 import { Slider } from '../../slider';

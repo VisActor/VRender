@@ -1,17 +1,13 @@
-import type { IArea, IGroup, ILine, IRect, ISymbol, Stage } from '@visactor/vrender-core';
-import { Group } from '@visactor/vrender-core';
-import type { Tag } from '../../src';
+import { type IArea, type IGroup, type ILine, type IRect, type ISymbol, type Stage } from '@visactor/vrender-core';
 import { DataZoom } from '../../src';
 import { createCanvas } from '../util/dom';
-import { createStage } from '../util/vrender';
-import { initBrowserEnv } from '@visactor/vrender-kits';
-initBrowserEnv();
+import { createTestStage } from '../util/vrender';
 
 describe('DataZoom component test', () => {
   let stage: Stage;
   beforeAll(() => {
     createCanvas(document.body, 'main');
-    stage = createStage('main');
+    stage = createTestStage('main');
   });
 
   afterAll(() => {
@@ -80,7 +76,6 @@ describe('DataZoom component test', () => {
     });
     stage.defaultLayer.add(dataZoom as any);
     stage.render();
-    const position = dataZoom.attribute.position;
     expect(dataZoom.getChildren()[0].getChildren().length).toBe(9);
 
     const background = dataZoom.getElementsByName('background')[0] as IRect;
@@ -190,7 +185,6 @@ describe('DataZoom component test', () => {
     });
     stage.defaultLayer.add(dataZoom as any);
     stage.render();
-    const position = dataZoom.attribute.position;
     expect(dataZoom.getChildren()[0].getChildren().length).toBe(9);
     const background = dataZoom.getElementsByName('background')[0] as IRect;
     expect(background.attribute.x).toBe(243);

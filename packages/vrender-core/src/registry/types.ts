@@ -1,0 +1,40 @@
+import type { IGraphicPicker } from '../interface/picker';
+import type { IGraphicRender } from '../interface/render';
+import type { IPlugin } from '../plugins/types';
+
+export type RegistryKey = string | symbol | number;
+
+export type IRendererFactory = () => IGraphicRender;
+export type IRendererRegistryEntry = IGraphicRender | IRendererFactory;
+
+export interface IRendererRegistry {
+  register: (key: RegistryKey, renderer: IRendererRegistryEntry) => void;
+  unregister?: (key: RegistryKey) => void;
+  get: (key: RegistryKey) => IGraphicRender | undefined;
+  getAll: () => IGraphicRender[];
+  clear: () => void;
+}
+
+export interface IPickerRegistry {
+  register: (key: RegistryKey, picker: IGraphicPicker) => void;
+  unregister?: (key: RegistryKey) => void;
+  get: (key: RegistryKey) => IGraphicPicker | undefined;
+  getAll: () => IGraphicPicker[];
+  clear: () => void;
+}
+
+export interface IPluginRegistry {
+  install: (plugin: IPlugin) => void;
+  uninstall: (name: string) => void;
+  get: (name: string) => IPlugin | undefined;
+  getAll: () => IPlugin[];
+  clear: () => void;
+}
+
+export interface IContributionRegistry<T = unknown> {
+  register: (key: RegistryKey, contribution: T) => void;
+  unregister?: (key: RegistryKey, contribution?: T) => void;
+  get: (key: RegistryKey) => T[];
+  getAll: () => T[];
+  clear: (key?: RegistryKey) => void;
+}

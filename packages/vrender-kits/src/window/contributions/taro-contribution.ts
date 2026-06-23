@@ -1,12 +1,4 @@
-import {
-  inject,
-  injectable,
-  Generator,
-  BaseWindowHandlerContribution,
-  VGlobal,
-  ContainerModule,
-  WindowHandlerContribution
-} from '@visactor/vrender-core';
+import { Generator, BaseWindowHandlerContribution, WindowHandlerContribution } from '@visactor/vrender-core';
 import type {
   EnvType,
   IGlobal,
@@ -18,6 +10,7 @@ import type {
 } from '@visactor/vrender-core';
 import type { IBoundsLike } from '@visactor/vutils';
 import { TaroCanvas } from '../../canvas/contributions/taro';
+import { application } from '@visactor/vrender-core';
 
 class MiniAppEventManager {
   addEventListener(type: string, func: EventListenerOrEventListenerObject) {
@@ -47,7 +40,6 @@ class MiniAppEventManager {
   cache: Record<string, { listener: EventListenerOrEventListenerObject[] }> = {};
 }
 
-@injectable()
 export class TaroWindowHandlerContribution extends BaseWindowHandlerContribution implements IWindowHandlerContribution {
   static env: EnvType = 'taro';
   type: EnvType = 'taro';
@@ -59,7 +51,7 @@ export class TaroWindowHandlerContribution extends BaseWindowHandlerContribution
     return null;
   }
 
-  constructor(@inject(VGlobal) private readonly global: IGlobal) {
+  constructor(private readonly global: IGlobal = application.global) {
     super();
   }
 
@@ -109,6 +101,14 @@ export class TaroWindowHandlerContribution extends BaseWindowHandlerContribution
     let canvas: HTMLCanvasElement | null;
     if (typeof params.canvas === 'string') {
       canvas = this.global.getElementById(params.canvas) as HTMLCanvasElement | null;
+      if (!canvas) {
+        canvas = this.global.createCanvas({
+          id: params.canvas,
+          width: params.width,
+          height: params.height,
+          dpr: params.dpr
+        }) as HTMLCanvasElement | null;
+      }
       if (!canvas) {
         throw new Error('canvasId 参数不正确，请确认canvas存在并插入dom');
       }
@@ -255,10 +255,14 @@ export class TaroWindowHandlerContribution extends BaseWindowHandlerContribution
   }
 }
 
-export const taroWindowModule = new ContainerModule(bind => {
-  // taro
-  bind(TaroWindowHandlerContribution).toSelf();
-  bind(WindowHandlerContribution)
-    .toDynamicValue(ctx => ctx.container.get(TaroWindowHandlerContribution))
-    .whenTargetNamed(TaroWindowHandlerContribution.env);
-});
+export function bindTaroWindowContribution(container: any) {
+  if (!container.isBound?.(TaroWindowHandlerContribution)) {
+    container.bind(TaroWindowHandlerContribution).toSelf();
+  }
+  if (!container.getNamed?.(WindowHandlerContribution, TaroWindowHandlerContribution.env)) {
+    container
+      .bind(WindowHandlerContribution)
+      .toService(TaroWindowHandlerContribution)
+      .whenTargetNamed(TaroWindowHandlerContribution.env);
+  }
+}

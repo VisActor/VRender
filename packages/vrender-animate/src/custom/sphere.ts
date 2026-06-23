@@ -1,5 +1,6 @@
 import { pi, pi2 } from '@visactor/vutils';
 import { ACustomAnimate } from './custom-animate';
+import { applyAnimationFrameAttributes } from './transient';
 
 type RotateSphereParams =
   | {
@@ -30,18 +31,16 @@ export class RotateBySphereAnimate extends ACustomAnimate<any> {
 
   onFirstRun(): void {
     super.onFirstRun();
-    const finalAttribute = this.target.getFinalAttribute();
-    if (finalAttribute) {
-      this.target.setAttributes(finalAttribute);
-    }
+    (this.target as any).applyFinalAttributeToAttribute();
   }
 
   onStart(): void {
     super.onStart();
     const { center, r } = typeof this.params === 'function' ? this.params() : this.params;
-    const startX = this.target.finalAttribute.x;
-    const startY = this.target.finalAttribute.y;
-    const startZ = this.target.finalAttribute.z;
+    const source = this.target.getFinalAttribute() ?? this.target.attribute;
+    const startX = source.x;
+    const startY = source.y;
+    const startZ = source.z ?? 0;
     const phi = Math.acos((startY - center.y) / r);
     let theta = Math.acos((startX - center.x) / r / Math.sin(phi));
     if (startZ - center.z < 0) {
@@ -59,7 +58,6 @@ export class RotateBySphereAnimate extends ACustomAnimate<any> {
     if (this.phi == null || this.theta == null) {
       return;
     }
-    const target = this.target;
     const { center, r, cb } = typeof this.params === 'function' ? this.params() : this.params;
     const deltaAngle = Math.PI * 2 * ratio;
     const theta = this.theta + deltaAngle;
@@ -67,17 +65,22 @@ export class RotateBySphereAnimate extends ACustomAnimate<any> {
     const x = r * Math.sin(phi) * Math.cos(theta) + center.x;
     const y = r * Math.cos(phi) + center.y;
     const z = r * Math.sin(phi) * Math.sin(theta) + center.z;
-    target.attribute.x = x;
-    target.attribute.y = y;
-    target.attribute.z = z;
+    let alpha = theta + pi / 2;
     // out.beta = phi;
-    target.attribute.alpha = theta + pi / 2;
-    while (target.attribute.alpha > pi2) {
-      target.attribute.alpha -= pi2;
+    while (alpha > pi2) {
+      alpha -= pi2;
     }
-    target.attribute.alpha = pi2 - target.attribute.alpha;
+    alpha = pi2 - alpha;
 
-    target.attribute.zIndex = target.attribute.z * -10000;
+    applyAnimationFrameAttributes(this.target, {
+      x,
+      y,
+      z,
+      alpha,
+      zIndex: z * -10000
+    });
+    this.target.addUpdatePositionTag();
+    this.target.addUpdateShapeAndBoundsTag();
     cb && cb(out);
   }
 }

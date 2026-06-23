@@ -1,15 +1,20 @@
 {
-  "name": "wx-vrender",
-  "version": "1.0.0",
-  "description": "",
+  "name": "wx-vrender-local-smoke",
+  "version": "0.0.0",
+  "private": true,
+  "description": "VRender smoke test for WeChat Mini Program.",
   "scripts": {
+    "prepare:local": "npm install && npm run sync:local",
+    "sync:local": "node scripts/sync-local-vrender.js",
+    "patch:npm": "node scripts/patch-miniprogram-npm.js",
+    "typecheck": "tsc --noEmit"
   },
-  "keywords": [],
-  "author": "",
-  "license": "",
   "dependencies": {
+    "@visactor/vrender": "1.1.0-alpha.21",
+    "js-binary-schema-parser": "^2.0.3"
   },
   "devDependencies": {
-    "miniprogram-api-typings": "^2.8.3-1"
+    "miniprogram-api-typings": "^5.2.1",
+    "typescript": "^5.9.0"
   }
 }

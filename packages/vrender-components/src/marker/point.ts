@@ -10,7 +10,7 @@ import type {
   ILineGraphicAttribute
 } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
-import { graphicCreator } from '@visactor/vrender-core';
+import { graphicCreator } from '../util/graphic-creator';
 import type { IPointLike } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports
 import { isValidNumber, merge } from '@visactor/vutils';
@@ -460,7 +460,7 @@ export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
       visible: targetItemvisible = false,
       size: targetSymbolSize
     } = targetSymbol;
-    const targetSize = targetItemvisible ? (targetSymbolStyle.size ?? targetSymbolSize ?? 20) : 0;
+    const targetSize = targetItemvisible ? targetSymbolStyle.size ?? targetSymbolSize ?? 20 : 0;
 
     let targetOffsetAngle;
     if (itemLine.type === 'type-do') {

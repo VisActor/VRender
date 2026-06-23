@@ -1,5 +1,6 @@
 // @ts-nocheck
-import { createStage, Gesture, createCircle } from '@visactor/vrender';
+import { Gesture, createCircle } from '@visactor/vrender';
+import { createBrowserPageStage } from '../page-stage';
 
 export function renderCircle() {
   const container = document.querySelector<HTMLDivElement>('#container')!;
@@ -12,7 +13,7 @@ export function renderCircle() {
   canvas.id = 'test';
   container.appendChild(canvas);
   const t = Date.now();
-  const stage = createStage({ canvas: 'main', width: 1200, height: 600, viewWidth: 600, viewHeight: 600 });
+  const stage = createBrowserPageStage({ canvas: 'main', width: 1200, height: 600, viewWidth: 600, viewHeight: 600 });
   const circle = createCircle({
     radius: 100,
     startAngle: 0,
@@ -74,7 +75,7 @@ export function renderCircle() {
   canopusDom.innerText = `canopus耗时：` + delta.toString();
   container.appendChild(div);
 
-  const stage1 = createStage({ canvas: 'test', width: 1200, height: 600, viewWidth: 600, viewHeight: 600 });
+  const stage1 = createBrowserPageStage({ canvas: 'test', width: 1200, height: 600, viewWidth: 600, viewHeight: 600 });
   const circle1 = createCircle({
     radius: 100,
     startAngle: 0,

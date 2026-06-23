@@ -2,6 +2,7 @@ import type { EasingType, IImage, ILine, IRichText, ISymbol } from '@visactor/vr
 import type { ArcSegment, Segment } from '../../segment';
 import type { Tag } from '../../tag';
 import { getSegmentLineGraphics, graphicFadeIn } from './common';
+import { commitUpdateAnimationTarget } from '../../animation/static-truth';
 
 export function pointCallIn(
   itemLine: Segment | ArcSegment,
@@ -22,7 +23,7 @@ export function pointCallIn(
 
   // line
   const lines = getSegmentLineGraphics(itemLine);
-  lines.forEach(line => line.setAttribute('clipRange', 0));
+  lines.forEach(line => commitUpdateAnimationTarget(line, { clipRange: 1 }, { clipRange: 0 }));
   lines.forEach((l, index) => {
     const stepDuration = lineDuration / lines.length;
     l.animate()

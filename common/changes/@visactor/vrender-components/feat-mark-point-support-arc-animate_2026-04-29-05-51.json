@@ -2,7 +2,7 @@
   "changes": [
     {
       "packageName": "@visactor/vrender-components",
-      "comment": "feat: arc markpoint support animation. close VisAct",
+      "comment": "Covered by the consolidated VRender 1.1.0 component release entry.",
       "type": "none"
     }
   ],

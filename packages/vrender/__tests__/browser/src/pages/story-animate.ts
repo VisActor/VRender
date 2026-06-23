@@ -10,9 +10,7 @@ import {
   registerCustomAnimate
 } from '@visactor/vrender-animate';
 import {
-  container,
   createRect,
-  createStage,
   createSymbol,
   IGraphic,
   vglobal,
@@ -23,7 +21,8 @@ import {
   createPath
 } from '@visactor/vrender';
 import type { EasingType } from '@visactor/vrender-core';
-// container.load(roughModule);
+import { createBrowserPageStage } from '../page-stage';
+// roughModule(getLegacyBindingContext());
 
 vglobal.setEnv('browser');
 
@@ -39,7 +38,7 @@ function addCase(name: string, container: HTMLElement, cb: (stage: any) => void)
   container.appendChild(button);
   button.addEventListener('click', () => {
     stage && stage.release();
-    stage = createStage({
+    stage = createBrowserPageStage({
       canvas: 'main',
       width: 900,
       height: 600,

@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "paths": {
+      "@visactor/react-vrender": ["../react-vrender/src"]
+    }
+  },
+  "include": ["src", "__tests__"],
+  "references": []
+}

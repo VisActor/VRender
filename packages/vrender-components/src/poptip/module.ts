@@ -1,27 +1,44 @@
 import {
-  InteractiveSubRenderContribution,
   AutoEnablePlugins,
-  ContainerModule,
-  container
+  InteractiveSubRenderContribution,
+  configureRuntimeApplicationForApp,
+  getLegacyBindingContext,
+  getRuntimeInstallerBindingContext,
+  installRuntimeGraphicRenderersToApp,
+  refreshRuntimeInstallerContributions,
+  type IApp
 } from '@visactor/vrender-core';
 import { PopTipRenderContribution } from './contribution';
 import { PopTipPlugin, PopTipForClipedTextPlugin } from './poptip-plugin';
 
-export const popTipModule = new ContainerModule((bind, unbind, isBound, rebind) => {
-  if (!isBound(PopTipRenderContribution)) {
-    bind(PopTipRenderContribution).toSelf().inSingletonScope();
-    bind(InteractiveSubRenderContribution).toService(PopTipRenderContribution);
+function bindPoptip(container: Pick<ReturnType<typeof getRuntimeInstallerBindingContext>, 'bind' | 'isBound'>) {
+  if (!container.isBound(PopTipRenderContribution)) {
+    container.bind(PopTipRenderContribution).toSelf().inSingletonScope();
+    container.bind(InteractiveSubRenderContribution).toService(PopTipRenderContribution);
   }
-  if (!isBound(PopTipPlugin)) {
-    bind(PopTipPlugin).toSelf();
-    bind(AutoEnablePlugins).toService(PopTipPlugin);
+  if (!container.isBound(PopTipPlugin)) {
+    container.bind(PopTipPlugin).toSelf();
+    container.bind(AutoEnablePlugins).toService(PopTipPlugin);
   }
-  if (!isBound(PopTipForClipedTextPlugin)) {
-    bind(PopTipForClipedTextPlugin).toSelf();
-    bind(AutoEnablePlugins).toService(PopTipForClipedTextPlugin);
+  if (!container.isBound(PopTipForClipedTextPlugin)) {
+    container.bind(PopTipForClipedTextPlugin).toSelf();
+    container.bind(AutoEnablePlugins).toService(PopTipForClipedTextPlugin);
   }
-});
+}
+
+export function installPoptipToApp(app: IApp): void {
+  if (!app) {
+    throw new Error('installPoptipToApp requires an app instance');
+  }
+
+  configureRuntimeApplicationForApp(app);
+  bindPoptip(getRuntimeInstallerBindingContext());
+  refreshRuntimeInstallerContributions();
+  installRuntimeGraphicRenderersToApp(app);
+}
 
 export function loadPoptip() {
-  container.load(popTipModule);
+  bindPoptip(getLegacyBindingContext());
+  bindPoptip(getRuntimeInstallerBindingContext());
+  refreshRuntimeInstallerContributions();
 }

@@ -1,0 +1,13 @@
+{
+  "previewTab": ["qrcode"],
+  "info": {
+    "lynx": {
+      "defaultSchemaType": "LYNX",
+      "defaultSchemaValue": "{{{url}}}?fullscreen=true"
+    }
+  },
+  "defaultSelectedFile": "src/App.tsx",
+  "outputPath": "dist",
+  "outputFileName": "template.js",
+  "buildScript": "pnpm build"
+}

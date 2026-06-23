@@ -1,22 +1,16 @@
 import {
-  inject,
-  injectable,
   Generator,
   BaseWindowHandlerContribution,
-  VGlobal,
-  ContainerModule,
-  WindowHandlerContribution
+  WindowHandlerContribution,
+  application,
+  type EnvType,
+  type IGlobal,
+  type IContext2d,
+  type ICanvas,
+  type IDomRectLike,
+  type IWindowHandlerContribution,
+  type IWindowParams
 } from '@visactor/vrender-core';
-import type {
-  EnvType,
-  IGlobal,
-  IContext2d,
-  ICanvas,
-  IDomRectLike,
-  IWindowHandlerContribution,
-  IWindowParams
-} from '@visactor/vrender-core';
-import type { IBoundsLike } from '@visactor/vutils';
 import { WxCanvas } from '../../canvas/contributions/wx';
 
 class MiniAppEventManager {
@@ -47,7 +41,21 @@ class MiniAppEventManager {
   cache: Record<string, { listener: EventListenerOrEventListenerObject[] }> = {};
 }
 
-@injectable()
+function setMiniAppEventTarget(event: any, key: 'target' | 'currentTarget', value: any) {
+  if (!event || !value) {
+    return;
+  }
+
+  try {
+    event[key] = value;
+  } catch {
+    Object.defineProperty(event, key, {
+      configurable: true,
+      value
+    });
+  }
+}
+
 export class WxWindowHandlerContribution extends BaseWindowHandlerContribution implements IWindowHandlerContribution {
   static env: EnvType = 'wx';
   type: EnvType = 'wx';
@@ -59,7 +67,7 @@ export class WxWindowHandlerContribution extends BaseWindowHandlerContribution i
     return null;
   }
 
-  constructor(@inject(VGlobal) private readonly global: IGlobal) {
+  constructor(private readonly global: IGlobal = application.global) {
     super();
   }
 
@@ -110,10 +118,18 @@ export class WxWindowHandlerContribution extends BaseWindowHandlerContribution i
     if (typeof params.canvas === 'string') {
       canvas = this.global.getElementById(params.canvas) as HTMLCanvasElement | null;
       if (!canvas) {
+        canvas = this.global.createCanvas({
+          id: params.canvas,
+          width: params.width,
+          height: params.height,
+          dpr: params.dpr
+        }) as HTMLCanvasElement | null;
+      }
+      if (!canvas) {
         throw new Error('canvasId 参数不正确，请确认canvas存在并插入dom');
       }
     } else {
-      canvas = params!.canvas as HTMLCanvasElement | null;
+      canvas = params.canvas as HTMLCanvasElement | null;
     }
 
     // 如果没有传入wh，或者是不受控制的canvas，那就用canvas的原始wh
@@ -179,6 +195,10 @@ export class WxWindowHandlerContribution extends BaseWindowHandlerContribution i
       return false;
     }
 
+    const nativeCanvas = this.canvas?.nativeCanvas;
+    setMiniAppEventTarget(event, 'target', nativeCanvas);
+    setMiniAppEventTarget(event, 'currentTarget', nativeCanvas);
+
     // hack for offsetX offsetY
     if (event.changedTouches && event.changedTouches[0]) {
       event.offsetX = event.changedTouches[0].x;
@@ -238,10 +258,14 @@ export class WxWindowHandlerContribution extends BaseWindowHandlerContribution i
   }
 }
 
-export const wxWindowModule = new ContainerModule(bind => {
-  // wx
-  bind(WxWindowHandlerContribution).toSelf();
-  bind(WindowHandlerContribution)
-    .toDynamicValue(ctx => ctx.container.get(WxWindowHandlerContribution))
-    .whenTargetNamed(WxWindowHandlerContribution.env);
-});
+export function bindWxWindowContribution(container: any) {
+  if (!container.isBound?.(WxWindowHandlerContribution)) {
+    container.bind(WxWindowHandlerContribution).toSelf();
+  }
+  if (!container.getNamed?.(WindowHandlerContribution, WxWindowHandlerContribution.env)) {
+    container
+      .bind(WindowHandlerContribution)
+      .toService(WxWindowHandlerContribution)
+      .whenTargetNamed(WxWindowHandlerContribution.env);
+  }
+}

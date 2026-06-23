@@ -1,6 +1,5 @@
 import type { IMatrix, IPoint, IPointLike } from '@visactor/vutils';
 import { Matrix, Point } from '@visactor/vutils';
-import { inject, injectable } from '../common/inversify-lite';
 import type {
   IGraphic,
   IGroup,
@@ -15,7 +14,6 @@ import { application } from '../application';
 
 // 默认的pick-service，提供基本的最优选中策略，尽量不需要用户自己实现contribution
 // 用户可以写plugin
-@injectable()
 export class DefaultGlobalPickerService implements IPickerService {
   type: 'global';
 

@@ -29,7 +29,7 @@ export abstract class BaseRender<T extends IGraphic> {
   declare z: number;
 
   builtinContributions: IBaseRenderContribution<T, T['attribute']>[];
-  declare protected graphicRenderContributions: IContributionProvider<IBaseRenderContribution<T, T['attribute']>>;
+  protected declare graphicRenderContributions: IContributionProvider<IBaseRenderContribution<T, T['attribute']>>;
 
   // declare renderContribitions: IContributionProvider<IBaseRenderContribution<T, T['attribute']>> | null;
 
@@ -38,19 +38,18 @@ export abstract class BaseRender<T extends IGraphic> {
   protected _renderContribitions: IBaseRenderContribution<T, T['attribute']>[];
 
   init(contributions?: IContributionProvider<IBaseRenderContribution<T, T['attribute']>>) {
-    if (contributions) {
-      // this.renderContribitions = contributions;
-      this._renderContribitions = contributions.getContributions();
-    }
-    if (!this._renderContribitions) {
-      this._renderContribitions = [];
-    }
     if (!this.builtinContributions) {
       this.builtinContributions = [];
     }
-    this.builtinContributions.push(defaultBaseClipRenderBeforeContribution);
-    this.builtinContributions.push(defaultBaseClipRenderAfterContribution);
-    this.builtinContributions.forEach(item => this._renderContribitions.push(item));
+    this._renderContribitions = contributions ? contributions.getContributions().slice() : [];
+    const addContribution = (item: IBaseRenderContribution<T, T['attribute']>) => {
+      if (!this._renderContribitions.includes(item)) {
+        this._renderContribitions.push(item);
+      }
+    };
+    this.builtinContributions.forEach(addContribution);
+    addContribution(defaultBaseClipRenderBeforeContribution as IBaseRenderContribution<T, T['attribute']>);
+    addContribution(defaultBaseClipRenderAfterContribution as IBaseRenderContribution<T, T['attribute']>);
     if (this._renderContribitions.length) {
       this._renderContribitions.sort((a, b) => b.order - a.order);
       this._beforeRenderContribitions = this._renderContribitions.filter(
@@ -59,6 +58,9 @@ export abstract class BaseRender<T extends IGraphic> {
       this._afterRenderContribitions = this._renderContribitions.filter(
         c => c.time === BaseRenderContributionTime.afterFillStroke
       );
+    } else {
+      this._beforeRenderContribitions = [];
+      this._afterRenderContribitions = [];
     }
   }
 

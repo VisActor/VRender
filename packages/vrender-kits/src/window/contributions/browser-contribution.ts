@@ -1,9 +1,6 @@
 import {
-  inject,
-  injectable,
   Generator,
   BaseWindowHandlerContribution,
-  ContainerModule,
   WindowHandlerContribution,
   application
 } from '@visactor/vrender-core';
@@ -20,7 +17,6 @@ import type { IBoundsLike, IMatrix, IBounds } from '@visactor/vutils';
 import { Matrix, AABBBounds } from '@visactor/vutils';
 import { BrowserCanvas } from '../../canvas/contributions/browser';
 
-@injectable()
 export class BrowserWindowHandlerContribution
   extends BaseWindowHandlerContribution
   implements IWindowHandlerContribution
@@ -182,6 +178,9 @@ export class BrowserWindowHandlerContribution
     let canvas: HTMLCanvasElement | null;
     if (typeof params.canvas === 'string') {
       canvas = this.global.getElementById(params.canvas) as HTMLCanvasElement | null;
+      if (!canvas && typeof document !== 'undefined') {
+        canvas = document.getElementById(params.canvas) as HTMLCanvasElement | null;
+      }
       if (!canvas) {
         throw new Error('canvasId 参数不正确，请确认canvas存在并插入dom');
       }
@@ -218,7 +217,7 @@ export class BrowserWindowHandlerContribution
       height: height,
       dpr: dpr,
       nativeCanvas: canvas,
-      canvasControled: params.canvasControled
+      canvasControled: params.canvasControled ?? false
     });
     // if (params.canvasControled) {
     //   this.canvas.resetStyle({
@@ -328,10 +327,14 @@ export class BrowserWindowHandlerContribution
   }
 }
 
-export const browserWindowModule = new ContainerModule(bind => {
-  // browser
-  bind(BrowserWindowHandlerContribution).toSelf();
-  bind(WindowHandlerContribution)
-    .toDynamicValue(ctx => ctx.container.get(BrowserWindowHandlerContribution))
-    .whenTargetNamed(BrowserWindowHandlerContribution.env);
-});
+export function bindBrowserWindowContribution(container: any) {
+  if (!container.isBound?.(BrowserWindowHandlerContribution)) {
+    container.bind(BrowserWindowHandlerContribution).toSelf();
+  }
+  if (!container.getNamed?.(WindowHandlerContribution, BrowserWindowHandlerContribution.env)) {
+    container
+      .bind(WindowHandlerContribution)
+      .toService(BrowserWindowHandlerContribution)
+      .whenTargetNamed(BrowserWindowHandlerContribution.env);
+  }
+}

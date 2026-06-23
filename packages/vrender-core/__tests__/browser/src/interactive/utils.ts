@@ -1,4 +1,5 @@
-import { createStage, Stage } from '@visactor/vrender';
+import { Stage } from '@visactor/vrender';
+import { createBrowserPageStage } from '../page-stage';
 let stage: Stage;
 export function renderElement(num: number, type: string, canopusCb: Function) {
   const container = document.querySelector<HTMLDivElement>('#container')!;
@@ -15,7 +16,7 @@ export function renderElement(num: number, type: string, canopusCb: Function) {
     for (let i = 0; i < num; i++) {
       arr.push(canopusCb());
     }
-    stage = createStage({
+    stage = createBrowserPageStage({
       canvas: 'main',
       width: 1200,
       height: 600,

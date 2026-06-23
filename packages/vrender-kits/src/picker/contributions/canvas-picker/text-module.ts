@@ -1,15 +1,17 @@
-import { ContainerModule } from '@visactor/vrender-core';
-import { CanvasLinePicker, CanvasPickerContribution, CanvasTextPicker } from '../constants';
-import { DefaultCanvasLinePicker } from './line-picker';
+import { TextRender } from '@visactor/vrender-core';
+import { resolveContainerBinding } from '../../../common/explicit-binding';
+import { CanvasPickerContribution, CanvasTextPicker } from '../constants';
 import { DefaultCanvasTextPicker } from './text-picker';
 
 let loadTextPick = false;
-export const textCanvasPickModule = new ContainerModule((bind, unbind, isBound, rebind) => {
+export function bindTextCanvasPickerContribution(container: any) {
   if (loadTextPick) {
     return;
   }
   loadTextPick = true;
-  // text picker
-  bind(CanvasTextPicker).to(DefaultCanvasTextPicker).inSingletonScope();
-  bind(CanvasPickerContribution).toService(CanvasTextPicker);
-});
+  container
+    .bind(CanvasTextPicker)
+    .toDynamicValue(() => new DefaultCanvasTextPicker(resolveContainerBinding(container, TextRender)))
+    .inSingletonScope();
+  container.bind(CanvasPickerContribution).toService(CanvasTextPicker);
+}

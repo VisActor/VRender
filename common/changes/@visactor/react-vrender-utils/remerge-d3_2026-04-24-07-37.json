@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "Align React DOM utility behavior and release verification with the VRender 1.1.0 app-scoped runtime contract.",
+      "type": "minor",
+      "packageName": "@visactor/react-vrender-utils"
+    }
+  ],
+  "packageName": "@visactor/react-vrender-utils",
+  "email": "lixuef1313@163.com"
+}

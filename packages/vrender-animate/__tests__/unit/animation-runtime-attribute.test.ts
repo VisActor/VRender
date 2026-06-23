@@ -1,0 +1,1997 @@
+import {
+  application,
+  AttributeUpdateType,
+  createGroup,
+  createLine,
+  createRect,
+  createSymbol,
+  DefaultGraphicService
+} from '@visactor/vrender-core';
+import { registerAnimate } from '../../src/register';
+import { registerCustomAnimate } from '../../src/custom/register';
+import { AnimateExecutor } from '../../src/executor/animate-executor';
+import { TagPointsUpdate } from '../../src/custom/tag-points';
+import { Update } from '../../src/custom/update';
+import { DefaultTimeline } from '../../src/timeline';
+import { ManualTicker } from '../../src/ticker/manual-ticker';
+
+let animationRuntimeRegistered = false;
+
+function ensureAnimationRuntime() {
+  if (animationRuntimeRegistered) {
+    return;
+  }
+  registerAnimate();
+  registerCustomAnimate();
+  if (!application.graphicService) {
+    application.graphicService = new DefaultGraphicService();
+  }
+  animationRuntimeRegistered = true;
+}
+
+function createGraphicServiceStub() {
+  return {
+    onAttributeUpdate: jest.fn(),
+    onSetStage: jest.fn(),
+    onRemove: jest.fn(),
+    onAddIncremental: jest.fn(),
+    onClearIncremental: jest.fn(),
+    beforeUpdateAABBBounds: jest.fn(),
+    afterUpdateAABBBounds: jest.fn(),
+    clearAABBBounds: jest.fn(),
+    validCheck: jest.fn(() => true)
+  };
+}
+
+function bindGraphicService(graphic: any, graphicService: any) {
+  jest.spyOn(graphic, 'getGraphicService').mockReturnValue(graphicService);
+}
+
+function createStageHarness(label: string) {
+  ensureAnimationRuntime();
+
+  const timeline = new DefaultTimeline();
+  const ticker = new ManualTicker();
+  // DefaultTicker only creates a handler when env is available; tests install one explicitly.
+  (ticker as any).setupTickHandler();
+  ticker.autoStop = false;
+  ticker.addTimeline(timeline);
+
+  const graphicService = createGraphicServiceStub();
+  const stage: any = {
+    stage: null,
+    name: label,
+    params: { optimize: { tickRenderMode: 'effect' } },
+    ticker,
+    graphicService,
+    renderNextFrame: jest.fn(),
+    getTimeline: () => timeline
+  };
+  stage.stage = stage;
+
+  const group = createGroup({});
+  bindGraphicService(group as any, graphicService);
+  group.setStage(stage, null as any);
+
+  return {
+    stage,
+    group,
+    ticker,
+    timeline,
+    graphicService
+  };
+}
+
+function createAnimatedRect(graphicService: any) {
+  const rect = createRect({
+    x: 0,
+    y: 0,
+    width: 10,
+    height: 10,
+    opacity: 1,
+    fill: 'blue'
+  });
+  bindGraphicService(rect as any, graphicService);
+  return rect;
+}
+
+function tick(ticker: ManualTicker, delta: number) {
+  ticker.tick(delta);
+}
+
+function boundsSize(graphic: any) {
+  const bounds = graphic.AABBBounds;
+  return {
+    width: bounds.x2 - bounds.x1,
+    height: bounds.y2 - bounds.y1
+  };
+}
+
+function pointList(xs: number[], ys: number[] = xs.map(() => 0)) {
+  return xs.map((x, index) => ({
+    x,
+    y: ys[index],
+    context: `p-${index}`
+  }));
+}
+
+describe('D3 pre-handoff animation runtime', () => {
+  beforeAll(() => {
+    ensureAnimationRuntime();
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  test('state animation updates graphic.attribute over time without polluting baseAttributes', () => {
+    const { group, ticker, graphicService } = createStageHarness('state-runtime');
+    const rect = createAnimatedRect(graphicService);
+    group.appendChild(rect);
+
+    rect.states = {
+      hover: {
+        opacity: 0.2
+      }
+    } as any;
+    rect.stateAnimateConfig = {
+      duration: 100,
+      easing: 'linear'
+    } as any;
+
+    rect.useStates(['hover'], true);
+
+    expect(rect.attribute.opacity).toBe(1);
+    expect((rect as any).baseAttributes.opacity).toBe(1);
+
+    tick(ticker, 50);
+    expect(rect.attribute.opacity).toBeCloseTo(0.6, 5);
+    expect((rect as any).baseAttributes.opacity).toBe(1);
+
+    tick(ticker, 50);
+    expect(rect.attribute.opacity).toBeCloseTo(0.2, 5);
+    expect((rect as any).baseAttributes.opacity).toBe(1);
+  });
+
+  test('state animation ends at the resolved state style without committing it to baseAttributes', () => {
+    const { group, ticker, graphicService } = createStageHarness('state-runtime-end-style');
+    const rect = createAnimatedRect(graphicService);
+    rect.setAttribute('lineWidth', 1);
+    rect.setFinalAttributes({ ...rect.attribute });
+    group.appendChild(rect);
+
+    rect.states = {
+      a: {
+        opacity: 0.35,
+        lineWidth: 6
+      }
+    } as any;
+    rect.stateAnimateConfig = {
+      duration: 100,
+      easing: 'linear'
+    } as any;
+
+    rect.useStates(['a'], true);
+
+    expect(rect.currentStates).toEqual(['a']);
+    expect(rect.resolvedStatePatch).toEqual({
+      opacity: 0.35,
+      lineWidth: 6
+    });
+    expect(rect.attribute.opacity).toBe(1);
+    expect(rect.attribute.lineWidth).toBe(1);
+    expect((rect as any).baseAttributes.opacity).toBe(1);
+    expect((rect as any).baseAttributes.lineWidth).toBe(1);
+    expect(rect.getFinalAttribute().opacity).toBe(0.35);
+    expect(rect.getFinalAttribute().lineWidth).toBe(6);
+
+    tick(ticker, 50);
+    expect(rect.attribute.opacity).toBeCloseTo(0.675, 5);
+    expect(rect.attribute.lineWidth).toBeCloseTo(3.5, 5);
+    expect((rect as any).baseAttributes.opacity).toBe(1);
+    expect((rect as any).baseAttributes.lineWidth).toBe(1);
+
+    tick(ticker, 50);
+    expect(rect.attribute.opacity).toBeCloseTo(0.35, 5);
+    expect(rect.attribute.lineWidth).toBeCloseTo(6, 5);
+    expect(rect.getFinalAttribute().opacity).toBeCloseTo(0.35, 5);
+    expect(rect.getFinalAttribute().lineWidth).toBeCloseTo(6, 5);
+    expect((rect as any).baseAttributes.opacity).toBe(1);
+    expect((rect as any).baseAttributes.lineWidth).toBe(1);
+    expect(rect.currentStates).toEqual(['a']);
+    expect(rect.resolvedStatePatch).toEqual({
+      opacity: 0.35,
+      lineWidth: 6
+    });
+  });
+
+  test('interrupted state animations resolve [] to [a] to [a,b] to [a] to [] without stale state styles', () => {
+    const { group, ticker, graphicService } = createStageHarness('state-runtime-interrupted-stack');
+    const rect = createAnimatedRect(graphicService);
+    rect.setAttribute('lineWidth', 1);
+    rect.setFinalAttributes({ ...rect.attribute });
+    group.appendChild(rect);
+
+    rect.states = {
+      a: {
+        opacity: 0.2
+      },
+      b: {
+        lineWidth: 5
+      }
+    } as any;
+    rect.stateAnimateConfig = {
+      duration: 100,
+      easing: 'linear'
+    } as any;
+
+    rect.useStates(['a'], true);
+    tick(ticker, 25);
+    expect(rect.attribute.opacity).toBeCloseTo(0.8, 5);
+    expect(rect.attribute.lineWidth).toBe(1);
+    expect(rect.currentStates).toEqual(['a']);
+    expect(rect.resolvedStatePatch).toEqual({
+      opacity: 0.2
+    });
+
+    rect.useStates(['a', 'b'], true);
+    tick(ticker, 25);
+    expect(rect.attribute.opacity).toBeGreaterThan(0.2);
+    expect(rect.attribute.opacity).toBeLessThan(0.8);
+    expect(rect.attribute.lineWidth).toBeGreaterThan(1);
+    expect(rect.attribute.lineWidth).toBeLessThan(5);
+    expect(rect.currentStates).toEqual(['a', 'b']);
+    expect(rect.resolvedStatePatch).toEqual({
+      opacity: 0.2,
+      lineWidth: 5
+    });
+    const lineWidthWithB = rect.attribute.lineWidth;
+
+    rect.useStates(['a'], true);
+    tick(ticker, 25);
+    expect(rect.attribute.opacity).toBeGreaterThan(0.2);
+    expect(rect.attribute.opacity).toBeLessThan(0.8);
+    expect(rect.attribute.lineWidth).toBeGreaterThan(1);
+    expect(rect.attribute.lineWidth).toBeLessThan(lineWidthWithB);
+    expect(rect.getFinalAttribute().opacity).toBe(0.2);
+    expect(rect.getFinalAttribute().lineWidth).toBe(1);
+    expect(rect.currentStates).toEqual(['a']);
+    expect(rect.resolvedStatePatch).toEqual({
+      opacity: 0.2
+    });
+    const lineWidthAfterRemovingB = rect.attribute.lineWidth;
+
+    rect.useStates([], true);
+    tick(ticker, 25);
+    expect(rect.attribute.opacity).toBeGreaterThan(0.2);
+    expect(rect.attribute.opacity).toBeLessThan(1);
+    expect(rect.attribute.lineWidth).toBeGreaterThan(1);
+    expect(rect.attribute.lineWidth).toBeLessThan(lineWidthAfterRemovingB);
+    expect(rect.currentStates).toEqual([]);
+    expect(rect.resolvedStatePatch).toBeUndefined();
+
+    tick(ticker, 100);
+    expect(rect.attribute.opacity).toBe(1);
+    expect(rect.attribute.lineWidth).toBe(1);
+    expect(rect.getFinalAttribute().opacity).toBe(1);
+    expect(rect.getFinalAttribute().lineWidth).toBe(1);
+    expect((rect as any).baseAttributes.opacity).toBe(1);
+    expect((rect as any).baseAttributes.lineWidth).toBe(1);
+    expect(rect.currentStates).toEqual([]);
+    expect(rect.resolvedStatePatch).toBeUndefined();
+  });
+
+  test('clearing hover state keeps y/y1 rect layout from collapsing through undefined height aliases', () => {
+    const { group, ticker, graphicService } = createStageHarness('state-runtime-clear-vertical-alias');
+    const rect = createRect({
+      x: 150,
+      y: 0,
+      y1: 320,
+      width: 140,
+      x1: undefined,
+      height: undefined,
+      lineWidth: 0,
+      fill: '#1664FF',
+      stroke: '#1664FF',
+      fillOpacity: undefined,
+      visible: true
+    } as any);
+    bindGraphicService(rect as any, graphicService);
+    rect.setFinalAttributes({ ...rect.attribute });
+    group.appendChild(rect);
+
+    rect.states = {
+      hover: {
+        lineWidth: 4,
+        fillOpacity: 0.6
+      }
+    } as any;
+    rect.stateAnimateConfig = {
+      duration: 100,
+      easing: 'linear'
+    } as any;
+
+    rect.useStates(['hover'], true);
+    tick(ticker, 100);
+    expect(rect.attribute.lineWidth).toBe(4);
+    expect(rect.attribute.fillOpacity).toBe(0.6);
+    expect((rect as any).baseAttributes.height).toBeUndefined();
+    expect((rect as any).baseAttributes.x1).toBeUndefined();
+
+    rect.useStates([], true);
+    tick(ticker, 16);
+
+    expect(rect.attribute.height).toBeUndefined();
+    expect(rect.attribute.x1).toBeUndefined();
+    expect(rect.attribute.y).toBe(0);
+    expect(rect.attribute.y1).toBe(320);
+    expect(boundsSize(rect).height).toBeGreaterThan(100);
+
+    tick(ticker, 100);
+    expect(rect.attribute.height).toBeUndefined();
+    expect(rect.attribute.x1).toBeUndefined();
+    expect((rect as any).baseAttributes.height).toBeUndefined();
+    expect((rect as any).baseAttributes.x1).toBeUndefined();
+    expect(rect.getFinalAttribute().height).toBeUndefined();
+    expect(rect.getFinalAttribute().x1).toBeUndefined();
+    expect(rect.attribute.y).toBe(0);
+    expect(rect.attribute.y1).toBe(320);
+    expect(rect.attribute.lineWidth).toBe(0);
+    expect(boundsSize(rect).height).toBeGreaterThan(100);
+  });
+
+  test('clearing hover state keeps x/x1 rect layout from collapsing through undefined width aliases', () => {
+    const { group, ticker, graphicService } = createStageHarness('state-runtime-clear-horizontal-alias');
+    const rect = createRect({
+      x: 10,
+      x1: 210,
+      y: 5,
+      height: 40,
+      width: undefined,
+      y1: undefined,
+      lineWidth: 0,
+      fill: '#1664FF',
+      stroke: '#1664FF',
+      fillOpacity: undefined,
+      visible: true
+    } as any);
+    bindGraphicService(rect as any, graphicService);
+    rect.setFinalAttributes({ ...rect.attribute });
+    group.appendChild(rect);
+
+    rect.states = {
+      hover: {
+        lineWidth: 4,
+        fillOpacity: 0.6
+      }
+    } as any;
+    rect.stateAnimateConfig = {
+      duration: 100,
+      easing: 'linear'
+    } as any;
+
+    rect.useStates(['hover'], true);
+    tick(ticker, 100);
+    expect(rect.attribute.lineWidth).toBe(4);
+    expect(rect.attribute.fillOpacity).toBe(0.6);
+    expect((rect as any).baseAttributes.width).toBeUndefined();
+    expect((rect as any).baseAttributes.y1).toBeUndefined();
+
+    rect.useStates([], true);
+    tick(ticker, 16);
+
+    expect(rect.attribute.width).toBeUndefined();
+    expect(rect.attribute.y1).toBeUndefined();
+    expect(rect.attribute.x).toBe(10);
+    expect(rect.attribute.x1).toBe(210);
+    expect(boundsSize(rect).width).toBeGreaterThan(100);
+
+    tick(ticker, 100);
+    expect(rect.attribute.width).toBeUndefined();
+    expect(rect.attribute.y1).toBeUndefined();
+    expect((rect as any).baseAttributes.width).toBeUndefined();
+    expect((rect as any).baseAttributes.y1).toBeUndefined();
+    expect(rect.getFinalAttribute().width).toBeUndefined();
+    expect(rect.getFinalAttribute().y1).toBeUndefined();
+    expect(rect.attribute.x).toBe(10);
+    expect(rect.attribute.x1).toBe(210);
+    expect(rect.attribute.lineWidth).toBe(0);
+    expect(boundsSize(rect).width).toBeGreaterThan(100);
+  });
+
+  test('clearing hover state animates removed style keys to defaults when base lacks those keys', () => {
+    const { group, ticker, graphicService } = createStageHarness('state-runtime-clear-missing-style-key');
+    const rect = createRect({
+      x: 0,
+      y: 0,
+      y1: 100,
+      width: 20,
+      lineWidth: 0,
+      fill: '#1664FF',
+      visible: true
+    } as any);
+    bindGraphicService(rect as any, graphicService);
+    rect.setFinalAttributes({ ...rect.attribute });
+    group.appendChild(rect);
+
+    rect.states = {
+      hover: {
+        lineWidth: 4,
+        fillOpacity: 0.6
+      }
+    } as any;
+    rect.stateAnimateConfig = {
+      duration: 100,
+      easing: 'linear'
+    } as any;
+
+    rect.useStates(['hover'], true);
+    tick(ticker, 100);
+    expect(rect.attribute.fillOpacity).toBe(0.6);
+    expect((rect as any).baseAttributes.fillOpacity).toBeUndefined();
+
+    rect.useStates([], true);
+    tick(ticker, 16);
+
+    expect(rect.attribute.fillOpacity).toBeGreaterThan(0.6);
+    expect(rect.attribute.fillOpacity).toBeLessThan(1);
+    expect((rect as any).baseAttributes.fillOpacity).toBeUndefined();
+    expect(rect.getFinalAttribute().fillOpacity).toBeUndefined();
+
+    tick(ticker, 100);
+    expect(rect.attribute.fillOpacity).toBeUndefined();
+    expect((rect as any).baseAttributes.fillOpacity).toBeUndefined();
+    expect(rect.getFinalAttribute().fillOpacity).toBeUndefined();
+  });
+
+  test('clearing explicit height state on y/y1 rect animates to computed layout height', () => {
+    const { group, ticker, graphicService } = createStageHarness('state-runtime-clear-explicit-height-alias');
+    const rect = createRect({
+      x: 0,
+      y: 0,
+      y1: 100,
+      width: 20,
+      height: undefined,
+      visible: true
+    } as any);
+    bindGraphicService(rect as any, graphicService);
+    rect.setFinalAttributes({ ...rect.attribute });
+    group.appendChild(rect);
+
+    rect.states = {
+      hover: {
+        height: 60
+      }
+    } as any;
+    rect.stateAnimateConfig = {
+      duration: 100,
+      easing: 'linear'
+    } as any;
+
+    rect.useStates(['hover'], true);
+    tick(ticker, 100);
+    expect(rect.attribute.height).toBe(60);
+    expect((rect as any).baseAttributes.height).toBeUndefined();
+
+    rect.useStates([], true);
+    tick(ticker, 50);
+
+    expect(rect.attribute.height).toBeGreaterThan(60);
+    expect(rect.attribute.height).toBeLessThan(100);
+    expect(boundsSize(rect).height).toBeGreaterThan(60);
+    expect((rect as any).baseAttributes.height).toBeUndefined();
+    expect(rect.getFinalAttribute().height).toBeUndefined();
+
+    tick(ticker, 100);
+    expect(rect.attribute.height).toBeUndefined();
+    expect(rect.attribute.y).toBe(0);
+    expect(rect.attribute.y1).toBe(100);
+    expect(boundsSize(rect).height).toBeGreaterThan(90);
+    expect((rect as any).baseAttributes.height).toBeUndefined();
+    expect(rect.getFinalAttribute().height).toBeUndefined();
+  });
+
+  test('clearing explicit width state on x/x1 rect animates to computed layout width', () => {
+    const { group, ticker, graphicService } = createStageHarness('state-runtime-clear-explicit-width-alias');
+    const rect = createRect({
+      x: 0,
+      x1: 100,
+      y: 0,
+      height: 20,
+      width: undefined,
+      visible: true
+    } as any);
+    bindGraphicService(rect as any, graphicService);
+    rect.setFinalAttributes({ ...rect.attribute });
+    group.appendChild(rect);
+
+    rect.states = {
+      hover: {
+        width: 60
+      }
+    } as any;
+    rect.stateAnimateConfig = {
+      duration: 100,
+      easing: 'linear'
+    } as any;
+
+    rect.useStates(['hover'], true);
+    tick(ticker, 100);
+    expect(rect.attribute.width).toBe(60);
+    expect((rect as any).baseAttributes.width).toBeUndefined();
+
+    rect.useStates([], true);
+    tick(ticker, 50);
+
+    expect(rect.attribute.width).toBeGreaterThan(60);
+    expect(rect.attribute.width).toBeLessThan(100);
+    expect(boundsSize(rect).width).toBeGreaterThan(60);
+    expect((rect as any).baseAttributes.width).toBeUndefined();
+    expect(rect.getFinalAttribute().width).toBeUndefined();
+
+    tick(ticker, 100);
+    expect(rect.attribute.width).toBeUndefined();
+    expect(rect.attribute.x).toBe(0);
+    expect(rect.attribute.x1).toBe(100);
+    expect(boundsSize(rect).width).toBeGreaterThan(90);
+    expect((rect as any).baseAttributes.width).toBeUndefined();
+    expect(rect.getFinalAttribute().width).toBeUndefined();
+  });
+
+  test('switching from explicit height state to another state animates to computed layout height', () => {
+    const { group, ticker, graphicService } = createStageHarness('state-runtime-switch-explicit-height-alias');
+    const rect = createRect({
+      x: 0,
+      y: 0,
+      y1: 100,
+      width: 20,
+      height: undefined,
+      visible: true
+    } as any);
+    bindGraphicService(rect as any, graphicService);
+    rect.setFinalAttributes({ ...rect.attribute });
+    group.appendChild(rect);
+
+    rect.states = {
+      hover: {
+        height: 60
+      },
+      selected: {
+        fillOpacity: 0.5
+      }
+    } as any;
+    rect.stateAnimateConfig = {
+      duration: 100,
+      easing: 'linear'
+    } as any;
+
+    rect.useStates(['hover'], true);
+    tick(ticker, 100);
+    expect(rect.attribute.height).toBe(60);
+
+    rect.useStates(['selected'], true);
+    tick(ticker, 50);
+
+    expect(rect.attribute.height).toBeGreaterThan(60);
+    expect(rect.attribute.height).toBeLessThan(100);
+    expect(rect.attribute.fillOpacity).toBeGreaterThan(0.5);
+    expect(rect.attribute.fillOpacity).toBeLessThan(1);
+    expect(boundsSize(rect).height).toBeGreaterThan(60);
+    expect((rect as any).baseAttributes.height).toBeUndefined();
+    expect(rect.getFinalAttribute().height).toBeUndefined();
+
+    tick(ticker, 100);
+    expect(rect.attribute.height).toBeUndefined();
+    expect(rect.attribute.y).toBe(0);
+    expect(rect.attribute.y1).toBe(100);
+    expect(rect.attribute.fillOpacity).toBe(0.5);
+    expect(boundsSize(rect).height).toBeGreaterThan(90);
+    expect((rect as any).baseAttributes.height).toBeUndefined();
+    expect(rect.getFinalAttribute().height).toBeUndefined();
+  });
+
+  test('switching from explicit width state to another state animates to computed layout width', () => {
+    const { group, ticker, graphicService } = createStageHarness('state-runtime-switch-explicit-width-alias');
+    const rect = createRect({
+      x: 0,
+      x1: 100,
+      y: 0,
+      height: 20,
+      width: undefined,
+      visible: true
+    } as any);
+    bindGraphicService(rect as any, graphicService);
+    rect.setFinalAttributes({ ...rect.attribute });
+    group.appendChild(rect);
+
+    rect.states = {
+      hover: {
+        width: 60
+      },
+      selected: {
+        fillOpacity: 0.5
+      }
+    } as any;
+    rect.stateAnimateConfig = {
+      duration: 100,
+      easing: 'linear'
+    } as any;
+
+    rect.useStates(['hover'], true);
+    tick(ticker, 100);
+    expect(rect.attribute.width).toBe(60);
+
+    rect.useStates(['selected'], true);
+    tick(ticker, 50);
+
+    expect(rect.attribute.width).toBeGreaterThan(60);
+    expect(rect.attribute.width).toBeLessThan(100);
+    expect(rect.attribute.fillOpacity).toBeGreaterThan(0.5);
+    expect(rect.attribute.fillOpacity).toBeLessThan(1);
+    expect(boundsSize(rect).width).toBeGreaterThan(60);
+    expect((rect as any).baseAttributes.width).toBeUndefined();
+    expect(rect.getFinalAttribute().width).toBeUndefined();
+
+    tick(ticker, 100);
+    expect(rect.attribute.width).toBeUndefined();
+    expect(rect.attribute.x).toBe(0);
+    expect(rect.attribute.x1).toBe(100);
+    expect(rect.attribute.fillOpacity).toBe(0.5);
+    expect(boundsSize(rect).width).toBeGreaterThan(90);
+    expect((rect as any).baseAttributes.width).toBeUndefined();
+    expect(rect.getFinalAttribute().width).toBeUndefined();
+  });
+
+  test('animate.to restores static truth after completion and keeps baseAttributes untouched', () => {
+    const { group, ticker, graphicService } = createStageHarness('self-to');
+    const rect = createAnimatedRect(graphicService);
+    group.appendChild(rect);
+
+    rect.animate().to({ x: 100 }, 100, 'linear');
+
+    expect(rect.attribute.x).toBe(0);
+    expect((rect as any).baseAttributes.x).toBe(0);
+
+    tick(ticker, 50);
+    expect(rect.attribute.x).toBeCloseTo(50, 5);
+    expect((rect as any).baseAttributes.x).toBe(0);
+
+    tick(ticker, 50);
+    expect(rect.attribute.x).toBe(0);
+    expect((rect as any).baseAttributes.x).toBe(0);
+  });
+
+  test('animate.to interpolation frames use direct writes without polluting static truth', () => {
+    const { group, ticker, graphicService } = createStageHarness('self-to-direct-frame-path');
+    const rect = createAnimatedRect(graphicService);
+    group.appendChild(rect);
+
+    const transientCalls: Record<string, any>[] = [];
+    const originalApplyTransientAttributes = (rect as any).applyTransientAttributes.bind(rect);
+    (rect as any).applyTransientAttributes = (attrs: Record<string, any>, forceUpdateTag: boolean, context: any) => {
+      transientCalls.push({ attrs, forceUpdateTag, context });
+      return originalApplyTransientAttributes(attrs, forceUpdateTag, context);
+    };
+
+    rect.animate().to({ x: 100, width: 20 }, 100, 'linear');
+    tick(ticker, 50);
+
+    expect(transientCalls).toHaveLength(0);
+    expect(rect.attribute.x).toBeCloseTo(50, 5);
+    expect(rect.attribute.width).toBeCloseTo(15, 5);
+    expect((rect as any).baseAttributes.x).toBe(0);
+    expect((rect as any).baseAttributes.width).toBe(10);
+  });
+
+  test('ending an older self-driven animation does not restore over a newer animation frame', () => {
+    const { group, ticker, graphicService } = createStageHarness('self-to-superseded-restore');
+    const rect = createAnimatedRect(graphicService);
+    group.appendChild(rect);
+
+    rect.animate().to({ x: 100 }, 100, 'linear');
+    tick(ticker, 50);
+    expect(rect.attribute.x).toBeCloseTo(50, 5);
+
+    rect.animate().to({ x: 200 }, 100, 'linear');
+    tick(ticker, 25);
+    expect(rect.attribute.x).toBeGreaterThan(50);
+    expect(rect.attribute.x).toBeLessThan(200);
+    const newerFrameBeforeOldEnd = rect.attribute.x;
+
+    tick(ticker, 25);
+    expect(rect.attribute.x).toBeGreaterThan(newerFrameBeforeOldEnd);
+    expect(rect.attribute.x).toBeLessThan(200);
+    expect((rect as any).baseAttributes.x).toBe(0);
+  });
+
+  test('animate.from interpolates from the provided value back to static truth', () => {
+    const { group, ticker, graphicService } = createStageHarness('self-from');
+    const rect = createAnimatedRect(graphicService);
+    rect.setAttribute('x', 80);
+    group.appendChild(rect);
+
+    rect.animate().from({ x: 0 }, 100, 'linear');
+
+    expect(rect.attribute.x).toBe(0);
+    expect((rect as any).baseAttributes.x).toBe(80);
+
+    tick(ticker, 50);
+    expect(rect.attribute.x).toBeCloseTo(40, 5);
+    expect((rect as any).baseAttributes.x).toBe(80);
+
+    tick(ticker, 50);
+    expect(rect.attribute.x).toBe(80);
+    expect((rect as any).baseAttributes.x).toBe(80);
+  });
+
+  test('fade appear keeps final opacity in static truth when using animate.from', () => {
+    const { group, ticker, graphicService } = createStageHarness('fade-appear-from');
+    const rect = createAnimatedRect(graphicService);
+    rect.setAttribute('opacity', 1);
+    group.appendChild(rect);
+
+    rect.animate().from({ opacity: 0 }, 100, 'linear');
+
+    expect(rect.attribute.opacity).toBe(0);
+    expect((rect as any).baseAttributes.opacity).toBe(1);
+
+    tick(ticker, 50);
+    expect(rect.attribute.opacity).toBeCloseTo(0.5, 5);
+    expect((rect as any).baseAttributes.opacity).toBe(1);
+
+    tick(ticker, 50);
+    expect(rect.attribute.opacity).toBe(1);
+    expect((rect as any).baseAttributes.opacity).toBe(1);
+  });
+
+  test('fade to does not make the animation endpoint the static truth', () => {
+    const { group, ticker, graphicService } = createStageHarness('fade-appear-to');
+    const rect = createAnimatedRect(graphicService);
+    rect.setAttribute('opacity', 0);
+    group.appendChild(rect);
+
+    rect.animate().to({ opacity: 1 }, 100, 'linear');
+
+    expect(rect.attribute.opacity).toBe(0);
+    expect((rect as any).baseAttributes.opacity).toBe(0);
+
+    tick(ticker, 50);
+    expect(rect.attribute.opacity).toBeCloseTo(0.5, 5);
+    expect((rect as any).baseAttributes.opacity).toBe(0);
+
+    tick(ticker, 50);
+    expect(rect.attribute.opacity).toBe(0);
+    expect((rect as any).baseAttributes.opacity).toBe(0);
+  });
+
+  test('wait step holds the previous frame without committing it to baseAttributes', () => {
+    const { group, ticker, graphicService } = createStageHarness('wait-step');
+    const rect = createAnimatedRect(graphicService);
+    group.appendChild(rect);
+
+    rect.animate().to({ x: 100 }, 100, 'linear').wait(50).to({ x: 200 }, 100, 'linear');
+
+    tick(ticker, 100);
+    expect(rect.attribute.x).toBeCloseTo(100, 5);
+    expect((rect as any).baseAttributes.x).toBe(0);
+
+    tick(ticker, 1);
+    expect(rect.attribute.x).toBeCloseTo(100, 5);
+    expect((rect as any).baseAttributes.x).toBe(0);
+  });
+
+  test('loop reset applies the start frame without overwriting current static truth', () => {
+    const { group, ticker, graphicService } = createStageHarness('loop-reset');
+    const rect = createAnimatedRect(graphicService);
+    group.appendChild(rect);
+
+    rect.animate().to({ x: 100 }, 100, 'linear').loop(1);
+
+    tick(ticker, 50);
+    expect(rect.attribute.x).toBeCloseTo(50, 5);
+    rect.setAttribute('x', 20);
+    expect((rect as any).baseAttributes.x).toBe(20);
+
+    tick(ticker, 50);
+    expect(rect.attribute.x).toBe(0);
+    expect((rect as any).baseAttributes.x).toBe(20);
+  });
+
+  test('stop with an explicit target is a static commit API', () => {
+    const { group, ticker, graphicService } = createStageHarness('stop-commit');
+    const endRect = createAnimatedRect(graphicService);
+    const startRect = createAnimatedRect(graphicService);
+    const customRect = createAnimatedRect(graphicService);
+    group.appendChild(endRect);
+    group.appendChild(startRect);
+    group.appendChild(customRect);
+
+    const endAnimate = endRect.animate().to({ x: 100 }, 100, 'linear');
+    tick(ticker, 50);
+    endAnimate.stop('end');
+    expect(endRect.attribute.x).toBe(100);
+    expect((endRect as any).baseAttributes.x).toBe(100);
+
+    const startAnimate = startRect.animate().to({ x: 100 }, 100, 'linear');
+    tick(ticker, 50);
+    startAnimate.stop('start');
+    expect(startRect.attribute.x).toBe(0);
+    expect((startRect as any).baseAttributes.x).toBe(0);
+
+    const customAnimate = customRect.animate().to({ x: 100 }, 100, 'linear');
+    tick(ticker, 50);
+    customAnimate.stop({ x: 12 });
+    expect(customRect.attribute.x).toBe(12);
+    expect((customRect as any).baseAttributes.x).toBe(12);
+  });
+
+  test('executor attrOutChannel commits non-animated diff attrs as static truth', () => {
+    const { group, ticker, graphicService } = createStageHarness('executor-attr-out-channel');
+    const rect = createAnimatedRect(graphicService);
+    (rect as any).context = {
+      diffAttrs: {
+        x: 80,
+        fill: 'red'
+      }
+    };
+    group.appendChild(rect);
+
+    new AnimateExecutor(rect).execute({
+      channel: {
+        x: { to: 80 }
+      },
+      duration: 100,
+      easing: 'linear'
+    });
+
+    expect((rect as any).baseAttributes.fill).toBe('red');
+    expect((rect as any).baseAttributes.x).toBe(0);
+
+    tick(ticker, 50);
+    expect(rect.attribute.x).toBeCloseTo(40, 5);
+    expect(rect.attribute.fill).toBe('red');
+    expect((rect as any).baseAttributes.fill).toBe('red');
+    expect((rect as any).baseAttributes.x).toBe(0);
+  });
+
+  test('prevent-animate update seeds final attributes from update context before animation bind', () => {
+    const { group, graphicService } = createStageHarness('prevent-animate-context-final-target');
+    const rect = createAnimatedRect(graphicService);
+    rect.setFinalAttributes({ x: 0, y: 0, width: 10, height: 10, fill: 'orange' });
+    group.appendChild(rect);
+
+    (rect as any).context = {
+      diffAttrs: {
+        x: 80
+      },
+      finalAttrs: {
+        x: 80,
+        y: 0,
+        width: 10,
+        height: 10,
+        fill: 'purple'
+      }
+    };
+
+    expect(rect.getAttributes(true).x).toBe(0);
+    expect(rect.getAttributes(true).fill).toBe('orange');
+
+    rect.setAttributesAndPreventAnimate({ x: 80 });
+
+    expect(rect.attribute.x).toBe(80);
+    expect(rect.attribute.fill).toBe('blue');
+    expect((rect as any).baseAttributes.x).toBe(0);
+    expect(rect.getAttributes(true).x).toBe(80);
+    expect(rect.getAttributes(true).fill).toBe('purple');
+  });
+
+  test('executor does not let sibling channel updates pre-commit attrs animated by update', () => {
+    const { group, ticker, graphicService } = createStageHarness('executor-sibling-update-channel-ownership');
+    const oldPoints = pointList([0, 10, 20], [0, 5, 0]);
+    const nextPoints = pointList([0, 10, 20, 30, 40], [10, 15, 10, 20, 10]);
+    const oldStroke = '#F0A868';
+    const nextStroke = '#4A5568';
+    const line = createLine({
+      points: oldPoints,
+      stroke: oldStroke,
+      lineWidth: 2
+    });
+    bindGraphicService(line as any, graphicService);
+    group.appendChild(line);
+
+    (line as any).context = {
+      animationState: 'update',
+      diffState: 'update',
+      data: [{ id: 'line-a' }],
+      diffAttrs: {
+        stroke: nextStroke,
+        points: nextPoints
+      },
+      finalAttrs: {
+        points: nextPoints,
+        stroke: nextStroke,
+        lineWidth: 2
+      }
+    };
+
+    new AnimateExecutor(line).execute([
+      {
+        type: 'update',
+        options: { excludeChannels: ['points', 'defined', 'segments'] },
+        duration: 100,
+        easing: 'linear'
+      },
+      {
+        channel: ['points', 'segments'],
+        custom: TagPointsUpdate,
+        duration: 100,
+        easing: 'linear'
+      }
+    ]);
+
+    expect(line.attribute.stroke).toBe(oldStroke);
+    expect((line as any).baseAttributes.stroke).toBe(oldStroke);
+
+    tick(ticker, 50);
+    expect(line.attribute.stroke).not.toBe(oldStroke);
+    expect(line.attribute.stroke).not.toBe(nextStroke);
+    expect((line as any).baseAttributes.stroke).toBe(oldStroke);
+
+    tick(ticker, 50);
+    expect(line.attribute.stroke).toBe(nextStroke);
+    expect((line as any).baseAttributes.stroke).toBe(nextStroke);
+    expect(line.getFinalAttribute().stroke).toBe(nextStroke);
+  });
+
+  test('executor keeps from-only appear channels out of attrOutChannel static writes', () => {
+    const { group, ticker, graphicService } = createStageHarness('executor-from-only-appear-channel');
+    const final = {
+      x: 78.75,
+      y: 31.2,
+      y1: 260,
+      width: 202.5,
+      visible: true
+    };
+    const rect = createRect(final);
+    bindGraphicService(rect as any, graphicService);
+    rect.setFinalAttributes(final);
+    (rect as any).context = {
+      animationState: 'appear',
+      data: [{ value: 10 }],
+      diffAttrs: {
+        y: 260,
+        y1: 260
+      }
+    };
+    group.appendChild(rect);
+
+    new AnimateExecutor(rect).execute({
+      type: 'growHeightIn',
+      channel: {
+        y: { from: 260 },
+        y1: { from: 260 }
+      },
+      duration: 100,
+      easing: 'linear',
+      options: { overall: 260 }
+    });
+
+    expect((rect as any).baseAttributes.y).toBe(31.2);
+    expect((rect as any).baseAttributes.y1).toBe(260);
+    expect(rect.attribute.y).toBe(260);
+    expect(rect.attribute.y1).toBe(260);
+    expect(rect.getFinalAttribute().y).toBe(31.2);
+    expect(rect.getFinalAttribute().y1).toBe(260);
+
+    tick(ticker, 50);
+    expect(rect.attribute.y).toBeCloseTo(145.6, 5);
+    expect(rect.attribute.y1).toBe(260);
+    expect((rect as any).baseAttributes.y).toBe(31.2);
+    expect((rect as any).baseAttributes.y1).toBe(260);
+
+    tick(ticker, 50);
+    expect((rect as any).baseAttributes.y).toBe(31.2);
+    expect((rect as any).baseAttributes.y1).toBe(260);
+    expect(rect.attribute.y).toBe(31.2);
+    expect(rect.attribute.y1).toBe(260);
+    expect(rect.getFinalAttribute().y).toBe(31.2);
+    expect(rect.getFinalAttribute().y1).toBe(260);
+  });
+
+  test('executor update animation restores to resized final layout after completion', () => {
+    const { group, ticker, graphicService } = createStageHarness('executor-update-resize-static-truth');
+    const initial = {
+      x: 78.75,
+      y: 31.2,
+      y1: 260,
+      width: 202.5,
+      visible: true
+    };
+    const resized = {
+      x: 105,
+      y: 38.4,
+      y1: 320,
+      width: 270,
+      visible: true
+    };
+    const rect = createRect(initial);
+    bindGraphicService(rect as any, graphicService);
+    rect.setFinalAttributes(initial);
+    group.appendChild(rect);
+
+    (rect as any).context = {
+      animationState: 'update',
+      data: [{ value: 10 }],
+      diffAttrs: {
+        x: resized.x,
+        y: resized.y,
+        y1: resized.y1,
+        width: resized.width
+      },
+      finalAttrs: resized
+    };
+    rect.setFinalAttributes(resized);
+
+    new AnimateExecutor(rect).execute({
+      type: 'update',
+      duration: 100,
+      easing: 'linear'
+    });
+
+    expect((rect as any).baseAttributes.x).toBe(initial.x);
+    expect((rect as any).baseAttributes.y).toBe(initial.y);
+    expect((rect as any).baseAttributes.y1).toBe(initial.y1);
+    expect((rect as any).baseAttributes.width).toBe(initial.width);
+    expect(rect.getFinalAttribute().x).toBe(resized.x);
+    expect(rect.getFinalAttribute().y).toBe(resized.y);
+    expect(rect.getFinalAttribute().y1).toBe(resized.y1);
+    expect(rect.getFinalAttribute().width).toBe(resized.width);
+
+    tick(ticker, 50);
+    expect(rect.attribute.x).toBeCloseTo(91.875, 5);
+    expect(rect.attribute.y).toBeCloseTo(34.8, 5);
+    expect(rect.attribute.y1).toBeCloseTo(290, 5);
+    expect(rect.attribute.width).toBeCloseTo(236.25, 5);
+    expect((rect as any).baseAttributes.x).toBe(initial.x);
+    expect((rect as any).baseAttributes.y).toBe(initial.y);
+    expect((rect as any).baseAttributes.y1).toBe(initial.y1);
+    expect((rect as any).baseAttributes.width).toBe(initial.width);
+
+    tick(ticker, 50);
+    expect((rect as any).baseAttributes.x).toBe(resized.x);
+    expect((rect as any).baseAttributes.y).toBe(resized.y);
+    expect((rect as any).baseAttributes.y1).toBe(resized.y1);
+    expect((rect as any).baseAttributes.width).toBe(resized.width);
+    expect(rect.attribute.x).toBe(resized.x);
+    expect(rect.attribute.y).toBe(resized.y);
+    expect(rect.attribute.y1).toBe(resized.y1);
+    expect(rect.attribute.width).toBe(resized.width);
+    expect(rect.getFinalAttribute().x).toBe(resized.x);
+    expect(rect.getFinalAttribute().y).toBe(resized.y);
+    expect(rect.getFinalAttribute().y1).toBe(resized.y1);
+    expect(rect.getFinalAttribute().width).toBe(resized.width);
+  });
+
+  test('executor update uses the transient value before setAttributesAndPreventAnimate as its start frame', () => {
+    const { group, ticker, graphicService } = createStageHarness('executor-update-start-snapshot');
+    const initial = {
+      x: 0,
+      y: 50,
+      width: 10,
+      height: 10,
+      visible: true
+    };
+    const next = {
+      ...initial,
+      y: 3
+    };
+    const rect = createRect(initial);
+    bindGraphicService(rect as any, graphicService);
+    rect.setFinalAttributes(initial);
+    group.appendChild(rect);
+
+    const diffAttrs = {
+      y: next.y
+    };
+    (rect as any).context = {
+      animationState: 'update',
+      diffState: 'update',
+      data: [{ id: 'China_share_global_co2' }],
+      diffAttrs,
+      finalAttrs: next
+    };
+
+    rect.setAttributesAndPreventAnimate(diffAttrs);
+    rect.setFinalAttributes(next);
+
+    expect(Object.prototype.hasOwnProperty.call((rect as any).context, '__vrenderTransientFromAttrs')).toBe(false);
+    expect(Object.prototype.hasOwnProperty.call((rect as any).context, '__vrenderTransientFromAttrsDiffAttrs')).toBe(
+      false
+    );
+    expect(rect.attribute.y).toBe(next.y);
+    expect(rect.getFinalAttribute().y).toBe(next.y);
+
+    (rect as any).executeAnimation({
+      type: 'update',
+      duration: 300,
+      easing: 'linear'
+    });
+
+    tick(ticker, 150);
+    expect(rect.attribute.y).toBeGreaterThan(next.y);
+    expect(rect.attribute.y).toBeLessThan(initial.y);
+    expect(rect.attribute.y).toBeCloseTo(26.5, 5);
+    expect(rect.getFinalAttribute().y).toBe(next.y);
+
+    tick(ticker, 150);
+    expect(rect.attribute.y).toBe(next.y);
+    expect((rect as any).baseAttributes.y).toBe(next.y);
+    expect(rect.getFinalAttribute().y).toBe(next.y);
+  });
+
+  test('executor update consumes start snapshots after split planners replace diffAttrs by channel subset', () => {
+    const { group, ticker, graphicService } = createStageHarness('executor-update-split-start-snapshot');
+    const initial = {
+      x: 10,
+      y: 50,
+      width: 20,
+      height: 10,
+      visible: true
+    };
+    const next = {
+      ...initial,
+      x: 100,
+      y: 3,
+      height: 34
+    };
+    const rect = createRect(initial);
+    bindGraphicService(rect as any, graphicService);
+    rect.setFinalAttributes(initial);
+    group.appendChild(rect);
+
+    const diffAttrs = {
+      x: next.x,
+      y: next.y,
+      height: next.height
+    };
+    (rect as any).context = {
+      animationState: 'update',
+      diffState: 'update',
+      data: [{ id: 'China_share_global_co2' }],
+      diffAttrs,
+      finalAttrs: next
+    };
+
+    rect.setAttributesAndPreventAnimate(diffAttrs);
+    rect.setFinalAttributes(next);
+
+    (rect as any).context.diffAttrs = {
+      y: next.y,
+      height: next.height
+    };
+    (rect as any).executeAnimation({
+      type: 'update',
+      duration: 300,
+      easing: 'linear'
+    });
+
+    tick(ticker, 150);
+    expect(rect.attribute.y).toBeGreaterThan(next.y);
+    expect(rect.attribute.y).toBeLessThan(initial.y);
+    expect(rect.attribute.height).toBeGreaterThan(initial.height);
+    expect(rect.attribute.height).toBeLessThan(next.height);
+
+    tick(ticker, 150);
+    expect(rect.attribute.y).toBe(next.y);
+    expect(rect.attribute.height).toBe(next.height);
+
+    (rect as any).context.diffAttrs = {
+      x: next.x
+    };
+    (rect as any).executeAnimation({
+      type: 'update',
+      duration: 300,
+      easing: 'linear'
+    });
+
+    tick(ticker, 150);
+    expect(rect.attribute.x).toBeGreaterThan(initial.x);
+    expect(rect.attribute.x).toBeLessThan(next.x);
+
+    tick(ticker, 150);
+    expect(rect.attribute.x).toBe(next.x);
+    expect((rect as any).baseAttributes.x).toBe(next.x);
+    expect((rect as any).baseAttributes.y).toBe(next.y);
+    expect((rect as any).baseAttributes.height).toBe(next.height);
+    expect(rect.getFinalAttribute().x).toBe(next.x);
+    expect(rect.getFinalAttribute().y).toBe(next.y);
+    expect(rect.getFinalAttribute().height).toBe(next.height);
+  });
+
+  test('update animation captures start attrs when diff context is attached after prevent-animate handoff', () => {
+    ensureAnimationRuntime();
+
+    const oldY = 46.90909090909094;
+    const finalY = 3;
+    const rect = createRect({
+      x: 0,
+      y: oldY,
+      width: 10,
+      height: 34
+    });
+    rect.setFinalAttributes({ ...rect.attribute });
+
+    const diffAttrs = {
+      x: 974.1100285714286,
+      y: finalY,
+      height: 34
+    };
+
+    rect.setAttributesAndPreventAnimate(diffAttrs, false, {
+      type: AttributeUpdateType.DEFAULT
+    });
+
+    expect(rect.attribute.y).toBe(finalY);
+    expect((rect as any).baseAttributes.y).toBeCloseTo(oldY);
+
+    (rect as any).context = {
+      diffAttrs,
+      finalAttrs: diffAttrs
+    };
+
+    const animate = rect.animate().play(new Update(null, null, 300, 'linear', {} as any));
+    animate.advance(1);
+
+    const step = (animate as any)._firstStep;
+    expect(step.getFromProps().y).toBeCloseTo(oldY);
+    expect(step.getEndProps().y).toBe(finalY);
+    expect(rect.attribute.y).toBeGreaterThan(finalY);
+    expect(rect.attribute.y).toBeLessThan(oldY);
+
+    animate.advance(300);
+
+    expect(rect.attribute.y).toBe(finalY);
+    expect((rect as any).baseAttributes.y).toBe(finalY);
+    expect(rect.getFinalAttribute().y).toBe(finalY);
+  });
+
+  test.each([
+    ['style-only channel', ['fillOpacity']],
+    ['empty channel', []]
+  ])('animation state update keeps diffAttrs animated with %s', (_name, channel) => {
+    const { group, ticker, graphicService } = createStageHarness('state-update-channel-out-position');
+    const oldAttrs = {
+      x: 0,
+      y: 46.90909090909094,
+      width: 10,
+      height: 34,
+      fillOpacity: 1,
+      visible: true
+    };
+    const diffAttrs = {
+      x: 974.1100285714286,
+      y: 3,
+      height: 34
+    };
+    const finalAttrs = {
+      ...oldAttrs,
+      ...diffAttrs
+    };
+    const rect = createRect(oldAttrs);
+    bindGraphicService(rect as any, graphicService);
+    rect.setFinalAttributes(oldAttrs);
+    (rect as any).context = {
+      diffState: 'update',
+      animationState: 'update',
+      data: [{ id: 'China_share_global_co2' }],
+      diffAttrs,
+      finalAttrs
+    };
+    group.appendChild(rect);
+
+    rect.setFinalAttributes(finalAttrs);
+    (rect as any).applyAnimationState(
+      ['update'],
+      [
+        {
+          name: 'update_0',
+          animation: {
+            type: 'update',
+            duration: 300,
+            easing: 'linear',
+            channel
+          }
+        }
+      ]
+    );
+
+    tick(ticker, 1);
+
+    const animate = (rect as any)._animationStateManager.stateList[0].executor._animates[0];
+    const step = (animate as any)._firstStep;
+    expect(step.getFromProps().y).toBeCloseTo(oldAttrs.y, 6);
+    expect(step.getEndProps().y).toBeCloseTo(diffAttrs.y, 6);
+    expect(rect.attribute.y).toBeGreaterThan(diffAttrs.y);
+    expect(rect.attribute.y).toBeLessThan(oldAttrs.y);
+
+    tick(ticker, 299);
+
+    expect(rect.attribute.y).toBe(diffAttrs.y);
+    expect((rect as any).baseAttributes.y).toBe(diffAttrs.y);
+    expect(rect.getFinalAttribute().y).toBe(diffAttrs.y);
+  });
+
+  test('animation state update interrupts an in-flight update and restarts from the current transient frame', () => {
+    const { group, ticker, graphicService } = createStageHarness('state-update-interrupt-current-frame');
+    const initialY = 101.57790217791035;
+    const hiddenY = 0;
+    const symbol = createSymbol({
+      x: 31.5,
+      y: initialY,
+      size: 10,
+      visible: true
+    });
+    bindGraphicService(symbol as any, graphicService);
+    symbol.setFinalAttributes({ ...symbol.attribute });
+    group.appendChild(symbol);
+
+    const applyUpdate = (targetY: number) => {
+      const finalAttrs = {
+        x: 31.5,
+        y: targetY,
+        size: 10,
+        visible: true
+      };
+      (symbol as any).context = {
+        diffState: 'update',
+        animationState: 'update',
+        data: [{ id: 'China_Nail polish' }],
+        diffAttrs: { y: targetY },
+        finalAttrs
+      };
+      symbol.setFinalAttributes(finalAttrs);
+      (symbol as any).applyAnimationState(
+        ['update'],
+        [
+          {
+            name: 'update_0',
+            animation: {
+              type: 'update',
+              duration: 300,
+              easing: 'linear'
+            }
+          }
+        ]
+      );
+    };
+
+    applyUpdate(hiddenY);
+    tick(ticker, 75);
+    const currentY = symbol.attribute.y;
+    expect(currentY).toBeGreaterThan(hiddenY);
+    expect(currentY).toBeLessThan(initialY);
+
+    applyUpdate(initialY);
+    const activeUpdateStates = (symbol as any)._animationStateManager.stateList.filter(
+      (state: any) => state.state === 'update'
+    );
+    expect(activeUpdateStates).toHaveLength(1);
+    const secondAnimate = activeUpdateStates[0].executor._animates[0];
+
+    tick(ticker, 75);
+    expect((secondAnimate as any)._firstStep.getFromProps().y).toBeCloseTo(currentY, 6);
+    expect(symbol.attribute.y).toBeGreaterThan(currentY);
+    expect(symbol.attribute.y).toBeLessThan(initialY);
+
+    tick(ticker, 225);
+    expect(symbol.attribute.y).toBeCloseTo(initialY, 6);
+    expect((symbol as any).baseAttributes.y).toBeCloseTo(initialY, 6);
+    expect(symbol.getFinalAttribute().y).toBeCloseTo(initialY, 6);
+  });
+
+  test('animation state update preserves an in-flight update that owns different attrs', () => {
+    const { group, ticker, graphicService } = createStageHarness('state-update-disjoint-attrs');
+    const rect = createRect({
+      x: 0,
+      y: 100,
+      width: 10,
+      height: 10,
+      visible: true
+    });
+    bindGraphicService(rect as any, graphicService);
+    rect.setFinalAttributes({ ...rect.attribute });
+    group.appendChild(rect);
+
+    const applyUpdate = (diffAttrs: Record<string, any>, finalAttrs: Record<string, any>) => {
+      (rect as any).context = {
+        diffState: 'update',
+        animationState: 'update',
+        data: [{ id: 'disjoint-update' }],
+        diffAttrs,
+        finalAttrs
+      };
+      rect.setFinalAttributes(finalAttrs);
+      (rect as any).applyAnimationState(
+        ['update'],
+        [
+          {
+            name: 'update_0',
+            animation: {
+              type: 'update',
+              duration: 300,
+              easing: 'linear'
+            }
+          }
+        ]
+      );
+    };
+
+    applyUpdate({ x: 100 }, { ...rect.attribute, x: 100 });
+    tick(ticker, 75);
+    const currentX = rect.attribute.x;
+    expect(currentX).toBeGreaterThan(0);
+    expect(currentX).toBeLessThan(100);
+
+    applyUpdate({ y: 200 }, { x: 100, y: 200, width: 10, height: 10, visible: true });
+
+    const activeUpdateStates = (rect as any)._animationStateManager.stateList.filter(
+      (state: any) => state.state === 'update'
+    );
+    expect(activeUpdateStates).toHaveLength(2);
+
+    tick(ticker, 75);
+    expect(rect.attribute.x).toBeGreaterThan(currentX);
+    expect(rect.attribute.x).toBeLessThan(100);
+    expect(rect.attribute.y).toBeGreaterThan(100);
+    expect(rect.attribute.y).toBeLessThan(200);
+
+    tick(ticker, 225);
+    expect(rect.attribute.x).toBeCloseTo(100, 6);
+    expect(rect.attribute.y).toBeCloseTo(200, 6);
+    expect((rect as any).baseAttributes.x).toBeCloseTo(100, 6);
+    expect((rect as any).baseAttributes.y).toBeCloseTo(200, 6);
+    expect(rect.getFinalAttribute().x).toBeCloseTo(100, 6);
+    expect(rect.getFinalAttribute().y).toBeCloseTo(200, 6);
+  });
+
+  test('non-animation update commits diffAttrs without going through animation executor', () => {
+    const oldAttrs = {
+      x: 0,
+      y: 46.90909090909094,
+      width: 10,
+      height: 34,
+      fillOpacity: 1,
+      visible: true
+    };
+    const diffAttrs = {
+      x: 974.1100285714286,
+      y: 3,
+      height: 34
+    };
+    const finalAttrs = {
+      ...oldAttrs,
+      ...diffAttrs
+    };
+    const rect = createRect(oldAttrs);
+    rect.setFinalAttributes(oldAttrs);
+    (rect as any).context = {
+      diffState: 'update',
+      animationState: 'update',
+      data: [{ id: 'China_share_global_co2' }],
+      diffAttrs,
+      finalAttrs
+    };
+
+    rect.setAttributes(diffAttrs);
+    rect.setFinalAttributes(finalAttrs);
+
+    expect(rect.attribute.y).toBe(diffAttrs.y);
+    expect((rect as any).baseAttributes.y).toBe(diffAttrs.y);
+    expect(rect.getFinalAttribute().y).toBe(diffAttrs.y);
+    expect(rect.attribute.x).toBe(diffAttrs.x);
+    expect((rect as any).baseAttributes.x).toBe(diffAttrs.x);
+    expect(rect.getFinalAttribute().x).toBe(diffAttrs.x);
+    expect((rect as any)._animationStateManager).toBeUndefined();
+  });
+
+  test('superseded executor update cannot commit stale layout when it ends late', () => {
+    const { group, ticker, graphicService } = createStageHarness('executor-update-stale-end');
+    const threeItemLayout = {
+      x: 76.61875,
+      y: 0,
+      y1: 320,
+      width: 41.5125,
+      visible: true
+    };
+    const fourItemLayout = {
+      x: 73.54375,
+      y: 0,
+      y1: 320,
+      width: 32.2875,
+      visible: true
+    };
+    const rect = createRect(threeItemLayout);
+    bindGraphicService(rect as any, graphicService);
+    rect.setFinalAttributes(threeItemLayout);
+    group.appendChild(rect);
+
+    (rect as any).context = {
+      animationState: 'update',
+      data: [{ value: 10 }],
+      diffAttrs: {
+        x: fourItemLayout.x,
+        width: fourItemLayout.width
+      },
+      finalAttrs: fourItemLayout
+    };
+    rect.setFinalAttributes(fourItemLayout);
+    new AnimateExecutor(rect).execute({
+      type: 'update',
+      duration: 200,
+      easing: 'linear'
+    });
+
+    tick(ticker, 50);
+    expect(rect.attribute.x).toBeLessThan(threeItemLayout.x);
+    expect(rect.attribute.x).toBeGreaterThan(fourItemLayout.x);
+    expect(rect.attribute.width).toBeLessThan(threeItemLayout.width);
+    expect(rect.attribute.width).toBeGreaterThan(fourItemLayout.width);
+
+    (rect as any).context = {
+      animationState: 'update',
+      data: [{ value: 10 }],
+      diffAttrs: {
+        x: threeItemLayout.x,
+        width: threeItemLayout.width
+      },
+      finalAttrs: threeItemLayout
+    };
+    rect.setFinalAttributes(threeItemLayout);
+    new AnimateExecutor(rect).execute({
+      type: 'update',
+      duration: 100,
+      easing: 'linear'
+    });
+
+    tick(ticker, 100);
+    expect(rect.attribute.x).toBeCloseTo(threeItemLayout.x, 5);
+    expect(rect.attribute.width).toBeCloseTo(threeItemLayout.width, 5);
+    expect((rect as any).baseAttributes.x).toBeCloseTo(threeItemLayout.x, 5);
+    expect((rect as any).baseAttributes.width).toBeCloseTo(threeItemLayout.width, 5);
+    expect(rect.getFinalAttribute().x).toBeCloseTo(threeItemLayout.x, 5);
+    expect(rect.getFinalAttribute().width).toBeCloseTo(threeItemLayout.width, 5);
+
+    tick(ticker, 50);
+    expect(rect.attribute.x).toBeCloseTo(threeItemLayout.x, 5);
+    expect(rect.attribute.width).toBeCloseTo(threeItemLayout.width, 5);
+    expect((rect as any).baseAttributes.x).toBeCloseTo(threeItemLayout.x, 5);
+    expect((rect as any).baseAttributes.width).toBeCloseTo(threeItemLayout.width, 5);
+    expect(rect.getFinalAttribute().x).toBeCloseTo(threeItemLayout.x, 5);
+    expect(rect.getFinalAttribute().width).toBeCloseTo(threeItemLayout.width, 5);
+  });
+
+  test('executor update keeps parent clip path in sync with child transient layout', () => {
+    const { group, ticker, graphicService } = createStageHarness('executor-update-clip-path-sync');
+    const currentLayout = {
+      x: 266.8696428571429,
+      y: 404,
+      y1: 808,
+      width: 142.39017857142858,
+      visible: true
+    };
+    const finalLayout = {
+      x: 257.01875,
+      y: 404,
+      y1: 808,
+      width: 112.8375,
+      visible: true
+    };
+    const rect = createRect(currentLayout);
+    const clipRect = createRect(finalLayout);
+    bindGraphicService(rect as any, graphicService);
+    bindGraphicService(clipRect as any, graphicService);
+    rect.setFinalAttributes(currentLayout);
+    clipRect.setFinalAttributes(finalLayout);
+    group.appendChild(rect);
+    group.setAttributes({
+      clip: true,
+      path: [clipRect]
+    });
+
+    (rect as any).context = {
+      animationState: 'update',
+      data: [{ value: 10 }],
+      diffAttrs: {
+        x: finalLayout.x,
+        width: finalLayout.width
+      },
+      finalAttrs: finalLayout
+    };
+    rect.setFinalAttributes(finalLayout);
+
+    new AnimateExecutor(group).execute({
+      type: 'update',
+      duration: 300,
+      easing: 'linear'
+    });
+
+    expect(clipRect.attribute.x).toBeCloseTo(currentLayout.x, 5);
+    expect(clipRect.attribute.width).toBeCloseTo(currentLayout.width, 5);
+    expect((clipRect as any).baseAttributes.x).toBeCloseTo(finalLayout.x, 5);
+    expect((clipRect as any).baseAttributes.width).toBeCloseTo(finalLayout.width, 5);
+
+    tick(ticker, 20);
+    expect(rect.attribute.x).toBeLessThan(currentLayout.x);
+    expect(rect.attribute.x).toBeGreaterThan(finalLayout.x);
+    expect(rect.attribute.width).toBeLessThan(currentLayout.width);
+    expect(rect.attribute.width).toBeGreaterThan(finalLayout.width);
+    expect(clipRect.attribute.x).toBeCloseTo(rect.attribute.x, 5);
+    expect(clipRect.attribute.width).toBeCloseTo(rect.attribute.width, 5);
+    expect((clipRect as any).baseAttributes.x).toBeCloseTo(finalLayout.x, 5);
+    expect((clipRect as any).baseAttributes.width).toBeCloseTo(finalLayout.width, 5);
+
+    tick(ticker, 280);
+    expect(rect.attribute.x).toBeCloseTo(finalLayout.x, 5);
+    expect(rect.attribute.width).toBeCloseTo(finalLayout.width, 5);
+    expect(clipRect.attribute.x).toBeCloseTo(finalLayout.x, 5);
+    expect(clipRect.attribute.width).toBeCloseTo(finalLayout.width, 5);
+    expect((clipRect as any).baseAttributes.x).toBeCloseTo(finalLayout.x, 5);
+    expect((clipRect as any).baseAttributes.width).toBeCloseTo(finalLayout.width, 5);
+    expect(clipRect.getFinalAttribute().x).toBeCloseTo(finalLayout.x, 5);
+    expect(clipRect.getFinalAttribute().width).toBeCloseTo(finalLayout.width, 5);
+  });
+
+  test('executor update rechecks parent clip path when it is replaced after bind', () => {
+    const { group, ticker, graphicService } = createStageHarness('executor-update-replaced-clip-path');
+    const currentLayout = {
+      x: 266.8696428571429,
+      y: 404,
+      y1: 808,
+      width: 142.39017857142858,
+      visible: true
+    };
+    const finalLayout = {
+      x: 257.01875,
+      y: 404,
+      y1: 808,
+      width: 112.8375,
+      visible: true
+    };
+    const rect = createRect(currentLayout);
+    const staleClipRect = createRect(currentLayout);
+    bindGraphicService(rect as any, graphicService);
+    bindGraphicService(staleClipRect as any, graphicService);
+    rect.setFinalAttributes(currentLayout);
+    staleClipRect.setFinalAttributes(currentLayout);
+    group.appendChild(rect);
+    group.setAttributes({
+      clip: true,
+      path: [staleClipRect]
+    });
+
+    (rect as any).context = {
+      animationState: 'update',
+      data: [{ value: 10 }],
+      diffAttrs: {
+        x: finalLayout.x,
+        width: finalLayout.width
+      },
+      finalAttrs: finalLayout
+    };
+    rect.setFinalAttributes(finalLayout);
+
+    new AnimateExecutor(group).execute({
+      type: 'update',
+      duration: 300,
+      easing: 'linear'
+    });
+
+    const finalClipRect = createRect(finalLayout);
+    bindGraphicService(finalClipRect as any, graphicService);
+    finalClipRect.setFinalAttributes(finalLayout);
+    group.setAttributes({
+      clip: true,
+      path: [finalClipRect]
+    });
+
+    tick(ticker, 20);
+    expect(rect.attribute.x).toBeLessThan(currentLayout.x);
+    expect(rect.attribute.x).toBeGreaterThan(finalLayout.x);
+    expect(rect.attribute.width).toBeLessThan(currentLayout.width);
+    expect(rect.attribute.width).toBeGreaterThan(finalLayout.width);
+    expect(finalClipRect.attribute.x).toBeCloseTo(rect.attribute.x, 5);
+    expect(finalClipRect.attribute.width).toBeCloseTo(rect.attribute.width, 5);
+    expect((finalClipRect as any).baseAttributes.x).toBeCloseTo(finalLayout.x, 5);
+    expect((finalClipRect as any).baseAttributes.width).toBeCloseTo(finalLayout.width, 5);
+  });
+
+  test('executor update does not sync unrelated parent clip paths', () => {
+    const { group, ticker, graphicService } = createStageHarness('executor-update-unrelated-clip-path');
+    const currentLayout = {
+      x: 100,
+      y: 0,
+      y1: 100,
+      width: 80,
+      visible: true
+    };
+    const finalLayout = {
+      x: 120,
+      y: 0,
+      y1: 100,
+      width: 40,
+      visible: true
+    };
+    const unrelatedClipLayout = {
+      x: 0,
+      y: 0,
+      y1: 100,
+      width: 300,
+      visible: true
+    };
+    const rect = createRect(currentLayout);
+    const clipRect = createRect(unrelatedClipLayout);
+    bindGraphicService(rect as any, graphicService);
+    bindGraphicService(clipRect as any, graphicService);
+    rect.setFinalAttributes(currentLayout);
+    clipRect.setFinalAttributes(unrelatedClipLayout);
+    group.appendChild(rect);
+    group.setAttributes({
+      clip: true,
+      path: [clipRect]
+    });
+
+    (rect as any).context = {
+      animationState: 'update',
+      data: [{ value: 10 }],
+      diffAttrs: {
+        x: finalLayout.x,
+        width: finalLayout.width
+      },
+      finalAttrs: finalLayout
+    };
+    rect.setFinalAttributes(finalLayout);
+
+    new AnimateExecutor(group).execute({
+      type: 'update',
+      duration: 100,
+      easing: 'linear'
+    });
+
+    tick(ticker, 50);
+    expect(rect.attribute.x).toBeCloseTo(110, 5);
+    expect(rect.attribute.width).toBeCloseTo(60, 5);
+    expect(clipRect.attribute.x).toBeCloseTo(unrelatedClipLayout.x, 5);
+    expect(clipRect.attribute.width).toBeCloseTo(unrelatedClipLayout.width, 5);
+    expect((clipRect as any).baseAttributes.x).toBeCloseTo(unrelatedClipLayout.x, 5);
+    expect((clipRect as any).baseAttributes.width).toBeCloseTo(unrelatedClipLayout.width, 5);
+  });
+
+  test('TagPointsUpdate commits resized final points as static truth after update animation', () => {
+    const { group, ticker, graphicService } = createStageHarness('tag-points-update-static-truth');
+    const oldPoints = pointList([78.83, 183.94, 289.06, 394.17], [135, 108, 81, 54]);
+    const resizedPoints = pointList([112.17, 261.72, 411.28, 560.83], [135, 108, 81, 54]);
+    const line = createLine({
+      points: oldPoints,
+      stroke: 'blue',
+      lineWidth: 2
+    });
+    bindGraphicService(line as any, graphicService);
+    line.setFinalAttributes({ points: resizedPoints });
+    group.appendChild(line);
+
+    line.animate().play(new TagPointsUpdate(null, null, 100, 'linear'));
+
+    expect((line as any).baseAttributes.points[0].x).toBe(oldPoints[0].x);
+    expect(line.getFinalAttribute().points[0].x).toBe(resizedPoints[0].x);
+
+    tick(ticker, 50);
+    expect(line.attribute.points[0].x).toBeCloseTo((oldPoints[0].x + resizedPoints[0].x) / 2, 5);
+    expect((line as any).baseAttributes.points[0].x).toBe(oldPoints[0].x);
+    expect(line.getFinalAttribute().points[0].x).toBe(resizedPoints[0].x);
+
+    tick(ticker, 50);
+    expect(line.attribute.points.map(point => point.x)).toEqual(resizedPoints.map(point => point.x));
+    expect((line as any).baseAttributes.points.map((point: any) => point.x)).toEqual(
+      resizedPoints.map(point => point.x)
+    );
+    expect(line.getFinalAttribute().points.map((point: any) => point.x)).toEqual(resizedPoints.map(point => point.x));
+    expect(Object.prototype.hasOwnProperty.call((line as any).baseAttributes, 'segments')).toBe(false);
+    expect(Object.prototype.hasOwnProperty.call(line.attribute, 'segments')).toBe(false);
+  });
+
+  test('TagPointsUpdate can read point targets from update context without setFinalAttributes', () => {
+    const { group, ticker, graphicService } = createStageHarness('tag-points-update-context-target');
+    const oldPoints = pointList([78.83, 183.94, 289.06], [135, 108, 81]);
+    const resizedPoints = pointList([112.17, 261.72, 411.28, 560.83, 710.39], [135, 108, 81, 54, 27]);
+    const line = createLine({
+      points: oldPoints,
+      stroke: 'blue',
+      lineWidth: 2
+    });
+    bindGraphicService(line as any, graphicService);
+    (line as any).context = {
+      animationState: 'update',
+      diffState: 'update',
+      diffAttrs: {
+        points: resizedPoints
+      },
+      finalAttrs: {
+        points: resizedPoints,
+        stroke: 'blue',
+        lineWidth: 2
+      }
+    };
+    group.appendChild(line);
+
+    line.animate().play(new TagPointsUpdate(null, null, 100, 'linear'));
+
+    tick(ticker, 50);
+    expect(line.attribute.points.length).toBe(resizedPoints.length);
+    expect(line.attribute.points[0].x).toBeCloseTo((oldPoints[0].x + resizedPoints[0].x) / 2, 5);
+    expect((line as any).baseAttributes.points.length).toBe(oldPoints.length);
+
+    tick(ticker, 50);
+    expect(line.attribute.points.map(point => point.x)).toEqual(resizedPoints.map(point => point.x));
+    expect((line as any).baseAttributes.points.map((point: any) => point.x)).toEqual(
+      resizedPoints.map(point => point.x)
+    );
+    expect(line.getFinalAttribute().points.map((point: any) => point.x)).toEqual(resizedPoints.map(point => point.x));
+  });
+
+  test('TagPointsUpdate commits resized final segments as static truth after update animation', () => {
+    const { group, ticker, graphicService } = createStageHarness('tag-points-update-segments-static-truth');
+    const oldSegments = [{ points: pointList([78.83, 183.94, 289.06, 394.17], [135, 108, 81, 54]) }];
+    const resizedSegments = [{ points: pointList([112.17, 261.72, 411.28, 560.83], [135, 108, 81, 54]) }];
+    const line = createLine({
+      segments: oldSegments,
+      stroke: 'blue',
+      lineWidth: 2
+    });
+    bindGraphicService(line as any, graphicService);
+    line.setFinalAttributes({ segments: resizedSegments });
+    group.appendChild(line);
+
+    line.animate().play(new TagPointsUpdate(null, null, 100, 'linear'));
+
+    tick(ticker, 50);
+    expect(line.attribute.segments[0].points[0].x).toBeCloseTo(
+      (oldSegments[0].points[0].x + resizedSegments[0].points[0].x) / 2,
+      5
+    );
+    expect((line as any).baseAttributes.segments[0].points[0].x).toBe(oldSegments[0].points[0].x);
+    expect(line.getFinalAttribute().segments[0].points[0].x).toBe(resizedSegments[0].points[0].x);
+
+    tick(ticker, 50);
+    expect(line.attribute.segments[0].points.map(point => point.x)).toEqual(
+      resizedSegments[0].points.map(point => point.x)
+    );
+    expect((line as any).baseAttributes.segments[0].points.map((point: any) => point.x)).toEqual(
+      resizedSegments[0].points.map(point => point.x)
+    );
+    expect(line.getFinalAttribute().segments[0].points.map((point: any) => point.x)).toEqual(
+      resizedSegments[0].points.map(point => point.x)
+    );
+    expect(Object.prototype.hasOwnProperty.call((line as any).baseAttributes, 'points')).toBe(false);
+    expect(Object.prototype.hasOwnProperty.call(line.attribute, 'points')).toBe(false);
+  });
+
+  test('switching states mid-animation restores to the new static truth and blocks late writes', () => {
+    const { group, ticker, graphicService } = createStageHarness('state-conflict');
+    const rect = createAnimatedRect(graphicService);
+    group.appendChild(rect);
+
+    rect.states = {
+      hover: { opacity: 0.2 },
+      selected: { opacity: 0.8 }
+    } as any;
+    rect.stateAnimateConfig = {
+      duration: 100,
+      easing: 'linear'
+    } as any;
+
+    rect.useStates(['hover'], true);
+    tick(ticker, 50);
+    expect(rect.attribute.opacity).toBeCloseTo(0.6, 5);
+
+    rect.useStates(['selected'], true);
+    tick(ticker, 50);
+    expect(rect.attribute.opacity).toBeCloseTo(0.7, 5);
+
+    tick(ticker, 50);
+    expect(rect.attribute.opacity).toBeCloseTo(0.8, 5);
+    expect((rect as any).baseAttributes.opacity).toBe(1);
+
+    tick(ticker, 50);
+    expect(rect.attribute.opacity).toBeCloseTo(0.8, 5);
+  });
+
+  test('state switch wins over an in-flight self-driven animation on the same attribute', () => {
+    const { group, ticker, graphicService } = createStageHarness('self-vs-state');
+    const rect = createAnimatedRect(graphicService);
+    group.appendChild(rect);
+
+    rect.states = {
+      hover: { opacity: 0.2 }
+    } as any;
+    rect.stateAnimateConfig = {
+      duration: 100,
+      easing: 'linear'
+    } as any;
+
+    rect.animate().to({ opacity: 0 }, 100, 'linear');
+    tick(ticker, 50);
+    expect(rect.attribute.opacity).toBeCloseTo(0.5, 5);
+
+    rect.useStates(['hover'], true);
+    tick(ticker, 50);
+    expect(rect.attribute.opacity).toBeCloseTo(0.2, 5);
+
+    tick(ticker, 50);
+    expect(rect.attribute.opacity).toBeCloseTo(0.2, 5);
+    expect((rect as any).baseAttributes.opacity).toBe(1);
+
+    tick(ticker, 50);
+    expect(rect.attribute.opacity).toBeCloseTo(0.2, 5);
+  });
+
+  test('removeChild and removeAllChild do not crash and prevent late animation writes', () => {
+    const { group, ticker, graphicService } = createStageHarness('tree-remove');
+    const rect = createAnimatedRect(graphicService);
+    const other = createAnimatedRect(graphicService);
+    group.appendChild(rect);
+    group.appendChild(other);
+
+    rect.animate().to({ x: 100 }, 100, 'linear');
+    tick(ticker, 50);
+    expect(rect.attribute.x).toBeCloseTo(50, 5);
+
+    expect(() => group.removeChild(rect)).not.toThrow();
+    const detachedValue = rect.attribute.x;
+    tick(ticker, 50);
+    expect(rect.attribute.x).toBe(detachedValue);
+    expect((rect as any).baseAttributes.x).toBe(0);
+
+    other.animate().to({ x: 40 }, 100, 'linear');
+    tick(ticker, 50);
+    expect(() => group.removeAllChild()).not.toThrow();
+    const removedValue = other.attribute.x;
+    tick(ticker, 50);
+    expect(other.attribute.x).toBe(removedValue);
+    expect((other as any).baseAttributes.x).toBe(0);
+  });
+
+  test('setStage(null) stops stage-bound animations and prevents late writes from the old timeline', () => {
+    const stageA = createStageHarness('stage-a');
+    const rect = createAnimatedRect(stageA.graphicService);
+    stageA.group.appendChild(rect);
+
+    rect.animate().to({ x: 100 }, 100, 'linear');
+    tick(stageA.ticker, 50);
+    expect(rect.attribute.x).toBeCloseTo(50, 5);
+
+    rect.setStage(null as any, null as any);
+    expect(rect.attribute.x).toBe(0);
+    tick(stageA.ticker, 50);
+    expect(rect.attribute.x).toBe(0);
+  });
+
+  test('reparent restores static truth and prevents both old and new stage timelines from writing stale values', () => {
+    const stageA = createStageHarness('stage-a');
+    const stageB = createStageHarness('stage-b');
+    const rect = createAnimatedRect(stageA.graphicService);
+    stageA.group.appendChild(rect);
+
+    rect.animate().to({ x: 100 }, 100, 'linear');
+    tick(stageA.ticker, 50);
+    expect(rect.attribute.x).toBeCloseTo(50, 5);
+
+    stageB.group.appendChild(rect);
+    expect(rect.attribute.x).toBe(0);
+    tick(stageA.ticker, 50);
+    expect(rect.attribute.x).toBe(0);
+
+    tick(stageB.ticker, 50);
+    expect(rect.attribute.x).toBe(0);
+    expect((rect as any).baseAttributes.x).toBe(0);
+  });
+});

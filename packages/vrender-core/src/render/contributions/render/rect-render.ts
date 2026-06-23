@@ -1,10 +1,7 @@
 import { isArray } from '@visactor/vutils';
-import { inject, injectable, named } from '../../../common/inversify-lite';
 import { getTheme } from '../../../graphic/theme';
 import { RECT_NUMBER_TYPE } from '../../../graphic/constants';
 import { createRectPath } from '../../../common/shape/rect';
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { ContributionProvider } from '../../../common/contribution-provider';
 import type {
   IGraphicAttribute,
   IContext2d,
@@ -19,7 +16,6 @@ import type {
   IContributionProvider,
   IRectGraphicAttribute
 } from '../../../interface';
-import { RectRenderContribution } from './contributions/constants';
 import { rectFillVisible, rectStrokeVisible, runFill, runStroke } from './utils';
 import { BaseRender } from './base-render';
 import {
@@ -28,17 +24,12 @@ import {
   defaultRectTextureRenderContribution
 } from './contributions';
 
-@injectable()
 export class DefaultCanvasRectRender extends BaseRender<IRect> implements IGraphicRender {
   type = 'rect';
   numberType: number = RECT_NUMBER_TYPE;
   tempTheme: Required<IRectGraphicAttribute>;
 
-  constructor(
-    @inject(ContributionProvider)
-    @named(RectRenderContribution)
-    protected readonly graphicRenderContributions: IContributionProvider<IRectRenderContribution>
-  ) {
+  constructor(protected readonly graphicRenderContributions: IContributionProvider<IRectRenderContribution>) {
     super();
     this.builtinContributions = [
       defaultRectRenderContribution,

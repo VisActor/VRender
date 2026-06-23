@@ -7,6 +7,7 @@ const { spawnSync } = require('child_process')
 const fs = require('fs')
 const path = require('path')
 const checkAndUpdateNextBump = require('./version-policies');
+const { buildTagPackages } = require('./build-tag-packages');
 
 function getPackageJson(pkgJsonPath) {
   const pkgJson = fs.readFileSync(pkgJsonPath, { encoding: 'utf-8' })
@@ -28,10 +29,7 @@ function run() {
 
 
   // 2. build all the packages
-  spawnSync('sh', ['-c', `rush build --only tag:package`], {
-    stdio: 'inherit',
-    shell: false,
-  });
+  buildTagPackages();
 
   // 3. publish to npm
   spawnSync('sh', ['-c', 'rush publish --publish --include-all'], {
@@ -46,14 +44,14 @@ function run() {
   });
 
   const rushJson = getPackageJson(path.join(__dirname, '../../rush.json'));
-  const package = rushJson.projects.find((project) => project.name === '@visactor/vrender');
+  const package = rushJson.projects.find((project) => project.packageName === '@visactor/vrender');
 
   if (package) {
-    const pkgJsonPath = path.join(__dirname, '../../', project.projectFolder, 'package.json')
+    const pkgJsonPath = path.join(__dirname, '../../', package.projectFolder, 'package.json')
     const pkgJson = getPackageJson(pkgJsonPath)
 
     // 5. add tag
-    spawnSync('sh', ['-c', `git tag v${pkgJson.versopn}`], {
+    spawnSync('sh', ['-c', `git tag v${pkgJson.version}`], {
       stdio: 'inherit',
       shell: false,
     });
@@ -79,4 +77,3 @@ function run() {
 }
 
 run()
-

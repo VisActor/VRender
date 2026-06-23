@@ -1,5 +1,6 @@
-import { createStage, createCircle, defaultTicker } from '@visactor/vrender';
+import { createCircle, defaultTicker } from '@visactor/vrender';
 import { createGroup } from '@visactor/vrender';
+import { createBrowserPageStage } from '../page-stage';
 
 export const page = () => {
   const colors = [
@@ -25,7 +26,7 @@ export const page = () => {
     'lemonchiffon',
     'lightblue'
   ];
-  const stage = createStage({
+  const stage = createBrowserPageStage({
     canvas: 'main',
     autoRender: true
   });

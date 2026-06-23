@@ -1,6 +1,9 @@
 import { EventEmitter } from '@visactor/vutils';
-import type { IStage, ITimeline } from '@visactor/vrender-core';
-import { application, PerformanceRAF, type ITickHandler, type ITicker, STATUS } from '@visactor/vrender-core';
+import type { IStage, ITickHandler, ITicker, ITimeline } from '@visactor/vrender-core';
+import { application } from '@visactor/vrender-core/application';
+import { PerformanceRAF } from '@visactor/vrender-core/common/performance-raf';
+import { STATUS } from '@visactor/vrender-core/event/constant';
+import '@visactor/vrender-core/global';
 
 const performanceRAF = new PerformanceRAF();
 

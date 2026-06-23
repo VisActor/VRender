@@ -1,0 +1,16 @@
+export { arcModule } from '../render/contributions/render/arc-module';
+export { arc3dModule } from '../render/contributions/render/arc3d-module';
+export { areaModule } from '../render/contributions/render/area-module';
+export { circleModule } from '../render/contributions/render/circle-module';
+export { glyphModule } from '../render/contributions/render/glyph-module';
+export { imageModule } from '../render/contributions/render/image-module';
+export { lineModule } from '../render/contributions/render/line-module';
+export { pathModule } from '../render/contributions/render/path-module';
+export { polygonModule } from '../render/contributions/render/polygon-module';
+export { pyramid3dModule } from '../render/contributions/render/pyramid3d-module';
+export { rectModule } from '../render/contributions/render/rect-module';
+export { rect3dModule } from '../render/contributions/render/rect3d-module';
+export { richtextModule } from '../render/contributions/render/richtext-module';
+export { starModule } from '../render/contributions/render/star-module';
+export { symbolModule } from '../render/contributions/render/symbol-module';
+export { textModule } from '../render/contributions/render/text-module';

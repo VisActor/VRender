@@ -1,32 +1,15 @@
-module.exports = {
-  testEnvironment: '../../share/jest-config/jest-environment-jsdom-26.js',
-  testEnvironmentOptions: {
-    pretendToBeVisual: true
-  },
-  testTimeout: 30000,
+const path = require('path');
+const { createStablePackageJestConfig } = require('../../share/jest-config/create-package-config');
+
+module.exports = createStablePackageJestConfig({
+  environment: 'jsdom',
   testRegex: '/__tests__/.*test\\.ts?$',
   moduleFileExtensions: ['ts', 'js', 'json'],
   setupFilesAfterEnv: ['jest-extended/all'],
-  preset: 'ts-jest',
-  silent: true,
-  useStderr: false,
-  globals: {
-    'ts-jest': {
-      tsconfig: {
-        resolveJsonModule: true,
-        esModuleInterop: true,
-        experimentalDecorators: true,
-        module: 'ESNext',
-        sourceMap: true
-      }
-    },
-    __DEV__: true
-  },
-  setupFiles: ['../../share/jest-config/setup-jsdom-canvas.js', './setup-mock.js'],
-  verbose: true,
-  coverageReporters: ['json-summary', 'lcov', 'text'],
+  setupFiles: ['../../share/jest-config/browser-globals.js', './setup-mock.js'],
+  tsconfig: './tsconfig.test.json',
   coveragePathIgnorePatterns: ['node_modules', '__tests__', 'interface.ts', '.d.ts', 'typings'],
-  testPathIgnorePatterns: ['__tests__/browser'],
+  testPathIgnorePatterns: ['__tests__/browser', '__tests__/electron'],
   collectCoverageFrom: [
     '**/src/**',
     '!**/cjs/**',
@@ -45,5 +28,18 @@ module.exports = {
       lines: 80,
       statements: 80
     }
+  },
+  moduleNameMapper: {
+    '^@visactor/vrender-core/event/constant$': path.resolve(__dirname, './src/event/public-constant.ts'),
+    '^@visactor/vrender-core/render/draw-interceptor$': path.resolve(
+      __dirname,
+      './src/render/contributions/render/draw-interceptor.ts'
+    ),
+    '^@visactor/vrender-core/render/symbol$': path.resolve(
+      __dirname,
+      './src/render/contributions/render/symbol.ts'
+    ),
+    '^@visactor/vrender-core/(.*)$': path.resolve(__dirname, './src/$1'),
+    '^@visactor/vrender-core$': path.resolve(__dirname, './src/index.ts')
   }
-};
+});

@@ -1,5 +1,7 @@
 import type { EasingType } from '@visactor/vrender-core';
+import { AttributeUpdateType } from '@visactor/vrender-core/event/constant';
 import { ACustomAnimate } from './custom-animate';
+import { applyAnimationTransientAttributes } from './transient';
 
 export class FromTo extends ACustomAnimate<Record<string, number>> {
   declare valid: boolean;
@@ -9,6 +11,10 @@ export class FromTo extends ACustomAnimate<Record<string, number>> {
   constructor(from: null, to: null, duration: number, easing: EasingType, params?: any) {
     super(from, to, duration, easing, params);
     this.from = from ?? {};
+  }
+
+  protected applyTransientFromAttributes(): void {
+    applyAnimationTransientAttributes(this.target, this.from, AttributeUpdateType.ANIMATE_START);
   }
 
   onBind(): void {
@@ -21,15 +27,12 @@ export class FromTo extends ACustomAnimate<Record<string, number>> {
       }
     });
 
-    const finalAttribute = this.target.getFinalAttribute();
     // 如果入场动画，那么需要设置属性
     if (this.target.context?.animationState === 'appear') {
-      if (finalAttribute) {
-        this.target.setAttributes(finalAttribute);
-      }
+      (this.target as any).applyFinalAttributeToAttribute();
     }
-    if (this.params.controlOptions?.immediatelyApply !== false) {
-      this.target.setAttributes(this.from);
+    if (this.params?.controlOptions?.immediatelyApply !== false) {
+      this.applyTransientFromAttributes();
     }
   }
 
@@ -43,17 +46,16 @@ export class FromTo extends ACustomAnimate<Record<string, number>> {
       });
     // TODO：比较hack
     // 如果是入场动画，那么还需要设置属性
-    // if (this.target.context?.animationState === 'appear') {
-    //   // 用于入场的时候设置属性（因为有动画的时候VChart不会再设置属性了）
-    //   const finalAttribute = this.target.getFinalAttribute();
-    //   this.target.setAttributes(finalAttribute);
-    // }
-    this.target.setAttributes(this.from);
+    this.applyTransientFromAttributes();
   }
 
   deleteSelfAttr(key: string): void {
-    super.deleteSelfAttr(key);
-    delete this.from[key];
+    this.deleteSelfAttrs([key]);
+  }
+
+  deleteSelfAttrs(keys: string[]): void {
+    super.deleteSelfAttrs(keys);
+    this.from = this.removeKeysFromRecord(this.from, keys);
   }
 
   /**
@@ -68,18 +70,7 @@ export class FromTo extends ACustomAnimate<Record<string, number>> {
     }
     // 应用缓动函数
     const easedRatio = this.easing(ratio);
-    this.animate.interpolateUpdateFunction
-      ? this.animate.interpolateUpdateFunction(this.from, this.props, easedRatio, this, this.target)
-      : this.interpolateUpdateFunctions.forEach((func, index) => {
-          // 如果这个属性被屏蔽了，直接跳过
-          if (!this.animate.validAttr(this.propKeys[index])) {
-            return;
-          }
-          const key = this.propKeys[index];
-          const fromValue = this.from[key];
-          const toValue = this.props[key];
-          func(key, fromValue, toValue, easedRatio, this, this.target);
-        });
+    this.runInterpolateUpdate(this.from, this.props, easedRatio);
     this.onUpdate(end, easedRatio, out);
     this.syncAttributeUpdate();
   }

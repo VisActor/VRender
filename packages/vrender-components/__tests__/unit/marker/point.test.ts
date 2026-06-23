@@ -1,17 +1,15 @@
 import type { Group, IGraphic, Stage } from '@visactor/vrender-core';
-import type { ArcSegment, Tag, Segment } from '../../../src';
-import { MarkPoint, registerMarkPointAnimate } from '../../../src';
+import { MarkPoint, registerMarkPointAnimate, type ArcSegment, type Tag, type Segment } from '../../../src';
 import { createCanvas } from '../../util/dom';
-import { createStage } from '../../util/vrender';
-import { initBrowserEnv } from '@visactor/vrender-kits';
-initBrowserEnv();
+import { createTestStage } from '../../util/vrender';
+
 registerMarkPointAnimate();
 
 describe('Marker', () => {
   let stage: Stage;
   beforeAll(() => {
     createCanvas(document.body, 'main');
-    stage = createStage('main');
+    stage = createTestStage('main');
   });
 
   afterAll(() => {

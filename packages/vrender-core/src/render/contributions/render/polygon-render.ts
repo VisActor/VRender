@@ -1,5 +1,4 @@
 import { isArray } from '@visactor/vutils';
-import { inject, injectable, named } from '../../../common/inversify-lite';
 import { getTheme } from '../../../graphic/theme';
 import { POLYGON_NUMBER_TYPE } from '../../../graphic/constants';
 import type {
@@ -17,24 +16,17 @@ import type {
 } from '../../../interface';
 import { drawPolygon, drawRoundedPolygon } from '../../../common/polygon';
 import { PolygonRenderContribution } from './contributions/constants';
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { ContributionProvider } from '../../../common/contribution-provider';
 import { BaseRender } from './base-render';
 import {
   defaultPolygonBackgroundRenderContribution,
   defaultPolygonTextureRenderContribution
 } from './contributions/polygon-contribution-render';
 
-@injectable()
 export class DefaultCanvasPolygonRender extends BaseRender<IPolygon> implements IGraphicRender {
   type: 'polygon';
   numberType: number = POLYGON_NUMBER_TYPE;
 
-  constructor(
-    @inject(ContributionProvider)
-    @named(PolygonRenderContribution)
-    protected readonly graphicRenderContributions: IContributionProvider<IPolygonRenderContribution>
-  ) {
+  constructor(protected readonly graphicRenderContributions: IContributionProvider<IPolygonRenderContribution>) {
     super();
     this.builtinContributions = [defaultPolygonBackgroundRenderContribution, defaultPolygonTextureRenderContribution];
     this.init(graphicRenderContributions);

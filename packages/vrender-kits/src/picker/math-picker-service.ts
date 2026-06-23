@@ -1,15 +1,6 @@
 import type { IMatrix, IPointLike } from '@visactor/vutils';
 // eslint-disable-next-line
-import {
-  ContributionProvider,
-  inject,
-  injectable,
-  named,
-  DefaultPickService,
-  EmptyContext2d,
-  PickItemInterceptor,
-  PickServiceInterceptor
-} from '@visactor/vrender-core';
+import { DefaultPickService, EmptyContext2d } from '@visactor/vrender-core';
 import type {
   ICanvas,
   IContext2d,
@@ -28,7 +19,6 @@ import { MathPickerContribution } from './contributions/constants';
 
 // 默认的pick-service，提供基本的最优选中策略，尽量不需要用户自己实现contribution
 // 用户可以写plugin
-@injectable()
 export class DefaultMathPickerService extends DefaultPickService implements IPickerService {
   declare type: 'default';
   // pcik canvas
@@ -37,15 +27,9 @@ export class DefaultMathPickerService extends DefaultPickService implements IPic
   declare pickerMap: Map<number, IGraphicPicker>;
 
   constructor(
-    @inject(ContributionProvider)
-    @named(MathPickerContribution)
     protected readonly contributions: IContributionProvider<IGraphicPicker>,
     // 拦截器
-    @inject(ContributionProvider)
-    @named(PickItemInterceptor)
     protected readonly pickItemInterceptorContributions: IContributionProvider<IPickItemInterceptorContribution>,
-    @inject(ContributionProvider)
-    @named(PickServiceInterceptor)
     protected readonly pickServiceInterceptorContributions: IContributionProvider<IPickServiceInterceptorContribution>
   ) {
     super(pickItemInterceptorContributions, pickServiceInterceptorContributions);

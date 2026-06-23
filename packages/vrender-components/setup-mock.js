@@ -19,7 +19,7 @@ const {
   WrapText,
   graphicCreator,
   arcModule,
-  container,
+  getLegacyBindingContext,
   rectModule,
   lineModule,
   areaModule,
@@ -37,33 +37,33 @@ const {
   pyramid3dModule
 } = require('@visactor/vrender-core');
 const {
-  arc3dCanvasPickModule,
-  arcCanvasPickModule,
-  arcMathPickModule,
-  areaCanvasPickModule,
-  areaMathPickModule,
-  circleCanvasPickModule,
-  circleMathPickModule,
-  glyphCanvasPickModule,
-  glyphMathPickModule,
-  imageCanvasPickModule,
-  imageMathPickModule,
-  lineCanvasPickModule,
-  lineMathPickModule,
-  pathCanvasPickModule,
-  pathMathPickModule,
-  polygonCanvasPickModule,
-  polygonMathPickModule,
-  pyramid3dCanvasPickModule,
-  rect3dCanvasPickModule,
-  rectCanvasPickModule,
-  rectMathPickModule,
-  richTextMathPickModule,
-  richtextCanvasPickModule,
-  symbolCanvasPickModule,
-  symbolMathPickModule,
-  textCanvasPickModule,
-  textMathPickModule
+  bindArc3dCanvasPickerContribution,
+  bindArcCanvasPickerContribution,
+  bindArcMathPickerContribution,
+  bindAreaCanvasPickerContribution,
+  bindAreaMathPickerContribution,
+  bindCircleCanvasPickerContribution,
+  bindCircleMathPickerContribution,
+  bindGlyphCanvasPickerContribution,
+  bindGlyphMathPickerContribution,
+  bindImageCanvasPickerContribution,
+  bindImageMathPickerContribution,
+  bindLineCanvasPickerContribution,
+  bindLineMathPickerContribution,
+  bindPathCanvasPickerContribution,
+  bindPathMathPickerContribution,
+  bindPolygonCanvasPickerContribution,
+  bindPolygonMathPickerContribution,
+  bindPyramid3dCanvasPickerContribution,
+  bindRect3dCanvasPickerContribution,
+  bindRectCanvasPickerContribution,
+  bindRectMathPickerContribution,
+  bindRichTextMathPickerContribution,
+  bindRichtextCanvasPickerContribution,
+  bindSymbolCanvasPickerContribution,
+  bindSymbolMathPickerContribution,
+  bindTextCanvasPickerContribution,
+  bindTextMathPickerContribution
 } = require('@visactor/vrender-kits');
 
 global.__DEV__ = true;
@@ -149,48 +149,50 @@ Object.keys(obj).forEach(k => {
 });
 
 const browser = isBrowserEnv();
+const legacyContext = getLegacyBindingContext();
+const bindContext = { bind: legacyContext.bind };
 
-container.load(arcModule);
-container.load(browser ? arcCanvasPickModule : arcMathPickModule);
+arcModule(bindContext);
+browser ? bindArcCanvasPickerContribution(legacyContext) : bindArcMathPickerContribution(legacyContext);
 
-container.load(rectModule);
-container.load(browser ? rectCanvasPickModule : rectMathPickModule);
+rectModule(bindContext);
+browser ? bindRectCanvasPickerContribution(legacyContext) : bindRectMathPickerContribution(legacyContext);
 
-container.load(lineModule);
-container.load(browser ? lineCanvasPickModule : lineMathPickModule);
+lineModule(bindContext);
+browser ? bindLineCanvasPickerContribution(legacyContext) : bindLineMathPickerContribution(legacyContext);
 
-container.load(areaModule);
-container.load(browser ? areaCanvasPickModule : areaMathPickModule);
+areaModule(bindContext);
+browser ? bindAreaCanvasPickerContribution(legacyContext) : bindAreaMathPickerContribution(legacyContext);
 
-container.load(symbolModule);
-container.load(browser ? symbolCanvasPickModule : symbolMathPickModule);
+symbolModule(bindContext);
+browser ? bindSymbolCanvasPickerContribution(legacyContext) : bindSymbolMathPickerContribution(legacyContext);
 
-container.load(textModule);
-container.load(browser ? textCanvasPickModule : textMathPickModule);
+textModule(bindContext);
+browser ? bindTextCanvasPickerContribution(legacyContext) : bindTextMathPickerContribution(legacyContext);
 
-container.load(circleModule);
-container.load(browser ? circleCanvasPickModule : circleMathPickModule);
+circleModule(bindContext);
+browser ? bindCircleCanvasPickerContribution(legacyContext) : bindCircleMathPickerContribution(legacyContext);
 
-container.load(pathModule);
-container.load(browser ? pathCanvasPickModule : pathMathPickModule);
+pathModule(bindContext);
+browser ? bindPathCanvasPickerContribution(legacyContext) : bindPathMathPickerContribution(legacyContext);
 
-container.load(richtextModule);
-container.load(browser ? richtextCanvasPickModule : richTextMathPickModule);
+richtextModule(bindContext);
+browser ? bindRichtextCanvasPickerContribution(legacyContext) : bindRichTextMathPickerContribution(legacyContext);
 
-container.load(polygonModule);
-container.load(browser ? polygonCanvasPickModule : polygonMathPickModule);
+polygonModule(bindContext);
+browser ? bindPolygonCanvasPickerContribution(legacyContext) : bindPolygonMathPickerContribution(legacyContext);
 
-container.load(imageModule);
-container.load(browser ? imageCanvasPickModule : imageMathPickModule);
+imageModule(bindContext);
+browser ? bindImageCanvasPickerContribution(legacyContext) : bindImageMathPickerContribution(legacyContext);
 
-container.load(glyphModule);
-container.load(browser ? glyphCanvasPickModule : glyphMathPickModule);
+glyphModule(bindContext);
+browser ? bindGlyphCanvasPickerContribution(legacyContext) : bindGlyphMathPickerContribution(legacyContext);
 
-container.load(rect3dModule);
-container.load(browser ? rect3dCanvasPickModule : rect3dCanvasPickModule);
+rect3dModule(bindContext);
+bindRect3dCanvasPickerContribution(legacyContext);
 
-container.load(arc3dModule);
-container.load(browser ? arc3dCanvasPickModule : arc3dCanvasPickModule);
+arc3dModule(bindContext);
+bindArc3dCanvasPickerContribution(legacyContext);
 
-container.load(pyramid3dModule);
-container.load(browser ? pyramid3dCanvasPickModule : pyramid3dCanvasPickModule);
+pyramid3dModule(bindContext);
+bindPyramid3dCanvasPickerContribution(legacyContext);

@@ -1,5 +1,6 @@
 import type { EasingType, IAnimate, IStep } from '@visactor/vrender-core';
 import { ACustomAnimate } from './custom-animate';
+import { applyAnimationTransientAttributes } from './transient';
 
 /**
  * 数字增加动画，支持string; number; xx%; xx,xxx; xxx.xx%
@@ -235,6 +236,6 @@ export class IncreaseCount extends ACustomAnimate<{ text: string | number }> {
     }
 
     // 更新图形的text属性
-    this.target.setAttribute('text', formattedText);
+    applyAnimationTransientAttributes(this.target, { text: formattedText });
   }
 }

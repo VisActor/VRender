@@ -1,0 +1,32 @@
+const path = require('path');
+const { createElectronPackageJestConfig } = require('../../share/jest-config/create-package-config');
+
+module.exports = createElectronPackageJestConfig({
+  rootDir: __dirname,
+  testRegex: '/__tests__/.*\\.test\\.(js|ts)$',
+  moduleFileExtensions: ['ts', 'js', 'json'],
+  setupFiles: ['./setup-mock.js'],
+  tsconfig: './tsconfig.test.json',
+  collectCoverageFrom: ['src/**/*.ts', '!**/type/**'],
+  coveragePathIgnorePatterns: ['node_modules', '__tests__', 'interface.ts', '.d.ts', 'typings', 'type.ts'],
+  moduleNameMapper: {
+    '^@visactor/vrender-kits/(.*)$': path.resolve(__dirname, '../vrender-kits/src/$1'),
+    '^@visactor/vrender-kits$': path.resolve(__dirname, '../vrender-kits/src/index.ts'),
+    '^@visactor/vrender-core/event/constant$': path.resolve(__dirname, '../vrender-core/src/event/public-constant.ts'),
+    '^@visactor/vrender-core/render/draw-interceptor$': path.resolve(
+      __dirname,
+      '../vrender-core/src/render/contributions/render/draw-interceptor.ts'
+    ),
+    '^@visactor/vrender-core/render/symbol$': path.resolve(
+      __dirname,
+      '../vrender-core/src/render/contributions/render/symbol.ts'
+    ),
+    '^@visactor/vrender-core/(.*)$': path.resolve(__dirname, '../vrender-core/src/$1'),
+    '^@visactor/vrender-core$': path.resolve(__dirname, '../vrender-core/src/index.ts'),
+    '^@visactor/vrender/es/core$': path.resolve(__dirname, '../vrender/src/index.ts'),
+    '^@visactor/vrender/es/register$': path.resolve(__dirname, '../vrender/src/register.ts'),
+    '^@visactor/vrender/es/kits$': path.resolve(__dirname, '../vrender/src/kits.ts'),
+    '^@visactor/vrender-animate/(.*)$': path.resolve(__dirname, '../vrender-animate/src/$1'),
+    '^@visactor/vrender-animate$': path.resolve(__dirname, '../vrender-animate/src/index.ts')
+  }
+});

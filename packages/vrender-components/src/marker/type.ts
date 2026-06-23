@@ -8,14 +8,13 @@ import type {
   IPolygonAttribute,
   IPolygonGraphicAttribute,
   IRectGraphicAttribute,
-  IRichTextGraphicAttribute,
   ISymbol,
   ISymbolGraphicAttribute,
   ITextGraphicAttribute
 } from '@visactor/vrender-core';
 import type { CommonSegmentAttributes, ILineGraphicWithCornerRadius, SegmentAttributes } from '../segment/type';
 import type { TagAttributes } from '../tag/type';
-import type { Point, State } from '../core/type';
+import type { ComponentExitReleaseOptions, Point, State } from '../core/type';
 
 export enum IMarkLineLabelPosition {
   start = 'start',
@@ -233,6 +232,8 @@ export type MarkerExitAnimation = MarkerAnimationBase & {
 };
 
 export type MarkerAnimationState = 'enter' | 'update' | 'exit';
+
+export type MarkerExitReleaseOptions = ComponentExitReleaseOptions;
 
 /** state type */
 export type MarkCommonLineState<LineAttr> = {

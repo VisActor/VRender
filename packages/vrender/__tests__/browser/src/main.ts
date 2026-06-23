@@ -1,7 +1,81 @@
 import './style.css';
 import { pages } from './pages/';
+import { flattenPages, resolveInitialPath, type IFlatPageEntry } from './harness';
 
 const LOCAL_STORAGE_KEY = 'CANOPUS_DEMOS';
+const flatPages = flattenPages(pages as any);
+const pageByPath = new Map(flatPages.map(entry => [entry.path, entry]));
+
+interface ISmokeTelemetry {
+  isSmokeMode: boolean;
+  requestedPath: string | null;
+  currentPath: string | null;
+  canOpen: boolean;
+  pageInvoked: boolean;
+  importError: string | null;
+  pageError: string | null;
+  uncaughtErrors: string[];
+  unhandledRejections: string[];
+  consoleErrors: string[];
+}
+
+declare global {
+  interface Window {
+    __D3_SMOKE__?: ISmokeTelemetry;
+    __D3_PAGE_LIST__?: IFlatPageEntry[];
+    __D3_HARNESS_CLEANUP__?: (() => void) | null;
+    __D3_REACT_ROOT__?: { unmount?: () => void } | null;
+    stage?: { release?: () => void } | null;
+  }
+}
+
+const createSmokeTelemetry = (requestedPath: string | null, isSmokeMode: boolean): ISmokeTelemetry => ({
+  isSmokeMode,
+  requestedPath,
+  currentPath: null,
+  canOpen: false,
+  pageInvoked: false,
+  importError: null,
+  pageError: null,
+  uncaughtErrors: [],
+  unhandledRejections: [],
+  consoleErrors: []
+});
+
+const installSmokeHooks = (telemetry: ISmokeTelemetry) => {
+  window.__D3_SMOKE__ = telemetry;
+
+  if (!telemetry.isSmokeMode) {
+    return;
+  }
+
+  window.addEventListener('error', event => {
+    telemetry.uncaughtErrors.push(event.error?.stack ?? event.message ?? 'unknown error');
+  });
+
+  window.addEventListener('unhandledrejection', event => {
+    telemetry.unhandledRejections.push(String(event.reason ?? 'unknown rejection'));
+  });
+
+  const originalConsoleError = console.error.bind(console);
+  console.error = (...args: unknown[]) => {
+    telemetry.consoleErrors.push(args.map(arg => String(arg)).join(' '));
+    originalConsoleError(...args);
+  };
+};
+
+const cleanupPreviousPage = () => {
+  const stage = window.stage;
+  const cleanup = window.__D3_HARNESS_CLEANUP__;
+
+  window.__D3_HARNESS_CLEANUP__ = null;
+  window.__D3_REACT_ROOT__?.unmount?.();
+  window.__D3_REACT_ROOT__ = null;
+  window.stage = null;
+
+  stage?.release?.();
+  cleanup?.();
+};
 
 const createSidebar = (node: HTMLDivElement) => {
   const specsHtml = pages.map(entry => {
@@ -27,13 +101,27 @@ const createSidebar = (node: HTMLDivElement) => {
 };
 
 const ACTIVE_ITEM_CLS = 'menu-item-active';
+const {
+  isSmokeMode,
+  path: initialPath,
+  requestedPath
+} = resolveInitialPath(window.location.search, localStorage.getItem(LOCAL_STORAGE_KEY), flatPages);
+const smokeTelemetry = createSmokeTelemetry(requestedPath, isSmokeMode);
+
+installSmokeHooks(smokeTelemetry);
+window.__D3_PAGE_LIST__ = flatPages;
 
 const handleClick = (e: { target: any }, isInit?: boolean) => {
   const container = document.querySelector<HTMLDivElement>('#container')!;
+  const root = document.querySelector<HTMLDivElement>('#root')!;
+  const footer = document.querySelector<HTMLDivElement>('#footer')!;
   const triggerNode = e.target;
   const prevActiveItems = document.getElementsByClassName(ACTIVE_ITEM_CLS);
 
+  cleanupPreviousPage();
   container.innerHTML = '';
+  root.innerHTML = '';
+  footer.innerHTML = '';
   if (prevActiveItems && prevActiveItems.length) {
     for (let i = 0; i < prevActiveItems.length; i++) {
       const element = prevActiveItems[i];
@@ -44,21 +132,36 @@ const handleClick = (e: { target: any }, isInit?: boolean) => {
 
   if (triggerNode) {
     const path = triggerNode.dataset.path;
+    const pageEntry = pageByPath.get(path);
 
     triggerNode.classList.add(ACTIVE_ITEM_CLS);
     if (!isInit) {
       localStorage.setItem(LOCAL_STORAGE_KEY, path);
     }
 
-    import(path === 'jsx' || path === 'react' ? `./pages/${path}.tsx` : `./pages/${path}.ts`)
+    smokeTelemetry.currentPath = path;
+    smokeTelemetry.canOpen = false;
+    smokeTelemetry.pageInvoked = false;
+    smokeTelemetry.importError = null;
+    smokeTelemetry.pageError = null;
+
+    import(`./pages/${path}.${pageEntry?.type ?? 'ts'}`)
       .then(module => {
         container.innerHTML = '<canvas id="main" width=3200 height=1800 style="width: 1600px; height: 900px"></canvas>';
+        smokeTelemetry.canOpen = true;
 
         if (module.page) {
-          module.page();
+          smokeTelemetry.pageInvoked = true;
+          try {
+            module.page();
+          } catch (err) {
+            smokeTelemetry.pageError = err instanceof Error ? err.stack ?? err.message : String(err);
+            throw err;
+          }
         }
       })
       .catch(err => {
+        smokeTelemetry.importError = err instanceof Error ? err.stack ?? err.message : String(err);
         console.log(err);
       });
   }
@@ -85,7 +188,6 @@ const initSidebarEvent = (node: HTMLDivElement) => {
 
 const run = () => {
   const sidebarNode = document.querySelector<HTMLDivElement>('#sidebar')!;
-  const prevActivePath = localStorage.getItem(LOCAL_STORAGE_KEY);
 
   createSidebar(sidebarNode);
   initSidebarEvent(sidebarNode);
@@ -98,7 +200,7 @@ const run = () => {
         menuItemNodes &&
         menuItemNodes.length &&
         ([...menuItemNodes].find(node => {
-          return prevActivePath && node.dataset.path === prevActivePath;
+          return initialPath && node.dataset.path === initialPath;
         }) ||
           menuItemNodes[0])
     },

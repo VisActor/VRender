@@ -33,7 +33,7 @@ import type {
   IRect
 } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
-import { graphicCreator } from '@visactor/vrender-core';
+import { graphicCreator } from '../../util/graphic-creator';
 import { LegendBase } from '../base';
 import { Pager } from '../../pager';
 import {
@@ -59,8 +59,8 @@ import type {
 import type { ComponentOptions } from '../../interface';
 import { loadDiscreteLegendComponent } from '../register';
 import { createTextGraphicByType } from '../../util';
-import type { ScrollBarAttributes } from '../../scrollbar';
-import { ScrollBar } from '../../scrollbar';
+import { ScrollBar, type ScrollBarAttributes } from '../../scrollbar';
+import { commitUpdateAnimationTarget } from '../../animation/static-truth';
 
 const DEFAULT_STATES = {
   [LegendStateValue.focus]: {},
@@ -738,8 +738,10 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       ? this.attribute.item.width
       : innerGroupWidth + parsedPadding[1] + parsedPadding[3];
     const itemGroupHeight = this._itemHeightByUser || innerGroupHeight + parsedPadding[0] + parsedPadding[2];
-    itemGroup.attribute.width = itemGroupWidth;
-    itemGroup.attribute.height = itemGroupHeight;
+    itemGroup.setAttributes({
+      width: itemGroupWidth,
+      height: itemGroupHeight
+    });
     focusShape && focusShape.setAttribute('visible', false);
 
     innerGroup.translateTo(-innerGroupBounds.x1 + parsedPadding[3], -innerGroupBounds.y1 + parsedPadding[0]);
@@ -938,9 +940,9 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
 
       if (!this._itemContext.isScrollbar) {
         if (animation) {
-          (this._itemsContainer as IGroup)
-            .animate()
-            .to({ [channel]: -(newPage - 1) * pageSize }, animationDuration, animationEasing);
+          const attrs = { [channel]: -(newPage - 1) * pageSize };
+          commitUpdateAnimationTarget(this._itemsContainer as IGroup, attrs);
+          (this._itemsContainer as IGroup).animate().to(attrs, animationDuration, animationEasing);
         } else {
           (this._itemsContainer as IGroup).setAttribute(channel, -(newPage - 1) * pageSize);
         }
@@ -957,7 +959,9 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
         this.updateScrollMask();
 
         if (animation) {
-          this._itemsContainer.animate().to({ [channel]: -startOffset }, animationDuration, animationEasing);
+          const attrs = { [channel]: -startOffset };
+          commitUpdateAnimationTarget(this._itemsContainer, attrs);
+          this._itemsContainer.animate().to(attrs, animationDuration, animationEasing);
         } else {
           this._itemsContainer.setAttribute(channel, -startOffset);
         }

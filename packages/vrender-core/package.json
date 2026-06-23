@@ -10,6 +10,40 @@
   "main": "cjs/index.js",
   "module": "es/index.js",
   "types": "es/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "application": ["es/application.d.ts"],
+      "color-string": ["es/color-string/index.d.ts"],
+      "common/diff": ["es/common/diff.d.ts"],
+      "common/generator": ["es/common/generator.d.ts"],
+      "common/performance-raf": ["es/common/performance-raf.d.ts"],
+      "constants": ["es/constants.d.ts"],
+      "container": ["es/container.d.ts"],
+      "entries/browser": ["es/entries/browser.d.ts"],
+      "entries/runtime-installer": ["es/entries/runtime-installer.d.ts"],
+      "env": ["es/env.d.ts"],
+      "event/constant": ["es/event/public-constant.d.ts"],
+      "global": ["es/global.d.ts"],
+      "graphic/base": ["es/graphic/base.d.ts"],
+      "graphic/builtin-symbol": ["es/graphic/builtin-symbol/index.d.ts"],
+      "graphic/creator": ["es/graphic/creator.d.ts"],
+      "graphic/group": ["es/graphic/group.d.ts"],
+      "graphic/modules": ["es/graphic/modules.d.ts"],
+      "graphic/symbol": ["es/graphic/symbol.d.ts"],
+      "interpolate": ["es/interpolate.d.ts"],
+      "legacy/bootstrap": ["es/legacy/bootstrap.d.ts"],
+      "path": ["es/path.d.ts"],
+      "picker/constants": ["es/picker/constants.d.ts"],
+      "plugin/3d": ["es/plugin/3d.d.ts"],
+      "plugin/attribute": ["es/plugin/attribute.d.ts"],
+      "plugin/flex-layout": ["es/plugin/flex-layout.d.ts"],
+      "register/graphic": ["es/register/graphic.d.ts"],
+      "render/draw-interceptor": ["es/render/contributions/render/draw-interceptor.d.ts"],
+      "render/symbol": ["es/render/contributions/render/symbol.d.ts"],
+      "svg": ["es/svg.d.ts"],
+      "text": ["es/text.d.ts"]
+    }
+  },
   "files": [
     "cjs",
     "es",
@@ -22,10 +56,11 @@
     "build-umd": "cross-env DEBUG='Bundler*' bundle --clean -f umd",
     "dev": "cross-env DEBUG='Bundler*' bundle --clean -f es -w",
     "start": "vite ./__tests__/browser",
-    "test": "jest 2>&1",
+    "test": "jest -c jest.config.js",
+    "test:electron": "jest -c jest.electron.config.js --runInBand --passWithNoTests --testPathPattern='__tests__/(browser|electron)/'",
     "test-live": "npm run test-watch __tests__/unit/theme/line.test.ts",
-    "test-watch": "cross-env DEBUG_MODE=1 jest --watch",
-    "test-cov": "jest -w 16 --coverage",
+    "test-watch": "cross-env DEBUG_MODE=1 jest --watch -c jest.config.js",
+    "test-cov": "jest -c jest.config.js -w 16 --coverage",
     "build:spec-types": "rm -rf ./spec-types && tsc -p ./tsconfig.spec.json --declaration --emitDeclarationOnly --outDir ./spec-types"
   },
   "dependencies": {
@@ -44,7 +79,7 @@
     "@vitejs/plugin-react": "3.1.0",
     "@types/jest": "^26.0.0",
     "jest": "^26.0.0",
-    "jest-electron": "^0.1.12",
+    "jest-electron": "npm:@pixi/jest-electron@26.1.0",
     "jest-extended": "^1.2.1",
     "ts-jest": "^26.0.0",
     "eslint": "~8.18.0",
@@ -74,6 +109,156 @@
     ".": {
       "import": "./es/index.js",
       "require": "./cjs/index.js"
+    },
+    "./application": {
+      "types": "./es/application.d.ts",
+      "import": "./es/application.js",
+      "require": "./cjs/application.js"
+    },
+    "./common/generator": {
+      "types": "./es/common/generator.d.ts",
+      "import": "./es/common/generator.js",
+      "require": "./cjs/common/generator.js"
+    },
+    "./common/diff": {
+      "types": "./es/common/diff.d.ts",
+      "import": "./es/common/diff.js",
+      "require": "./cjs/common/diff.js"
+    },
+    "./common/performance-raf": {
+      "types": "./es/common/performance-raf.d.ts",
+      "import": "./es/common/performance-raf.js",
+      "require": "./cjs/common/performance-raf.js"
+    },
+    "./color-string": {
+      "types": "./es/color-string/index.d.ts",
+      "import": "./es/color-string/index.js",
+      "require": "./cjs/color-string/index.js"
+    },
+    "./constants": {
+      "types": "./es/constants.d.ts",
+      "import": "./es/constants.js",
+      "require": "./cjs/constants.js"
+    },
+    "./container": {
+      "types": "./es/container.d.ts",
+      "import": "./es/container.js",
+      "require": "./cjs/container.js"
+    },
+    "./entries/browser": {
+      "types": "./es/entries/browser.d.ts",
+      "import": "./es/entries/browser.js",
+      "require": "./cjs/entries/browser.js"
+    },
+    "./entries/runtime-installer": {
+      "types": "./es/entries/runtime-installer.d.ts",
+      "import": "./es/entries/runtime-installer.js",
+      "require": "./cjs/entries/runtime-installer.js"
+    },
+    "./env": {
+      "types": "./es/env.d.ts",
+      "import": "./es/env.js",
+      "require": "./cjs/env.js"
+    },
+    "./event/constant": {
+      "types": "./es/event/public-constant.d.ts",
+      "import": "./es/event/public-constant.js",
+      "require": "./cjs/event/public-constant.js"
+    },
+    "./global": {
+      "types": "./es/global.d.ts",
+      "import": "./es/global.js",
+      "require": "./cjs/global.js"
+    },
+    "./graphic/base": {
+      "types": "./es/graphic/base.d.ts",
+      "import": "./es/graphic/base.js",
+      "require": "./cjs/graphic/base.js"
+    },
+    "./graphic/builtin-symbol": {
+      "types": "./es/graphic/builtin-symbol/index.d.ts",
+      "import": "./es/graphic/builtin-symbol/index.js",
+      "require": "./cjs/graphic/builtin-symbol/index.js"
+    },
+    "./graphic/creator": {
+      "types": "./es/graphic/creator.d.ts",
+      "import": "./es/graphic/creator.js",
+      "require": "./cjs/graphic/creator.js"
+    },
+    "./graphic/group": {
+      "types": "./es/graphic/group.d.ts",
+      "import": "./es/graphic/group.js",
+      "require": "./cjs/graphic/group.js"
+    },
+    "./graphic/modules": {
+      "types": "./es/graphic/modules.d.ts",
+      "import": "./es/graphic/modules.js",
+      "require": "./cjs/graphic/modules.js"
+    },
+    "./graphic/symbol": {
+      "types": "./es/graphic/symbol.d.ts",
+      "import": "./es/graphic/symbol.js",
+      "require": "./cjs/graphic/symbol.js"
+    },
+    "./interpolate": {
+      "types": "./es/interpolate.d.ts",
+      "import": "./es/interpolate.js",
+      "require": "./cjs/interpolate.js"
+    },
+    "./legacy/bootstrap": {
+      "types": "./es/legacy/bootstrap.d.ts",
+      "import": "./es/legacy/bootstrap.js",
+      "require": "./cjs/legacy/bootstrap.js"
+    },
+    "./path": {
+      "types": "./es/path.d.ts",
+      "import": "./es/path.js",
+      "require": "./cjs/path.js"
+    },
+    "./picker/constants": {
+      "types": "./es/picker/constants.d.ts",
+      "import": "./es/picker/constants.js",
+      "require": "./cjs/picker/constants.js"
+    },
+    "./plugin/3d": {
+      "types": "./es/plugin/3d.d.ts",
+      "import": "./es/plugin/3d.js",
+      "require": "./cjs/plugin/3d.js"
+    },
+    "./plugin/attribute": {
+      "types": "./es/plugin/attribute.d.ts",
+      "import": "./es/plugin/attribute.js",
+      "require": "./cjs/plugin/attribute.js"
+    },
+    "./plugin/flex-layout": {
+      "types": "./es/plugin/flex-layout.d.ts",
+      "import": "./es/plugin/flex-layout.js",
+      "require": "./cjs/plugin/flex-layout.js"
+    },
+    "./register/graphic": {
+      "types": "./es/register/graphic.d.ts",
+      "import": "./es/register/graphic.js",
+      "require": "./cjs/register/graphic.js"
+    },
+    "./render/draw-interceptor": {
+      "types": "./es/render/contributions/render/draw-interceptor.d.ts",
+      "import": "./es/render/contributions/render/draw-interceptor.js",
+      "require": "./cjs/render/contributions/render/draw-interceptor.js"
+    },
+    "./render/symbol": {
+      "types": "./es/render/contributions/render/symbol.d.ts",
+      "import": "./es/render/contributions/render/symbol.js",
+      "require": "./cjs/render/contributions/render/symbol.js"
+    },
+    "./svg": {
+      "types": "./es/svg.d.ts",
+      "import": "./es/svg.js",
+      "require": "./cjs/svg.js"
+    },
+    "./text": {
+      "types": "./es/text.d.ts",
+      "import": "./es/text.js",
+      "require": "./cjs/text.js"
     }
   },
   "publishConfig": {

@@ -1,12 +1,9 @@
-import { createStage, VGroup, VSymbol, VText, VImage, VRichText, Fragment, jsx } from '@visactor/vrender';
-import { VTag } from '@visactor/vrender-components';
-import { roughModule } from '@visactor/vrender-kits';
-import { addShapesToStage, colorPools } from '../utils';
-import React, { Component } from 'react';
+import { VGroup, VRichText } from '@visactor/vrender';
+import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { decodeReactDom } from '@visactor/vrender-kits';
-import { IGroup } from '@visactor/vrender';
-import { IFederatedEvent } from '@visactor/vrender';
+import { setHarnessReactRoot } from '../harness';
+import { createBrowserPageStage } from '../page-stage';
 
 // container.load(roughModule);
 const svg =
@@ -21,8 +18,10 @@ function App() {
 }
 
 export const page = () => {
-  ReactDOM.createRoot(document.getElementById('root')!).render(<App />);
-  const stage = createStage({
+  const root = ReactDOM.createRoot(document.getElementById('root')!);
+  setHarnessReactRoot(root);
+  root.render(<App />);
+  const stage = createBrowserPageStage({
     canvas: 'main',
     autoRender: true,
     poptip: true,
@@ -47,4 +46,5 @@ export const page = () => {
   );
   console.log(dom);
   stage.defaultLayer.add(dom);
+  stage.render();
 };

@@ -5,20 +5,16 @@ import type {
   IDrawContext,
   IGraphicRenderDrawParams
 } from '@visactor/vrender-core';
-import { CIRCLE_NUMBER_TYPE, DefaultCanvasCircleRender, getTheme, inject, injectable } from '@visactor/vrender-core';
+import { CIRCLE_NUMBER_TYPE, DefaultCanvasCircleRender, getTheme } from '@visactor/vrender-core';
 import rough from 'roughjs';
 import { RoughBaseRender } from './base-render';
 
-@injectable()
 export class RoughCanvasCircleRender extends RoughBaseRender implements IGraphicRender {
   declare type: 'circle';
   declare numberType: number;
   style: 'rough' = 'rough';
 
-  constructor(
-    @inject(DefaultCanvasCircleRender)
-    public readonly canvasRenderer: IGraphicRender
-  ) {
+  constructor(public readonly canvasRenderer: IGraphicRender) {
     super();
     this.type = 'circle';
     this.numberType = CIRCLE_NUMBER_TYPE;

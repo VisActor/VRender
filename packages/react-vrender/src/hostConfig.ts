@@ -454,9 +454,8 @@ reconcilor.injectIntoDevTools({
   version: React.version,
   rendererPackageName: 'react-g',
   rendererConfig: {
-    getInspectorDataForViewTag: (tag: number) => {
-      // eslint-disable-next-line no-console
-      console.log(tag);
+    getInspectorDataForViewTag: () => {
+      return;
     }
   }
 });

@@ -1,8 +1,7 @@
 import { application } from '../application';
-import { isXML } from '../common/xml/parser';
+import { isXML, XMLParser } from '../common/xml';
 import type { IGraphic, IGroup, ILayer, IRichTextCharacter, IRichTextImageCharacter, IStage } from '../interface';
 import { isArray, type IAABBBounds } from '@visactor/vutils';
-import { XMLParser } from '../common/xml';
 
 // 不触发外部的render
 export function incrementalAddTo(group: IGroup, graphic: IGraphic) {

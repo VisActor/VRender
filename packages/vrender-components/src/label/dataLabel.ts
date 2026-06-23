@@ -1,18 +1,27 @@
 import { isValidNumber, merge } from '@visactor/vutils';
 import type { IGraphic, INode } from '@visactor/vrender-core';
 import { AbstractComponent } from '../core/base';
-import type { PointLocationCfg } from '../core/type';
+import type { ComponentExitReleaseOptions, PointLocationCfg } from '../core/type';
 import { bitmapTool } from './overlap';
 import type { DataLabelAttrs } from './type';
-import type { LabelBase } from './base';
-import { LabelBase as PointLabel } from './base';
+import { LabelBase as PointLabel, type LabelBase } from './base';
 import type { ComponentOptions } from '../interface';
 import { getLabelComponent } from './data-label-register';
+import {
+  appendExitReleaseCallback,
+  runExitReleaseCallbacks,
+  type ExitReleaseCallbackState
+} from '../animation/exit-release';
+
+type DataLabelExitReleaseState = ExitReleaseCallbackState & {
+  pendingCount: number;
+};
 
 export class DataLabel extends AbstractComponent<DataLabelAttrs> {
   name = 'data-label';
 
   private _componentMap: Map<string, LabelBase<any>>;
+  private _exitReleaseState?: DataLabelExitReleaseState;
 
   private static defaultAttributes: Partial<DataLabelAttrs> = {
     pickable: false
@@ -26,6 +35,10 @@ export class DataLabel extends AbstractComponent<DataLabelAttrs> {
   }
 
   protected render(): void {
+    if (this._exitReleaseState) {
+      return;
+    }
+
     const { dataLabels, size } = this.attribute;
     if (!dataLabels || dataLabels.length === 0) {
       return;
@@ -80,6 +93,116 @@ export class DataLabel extends AbstractComponent<DataLabelAttrs> {
     });
 
     this._componentMap = currentComponentMap;
+  }
+
+  private _finalizeExitRelease() {
+    const state = this._exitReleaseState;
+    if (state?.finalized) {
+      return;
+    }
+
+    if (state) {
+      state.finalized = true;
+    }
+
+    const parent = this.parent;
+    const removeFromParent = !!state?.removeFromParent;
+    const callbacks = state?.onComplete ?? [];
+
+    this._exitReleaseState = undefined;
+    this._componentMap?.clear();
+    this.removeAllChild(true);
+    super.release(true);
+    if (removeFromParent) {
+      (parent ?? this.parent)?.removeChild(this);
+    }
+
+    runExitReleaseCallbacks(callbacks);
+  }
+
+  releaseWithExitAnimation(options: ComponentExitReleaseOptions = {}): boolean {
+    if (this.releaseStatus === 'released') {
+      return false;
+    }
+
+    if (this._exitReleaseState && !this._exitReleaseState.finalized) {
+      this._exitReleaseState.removeFromParent = this._exitReleaseState.removeFromParent || !!options.removeFromParent;
+      appendExitReleaseCallback(this._exitReleaseState, options.onComplete);
+      return true;
+    }
+
+    if (!this.stage || !this._componentMap?.size) {
+      return false;
+    }
+
+    const state: DataLabelExitReleaseState = {
+      pendingCount: 0,
+      finalized: false,
+      removeFromParent: !!options.removeFromParent,
+      onComplete: options.onComplete ? [options.onComplete] : []
+    };
+    const exitingComponents: LabelBase<any>[] = [];
+    const fallbackComponents: LabelBase<any>[] = [];
+    let initializing = true;
+    const finish = () => {
+      if (state.finalized) {
+        return;
+      }
+
+      state.pendingCount -= 1;
+      if (state.pendingCount <= 0 && !initializing) {
+        this._finalizeExitRelease();
+      }
+    };
+
+    this._exitReleaseState = state;
+
+    this._componentMap.forEach(component => {
+      state.pendingCount += 1;
+      const releasedWithExit = component.releaseWithExitAnimation({
+        removeFromParent: false,
+        onComplete: finish
+      });
+
+      if (releasedWithExit) {
+        exitingComponents.push(component);
+      } else {
+        state.pendingCount -= 1;
+        fallbackComponents.push(component);
+      }
+    });
+
+    if (!exitingComponents.length) {
+      this._exitReleaseState = undefined;
+      return false;
+    }
+
+    fallbackComponents.forEach(component => {
+      component.release(true);
+      this.removeChild(component as any);
+    });
+
+    this.setAttribute('childrenPickable', false);
+    this.releaseStatus = 'willRelease';
+    initializing = false;
+    if (state.pendingCount <= 0) {
+      this._finalizeExitRelease();
+    }
+
+    return true;
+  }
+
+  release(all?: boolean): void {
+    if (this._exitReleaseState) {
+      this._finalizeExitRelease();
+      return;
+    }
+
+    if (all) {
+      this.removeAllChild(true);
+    }
+    super.release(all);
+    this._componentMap?.clear();
   }
 
   setLocation(point: PointLocationCfg) {

@@ -1,15 +1,13 @@
-import type { IGraphic, ILine, ILineGraphicAttribute, Stage } from '@visactor/vrender-core';
+import type { IGraphic, ILine, Stage } from '@visactor/vrender-core';
 import { Segment } from '../../src';
 import { createCanvas } from '../util/dom';
-import { createStage } from '../util/vrender';
-import { initBrowserEnv } from '@visactor/vrender-kits';
-initBrowserEnv();
+import { createTestStage } from '../util/vrender';
 
 describe('Segment', () => {
   let stage: Stage;
   beforeAll(() => {
     createCanvas(document.body, 'main');
-    stage = createStage('main');
+    stage = createTestStage('main');
   });
 
   afterAll(() => {

@@ -5,7 +5,8 @@
 // 3. 重载Graphic的getAttributes方法，根据参数getAttributes(final = true)返回finalAttribute = {}; merge(finalAttribute, graphic.attribute, animatedAttribute)，
 // animatedAttribute为所有动画的最终结果（loop为INFINITY的动画不算）
 
-import type { IGraphicAnimateParams, IAnimate } from '@visactor/vrender-core';
+import type { IAnimate, IGraphicAnimateParams } from '@visactor/vrender-core';
+import { AttributeUpdateType } from '@visactor/vrender-core/event/constant';
 import { Animate } from './animate';
 import { DefaultTimeline, defaultTimeline } from './timeline';
 import { DefaultTicker } from './ticker/default-ticker';
@@ -18,6 +19,10 @@ export class AnimateExtension {
   _animateExecutor: AnimateExecutor | null;
 
   declare animates: Map<string | number, IAnimate>;
+
+  protected visitTrackedAnimates(cb: (animate: IAnimate) => void) {
+    (this as any).forEachTrackedAnimate(cb);
+  }
 
   getAttributes(final: boolean = false) {
     if (final && this.finalAttribute) {
@@ -72,6 +77,20 @@ export class AnimateExtension {
     }
   }
 
+  applyFinalAttributeToAttribute(): void {
+    const finalAttribute = this.getFinalAttribute();
+    if (!finalAttribute) {
+      return;
+    }
+
+    const target = this as any;
+    target.setAttributesAndPreventAnimate(finalAttribute, false, { type: AttributeUpdateType.ANIMATE_BIND });
+  }
+
+  restoreStaticAttribute(): void {
+    (this as any)._restoreAttributeFromStaticTruth({ type: AttributeUpdateType.ANIMATE_END });
+  }
+
   /**
    * Apply animation configuration to the component
    * @param config Animation configuration
@@ -90,9 +109,7 @@ export class AnimateExtension {
    */
   executeAnimations(configs: IAnimationConfig[]): this {
     this.initAnimateExecutor();
-    configs.forEach(config => {
-      this._animateExecutor.execute(config);
-    });
+    this._animateExecutor.execute(configs);
     return this;
   }
 
@@ -109,7 +126,7 @@ export class AnimateExtension {
   }
 
   pauseAnimation(deep: boolean = false) {
-    this.animates && this.animates.forEach(animate => animate.pause());
+    this.visitTrackedAnimates(animate => animate.pause());
     if (deep && (this as any).isContainer) {
       (this as any).forEachChildren((child: any) => {
         child.pauseAnimation(deep);
@@ -118,7 +135,7 @@ export class AnimateExtension {
   }
 
   resumeAnimation(deep: boolean = false) {
-    this.animates && this.animates.forEach(animate => animate.resume());
+    this.visitTrackedAnimates(animate => animate.resume());
     if (deep && (this as any).isContainer) {
       (this as any).forEachChildren((child: any) => {
         child.resumeAnimation(deep);
@@ -127,7 +144,7 @@ export class AnimateExtension {
   }
 
   stopAnimation(deep: boolean = false) {
-    this.animates && this.animates.forEach(animate => animate.stop());
+    this.visitTrackedAnimates(animate => animate.stop());
     if (deep && (this as any).isContainer) {
       (this as any).forEachChildren((child: any) => {
         child.stopAnimation(deep);

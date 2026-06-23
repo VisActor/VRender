@@ -1,6 +1,5 @@
-import { createStage, createRect, IGraphic, createGroup } from '@visactor/vrender';
-import { roughModule } from '@visactor/vrender-kits';
-import { addShapesToStage, colorPools } from '../utils';
+import { createBrowserVRenderApp, createRect, IGraphic, createGroup } from '@visactor/vrender';
+import { colorPools } from '../utils';
 
 // container.load(roughModule);
 export const page = () => {
@@ -60,7 +59,8 @@ export const page = () => {
 
   // r.animate().to({ angle: 10 }, 10000, 'linear');
 
-  const stage = createStage({
+  const app = createBrowserVRenderApp();
+  const stage = app.createStage({
     canvas: 'main',
     autoRender: true
   });

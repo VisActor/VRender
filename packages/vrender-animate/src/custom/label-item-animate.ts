@@ -1,6 +1,7 @@
 import { AComponentAnimate } from './custom-animate';
 import { createComponentAnimator } from '../component';
 import { InputText } from './input-text';
+import { applyAppearStartAttributes } from './transient';
 
 /**
  * LabelItemAppear class handles the appear animation for StoryLabelItem components
@@ -17,7 +18,7 @@ export class LabelItemAppear extends AComponentAnimate<any> {
     const { symbolStartOuterType = 'scale', titleType = 'typewriter', titlePanelType = 'scale' } = this.params;
 
     const symbolTime = duration / 10;
-    target._symbolStart.setAttributes({ scaleX: 0, scaleY: 0 });
+    applyAppearStartAttributes(target._symbolStart, { scaleX: 0, scaleY: 0 });
 
     animator.animate(target._symbolStart, {
       type: 'to',
@@ -35,7 +36,7 @@ export class LabelItemAppear extends AComponentAnimate<any> {
       symbolStartOuterFrom = { clipRange: 0 };
       symbolStartOuterTo = { clipRange: 1 };
     }
-    target._symbolStartOuter.setAttributes(symbolStartOuterFrom);
+    applyAppearStartAttributes(target._symbolStartOuter, symbolStartOuterFrom);
 
     animator.animate(target._symbolStartOuter, {
       type: 'to',
@@ -44,7 +45,7 @@ export class LabelItemAppear extends AComponentAnimate<any> {
       easing
     });
 
-    target._symbolEnd.setAttributes({ scaleX: 0, scaleY: 0 });
+    applyAppearStartAttributes(target._symbolEnd, { scaleX: 0, scaleY: 0 });
 
     animator.animate(target._symbolEnd, {
       type: 'to',
@@ -54,7 +55,7 @@ export class LabelItemAppear extends AComponentAnimate<any> {
       easing
     });
 
-    target._line.setAttributes({ clipRange: 0 });
+    applyAppearStartAttributes(target._line, { clipRange: 0 });
 
     animator.animate(target._line, {
       type: 'to',
@@ -65,7 +66,7 @@ export class LabelItemAppear extends AComponentAnimate<any> {
 
     if (titleType === 'typewriter') {
       const titleTopText = target._titleTop.attribute.text as string;
-      target._titleTop.setAttributes({ text: '' });
+      applyAppearStartAttributes(target._titleTop, { text: '' });
 
       animator.animate(target._titleTop, {
         type: 'custom',
@@ -77,7 +78,7 @@ export class LabelItemAppear extends AComponentAnimate<any> {
       });
 
       const titleBottomText = target._titleBottom.attribute.text as string;
-      target._titleBottom.setAttributes({ text: '' });
+      applyAppearStartAttributes(target._titleBottom, { text: '' });
 
       animator.animate(target._titleBottom, {
         type: 'custom',
@@ -88,7 +89,7 @@ export class LabelItemAppear extends AComponentAnimate<any> {
         custom: InputText
       });
     } else {
-      target._titleTop.setAttributes({ dy: target._titleTop.AABBBounds.height() + 10 });
+      applyAppearStartAttributes(target._titleTop, { dy: target._titleTop.AABBBounds.height() + 10 });
 
       animator.animate(target._titleTop, {
         type: 'to',
@@ -100,7 +101,7 @@ export class LabelItemAppear extends AComponentAnimate<any> {
         easing: 'linear'
       });
 
-      target._titleBottom.setAttributes({ dy: -(10 + target._titleBottom.AABBBounds.height()) });
+      applyAppearStartAttributes(target._titleBottom, { dy: -(10 + target._titleBottom.AABBBounds.height()) });
 
       animator.animate(target._titleBottom, {
         type: 'to',
@@ -116,7 +117,7 @@ export class LabelItemAppear extends AComponentAnimate<any> {
     if (titlePanelType === 'scale') {
       [target._titleTopPanel, target._titleBottomPanel].forEach(panel => {
         const scaleX = panel.attribute.scaleX ?? 1;
-        panel.setAttributes({ scaleX: 0 });
+        applyAppearStartAttributes(panel, { scaleX: 0 });
         animator.animate(panel, {
           type: 'to',
           to: {
@@ -130,7 +131,7 @@ export class LabelItemAppear extends AComponentAnimate<any> {
       [target._titleTopPanel, target._titleBottomPanel].forEach(panel => {
         const b = panel.AABBBounds;
         const totalLen = (b.width() + b.height()) * 2;
-        panel.setAttributes({ lineDash: [0, totalLen * 10] });
+        applyAppearStartAttributes(panel, { lineDash: [0, totalLen * 10] });
         animator.animate(panel, {
           type: 'to',
           to: {

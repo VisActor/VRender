@@ -1,6 +1,6 @@
 import { createRect } from '../graphic/rect';
-import { graphicCreator } from '../graphic/graphic-creator';
+import { registerGraphic } from '../graphic/graphic-creator';
 
 export function registerRectGraphic() {
-  graphicCreator.RegisterGraphicCreator('rect', createRect);
+  registerGraphic('rect', createRect);
 }

@@ -1,9 +1,9 @@
 import GUI from 'lil-gui';
 import '@visactor/vrender';
 import { createLine } from '@visactor/vrender';
-import render from '../../util/render';
+import { createRenderer } from '../../util/render';
 import { Tag } from '../../../src';
-import { createGroup, createStage } from '@visactor/vrender-core';
+import { createGroup } from '@visactor/vrender-core';
 
 export function run() {
   const tag = new Tag({
@@ -59,21 +59,11 @@ export function run() {
   group.add(tag);
   group.add(tag1);
 
-  const stage = createStage({
-    canvas: 'main',
+  const stage = createRenderer('main', {
     width: 600,
     height: 600,
     autoRender: true,
     disableDirtyBounds: true,
-    // canvasControled: false,
-    background: 'rgba(238,238,238,0.5)',
-    viewBox: {
-      x1: 50,
-      y1: 50,
-      x2: 550,
-      y2: 550
-    },
-    pluginList: ['poptipForText', 'scrollbar'],
     enableHtmlAttribute: true,
     enableLayout: true
   });

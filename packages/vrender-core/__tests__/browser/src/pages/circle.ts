@@ -1,10 +1,12 @@
 import { colorPools } from '../utils';
-import { createGroup, createStage, container, createCircle, IGraphic } from '@visactor/vrender-core';
+import { createGroup, getLegacyBindingContext, createCircle, IGraphic } from '@visactor/vrender-core';
 import { loadBrowserEnv, loadCanvasPicker } from '@visactor/vrender-kits';
+import { createBrowserPageStage } from '../page-stage';
 
 console.log('abc');
-loadCanvasPicker(container);
-loadBrowserEnv(container);
+const legacyContext = getLegacyBindingContext();
+loadCanvasPicker(legacyContext);
+loadBrowserEnv(legacyContext);
 
 export const page = () => {
   const graphics: IGraphic[] = [];
@@ -75,7 +77,7 @@ export const page = () => {
 
   graphics.push(group);
 
-  const stage = createStage({
+  const stage = createBrowserPageStage({
     canvas: 'main',
     autoRender: true
   });

@@ -1,17 +1,18 @@
-import { ContainerModule } from '../../../common/inversify';
-import { DefaultCanvasArcRender } from './arc-render';
+import { isBindingContextLoaded } from '../../../common/module-guard';
 import { DefaultCanvasArc3DRender } from './arc3d-render';
-import { DefaultBaseInteractiveRenderContribution } from './contributions';
-import { ArcRenderContribution } from './contributions/constants';
-import { Arc3dRender, ArcRender, GraphicRender } from './symbol';
+import { Arc3dRender, GraphicRender } from './symbol';
 
-let loadArc3dModule = false;
-export const arc3dModule = new ContainerModule(bind => {
-  if (loadArc3dModule) {
+const loadedArc3dModuleContexts = new WeakSet<object>();
+export function bindArc3dRenderModule({ bind }: { bind: any }) {
+  if (isBindingContextLoaded(loadedArc3dModuleContexts, bind)) {
     return;
   }
-  loadArc3dModule = true;
   // arc3d 渲染器
-  bind(Arc3dRender).to(DefaultCanvasArc3DRender).inSingletonScope();
+  bind(DefaultCanvasArc3DRender)
+    .toDynamicValue(() => new DefaultCanvasArc3DRender())
+    .inSingletonScope();
+  bind(Arc3dRender).toService(DefaultCanvasArc3DRender);
   bind(GraphicRender).toService(Arc3dRender);
-});
+}
+
+export const arc3dModule = bindArc3dRenderModule;

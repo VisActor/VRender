@@ -1,15 +1,17 @@
-import { ContainerModule } from '@visactor/vrender-core';
-import { MathCirclePicker, MathPickerContribution, MathPolygonPicker } from '../constants';
-import { DefaultMathCirclePicker } from './circle-picker';
+import { PolygonRender } from '@visactor/vrender-core';
+import { resolveContainerBinding } from '../../../common/explicit-binding';
+import { MathPickerContribution, MathPolygonPicker } from '../constants';
 import { DefaultMathPolygonPicker } from './polygon-picker';
 
 let loadPolygonPick = false;
-export const polygonMathPickModule = new ContainerModule((bind, unbind, isBound, rebind) => {
+export function bindPolygonMathPickerContribution(container: any) {
   if (loadPolygonPick) {
     return;
   }
   loadPolygonPick = true;
-  // polygon picker
-  bind(MathPolygonPicker).to(DefaultMathPolygonPicker).inSingletonScope();
-  bind(MathPickerContribution).toService(MathPolygonPicker);
-});
+  container
+    .bind(MathPolygonPicker)
+    .toDynamicValue(() => new DefaultMathPolygonPicker(resolveContainerBinding(container, PolygonRender)))
+    .inSingletonScope();
+  container.bind(MathPickerContribution).toService(MathPolygonPicker);
+}

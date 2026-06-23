@@ -1,4 +1,3 @@
-import { injectable, inject, named } from '../common/inversify-lite';
 import type {
   ICanvas,
   IContext2d,
@@ -8,23 +7,16 @@ import type {
   IContributionProvider,
   IGraphic,
   IGraphicAttribute,
-  IStage,
-  IWindow
+  IStage
 } from '../interface';
 import type { ITextMeasure, TextOptionsType } from '../interface/text';
-import { TextMeasureContribution } from './contributions/textMeasure/textMeasure-contribution';
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { ContributionProvider } from '../common/contribution-provider';
 import { DefaultTextStyle } from '../graphic/config';
-import type { IMatrix, IPointLike, ITextMeasureOption } from '@visactor/vutils';
-import { Matrix, TextMeasure } from '@visactor/vutils';
+import { Matrix, TextMeasure, type IMatrix, type IPointLike, type ITextMeasureOption } from '@visactor/vutils';
 import type { IGraphicUtil, ITransformUtil, TransformType } from '../interface/core';
 import { canvasAllocate } from '../allocator/canvas-allocate';
 import { application } from '../application';
-import { container } from '../container';
-import { VWindow } from './window';
+import { DefaultWindow } from './window';
 
-@injectable()
 export class DefaultGraphicUtil implements IGraphicUtil {
   get canvas(): ICanvas {
     this.tryInitCanvas();
@@ -41,11 +33,7 @@ export class DefaultGraphicUtil implements IGraphicUtil {
   configured: boolean;
   global: IGlobal;
 
-  constructor(
-    @inject(ContributionProvider)
-    @named(TextMeasureContribution)
-    protected readonly contributions: IContributionProvider<ITextMeasure>
-  ) {
+  constructor(protected readonly contributions: IContributionProvider<ITextMeasure>) {
     this.configured = false;
     this.global = application.global;
     this._textMeasureMap = new Map();
@@ -142,7 +130,7 @@ export class DefaultGraphicUtil implements IGraphicUtil {
     if (!stage.defaultLayer) {
       return null;
     }
-    const window = container.get<IWindow>(VWindow);
+    const window = application.windowFactory?.() ?? new DefaultWindow(this.global);
     const bounds = graphic.AABBBounds;
     const width = bounds.width();
     const height = bounds.height();
@@ -189,7 +177,6 @@ enum TransformMode {
 
 const _matrix = new Matrix();
 
-@injectable()
 export class DefaultTransformUtil implements ITransformUtil {
   private matrix: IMatrix;
   private originTransform: TransformType;

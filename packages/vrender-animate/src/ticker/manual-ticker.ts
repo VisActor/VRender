@@ -1,5 +1,5 @@
-import type { IStage } from '@visactor/vrender-core';
-import { STATUS, type ITickHandler, type ITicker } from '@visactor/vrender-core';
+import type { IStage, ITickHandler, ITicker } from '@visactor/vrender-core';
+import { STATUS } from '@visactor/vrender-core/event/constant';
 import { DefaultTicker } from './default-ticker';
 
 class ManualTickHandler implements ITickHandler {

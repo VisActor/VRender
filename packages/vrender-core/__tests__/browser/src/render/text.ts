@@ -1,4 +1,4 @@
-import { Text, container } from '@visactor/vrender';
+import { Text } from '@visactor/vrender';
 import { Text as ZText } from 'zrender';
 import { renderElement } from './utils';
 

@@ -1,15 +1,17 @@
-import { ContainerModule } from '@visactor/vrender-core';
-import { CanvasGlyphPicker, CanvasImagePicker, CanvasPickerContribution } from '../constants';
-import { DefaultCanvasGlyphPicker } from './glyph-picker';
+import { ImageRender } from '@visactor/vrender-core';
+import { resolveContainerBinding } from '../../../common/explicit-binding';
+import { CanvasImagePicker, CanvasPickerContribution } from '../constants';
 import { DefaultCanvasImagePicker } from './image-picker';
 
 let loadImagePick = false;
-export const imageCanvasPickModule = new ContainerModule((bind, unbind, isBound, rebind) => {
+export function bindImageCanvasPickerContribution(container: any) {
   if (loadImagePick) {
     return;
   }
   loadImagePick = true;
-  // image picker
-  bind(CanvasImagePicker).to(DefaultCanvasImagePicker).inSingletonScope();
-  bind(CanvasPickerContribution).toService(CanvasImagePicker);
-});
+  container
+    .bind(CanvasImagePicker)
+    .toDynamicValue(() => new DefaultCanvasImagePicker(resolveContainerBinding(container, ImageRender)))
+    .inSingletonScope();
+  container.bind(CanvasPickerContribution).toService(CanvasImagePicker);
+}

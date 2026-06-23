@@ -67,6 +67,13 @@
               }
             },
             {
+              "path": "App",
+              "title": {
+                "zh": "App能力与使用建议",
+                "en": "App Capabilities and Usage"
+              }
+            },
+            {
               "path": "Graphic",
               "title": {
                 "zh": "图元",
@@ -106,6 +113,22 @@
               "title": {
                 "zh": "Jsx配置",
                 "en": "jsx config"
+              }
+            }
+          ]
+        },
+        {
+          "path": "Upgrade_Guide",
+          "title": {
+            "zh": "升级指南",
+            "en": "Upgrade Guide"
+          },
+          "children": [
+            {
+              "path": "Upgrade_to_1_1_0",
+              "title": {
+                "zh": "VRender 1.1.0 升级指南",
+                "en": "VRender 1.1.0 Upgrade Guide"
               }
             }
           ]

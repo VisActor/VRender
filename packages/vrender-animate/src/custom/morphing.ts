@@ -34,6 +34,7 @@ import { isArray, isNil, type IMatrix } from '@visactor/vutils';
 import { ACustomAnimate } from './custom-animate';
 import { DefaultMorphingAnimateConfig } from '../config/morphing';
 import { isTransformKey } from '../utils/transform';
+import { applyAnimationTransientAttributes } from './transient';
 
 declare const __DEV__: boolean;
 
@@ -287,7 +288,11 @@ export class MorphingPath extends ACustomAnimate<Record<string, any>> {
     if (this.otherAttrs && this.otherAttrs.length) {
       interpolateOtherAttrs(this.otherAttrs, out, ratio);
     }
-    this.target.setAttributes(out);
+    if (end && this.saveOnEnd) {
+      this.target.setAttributes(out);
+    } else {
+      applyAnimationTransientAttributes(this.target, out);
+    }
     // 计算位置
     if (end && !this.saveOnEnd) {
       (this.target as IGraphic).pathProxy = null;
@@ -377,7 +382,7 @@ export const oneToMultiMorph = (
   }
 
   const childGraphics: IGraphic[] = (
-    animationConfig?.splitPath === 'clone' ? cloneGraphic : (animationConfig?.splitPath ?? splitGraphic)
+    animationConfig?.splitPath === 'clone' ? cloneGraphic : animationConfig?.splitPath ?? splitGraphic
   )(fromGraphic, validateToGraphics.length, false);
 
   const oldOnEnd = animationConfig?.onEnd;
@@ -687,7 +692,7 @@ export const multiToOneMorph = (
   }
 
   const childGraphics: IGraphic[] = (
-    animationConfig?.splitPath === 'clone' ? cloneGraphic : (animationConfig?.splitPath ?? splitGraphic)
+    animationConfig?.splitPath === 'clone' ? cloneGraphic : animationConfig?.splitPath ?? splitGraphic
   )(toGraphic, validateFromGraphics.length, true);
 
   const toAttrs = toGraphic.attribute;

@@ -1,4 +1,4 @@
-import type { IGraphic } from '@visactor/vrender-core';
+import type { IAnimate, IGraphic } from '@visactor/vrender-core';
 import type { IAnimationState } from './types';
 import { AnimationTransitionRegistry } from './animation-states-registry';
 import type { IAnimationConfig } from '../executor/executor';
@@ -52,6 +52,7 @@ interface IStateInfo {
 
 export class AnimationStateManager {
   protected graphic: IGraphic;
+  protected trackedAnimates: Map<string | number, IAnimate>;
 
   // 当前状态
   // TODO（注意，这里无法了解动画的顺序，既有串行也有并行，具体在执行的时候确定，执行之后就无法获取串行或并行配置了）
@@ -59,13 +60,75 @@ export class AnimationStateManager {
 
   constructor(graphic: IGraphic) {
     this.graphic = graphic;
+    this.trackedAnimates = new Map();
+    (this.graphic as any).animates = this.trackedAnimates;
+  }
+
+  trackAnimate(animate: IAnimate): void {
+    this.trackedAnimates.set(animate.id, animate);
+  }
+
+  untrackAnimate(animateId: string | number): void {
+    this.trackedAnimates.delete(animateId);
+  }
+
+  forEachTrackedAnimate(cb: (animate: IAnimate) => void): void {
+    this.trackedAnimates.forEach(cb);
+  }
+
+  getTrackedAnimates(): Map<string | number, IAnimate> {
+    return this.trackedAnimates;
+  }
+
+  hasTrackedAnimate(): boolean {
+    return this.trackedAnimates.size > 0;
+  }
+
+  protected hasStateInfo(list: IStateInfo[], target: IStateInfo): boolean {
+    for (let i = 0; i < list.length; i++) {
+      if (list[i] === target) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  protected takeOverUpdateAttrs(
+    nextState: IStateInfo,
+    currentStates: IStateInfo[],
+    shouldStopState: IStateInfo[]
+  ): void {
+    if (nextState.state !== AnimationStates.UPDATE || !currentStates.length) {
+      return;
+    }
+
+    const nextKeys = nextState.executor.getActiveAttrKeys();
+    if (!nextKeys.length) {
+      return;
+    }
+
+    for (let i = 0; i < currentStates.length; i++) {
+      const currentState = currentStates[i];
+      if (
+        currentState.state !== AnimationStates.UPDATE ||
+        currentState === nextState ||
+        this.hasStateInfo(shouldStopState, currentState)
+      ) {
+        continue;
+      }
+
+      if (!currentState.executor.preventAttrs(nextKeys)) {
+        currentState.executor.stop(null, false);
+        shouldStopState.push(currentState);
+      }
+    }
   }
 
   // TODO 这里因为只有状态变更才会调用，所以代码写的比较宽松，如果有性能问题需要优化
   /**
    * 应用状态
-   * @param nextState 下一个状态数组，如果传入数组，那么状态是串行的。但是每次applyState都会立即执行动画，也就是applyState和applyState之间是并行
-   * @param animationConfig 动画配置
+   * @param nextState 下一个动画状态标识数组；这里只处理动画执行顺序，不解析 graphic 的业务状态语义
+   * @param animationConfig 已经由调用方编排好的动画配置
    * @param callback 动画结束后的回调函数，参数empty为true表示没有动画需要执行直接调的回调
    */
   applyState(
@@ -74,6 +137,7 @@ export class AnimationStateManager {
     callback?: (empty?: boolean) => void
   ): void {
     const registry = AnimationTransitionRegistry.getInstance();
+    const currentStateList = this.stateList ?? [];
 
     // TODO 这里指判断第一个状态，后续如果需要的话要循环判断
     // 检查是否需要停止当前状态，以及下一个状态是否需要应用
@@ -97,7 +161,7 @@ export class AnimationStateManager {
           allowTransition: true,
           stopOriginalTransition: true
         };
-        this.stateList.forEach(currState => {
+        currentStateList.forEach(currState => {
           const _result = registry.isTransitionAllowed(currState.state, state, this.graphic);
           result.allowTransition = result.allowTransition && _result.allowTransition;
         });
@@ -111,7 +175,7 @@ export class AnimationStateManager {
             executor: new AnimateExecutor(this.graphic)
           });
           // 允许过渡的话，需要重新遍历this.stateList，获取stopOriginalTransition
-          this.stateList.forEach(currState => {
+          currentStateList.forEach(currState => {
             const _result = registry.isTransitionAllowed(currState.state, state, this.graphic);
             if (_result.stopOriginalTransition) {
               shouldStopState.push(currState);
@@ -130,6 +194,7 @@ export class AnimationStateManager {
     // 立即应用动画，串行的应用
     if (shouldApplyState.length) {
       shouldApplyState[0].executor.execute(shouldApplyState[0].animationConfig);
+      this.takeOverUpdateAttrs(shouldApplyState[0], currentStateList, shouldStopState);
       // 如果下一个状态存在，那么下一个状态的动画在当前状态动画结束后立即执行
       for (let i = 0; i < shouldApplyState.length; i++) {
         const nextState = shouldApplyState[i + 1];
@@ -137,6 +202,11 @@ export class AnimationStateManager {
         currentState.executor.onEnd(() => {
           if (nextState) {
             nextState.executor.execute(nextState.animationConfig);
+            const stoppedStates: IStateInfo[] = [];
+            this.takeOverUpdateAttrs(nextState, this.stateList ?? [], stoppedStates);
+            if (stoppedStates.length && this.stateList) {
+              this.stateList = this.stateList.filter(state => !this.hasStateInfo(stoppedStates, state));
+            }
           }
           // 删除这个状态
           this.stateList = this.stateList.filter(state => state !== currentState);

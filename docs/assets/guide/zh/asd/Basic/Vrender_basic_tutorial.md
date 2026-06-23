@@ -145,7 +145,7 @@ VRender 支持的事件包括：
 ## 状态系统
 
 我们传给图元的属性可以认为是一个默认状态，如果我们希望图元在不同状态下有不同的表现，可以通过状态系统来实现。
-可以给图元定义一个 states 的属性，该属性是一个对象，里面保存了不同状态时的配置。也可以通过`stateProxy`回调来动态的设置不同状态的配置。
+可以给图元定义一个 states 的属性，该属性是一个对象，里面保存了不同状态时的配置。动态状态配置请使用 `StateDefinition.resolver`。
 然后通过`useStates`方法来切换图元状态，通过`clearStates`方法来清空图元状态。
 接下来通过一段代码示例演示
 
@@ -165,22 +165,15 @@ rect.states = {
   },
   b: {
     cornerRadius: 100
+  },
+  // 需要动态配置时，使用 resolver 返回状态属性
+  c: {
+    resolver: () => ({
+      width: 300
+    }),
+    declaredAffectedKeys: ['width']
   }
 };
-
-// 也可以定义一个回调，根据状态名称返回不同的状态配置，效果和states属性一直
-// rect.stateProxy = (stateName: string, targetStates?: string[]) => {
-//   if (stateName === 'a') {
-//     return {
-//       width: 300
-//     };
-//   }
-//   if (stateName === 'b') {
-//     return {
-//       cornerRadius: 100
-//     };
-//   }
-// };
 
 // 被点击的时候，激活状态a
 rect.on('click', () => {
@@ -241,7 +234,7 @@ VRender 支持在浏览器、小程序和 Node.js 环境下运行，同时也支
 ### 注册&使用环境
 
 ```ts
-import { vglobal, loadTTEnv, initTaroEnv, initWxEnv, initNodeEnv, initHarmonyEnv, container } from '@visactor/vrender';
+import { vglobal, createStage, loadTTEnv, initTaroEnv, initWxEnv, initNodeEnv, initHarmonyEnv, container } from '@visactor/vrender';
 const CanvasPkg = require('canvas');
 
 // 根据自己产品的环境，注册相关环境的逻辑
@@ -254,12 +247,21 @@ initFeishuEnv();
 
 // 注册后，就可以调用setEnv，使用对应的环境了
 vglobal.setEnv('node', CanvasPkg);
-// 小程序需要传递的内容会多一些
+// 小程序 app 级参数只放环境级能力，例如像素比或可复用的 canvasFactory
 vglobal.setEnv('feishu', {
-  domref, // 容器节点的引用，用于获取宽高
   force: true,
-  canvasIdLists, // 可用的canvas id列表，小程序无法动态创建canvas，需要传递一个可用的canvas id列表
-  freeCanvasIdx: 0 // 有时候除了绘图的canvas，会额外需要多份canvas，这里传入可以额外使用的canvas，对应canvasIdLists的下标
+  pixelRatio,
+  canvasFactory: ({ id, width, height, dpr }) => {
+    // 返回当前宿主可绘制的 Canvas-like 对象；该能力必须对同一个 app 下任意 Stage 有效
+  }
+});
+
+// 具体 canvas id / 宽高 / dpr 属于 Stage 创建参数
+const stage = createStage({
+  canvas: 'chart-canvas',
+  width,
+  height,
+  dpr: pixelRatio
 });
 ```
 

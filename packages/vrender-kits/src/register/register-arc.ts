@@ -1,16 +1,19 @@
-import { arcModule, container, registerArcGraphic } from '@visactor/vrender-core';
+import { getLegacyBindingContext } from '@visactor/vrender-core/legacy/bootstrap';
+import { registerArcGraphic } from '@visactor/vrender-core/register/graphic';
+import { arcModule } from '@visactor/vrender-core/graphic/modules';
 import { browser } from './env';
-import { arcCanvasPickModule } from '../picker/contributions/canvas-picker/arc-module';
-import { arcMathPickModule } from '../picker/contributions/math-picker/arc-module';
+import { bindArcCanvasPickerContribution } from '../picker/contributions/canvas-picker/arc-module';
+import { bindArcMathPickerContribution } from '../picker/contributions/math-picker/arc-module';
 
 export function _registerArc() {
   if (_registerArc.__loaded) {
     return;
   }
   _registerArc.__loaded = true;
+  const legacyContext = getLegacyBindingContext();
   registerArcGraphic();
-  container.load(arcModule);
-  container.load(browser ? arcCanvasPickModule : arcMathPickModule);
+  (arcModule as any)({ bind: legacyContext.bind });
+  browser ? bindArcCanvasPickerContribution(legacyContext) : bindArcMathPickerContribution(legacyContext);
 }
 
 _registerArc.__loaded = false;

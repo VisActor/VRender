@@ -1,9 +1,10 @@
-import { createStage, createGroup, createText, RotateBySphereAnimate, IGraphicAttribute } from '@visactor/vrender';
+import { createGroup, createText, RotateBySphereAnimate, IGraphicAttribute } from '@visactor/vrender';
 import { colorPools } from '../utils';
+import { createBrowserPageStage } from '../page-stage';
 
 function drawChartCanopus1() {
   // 创建stage
-  const stage = createStage({ canvas: 'main', autoRender: true });
+  const stage = createBrowserPageStage({ canvas: 'main', autoRender: true });
   stage.set3dOptions({
     alpha: 0,
     beta: 0,
@@ -71,7 +72,7 @@ function drawChartCanopus1() {
 
 function drawChartCanopus() {
   // 创建stage
-  const stage = createStage({ canvas: 'main', autoRender: true });
+  const stage = createBrowserPageStage({ canvas: 'main', autoRender: true });
   stage.set3dOptions({
     alpha: 0,
     beta: 0,
@@ -195,7 +196,7 @@ export const page = () => {
   // ctx.fillStyle = 'red';
   // ctx.fillRect(-2000, -2000, 8000, 8000);
 
-  // const stage = createStage({
+  // const stage = createBrowserPageStage({
   //   canvas: c as HTMLCanvasElement,
   //   canvasControled: false
   // });

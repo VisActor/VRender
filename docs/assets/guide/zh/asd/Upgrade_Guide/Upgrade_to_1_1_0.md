@@ -2,7 +2,7 @@
 
 VRender 1.1.0 是一次面向状态系统、动画语义和多端运行时接入方式的稳定版升级。核心变化是：状态样式、动画帧和静态属性真值的边界被明确拆开，跨端环境初始化也收敛到 App 级入口。
 
-如果你使用 VRender 作为 VChart、VTable 或自研渲染层的底层依赖，建议在升级前阅读本文并按迁移清单检查项目。
+如果你使用 VRender 作为 VChart、VTable 或自研渲染层的底层依赖，建议在升级前阅读本文并按迁移清单检查项目。本文面向所有升级用户，覆盖结构变化、破坏性变化和迁移方式。
 
 ## 适用范围
 
@@ -11,6 +11,8 @@ VRender 1.1.0 是一次面向状态系统、动画语义和多端运行时接入
 - 图元状态和 shared state。
 - appear/update/state 动画。
 - Browser、Node、小程序、Lynx、Harmony 等环境的创建方式。
+- root/default 与按需 register/profile 的能力边界。
+- poptip 等组件或插件的显式安装方式。
 - 上层库如何减少对 VRender 内部属性缓存的直接维护。
 
 ## 安装
@@ -58,6 +60,47 @@ baseAttributes + resolvedStatePatch -> attribute
 2. 使用 `app.createStage()` 创建具体视图。
 3. 旧的根级 `createStage()` 仍作为兼容入口保留，但不推荐新代码继续使用。
 4. 同一页面、容器或服务进程内如果会创建多个 VRender 视图，优先复用同一个 App。
+
+## 结构和兼容边界
+
+### Root/default 保持完整能力
+
+`@visactor/vrender` root/default 仍保持完整易用性。1.1.0 不会为了包体积优化从默认入口中删除用户期望的完整能力。
+
+如果业务对包体积敏感，应使用更窄的 public subpath/register 组织自己的 profile，而不是要求默认入口自动变成 lite 入口。
+
+### 按需能力通过明确 register/profile 暴露
+
+按需能力通过更窄的 public subpath/register 暴露，例如：
+
+```ts
+import { registerAnimate } from '@visactor/vrender-animate/register';
+import { registerBasicCustomAnimate } from '@visactor/vrender-animate/custom/register-basic';
+
+export function registerVRenderBasicAnimationProfile() {
+  registerAnimate();
+  registerBasicCustomAnimate();
+}
+```
+
+上层如果要做按需加载，应提供用户可理解的 profile，例如 `full`、`basic`、`richtext`、`story`、`disappear`。用户选择 lite/profile 后，如果缺少某种 animation type 或组件能力，应由上层给出清晰提示，不应由 VRender 在图元热路径自动加载 full。
+
+### 组件和插件注册更明确
+
+组件、插件、动画 custom register 的边界在 1.1.0 中更清晰：
+
+- full/root 入口继续保持完整注册行为。
+- lite/simple/profile 入口可以只注册需要的图元、renderer、picker、bounds、component 或 custom animation。
+- custom animation 可以选择 `basic`、`richtext`、`disappear`、`story` 或 full register。
+- `poptip` 插件需要通过 `loadPoptip()` 或 `installPoptipToApp(app)` 显式触发，不属于默认 bootstrap。
+
+## 破坏性变化
+
+- `graphic.stateProxy` 已移除。动态状态样式应迁移到 `StateDefinition.resolver`。
+- 图元绑定到 shared-state scope 后，状态定义来源应是 `sharedStateDefinitions`；本地图元 `graphic.states` 不再作为 missing-state fallback。
+- 动画帧不再是静态真值来源。`animate().to(...)` 仍是有效动画 API，但不是“动画结束后写入 `baseAttributes`”的接口。
+- 不要用 `clearStates()` 刷新同一组状态。状态集合相同但 resolved patch 变化时，应使用 `setStates(states, { animate, animateSameStatePatchChange })`。
+- 1.1.0 删除或收紧了一批 alpha 阶段、未承诺、已被替代的内部路径，包括旧 deferred state/perf hook、旧 animation target fallback 草稿、未发布 source shell 和 dead source。外部代码不应 deep import 这些内部文件。
 
 ## 推荐创建方式
 
@@ -404,6 +447,13 @@ rg "graphic\\.states|\\.states\\s*="
 - wx、Lynx、Harmony 若在业务中使用，应在对应宿主环境验证渲染、动画、事件和 release。
 - Taro、Feishu、TT 在真实端 smoke 前不要扩大稳定承诺。
 
+6. 检查可选能力 profile：
+
+- 默认 root/full 入口可以继续使用，不需要为了升级强制切换到按需 profile。
+- 如果上层提供 lite/simple/profile，应明确列出包含的图元、组件、插件和 custom animation register。
+- 需要 poptip 时，未创建 App 前调用 `loadPoptip()`；已有 App 时调用 `installPoptipToApp(app)`。
+- 不要让组件顶层 import 或默认 bootstrap 隐式注册 poptip，否则会破坏 simple/lite 入口的体积边界。
+
 ## 常见问题
 
 ### update 后同状态图元先闪回 normal attrs
@@ -453,11 +503,27 @@ graphic.setStates(nextStates, {
 - 是否把 node-canvas 包作为 `createNodeVRenderApp({ envParams })` 传入。
 - Stage 是否设置了明确的 `width` 和 `height`。
 
+### 升级后包体积一定会下降吗？
+
+不一定。1.1.0 增加了 app-scoped runtime、多端 entries、稳定状态/动画语义和 public subpath/register。默认 full/root 入口保持完整能力，体积收益需要上层使用更窄入口或 profile 后才能体现。
+
+### 什么时候使用 `installPoptipToApp(app)`？
+
+如果 App 已经创建，且需要在这个 App 的 runtime context 中补装 poptip 插件，使用：
+
+```ts
+import { installPoptipToApp } from '@visactor/vrender-components';
+
+installPoptipToApp(app);
+```
+
+该 API 要求显式传入 `app`，这样调用方可以及时发现错误。尚未创建 App，只是在全局注册 poptip 能力时，可以使用 `loadPoptip()`。
+
 ## 不属于本次稳定合同的内容
 
 1. Taro、Feishu、TT 的 Tier 1 稳定承诺。
 2. 同一 JS runtime 中多环境完全隔离。
-3. 细粒度按需装配等价替代根包默认入口。
+3. 细粒度按需装配自动等价替代根包默认入口；按需收益需要上层显式选择 profile/register。
 4. `Glyph` 子图元状态纳入 shared-state 主路径。
 5. 额外内存优化或构造期表示优化。
 

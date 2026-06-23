@@ -3,7 +3,7 @@
 > Status: final source for VRender 1.1.0 release notes
 > Target version: `1.1.0`
 > Scope: VRender D3 state / animation / app-scoped runtime stable release
-> User-facing guide: [VRender 1.1.0 升级指南](/Users/bytedance/Documents/GitHub/VRender2/docs/assets/guide/zh/asd/Basic/Upgrade_to_1_1_0.md)
+> User-facing guide: [VRender 1.1.0 升级指南](/Users/bytedance/Documents/GitHub/VRender2/docs/assets/guide/zh/asd/Upgrade_Guide/Upgrade_to_1_1_0.md)
 > Release reports: [VRender 1.1.0 release check](/Users/bytedance/Documents/GitHub/VRender2/docs/release/1.1.0/VRENDER_1_1_0_PRE_RELEASE_FINAL_CHECK.md)
 
 ## Headline

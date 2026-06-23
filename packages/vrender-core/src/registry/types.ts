@@ -9,6 +9,7 @@ export type IRendererRegistryEntry = IGraphicRender | IRendererFactory;
 
 export interface IRendererRegistry {
   register: (key: RegistryKey, renderer: IRendererRegistryEntry) => void;
+  unregister?: (key: RegistryKey) => void;
   get: (key: RegistryKey) => IGraphicRender | undefined;
   getAll: () => IGraphicRender[];
   clear: () => void;
@@ -16,6 +17,7 @@ export interface IRendererRegistry {
 
 export interface IPickerRegistry {
   register: (key: RegistryKey, picker: IGraphicPicker) => void;
+  unregister?: (key: RegistryKey) => void;
   get: (key: RegistryKey) => IGraphicPicker | undefined;
   getAll: () => IGraphicPicker[];
   clear: () => void;
@@ -31,6 +33,7 @@ export interface IPluginRegistry {
 
 export interface IContributionRegistry<T = unknown> {
   register: (key: RegistryKey, contribution: T) => void;
+  unregister?: (key: RegistryKey, contribution?: T) => void;
   get: (key: RegistryKey) => T[];
   getAll: () => T[];
   clear: (key?: RegistryKey) => void;

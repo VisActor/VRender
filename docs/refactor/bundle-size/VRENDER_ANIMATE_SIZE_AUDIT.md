@@ -57,7 +57,7 @@
 
 - `packages/vrender-animate/src/custom/scale.ts`
 - `docs/refactor/state-engine/D3_STABLE_RELEASE_NOTES_DRAFT.md`
-- `docs/assets/guide/zh/asd/Basic/Upgrade_to_1_1_0.md`
+- `docs/assets/guide/zh/asd/Upgrade_Guide/Upgrade_to_1_1_0.md`
 
 ## D3 口径风险
 

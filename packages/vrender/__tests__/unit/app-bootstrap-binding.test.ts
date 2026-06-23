@@ -67,6 +67,92 @@ describe('app-scoped bootstrap binding context', () => {
     });
   });
 
+  test('createBrowserVRenderApp preserves caller-owned registries during bootstrap', () => {
+    jest.isolateModules(() => {
+      const {
+        ContributionRegistry,
+        DrawItemInterceptor,
+        PickerRegistry,
+        PluginRegistry,
+        RendererRegistry,
+        createBrowserVRenderApp
+      } = require('../../src');
+
+      const rendererRegistry = new RendererRegistry();
+      const pickerRegistry = new PickerRegistry();
+      const contributionRegistry = new ContributionRegistry();
+      const pluginRegistry = new PluginRegistry();
+      const customRenderer = { type: 'custom-renderer' };
+      const customPicker = { type: 'custom-picker' };
+      const customDrawInterceptor = { type: 'custom-draw-interceptor' };
+
+      rendererRegistry.register('custom-renderer', customRenderer);
+      pickerRegistry.register('custom-picker', customPicker);
+      contributionRegistry.register(DrawItemInterceptor, customDrawInterceptor);
+
+      const app = createBrowserVRenderApp({
+        context: {
+          registry: {
+            renderer: rendererRegistry,
+            picker: pickerRegistry,
+            contribution: contributionRegistry,
+            plugin: pluginRegistry
+          }
+        }
+      });
+
+      expect(app.registry.renderer.get('custom-renderer')).toBe(customRenderer);
+      expect(app.registry.picker.get('custom-picker')).toBe(customPicker);
+      expect(app.context.registry.contribution.get(DrawItemInterceptor)).toContain(customDrawInterceptor);
+
+      app.release();
+    });
+  });
+
+  test('picker installers replace VRender-owned entries without clearing caller-owned picker', () => {
+    jest.isolateModules(() => {
+      const {
+        ContributionRegistry,
+        PickerRegistry,
+        PluginRegistry,
+        RendererRegistry,
+        createBrowserApp,
+        installBrowserPickersToApp,
+        installDefaultGraphicsToApp,
+        installMathPickersToApp
+      } = require('../../src');
+
+      const pickerRegistry = new PickerRegistry();
+      const customPicker = { type: 'custom-picker', numberType: -1 };
+      const app = createBrowserApp({
+        context: {
+          registry: {
+            renderer: new RendererRegistry(),
+            picker: pickerRegistry,
+            contribution: new ContributionRegistry(),
+            plugin: new PluginRegistry()
+          }
+        }
+      });
+
+      pickerRegistry.register('custom-picker', customPicker);
+
+      installDefaultGraphicsToApp(app);
+      installBrowserPickersToApp(app);
+      const browserOwnedPickers = app.registry.picker.getAll().filter((picker: any) => picker !== customPicker);
+
+      expect(browserOwnedPickers.length).toBeGreaterThan(0);
+
+      installMathPickersToApp(app);
+
+      const installedPickers = app.registry.picker.getAll();
+      expect(installedPickers).toContain(customPicker);
+      expect(installedPickers.some((picker: any) => browserOwnedPickers.includes(picker))).toBe(false);
+
+      app.release();
+    });
+  });
+
   test.each([
     ['area', '@visactor/vrender-kits/register/register-area', 'registerArea'],
     ['circle', '@visactor/vrender-kits/register/register-circle', 'registerCircle'],

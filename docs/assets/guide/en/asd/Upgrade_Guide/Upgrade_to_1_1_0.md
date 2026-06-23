@@ -2,7 +2,7 @@
 
 VRender 1.1.0 is a stable release for the state system, animation semantics, and app-scoped multi-environment runtime. The main contract is that state styles, animation frames, and static graphic attributes are now clearly separated.
 
-This guide is for users upgrading from 1.0.x or a 1.1.0 alpha version, especially projects that use VRender through VChart, VTable, or custom rendering integrations.
+This guide is for users upgrading from 1.0.x or a 1.1.0 alpha version, especially projects that use VRender through VChart, VTable, or custom rendering integrations. It covers structural changes, breaking changes, and migration steps for all upgrade users.
 
 ## Install
 
@@ -54,6 +54,47 @@ Recommended app creators:
 - `createHarmonyVRenderApp()`
 
 Create concrete views with `app.createStage()`. The old root-level `createStage()` remains as a compatibility surface, but new code should use app-scoped entries.
+
+## Structure and Compatibility Boundaries
+
+### Root and Default Entries Stay Full-Featured
+
+The `@visactor/vrender` root/default entry remains the complete, easy-to-use entry. VRender 1.1.0 does not remove expected full capabilities from the default entry for bundle-size optimization.
+
+Bundle-sensitive products should build their own profiles with narrower public subpaths/registers instead of expecting the default entry to become a lite entry.
+
+### Optional Capabilities Use Explicit Registers and Profiles
+
+Optional capabilities are exposed through narrower public subpaths and registers, for example:
+
+```ts
+import { registerAnimate } from '@visactor/vrender-animate/register';
+import { registerBasicCustomAnimate } from '@visactor/vrender-animate/custom/register-basic';
+
+export function registerVRenderBasicAnimationProfile() {
+  registerAnimate();
+  registerBasicCustomAnimate();
+}
+```
+
+If an upper layer wants on-demand loading, expose user-facing profiles such as `full`, `basic`, `richtext`, `story`, and `disappear`. If a lite/profile selection does not include an animation type or component capability, the upper layer should report that clearly instead of asking VRender to auto-load full in graphic hot paths.
+
+### Component and Plugin Registration Is Explicit
+
+VRender 1.1.0 makes component, plugin, and custom animation registration boundaries clearer:
+
+- Full/root entries keep full registration behavior.
+- Lite/simple/profile entries can register only the required graphics, renderers, pickers, bounds, components, plugins, or custom animations.
+- Custom animation can register `basic`, `richtext`, `disappear`, `story`, or the full surface.
+- The `poptip` plugin is explicit. Use `loadPoptip()` or `installPoptipToApp(app)`; it is not part of the default bootstrap.
+
+## Breaking Changes
+
+- `graphic.stateProxy` has been removed. Use `StateDefinition.resolver` for dynamic state styles.
+- Once a graphic is bound to a shared-state scope, state definitions should come from `sharedStateDefinitions`; local `graphic.states` no longer serves as a missing-state fallback.
+- Animation frames are not static truth. `animate().to(...)` remains a valid animation API, but it is not the API that commits endpoints to `baseAttributes`.
+- Do not use `clearStates()` to refresh the same state set. When the resolved patch changes while the state set stays the same, use `setStates(states, { animate, animateSameStatePatchChange })`.
+- VRender 1.1.0 removes or narrows alpha-only, uncommitted, and replaced internal paths, including old deferred state/perf hooks, old animation target fallback drafts, unpublished source shells, and dead source. External code should not deep import those internals.
 
 ## Recommended Setup
 
@@ -344,6 +385,13 @@ If you maintain VChart, VTable, or another upper-layer integration, also check t
 - If wx, Lynx, or Harmony are used, verify rendering, animation, event picking, and release in the real host.
 - Do not expand stable claims for Taro, Feishu, or TT before real-host smoke.
 
+6. Check optional capability profiles:
+
+- The root/full entry can continue to be used; upgrading does not require switching to an on-demand profile.
+- If an upper layer exposes lite/simple/profile entries, list the included graphics, components, plugins, and custom animation registers explicitly.
+- If poptip is needed, call `loadPoptip()` before App creation or `installPoptipToApp(app)` when an App already exists.
+- Do not let component top-level imports or default bootstrap implicitly register poptip, because that breaks the bundle boundary of simple/lite entries.
+
 ## Troubleshooting
 
 ### A graphic flashes back to normal attributes after update
@@ -393,10 +441,26 @@ Check:
 - The node-canvas package is passed through `createNodeVRenderApp({ envParams })`.
 - Stage has explicit `width` and `height`.
 
+### Will bundle size always decrease after upgrading?
+
+No. VRender 1.1.0 adds app-scoped runtime, multi-environment entries, stable state/animation semantics, and public subpaths/registers. The full/root entry remains complete. Bundle-size savings require upper layers to use narrower entries or profiles.
+
+### When should I use `installPoptipToApp(app)`?
+
+If an App already exists and you need to install the poptip plugin into that App's runtime context, use:
+
+```ts
+import { installPoptipToApp } from '@visactor/vrender-components';
+
+installPoptipToApp(app);
+```
+
+This API requires an explicit `app` argument so caller mistakes fail early. If the App has not been created yet and you only need to register poptip capability globally, use `loadPoptip()`.
+
 ## Not Included in the 1.1.0 Stable Contract
 
 - Tier 1 claims for Taro, Feishu, or TT.
 - Full multi-environment isolation inside one JS runtime.
-- Fine-grained on-demand assembly as an equivalent replacement for root package defaults.
+- Automatic fine-grained on-demand assembly as an equivalent replacement for root package defaults; savings require explicit profile/register selection by upper layers.
 - Moving glyph sub-graphic state into the shared-state main path.
 - Additional memory or constructor representation optimizations.

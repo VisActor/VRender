@@ -33,7 +33,7 @@
 D3 release 口径：
 
 - `docs/refactor/state-engine/D3_REMOVED_API_AND_CALL_CHAIN_LOG.md`
-- `docs/assets/guide/zh/asd/Basic/Upgrade_to_1_1_0.md`
+- `docs/assets/guide/zh/asd/Upgrade_Guide/Upgrade_to_1_1_0.md`
 - `docs/refactor/state-engine/D3_STABLE_RELEASE_NOTES_DRAFT.md`
 
 ## 确认工作区

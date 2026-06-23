@@ -1,9 +1,23 @@
 const path = require('path');
 const { spawn } = require('child_process');
-const electron = require('electron');
-const { EventsEnum } = require('jest-electron/lib/utils/constant');
-const { uuid } = require('jest-electron/lib/utils/uuid');
-const { delay } = require('jest-electron/lib/utils/delay');
+
+function resolveFromProject(request) {
+  return require.resolve(request, { paths: [process.cwd()] });
+}
+
+function requireFromProject(request) {
+  return require(resolveFromProject(request));
+}
+
+function resolveElectron() {
+  const jestElectronPackagePath = resolveFromProject('jest-electron/package.json');
+  return require.resolve('electron', { paths: [path.dirname(jestElectronPackagePath), process.cwd()] });
+}
+
+const electron = require(resolveElectron());
+const { EventsEnum } = requireFromProject('jest-electron/lib/utils/constant');
+const { uuid } = requireFromProject('jest-electron/lib/utils/uuid');
+const { delay } = requireFromProject('jest-electron/lib/utils/delay');
 
 const DEFAULT_STARTUP_TIMEOUT = Number(process.env.VRENDER_JEST_ELECTRON_STARTUP_TIMEOUT || 10000);
 const DEFAULT_STARTUP_RETRIES = Number(process.env.VRENDER_JEST_ELECTRON_STARTUP_RETRIES || 3);
@@ -166,36 +180,36 @@ class ElectronProc {
     }
   }
 
-  runTest(test) {
+  async runTest(test) {
     const id = uuid();
-    return new Promise(resolve => {
-      this.get().then(proc => {
-        const listener = ({ result, id: resultId, type }) => {
-          if (type === EventsEnum.ProcRunTestResult && resultId === id) {
-            proc.removeListener(EventsEnum.ProcMessage, listener);
-            resolve(result);
-          }
-        };
+    const proc = await this.get();
 
-        proc.on(EventsEnum.ProcMessage, listener);
-        proc.send({ type: EventsEnum.ProcRunTest, test, id });
-      });
+    return new Promise(resolve => {
+      const listener = ({ result, id: resultId, type }) => {
+        if (type === EventsEnum.ProcRunTestResult && resultId === id) {
+          proc.removeListener(EventsEnum.ProcMessage, listener);
+          resolve(result);
+        }
+      };
+
+      proc.on(EventsEnum.ProcMessage, listener);
+      proc.send({ type: EventsEnum.ProcRunTest, test, id });
     });
   }
 
-  initialWin() {
-    return new Promise(resolve => {
-      this.get().then(proc => {
-        const listener = ({ type }) => {
-          if (type === EventsEnum.ProcInitialWinEnd) {
-            proc.removeListener(EventsEnum.ProcMessage, listener);
-            resolve();
-          }
-        };
+  async initialWin() {
+    const proc = await this.get();
 
-        proc.on(EventsEnum.ProcMessage, listener);
-        proc.send({ type: EventsEnum.ProcInitialWin });
-      });
+    return new Promise(resolve => {
+      const listener = ({ type }) => {
+        if (type === EventsEnum.ProcInitialWinEnd) {
+          proc.removeListener(EventsEnum.ProcMessage, listener);
+          resolve();
+        }
+      };
+
+      proc.on(EventsEnum.ProcMessage, listener);
+      proc.send({ type: EventsEnum.ProcInitialWin });
     });
   }
 

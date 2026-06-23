@@ -34,6 +34,10 @@ import { DefaultPluginService } from '../plugins/plugin-service';
 const runtimeInstallerContext = createLegacyBindingContext();
 let runtimeInstallerPreloaded = false;
 let runtimeGlobal: IGlobal | undefined;
+const RUNTIME_RENDERER_NAMESPACE = 'vrender:runtime-renderer';
+const RUNTIME_PICKER_NAMESPACE = 'vrender:runtime-picker';
+const runtimeEntryKeys = new WeakMap<object, Map<string, Set<string>>>();
+const runtimeDrawContributions = new WeakMap<object, Set<IDrawItemInterceptorContribution>>();
 
 function ensureRuntimeInstallerPreloaded(): void {
   if (runtimeInstallerPreloaded) {
@@ -69,6 +73,30 @@ function registerRuntimeEntries<T extends { type?: string }>(
     const name = entry?.type ?? entry?.constructor?.name ?? `${prefix}-entry`;
     register(`${prefix}:${String(name)}:${index}`, entry);
   });
+}
+
+function getTrackedEntryKeys(registry: object, namespace: string): Set<string> {
+  let namespaces = runtimeEntryKeys.get(registry);
+  if (!namespaces) {
+    namespaces = new Map();
+    runtimeEntryKeys.set(registry, namespaces);
+  }
+
+  let keys = namespaces.get(namespace);
+  if (!keys) {
+    keys = new Set();
+    namespaces.set(namespace, keys);
+  }
+
+  return keys;
+}
+
+function clearTrackedEntryKeys(registry: object, namespace: string, unregister?: (key: string) => void): void {
+  const keys = getTrackedEntryKeys(registry, namespace);
+  if (unregister) {
+    keys.forEach(key => unregister(key));
+  }
+  keys.clear();
 }
 
 function createAppRegistryContributionProvider<T>(app: IApp, key: ServiceIdentifier<T>): IContributionProvider<T> {
@@ -123,15 +151,22 @@ export function installRuntimeGraphicRenderersToApp(app: IApp): void {
   const bindingContext = getRuntimeInstallerBindingContext();
   refreshRuntimeInstallerContributions();
   const renderers = bindingContext.getAll(GraphicRender);
+  const registeredKeys = getTrackedEntryKeys(app.registry.renderer as object, RUNTIME_RENDERER_NAMESPACE);
 
-  app.registry.renderer.clear();
+  clearTrackedEntryKeys(
+    app.registry.renderer as object,
+    RUNTIME_RENDERER_NAMESPACE,
+    app.registry.renderer.unregister?.bind(app.registry.renderer)
+  );
+
   registerRuntimeEntries(
     (key, renderer) => {
       renderer?.reInit?.();
       app.registry.renderer.register(key, renderer);
+      registeredKeys.add(key);
     },
     renderers as any[],
-    'runtime-renderer'
+    RUNTIME_RENDERER_NAMESPACE
   );
 }
 
@@ -139,10 +174,22 @@ export function installRuntimeDrawContributionsToApp(app: IApp): void {
   const bindingContext = getRuntimeInstallerBindingContext();
   refreshRuntimeInstallerContributions();
   const contributions = bindingContext.getAll(DrawItemInterceptor) as IDrawItemInterceptorContribution[];
+  const tracked =
+    runtimeDrawContributions.get(app.context.registry.contribution as object) ??
+    new Set<IDrawItemInterceptorContribution>();
+  tracked.forEach(contribution => {
+    app.context.registry.contribution.unregister?.(DrawItemInterceptor, contribution);
+  });
+  tracked.clear();
+  runtimeDrawContributions.set(app.context.registry.contribution as object, tracked);
+  const registered = new Set(app.context.registry.contribution.get(DrawItemInterceptor));
 
-  app.context.registry.contribution.clear(DrawItemInterceptor);
   contributions.forEach(contribution => {
-    app.context.registry.contribution.register(DrawItemInterceptor, contribution);
+    if (!registered.has(contribution)) {
+      app.context.registry.contribution.register(DrawItemInterceptor, contribution);
+      registered.add(contribution);
+    }
+    tracked.add(contribution);
   });
 }
 
@@ -153,11 +200,20 @@ export function installRuntimePickersToApp<T extends IGraphicPicker>(
   const bindingContext = getRuntimeInstallerBindingContext();
   refreshRuntimeInstallerContributions();
   const pickers = bindingContext.getAll(serviceIdentifier);
+  const registeredKeys = getTrackedEntryKeys(app.registry.picker as object, RUNTIME_PICKER_NAMESPACE);
 
-  app.registry.picker.clear();
+  clearTrackedEntryKeys(
+    app.registry.picker as object,
+    RUNTIME_PICKER_NAMESPACE,
+    app.registry.picker.unregister?.bind(app.registry.picker)
+  );
+
   registerRuntimeEntries(
-    (key, picker) => app.registry.picker.register(key, picker),
+    (key, picker) => {
+      app.registry.picker.register(key, picker);
+      registeredKeys.add(key);
+    },
     pickers as any[],
-    'runtime-picker'
+    RUNTIME_PICKER_NAMESPACE
   );
 }

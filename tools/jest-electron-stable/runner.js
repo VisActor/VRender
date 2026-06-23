@@ -1,7 +1,37 @@
-const throat = require('throat');
 const { electronProc } = require('./proc');
 
 const isDebugMode = () => process.env.DEBUG_MODE === '1';
+
+function createConcurrencyLimiter(limit) {
+  const concurrency = Math.max(1, limit);
+  const queue = [];
+  let active = 0;
+
+  const runNext = () => {
+    active -= 1;
+    const next = queue.shift();
+    if (next) {
+      next();
+    }
+  };
+
+  return task =>
+    new Promise((resolve, reject) => {
+      const run = () => {
+        active += 1;
+        Promise.resolve()
+          .then(task)
+          .then(resolve, reject)
+          .finally(runNext);
+      };
+
+      if (active < concurrency) {
+        run();
+      } else {
+        queue.push(run);
+      }
+    });
+}
 
 class StableElectronRunner {
   constructor(globalConfig) {
@@ -12,7 +42,7 @@ class StableElectronRunner {
   getConcurrency(testSize) {
     const { maxWorkers, watch, watchAll } = this._globalConfig;
     const isWatch = watch || watchAll;
-    const concurrency = Math.min(testSize, maxWorkers);
+    const concurrency = Math.max(1, Math.min(testSize, maxWorkers));
     return isWatch ? Math.ceil(concurrency / 2) : concurrency;
   }
 
@@ -33,9 +63,11 @@ class StableElectronRunner {
 
     await electronProc.initialWin();
 
+    const limit = createConcurrencyLimiter(concurrency);
+
     await Promise.all(
-      tests.map(
-        throat(concurrency, async test => {
+      tests.map(test =>
+        limit(async () => {
           onStart(test);
           const config = test.context.config;
           const globalConfig = this._globalConfig;

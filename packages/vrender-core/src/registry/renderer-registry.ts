@@ -14,6 +14,11 @@ export class RendererRegistry implements IRendererRegistry {
     this.cache.delete(key);
   }
 
+  unregister(key: RegistryKey): void {
+    this.entries.delete(key);
+    this.cache.delete(key);
+  }
+
   get(key: RegistryKey): IGraphicRender | undefined {
     if (this.cache.has(key)) {
       return this.cache.get(key);

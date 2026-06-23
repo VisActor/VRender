@@ -9,6 +9,25 @@ export class ContributionRegistry<T = unknown> implements IContributionRegistry<
     this.entries.set(key, current);
   }
 
+  unregister(key: RegistryKey, contribution?: T): void {
+    if (contribution === undefined) {
+      this.entries.delete(key);
+      return;
+    }
+
+    const current = this.entries.get(key);
+    if (!current) {
+      return;
+    }
+
+    const next = current.filter(entry => entry !== contribution);
+    if (next.length) {
+      this.entries.set(key, next);
+    } else {
+      this.entries.delete(key);
+    }
+  }
+
   get(key: RegistryKey): T[] {
     return [...(this.entries.get(key) ?? [])];
   }

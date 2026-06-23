@@ -144,6 +144,6 @@ const stage = handle.app.createStage(options);
 
 ## 建议阅读
 
-- [VRender 1.1.0 升级指南](../../assets/guide/zh/asd/Basic/Upgrade_to_1_1_0.md)
+- [VRender 1.1.0 升级指南](../../assets/guide/zh/asd/Upgrade_Guide/Upgrade_to_1_1_0.md)
 - [D3 Stable Release Notes Draft](../../refactor/state-engine/D3_STABLE_RELEASE_NOTES_DRAFT.md)
 - [VRender On-Demand Capability Usage](../../refactor/bundle-size/VRENDER_ON_DEMAND_CAPABILITY_USAGE.md)

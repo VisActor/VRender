@@ -8,6 +8,10 @@ export class PickerRegistry implements IPickerRegistry {
     this.entries.set(key, picker);
   }
 
+  unregister(key: RegistryKey): void {
+    this.entries.delete(key);
+  }
+
   get(key: RegistryKey): IGraphicPicker | undefined {
     return this.entries.get(key);
   }

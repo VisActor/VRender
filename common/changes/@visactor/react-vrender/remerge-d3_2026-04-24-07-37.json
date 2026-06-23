@@ -1,8 +1,8 @@
 {
   "changes": [
     {
-      "comment": "Prepare browser alpha app-scoped runtime verification.",
-      "type": "none",
+      "comment": "Align React Stage lifecycle and host bindings with the VRender 1.1.0 app-scoped runtime contract.",
+      "type": "minor",
       "packageName": "@visactor/react-vrender"
     }
   ],

@@ -1,8 +1,8 @@
 {
   "changes": [
     {
-      "comment": "Prepare browser alpha app-scoped runtime verification.",
-      "type": "none",
+      "comment": "Align component layout and animation with the D3 static-truth contract, expose optional component subpaths, and register poptip through the app-scoped runtime context.",
+      "type": "minor",
       "packageName": "@visactor/vrender-components"
     }
   ],

@@ -1,8 +1,8 @@
 {
   "changes": [
     {
-      "comment": "Prepare browser alpha app-scoped runtime verification.",
-      "type": "none",
+      "comment": "Move environment, renderer, picker, and graphic setup to app-scoped installers for browser, node, miniapp, Lynx, and Harmony profiles while preserving full bootstrap behavior.",
+      "type": "minor",
       "packageName": "@visactor/vrender-kits"
     }
   ],

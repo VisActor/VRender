@@ -1,8 +1,8 @@
 {
   "changes": [
     {
-      "comment": "Prepare browser alpha app-scoped runtime verification.",
-      "type": "none",
+      "comment": "Stabilize animation static-truth ownership and expose optional custom animation registers for basic, richtext, disappear, and story profiles while keeping the full register compatible.",
+      "type": "minor",
       "packageName": "@visactor/vrender-animate"
     }
   ],

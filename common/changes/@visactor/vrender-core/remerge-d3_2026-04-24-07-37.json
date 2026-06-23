@@ -1,13 +1,8 @@
 {
   "changes": [
     {
-      "comment": "Prepare browser alpha app-scoped runtime verification.",
-      "type": "none",
-      "packageName": "@visactor/vrender-core"
-    },
-    {
-      "comment": "Warn when deprecated graphic.states fallback supplies missing shared-state definitions.",
-      "type": "patch",
+      "comment": "Stabilize the D3 state engine and app-scoped runtime foundations, including explicit static truth, sharedStateDefinitions, same-state refresh, runtime installer context, and legacy path cleanup.",
+      "type": "minor",
       "packageName": "@visactor/vrender-core"
     }
   ],

@@ -1,8 +1,8 @@
 {
   "changes": [
     {
-      "comment": "Remove the temporary React DevTools inspector console output.",
-      "type": "patch",
+      "comment": "Covered by the consolidated VRender 1.1.0 app-scoped runtime release entry.",
+      "type": "none",
       "packageName": "@visactor/react-vrender"
     }
   ],

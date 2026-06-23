@@ -1,6 +1,17 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Wed, 15 Apr 2026 07:05:39 GMT and should not be manually modified.
+This log was last generated on Tue, 23 Jun 2026 04:01:55 GMT and should not be manually modified.
+
+## 1.1.0
+Tue, 23 Jun 2026 04:01:55 GMT
+
+### Minor changes
+
+- Align component layout and animation with the D3 static-truth contract, expose optional component subpaths, and register poptip through the app-scoped runtime context.
+
+### Updates
+
+- Covered by the consolidated VRender 1.1.0 component release entry.
 
 ## 1.0.46
 Wed, 15 Apr 2026 07:05:39 GMT

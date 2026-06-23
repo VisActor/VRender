@@ -2,6 +2,18 @@
   "name": "@visactor/vrender",
   "entries": [
     {
+      "version": "1.1.0",
+      "tag": "@visactor/vrender_v1.1.0",
+      "date": "Tue, 23 Jun 2026 04:01:55 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "Release the VRender 1.1.0 runtime contract with app-scoped entries, shared app lifecycle support, D3 state and animation semantics, and root/default compatibility."
+          }
+        ]
+      }
+    },
+    {
       "version": "1.0.46",
       "tag": "@visactor/vrender_v1.0.46",
       "date": "Wed, 15 Apr 2026 07:05:39 GMT",

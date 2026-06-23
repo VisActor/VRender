@@ -1,6 +1,13 @@
 # Change Log - @visactor/vrender-kits
 
-This log was last generated on Wed, 15 Apr 2026 07:05:39 GMT and should not be manually modified.
+This log was last generated on Tue, 23 Jun 2026 04:01:55 GMT and should not be manually modified.
+
+## 1.1.0
+Tue, 23 Jun 2026 04:01:55 GMT
+
+### Minor changes
+
+- Move environment, renderer, picker, and graphic setup to app-scoped installers for browser, node, miniapp, Lynx, and Harmony profiles while preserving full bootstrap behavior.
 
 ## 1.0.46
 Wed, 15 Apr 2026 07:05:39 GMT

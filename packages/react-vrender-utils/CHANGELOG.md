@@ -1,6 +1,13 @@
 # Change Log - @visactor/react-vrender-utils
 
-This log was last generated on Wed, 15 Apr 2026 07:05:39 GMT and should not be manually modified.
+This log was last generated on Tue, 23 Jun 2026 04:01:55 GMT and should not be manually modified.
+
+## 1.1.0
+Tue, 23 Jun 2026 04:01:55 GMT
+
+### Minor changes
+
+- Align React DOM utility behavior and release verification with the VRender 1.1.0 app-scoped runtime contract.
 
 ## 1.0.46
 Wed, 15 Apr 2026 07:05:39 GMT

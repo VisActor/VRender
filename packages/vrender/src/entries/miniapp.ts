@@ -1,6 +1,7 @@
 import * as VRenderCore from '@visactor/vrender-core';
 import type { IApp, IEntryOptions, IEnvParamsMap } from '@visactor/vrender-core';
 import { bootstrapVRenderMiniApp } from './bootstrap';
+import { installPendingRuntimeContributionModulesToApp } from './runtime-contribution';
 
 type TAppScopedMiniEnv = 'taro' | 'feishu' | 'tt' | 'wx' | 'lynx' | 'harmony';
 
@@ -17,8 +18,10 @@ function createMiniEnvVRenderApp<TEnv extends TAppScopedMiniEnv>(
   options: TVRenderMiniAppEntryOptions<TEnv> = {}
 ): IApp {
   const { envParams, ...entryOptions } = options;
+  const app = bootstrapVRenderMiniApp(createMiniappApp(entryOptions), env, envParams);
 
-  return bootstrapVRenderMiniApp(createMiniappApp(entryOptions), env, envParams);
+  installPendingRuntimeContributionModulesToApp(app);
+  return app;
 }
 
 export function createTaroVRenderApp(options: TVRenderMiniAppEntryOptions<'taro'> = {}): IApp {

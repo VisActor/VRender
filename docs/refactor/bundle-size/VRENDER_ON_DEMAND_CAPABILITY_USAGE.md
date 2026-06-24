@@ -130,6 +130,68 @@ export function registerVRenderStoryCustomAnimations() {
 - 如果使用 static profile，上层应通过不同入口文件、构建条件或明确 profile 导出承载选择，而不是在一个文件里静态导入所有 optional group。
 - 如果用户选择发生在运行时，使用下一节的动态加载方式。
 
+## 自定义 Runtime Contribution Module
+
+上层如果需要注入 renderer contribution、draw interceptor 或 picker contribution，应使用 VRender 的 runtime contribution installer，而不是直接维护 legacy/runtime container 与 app registry 的刷新顺序。
+
+Public entry:
+
+```ts
+import { installRuntimeContributionModule } from '@visactor/vrender/entries/runtime-contribution';
+```
+
+基础用法：
+
+```ts
+installRuntimeContributionModule(customContributionModule, {
+  targets: ['graphic-renderer']
+});
+```
+
+语义：
+
+- 如果未传 `app`，module 会登记为 pending runtime contribution。VRender 不会创建新 app，也不会在默认 graphics 尚未安装前提前执行 replacement module。
+- 当前已经存在的 shared app 会立即安装该 module。
+- 后续通过 `@visactor/vrender` app creator 创建的新 app，会在默认 bootstrap 完成后安装 pending module，保证 replacement module 可以看到内置 contribution token。
+- 默认也会安装到 legacy binding context，保持旧兼容路径可用；需要禁用时传 `legacy: false`。
+- 如果传入 `app`，VRender 只把 module 安装到该 app，不会同时扫描其他 shared app。
+- 同一个 module object 对同一个 binding context 只会加载一次，避免 append-style contribution 重复绑定；app-scoped reinstall 仍可以重复调用。
+
+`targets` 控制已有 app 需要刷新的 registry：
+
+| Target | 作用 |
+| --- | --- |
+| `'graphic-renderer'` | 重新安装 runtime graphic renderer，并调用 renderer `reInit()` 刷新 render contribution |
+| `'draw-contribution'` | 重新安装 draw interceptor contribution |
+| `{ picker: CanvasPickerContribution }` | 重新安装指定 picker contribution |
+
+VTable 这类同时注入 rect/group/image/text render contribution、draw interceptor 和 chart picker 的 profile，可以收口成：
+
+```ts
+import { CanvasPickerContribution } from '@visactor/vrender-kits/picker/contributions/constants';
+import { installRuntimeContributionModule } from '@visactor/vrender/entries/runtime-contribution';
+
+export function installVTableRuntimeContributions(app?: IApp) {
+  installRuntimeContributionModule(splitModule, {
+    app,
+    targets: ['graphic-renderer', 'draw-contribution', { picker: CanvasPickerContribution }]
+  });
+
+  installRuntimeContributionModule(textMeasureModule, {
+    app,
+    targets: ['graphic-renderer']
+  });
+}
+```
+
+推荐调用方式：
+
+1. 在 profile 顶层调用一次，覆盖 app 尚未创建时的 runtime 状态。
+2. 在拿到 app 后、`app.createStage()` 前再调用一次，覆盖 app 已存在或 shared app 被其他上层提前创建的场景。
+3. 不要依赖顶层 import 顺序来判断 renderer 是否已经安装；该判断由 VRender installer 承担。
+4. 不要把业务 contribution 放进 VRender 默认 bootstrap。full/default 行为保持完整，但业务可选能力应由上层 profile 显式安装。
+5. 业务方如果要替换内置 contribution，仍应使用稳定 token 的 `rebind(Token).to(CustomContribution)`；不要只追加同类型 contribution，否则内置 contribution 仍会参与绘制。
+
 ## 上层动态加载方式
 
 如果上层希望把 optional 能力拆成异步 chunk，可以使用动态 import。推荐仍然保留一个统一入口：

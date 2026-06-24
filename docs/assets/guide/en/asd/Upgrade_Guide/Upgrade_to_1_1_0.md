@@ -88,6 +88,31 @@ VRender 1.1.0 makes component, plugin, and custom animation registration boundar
 - Custom animation can register `basic`, `richtext`, `disappear`, `story`, or the full surface.
 - The `poptip` plugin is explicit. Use `loadPoptip()` or `installPoptipToApp(app)`; it is not part of the default bootstrap.
 
+### Custom Runtime Contributions Use a Runtime Installer
+
+If an upper layer injects renderer contributions, draw interceptors, or picker contributions, use the runtime contribution installer instead of directly managing VRender DI/container refresh order:
+
+```ts
+import { installRuntimeContributionModule } from '@visactor/vrender/entries/runtime-contribution';
+
+installRuntimeContributionModule(customContributionModule, {
+  targets: ['graphic-renderer', 'draw-contribution']
+});
+```
+
+When `app` is omitted, VRender records the module as a pending runtime contribution and refreshes any shared apps that already exist. It does not create a new app. New apps created later install the pending module after their default bootstrap, so replacement modules can see built-in contribution tokens before calling `rebind`.
+
+When an app already exists or is passed by the host, pass it explicitly:
+
+```ts
+installRuntimeContributionModule(customContributionModule, {
+  app,
+  targets: ['graphic-renderer']
+});
+```
+
+Use `{ picker: CanvasPickerContribution }` in `targets` when the module registers picker contributions. The same module object is loaded once per binding context, so it is safe for an upper layer to call the installer before app creation and again after resolving the app.
+
 ## Breaking Changes
 
 - `graphic.stateProxy` has been removed. Use `StateDefinition.resolver` for dynamic state styles.
@@ -456,6 +481,15 @@ installPoptipToApp(app);
 ```
 
 This API requires an explicit `app` argument so caller mistakes fail early. If the App has not been created yet and you only need to register poptip capability globally, use `loadPoptip()`.
+
+### When should I use `installRuntimeContributionModule()`?
+
+Use it for upper-layer custom renderer contribution modules, for example table split-border rendering, custom draw interceptors, or chart/table picker extensions. It handles both states:
+
+- no app yet: save the runtime contribution module for future app bootstrap and refresh existing shared apps if any;
+- app already exists: reinstall the requested app registry targets for that app.
+
+It is not a replacement for default VRender bootstrap and does not auto-load arbitrary optional features.
 
 ## Not Included in the 1.1.0 Stable Contract
 

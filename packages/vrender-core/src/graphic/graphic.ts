@@ -218,6 +218,8 @@ function areAttributeValuesEqual(left: unknown, right: unknown): boolean {
   return isEqual(left, right);
 }
 
+type ExcludedAttributeKeys = Record<string, true>;
+
 function deepMergeAttributeValue(base: Record<string, any>, value: Record<string, any>): Record<string, any> {
   const result: Record<string, any> = cloneAttributeValue(base) ?? {};
 
@@ -771,11 +773,18 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     return extraAttrs as Partial<T>;
   }
 
-  protected syncObjectToSnapshot(target: Record<string, any>, snapshot: Record<string, any>): AttributeDelta {
+  protected syncObjectToSnapshot(
+    target: Record<string, any>,
+    snapshot: Record<string, any>,
+    excludedKeys?: ExcludedAttributeKeys
+  ): AttributeDelta {
     const delta: AttributeDelta = new Map();
     const keySet = new Set<string>([...Object.keys(target), ...Object.keys(snapshot)]);
 
     keySet.forEach(key => {
+      if (excludedKeys?.[key] === true) {
+        return;
+      }
       const hasNext = Object.prototype.hasOwnProperty.call(snapshot, key);
       const previousValue = target[key];
 
@@ -799,24 +808,24 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     return delta;
   }
 
-  protected _syncAttribute(): AttributeDelta {
+  protected _syncAttribute(excludedKeys?: ExcludedAttributeKeys): AttributeDelta {
     if (this.attribute === this.baseAttributes && this.resolvedStatePatch) {
       this.detachAttributeFromBaseAttributes();
     }
     const snapshot = this.buildStaticAttributeSnapshot() as Record<string, any>;
-    const delta = this.syncObjectToSnapshot(this.attribute as Record<string, any>, snapshot);
+    const delta = this.syncObjectToSnapshot(this.attribute as Record<string, any>, snapshot, excludedKeys);
     this.valid = this.isValid();
-    this.attributeMayContainTransientAttrs = false;
+    this.attributeMayContainTransientAttrs = !!excludedKeys;
     return delta;
   }
 
-  protected _syncFinalAttributeFromStaticTruth(): void {
+  protected _syncFinalAttributeFromStaticTruth(excludedKeys?: ExcludedAttributeKeys): void {
     const target = (this as any).finalAttribute;
     if (!target) {
       return;
     }
     const snapshot = this.buildStaticAttributeSnapshot() as Record<string, any>;
-    this.syncObjectToSnapshot(target, snapshot);
+    this.syncObjectToSnapshot(target, snapshot, excludedKeys);
   }
 
   protected mergeAttributeDeltaCategory(category: UpdateCategory, key: string, prev: unknown, next: unknown) {
@@ -989,6 +998,41 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     }
   }
 
+  protected _commitAnimationStaticAttributes(params: Partial<T>, context?: ISetAttributeContext): void {
+    if (!params) {
+      return;
+    }
+
+    const source = params as Record<string, any>;
+    const baseAttributes = this.getBaseAttributesStorage() as Record<string, any>;
+    const target = this.attribute as Record<string, any>;
+    const delta: AttributeDelta = new Map();
+    let hasKeys = false;
+
+    for (const key in source) {
+      if (!Object.prototype.hasOwnProperty.call(source, key)) {
+        continue;
+      }
+      hasKeys = true;
+      const previousValue = target[key];
+      const nextValue = source[key];
+      baseAttributes[key] = nextValue;
+      target[key] = nextValue;
+      if (!areAttributeValuesEqual(previousValue, nextValue)) {
+        delta.set(key, { prev: previousValue, next: nextValue });
+      }
+    }
+
+    if (!hasKeys) {
+      return;
+    }
+
+    this.valid = this.isValid();
+    this.attributeMayContainTransientAttrs = true;
+    this.submitUpdateByDelta(delta);
+    this.onAttributeUpdate(context);
+  }
+
   applyAnimationTransientAttributes(
     params: Partial<T>,
     forceUpdateTag: boolean = false,
@@ -1050,9 +1094,12 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     this.onAttributeUpdate(context);
   }
 
-  protected _restoreAttributeFromStaticTruth(context?: ISetAttributeContext): void {
-    this._syncFinalAttributeFromStaticTruth();
-    const delta = this._syncAttribute();
+  protected _restoreAttributeFromStaticTruth(
+    context?: ISetAttributeContext,
+    excludedKeys?: ExcludedAttributeKeys
+  ): void {
+    this._syncFinalAttributeFromStaticTruth(excludedKeys);
+    const delta = this._syncAttribute(excludedKeys);
     this.submitUpdateByDelta(delta);
     this.onAttributeUpdate(context);
   }

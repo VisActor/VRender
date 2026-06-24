@@ -1,6 +1,7 @@
 import type { IApp, IEntryOptions, IEnvParamsMap } from '@visactor/vrender-core';
 import { createBrowserApp } from '@visactor/vrender-core/entries/browser';
 import { bootstrapVRenderSharedBrowserLiteApp } from './bootstrap-browser-lite';
+import { installPendingRuntimeContributionModulesToApp } from './runtime-contribution';
 import {
   acquireSharedApp,
   getSharedApp,
@@ -29,8 +30,10 @@ function createSharedBrowserLiteApp(options: TVRenderSharedBrowserLiteAppOptions
   delete entryOptions.env;
   delete entryOptions.envParams;
   delete entryOptions.key;
+  const app = bootstrapVRenderSharedBrowserLiteApp(createBrowserApp(entryOptions as any) as unknown as IApp, envParams);
 
-  return bootstrapVRenderSharedBrowserLiteApp(createBrowserApp(entryOptions as any) as unknown as IApp, envParams);
+  installPendingRuntimeContributionModulesToApp(app);
+  return app;
 }
 
 export function acquireSharedBrowserLiteVRenderApp(

@@ -162,6 +162,24 @@ export function getSharedApp<TEnv extends string>(
   return record.app;
 }
 
+export function getAllSharedApps(): IApp[] {
+  const apps: IApp[] = [];
+  const seen = new Set<IApp>();
+  const registry = getSharedAppRegistry<string>();
+
+  registry.forEach(envRegistry => {
+    envRegistry.forEach(record => {
+      if (record.released || record.app.released || seen.has(record.app)) {
+        return;
+      }
+      seen.add(record.app);
+      apps.push(record.app);
+    });
+  });
+
+  return apps;
+}
+
 export function releaseSharedApp<TEnv extends string>(
   env: TEnv,
   key: TVRenderSharedAppKey = DEFAULT_SHARED_APP_KEY

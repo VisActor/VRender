@@ -467,7 +467,7 @@ describe('vrender app-scoped entries', () => {
     });
   });
 
-  test('bootstrapVRenderBrowserApp should merge legacy renderer and picker registrations into app registries', () => {
+  test('bootstrapVRenderBrowserApp should register legacy renderer and picker entries without clearing app registries', () => {
     jest.isolateModules(() => {
       const legacyRenderer = {
         numberType: 11,
@@ -480,26 +480,15 @@ describe('vrender app-scoped entries', () => {
         type: 'rect',
         constructor: { name: 'DefaultCanvasRectPicker' }
       };
-      const appRenderer = {
-        numberType: 5,
-        constructor: { name: 'DefaultCanvasGroupRender' },
-        reInit: jest.fn()
-      };
-      const appPicker = {
-        numberType: 5,
-        constructor: { name: 'DefaultCanvasGroupPicker' }
-      };
       const rendererRegister = jest.fn();
       const pickerRegister = jest.fn();
       const app = {
         registry: {
           renderer: {
-            getAll: jest.fn(() => [appRenderer]),
             clear: jest.fn(),
             register: rendererRegister
           },
           picker: {
-            getAll: jest.fn(() => [appPicker]),
             clear: jest.fn(),
             register: pickerRegister
           }
@@ -589,28 +578,19 @@ describe('vrender app-scoped entries', () => {
       expect(installDefaultGraphicsToApp).toHaveBeenCalledWith(app);
       expect(installBrowserPickersToApp).toHaveBeenCalledWith(app);
       expect(registerRect).toHaveBeenCalledTimes(1);
-      expect(app.registry.renderer.clear).toHaveBeenCalledTimes(1);
-      expect(app.registry.picker.clear).toHaveBeenCalledTimes(1);
-      expect(rendererRegister).toHaveBeenCalledTimes(2);
-      expect(pickerRegister).toHaveBeenCalledTimes(2);
-      expect(rendererRegister).toHaveBeenCalledWith(
-        expect.stringContaining('renderer:5:unknown:DefaultCanvasGroupRender'),
-        appRenderer
-      );
+      expect(app.registry.renderer.clear).not.toHaveBeenCalled();
+      expect(app.registry.picker.clear).not.toHaveBeenCalled();
+      expect(rendererRegister).toHaveBeenCalledTimes(1);
+      expect(pickerRegister).toHaveBeenCalledTimes(1);
       expect(rendererRegister).toHaveBeenCalledWith(
         expect.stringContaining('renderer:11:rect:DefaultCanvasRectRender'),
         legacyRenderer
-      );
-      expect(pickerRegister).toHaveBeenCalledWith(
-        expect.stringContaining('picker:5:unknown:DefaultCanvasGroupPicker'),
-        appPicker
       );
       expect(pickerRegister).toHaveBeenCalledWith(
         expect.stringContaining('picker:11:rect:DefaultCanvasRectPicker'),
         legacyPicker
       );
       expect(legacyRenderer.reInit).toHaveBeenCalledTimes(1);
-      expect(appRenderer.reInit).toHaveBeenCalledTimes(1);
     });
   });
 });

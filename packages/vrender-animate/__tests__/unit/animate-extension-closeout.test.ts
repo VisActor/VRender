@@ -28,6 +28,17 @@ describe('AnimateExtension close-out', () => {
 
     target.restoreStaticAttribute();
 
-    expect(restore).toHaveBeenCalledWith({ type: AttributeUpdateType.ANIMATE_END });
+    expect(restore).toHaveBeenCalledWith({ type: AttributeUpdateType.ANIMATE_END }, undefined);
+  });
+
+  test('should pass excluded key table to the standard static truth restore path', () => {
+    const restore = jest.fn();
+    const target: any = createTarget({
+      _restoreAttributeFromStaticTruth: restore
+    });
+
+    target.restoreStaticAttribute({ x: true });
+
+    expect(restore).toHaveBeenCalledWith({ type: AttributeUpdateType.ANIMATE_END }, { x: true });
   });
 });

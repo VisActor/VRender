@@ -51,6 +51,11 @@ export function commitAnimationStaticAttrs(
   }
 
   (target as any).setFinalAttributes(commitAttrs);
-  target.setAttributes(commitAttrs as any, false, { type: AttributeUpdateType.ANIMATE_END });
+  const commitStaticAttributes = (target as any)._commitAnimationStaticAttributes;
+  if (typeof commitStaticAttributes === 'function') {
+    commitStaticAttributes.call(target, commitAttrs, { type: AttributeUpdateType.ANIMATE_END });
+  } else {
+    target.setAttributes(commitAttrs as any, false, { type: AttributeUpdateType.ANIMATE_END });
+  }
   return true;
 }

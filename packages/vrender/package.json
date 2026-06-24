@@ -97,6 +97,11 @@
       "import": "./es/entries/miniapp.js",
       "require": "./cjs/entries/miniapp.js"
     },
+    "./entries/runtime-contribution": {
+      "types": "./es/entries/runtime-contribution.d.ts",
+      "import": "./es/entries/runtime-contribution.js",
+      "require": "./cjs/entries/runtime-contribution.js"
+    },
     "./entries/node": {
       "types": "./es/entries/node.d.ts",
       "import": "./es/entries/node.js",

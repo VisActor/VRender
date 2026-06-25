@@ -19,6 +19,7 @@ import { WindowHandlerContribution, DefaultWindow } from '../core/window';
 import coreModule from '../core/core-modules';
 import graphicModule from '../graphic/graphic-service/graphic-module';
 import { createLegacyBindingContext, type ILegacyBindingContext } from '../legacy/binding-context';
+import { getLegacyBindingContext, preLoadAllModule } from '../legacy/bootstrap';
 import pickModule from '../picker/pick-modules';
 import { AreaRenderContribution } from '../render/contributions/render/contributions/constants';
 import { DrawItemInterceptor } from '../render/contributions/render/draw-interceptor';
@@ -31,6 +32,32 @@ import loadRenderContributions from '../render/contributions/modules';
 import { AutoEnablePlugins } from '../plugins/constants';
 import { DefaultPluginService } from '../plugins/plugin-service';
 
+export type TRuntimeContributionModuleRegistry = (
+  bind: ILegacyBindingContext['bind'],
+  unbind: (serviceIdentifier: ServiceIdentifier) => void,
+  isBound: ILegacyBindingContext['isBound'],
+  rebind: ILegacyBindingContext['rebind']
+) => void;
+
+export type TRuntimeContributionModule =
+  | ((context: ILegacyBindingContext) => void)
+  | {
+      registry: TRuntimeContributionModuleRegistry;
+    };
+
+export type TRuntimeContributionInstallTarget =
+  | 'graphic-renderer'
+  | 'draw-contribution'
+  | {
+      picker: ServiceIdentifier<IGraphicPicker>;
+    };
+
+export interface IRuntimeContributionModuleInstallOptions {
+  app?: IApp;
+  legacy?: boolean;
+  targets?: TRuntimeContributionInstallTarget[];
+}
+
 const runtimeInstallerContext = createLegacyBindingContext();
 let runtimeInstallerPreloaded = false;
 let runtimeGlobal: IGlobal | undefined;
@@ -38,6 +65,9 @@ const RUNTIME_RENDERER_NAMESPACE = 'vrender:runtime-renderer';
 const RUNTIME_PICKER_NAMESPACE = 'vrender:runtime-picker';
 const runtimeEntryKeys = new WeakMap<object, Map<string, Set<string>>>();
 const runtimeDrawContributions = new WeakMap<object, Set<IDrawItemInterceptorContribution>>();
+const loadedRuntimeContributionModules = new WeakMap<object, WeakSet<object>>();
+const DEFAULT_RUNTIME_CONTRIBUTION_TARGETS: TRuntimeContributionInstallTarget[] = ['graphic-renderer'];
+const noopUnbindRuntimeContributionService = (): void => undefined;
 
 function ensureRuntimeInstallerPreloaded(): void {
   if (runtimeInstallerPreloaded) {
@@ -216,4 +246,96 @@ export function installRuntimePickersToApp<T extends IGraphicPicker>(
     pickers as any[],
     RUNTIME_PICKER_NAMESPACE
   );
+}
+
+function getRuntimeContributionModuleIdentity(module: TRuntimeContributionModule): object {
+  return module as object;
+}
+
+function hasLoadedRuntimeContributionModule(
+  context: ILegacyBindingContext,
+  module: TRuntimeContributionModule
+): boolean {
+  return loadedRuntimeContributionModules.get(context)?.has(getRuntimeContributionModuleIdentity(module)) ?? false;
+}
+
+function markRuntimeContributionModuleLoaded(context: ILegacyBindingContext, module: TRuntimeContributionModule): void {
+  let modules = loadedRuntimeContributionModules.get(context);
+  if (!modules) {
+    modules = new WeakSet<object>();
+    loadedRuntimeContributionModules.set(context, modules);
+  }
+  modules.add(getRuntimeContributionModuleIdentity(module));
+}
+
+function loadRuntimeContributionModuleToContext(
+  context: ILegacyBindingContext,
+  module: TRuntimeContributionModule
+): void {
+  if (hasLoadedRuntimeContributionModule(context, module)) {
+    return;
+  }
+
+  if (typeof module === 'function') {
+    module(context);
+  } else {
+    module.registry(context.bind, noopUnbindRuntimeContributionService, context.isBound, context.rebind);
+  }
+
+  markRuntimeContributionModuleLoaded(context, module);
+}
+
+function isRuntimePickerTarget(
+  target: TRuntimeContributionInstallTarget
+): target is { picker: ServiceIdentifier<IGraphicPicker> } {
+  return typeof target === 'object' && target !== null && 'picker' in target;
+}
+
+function installRuntimeContributionTargetsToApp(
+  app: IApp,
+  targets: TRuntimeContributionInstallTarget[] | undefined
+): void {
+  const resolvedTargets = targets ?? DEFAULT_RUNTIME_CONTRIBUTION_TARGETS;
+  let installGraphicRenderers = false;
+  let installDrawContributions = false;
+  const pickerTargets = new Set<ServiceIdentifier<IGraphicPicker>>();
+
+  resolvedTargets.forEach(target => {
+    if (target === 'graphic-renderer') {
+      installGraphicRenderers = true;
+    } else if (target === 'draw-contribution') {
+      installDrawContributions = true;
+    } else if (isRuntimePickerTarget(target)) {
+      pickerTargets.add(target.picker);
+    }
+  });
+
+  if (installDrawContributions) {
+    installRuntimeDrawContributionsToApp(app);
+  }
+  if (installGraphicRenderers) {
+    installRuntimeGraphicRenderersToApp(app);
+  }
+  pickerTargets.forEach(serviceIdentifier => {
+    installRuntimePickersToApp(app, serviceIdentifier);
+  });
+}
+
+export function installRuntimeContributionModule(
+  module: TRuntimeContributionModule,
+  { app, legacy = true, targets }: IRuntimeContributionModuleInstallOptions = {}
+): void {
+  const runtimeContext = getRuntimeInstallerBindingContext();
+  loadRuntimeContributionModuleToContext(runtimeContext, module);
+
+  if (legacy) {
+    preLoadAllModule();
+    loadRuntimeContributionModuleToContext(getLegacyBindingContext(), module);
+  }
+
+  refreshRuntimeInstallerContributions();
+
+  if (app) {
+    installRuntimeContributionTargetsToApp(app, targets);
+  }
 }

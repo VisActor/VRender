@@ -87,8 +87,8 @@ export class AnimateExtension {
     target.setAttributesAndPreventAnimate(finalAttribute, false, { type: AttributeUpdateType.ANIMATE_BIND });
   }
 
-  restoreStaticAttribute(): void {
-    (this as any)._restoreAttributeFromStaticTruth({ type: AttributeUpdateType.ANIMATE_END });
+  restoreStaticAttribute(excludedKeys?: Record<string, true>): void {
+    (this as any)._restoreAttributeFromStaticTruth({ type: AttributeUpdateType.ANIMATE_END }, excludedKeys);
   }
 
   /**

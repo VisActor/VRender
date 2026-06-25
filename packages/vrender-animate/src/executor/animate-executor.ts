@@ -15,6 +15,7 @@ import type {
 } from './executor';
 import { isArray, isFunction, isValidNumber } from '@visactor/vutils';
 import { getCustomType } from './utils';
+import { commitAnimationStaticAttrs } from '../custom/static-truth';
 
 interface IAnimateExecutor {
   execute: (params: IAnimationConfig) => void;
@@ -452,6 +453,7 @@ export class AnimateExecutor implements IAnimateExecutor {
       type,
       graphic
     );
+    this.commitAnimatedUpdateDiffAttrsOnEnd(animate, graphic, type, props);
 
     let totalDelay = 0;
     if (oneByOneDelay) {
@@ -711,6 +713,51 @@ export class AnimateExecutor implements IAnimateExecutor {
     // Update owns context.diffAttrs itself. Its channel config must not pre-commit
     // omitted diff keys before Update captures their start frame.
     return type !== 'update';
+  }
+
+  private commitAnimatedUpdateDiffAttrsOnEnd(
+    animate: IAnimate,
+    graphic: IGraphic,
+    type: string,
+    props: Record<string, any> | null
+  ): void {
+    if (type === 'update' || !props || !this.isUpdateDiffContext(graphic)) {
+      return;
+    }
+
+    const keys = this.collectAnimatedUpdateDiffAttrKeys(graphic, props);
+    if (!keys?.length) {
+      return;
+    }
+
+    animate.onEnd(() => {
+      commitAnimationStaticAttrs(graphic, keys, animate, props);
+    });
+  }
+
+  private isUpdateDiffContext(graphic: IGraphic): boolean {
+    const context = graphic.context as any;
+    return context?.diffState === 'update' || context?.animationState === 'update';
+  }
+
+  private collectAnimatedUpdateDiffAttrKeys(graphic: IGraphic, props: Record<string, any>): string[] | null {
+    const diffAttrs = graphic.context?.diffAttrs;
+    if (!diffAttrs) {
+      return null;
+    }
+
+    let keys: string[] | null = null;
+    for (const key in props) {
+      if (
+        Object.prototype.hasOwnProperty.call(props, key) &&
+        Object.prototype.hasOwnProperty.call(diffAttrs, key) &&
+        diffAttrs[key] !== undefined
+      ) {
+        keys ?? (keys = []);
+        keys.push(key);
+      }
+    }
+    return keys;
   }
 
   /**

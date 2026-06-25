@@ -263,7 +263,7 @@ export type IStrokeStyle = {
   strokeBoundsBuffer: number;
   /**
    * stroke - true 全描边
-   * stroke - false 不描边
+   * stroke - false/null 不描边
    * stroke 为数值类型，适用于rect\arc等图形，用于配置部分描边的场景，其中
    *
    * 0b00000 - 不描边
@@ -277,6 +277,7 @@ export type IStrokeStyle = {
    * 0b001111 - 全描边
    *
    * stroke - boolean[]，适用于rect\arc等图形，用于配置部分描边的场景
+   * 对rect分边描边，数组项为false/null时表示对应边不描边
    */
   stroke: IStrokeType[] | IStrokeType;
 };

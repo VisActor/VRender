@@ -40,6 +40,44 @@ function removeKeysFromRecord<T extends Record<string, any> | undefined>(record:
   return nextRecord as T;
 }
 
+type ExcludedAttrKeys = Record<string, true>;
+
+function collectActiveSiblingAttrKeys(target: any, currentAnimate: IAnimate): ExcludedAttrKeys | undefined {
+  const getTrackedAnimates = target?.getTrackedAnimates;
+  if (typeof getTrackedAnimates === 'function') {
+    const trackedAnimates = getTrackedAnimates.call(target) as Map<string | number, IAnimate> | undefined;
+    if (trackedAnimates && trackedAnimates.size <= 1) {
+      return undefined;
+    }
+  }
+
+  const forEachTrackedAnimate = target?.forEachTrackedAnimate;
+  if (typeof forEachTrackedAnimate !== 'function') {
+    return undefined;
+  }
+
+  let keys: ExcludedAttrKeys | undefined;
+  const currentEndProps = currentAnimate.getEndProps?.();
+  forEachTrackedAnimate.call(target, (animate: IAnimate) => {
+    if (animate === currentAnimate || animate.status === AnimateStatus.END) {
+      return;
+    }
+    const endProps = animate.getEndProps?.();
+    if (!endProps) {
+      return;
+    }
+    for (const key in endProps) {
+      if (
+        Object.prototype.hasOwnProperty.call(endProps, key) &&
+        !(currentEndProps && Object.prototype.hasOwnProperty.call(currentEndProps, key))
+      ) {
+        (keys ?? (keys = Object.create(null)))[key] = true;
+      }
+    }
+  });
+  return keys;
+}
+
 export class Animate implements IAnimate {
   readonly id: string | number;
   status: AnimateStatus;
@@ -157,7 +195,7 @@ export class Animate implements IAnimate {
     this.onRemove(() => {
       this.stop();
       if (!(this as any).__skipRestoreStaticAttributeOnRemove) {
-        trackerTarget.restoreStaticAttribute();
+        trackerTarget.restoreStaticAttribute(collectActiveSiblingAttrKeys(trackerTarget, this));
       }
       trackerTarget.untrackAnimate(this.id);
     });
@@ -641,7 +679,7 @@ export class Animate implements IAnimate {
       this.onEnd();
       this.status = AnimateStatus.END;
       const trackerTarget = this.target as any;
-      trackerTarget.restoreStaticAttribute();
+      trackerTarget.restoreStaticAttribute(collectActiveSiblingAttrKeys(trackerTarget, this));
       (this as any).__skipRestoreStaticAttributeOnRemove = true;
       return;
     }

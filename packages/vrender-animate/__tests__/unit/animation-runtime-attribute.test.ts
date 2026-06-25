@@ -1454,6 +1454,77 @@ describe('D3 pre-handoff animation runtime', () => {
     expect(rect.getFinalAttribute().y).toBeCloseTo(200, 6);
   });
 
+  test('parallel update siblings should not restore active sibling attrs when the shorter channel ends', () => {
+    const { group, ticker, graphicService } = createStageHarness('parallel-update-sibling-restore');
+    const initial = {
+      x: 100,
+      y: 40,
+      width: 10,
+      height: 10,
+      visible: true
+    };
+    const finalAttrs = {
+      ...initial,
+      x: 400,
+      y: 200
+    };
+    const rect = createRect(initial);
+    bindGraphicService(rect as any, graphicService);
+    rect.setFinalAttributes(initial);
+    group.appendChild(rect);
+
+    const diffAttrs = {
+      x: finalAttrs.x,
+      y: finalAttrs.y
+    };
+    (rect as any).context = {
+      diffState: 'update',
+      animationState: 'update',
+      data: [{ id: 'parallel-update' }],
+      diffAttrs,
+      finalAttrs
+    };
+    rect.setFinalAttributes(finalAttrs);
+
+    (rect as any).applyAnimationState(
+      ['update'],
+      [
+        {
+          name: 'update_0',
+          animation: [
+            {
+              type: 'update',
+              duration: 1000,
+              easing: 'linear',
+              options: { excludeChannels: ['y'] }
+            },
+            {
+              channel: ['y'],
+              duration: 600,
+              easing: 'linear'
+            }
+          ]
+        }
+      ]
+    );
+
+    tick(ticker, 599);
+    expect(rect.attribute.x).toBeCloseTo(279.7, 5);
+    expect(rect.attribute.y).toBeGreaterThan(initial.y);
+    expect(rect.attribute.y).toBeLessThan(finalAttrs.y);
+
+    tick(ticker, 2);
+    expect(rect.attribute.x).toBeCloseTo(280.3, 5);
+    expect(rect.attribute.x).toBeGreaterThan(initial.x);
+    expect(rect.attribute.y).toBeCloseTo(finalAttrs.y, 5);
+
+    tick(ticker, 399);
+    expect(rect.attribute.x).toBeCloseTo(400, 5);
+    expect(rect.attribute.y).toBeCloseTo(finalAttrs.y, 5);
+    expect((rect as any).baseAttributes.x).toBeCloseTo(400, 5);
+    expect((rect as any).baseAttributes.y).toBeCloseTo(finalAttrs.y, 5);
+  });
+
   test('non-animation update commits diffAttrs without going through animation executor', () => {
     const oldAttrs = {
       x: 0,

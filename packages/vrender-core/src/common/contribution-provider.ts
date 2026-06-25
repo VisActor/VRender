@@ -63,19 +63,26 @@ export function bindContributionProviderNoSingletonScope(bind: any, id: ServiceI
 }
 
 export class ContributionStore {
-  static store: Map<ServiceIdentifier<any>, ContributionProviderCache<any>> = new Map();
+  static store: Map<ServiceIdentifier<any>, Set<ContributionProviderCache<any>>> = new Map();
 
-  static getStore(id: ServiceIdentifier<any>): ContributionProviderCache<any> {
-    return this.store.get(id);
+  static getStore(id: ServiceIdentifier<any>): ContributionProviderCache<any> | undefined {
+    return this.store.get(id)?.values().next().value;
   }
 
   static setStore(id: ServiceIdentifier<any>, cache: ContributionProviderCache<any>): void {
-    this.store.set(id, cache);
+    let caches = this.store.get(id);
+    if (!caches) {
+      caches = new Set<ContributionProviderCache<any>>();
+      this.store.set(id, caches);
+    }
+    caches.add(cache);
   }
 
   static refreshAllContributions(): void {
-    this.store.forEach(cache => {
-      cache.refresh();
+    this.store.forEach(caches => {
+      caches.forEach(cache => {
+        cache.refresh();
+      });
     });
   }
 }

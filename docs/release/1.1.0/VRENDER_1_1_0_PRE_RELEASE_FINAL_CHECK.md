@@ -10,14 +10,14 @@
 
 当前分支的主要发版差异可以拆成三类：
 
-1. D3 状态/动画语义稳定化：这是 1.1.0 的核心功能升级，不应回退。
+1. 状态/动画语义稳定化：这是 1.1.0 的核心功能升级，不应回退。
 2. app-scoped runtime 与多端入口：这是默认易用性和多端隔离能力的主要新增成本。
 3. 包体积专项：最近几轮在不破坏 root/default 的前提下，完成了 dead source 删除、XML parser 低频化、animate custom register 分层、components public subpath 补齐和收益 gate 文档化。
 
 对比线上 `1.0.46`，`@visactor/vrender-core` npm pack 体积已经小幅下降；增长主要集中在 `@visactor/vrender-kits`、`@visactor/vrender`、`@visactor/vrender-animate` 和 `@visactor/vrender-components`。这些增长不是单一原因导致：
 
 - `kits` / `vrender` 增长主要来自 app-scoped runtime、多端 installers、entries 与 dist 产物。
-- `animate` 增长主要来自 D3 animation runtime/update target 能力和 custom register 分层后的 public surface。
+- `animate` 增长主要来自 animation runtime/update target 能力和 custom register 分层后的 public surface。
 - `components` 增长主要来自 label/axis/marker 等稳定语义适配与 public subpath exports。
 - `core` 中 graphic/entries 有新增，但 common/reflect/dead source 删除抵消后整体下降。
 
@@ -64,11 +64,11 @@
 | Gate | 当前判断 | 说明 |
 | --- | --- | --- |
 | root/default 兼容 | 通过文档和测试基线约束 | full/default 能力未删除；新增的是窄 public subpath/register |
-| public API 删除 | 无稳定 public API 删除 | D3 alpha / internal / dead source 删除已在删除项文档留档 |
+| public API 删除 | 无稳定 public API 删除 | pre-release alpha / internal / dead source 删除已在删除项文档留档 |
 | package version | 未修改 | 符合本阶段约束 |
 | 线上包对比 | 已完成 pack 对比 | 见代码与包体积报告 |
 | VChart/VTable 迁移 | VRender 能力已提供，迁移尚未在本仓库落地 | 需要上层按需 profile 才能拿到 optional 收益 |
-| release notes / changelog | 已明确最终口径 | release body 使用 D3 release notes + 本目录报告；package/site changelog 由 release workflow 生成 |
+| release notes / changelog | 已明确最终口径 | release body 使用状态/动画 release notes + 本目录报告；package/site changelog 由 release workflow 生成 |
 | compile smoke | 已通过 | `rush compile -t @visactor/vrender` 覆盖 core/animate/kits/components/vrender |
 | full test | 需要 release-day 重跑 | 本报告生成阶段未重跑所有单测 |
 
@@ -87,13 +87,13 @@ cd packages/vrender && rushx test --runInBand
 cd packages/vrender-kits && rushx test --runInBand
 ```
 
-如果 release 环境包含 Node 出图能力，Node lane 需要使用与 `canvas` native ABI 匹配的 Node 版本。当前 D3 release notes 中记录的本地发布验证 Node 是 `20.19.6`。
+如果 release 环境包含 Node 出图能力，Node lane 需要使用与 `canvas` native ABI 匹配的 Node 版本。当前状态/动画 release notes 中记录的本地发布验证 Node 是 `20.19.6`。
 
 ## Release Notes And Changelog
 
 正式 1.1.0 的发布说明来源为：
 
-- [D3 Stable Release Notes](../../refactor/state-engine/D3_STABLE_RELEASE_NOTES_DRAFT.md)
+- [State and animation stable release notes](../../refactor/state-engine/D3_STABLE_RELEASE_NOTES_DRAFT.md)
 - [升级功能报告](./VRENDER_1_1_0_UPGRADE_FUNCTION_REPORT.md)
 - [业务使用报告](./VRENDER_1_1_0_BUSINESS_USAGE_REPORT.md)
 - [代码增加说明与包体积报告](./VRENDER_1_1_0_CODE_AND_BUNDLE_SIZE_REPORT.md)

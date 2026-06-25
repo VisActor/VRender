@@ -12,7 +12,7 @@ Tue, 23 Jun 2026 04:01:55 GMT
 
 ### Minor changes
 
-- Release the VRender 1.1.0 runtime contract with app-scoped entries, shared app lifecycle support, D3 state and animation semantics, and root/default compatibility.
+- Release the VRender 1.1.0 runtime contract with app-scoped entries, shared app lifecycle support, stable state and animation semantics, and root/default compatibility.
 
 ## 1.0.46
 Wed, 15 Apr 2026 07:05:39 GMT
@@ -1414,4 +1414,3 @@ Wed, 07 Jun 2023 12:20:05 GMT
 ### Minor changes
 
 - the official version
-

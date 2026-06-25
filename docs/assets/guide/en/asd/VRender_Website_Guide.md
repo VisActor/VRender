@@ -32,9 +32,9 @@ This site provides a powerful search function, allowing you to quickly find rele
 
 We are happy to assist you! If you encounter any issues while learning VRender, you can ask questions in the following ways:
 
-1. Submit an issue on the GitHub repository: Visit [VRender GitHub](https://github.com/VisActor/VChart/issues/new/choose), provide a detailed description of the problem you are facing, and our team will respond and resolve it promptly.
+1. Submit an issue on the GitHub repository: Visit [VRender GitHub](https://github.com/VisActor/VRender/issues/new/choose), provide a detailed description of the problem you are facing, and our team will respond and resolve it promptly.
 
-2. Start a discussion on the GitHub repository: Visit [VRender Discussion](https://github.com/VisActor/VChart/discussions), where you are welcome to share your ideas and suggestions. Our team will respond and address them promptly.
+2. Start a discussion on the GitHub repository: Visit [VRender Discussion](https://github.com/VisActor/VRender/discussions), where you are welcome to share your ideas and suggestions. Our team will respond and address them promptly.
 
 ## How to Report Corrections
 

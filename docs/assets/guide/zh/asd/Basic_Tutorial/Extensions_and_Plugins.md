@@ -21,20 +21,16 @@ import type {
   IDrawContext,
   IGraphicRenderDrawParams
 } from '@visactor/vrender';
-import { RECT_NUMBER_TYPE, DefaultCanvasRectRender, getTheme, inject, injectable } from '@visactor/vrender';
+import { RECT_NUMBER_TYPE, DefaultCanvasRectRender, getTheme } from '@visactor/vrender';
 import rough from 'roughjs';
 import { defaultRouthThemeSpec } from './config';
 
-@injectable()
 export class RoughCanvasRectRender implements IGraphicRender {
   type: 'rect';
   numberType: number;
   style: 'rough' = 'rough';
 
-  constructor(
-    @inject(DefaultCanvasRectRender)
-    public readonly canvasRenderer: IGraphicRender
-  ) {
+  constructor(public readonly canvasRenderer: IGraphicRender) {
     this.type = 'rect';
     this.numberType = RECT_NUMBER_TYPE;
   }
@@ -151,21 +147,31 @@ export class RoughCanvasRectRender implements IGraphicRender {
 }
 ```
 
-2. 将你的类注册到容器中
+2. 将你的类注册到 runtime contribution module 中
 
 ```ts
-export default new ContainerModule((bind, unbind, isBound, rebind) => {
+import { DefaultCanvasRectRender, GraphicRender } from '@visactor/vrender';
+
+export const yourModule = ({ bind }) => {
   // rect
-  bind(RoughCanvasRectRender).toSelf().inSingletonScope();
-  bind(GraphicRender).to(RoughCanvasRectRender);
+  bind(RoughCanvasRectRender)
+    .toDynamicValue(({ container }) => new RoughCanvasRectRender(container.getAll(DefaultCanvasRectRender)[0]))
+    .inSingletonScope();
+  bind(GraphicRender).toService(RoughCanvasRectRender);
+};
+```
+
+3. 在创建 App 前，通过 runtime contribution installer 安装你的 module
+
+```ts
+import { installRuntimeContributionModule } from '@visactor/vrender/entries/runtime-contribution';
+
+installRuntimeContributionModule(yourModule, {
+  targets: ['graphic-renderer']
 });
 ```
 
-3. 在代码运行之前，加载你的 module
-
-```ts
-container.load(your module);
-```
+如果 App 已经存在，则显式传入 app：`installRuntimeContributionModule(yourModule, { app, targets: ['graphic-renderer'] })`。
 
 ## 渲染流程注入自定义修改
 
@@ -174,7 +180,6 @@ container.load(your module);
 1. 编写 contribution，实现 IBaseRenderContribution 接口
 
 ```ts
-@injectable()
 export class RectBackgroundRenderContribution implements IBaseRenderContribution {
   time: BaseRenderContributionTime = BaseRenderContributionTime.beforeFillStroke;
   useStyle: boolean = true;
@@ -231,21 +236,29 @@ export class RectBackgroundRenderContribution implements IBaseRenderContribution
 }
 ```
 
-2. 将你的类注册到容器中
+2. 将你的类注册到 runtime contribution module 中
 
 ```ts
-export default new ContainerModule((bind, unbind, isBound, rebind) => {
+import { RectRenderContribution } from '@visactor/vrender';
+
+export const yourModule = ({ bind }) => {
   // rect
-  bind(DefaultRectBackgroundRenderContribution).toSelf().inSingletonScope();
-  bind(RectRenderContribution).toService(DefaultRectBackgroundRenderContribution);
+  bind(RectBackgroundRenderContribution).toSelf().inSingletonScope();
+  bind(RectRenderContribution).toService(RectBackgroundRenderContribution);
+};
+```
+
+3. 在创建 App 前，通过 runtime contribution installer 安装你的 module
+
+```ts
+import { installRuntimeContributionModule } from '@visactor/vrender/entries/runtime-contribution';
+
+installRuntimeContributionModule(yourModule, {
+  targets: ['graphic-renderer']
 });
 ```
 
-3. 在代码运行之前，加载你的 module
-
-```ts
-container.load(your module);
-```
+如果 App 已经存在，则显式传入 app：`installRuntimeContributionModule(yourModule, { app, targets: ['graphic-renderer'] })`。
 
 ## 开发插件
 

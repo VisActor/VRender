@@ -30,7 +30,7 @@
    - VChart：`VRENDER_VCHART_INTEGRATION_AUDIT.md`
 6. [VRENDER_BUNDLE_OPTIMIZATION_BACKLOG.md](./VRENDER_BUNDLE_OPTIMIZATION_BACKLOG.md)
 
-D3 release 口径：
+状态/动画 release 口径：
 
 - `docs/refactor/state-engine/D3_REMOVED_API_AND_CALL_CHAIN_LOG.md`
 - `docs/assets/guide/zh/asd/Upgrade_Guide/Upgrade_to_1_1_0.md`

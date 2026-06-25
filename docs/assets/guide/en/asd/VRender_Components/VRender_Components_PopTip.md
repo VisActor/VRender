@@ -79,9 +79,9 @@ The `PopTip` will expand based on its content by default. You can set the minimu
 
 The PopTip can be used as a regular component and added to the scene tree using the `xxx.add` method, similar to other components.
 
-Additionally, we provide a plugin (`poptipForText`) for usage. This plugin automatically identifies truncated text in the canvas. When the mouse hovers over the text, it will display a PopTip to show the complete content of the text.
+Additionally, we provide a plugin (`poptipForText`) for usage. This plugin automatically identifies truncated text in the canvas. When the mouse hovers over the text, it will display a PopTip to show the complete content of the text. The plugin is not part of the default bootstrap; call `loadPoptip()` before creating the App, or call `installPoptipToApp(app)` if the App already exists.
 1. You can configure the style of the PopTip displayed through the `attribute.poptip` property on the graphic element. The type of the `attribute.poptip` property is consistent with the parameters accepted by the PopTip component. The PopTip will automatically fill in the content to display the complete text.
-2. By adding `poptipForText` to the `pluginList` property of the `stage` when creating it, you can enable this plugin.
+2. Add `poptipForText` to the `pluginList` property when creating the Stage to enable this plugin for that Stage.
 
 ```javascript livedemo template=vrender
 VRenderComponent.loadPoptip();
@@ -104,7 +104,8 @@ const textLimit = VRender.createText({
     }
   }
 });
-const stage = VRender.createStage({
+const app = VRender.createBrowserVRenderApp();
+const stage = app.createStage({
   container: CONTAINER_ID,
   autoRender: true,
   pluginList: ['poptipForText'] // Enable poptipForText plugin

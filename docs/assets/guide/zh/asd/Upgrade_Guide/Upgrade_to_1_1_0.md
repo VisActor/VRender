@@ -424,7 +424,7 @@ graphic.animate().to({ opacity: 1 }, 300, 'linear');
 `Glyph` 仍是特殊图元 surface。1.1.0 不把 `glyphStates`、`glyphStateProxy` 或 `subAttributes` 合并进 shared-state 主路径。现有行为继续保持：
 
 - 状态属性作用于 glyph 自身。
-- subGraphic ownership 不由 D3 shared-state 主模型重新定义。
+- subGraphic ownership 不由 shared-state 主模型重新定义。
 - 如果业务依赖 glyph 子图元状态，应继续按 glyph 专属 API 或业务层约定处理。
 
 ## 迁移清单
@@ -451,9 +451,9 @@ rg "graphic\\.states|\\.states\\s*="
 
 避免在刷新相同状态前先 `clearStates()`；不要把 `normalAttrs` 当作 snapshot/restore 主路径。将 `stateProxy` 迁移到 `states` + `StateDefinition.resolver` 或 `sharedStateDefinitions`。
 
-如果你维护 VChart、VTable 或其他上层集成，还需要查看 D3 删除接口与调用链路留档：
+如果你维护 VChart、VTable 或其他上层集成，还需要查看预发布删除接口与调用链路留档：
 
-- [D3_REMOVED_API_AND_CALL_CHAIN_LOG.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_REMOVED_API_AND_CALL_CHAIN_LOG.md)
+- [删除接口与调用链路留档](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_REMOVED_API_AND_CALL_CHAIN_LOG.md)
 
 3. 检查 appear/fade：
 

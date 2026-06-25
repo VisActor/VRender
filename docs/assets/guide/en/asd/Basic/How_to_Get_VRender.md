@@ -35,4 +35,4 @@ You can get VRender from the following free CDNs:
 You can get the VRender source code directly from GitHub:
 
 - You can directly clone the source code from GitHub.
-- You can also select the corresponding version from the VRender [release](https://github.com/VisActor/VChart/releases) page, click on the Source code in the Assets section at the bottom of the page, download it to your local machine, extract it and use it.
+- You can also select the corresponding version from the VRender [release](https://github.com/VisActor/VRender/releases) page, click on the Source code in the Assets section at the bottom of the page, download it to your local machine, extract it and use it.

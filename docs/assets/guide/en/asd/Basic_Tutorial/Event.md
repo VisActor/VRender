@@ -74,7 +74,8 @@ once(
 
 ```javascript livedemo template=vrender
 // Register all necessary content
-const stage = new VRender.Stage({
+const app = VRender.createBrowserVRenderApp();
+const stage = app.createStage({
   container: CONTAINER_ID,
   autoRender: true
 });
@@ -100,7 +101,8 @@ Additionally, VRender also supports event delegation, where any node can directl
 
 ```javascript livedemo template=vrender
 // Register all necessary content
-const stage = new VRender.Stage({
+const app = VRender.createBrowserVRenderApp();
+const stage = app.createStage({
   container: CONTAINER_ID,
   autoRender: true
 });

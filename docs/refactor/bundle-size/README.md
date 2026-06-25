@@ -6,7 +6,7 @@
 
 ## 背景
 
-VRender 1.1.0 / D3 状态动画重构发布前，状态语义已经收敛，release 前 fallback / alpha API 也已清理。本专项接下来关注 VRender 全局包体积，而不是继续证明 D3 新增代码合理。
+VRender 1.1.0 状态/动画重构发布前，状态语义已经收敛，release 前 fallback / alpha API 也已清理。本专项接下来关注 VRender 全局包体积，而不是继续证明状态/动画重构新增代码合理。
 
 当前 VChart line 基础场景中，VRender 相关包占比已经较高，可作为历史外部参照：
 
@@ -37,9 +37,9 @@ VRender 1.1.0 / D3 状态动画重构发布前，状态语义已经收敛，rele
 - [Render / Picker Registry](../../agent/VRENDER_RENDER_PICKER_REGISTRY.md)
 - [Graphic Pipeline](../../agent/VRENDER_GRAPHIC_PIPELINE.md)
 
-## 与 D3 状态重构文档的关系
+## 与状态/动画重构文档的关系
 
-D3 语义不重开。本专项只记录包体积优化上下文。
+状态/动画语义不重开。本专项只记录包体积优化上下文。
 
 涉及状态、shared-state、动画静态真值时，仍以 `docs/refactor/state-engine/` 的正式文档和当前测试为准。当前已知 release 口径：
 

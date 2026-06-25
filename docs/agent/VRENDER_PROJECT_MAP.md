@@ -28,7 +28,7 @@ Rush 配置入口是 `rush.json`：
 ## 其他顶层目录
 
 - `multi-platform/`：多端真实工程或 smoke 工程，包含 `wx-vrender`、`lynx-vrender`、`harmony-vrender`、`feishu-vrender`、`tt-vrender`。这些目录用于端侧接入验证，不是 core 规范源。
-- `docs/`：文档站和专项设计文档。D3 状态引擎专项在 `docs/refactor/state-engine/`。
+- `docs/`：文档站和专项设计文档。状态/动画重构专项在 `docs/refactor/state-engine/`。
 - `tools/`：内部工具，例如 `tools/bundler`、`tools/bugserver-trigger`、`tools/jest-electron-stable`。
 - `share/`：共享 ts/jest/eslint 配置。
 - `common/`：Rush autoinstaller、hooks、pnpm lock、临时目录和脚本。

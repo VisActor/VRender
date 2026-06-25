@@ -38,7 +38,8 @@ const circle = VRender.createCircle({
 const graphics = [];
 graphics.push(circle);
 
-const stage = new Stage({
+const app = VRender.createBrowserVRenderApp();
+const stage = app.createStage({
   container: CONTAINER_ID,
   autoRender: true
 });

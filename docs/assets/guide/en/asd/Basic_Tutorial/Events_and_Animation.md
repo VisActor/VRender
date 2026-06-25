@@ -7,22 +7,21 @@ Our scene is very simple, consisting of a circular "drum." When the "drum" is cl
 ## Create a Canvas
 
 ```
-import { creator, Global } from '@dp/canopus'
+import { createBrowserVRenderApp } from '@visactor/vrender';
 
-// No need to set env for the browser environment
-Global.setEnv('tt');
+const app = createBrowserVRenderApp();
 
-// Create a stage with a default initial layer (layer)
-const stage = createStage({
-    canvas: 'main',
-    autoRender: true
-  });
+// Create a stage with a default initial layer.
+const stage = app.createStage({
+  canvas: 'main',
+  autoRender: true
+});
 ```
 
 ## Create Nodes
 
 ```TypeScript
-import { createCircle, createGroup } from '@dp/canopus';
+import { createCircle, createGroup, defaultTicker } from '@visactor/vrender';
 
 const c1 = createCircle({
     radius: 60,
@@ -42,7 +41,7 @@ const group = createGroup({});
 
 group.add(c1);
 
-// 开启动画ticker，ticker需要手动开启，方便应用程序在合适的时候统一开始执行动画
+// Start the animation ticker when the application is ready.
 defaultTicker.start();
 
 stage.defaultLayer.add(group);

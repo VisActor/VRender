@@ -79,9 +79,9 @@ type PopTipAttributes = {
 
 PopTip可以作为一般的组件使用，和普通的组件一样，可以通过`xxx.add`方法添加到场景树中，这种方法不具体介绍了。
 
-同时我们还提供了插件(`poptipForText`)的形式进行使用。该插件会自动的识别画布中被截断的文字，当鼠标hover到该文字上的时候，会自动的展示PopTip去显示文字的完整内容。
+同时我们还提供了插件(`poptipForText`)的形式进行使用。该插件会自动的识别画布中被截断的文字，当鼠标 hover 到该文字上的时候，会自动展示 PopTip 来显示完整内容。该插件不属于默认 bootstrap；未创建 App 前调用 `loadPoptip()`，已有 App 时调用 `installPoptipToApp(app)`。
 1. 我们可以通过在该图元上的`attribute.poptip`属性进行展示的PopTip的样式配置，`attribute.poptip`属性的类型和PopTip组件接收的参数一致。而PopTip会自动填充上content的内容，用于展示文字的全部内容
-2. 通过创建的时候给`stage`的`pluginList`属性添加`poptipForText`，就可以启用这个插件
+2. 创建 Stage 时在 `pluginList` 中加入 `poptipForText`，即可在该 Stage 上启用这个插件
 
 ```javascript livedemo template=vrender
 VRenderComponent.loadPoptip();
@@ -104,7 +104,8 @@ const textLimit = VRender.createText({
     }
   }
 });
-const stage = VRender.createStage({
+const app = VRender.createBrowserVRenderApp();
+const stage = app.createStage({
   container: CONTAINER_ID,
   autoRender: true,
   pluginList: ['poptipForText'] // 启用poptipForText插件

@@ -1,10 +1,10 @@
 # VRender Core Architecture
 
-本文解释 `packages/vrender-core/src` 的当前模块边界。涉及 D3 状态系统时，以当前代码和测试为事实基础，同时参考 `docs/refactor/state-engine/`。
+本文解释 `packages/vrender-core/src` 的当前模块边界。涉及 1.1 状态系统时，以当前代码和测试为事实基础，同时参考 `docs/refactor/state-engine/`。
 
-## 当前 D3 状态语义
+## 当前状态语义
 
-当前状态系统已经完成 D3 收敛。后续改动必须保留以下主语义：
+当前状态系统已经完成 1.1 收敛。后续改动必须保留以下主语义：
 
 - 静态真值主路径是 `baseAttributes + resolvedStatePatch -> attribute`。
 - 动画不是新的真值源。

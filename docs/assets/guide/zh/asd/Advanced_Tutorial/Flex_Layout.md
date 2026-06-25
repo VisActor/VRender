@@ -9,7 +9,8 @@
 VRender中布局的能力是通过插件功能实现的，首先我们需要再stage的参数中开启该插件：
 
 ```ts
-const stage = VRender.createStage({
+const app = VRender.createBrowserVRenderApp();
+const stage = app.createStage({
   container: CONTAINER_ID,
   autoRender: true,
   enableLayout: true, // 开启布局能力
@@ -129,7 +130,8 @@ group.add(g2);
 g2.add(g21);
 g2.add(g22);
 
-const stage = new VRender.Stage({
+const app = VRender.createBrowserVRenderApp();
+const stage = app.createStage({
   container: CONTAINER_ID,
   autoRender: true,
   enableLayout: true

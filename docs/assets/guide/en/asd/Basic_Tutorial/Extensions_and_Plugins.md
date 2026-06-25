@@ -21,20 +21,16 @@ import type {
   IDrawContext,
   IGraphicRenderDrawParams
 } from '@visactor/vrender';
-import { RECT_NUMBER_TYPE, DefaultCanvasRectRender, getTheme, inject, injectable } from '@visactor/vrender';
+import { RECT_NUMBER_TYPE, DefaultCanvasRectRender, getTheme } from '@visactor/vrender';
 import rough from 'roughjs';
 import { defaultRouthThemeSpec } from './config';
 
-@injectable()
 export class RoughCanvasRectRender implements IGraphicRender {
   type: 'rect';
   numberType: number;
   style: 'rough' = 'rough';
 
-  constructor(
-    @inject(DefaultCanvasRectRender)
-    public readonly canvasRenderer: IGraphicRender
-  ) {
+  constructor(public readonly canvasRenderer: IGraphicRender) {
     this.type = 'rect';
     this.numberType = RECT_NUMBER_TYPE;
   }
@@ -151,21 +147,31 @@ export class RoughCanvasRectRender implements IGraphicRender {
 }
 ```
 
-2. Register your class in the container
+2. Register your class in a runtime contribution module
 
 ```ts
-export default new ContainerModule((bind, unbind, isBound, rebind) => {
+import { DefaultCanvasRectRender, GraphicRender } from '@visactor/vrender';
+
+export const yourModule = ({ bind }) => {
   // rect
-  bind(RoughCanvasRectRender).toSelf().inSingletonScope();
-  bind(GraphicRender).to(RoughCanvasRectRender);
+  bind(RoughCanvasRectRender)
+    .toDynamicValue(({ container }) => new RoughCanvasRectRender(container.getAll(DefaultCanvasRectRender)[0]))
+    .inSingletonScope();
+  bind(GraphicRender).toService(RoughCanvasRectRender);
+};
+```
+
+3. Before creating the App, install your module through the runtime contribution installer
+
+```ts
+import { installRuntimeContributionModule } from '@visactor/vrender/entries/runtime-contribution';
+
+installRuntimeContributionModule(yourModule, {
+  targets: ['graphic-renderer']
 });
 ```
 
-3. Before the code runs, load your module
-
-```ts
-container.load(your module);
-```
+If the App already exists, pass it explicitly: `installRuntimeContributionModule(yourModule, { app, targets: ['graphic-renderer'] })`.
 
 ## Custom Modification of Render Flow Injection
 
@@ -174,7 +180,6 @@ If you don't want to modify the entire rendering logic but just want to do some 
 1. Write a contribution, which implements the IBaseRenderContribution interface
 
 ```ts
-@injectable()
 export class RectBackgroundRenderContribution implements IBaseRenderContribution {
   time: BaseRenderContributionTime = BaseRenderContributionTime.beforeFillStroke;
   useStyle: boolean = true;
@@ -231,21 +236,29 @@ export class RectBackgroundRenderContribution implements IBaseRenderContribution
 }
 ```
 
-2. Register your class in the container
+2. Register your class in a runtime contribution module
 
 ```ts
-export default new ContainerModule((bind, unbind, isBound, rebind) => {
+import { RectRenderContribution } from '@visactor/vrender';
+
+export const yourModule = ({ bind }) => {
   // rect
-  bind(DefaultRectBackgroundRenderContribution).toSelf().inSingletonScope();
-  bind(RectRenderContribution).toService(DefaultRectBackgroundRenderContribution);
+  bind(RectBackgroundRenderContribution).toSelf().inSingletonScope();
+  bind(RectRenderContribution).toService(RectBackgroundRenderContribution);
+};
+```
+
+3. Before creating the App, install your module through the runtime contribution installer
+
+```ts
+import { installRuntimeContributionModule } from '@visactor/vrender/entries/runtime-contribution';
+
+installRuntimeContributionModule(yourModule, {
+  targets: ['graphic-renderer']
 });
 ```
 
-3. Before the code runs, load your module
-
-```ts
-container.load(your module);
-```
+If the App already exists, pass it explicitly: `installRuntimeContributionModule(yourModule, { app, targets: ['graphic-renderer'] })`.
 
 ## Developing Plugins
 

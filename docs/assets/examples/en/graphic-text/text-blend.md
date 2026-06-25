@@ -58,7 +58,8 @@ t2.animate()
   .wait(2000)
   .loop(Infinity);
 
-const stage = new Stage({
+const app = VRender.createBrowserVRenderApp();
+const stage = app.createStage({
   container: CONTAINER_ID,
   autoRender: true
 });

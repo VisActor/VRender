@@ -35,4 +35,4 @@ $ yarn add @visactor/vrender
 从 GitHub 上你可以直接获取 VRender 的源码：
 
 - 你可以直接从 GitHub clone 源码。
-- 你也可以从 VRender 的  [release](https://github.com/VisActor/VChart/releases)  页面选择对应的版本，点击页面下方 Assets 中的 Source code，将其下载至本地解压后使用。
+- 你也可以从 VRender 的  [release](https://github.com/VisActor/VRender/releases)  页面选择对应的版本，点击页面下方 Assets 中的 Source code，将其下载至本地解压后使用。

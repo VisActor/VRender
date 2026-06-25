@@ -8,7 +8,8 @@ Here is a basic demo of creating animations:
 ```javascript livedemo template=vrender
 const rect = VRender.createRect({ x: 100, y: 100, width: 100, height: 100, fill: 'red' });
 
-const stage = new VRender.Stage({
+const app = VRender.createBrowserVRenderApp();
+const stage = app.createStage({
   container: CONTAINER_ID,
   autoRender: true
 });

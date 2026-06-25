@@ -32,9 +32,9 @@ VRender 的文档提供了有关功能和配置的详细信息。根据你的需
 
 我们很高兴为你提供帮助! 如果你在学习 VRender 过程中遇到问题，可以通过以下方式提问：
 
-1. 在 GitHub 仓库中提交一个 issue：访问 [VRender GitHub](https://github.com/VisActor/VChart/issues/new/choose)，详细描述你遇到的问题，我们的团队将尽快回应并解决。
+1. 在 GitHub 仓库中提交一个 issue：访问 [VRender GitHub](https://github.com/VisActor/VRender/issues/new/choose)，详细描述你遇到的问题，我们的团队将尽快回应并解决。
 
-2. 在 GitHub 仓库提交一个 discussion：访问 [VRender Discussion](https://github.com/VisActor/VChart/discussions)，非常欢迎你在这里提出你的想法和建议，我们的团队将尽快回应并解决。
+2. 在 GitHub 仓库提交一个 discussion：访问 [VRender Discussion](https://github.com/VisActor/VRender/discussions)，非常欢迎你在这里提出你的想法和建议，我们的团队将尽快回应并解决。
 
 ## 如何纠错
 

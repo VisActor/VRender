@@ -30,10 +30,10 @@ yarn add @visactor/vrender
 
 ### 通过 NPM 包引入
 
-在 JavaScript 文件顶部使用 `import` 引入 VRender：
+在 JavaScript 文件顶部引入浏览器 App 入口和图元创建函数：
 
 ```js
-import VRender from '@visactor/vrender';
+import { createBrowserVRenderApp, createCircle } from '@visactor/vrender';
 ```
 
 ### 使用 script 标签引入
@@ -62,45 +62,47 @@ import VRender from '@visactor/vrender';
 </body>
 ```
 
-接下来，我们基于这个Canvas创建一个 `Stage` 实例，创建一个圆形并添加到`Stage`中：
+接下来，先创建一个浏览器 `App`，再通过 `app.createStage()` 创建 `Stage`，最后创建一个圆形并添加到 `Stage` 中：
 
 ```ts
-// 创建一个stage
-const stage = createStage({
-    canvas: 'main',
-    autoRender: true // 开启自动渲染
+// 创建 app 和 stage
+const app = createBrowserVRenderApp();
+const stage = app.createStage({
+  canvas: 'main',
+  autoRender: true // 开启自动渲染
 });
 // 创建一个circle图元
 const circle = createCircle({
-    radius: 60,
-    x: 200,
-    y: 200,
-    fill: 'red',
+  radius: 60,
+  x: 200,
+  y: 200,
+  fill: 'red'
 });
-// 添加到stage中
+// 添加到 stage 中
 stage.defaultLayer.add(circle);
 ```
 
 至此，你已经成功绘制出了一个红色的圆形！
 
 ```javascript
-// 创建一个stage
-const stage = createStage({
-    canvas: 'main',
-    autoRender: true // 开启自动渲染
+// 创建 app 和 stage
+const app = createBrowserVRenderApp();
+const stage = app.createStage({
+  canvas: 'main',
+  autoRender: true // 开启自动渲染
 });
 // 创建一个circle图元
 const circle = createCircle({
-    radius: 60,
-    x: 200,
-    y: 200,
-    fill: 'red',
+  radius: 60,
+  x: 200,
+  y: 200,
+  fill: 'red'
 });
 // 监听点击事件，然后填充色变成绿色
 circle.addEventListener('click', () => {
-    circle.setAttribute('fill', 'green');
+  circle.setAttribute('fill', 'green');
 });
-// 添加到stage中
+// 添加到 stage 中
 stage.defaultLayer.add(circle);
 ```
 

@@ -12,7 +12,7 @@ Tue, 23 Jun 2026 04:01:55 GMT
 
 ### Minor changes
 
-- Stabilize the D3 state engine and app-scoped runtime foundations, including explicit static truth, sharedStateDefinitions, same-state refresh, runtime installer context, and legacy path cleanup.
+- Stabilize the state engine and app-scoped runtime foundations, including explicit static truth, sharedStateDefinitions, same-state refresh, runtime installer context, and legacy path cleanup.
 
 ## 1.0.46
 Wed, 15 Apr 2026 07:05:39 GMT
@@ -1444,4 +1444,3 @@ Thu, 28 Sep 2023 07:23:52 GMT
 - feat: add globalCompositeOperation, closed #540
 - feat: support interactive config, closed #446
 - feat: support scrollbar, closed #529
-

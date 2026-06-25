@@ -41,16 +41,33 @@ incremental renderer 不再作为普通 graphic renderer module 的独立裸 bin
 
 不要依赖旧全局 `createStage()` 作为新功能接入入口。
 
-上层如果需要注册 `ImageRenderContribution`、`TextRenderContribution` 等 graphic renderer contribution，应继续注册到 VRender runtime binding context 对应的 contribution token。现有 runtime-compatible 的 `container.load(module)` 路径可以继续承载这类注册，但最终消费方是 app-scoped runtime installer 收集到的 renderer provider。
+上层如果需要注册 `ImageRenderContribution`、`TextRenderContribution` 等 graphic renderer contribution，应通过 `@visactor/vrender/entries/runtime-contribution` 的 `installRuntimeContributionModule()` 安装 module。该入口会把 module 记录到 runtime binding context，并按 `targets` 刷新 app-scoped renderer / draw contribution / picker registry；未传 `app` 时会覆盖后续 App 创建，并刷新已经存在的 shared App，已有明确 App 时应显式传入 `app`。
 
 示例：
 
 ```ts
-bind(ImageRenderContribution).toService(BeforeImageRenderContribution);
-bind(TextRenderContribution).toService(AfterTextRenderContribution);
+import { installRuntimeContributionModule } from '@visactor/vrender/entries/runtime-contribution';
+import { CanvasPickerContribution } from '@visactor/vrender-kits/picker/contributions/constants';
+import { ImageRenderContribution, TextRenderContribution } from '@visactor/vrender-core';
+
+const customContributionModule = ({ bind }) => {
+  bind(ImageRenderContribution).toService(BeforeImageRenderContribution);
+  bind(TextRenderContribution).toService(AfterTextRenderContribution);
+};
+
+installRuntimeContributionModule(customContributionModule, {
+  targets: ['graphic-renderer', 'draw-contribution', { picker: CanvasPickerContribution }]
+});
+
+installRuntimeContributionModule(customContributionModule, {
+  app,
+  targets: ['graphic-renderer', 'draw-contribution', { picker: CanvasPickerContribution }]
+});
 ```
 
 不要把 `GraphicRenderContribution` 注册到 `app.context.registry.contribution` 并期待普通 renderer 自动消费。`app.context.registry.contribution` 当前用于 app-scoped draw interceptor 这类 app registry 扩展点，例如 `DrawItemInterceptor`。
+
+如果上层需要替换 VRender 内置 render contribution，应在 module 中对内置 contribution token 使用 `rebind(...)`，并通过 `installRuntimeContributionModule()` 安装。installer 会在默认 bootstrap 之后刷新 contribution provider，并在传入 `app` 时重装该 app 的目标 registry，避免已创建 shared app 继续持有旧 provider。
 
 ## 边界
 
@@ -68,6 +85,6 @@ bind(TextRenderContribution).toService(AfterTextRenderContribution);
 最终建议：
 
 1. 使用 app-scoped VRender entry 创建 stage。
-2. renderer 绘制扩展注册到对应 `...RenderContribution` token。
+2. renderer 绘制扩展注册到对应 `...RenderContribution` token，并通过 `installRuntimeContributionModule()` 安装。
 3. draw interceptor / picker / plugin 按各自 app-scoped installer 的扩展点注册。
 4. 不直接 new 或覆盖 `DefaultCanvas*Render` 实例来补 contribution。

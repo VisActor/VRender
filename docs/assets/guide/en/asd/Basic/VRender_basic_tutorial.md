@@ -117,14 +117,19 @@ stage can listen to the events of the entire scene tree, stage.window will direc
 Example code:
 
 ```ts
-import { createRect, createStage, vglobal } from '@visactor/vrender';
+import { createBrowserVRenderApp, createRect, vglobal } from '@visactor/vrender';
+
 const rect = createRect({});
 // Listen to the click event of rect
 rect.on('click', () => {
   // do something
 });
 
-const stage = createStage({});
+const app = createBrowserVRenderApp();
+const stage = app.createStage({
+  canvas: 'main',
+  autoRender: true
+});
 // Listen to the click event of the scene tree, the events of the scene tree will go through bubbling and capturing
 stage.on('click', () => {
   // do something
@@ -146,7 +151,7 @@ The events supported by VRender include:
 
 The attributes we pass to the graphics can be considered as a default state. If we want the graphics to have different performances in different states, we can implement it through the state system.
 You can define a states attribute for the graphics. This attribute is an object, which contains the configuration when in different states. Use `StateDefinition.resolver` for dynamic state attributes.
-Then use the `useStates` method to switch the graphic state, and use the `clearStates` method to clear the graphic state.
+Then use the `setStates` method to switch the graphic state, and use the `clearStates` method to clear the graphic state when the active states should really be removed. Do not call `clearStates()` only to refresh the same state set; call `setStates(states, { animate, animateSameStatePatchChange })` instead.
 Next, demonstrate through a piece of code
 
 ```ts
@@ -177,7 +182,7 @@ rect.states = {
 
 // When clicked, activate state a
 rect.on('click', () => {
-  rect.useStates(['a']);
+  rect.setStates(['a'], { animate: true });
 });
 // When double-clicked, clear the state and restore the default state
 rect.on('dblclick', () => {
@@ -234,32 +239,29 @@ VRender supports running in browsers, mini-programs and Node.js environments, an
 ### Registration & Use Environment
 
 ```ts
-import { vglobal, createStage, loadTTEnv, initTaroEnv, initWxEnv, initNodeEnv, initHarmonyEnv, container } from '@visactor/vrender';
+import { createNodeVRenderApp, createLynxVRenderApp } from '@visactor/vrender';
 const CanvasPkg = require('canvas');
 
-// Register the logic of the relevant environment according to your own product environment
-initTTEnv();
-initTaroEnv();
-initWxEnv();
-initNodeEnv();
-initHarmonyEnv();
-initFeishuEnv();
+// Node: pass the node-canvas compatible package through app envParams.
+const nodeApp = createNodeVRenderApp({
+  envParams: CanvasPkg
+});
 
-// After registration, you can call setEnv to use the corresponding environment
-vglobal.setEnv('node', CanvasPkg);
-// Mini-app app-level params should only contain environment-level capabilities,
-// such as pixel ratio or a reusable canvasFactory.
-vglobal.setEnv('feishu', {
-  force: true,
-  pixelRatio,
-  canvasFactory: ({ id, width, height, dpr }) => {
-    // Return a drawable Canvas-like object for the host.
-    // This capability must be valid for any Stage under the same app.
+// Mini-app, Lynx, and similar hosts: app-level params should only contain
+// environment capabilities, such as pixel ratio or a reusable canvasFactory.
+const app = createLynxVRenderApp({
+  envParams: {
+    lynx,
+    pixelRatio,
+    canvasFactory: ({ id, width, height, dpr }) => {
+      // Return a drawable Canvas-like object for the host.
+      // This capability must be valid for any Stage under the same app.
+    }
   }
 });
 
 // Concrete canvas id / width / height / dpr belong to Stage creation.
-const stage = createStage({
+const stage = app.createStage({
   canvas: 'chart-canvas',
   width,
   height,

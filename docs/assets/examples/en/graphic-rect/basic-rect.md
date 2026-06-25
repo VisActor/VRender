@@ -51,7 +51,8 @@ for (let i = 0; i < 3; i++) {
   );
 }
 
-const stage = new Stage({
+const app = VRender.createBrowserVRenderApp();
+const stage = app.createStage({
   container: CONTAINER_ID,
   autoRender: true
 });

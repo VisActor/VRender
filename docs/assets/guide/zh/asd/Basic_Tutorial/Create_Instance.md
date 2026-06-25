@@ -8,7 +8,9 @@
 
 ## 创建 Stage
 
-Stage 有两种方式创建，一种是通过`new`关键字创建，另一种是通过`createStage`方法创建。Stage 接受的一个对象为参数，对象中可配置的属性有很多，其中最常用的属性如下：
+新代码应先创建环境对应的 VRender `App`，再通过 `app.createStage()` 创建具体视图。旧的根级 `new Stage(...)` 和 `createStage(...)` 仍保留为兼容入口，但不再作为 browser、node、小程序、Lynx、Harmony 等接入的新推荐写法。
+
+Stage 接受一个对象作为参数，对象中可配置的属性有很多，其中最常用的属性如下：
 
 - `container`：挂载的容器，需要是 Dom 元素，仅在浏览器环境可用
 - `canvas`：挂载的画布，需要是 Canvas 元素，和 container 互斥，可以在不同环境中使用
@@ -18,18 +20,11 @@ Stage 有两种方式创建，一种是通过`new`关键字创建，另一种是
 - `background`：画布的背景色，默认为白色
 
 ```ts
-import { Stage, createStage } from '@visactor/vrender';
-// import { Stage, createStage } from '@visactor/vrender-core';
+import { createBrowserVRenderApp } from '@visactor/vrender';
 
-const stage1 = new Stage({
-  container: document.getElementById('container'),
-  width: 600,
-  height: 600,
-  autoRender: true,
-  background: 'pink'
-});
+const app = createBrowserVRenderApp();
 
-const stage2 = createStage({
+const stage = app.createStage({
   container: document.getElementById('container'),
   width: 600,
   height: 600,
@@ -241,7 +236,8 @@ const rect2 = createRect({
 
 ```javascript livedemo template=vrender
 // 注册所有需要的内容
-const stage = new VRender.Stage({
+const app = VRender.createBrowserVRenderApp();
+const stage = app.createStage({
   container: CONTAINER_ID,
   autoRender: true
 });

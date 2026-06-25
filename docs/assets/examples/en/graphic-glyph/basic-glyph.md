@@ -89,7 +89,8 @@ g.addEventListener('click', e => {
 
 group.add(g);
 
-const stage = new Stage({
+const app = VRender.createBrowserVRenderApp();
+const stage = app.createStage({
   container: CONTAINER_ID,
   autoRender: true
 });

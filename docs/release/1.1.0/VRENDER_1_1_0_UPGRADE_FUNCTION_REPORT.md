@@ -2,11 +2,11 @@
 
 > 文档类型：release feature report
 > 生成日期：2026-06-12
-> 范围：D3 state / animation stable contract、app-scoped runtime、包体积专项新增 public capability
+> 范围：state / animation stable contract、app-scoped runtime、包体积专项新增 public capability
 
 ## 升级定位
 
-VRender 1.1.0 是一次底层渲染语义稳定化升级，不是单纯包体积版本。核心目标是把 D3 阶段验证过的状态、动画和多端 runtime 语义转为稳定 contract，同时保留 root/default 的完整易用性。
+VRender 1.1.0 是一次底层渲染语义稳定化升级，不是单纯包体积版本。核心目标是把重构阶段验证过的状态、动画和多端 runtime 语义转为稳定 contract，同时保留 root/default 的完整易用性。
 
 对使用者而言，最重要的变化是：
 
@@ -118,19 +118,19 @@ const stage = handle.app.createStage(options);
 
 ## 删除与收紧项
 
-以下不是稳定 public API 的随意删除，而是 D3 alpha、内部旧路径、dead source 或未发布草稿收口：
+以下不是稳定 public API 的随意删除，而是 pre-release alpha、内部旧路径、dead source 或未发布草稿收口：
 
 | 删除/收紧项 | 替代路径 |
 | --- | --- |
 | `graphic.stateProxy` | `states` + `StateDefinition.resolver` 或 `sharedStateDefinitions` |
 | JSX/React `stateProxy` prop | JSX/React `states` prop |
 | shared scope 下本地 missing-state fallback | 共享状态补到 `sharedStateDefinitions` |
-| D3 alpha deferred state / perf hook | 1.1.0 标准 `setStates` 同步路径 |
+| pre-release deferred state / perf hook | 1.1.0 标准 `setStates` 同步路径 |
 | old animation target fallback 草稿 | 标准 animate extension target 方法 |
 | stale core/kits commented shells | 当前正式模块和 public entry |
 | unused segment curve stubs | 无稳定替代，未发布内部死码 |
 
-完整删除项以 [D3 删除接口与调用链路留档](../../refactor/state-engine/D3_REMOVED_API_AND_CALL_CHAIN_LOG.md) 为准。
+完整删除项以 [删除接口与调用链路留档](../../refactor/state-engine/D3_REMOVED_API_AND_CALL_CHAIN_LOG.md) 为准。
 
 ## 兼容性判断
 
@@ -138,12 +138,12 @@ const stage = handle.app.createStage(options);
 | --- | --- |
 | root/default | 保持完整易用性，不删除默认能力 |
 | stable public API | 未删除稳定 public API |
-| D3 alpha API | 已删除或收紧未承诺路径 |
+| pre-release alpha API | 已删除或收紧未承诺路径 |
 | VChart/VTable | 普通 full 升级不要求立即迁移按需能力；要拿体积收益才需要上层配合 |
 | package version | 本分支未修改，release 流程统一处理 |
 
 ## 建议阅读
 
 - [VRender 1.1.0 升级指南](../../assets/guide/zh/asd/Upgrade_Guide/Upgrade_to_1_1_0.md)
-- [D3 Stable Release Notes Draft](../../refactor/state-engine/D3_STABLE_RELEASE_NOTES_DRAFT.md)
+- [State and animation stable release notes draft](../../refactor/state-engine/D3_STABLE_RELEASE_NOTES_DRAFT.md)
 - [VRender On-Demand Capability Usage](../../refactor/bundle-size/VRENDER_ON_DEMAND_CAPABILITY_USAGE.md)

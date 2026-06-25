@@ -53,7 +53,7 @@ mixin(Graphic, AnimateExtension)
 - `getGraphicAttribute(key, prev?)`
 - `pauseAnimation` / `resumeAnimation` / `stopAnimation`
 
-这些方法服务动画执行和最终目标读取；它们不改变 D3 静态真值边界。
+这些方法服务动画执行和最终目标读取；它们不改变 core 静态真值边界。
 
 ## Animate / Step / Timeline / Ticker / Executor
 
@@ -86,11 +86,11 @@ graphic.animate()
 - highlight/select/hover 等动画状态 helper
 - animate tracking
 
-它“不参与 graphic 状态语义、样式解析或属性分类”。状态解析仍在 core 的 `StateEngine` 和 `Graphic.useStates` 路径。
+它“不参与 graphic 状态语义、样式解析或属性分类”。状态解析仍在 core 的 `StateEngine` 路径。
 
 关键约束：
 
-- `graphic.setStates` / `useStates` 负责状态集合与 resolved patch。
+- `graphic.setStates` 负责状态集合与 resolved patch。
 - state animation 负责从旧 patch/属性过渡到新 patch/属性。
 - 动画过程中不应把帧属性写成新的 `baseAttributes`。
 
@@ -159,7 +159,7 @@ components 包通过 `packages/vrender-components/src/animation/*` 使用 animat
 
 ## 删除/收紧的旧 fallback
 
-当前 D3 删除留档记录了旧 fallback：
+当前删除留档记录了旧 fallback：
 
 - `target.animates` map fallback。
 - `onStop(props)` 旧签名。

@@ -8,7 +8,9 @@ As shown in the diagram below, a VRender application generally includes a `Stage
 
 ## Creating a Stage
 
-There are two ways to create a Stage: one is by using the `new` keyword, and the other is by using the `createStage` method. When creating a Stage, an object is passed as a parameter, and there are many configurable properties within the object. The most commonly used properties are as follows:
+New code should create an environment-specific VRender `App` first, then create concrete views through `app.createStage()`. The older root-level `new Stage(...)` and `createStage(...)` APIs remain available for compatibility, but they should not be the default pattern for new browser, Node, mini-app, Lynx, or Harmony integrations.
+
+When creating a Stage, an object is passed as a parameter. The most commonly used properties are as follows:
 
 - `container`: the mounting container, which needs to be a DOM element and is only available in the browser environment
 - `canvas`: the mounting canvas, which needs to be a Canvas element and is mutually exclusive with the container, can be used in different environments
@@ -18,18 +20,11 @@ There are two ways to create a Stage: one is by using the `new` keyword, and the
 - `background`: the background color of the canvas, defaulting to white
 
 ```ts
-import { Stage, createStage } from '@visactor/vrender';
-// import { Stage, createStage } from '@visactor/vrender-core';
+import { createBrowserVRenderApp } from '@visactor/vrender';
 
-const stage1 = new Stage({
-  container: document.getElementById('container'),
-  width: 600,
-  height: 600,
-  autoRender: true,
-  background: 'pink'
-});
+const app = createBrowserVRenderApp();
 
-const stage2 = createStage({
+const stage = app.createStage({
   container: document.getElementById('container'),
   width: 600,
   height: 600,
@@ -241,7 +236,8 @@ By adding the rectangle to `stage.defaultLayer`, it will be displayed.
 
 ```javascript livedemo template=vrender
 // Register all necessary content
-const stage = new VRender.Stage({
+const app = VRender.createBrowserVRenderApp();
+const stage = app.createStage({
   container: CONTAINER_ID,
   autoRender: true
 });

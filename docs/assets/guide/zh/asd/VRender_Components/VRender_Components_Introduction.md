@@ -101,7 +101,8 @@ const lineAxis = new LineAxis({
   ],
 });
 
-const stage = createStage({
+const app = createBrowserVRenderApp();
+const stage = app.createStage({
   canvas: 'main',
   autoRender: true
 });
@@ -195,7 +196,8 @@ class CircleBox extends VRenderComponent.AbstractComponent {
 }
 
 const textLimit = new CircleBox({x: 10, y: 10, circleCount: 100});
-const stage = VRender.createStage({
+const app = VRender.createBrowserVRenderApp();
+const stage = app.createStage({
   container: CONTAINER_ID,
   autoRender: true,
   pluginList: ['poptipForText'] // 启用poptipForText插件

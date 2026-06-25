@@ -59,7 +59,7 @@
 - `docs/refactor/state-engine/D3_STABLE_RELEASE_NOTES_DRAFT.md`
 - `docs/assets/guide/zh/asd/Upgrade_Guide/Upgrade_to_1_1_0.md`
 
-## D3 口径风险
+## 状态/动画口径风险
 
 历史文档容易混淆两件事：
 
@@ -80,7 +80,7 @@
 | `custom/register-story.ts` | Medium | 标准窄入口，closure 包含 story effects、MotionPath、streamLight |
 | story / disappear / richtext | High | 对基础 line/simple 不是硬必需，且效果类多 |
 | growPoints / growWidth / growHeight | Medium | 常规 chart 需要，不能简单 optional |
-| state animation | Medium | D3 状态动画主路径，不建议为体积重开语义 |
+| state animation | Medium | 状态动画主路径，不建议为体积重开语义 |
 | ticker/timeline/executor | Low | 动画核心骨架，真实依赖 |
 
 ## 后续可拆建议

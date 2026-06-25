@@ -9,7 +9,8 @@ However, we also provide the ability to use `flex` layout in `VRender`. By enabl
 The layout capabilities in VRender are achieved through plugins. To enable the layout plugin, you need to set it in the stage parameters:
 
 ```ts
-const stage = VRender.createStage({
+const app = VRender.createBrowserVRenderApp();
+const stage = app.createStage({
   container: CONTAINER_ID,
   autoRender: true,
   enableLayout: true, // Enable layout capabilities
@@ -129,7 +130,8 @@ group.add(g2);
 g2.add(g21);
 g2.add(g22);
 
-const stage = new VRender.Stage({
+const app = VRender.createBrowserVRenderApp();
+const stage = app.createStage({
   container: CONTAINER_ID,
   autoRender: true,
   enableLayout: true

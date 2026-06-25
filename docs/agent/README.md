@@ -4,10 +4,10 @@
 
 ## 与其他文档的关系
 
-- `AGENTS.md` 是操作约束：规定工作方式、验证要求、性能边界、D3 状态系统约束和提交规范。
+- `AGENTS.md` 是操作约束：规定工作方式、验证要求、性能边界、1.1 状态系统约束和提交规范。
 - `docs/agent/` 是项目知识库：记录当前代码事实、路径导航、owner 判断和测试入口，不替代操作约束。
-- `docs/refactor/state-engine/` 是 D3 状态/动画专项规范源：涉及状态语义、shared-state、动画静态真值时仍应优先阅读专项文档。
-- 本目录只做当前代码结构导航。历史 D3 文档如果与当前代码不一致，应记录为“历史文档可能过期”，不要据此回退实现。
+- `docs/refactor/state-engine/` 是状态/动画重构规范源：涉及状态语义、shared-state、动画静态真值时仍应优先阅读专项文档。
+- 本目录只做当前代码结构导航。历史状态引擎文档如果与当前代码不一致，应记录为“历史文档可能过期”，不要据此回退实现。
 
 本目录不承诺 public API。公开 API 仍以 package exports、README、用户文档和类型定义为准。
 
@@ -36,7 +36,7 @@
 
 修改 animate：
 - 先读 [VRENDER_ANIMATE_ARCHITECTURE.md](./VRENDER_ANIMATE_ARCHITECTURE.md)。
-- 涉及状态动画时再读 [VRENDER_GRAPHIC_PIPELINE.md](./VRENDER_GRAPHIC_PIPELINE.md) 和 D3 状态文档。
+- 涉及状态动画时再读 [VRENDER_GRAPHIC_PIPELINE.md](./VRENDER_GRAPHIC_PIPELINE.md) 和状态引擎文档。
 
 修改 components：
 - 先读 [VRENDER_COMPONENTS_ARCHITECTURE.md](./VRENDER_COMPONENTS_ARCHITECTURE.md)。

@@ -121,6 +121,6 @@ P0 必须同时满足：
 | ID | 暂缓项 | 原因 |
 | --- | --- | --- |
 | BS-R-001 | 删除 root barrel | 破坏 public API，不符合本专项边界 |
-| BS-R-002 | 删除 D3 state engine 或 `graphic.animates` 表象 | D3 语义已收敛，且 `graphic.animates` 是兼容表象，不是旧 fallback |
+| BS-R-002 | 删除 state engine 或 `graphic.animates` 表象 | 状态/动画语义已收敛，且 `graphic.animates` 是兼容表象，不是旧 fallback |
 | BS-R-003 | 直接把 vutils 改成未公开 deep import | 需要 vutils public exports 契约，否则维护风险高 |
 | BS-R-004 | 从 full/default bootstrap 删除 3D/custom/gif 等能力 | 破坏默认行为；只能新增 lite/optional 路径或确保基础业务不走 full app |

@@ -438,7 +438,8 @@ type ICommonStyle = {
 ```
 ```javascript livedemo template=vrender
 // Register all required content
-const stage = new VRender.Stage({
+const app = VRender.createBrowserVRenderApp();
+const stage = app.createStage({
   container: CONTAINER_ID,
   autoRender: true
 });
@@ -520,7 +521,8 @@ type IGroupAttribute = {
 
 ```javascript livedemo template=vrender
 // Register all required content
-const stage = new VRender.Stage({
+const app = VRender.createBrowserVRenderApp();
+const stage = app.createStage({
   container: CONTAINER_ID,
   autoRender: true
 });

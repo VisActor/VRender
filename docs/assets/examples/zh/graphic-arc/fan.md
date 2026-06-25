@@ -134,7 +134,8 @@ const s3 = VRender.createSymbol({
 zgj.setSubGraphic([s1, s2, s3]);
 graphics.push(zgj);
 graphics.push(zgj);
-const stage = new Stage({
+const app = VRender.createBrowserVRenderApp();
+const stage = app.createStage({
   container: CONTAINER_ID,
   autoRender: true
 });

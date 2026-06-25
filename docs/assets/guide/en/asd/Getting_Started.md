@@ -30,10 +30,10 @@ You can also get the built VRender file through the CDN. Add the following code 
 
 ### Import VRender via NPM Package
 
-Use `import` to introduce VRender at the top of the JavaScript file:
+Use `import` to introduce the browser App entry and graphic creators at the top of the JavaScript file:
 
 ```js
-import VRender from '@visactor/vrender';
+import { createBrowserVRenderApp, createCircle } from '@visactor/vrender';
 ```
 
 ### Import VRender using the script tag
@@ -62,20 +62,21 @@ Before we draw, we can prepare a DOM container with width and height for VRender
 </body>
 ```
 
-Next, let's create a `Stage` instance based on this Canvas, create a circle and add it to the `Stage`:
+Next, create a browser `App`, create a `Stage` from it, create a circle and add it to the `Stage`:
 
 ```ts
-// Create a stage
-const stage = createStage({
-    canvas: 'main',
-    autoRender: true // Enable automatic rendering
+// Create an app and a stage
+const app = createBrowserVRenderApp();
+const stage = app.createStage({
+  canvas: 'main',
+  autoRender: true // Enable automatic rendering
 });
 // Create a circle element
 const circle = createCircle({
-    radius: 60,
-    x: 200,
-    y: 200,
-    fill: 'red',
+  radius: 60,
+  x: 200,
+  y: 200,
+  fill: 'red'
 });
 // Add it to the stage
 stage.defaultLayer.add(circle);
@@ -84,24 +85,25 @@ stage.defaultLayer.add(circle);
 At this point, you have successfully drawn a red circle!
 
 ```javascript
-// Create a stage
-const stage = createStage({
-    canvas: 'main',
-    autoRender: true // Enable automatic rendering
+// Create an app and a stage
+const app = createBrowserVRenderApp();
+const stage = app.createStage({
+  canvas: 'main',
+  autoRender: true // Enable automatic rendering
 });
 // Create a circle element
 const circle = createCircle({
-    radius: 60,
-    x: 200,
-    y: 200,
-    fill: 'red',
+  radius: 60,
+  x: 200,
+  y: 200,
+  fill: 'red'
 });
 // Listen to click events, then change fill color to green
 circle.addEventListener('click', () => {
-    circle.setAttribute('fill', 'green');
+  circle.setAttribute('fill', 'green');
 });
 // Add it to the stage
 stage.defaultLayer.add(circle);
 ```
 
-We hope this tutorial helps you learn how to use VChart. Now you can try drawing different types of charts and customize more diverse chart effects by understanding in depth the various configuration options of VChart. Embark on your VChart journey bravely!
+We hope this tutorial helps you learn how to use VRender. Now you can try drawing different graphics and customize richer rendering effects by understanding VRender configuration options.

@@ -364,7 +364,7 @@ Public entries that still require project-level real-host smoke before Tier 1 cl
 Current behavior remains:
 
 - State attributes apply to the glyph itself.
-- Sub-graphic ownership is not redefined by the D3 shared-state model.
+- Sub-graphic ownership is not redefined by the shared-state main model.
 - If your business logic depends on glyph sub-graphic states, keep using glyph-specific APIs or upper-layer conventions.
 
 ## Migration Checklist
@@ -389,9 +389,9 @@ rg "graphic\\.states|\\.states\\s*="
 
 Avoid `clearStates()` before same-state refresh. Do not use `normalAttrs` as a snapshot or restore source. Replace `stateProxy` with `states` + `StateDefinition.resolver` or `sharedStateDefinitions`.
 
-If you maintain VChart, VTable, or another upper-layer integration, also check the D3 removal log for deleted pre-release APIs and old call chains:
+If you maintain VChart, VTable, or another upper-layer integration, also check the removed API and call-chain log for deleted pre-release APIs and old call chains:
 
-- [D3_REMOVED_API_AND_CALL_CHAIN_LOG.md](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_REMOVED_API_AND_CALL_CHAIN_LOG.md)
+- [Removed API and call-chain log](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_REMOVED_API_AND_CALL_CHAIN_LOG.md)
 
 3. Check appear/fade animations:
 

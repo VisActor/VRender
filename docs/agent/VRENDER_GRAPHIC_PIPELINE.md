@@ -42,7 +42,7 @@ React 绑定也走这条链：`packages/react-vrender/src/hostConfig.ts` 根据 
 - `resolvedStatePatch`：当前状态解析出的 patch。
 - `normalAttrs`：兼容 alias/view，getter 返回 `baseAttributes`，不是旧 snapshot。
 
-D3 主路径：
+状态解析主路径：
 
 ```text
 baseAttributes + resolvedStatePatch -> attribute
@@ -169,7 +169,7 @@ Group：
 
 Glyph：
 - 使用 `setSubGraphic` / `getSubGraphic` 管理子图元。
-- `glyphStates` / `glyphStateProxy` 只作用 Glyph 专属状态语义；D3 shared-state 不重新定义子图元 ownership。
+- `glyphStates` / `glyphStateProxy` 只作用 Glyph 专属状态语义；shared-state 主路径不重新定义子图元 ownership。
 
 ShadowRoot：
 - 主要服务 HTML / React overlay 场景。

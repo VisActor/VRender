@@ -12,7 +12,7 @@ Tue, 23 Jun 2026 04:01:55 GMT
 
 ### Minor changes
 
-- Align component layout and animation with the D3 static-truth contract, expose optional component subpaths, and register poptip through the app-scoped runtime context.
+- Align component layout and animation with the static-truth contract, expose optional component subpaths, and register poptip through the app-scoped runtime context.
 
 ### Updates
 
@@ -1808,4 +1808,3 @@ _Version update only_
 Wed, 07 Jun 2023 12:20:05 GMT
 
 _Initial release_
-

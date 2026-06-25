@@ -7,22 +7,21 @@
 ## 创建画布
 
 ```TypeScript
-import { creator, Global } from '@dp/canopus'
+import { createBrowserVRenderApp } from '@visactor/vrender';
 
-// 浏览器环境不需要设置env
-Global.setEnv('tt');
+const app = createBrowserVRenderApp();
 
-// 创建一个stage，默认有一个初始图层（layer）
-const stage = createStage({
-    canvas: 'main',
-    autoRender: true
-  });
+// 创建一个 stage，默认有一个初始图层（layer）
+const stage = app.createStage({
+  canvas: 'main',
+  autoRender: true
+});
 ```
 
 ## 创建节点
 
 ```TypeScript
-import { createCircle, createGroup } from '@dp/canopus';
+import { createCircle, createGroup, defaultTicker } from '@visactor/vrender';
 
 const c1 = createCircle({
     radius: 60,
@@ -42,7 +41,7 @@ const group = createGroup({});
 
 group.add(c1);
 
-// 开启动画ticker，ticker需要手动开启，方便应用程序在合适的时候统一开始执行动画
+// 开启动画 ticker，方便应用程序在合适的时候统一开始执行动画
 defaultTicker.start();
 
 stage.defaultLayer.add(group);

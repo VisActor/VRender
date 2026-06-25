@@ -595,7 +595,8 @@ for (let i = 0; i < 8; i++) {
 
 graphics.push(ship);
 
-const stage = new Stage({
+const app = VRender.createBrowserVRenderApp();
+const stage = app.createStage({
   container: CONTAINER_ID,
   autoRender: true
 });

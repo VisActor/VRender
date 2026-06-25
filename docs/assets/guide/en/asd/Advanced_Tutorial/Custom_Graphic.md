@@ -12,9 +12,9 @@ Next, we will use registering a `Lottie` graphic element as an example to explai
 
 Note: Before reading this section, it is recommended to read the [Graphic](./Graphic) section first.
 
-## Dependency Injection
+## Runtime Contribution Module
 
-Based on the dependency injection mechanism, we can easily inject various extension functions into VRender. All the functions of custom graphic elements we need to implement rely on dependency injection to achieve. Our dependency injection capability is based on `inversifyJS` transformation, so the API is aligned with `inversifyJS`. If you want to delve deeper, it is recommended to read the [`inversifyJS` documentation](https://inversify.io/).
+Custom graphic renderers, pickers, and contributions should be installed through runtime contribution modules. The module receives the lightweight VRender binding context, registers the required tokens, and is then installed through `installRuntimeContributionModule()` before App creation or with an explicit `app`.
 
 ## Preparation
 
@@ -140,7 +140,6 @@ Our graphic element has been defined. Next, we need to define the rendering logi
 Here, we only need to implement the `drawShape` interface. When rendering the rectangle, there are two callback functions `fillCb` and `strokeCb`. In `fillCb`, we need to generate a pattern of the Lottie canvas and draw it on the graphic element.
 
 ```ts
-@injectable()
 export class DefaultCanvasLottieRender extends DefaultCanvasRectRender implements IGraphicRender {
   type: 'glyph';
   numberType: number = LOTTIE_NUMBER_TYPE;
@@ -197,9 +196,8 @@ export class DefaultCanvasLottieRender extends DefaultCanvasRectRender implement
 Our Lottie graphic element has been implemented. Next, we need to implement the picking logic. We need to define a `DefaultCanvasLottiePicker` class, which inherits from `RectPickerBase` and implements the `IGraphicPicker` interface. The logic here is very simple because our picking is based on picking a rectangle, so after inheriting the picking class of the rectangle, we don't need to do anything.
 
 ```ts
-@injectable()
 export class DefaultCanvasLottiePicker extends RectPickerBase implements IGraphicPicker {
-  constructor(@inject(RectRender) public readonly canvasRenderer: IGraphicRender) {
+  constructor(public readonly canvasRenderer: IGraphicRender) {
     super();
   }
 }
@@ -215,44 +213,54 @@ Graphic elements do not need to be registered. One thing to note is that the `nu
 
 2. Rendering Registration
 
-Rendering logic needs to be registered through dependency injection.
+Rendering logic needs to be registered through a runtime contribution module. If the renderer inherits a built-in renderer that needs contributions, create the dependency explicitly.
 
 ```ts
-let loadLottieModule = false;
-export const lottieModule = new ContainerModule(bind => {
-  if (loadLottieModule) {
-    return;
-  }
-  loadLottieModule = true;
+import { createContributionProvider, GraphicRender, RectRenderContribution } from '@visactor/vrender';
+
+export const lottieModule = ({ bind }) => {
   // Lottie renderer
-  bind(DefaultCanvasLottieRender).toSelf().inSingletonScope();
+  bind(DefaultCanvasLottieRender)
+    .toDynamicValue(
+      ({ container }) => new DefaultCanvasLottieRender(createContributionProvider(RectRenderContribution, container))
+    )
+    .inSingletonScope();
   bind(GraphicRender).toService(DefaultCanvasLottieRender);
-});
+};
 ```
 
 3. Picking Registration
 
-Similar to rendering registration, picking classes are also registered through dependency injection.
+Similar to rendering registration, picking classes are also registered through a runtime contribution module.
 
 ```ts
-let loadLottiePick = false;
-export const lottieCanvasPickModule = new ContainerModule((bind, unbind, isBound, rebind) => {
-  if (loadLottiePick) {
-    return;
-  }
-  loadLottiePick = true;
-  bind(CanvasLottiePicker).to(DefaultCanvasLottiePicker).inSingletonScope();
+import { RectRender } from '@visactor/vrender';
+
+export const lottieCanvasPickModule = ({ bind }) => {
+  bind(CanvasLottiePicker)
+    .toDynamicValue(({ container }) => new DefaultCanvasLottiePicker(container.getAll(RectRender)[0]))
+    .inSingletonScope();
   bind(CanvasPickerContribution).toService(CanvasLottiePicker);
-});
+};
 ```
 
 ## Usage
 
-Next, we can load the relevant code of the `Lottie` graphic element in the code and use it.
+Next, load the relevant runtime contribution modules of the `Lottie` graphic element and use it. Use `installRuntimeContributionModule` instead of loading directly into the legacy container. When `app` is omitted, VRender records the module for future App creation and refreshes existing shared Apps. If an App already exists and you want to install into that App immediately, pass `{ app, targets }`.
 
 ```ts
-container.load(lottieModule);
-container.load(lottieCanvasPickModule);
+import { createBrowserVRenderApp } from '@visactor/vrender';
+import { installRuntimeContributionModule } from '@visactor/vrender/entries/runtime-contribution';
+import { CanvasPickerContribution } from '@visactor/vrender-kits/picker/contributions/constants';
+
+installRuntimeContributionModule(lottieModule, {
+  targets: ['graphic-renderer']
+});
+installRuntimeContributionModule(lottieCanvasPickModule, {
+  targets: [{ picker: CanvasPickerContribution }]
+});
+
+const app = createBrowserVRenderApp();
 
 const lottie = createLottie({
   data: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/vrender/custom-graphic-lottie-animate.json',
@@ -264,7 +272,7 @@ const lottie = createLottie({
   background: 'pink'
 });
 
-const stage = createStage({
+const stage = app.createStage({
   canvas: 'main',
   autoRender: true
 });

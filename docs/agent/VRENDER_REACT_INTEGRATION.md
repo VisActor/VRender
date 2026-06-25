@@ -141,7 +141,7 @@ event：
 
 ## 已删除 React `stateProxy` Prop
 
-D3 删除留档要求 JSX / React `stateProxy` prop 迁移到 `states` prop。当前 React 包没有 `stateProxy` surface。
+1.1 删除留档要求 JSX / React `stateProxy` prop 迁移到 `states` prop。当前 React 包没有 `stateProxy` surface。
 
 如果上层仓库仍搜索到 React `stateProxy`：
 

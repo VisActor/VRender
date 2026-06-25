@@ -1,6 +1,11 @@
 # Change Log - @visactor/vrender-animate
 
-This log was last generated on Tue, 23 Jun 2026 04:01:55 GMT and should not be manually modified.
+This log was last generated on Thu, 25 Jun 2026 02:44:21 GMT and should not be manually modified.
+
+## 1.1.1
+Thu, 25 Jun 2026 02:44:21 GMT
+
+_Version update only_
 
 ## 1.1.0
 Tue, 23 Jun 2026 04:01:55 GMT

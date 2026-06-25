@@ -94,6 +94,31 @@ export function registerVRenderBasicAnimationProfile() {
 - custom animation 可以选择 `basic`、`richtext`、`disappear`、`story` 或 full register。
 - `poptip` 插件需要通过 `loadPoptip()` 或 `installPoptipToApp(app)` 显式触发，不属于默认 bootstrap。
 
+### 自定义 Runtime Contribution 使用统一 Installer
+
+如果上层需要注入 renderer contribution、draw interceptor 或 picker contribution，应使用 VRender 的 runtime contribution installer，而不是自己维护 DI/container 刷新顺序：
+
+```ts
+import { installRuntimeContributionModule } from '@visactor/vrender/entries/runtime-contribution';
+
+installRuntimeContributionModule(customContributionModule, {
+  targets: ['graphic-renderer', 'draw-contribution']
+});
+```
+
+未传 `app` 时，VRender 会把 module 记录为 pending runtime contribution，并刷新当前已经存在的 shared app。它不会创建新 app；后续新建 app 会在默认 bootstrap 完成后安装这份 pending module，保证 replacement module 在执行 `rebind` 前可以看到内置 contribution token。
+
+如果 app 已经存在，或由宿主传入，应显式传入 app：
+
+```ts
+installRuntimeContributionModule(customContributionModule, {
+  app,
+  targets: ['graphic-renderer']
+});
+```
+
+如果 module 注册 picker contribution，在 `targets` 中加入 `{ picker: CanvasPickerContribution }`。同一个 module object 对同一个 binding context 只会加载一次，因此上层可以在 app 创建前调用一次，并在拿到 app 后再次调用。
+
 ## 破坏性变化
 
 - `graphic.stateProxy` 已移除。动态状态样式应迁移到 `StateDefinition.resolver`。

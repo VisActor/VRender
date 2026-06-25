@@ -1,6 +1,7 @@
 import * as VRenderCore from '@visactor/vrender-core';
 import type { IApp, IEntryOptions, IEnvParamsMap } from '@visactor/vrender-core';
 import { bootstrapVRenderNodeApp } from './bootstrap';
+import { installPendingRuntimeContributionModulesToApp } from './runtime-contribution';
 
 export type TVRenderNodeAppEntryOptions = IEntryOptions & {
   /**
@@ -16,6 +17,8 @@ const { createNodeApp } = VRenderCore as typeof VRenderCore & {
 
 export function createNodeVRenderApp(options: TVRenderNodeAppEntryOptions = {}): IApp {
   const { envParams, ...entryOptions } = options;
+  const app = bootstrapVRenderNodeApp(createNodeApp(entryOptions), envParams);
 
-  return bootstrapVRenderNodeApp(createNodeApp(entryOptions), envParams);
+  installPendingRuntimeContributionModulesToApp(app);
+  return app;
 }

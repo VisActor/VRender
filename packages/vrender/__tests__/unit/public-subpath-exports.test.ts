@@ -64,7 +64,8 @@ const expectedExports: Record<string, ExpectedSubpath[]> = {
     { subpath: './entries/shared', source: 'src/entries/shared.ts', browserSource: 'src/entries/shared-browser.ts' },
     { subpath: './entries/browser', source: 'src/entries/browser.ts' },
     { subpath: './entries/node', source: 'src/entries/node.ts' },
-    { subpath: './entries/miniapp', source: 'src/entries/miniapp.ts' }
+    { subpath: './entries/miniapp', source: 'src/entries/miniapp.ts' },
+    { subpath: './entries/runtime-contribution', source: 'src/entries/runtime-contribution.ts' }
   ]
 };
 

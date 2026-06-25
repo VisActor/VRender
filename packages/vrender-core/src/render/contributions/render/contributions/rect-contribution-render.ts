@@ -8,13 +8,18 @@ import type {
   IThemeAttribute,
   IRectRenderContribution,
   IDrawContext,
-  IBorderStyle
+  IBorderStyle,
+  IStrokeType
 } from '../../../../interface';
 import { getScaledStroke } from '../../../../common/canvas-utils';
 import { defaultBaseBackgroundRenderContribution } from './base-contribution-render';
 import { createRectPath } from '../../../../common/shape/rect';
 import { BaseRenderContributionTime } from '../../../../common/enums';
 import { defaultBaseTextureRenderContribution } from './base-texture-contribution-render';
+
+function hasDisabledStrokeSide(stroke: unknown): stroke is IStrokeType[] {
+  return Array.isArray(stroke) && stroke.some(s => s === false || s === null);
+}
 
 export class DefaultRectRenderContribution implements IRectRenderContribution {
   time: BaseRenderContributionTime = BaseRenderContributionTime.afterFillStroke;
@@ -149,8 +154,8 @@ export class SplitRectBeforeRenderContribution implements IRectRenderContributio
   ) {
     const { stroke = groupAttribute.stroke } = group.attribute as any;
 
-    // 数组且存在为false的项目，那就不绘制
-    if (Array.isArray(stroke) && stroke.some(s => s === false)) {
+    // 数组且存在为false/null的项目，交给分边描边 contribution 处理
+    if (hasDisabledStrokeSide(stroke)) {
       doFillOrStroke.doStroke = false;
     }
   }
@@ -197,7 +202,7 @@ export class SplitRectAfterRenderContribution implements IRectRenderContribution
     height = (height ?? y1 - originY) || 0;
 
     // 不是数组
-    if (!(Array.isArray(stroke) && stroke.some(s => s === false))) {
+    if (!hasDisabledStrokeSide(stroke)) {
       return;
     }
 

@@ -75,4 +75,13 @@ describe('vrender-core public subpath exports', () => {
 
     expect(packageJson.typesVersions?.['*']).toEqual(expectedTypesVersions);
   });
+
+  test('keeps BytePack-sensitive root runtime exports explicit in the ESM artifact', () => {
+    const artifact = fs.readFileSync(path.join(packageRoot, 'es/index.js'), 'utf8');
+
+    expect(artifact).toContain('export { Symbol, createSymbol } from "./graphic/symbol"');
+    expect(artifact).toContain(
+      'export { builtInSymbolStrMap, builtinSymbols, builtinSymbolsMap } from "./graphic/builtin-symbol"'
+    );
+  });
 });

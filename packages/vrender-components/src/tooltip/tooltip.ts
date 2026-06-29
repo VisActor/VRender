@@ -10,7 +10,7 @@ import type {
   ITextGraphicAttribute,
   TextAlignType
 } from '@visactor/vrender-core';
-import { builtinSymbolsMap } from '@visactor/vrender-core/graphic/builtin-symbol';
+import { builtinSymbolsMap } from '@visactor/vrender-core';
 import { calculateLineHeight } from '@visactor/vrender-core/text';
 import { merge, isValid, normalizePadding, isNil, type TextMeasureInput } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';

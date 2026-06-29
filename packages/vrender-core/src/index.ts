@@ -1,5 +1,6 @@
 export * from './core/global';
 export * from './graphic';
+export { builtInSymbolStrMap, builtinSymbols, builtinSymbolsMap } from './graphic/builtin-symbol';
 export { Group } from './graphic/group';
 export { createGraphic, graphicCreator, registerGraphic } from './graphic/graphic-creator';
 export { container, graphicUtil, transformUtil, graphicService, layerService } from './modules';

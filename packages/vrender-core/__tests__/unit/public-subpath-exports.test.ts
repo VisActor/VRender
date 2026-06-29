@@ -39,7 +39,7 @@ const expectedExports: ExpectedSubpath[] = [
   { subpath: './common/generator', source: 'src/common/generator.ts' },
   { subpath: './common/diff', source: 'src/common/diff.ts' },
   { subpath: './common/performance-raf', source: 'src/common/performance-raf.ts' },
-  { subpath: './graphic/builtin-symbol', source: 'src/graphic/builtin-symbol/index.ts' },
+  { subpath: './graphic/builtin-symbol', source: 'src/graphic/builtin-symbol.ts' },
   { subpath: './graphic/group', source: 'src/graphic/group.ts' },
   { subpath: './legacy/bootstrap', source: 'src/legacy/bootstrap.ts' },
   { subpath: './picker/constants', source: 'src/picker/constants.ts' },

@@ -1,25 +1,33 @@
 import { PickItemInterceptor, PickServiceInterceptor } from '@visactor/vrender-core/picker/constants';
 import { application } from '@visactor/vrender-core/application';
 import {
+  configureRuntimeApplicationForApp,
+  getRuntimeInstallerBindingContext,
+  getRuntimeInstallerGlobal,
+  installRuntimeDrawContributionsToApp,
+  installRuntimeGraphicRenderersToApp,
+  installRuntimePickersToApp,
+  refreshRuntimeInstallerContributions
+} from '@visactor/vrender-core/entries/runtime-installer';
+import {
   arc3dModule,
   arcModule,
   areaModule,
   circleModule,
-  configureRuntimeApplicationForApp,
-  getRuntimeInstallerBindingContext,
-  getRuntimeInstallerGlobal,
   glyphModule,
   imageModule,
-  installRuntimeDrawContributionsToApp,
-  installRuntimeGraphicRenderersToApp,
-  installRuntimePickersToApp,
   lineModule,
   pathModule,
   polygonModule,
   pyramid3dModule,
   rect3dModule,
   rectModule,
-  refreshRuntimeInstallerContributions,
+  richtextModule,
+  starModule,
+  symbolModule,
+  textModule
+} from '@visactor/vrender-core/graphic/modules';
+import {
   registerArc3dGraphic,
   registerArcGraphic,
   registerAreaGraphic,
@@ -38,11 +46,9 @@ import {
   registerStarGraphic,
   registerSymbolGraphic,
   registerTextGraphic,
-  registerWrapTextGraphic,
-  richtextModule,
-  starModule,
-  symbolModule,
-  textModule,
+  registerWrapTextGraphic
+} from '@visactor/vrender-core/register/graphic';
+import {
   type EnvType,
   type IContributionProvider,
   type IEnvParamsMap,

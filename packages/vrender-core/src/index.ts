@@ -48,6 +48,15 @@ export * from './color-string';
 export * from './factory';
 export * from './registry';
 export * from './entries';
+export {
+  configureRuntimeApplicationForApp,
+  getRuntimeInstallerBindingContext,
+  getRuntimeInstallerGlobal,
+  installRuntimeDrawContributionsToApp,
+  installRuntimeGraphicRenderersToApp,
+  installRuntimePickersToApp,
+  refreshRuntimeInstallerContributions
+} from './entries/runtime-installer';
 
 /* export common */
 export * from './common/text';

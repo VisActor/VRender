@@ -15,6 +15,39 @@ const forbiddenWorkspaceSourcePatterns = [
   /(?:^|[./-])vrender-kits\/src\b/,
   /(?:^|[./-])vrender\/src\b/
 ];
+const forbiddenCoreRootRuntimeImports = [
+  'Arc3dRender',
+  'ArcRender',
+  'AreaRender',
+  'CircleRender',
+  'DrawContribution',
+  'Generator',
+  'GlyphRender',
+  'GraphicRender',
+  'Group',
+  'ImageRender',
+  'LineRender',
+  'PathRender',
+  'PickItemInterceptor',
+  'PickServiceInterceptor',
+  'PickerService',
+  'PolygonRender',
+  'Pyramid3dRender',
+  'Rect3DRender',
+  'RectRender',
+  'RichTextRender',
+  'StarRender',
+  'SymbolRender',
+  'TextRender',
+  'application',
+  'configureRuntimeApplicationForApp',
+  'getRuntimeInstallerBindingContext',
+  'getRuntimeInstallerGlobal',
+  'installRuntimeDrawContributionsToApp',
+  'installRuntimeGraphicRenderersToApp',
+  'installRuntimePickersToApp',
+  'refreshRuntimeInstallerContributions'
+];
 
 function collectArtifactFiles(relativeDir: string): string[] {
   const absoluteDir = path.join(packageRoot, relativeDir);
@@ -97,5 +130,12 @@ describe('vrender-kits and vrender-core bundle artifacts', () => {
     const missingImports = coreRootImports.filter(name => !coreRootExports.has(name));
 
     expect(missingImports).toEqual([]);
+  });
+  test('internal runtime symbols should use vrender-core narrow subpaths instead of the root bundle', () => {
+    const kitsBundle = readArtifact(packageRoot, 'dist/index.es.js');
+    const coreRootImports = new Set(collectRootNamedImports(kitsBundle));
+    const rootRuntimeImports = forbiddenCoreRootRuntimeImports.filter(name => coreRootImports.has(name));
+
+    expect(rootRuntimeImports).toEqual([]);
   });
 });

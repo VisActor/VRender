@@ -1,4 +1,4 @@
-import { LineRender } from '@visactor/vrender-core';
+import { LineRender } from '@visactor/vrender-core/render/symbol';
 import { resolveContainerBinding } from '../../../common/explicit-binding';
 import { CanvasLinePicker, CanvasPickerContribution } from '../constants';
 import { DefaultCanvasLinePicker } from './line-picker';

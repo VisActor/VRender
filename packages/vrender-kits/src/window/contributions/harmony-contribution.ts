@@ -1,4 +1,5 @@
-import { Generator, BaseWindowHandlerContribution, WindowHandlerContribution } from '@visactor/vrender-core';
+import { Generator } from '@visactor/vrender-core/common/generator';
+import { BaseWindowHandlerContribution, WindowHandlerContribution } from '@visactor/vrender-core';
 import type {
   EnvType,
   IGlobal,
@@ -9,7 +10,7 @@ import type {
   IWindowHandlerContribution
 } from '@visactor/vrender-core';
 import { HarmonyCanvas } from '../../canvas/contributions/harmony';
-import { application } from '@visactor/vrender-core';
+import { application } from '@visactor/vrender-core/application';
 
 class MiniAppEventManager {
   addEventListener(type: string, func: EventListenerOrEventListenerObject) {

@@ -1,4 +1,5 @@
-import { application, clock, WILDCARD } from '@visactor/vrender-core';
+import { application } from '@visactor/vrender-core/application';
+import { clock, WILDCARD } from '@visactor/vrender-core';
 import type { IEventTarget, IFederatedPointerEvent, FederatedPointerEvent, INode } from '@visactor/vrender-core';
 import type { IPointLike } from '@visactor/vutils';
 import { EventEmitter } from '@visactor/vutils';

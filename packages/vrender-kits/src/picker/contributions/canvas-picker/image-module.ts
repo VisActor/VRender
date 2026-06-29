@@ -1,4 +1,4 @@
-import { ImageRender } from '@visactor/vrender-core';
+import { ImageRender } from '@visactor/vrender-core/render/symbol';
 import { resolveContainerBinding } from '../../../common/explicit-binding';
 import { CanvasImagePicker, CanvasPickerContribution } from '../constants';
 import { DefaultCanvasImagePicker } from './image-picker';

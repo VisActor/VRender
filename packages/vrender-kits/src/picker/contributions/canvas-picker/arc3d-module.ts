@@ -1,4 +1,4 @@
-import { Arc3dRender } from '@visactor/vrender-core';
+import { Arc3dRender } from '@visactor/vrender-core/render/symbol';
 import { resolveContainerBinding } from '../../../common/explicit-binding';
 import { CanvasArc3dPicker, CanvasPickerContribution } from '../constants';
 import { DefaultCanvasArc3dPicker } from './arc3d-picker';

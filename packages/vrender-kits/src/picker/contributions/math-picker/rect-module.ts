@@ -1,4 +1,4 @@
-import { RectRender } from '@visactor/vrender-core';
+import { RectRender } from '@visactor/vrender-core/render/symbol';
 import { resolveContainerBinding } from '../../../common/explicit-binding';
 import { MathPickerContribution, MathRectPicker } from '../constants';
 import { DefaultMathRectPicker } from './rect-picker';

@@ -1,4 +1,4 @@
-import { Pyramid3dRender } from '@visactor/vrender-core';
+import { Pyramid3dRender } from '@visactor/vrender-core/render/symbol';
 import { resolveContainerBinding } from '../../../common/explicit-binding';
 import { CanvasPickerContribution, CanvasPyramid3dPicker } from '../constants';
 import { DefaultCanvasPyramid3dPicker } from './pyramid3d-picker';

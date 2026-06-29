@@ -6,6 +6,7 @@ const path = require('path');
 const process = require('process');
 
 const packageRoot = process.cwd();
+const corePackageRoot = path.resolve(packageRoot, '../vrender-core');
 const buildRoots = ['es', 'cjs'];
 const artifactExtensions = new Set(['.js', '.d.ts']);
 const forbiddenWorkspaceSourcePatterns = [
@@ -13,6 +14,39 @@ const forbiddenWorkspaceSourcePatterns = [
   /(?:^|[./-])vrender-animate\/src\b/,
   /(?:^|[./-])vrender-kits\/src\b/,
   /(?:^|[./-])vrender\/src\b/
+];
+const forbiddenCoreRootRuntimeImports = [
+  'Arc3dRender',
+  'ArcRender',
+  'AreaRender',
+  'CircleRender',
+  'DrawContribution',
+  'Generator',
+  'GlyphRender',
+  'GraphicRender',
+  'Group',
+  'ImageRender',
+  'LineRender',
+  'PathRender',
+  'PickItemInterceptor',
+  'PickServiceInterceptor',
+  'PickerService',
+  'PolygonRender',
+  'Pyramid3dRender',
+  'Rect3DRender',
+  'RectRender',
+  'RichTextRender',
+  'StarRender',
+  'SymbolRender',
+  'TextRender',
+  'application',
+  'configureRuntimeApplicationForApp',
+  'getRuntimeInstallerBindingContext',
+  'getRuntimeInstallerGlobal',
+  'installRuntimeDrawContributionsToApp',
+  'installRuntimeGraphicRenderersToApp',
+  'installRuntimePickersToApp',
+  'refreshRuntimeInstallerContributions'
 ];
 
 function collectArtifactFiles(relativeDir: string): string[] {
@@ -43,5 +77,66 @@ describe('vrender-kits published artifacts', () => {
     );
 
     expect(offenders).toEqual([]);
+  });
+});
+
+function readArtifact(packageDir: string, relativePath: string): string {
+  return fs.readFileSync(path.join(packageDir, relativePath), 'utf8');
+}
+
+function collectRootNamedImports(artifact: string): string[] {
+  const imports = new Set<string>();
+  const importPattern = /import\s+\{([^}]+)\}\s+from\s+['"]@visactor\/vrender-core['"]/g;
+  let match: RegExpExecArray | null;
+
+  while ((match = importPattern.exec(artifact))) {
+    match[1]
+      .split(',')
+      .map(specifier => specifier.trim())
+      .filter(Boolean)
+      .forEach(specifier => {
+        imports.add(specifier.split(/\s+as\s+/)[0].trim());
+      });
+  }
+
+  return Array.from(imports).sort();
+}
+
+function collectBundleNamedExports(artifact: string): string[] {
+  const exports = new Set<string>();
+  const exportPattern = /export\s+\{([^}]+)\}/g;
+  let match: RegExpExecArray | null;
+
+  while ((match = exportPattern.exec(artifact))) {
+    match[1]
+      .split(',')
+      .map(specifier => specifier.trim())
+      .filter(Boolean)
+      .forEach(specifier => {
+        const [, exportedName = specifier] = specifier.match(/\s+as\s+([A-Za-z0-9_$]+)$/) ?? [];
+        exports.add(exportedName.trim());
+      });
+  }
+
+  return Array.from(exports).sort();
+}
+
+describe('vrender-kits and vrender-core bundle artifacts', () => {
+  test('root named imports from vrender-core should exist in the core root bundle export list', () => {
+    const kitsBundle = readArtifact(packageRoot, 'dist/index.es.js');
+    const coreBundle = readArtifact(corePackageRoot, 'dist/index.es.js');
+    const coreRootImports = collectRootNamedImports(kitsBundle);
+    const coreRootExports = new Set(collectBundleNamedExports(coreBundle));
+    const missingImports = coreRootImports.filter(name => !coreRootExports.has(name));
+
+    expect(missingImports).toEqual([]);
+  });
+
+  test('internal runtime symbols should use vrender-core narrow subpaths instead of the root bundle', () => {
+    const kitsBundle = readArtifact(packageRoot, 'dist/index.es.js');
+    const coreRootImports = new Set(collectRootNamedImports(kitsBundle));
+    const rootRuntimeImports = forbiddenCoreRootRuntimeImports.filter(name => coreRootImports.has(name));
+
+    expect(rootRuntimeImports).toEqual([]);
   });
 });

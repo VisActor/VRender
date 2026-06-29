@@ -1,5 +1,6 @@
 export * from './core/global';
 export * from './graphic';
+export { Group } from './graphic/group';
 export { createGraphic, graphicCreator, registerGraphic } from './graphic/graphic-creator';
 export { container, graphicUtil, transformUtil, graphicService, layerService } from './modules';
 export {
@@ -13,17 +14,49 @@ export * from './create';
 export * from './event';
 export * from './interface';
 export * from './render';
+export {
+  IncrementalDrawContribution,
+  ArcRender,
+  Arc3dRender,
+  AreaRender,
+  CircleRender,
+  GraphicRender,
+  LineRender,
+  PathRender,
+  PolygonRender,
+  RectRender,
+  Rect3DRender,
+  SymbolRender,
+  TextRender,
+  RichTextRender,
+  Pyramid3dRender,
+  GlyphRender,
+  ImageRender,
+  RenderSelector,
+  DrawContribution,
+  StarRender
+} from './render/contributions/render/symbol';
 export * from './render/contributions/render/base-render';
 export * from './canvas';
 export * from './core';
 export * from './core/light';
 export * from './core/camera';
 export * from './picker';
+export { PickerService, PickItemInterceptor, PickServiceInterceptor } from './picker/constants';
 export * from './resource-loader/loader';
 export * from './color-string';
 export * from './factory';
 export * from './registry';
 export * from './entries';
+export {
+  configureRuntimeApplicationForApp,
+  getRuntimeInstallerBindingContext,
+  getRuntimeInstallerGlobal,
+  installRuntimeDrawContributionsToApp,
+  installRuntimeGraphicRenderersToApp,
+  installRuntimePickersToApp,
+  refreshRuntimeInstallerContributions
+} from './entries/runtime-installer';
 
 /* export common */
 export * from './common/text';
@@ -36,6 +69,7 @@ export * from './common/segment';
 export * from './common/canvas-utils';
 export * from './common/contribution-provider';
 export * from './common/generator';
+export { Generator } from './common/generator';
 export * from './common/utils';
 export * from './common/shape/arc';
 export * from './common/shape/rect';
@@ -66,6 +100,7 @@ export * from './common/xml';
 export * from './common/explicit-binding';
 export * from './constants';
 export * from './application';
+export { application } from './application';
 export * from './env-check';
 
 export * from './render/contributions/render/arc-module';

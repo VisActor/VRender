@@ -1,4 +1,4 @@
-import { Rect3DRender } from '@visactor/vrender-core';
+import { Rect3DRender } from '@visactor/vrender-core/render/symbol';
 import { resolveContainerBinding } from '../../../common/explicit-binding';
 import { CanvasPickerContribution, CanvasRect3dPicker } from '../constants';
 import { DefaultCanvasRect3dPicker } from './rect3d-picker';

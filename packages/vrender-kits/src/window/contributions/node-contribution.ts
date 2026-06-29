@@ -1,4 +1,5 @@
-import { Generator, BaseWindowHandlerContribution, WindowHandlerContribution } from '@visactor/vrender-core';
+import { Generator } from '@visactor/vrender-core/common/generator';
+import { BaseWindowHandlerContribution, WindowHandlerContribution } from '@visactor/vrender-core';
 import type { IBoundsLike } from '@visactor/vutils';
 import type {
   EnvType,
@@ -10,7 +11,7 @@ import type {
   IWindowParams
 } from '@visactor/vrender-core';
 import { NodeCanvas } from '../../canvas/contributions/node';
-import { application } from '@visactor/vrender-core';
+import { application } from '@visactor/vrender-core/application';
 
 export class NodeWindowHandlerContribution extends BaseWindowHandlerContribution implements IWindowHandlerContribution {
   static env: EnvType = 'node';

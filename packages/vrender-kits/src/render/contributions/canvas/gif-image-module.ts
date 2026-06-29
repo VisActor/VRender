@@ -1,4 +1,5 @@
-import { GraphicRender, ImageRenderContribution } from '@visactor/vrender-core';
+import { GraphicRender } from '@visactor/vrender-core/render/symbol';
+import { ImageRenderContribution } from '@visactor/vrender-core';
 import { createContributionProvider } from '../../../common/explicit-binding';
 import { DefaultCanvasGifImageRender } from './gif-image-render';
 

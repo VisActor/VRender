@@ -1,4 +1,4 @@
-import { PickItemInterceptor, PickerService, PickServiceInterceptor } from '@visactor/vrender-core';
+import { PickItemInterceptor, PickerService, PickServiceInterceptor } from '@visactor/vrender-core/picker/constants';
 import { createContributionProvider } from '../common/explicit-binding';
 import { DefaultMathPickerService } from './math-picker-service';
 import { bindMathPickerContribution } from './contributions/math-picker/module';

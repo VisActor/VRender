@@ -1,4 +1,4 @@
-import { PathRender } from '@visactor/vrender-core';
+import { PathRender } from '@visactor/vrender-core/render/symbol';
 import { resolveContainerBinding } from '../../../common/explicit-binding';
 import { MathPathPicker, MathPickerContribution } from '../constants';
 import { DefaultMathPathPicker } from './path-picker';

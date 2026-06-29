@@ -1,3 +1,4 @@
+import { GraphicRender } from '@visactor/vrender-core/render/symbol';
 import {
   AreaRenderContribution,
   DefaultCanvasArcRender,
@@ -5,8 +6,7 @@ import {
   DefaultCanvasLineRender,
   DefaultCanvasPathRender,
   DefaultCanvasRectRender,
-  DefaultCanvasSymbolRender,
-  GraphicRender
+  DefaultCanvasSymbolRender
 } from '@visactor/vrender-core';
 import { createContributionProvider, resolveContainerBinding } from '../../../common/explicit-binding';
 import { RoughCanvasArcRender } from './rough-arc';

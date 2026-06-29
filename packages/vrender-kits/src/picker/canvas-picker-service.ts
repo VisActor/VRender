@@ -1,6 +1,7 @@
 import type { IMatrix, IPointLike } from '@visactor/vutils';
 // eslint-disable-next-line
-import { DefaultPickService, canvasAllocate, application } from '@visactor/vrender-core';
+import { application } from '@visactor/vrender-core/application';
+import { DefaultPickService, canvasAllocate } from '@visactor/vrender-core';
 import type {
   ICanvas,
   IContext2d,

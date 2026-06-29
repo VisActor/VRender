@@ -1,4 +1,4 @@
-import { CircleRender } from '@visactor/vrender-core';
+import { CircleRender } from '@visactor/vrender-core/render/symbol';
 import { resolveContainerBinding } from '../../../common/explicit-binding';
 import { CanvasCirclePicker, CanvasPickerContribution } from '../constants';
 import { DefaultCanvasCirclePicker } from './circle-picker';

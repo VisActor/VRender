@@ -1,7 +1,6 @@
+import { PickItemInterceptor, PickServiceInterceptor } from '@visactor/vrender-core/picker/constants';
+import { application } from '@visactor/vrender-core/application';
 import {
-  PickItemInterceptor,
-  PickServiceInterceptor,
-  application,
   arc3dModule,
   arcModule,
   areaModule,

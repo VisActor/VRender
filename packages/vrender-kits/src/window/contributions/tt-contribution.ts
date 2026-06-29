@@ -1,4 +1,5 @@
-import { Generator, BaseWindowHandlerContribution, WindowHandlerContribution } from '@visactor/vrender-core';
+import { Generator } from '@visactor/vrender-core/common/generator';
+import { BaseWindowHandlerContribution, WindowHandlerContribution } from '@visactor/vrender-core';
 import type {
   EnvType,
   IGlobal,
@@ -10,7 +11,7 @@ import type {
 } from '@visactor/vrender-core';
 import type { IBoundsLike } from '@visactor/vutils';
 import { TTCanvas } from '../../canvas/contributions/tt';
-import { application } from '@visactor/vrender-core';
+import { application } from '@visactor/vrender-core/application';
 
 class MiniAppEventManager {
   addEventListener(type: string, func: EventListenerOrEventListenerObject) {

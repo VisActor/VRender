@@ -1,9 +1,6 @@
-import {
-  Generator,
-  BaseWindowHandlerContribution,
-  WindowHandlerContribution,
-  application
-} from '@visactor/vrender-core';
+import { Generator } from '@visactor/vrender-core/common/generator';
+import { application } from '@visactor/vrender-core/application';
+import { BaseWindowHandlerContribution, WindowHandlerContribution } from '@visactor/vrender-core';
 import type {
   IContext2d,
   ICanvas,

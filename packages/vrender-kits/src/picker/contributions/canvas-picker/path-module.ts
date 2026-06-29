@@ -1,4 +1,4 @@
-import { PathRender } from '@visactor/vrender-core';
+import { PathRender } from '@visactor/vrender-core/render/symbol';
 import { resolveContainerBinding } from '../../../common/explicit-binding';
 import { CanvasPathPicker, CanvasPickerContribution } from '../constants';
 import { DefaultCanvasPathPicker } from './path-picker';

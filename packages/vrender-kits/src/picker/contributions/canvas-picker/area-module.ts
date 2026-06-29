@@ -1,4 +1,4 @@
-import { AreaRender } from '@visactor/vrender-core';
+import { AreaRender } from '@visactor/vrender-core/render/symbol';
 import { resolveContainerBinding } from '../../../common/explicit-binding';
 import { CanvasAreaPicker, CanvasPickerContribution } from '../constants';
 import { DefaultCanvasAreaPicker } from './area-picker';

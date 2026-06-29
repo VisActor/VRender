@@ -1,4 +1,5 @@
-import { application, BaseCanvas } from '@visactor/vrender-core';
+import { application } from '@visactor/vrender-core/application';
+import { BaseCanvas } from '@visactor/vrender-core';
 import type { CanvasConfigType, ICanvas, EnvType } from '@visactor/vrender-core';
 import { BrowserContext2d } from './context';
 

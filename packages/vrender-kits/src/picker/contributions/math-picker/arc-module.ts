@@ -1,4 +1,4 @@
-import { ArcRender } from '@visactor/vrender-core';
+import { ArcRender } from '@visactor/vrender-core/render/symbol';
 import { resolveContainerBinding } from '../../../common/explicit-binding';
 import { MathArcPicker, MathPickerContribution } from '../constants';
 import { DefaultMathArcPicker } from './arc-picker';

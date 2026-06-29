@@ -1,5 +1,6 @@
 // 参考konva
-import { createColor, getScaledStroke, application } from '@visactor/vrender-core';
+import { application } from '@visactor/vrender-core/application';
+import { createColor, getScaledStroke } from '@visactor/vrender-core';
 import type {
   IContext2d,
   EnvType,

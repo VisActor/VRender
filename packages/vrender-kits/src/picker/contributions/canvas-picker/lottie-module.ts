@@ -1,4 +1,4 @@
-import { RectRender } from '@visactor/vrender-core';
+import { RectRender } from '@visactor/vrender-core/render/symbol';
 import { resolveContainerBinding } from '../../../common/explicit-binding';
 import { CanvasLottiePicker, CanvasPickerContribution } from '../constants';
 import { DefaultCanvasLottiePicker } from './lottie-picker';

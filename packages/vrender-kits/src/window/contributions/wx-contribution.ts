@@ -1,8 +1,8 @@
+import { Generator } from '@visactor/vrender-core/common/generator';
+import { application } from '@visactor/vrender-core/application';
 import {
-  Generator,
   BaseWindowHandlerContribution,
   WindowHandlerContribution,
-  application,
   type EnvType,
   type IGlobal,
   type IContext2d,

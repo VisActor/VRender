@@ -1,4 +1,5 @@
-import { DrawContribution, PickItemInterceptor, PickerService, PickServiceInterceptor } from '@visactor/vrender-core';
+import { DrawContribution } from '@visactor/vrender-core/render/symbol';
+import { PickItemInterceptor, PickerService, PickServiceInterceptor } from '@visactor/vrender-core/picker/constants';
 import { createContributionProvider, resolveContainerBinding } from '../common/explicit-binding';
 import { DefaultCanvasPickerService } from './canvas-picker-service';
 import { bindCanvasPickerContribution } from './contributions/canvas-picker/module';

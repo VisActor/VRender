@@ -131,7 +131,6 @@ describe('vrender-kits and vrender-core bundle artifacts', () => {
 
     expect(missingImports).toEqual([]);
   });
-
   test('internal runtime symbols should use vrender-core narrow subpaths instead of the root bundle', () => {
     const kitsBundle = readArtifact(packageRoot, 'dist/index.es.js');
     const coreRootImports = new Set(collectRootNamedImports(kitsBundle));

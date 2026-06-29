@@ -1,4 +1,4 @@
-import { GlyphRender } from '@visactor/vrender-core';
+import { GlyphRender } from '@visactor/vrender-core/render/symbol';
 import { resolveContainerBinding } from '../../../common/explicit-binding';
 import { CanvasGlyphPicker, CanvasPickerContribution } from '../constants';
 import { DefaultCanvasGlyphPicker } from './glyph-picker';

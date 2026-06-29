@@ -1,4 +1,6 @@
-import { Generator, BaseEnvContribution, application } from '@visactor/vrender-core';
+import { Generator } from '@visactor/vrender-core/common/generator';
+import { application } from '@visactor/vrender-core/application';
+import { BaseEnvContribution } from '@visactor/vrender-core';
 import type {
   ICanvasLike,
   EnvType,

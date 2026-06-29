@@ -34,13 +34,13 @@ import {
   type ITextMeasureSpec,
   type IMatrix
 } from '@visactor/vutils';
+import { application } from '@visactor/vrender-core/application';
 import {
   DefaultFillStyle,
   DefaultStrokeStyle,
   DefaultTextStyle,
   createColor,
   getScaledStroke,
-  application,
   matrixAllocate,
   transformMat4,
   createConicalGradient,

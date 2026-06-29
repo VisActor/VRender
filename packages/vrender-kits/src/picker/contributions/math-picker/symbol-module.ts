@@ -1,4 +1,4 @@
-import { SymbolRender } from '@visactor/vrender-core';
+import { SymbolRender } from '@visactor/vrender-core/render/symbol';
 import { resolveContainerBinding } from '../../../common/explicit-binding';
 import { MathPickerContribution, MathSymbolPicker } from '../constants';
 import { DefaultMathSymbolPicker } from './symbol-picker';

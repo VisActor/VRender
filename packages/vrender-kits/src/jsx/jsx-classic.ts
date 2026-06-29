@@ -1,5 +1,6 @@
 import { isArray, isString } from '@visactor/vutils';
-import { Group, graphicCreator } from '@visactor/vrender-core';
+import { Group } from '@visactor/vrender-core/graphic/group';
+import { graphicCreator } from '@visactor/vrender-core';
 import { REACT_TO_CANOPUS_EVENTS } from './graphicType';
 
 function flatten(list: any, out: any[]): void {

@@ -1,4 +1,4 @@
-import { PolygonRender } from '@visactor/vrender-core';
+import { PolygonRender } from '@visactor/vrender-core/render/symbol';
 import { resolveContainerBinding } from '../../../common/explicit-binding';
 import { CanvasPickerContribution, CanvasPolygonPicker } from '../constants';
 import { DefaultCanvasPolygonPicker } from './polygon-picker';

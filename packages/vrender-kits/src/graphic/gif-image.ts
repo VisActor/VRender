@@ -1,5 +1,6 @@
 import type { IImageGraphicAttribute, ISetAttributeContext } from '@visactor/vrender-core';
-import { application, Image, ResourceLoader } from '@visactor/vrender-core';
+import { application } from '@visactor/vrender-core/application';
+import { Image, ResourceLoader } from '@visactor/vrender-core';
 import type { ITimeline } from '@visactor/vrender-core';
 import { isString } from '@visactor/vutils';
 import type { ParsedFrame } from 'gifuct-js';

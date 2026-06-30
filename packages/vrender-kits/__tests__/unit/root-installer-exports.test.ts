@@ -27,4 +27,39 @@ describe('vrender-kits root installer exports', () => {
     expect(cjsTypes).toContain('installNodeEnvToApp');
     expect(cjsTypes).toContain('installBrowserEnvToApp');
   });
+
+  test('root artifacts should explicitly expose dynamic texture effects', () => {
+    const esIndex = readArtifact('es/index.js');
+    const esTypes = readArtifact('es/index.d.ts');
+    const cjsIndex = readArtifact('cjs/index.js');
+    const cjsTypes = readArtifact('cjs/index.d.ts');
+
+    [
+      'randomOpacity',
+      'columnLeftToRight',
+      'columnRightToLeft',
+      'rowTopToBottom',
+      'rowBottomToTop',
+      'diagonalCenterToEdge',
+      'diagonalTopLeftToBottomRight',
+      'rotationScan',
+      'rippleEffect',
+      'snakeWave',
+      'alternatingWave',
+      'spiralEffect',
+      'columnEdgeToCenter',
+      'columnCenterToEdge',
+      'rowEdgeToCenter',
+      'rowCenterToEdge',
+      'cornerToCenter',
+      'centerToCorner',
+      'pulseWave',
+      'particleEffect'
+    ].forEach(effectName => {
+      expect(esIndex).toContain(effectName);
+      expect(esTypes).toContain(effectName);
+      expect(cjsIndex).toContain(effectName);
+      expect(cjsTypes).toContain(effectName);
+    });
+  });
 });

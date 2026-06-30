@@ -39,7 +39,7 @@ const expectedExports: ExpectedSubpath[] = [
   { subpath: './common/generator', source: 'src/common/generator.ts' },
   { subpath: './common/diff', source: 'src/common/diff.ts' },
   { subpath: './common/performance-raf', source: 'src/common/performance-raf.ts' },
-  { subpath: './graphic/builtin-symbol', source: 'src/graphic/builtin-symbol/index.ts' },
+  { subpath: './graphic/builtin-symbol', source: 'src/graphic/builtin-symbol.ts' },
   { subpath: './graphic/group', source: 'src/graphic/group.ts' },
   { subpath: './legacy/bootstrap', source: 'src/legacy/bootstrap.ts' },
   { subpath: './picker/constants', source: 'src/picker/constants.ts' },
@@ -74,5 +74,73 @@ describe('vrender-core public subpath exports', () => {
     }, {} as Record<string, string[]>);
 
     expect(packageJson.typesVersions?.['*']).toEqual(expectedTypesVersions);
+  });
+
+  test('keeps BytePack-sensitive root runtime exports explicit in the ESM artifact', () => {
+    const artifact = fs.readFileSync(path.join(packageRoot, 'es/index.js'), 'utf8');
+    const explicitExports = new Set<string>();
+    const exportPattern = /export\s+\{([^}]+)\}/g;
+    let match: RegExpExecArray | null;
+
+    while ((match = exportPattern.exec(artifact))) {
+      match[1]
+        .split(',')
+        .map((item: string) => item.trim())
+        .filter(Boolean)
+        .forEach((specifier: string) => {
+          const exportedName = specifier.match(/\s+as\s+([A-Za-z0-9_$]+)$/)?.[1] ?? specifier;
+          explicitExports.add(exportedName.trim());
+        });
+    }
+
+    const expectedExplicitRuntimeExports = [
+      'CustomEvent',
+      'CustomPath2D',
+      'GradientParser',
+      'IContainPointMode',
+      'Symbol',
+      'builtInSymbolStrMap',
+      'builtinSymbols',
+      'builtinSymbolsMap',
+      'container',
+      'createArc',
+      'createArc3d',
+      'createArea',
+      'createGlyph',
+      'createGroup',
+      'createImage',
+      'createLine',
+      'createPath',
+      'createPolygon',
+      'createPyramid3d',
+      'createRect',
+      'createRect3d',
+      'createRichText',
+      'createSymbol',
+      'createText',
+      'getRichTextBounds',
+      'getTextBounds',
+      'graphicCreator',
+      'isBrowserEnv',
+      'mapToCanvasPointForCanvas',
+      'matrixAllocate',
+      'registerDirectionalLight',
+      'registerGlobalEventTransformer',
+      'registerHtmlAttributePlugin',
+      'registerOrthoCamera',
+      'registerReactAttributePlugin',
+      'registerViewTransform3dPlugin',
+      'registerWindowEventTransformer',
+      'transformPointForCanvas',
+      'vglobal',
+      'waitForAllSubLayers'
+    ];
+
+    expect(expectedExplicitRuntimeExports.filter(name => !explicitExports.has(name))).toEqual([]);
+
+    expect(artifact).toContain('export { Symbol, createSymbol } from "./graphic/symbol"');
+    expect(artifact).toContain(
+      'export { builtInSymbolStrMap, builtinSymbols, builtinSymbolsMap } from "./graphic/builtin-symbol"'
+    );
   });
 });

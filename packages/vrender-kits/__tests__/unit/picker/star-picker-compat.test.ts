@@ -10,7 +10,7 @@ describe('star canvas picker compatibility', () => {
     jest.isolateModules(() => {
       const bind = jest.fn();
 
-      jest.doMock('@visactor/vrender-core', () => ({
+      jest.doMock('@visactor/vrender-core/render/symbol', () => ({
         StarRender: 'StarRender'
       }));
       jest.doMock('../../../src/common/explicit-binding', () => ({
@@ -40,7 +40,7 @@ describe('star canvas picker compatibility', () => {
       const toService = jest.fn();
       const bind = jest.fn(() => ({ toDynamicValue, toService }));
 
-      jest.doMock('@visactor/vrender-core', () => ({
+      jest.doMock('@visactor/vrender-core/render/symbol', () => ({
         StarRender: 'StarRender'
       }));
       jest.doMock('../../../src/common/explicit-binding', () => ({

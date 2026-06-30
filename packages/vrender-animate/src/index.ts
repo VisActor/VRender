@@ -26,6 +26,7 @@ export { RotateBySphereAnimate } from './custom/sphere';
 export { AnimateExecutor } from './executor/animate-executor';
 export type { IAnimationConfig } from './executor/executor';
 export * from './custom/register';
+export { registerCustomAnimate } from './custom/register';
 // Export animation state modules
 export * from './state';
 export { AnimationTransitionRegistry } from './state/animation-states-registry';

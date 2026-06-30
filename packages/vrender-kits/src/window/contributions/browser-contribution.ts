@@ -79,7 +79,7 @@ export class BrowserWindowHandlerContribution
   }
 
   protected postInit() {
-    if (!this.global.optimizeVisible) {
+    if (!this.global?.optimizeVisible) {
       return;
     }
     try {
@@ -174,7 +174,7 @@ export class BrowserWindowHandlerContribution
     // 获取canvas
     let canvas: HTMLCanvasElement | null;
     if (typeof params.canvas === 'string') {
-      canvas = this.global.getElementById(params.canvas) as HTMLCanvasElement | null;
+      canvas = this.global?.getElementById(params.canvas) as HTMLCanvasElement | null;
       if (!canvas && typeof document !== 'undefined') {
         canvas = document.getElementById(params.canvas) as HTMLCanvasElement | null;
       }

@@ -13,10 +13,12 @@ describe('picker/math-module', () => {
       }));
       const rebind = jest.fn(() => ({ toService: jest.fn() }));
 
-      jest.doMock('@visactor/vrender-core', () => ({
+      jest.doMock('@visactor/vrender-core/picker/constants', () => ({
         PickItemInterceptor: 'PickItemInterceptor',
         PickServiceInterceptor: 'PickServiceInterceptor',
-        PickerService: 'PickerService',
+        PickerService: 'PickerService'
+      }));
+      jest.doMock('../../../src/common/explicit-binding', () => ({
         createContributionProvider: jest.fn()
       }));
 
@@ -133,7 +135,7 @@ describe('picker/math-module', () => {
 
   test('loadMathPicker loads modules and binds picker service explicitly', () => {
     jest.isolateModules(() => {
-      jest.doMock('@visactor/vrender-core', () => ({
+      jest.doMock('@visactor/vrender-core/picker/constants', () => ({
         PickerService: 'PickerService'
       }));
 

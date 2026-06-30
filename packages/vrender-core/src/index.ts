@@ -3,6 +3,20 @@ export * from './graphic';
 export { builtInSymbolStrMap, builtinSymbols, builtinSymbolsMap } from './graphic/builtin-symbol';
 export { Group } from './graphic/group';
 export { Symbol, createSymbol } from './graphic/symbol';
+export { createArc } from './graphic/arc';
+export { createArc3d } from './graphic/arc3d';
+export { createArea } from './graphic/area';
+export { createGlyph } from './graphic/glyph';
+export { createGroup } from './graphic/group';
+export { createImage } from './graphic/image';
+export { createLine } from './graphic/line';
+export { createPath } from './graphic/path';
+export { createPolygon } from './graphic/polygon';
+export { createPyramid3d } from './graphic/pyramid3d';
+export { createRect } from './graphic/rect';
+export { createRect3d } from './graphic/rect3d';
+export { createRichText } from './graphic/richtext';
+export { createText } from './graphic/text';
 export { createGraphic, graphicCreator, registerGraphic } from './graphic/graphic-creator';
 export { container, graphicUtil, transformUtil, graphicService, layerService } from './modules';
 export {
@@ -42,7 +56,9 @@ export * from './render/contributions/render/base-render';
 export * from './canvas';
 export * from './core';
 export * from './core/light';
+export { registerDirectionalLight } from './core/light';
 export * from './core/camera';
+export { registerOrthoCamera } from './core/camera';
 export * from './picker';
 export { PickerService, PickItemInterceptor, PickServiceInterceptor } from './picker/constants';
 export * from './resource-loader/loader';
@@ -67,6 +83,7 @@ export * from './common/bezier-utils';
 export * from './common/bounds-context';
 export * from './common/seg-context';
 export * from './common/custom-path2d';
+export { CustomPath2D } from './common/custom-path2d';
 export * from './common/segment';
 export * from './common/canvas-utils';
 export * from './common/contribution-provider';
@@ -87,12 +104,20 @@ export * from './common/sort';
 export * from './common/morphing-utils';
 export * from './common/split-path';
 export * from './common/enums';
+export { IContainPointMode } from './common/enums';
 export * from './common/generator';
 export * from './common/performance-raf';
 export * from './common/event-transformer';
+export {
+  mapToCanvasPointForCanvas,
+  registerGlobalEventTransformer,
+  registerWindowEventTransformer,
+  transformPointForCanvas
+} from './common/event-transformer';
 export * from './plugins/constants';
 export * from './plugins/builtin-plugin/richtext-edit-plugin';
 export * from './allocator/matrix-allocate';
+export { matrixAllocate } from './allocator/matrix-allocate';
 export * from './allocator/canvas-allocate';
 export * from './allocator/graphic-allocate';
 export * from './common/contribution-provider';
@@ -104,6 +129,11 @@ export * from './constants';
 export * from './application';
 export { application } from './application';
 export * from './env-check';
+export { isBrowserEnv } from './env-check';
+export { CustomEvent } from './event/federated-event/custom-event';
+export { GradientParser } from './common/color-utils';
+export { getRichTextBounds, getTextBounds } from './graphic/bounds';
+export { waitForAllSubLayers } from './graphic/tools';
 
 export * from './render/contributions/render/arc-module';
 export * from './render/contributions/render/rect-module';
@@ -144,8 +174,11 @@ export * from './register/register-wraptext';
 
 // plugin
 export * from './plugins/builtin-plugin/html-attribute-plugin';
+export { registerHtmlAttributePlugin } from './plugins/builtin-plugin/html-attribute-plugin';
 export * from './plugins/builtin-plugin/react-attribute-plugin';
+export { registerReactAttributePlugin } from './plugins/builtin-plugin/react-attribute-plugin';
 export * from './plugins/builtin-plugin/3dview-transform-plugin';
+export { registerViewTransform3dPlugin } from './plugins/builtin-plugin/3dview-transform-plugin';
 export * from './plugins/builtin-plugin/flex-layout-plugin';
 
 export * from './plugins/builtin-plugin/edit-module';

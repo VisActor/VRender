@@ -83,12 +83,12 @@ export class DefaultWindow extends EventListenerManager implements IWindow {
   }
 
   constructor(
-    global: IGlobal = application.global,
+    vRenderGlobal: IGlobal = application.global,
     private readonly handlerFactory: IWindowHandlerFactory = defaultWindowHandlerFactory
   ) {
     super();
     this._uid = Generator.GenAutoIncrementId();
-    this.global = global;
+    this.global = vRenderGlobal;
     this.postInit();
   }
 
@@ -121,12 +121,12 @@ export class DefaultWindow extends EventListenerManager implements IWindow {
   }
 
   protected active = () => {
-    const global = this.global;
-    if (!global.env || this.actived) {
+    const vRenderGlobal = this.global;
+    if (!vRenderGlobal.env || this.actived) {
       return;
     }
-    const handler = this.handlerFactory(global.env);
-    handler.configure(this, global);
+    const handler = this.handlerFactory(vRenderGlobal.env);
+    handler.configure(this, vRenderGlobal);
     // this.contributions.getContributions().forEach((handlerContribution) => {
     //   handlerContribution.configure(this, this.global);
     // });

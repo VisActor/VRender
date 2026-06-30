@@ -13,12 +13,20 @@ describe('picker/canvas-module', () => {
       }));
       const rebind = jest.fn(() => ({ toService: jest.fn() }));
 
-      jest.doMock('@visactor/vrender-core', () => {
+      jest.doMock('@visactor/vrender-core/render/symbol', () => {
         return {
-          DrawContribution: 'DrawContribution',
+          DrawContribution: 'DrawContribution'
+        };
+      });
+      jest.doMock('@visactor/vrender-core/picker/constants', () => {
+        return {
           PickItemInterceptor: 'PickItemInterceptor',
           PickServiceInterceptor: 'PickServiceInterceptor',
-          PickerService: 'PickerService',
+          PickerService: 'PickerService'
+        };
+      });
+      jest.doMock('../../../src/common/explicit-binding', () => {
+        return {
           createContributionProvider: jest.fn(),
           resolveContainerBinding: jest.fn()
         };
@@ -141,7 +149,7 @@ describe('picker/canvas-module', () => {
 
   test('loadCanvasPicker loads modules in order', () => {
     jest.isolateModules(() => {
-      jest.doMock('@visactor/vrender-core', () => {
+      jest.doMock('@visactor/vrender-core/picker/constants', () => {
         return {
           PickerService: 'PickerService'
         };

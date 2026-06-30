@@ -2,6 +2,7 @@
 export const version = __VERSION__;
 
 export * from './core/base';
+export { AbstractComponent } from './core/base';
 export * from './core/type';
 export * from './scrollbar';
 export { ScrollBar } from './scrollbar/scrollbar';
@@ -26,6 +27,7 @@ export * from './axis/grid';
 export { LineAxisGrid } from './axis/grid/line';
 export { CircleAxisGrid } from './axis/grid/circle';
 export * from './segment';
+export { Segment } from './segment/segment';
 export * from './data-zoom';
 export { DataZoom } from './data-zoom/data-zoom';
 export * from './marker';

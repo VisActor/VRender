@@ -11,6 +11,7 @@ describe('vrender-components root esm exports', () => {
 
     [
       "export { ScrollBar } from './scrollbar/scrollbar'",
+      "export { AbstractComponent } from './core/base'",
       "export { loadScrollbar } from './scrollbar/module'",
       "export { loadPoptip } from './poptip/module'",
       "export { LineCrosshair } from './crosshair/line'",
@@ -25,6 +26,7 @@ describe('vrender-components root esm exports', () => {
       "export { polarAngleAxisDiscreteTicks } from './axis/tick-data/discrete/polar-angle'",
       "export { LineAxisGrid } from './axis/grid/line'",
       "export { CircleAxisGrid } from './axis/grid/circle'",
+      "export { Segment } from './segment/segment'",
       "export { DataZoom } from './data-zoom/data-zoom'",
       "export { MarkLine, registerMarkLineAnimate } from './marker/line'",
       "export { MarkArea, registerMarkAreaAnimate } from './marker/area'",

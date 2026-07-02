@@ -89,6 +89,8 @@ export function applyStrokeStyle(ctx: IContext2d, character: IRichTextParagraphC
 
   ctx.globalAlpha = strokeOpacity * opacity;
   ctx.lineWidth = character && typeof character.lineWidth === 'number' ? character.lineWidth : 1;
+  ctx.setLineDash(character.lineDash ?? []);
+  ctx.lineDashOffset = character.lineDashOffset ?? 0;
   ctx.strokeStyle = strokeStyle as string;
 
   setTextStyle(ctx, character);

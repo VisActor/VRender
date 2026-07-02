@@ -19,6 +19,7 @@ type ExpectedSubpath = {
 
 const expectedExports: ExpectedSubpath[] = [
   { subpath: './graphic/creator', source: 'src/graphic/creator.ts' },
+  { subpath: './graphic/graphic-registry', source: 'src/graphic/graphic-registry.ts' },
   { subpath: './graphic/base', source: 'src/graphic/base.ts' },
   { subpath: './graphic/modules', source: 'src/graphic/modules.ts' },
   { subpath: './graphic/symbol', source: 'src/graphic/symbol.ts' },

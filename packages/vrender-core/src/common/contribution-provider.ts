@@ -1,5 +1,6 @@
 import type { IBindingResolver, ServiceIdentifier } from './explicit-binding';
 import type { IContributionProvider } from '../interface';
+import { getContributionStoreState } from './contribution-store-state';
 
 export const ContributionProvider = Symbol('ContributionProvider');
 
@@ -63,7 +64,7 @@ export function bindContributionProviderNoSingletonScope(bind: any, id: ServiceI
 }
 
 export class ContributionStore {
-  static store: Map<ServiceIdentifier<any>, Set<ContributionProviderCache<any>>> = new Map();
+  static store = getContributionStoreState().store as Map<ServiceIdentifier<any>, Set<ContributionProviderCache<any>>>;
 
   static getStore(id: ServiceIdentifier<any>): ContributionProviderCache<any> | undefined {
     return this.store.get(id)?.values().next().value;
@@ -86,3 +87,6 @@ export class ContributionStore {
     });
   }
 }
+
+export { CONTRIBUTION_STORE_STATE_SYMBOL, getContributionStoreState } from './contribution-store-state';
+export type { IContributionStoreState } from './contribution-store-state';

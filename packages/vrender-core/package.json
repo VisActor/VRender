@@ -27,6 +27,7 @@
       "graphic/base": ["es/graphic/base.d.ts"],
       "graphic/builtin-symbol": ["es/graphic/builtin-symbol.d.ts"],
       "graphic/creator": ["es/graphic/creator.d.ts"],
+      "graphic/graphic-registry": ["es/graphic/graphic-registry.d.ts"],
       "graphic/group": ["es/graphic/group.d.ts"],
       "graphic/modules": ["es/graphic/modules.d.ts"],
       "graphic/symbol": ["es/graphic/symbol.d.ts"],
@@ -184,6 +185,11 @@
       "types": "./es/graphic/creator.d.ts",
       "import": "./es/graphic/creator.js",
       "require": "./cjs/graphic/creator.js"
+    },
+    "./graphic/graphic-registry": {
+      "types": "./es/graphic/graphic-registry.d.ts",
+      "import": "./es/graphic/graphic-registry.js",
+      "require": "./cjs/graphic/graphic-registry.js"
     },
     "./graphic/group": {
       "types": "./es/graphic/group.d.ts",

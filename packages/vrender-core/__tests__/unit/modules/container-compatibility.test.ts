@@ -12,6 +12,14 @@ function readArtifact(relativePath: string) {
 }
 
 describe('vrender-core container compatibility', () => {
+  test('application should use realm-level shared state for duplicated ESM entry evaluation', () => {
+    const { application } = require(path.join(packageRoot, 'src/application'));
+    const state = (globalThis as any)[Symbol.for('@visactor/vrender-core/application-state')];
+
+    expect(state).toBeDefined();
+    expect(state.application).toBe(application);
+  });
+
   test('es artifacts should expose legacy container compatibility surface', () => {
     expect(readArtifact('es/modules.js')).toContain('export const container');
     expect(readArtifact('es/modules.d.ts')).toContain('container');

@@ -1,3 +1,19 @@
+# v1.1.3
+
+2026-07-02
+
+
+**What's Changed**
+
+* fix: stabilize 1.1.0 runtime integration before release by @xuefei1313 in https://github.com/VisActor/VRender/pull/2083
+* fix: expose render symbols from core root by @xuefei1313 in https://github.com/VisActor/VRender/pull/2086
+* Fix/core render symbol export by @xuefei1313 in https://github.com/VisActor/VRender/pull/2089
+
+
+**Full Changelog**: https://github.com/VisActor/VRender/compare/v1.1.0...v1.1.3
+
+[更多详情请查看 v1.1.3](https://github.com/VisActor/VRender/releases/tag/v1.1.3)
+
 # v1.0.43
 
 2026-03-25

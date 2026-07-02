@@ -18,7 +18,7 @@ import { DefaultGlobal } from '../core/global';
 import { WindowHandlerContribution, DefaultWindow } from '../core/window';
 import coreModule from '../core/core-modules';
 import graphicModule from '../graphic/graphic-service/graphic-module';
-import { createLegacyBindingContext, type ILegacyBindingContext } from '../legacy/binding-context';
+import type { ILegacyBindingContext } from '../legacy/binding-context';
 import { getLegacyBindingContext, preLoadAllModule } from '../legacy/bootstrap';
 import pickModule from '../picker/pick-modules';
 import { AreaRenderContribution } from '../render/contributions/render/contributions/constants';
@@ -31,6 +31,7 @@ import { GraphicRender } from '../render/contributions/render/symbol';
 import loadRenderContributions from '../render/contributions/modules';
 import { AutoEnablePlugins } from '../plugins/constants';
 import { DefaultPluginService } from '../plugins/plugin-service';
+import { getRuntimeInstallerState } from './runtime-installer-state';
 
 export type TRuntimeContributionModuleRegistry = (
   bind: ILegacyBindingContext['bind'],
@@ -58,23 +59,22 @@ export interface IRuntimeContributionModuleInstallOptions {
   targets?: TRuntimeContributionInstallTarget[];
 }
 
-const runtimeInstallerContext = createLegacyBindingContext();
-let runtimeInstallerPreloaded = false;
-let runtimeGlobal: IGlobal | undefined;
+const runtimeInstallerState = getRuntimeInstallerState();
+const runtimeInstallerContext = runtimeInstallerState.runtimeInstallerContext;
 const RUNTIME_RENDERER_NAMESPACE = 'vrender:runtime-renderer';
 const RUNTIME_PICKER_NAMESPACE = 'vrender:runtime-picker';
-const runtimeEntryKeys = new WeakMap<object, Map<string, Set<string>>>();
-const runtimeDrawContributions = new WeakMap<object, Set<IDrawItemInterceptorContribution>>();
-const loadedRuntimeContributionModules = new WeakMap<object, WeakSet<object>>();
+const runtimeEntryKeys = runtimeInstallerState.runtimeEntryKeys;
+const runtimeDrawContributions = runtimeInstallerState.runtimeDrawContributions;
+const loadedRuntimeContributionModules = runtimeInstallerState.loadedRuntimeContributionModules;
 const DEFAULT_RUNTIME_CONTRIBUTION_TARGETS: TRuntimeContributionInstallTarget[] = ['graphic-renderer'];
 const noopUnbindRuntimeContributionService = (): void => undefined;
 
 function ensureRuntimeInstallerPreloaded(): void {
-  if (runtimeInstallerPreloaded) {
+  if (runtimeInstallerState.preloaded) {
     return;
   }
 
-  runtimeInstallerPreloaded = true;
+  runtimeInstallerState.preloaded = true;
   coreModule({ bind: runtimeInstallerContext.bind });
   graphicModule({ bind: runtimeInstallerContext.bind });
   renderModule({ bind: runtimeInstallerContext.bind });
@@ -146,10 +146,10 @@ export function refreshRuntimeInstallerContributions(): void {
 
 export function getRuntimeInstallerGlobal(): IGlobal {
   ensureRuntimeInstallerPreloaded();
-  runtimeGlobal ??= new DefaultGlobal(
+  runtimeInstallerState.runtimeGlobal ??= new DefaultGlobal(
     createContributionProvider<IEnvContribution>(EnvContribution, runtimeInstallerContext)
   );
-  return runtimeGlobal;
+  return runtimeInstallerState.runtimeGlobal;
 }
 
 export function configureRuntimeApplicationForApp(app: IApp): void {
@@ -176,6 +176,9 @@ export function configureRuntimeApplicationForApp(app: IApp): void {
       createAppRegistryContributionProvider<IDrawItemInterceptorContribution>(app, DrawItemInterceptor)
     );
 }
+
+export { RUNTIME_INSTALLER_STATE_SYMBOL, getRuntimeInstallerState } from './runtime-installer-state';
+export type { IRuntimeInstallerState } from './runtime-installer-state';
 
 export function installRuntimeGraphicRenderersToApp(app: IApp): void {
   const bindingContext = getRuntimeInstallerBindingContext();

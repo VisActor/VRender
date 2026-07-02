@@ -104,6 +104,16 @@ describe('contribution-provider', () => {
     expect(spy2).toHaveBeenCalledTimes(1);
   });
 
+  test('ContributionStore should use realm-level shared state for duplicated ESM entry evaluation', () => {
+    const id = Symbol('shared-svc');
+    const cache = createProviderCache({ isBound: jest.fn(() => false), getAll: jest.fn(() => []) }, id);
+    const state = (globalThis as any)[Symbol.for('@visactor/vrender-core/contribution-store-state')];
+
+    expect(state).toBeDefined();
+    expect(state.store).toBe(ContributionStore.store);
+    expect(state.store.get(id)?.has(cache)).toBe(true);
+  });
+
   test('bindContributionProviderNoSingletonScope does not call inSingletonScope', () => {
     let factory: DynamicValueFactory | undefined;
 

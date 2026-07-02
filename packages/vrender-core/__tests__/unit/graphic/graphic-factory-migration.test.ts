@@ -1,7 +1,11 @@
 import type { IRectGraphicAttribute } from '../../../src/interface';
 import { createGraphic, graphicCreator, registerGraphic } from '../../../src/graphic';
+import { Arc3d } from '../../../src/graphic/arc3d';
 import { DefaultGraphicService } from '../../../src/graphic/graphic-service/graphic-service';
+import { Group } from '../../../src/graphic/group';
 import { Rect } from '../../../src/graphic/rect';
+import { registerArc3dGraphic } from '../../../src/register/register-arc3d';
+import { registerGroupGraphic } from '../../../src/register/register-group';
 import { registerRectGraphic } from '../../../src/register/register-rect';
 
 class GraphicStub {
@@ -9,6 +13,17 @@ class GraphicStub {
 }
 
 describe('graphic factory migration', () => {
+  test('graphic registry should use realm-level shared state for duplicated ESM entry evaluation', () => {
+    registerGraphic('realm-shared-stub', GraphicStub as any);
+
+    const registryState = (globalThis as any)[Symbol.for('@visactor/vrender-core/graphic-registry')];
+
+    expect(registryState).toBeDefined();
+    expect(registryState.graphicCreator).toBe(graphicCreator);
+    expect(registryState.graphicFactory.create('realm-shared-stub', { x: 1 })).toBeInstanceOf(GraphicStub);
+    expect(createGraphic('realm-shared-stub', { x: 2 })).toBeInstanceOf(GraphicStub);
+  });
+
   test('registerGraphic should register creators for createGraphic', () => {
     registerGraphic('unit-stub', GraphicStub as any);
 
@@ -35,6 +50,22 @@ describe('graphic factory migration', () => {
 
     expect(rect).toBeInstanceOf(Rect);
     expect((rect as Rect).attribute.width).toBe(100);
+  });
+
+  test('registerGroupGraphic should enable createGraphic for group from a separate register entry', () => {
+    registerGroupGraphic();
+
+    const group = createGraphic('group', {});
+
+    expect(group).toBeInstanceOf(Group);
+  });
+
+  test('registerArc3dGraphic should enable createGraphic for arc3d from a separate register entry', () => {
+    registerArc3dGraphic();
+
+    const arc3d = createGraphic('arc3d', {});
+
+    expect(arc3d).toBeInstanceOf(Arc3d);
   });
 
   test('DefaultGraphicService should default to the shared graphic creator adapter', () => {

@@ -7,6 +7,9 @@ import '@visactor/vrender-core/global';
 
 const performanceRAF = new PerformanceRAF();
 
+// Avoid unbounded growth when long-running animations keep a ticker alive.
+const MAX_FRAME_TIME_HISTORY = 600;
+
 class RAFTickHandler implements ITickHandler {
   protected released: boolean = false;
 
@@ -46,6 +49,14 @@ export class DefaultTicker extends EventEmitter implements ITicker {
   protected timeOffset: number;
   declare _lastTickTime: number;
   protected frameTimeHistory: number[] = [];
+
+  protected pushFrameTime(time: number): void {
+    this.frameTimeHistory.push(time);
+    const overflow = this.frameTimeHistory.length - MAX_FRAME_TIME_HISTORY;
+    if (overflow > 0) {
+      this.frameTimeHistory.splice(0, overflow);
+    }
+  }
 
   constructor(stage?: IStage) {
     super();
@@ -219,6 +230,7 @@ export class DefaultTicker extends EventEmitter implements ITicker {
   release(): void {
     this.stop();
     this.timelines = [];
+    this.frameTimeHistory.length = 0;
     this.tickerHandler?.release();
     this.tickerHandler = null;
     this.lastFrameTime = -1;
@@ -249,7 +261,7 @@ export class DefaultTicker extends EventEmitter implements ITicker {
 
     if (this.lastFrameTime < 0) {
       this.lastFrameTime = currentTime - this.interval + this.timeOffset;
-      this.frameTimeHistory.push(this.lastFrameTime);
+      this.pushFrameTime(this.lastFrameTime);
     }
 
     const delta = currentTime - this.lastFrameTime;
@@ -259,7 +271,7 @@ export class DefaultTicker extends EventEmitter implements ITicker {
     if (!skip) {
       this._handlerTick(delta);
       this.lastFrameTime = currentTime;
-      this.frameTimeHistory.push(this.lastFrameTime);
+      this.pushFrameTime(this.lastFrameTime);
     }
 
     if (!once) {

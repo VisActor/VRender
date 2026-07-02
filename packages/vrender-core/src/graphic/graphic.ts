@@ -306,7 +306,7 @@ export const NOWORK_ANIMATE_ATTR = {
  * 3. 所有节点的transform修改，或者globalTransform修改，都会下发到自己的shadowRoot上
  */
 
-export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGraphicAttribute>>
+abstract class GraphicImpl<T extends Partial<IGraphicAttribute> = Partial<IGraphicAttribute>>
   extends Node
   implements IGraphic<T>, IAnimateTarget
 {
@@ -327,7 +327,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
 
       // Set the property using the property descriptor - this works for accessors and normal value properties
       Object.defineProperty(
-        Graphic.prototype,
+        this.prototype,
         propertyName,
         Object.getOwnPropertyDescriptor(source, propertyName) as PropertyDecorator
       );
@@ -3129,6 +3129,31 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     return null;
   }
 }
+
+export type Graphic<T extends Partial<IGraphicAttribute> = Partial<IGraphicAttribute>> = GraphicImpl<T>;
+
+export const GRAPHIC_CLASS_SYMBOL = Symbol.for('@visactor/vrender-core/graphic-class');
+
+export interface IGraphicClassState {
+  Graphic: typeof GraphicImpl;
+}
+
+function createGraphicClassState(): IGraphicClassState {
+  return {
+    Graphic: GraphicImpl
+  };
+}
+
+export function getGraphicClassState(): IGraphicClassState {
+  const globalScope = globalThis as typeof globalThis & {
+    [GRAPHIC_CLASS_SYMBOL]?: IGraphicClassState;
+  };
+
+  globalScope[GRAPHIC_CLASS_SYMBOL] ??= createGraphicClassState();
+  return globalScope[GRAPHIC_CLASS_SYMBOL];
+}
+
+export const Graphic = getGraphicClassState().Graphic;
 
 Graphic.mixin(EventTarget);
 

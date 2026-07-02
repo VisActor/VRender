@@ -1,5 +1,8 @@
+import { createGraphic } from '@visactor/vrender-core/graphic/creator';
+import { registerGroupGraphic } from '@visactor/vrender-core/register/register-group';
 import { GraphicStateExtension } from '../../src/state/graphic-extension';
 import { AnimationStateManager } from '../../src/state/animation-state';
+import { registerAnimate } from '../../src/register';
 
 describe('GraphicStateExtension', () => {
   afterEach(() => {
@@ -70,5 +73,15 @@ describe('GraphicStateExtension', () => {
     expect(clearState).toHaveBeenCalledTimes(1);
     expect(graphic.currentStates).toEqual(['hover']);
     expect(graphic.normalAttrs).toEqual({ fill: 'blue' });
+  });
+
+  test('registerAnimate should mix animation APIs into graphics created through core creator subpath', () => {
+    registerAnimate();
+    registerGroupGraphic();
+
+    const group = createGraphic('group', {});
+
+    expect(typeof (group as any).applyAnimationState).toBe('function');
+    expect(typeof (group as any).clearAnimationStates).toBe('function');
   });
 });

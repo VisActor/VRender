@@ -1,6 +1,7 @@
 import type { IRectGraphicAttribute } from '../../../src/interface';
 import { createGraphic, graphicCreator, registerGraphic } from '../../../src/graphic';
 import { Arc3d } from '../../../src/graphic/arc3d';
+import { Graphic } from '../../../src/graphic/base';
 import { DefaultGraphicService } from '../../../src/graphic/graphic-service/graphic-service';
 import { Group } from '../../../src/graphic/group';
 import { Rect } from '../../../src/graphic/rect';
@@ -22,6 +23,20 @@ describe('graphic factory migration', () => {
     expect(registryState.graphicCreator).toBe(graphicCreator);
     expect(registryState.graphicFactory.create('realm-shared-stub', { x: 1 })).toBeInstanceOf(GraphicStub);
     expect(createGraphic('realm-shared-stub', { x: 2 })).toBeInstanceOf(GraphicStub);
+  });
+
+  test('Graphic class should use realm-level shared state for duplicated ESM entry evaluation', () => {
+    registerGroupGraphic();
+    registerArc3dGraphic();
+
+    const classState = (globalThis as any)[Symbol.for('@visactor/vrender-core/graphic-class')];
+    const group = createGraphic('group', {});
+    const arc3d = createGraphic('arc3d', {});
+
+    expect(classState).toBeDefined();
+    expect(classState.Graphic).toBe(Graphic);
+    expect(group).toBeInstanceOf(classState.Graphic);
+    expect(arc3d).toBeInstanceOf(classState.Graphic);
   });
 
   test('registerGraphic should register creators for createGraphic', () => {

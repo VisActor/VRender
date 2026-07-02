@@ -5,11 +5,13 @@ import graphicModule from '../graphic/graphic-service/graphic-module';
 import pluginModule from '../plugins/plugin-modules';
 import loadBuiltinContributions from '../core/contributions/modules';
 import loadRenderContributions from '../render/contributions/modules';
-import { createLegacyBindingContext, type ILegacyBindContext, type ILegacyBindingContext } from './binding-context';
+import type { ILegacyBindContext, ILegacyBindingContext } from './binding-context';
+import { getLegacyBootstrapState } from './bootstrap-state';
 
 export type { ILegacyBindContext, ILegacyBindingContext } from './binding-context';
 
-const legacyBindingContext = createLegacyBindingContext();
+const legacyBootstrapState = getLegacyBootstrapState();
+const legacyBindingContext = legacyBootstrapState.legacyBindingContext;
 
 function getLegacyTarget<T>(resolver: () => T): () => T {
   let target: T | undefined;
@@ -24,10 +26,10 @@ function getLegacyTarget<T>(resolver: () => T): () => T {
 }
 
 export function preLoadAllModule() {
-  if (preLoadAllModule.__loaded) {
+  if (legacyBootstrapState.preloaded) {
     return;
   }
-  preLoadAllModule.__loaded = true;
+  legacyBootstrapState.preloaded = true;
   coreModule({ bind: legacyBindingContext.bind });
   graphicModule({ bind: legacyBindingContext.bind });
   renderModule({ bind: legacyBindingContext.bind });
@@ -36,8 +38,6 @@ export function preLoadAllModule() {
   loadBuiltinContributions(legacyBindingContext);
   loadRenderContributions(legacyBindingContext);
 }
-
-preLoadAllModule.__loaded = false;
 
 export function getLegacyBindingContext(): ILegacyBindingContext {
   return legacyBindingContext;
@@ -48,6 +48,9 @@ export function resolveLegacySingleton<T>(serviceIdentifier: any): T {
   const [instance] = legacyBindingContext.getAll<T>(serviceIdentifier);
   return instance;
 }
+
+export { LEGACY_BOOTSTRAP_STATE_SYMBOL, getLegacyBootstrapState } from './bootstrap-state';
+export type { ILegacyBootstrapState } from './bootstrap-state';
 
 export function resolveLegacyNamed<T>(serviceIdentifier: any, name: string): T | undefined {
   preLoadAllModule();

@@ -8,7 +8,7 @@ import type {
   IWindow
 } from '../../../src/interface';
 import type { IGraphic, IGraphicAttribute } from '../../../src/interface/graphic';
-import { GraphicFactory, LayerFactory, StageFactory } from '../../../src/factory';
+import { Factory, GraphicFactory, LayerFactory, StageFactory } from '../../../src/factory';
 
 class StageStub {
   readonly params: Partial<IStageParams>;
@@ -41,6 +41,17 @@ class GraphicStub {
 }
 
 describe('factory module', () => {
+  test('Factory plugin registry should use realm-level shared state for duplicated ESM entry evaluation', () => {
+    class PluginStub {}
+
+    Factory.registerPlugin('unit-plugin', PluginStub);
+    const state = (globalThis as any)[Symbol.for('@visactor/vrender-core/factory-state')];
+
+    expect(state).toBeDefined();
+    expect(state.pluginClasses['unit-plugin']).toBe(PluginStub);
+    expect(Factory.getPlugin('unit-plugin')).toBe(PluginStub);
+  });
+
   test('StageFactory should create stage instances with forwarded params', () => {
     const factory = new StageFactory(StageStub as any);
     const params = { width: 320, height: 180 };

@@ -22,6 +22,8 @@ export * from './shadow-root';
 export * from './config';
 export * from './graphic-service/graphic-service';
 export * from './graphic-creator';
+export { GRAPHIC_REGISTRY_SYMBOL, getGraphicRegistryState } from './graphic-registry';
+export type { IGraphicRegistryState } from './graphic-registry';
 export * from './builtin-symbol';
 export * from './graphic';
 export * from './bounds';

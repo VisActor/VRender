@@ -113,4 +113,14 @@ describe('legacy binding context', () => {
       expect(loadRenderContributions).toHaveBeenCalledTimes(1);
     });
   });
+
+  test('legacy bootstrap should use realm-level shared state for duplicated ESM entry evaluation', () => {
+    jest.isolateModules(() => {
+      const bootstrap = require('../../../src/legacy/bootstrap');
+      const state = (globalThis as any)[Symbol.for('@visactor/vrender-core/legacy-bootstrap-state')];
+
+      expect(state).toBeDefined();
+      expect(state.legacyBindingContext).toBe(bootstrap.getLegacyBindingContext());
+    });
+  });
 });

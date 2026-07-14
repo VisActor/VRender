@@ -44,6 +44,14 @@ export type LegendPagerAttributes = Omit<PagerAttributes, 'total'> &
      * @default 'middle'
      */
     position?: 'start' | 'middle' | 'end';
+    /**
+     * 是否让分页器紧贴图例内容排布。默认 false，分页器固定在图例可用空间的末端，
+     * 图例项与分页器呈两端对齐；开启后分页器紧跟最后一个图例项（间距为 `space`），
+     * 同时分页裁剪视口收缩到实际内容尺寸，使「图例项 + 分页器」的包围盒随内容
+     * 自适应，便于外部布局把整块内容居中放置。
+     * @default false
+     */
+    hugContent?: boolean;
   };
 
 /**

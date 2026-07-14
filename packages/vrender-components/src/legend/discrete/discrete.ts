@@ -809,6 +809,8 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     const { pager } = this.attribute;
     const { totalPage, isHorizontal } = this._itemContext;
     const position = (pager && (pager as LegendPagerAttributes).position) || 'middle';
+    const hugContent = !!(pager && (pager as LegendPagerAttributes).hugContent);
+    const pagerSpace = (pager && (pager as LegendPagerAttributes).space) ?? DEFAULT_PAGER_SPACE;
     (this._pagerComponent as Pager).setTotal(totalPage);
 
     if (isHorizontal) {
@@ -820,8 +822,13 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       } else {
         y = renderStartY + compHeight / 2 - this._pagerComponent.AABBBounds.height() / 2;
       }
+      let x = compWidth - this._pagerComponent.AABBBounds.width();
+      if (hugContent) {
+        // 分页器紧贴内容右缘，内容占满可用空间时退化为原有的贴右缘布局
+        x = Math.max(0, Math.min(this._itemsContainer.AABBBounds.width() + pagerSpace, x));
+      }
       this._pagerComponent.setAttributes({
-        x: compWidth - this._pagerComponent.AABBBounds.width(),
+        x,
         y
       });
     } else {
@@ -833,9 +840,14 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       } else {
         x = (compWidth - this._pagerComponent.AABBBounds.width()) / 2;
       }
+      let y = compHeight - this._pagerComponent.AABBBounds.height();
+      if (hugContent) {
+        // 分页器紧贴内容下缘，内容占满可用空间时退化为原有的贴下缘布局
+        y = Math.max(0, Math.min(renderStartY + this._itemsContainer.AABBBounds.height() + pagerSpace, y));
+      }
       this._pagerComponent.setAttributes({
         x,
-        y: compHeight - this._pagerComponent.AABBBounds.height()
+        y
       });
     }
   }
@@ -1095,11 +1107,23 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       }
     }
 
+    // hugContent 时分页裁剪视口收缩到实际内容尺寸：定宽（高）的 clip 分组会把图例包围盒
+    // 固定在整个可用空间上，导致「图例项 + 分页器」无法作为整块被外部布局居中
+    const hugContent = !!(pager as LegendPagerAttributes).hugContent;
+    let clipWidth = isHorizontal ? contentWidth : compWidth;
+    let clipHeight = isHorizontal ? compHeight : contentHeight;
+    if (hugContent) {
+      if (isHorizontal) {
+        clipWidth = Math.max(0, Math.min(clipWidth, itemsContainer.AABBBounds.width()));
+      } else {
+        clipHeight = Math.max(0, Math.min(clipHeight, itemsContainer.AABBBounds.height()));
+      }
+    }
     const clipGroup = graphicCreator.group({
       x: 0,
       y: renderStartY,
-      width: isHorizontal ? contentWidth : compWidth,
-      height: isHorizontal ? compHeight : contentHeight,
+      width: clipWidth,
+      height: clipHeight,
       clip: true,
       pickable: false
     });

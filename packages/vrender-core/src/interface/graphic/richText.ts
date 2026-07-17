@@ -160,6 +160,14 @@ export type IRichTextParagraphCharacter = IRichTextBasicCharacter & {
    * 富文本片段的文字描边宽度
    */
   lineWidth?: number;
+  /**
+   * 富文本片段的文字描边虚线配置
+   */
+  lineDash?: number[];
+  /**
+   * 富文本片段的文字描边虚线偏移量
+   */
+  lineDashOffset?: number;
   // lineHeight?: number;
   /**
    * 富文本片段的文字斜体设置，支持以下属性

@@ -1,6 +1,7 @@
 import type { IEventElement, Releaseable } from './common';
 import type { ILayer } from './layer';
 import type { IStage } from './stage';
+import type { SharedStateScope } from '../graphic/state/shared-state-scope';
 
 export interface INode extends Releaseable, IEventElement {
   _prev?: INode;
@@ -69,7 +70,11 @@ export interface INode extends Releaseable, IEventElement {
   /**
    * Rebinds stage/layer derived state when this node is attached to a different parent tree.
    */
-  onParentSharedStateTreeChanged: (stage?: IStage, layer?: ILayer) => void;
+  onParentSharedStateTreeChanged: (
+    stage?: IStage,
+    layer?: ILayer,
+    inheritedSharedStateScope?: SharedStateScope<Record<string, any>> | null
+  ) => void;
   /**
    * 从当前节点的父节点删除当前节点
    */

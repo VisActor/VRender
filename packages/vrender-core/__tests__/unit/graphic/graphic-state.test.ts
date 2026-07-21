@@ -1,7 +1,12 @@
 import { createRect } from '../../../src/graphic/rect';
 import { AttributeUpdateType } from '../../../src/common/enums';
+import { StateDefinitionCompiler } from '../../../src/graphic/state/state-definition-compiler';
 
 describe('Graphic useStates', () => {
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
   const createGraphic = () => {
     const graphic = createRect({
       x: 0,
@@ -49,6 +54,50 @@ describe('Graphic useStates', () => {
       opacity: 1
     });
     expect(graphic.normalAttrs).toEqual((graphic as any).baseAttributes);
+  });
+
+  test('should reuse compiled local definitions for graphics with the same state source', () => {
+    const states = {
+      selected: {
+        fill: 'red'
+      }
+    } as any;
+    const first = createGraphic();
+    const second = createGraphic();
+    const compile = jest.spyOn(StateDefinitionCompiler.prototype, 'compile');
+    const compiledDefinitions = new StateDefinitionCompiler().compile(states);
+    (first as any).setStateDefinitionsWithCompiled(states, compiledDefinitions);
+    (second as any).setStateDefinitionsWithCompiled(states, compiledDefinitions);
+
+    first.useStates(['selected'], false);
+    second.useStates(['selected'], false);
+
+    expect(compile).toHaveBeenCalledTimes(1);
+    expect(first.attribute.fill).toBe('red');
+    expect(second.attribute.fill).toBe('red');
+
+    first.useStates([], false);
+
+    expect(first.attribute.fill).toBe('blue');
+    expect(second.attribute.fill).toBe('red');
+  });
+
+  test('should compile local definitions per graphic without a precompiled definition', () => {
+    const states = {
+      selected: {
+        fill: 'red'
+      }
+    } as any;
+    const first = createGraphic();
+    const second = createGraphic();
+    first.states = states;
+    second.states = states;
+    const compile = jest.spyOn(StateDefinitionCompiler.prototype, 'compile');
+
+    first.useStates(['selected'], false);
+    second.useStates(['selected'], false);
+
+    expect(compile).toHaveBeenCalledTimes(2);
   });
 
   test('should sync target states through a single optimized call', () => {

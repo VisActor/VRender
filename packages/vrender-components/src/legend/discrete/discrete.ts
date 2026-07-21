@@ -33,6 +33,7 @@ import type {
   IRect
 } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
+import { StateDefinitionCompiler } from '@visactor/vrender-core';
 import { graphicCreator } from '../../util/graphic-creator';
 import { LegendBase } from '../base';
 import { Pager } from '../../pager';
@@ -61,6 +62,11 @@ import { loadDiscreteLegendComponent } from '../register';
 import { createTextGraphicByType } from '../../util';
 import { ScrollBar, type ScrollBarAttributes } from '../../scrollbar';
 import { commitUpdateAnimationTarget } from '../../animation/static-truth';
+
+type StateDefinitionsCacheEntry = {
+  definitions: Record<string, any>;
+  compiledDefinitions: Map<string, any>;
+};
 
 const DEFAULT_STATES = {
   [LegendStateValue.focus]: {},
@@ -105,6 +111,8 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     startStops: ILinearGradient['stops'];
     endStops: ILinearGradient['stops'];
   };
+  // Weak keys avoid retaining caller-owned state definitions after a legend is released.
+  private _stateDefinitionsCache = new WeakMap<object, StateDefinitionsCacheEntry>();
 
   static defaultAttributes: Partial<DiscreteLegendAttrs> = {
     layout: 'horizontal',
@@ -200,6 +208,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
   }
 
   render() {
+    this._stateDefinitionsCache = new WeakMap<object, StateDefinitionsCacheEntry>();
     super.render();
     this._lastActiveItem = null;
   }
@@ -562,7 +571,14 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
         y: 0,
         ...backgroundStyle.style
       });
-      this._appendDataToShape(itemGroup, LEGEND_ELEMENT_NAME.item, item, itemGroup, backgroundStyle.state);
+      this._appendDataToShape(
+        itemGroup,
+        LEGEND_ELEMENT_NAME.item,
+        item,
+        itemGroup,
+        backgroundStyle.state,
+        backgroundStyle.reuseStateDefinitions
+      );
     }
     itemGroup.id = `${id ?? label}-${index}`;
 
@@ -607,7 +623,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
           (shapeStyle.state[key] as ISymbolGraphicAttribute).stroke = color as string;
         }
       });
-      this._appendDataToShape(itemShape, LEGEND_ELEMENT_NAME.itemShape, item, itemGroup, shapeStyle.state);
+      this._appendDataToShape(itemShape, LEGEND_ELEMENT_NAME.itemShape, item, itemGroup, shapeStyle.state, false);
 
       itemShape.addState(isSelected ? LegendStateValue.selected : LegendStateValue.unSelected);
       innerGroup.add(itemShape);
@@ -645,7 +661,14 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
 
     const labelShape = createTextGraphicByType(labelAttributes);
 
-    this._appendDataToShape(labelShape, LEGEND_ELEMENT_NAME.itemLabel, item, itemGroup, labelStyle.state);
+    this._appendDataToShape(
+      labelShape,
+      LEGEND_ELEMENT_NAME.itemLabel,
+      item,
+      itemGroup,
+      labelStyle.state,
+      labelStyle.reuseStateDefinitions
+    );
     labelShape.addState(isSelected ? LegendStateValue.selected : LegendStateValue.unSelected);
     innerGroup.add(labelShape);
     const labelSpace = get(labelAttr, 'space', DEFAULT_LABEL_SPACE);
@@ -665,7 +688,14 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
 
       const valueShape = createTextGraphicByType(valueAttributes);
 
-      this._appendDataToShape(valueShape, LEGEND_ELEMENT_NAME.itemValue, item, itemGroup, valueStyle.state);
+      this._appendDataToShape(
+        valueShape,
+        LEGEND_ELEMENT_NAME.itemValue,
+        item,
+        itemGroup,
+        valueStyle.state,
+        valueStyle.reuseStateDefinitions
+      );
       valueShape.addState(isSelected ? LegendStateValue.selected : LegendStateValue.unSelected);
 
       if (this._itemWidthByUser) {
@@ -1566,11 +1596,38 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     return selectedData;
   }
 
-  private _appendDataToShape(shape: any, name: string, data: any, delegateShape: any, states: any = {}) {
+  private _appendDataToShape(
+    shape: any,
+    name: string,
+    data: any,
+    delegateShape: any,
+    states?: Record<string, any>,
+    reuseStateDefinitions: boolean = true
+  ) {
     shape.name = name;
     shape.data = data;
     shape.delegate = delegateShape;
-    shape.states = merge({}, DEFAULT_STATES, states);
+    if (!reuseStateDefinitions) {
+      shape.states = merge({}, DEFAULT_STATES, states);
+      return;
+    }
+
+    const source = states ?? DEFAULT_STATES;
+    const cached = this._stateDefinitionsCache.get(source);
+    if (cached) {
+      shape.states = cached.definitions;
+      (shape as any).setStateDefinitionsWithCompiled(cached.definitions, cached.compiledDefinitions);
+      return;
+    }
+
+    const definitions = states ? merge({}, DEFAULT_STATES, states) : DEFAULT_STATES;
+    const entry = {
+      definitions,
+      compiledDefinitions: new StateDefinitionCompiler().compile(definitions)
+    };
+    this._stateDefinitionsCache.set(source, entry);
+    shape.states = entry.definitions;
+    (shape as any).setStateDefinitionsWithCompiled(entry.definitions, entry.compiledDefinitions);
   }
 
   private _dispatchLegendEvent(eventName: string, legendItem: any, event: FederatedPointerEvent) {
@@ -1609,23 +1666,28 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     }
 
     if (config.state) {
-      newConfig.state = {};
-
-      Object.keys(config.state).forEach(key => {
-        if (config.state[key]) {
-          if (isFunction(config.state[key])) {
-            newConfig.state[key] = config.state[key](item, isSelected, index, items);
-          } else {
-            newConfig.state[key] = config.state[key];
+      const stateKeys = Object.keys(config.state);
+      const hasStateFunction = stateKeys.some(key => isFunction(config.state[key]));
+      newConfig.reuseStateDefinitions = !hasStateFunction;
+      if (!hasStateFunction) {
+        newConfig.state = config.state;
+      } else {
+        newConfig.state = {};
+        stateKeys.forEach(key => {
+          if (config.state[key]) {
+            newConfig.state[key] = isFunction(config.state[key])
+              ? config.state[key](item, isSelected, index, items)
+              : config.state[key];
           }
-        }
-      });
+        });
+      }
     }
 
     return newConfig;
   }
 
   release(): void {
+    this._stateDefinitionsCache = new WeakMap<object, StateDefinitionsCacheEntry>();
     super.release();
     this.removeAllEventListeners();
   }

@@ -27,6 +27,7 @@ import { RichTextIcon } from './richtext/icon';
 import type { FederatedMouseEvent } from '../event';
 import { application } from '../application';
 import { RICHTEXT_NUMBER_TYPE } from './constants';
+import type { SharedStateScope } from './state/shared-state-scope';
 
 let supportIntl = false;
 try {
@@ -618,8 +619,8 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
     return new RichText({ ...this.attribute });
   }
 
-  setStage(stage?: IStage, layer?: ILayer) {
-    super.setStage(stage, layer);
+  setStage(stage?: IStage, layer?: ILayer, inheritedSharedStateScope?: SharedStateScope<Record<string, any>> | null) {
+    super.setStage(stage, layer, inheritedSharedStateScope);
     const frameCache = this.getFrameCache();
     // for (let i = 0; i < frameCache.icons.length; i++) {
     //   const icon = frameCache.icons[i];

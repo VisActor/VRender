@@ -1,0 +1,21 @@
+.gitignore
+  s_0b5e37b8c1e9bf::t_79db3039dc905c 102
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "a409fd88b3bddcff8f8f82ebda69959f49235881",
+  "prompts": {},
+  "sessions": {
+    "s_0b5e37b8c1e9bf": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f939c-0d78-7361-be0c-834583586e06",
+        "model": "unknown"
+      },
+      "human_author": "lixuefei.1313 <lixuef1313@163.com>"
+    }
+  },
+  "attestation_metadata": {},
+  "remote_transcripts": {}
+}

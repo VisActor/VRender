@@ -80,6 +80,11 @@ export class StateEngine<T extends Record<string, any> = Record<string, any>> {
   }
 
   applyStates(stateNames: string[]): StateTransitionResult {
+    const singleStaticStateResult = this.tryApplySingleStaticState(stateNames);
+    if (singleStaticStateResult) {
+      return singleStaticStateResult;
+    }
+
     const uniqueStates = Array.from(new Set(stateNames));
     const sortedStates = this.sortStates(uniqueStates);
     const adjudicated = this.adjudicate(sortedStates);
@@ -105,6 +110,47 @@ export class StateEngine<T extends Record<string, any> = Record<string, any>> {
       activeStates: [...this._activeStates],
       effectiveStates: [...this._effectiveStates],
       suppressed: [...this._suppressed]
+    };
+  }
+
+  /**
+   * The common initial-state case has one state with a static patch and no
+   * state relations. It does not need de-duplication, ordering or adjudication.
+   */
+  private tryApplySingleStaticState(stateNames: string[]): StateTransitionResult | undefined {
+    if (stateNames.length !== 1 || this.mergeMode !== 'shallow') {
+      return undefined;
+    }
+
+    const stateName = stateNames[0];
+    const definition = this.compiledDefinitions.get(stateName);
+    if (definition && (definition.hasResolver || definition.exclude.size || definition.suppress.size)) {
+      return undefined;
+    }
+
+    const changed =
+      this._activeStates.length !== 1 ||
+      this._activeStates[0] !== stateName ||
+      this._effectiveStates.length !== 1 ||
+      this._effectiveStates[0] !== stateName ||
+      this._suppressed.length !== 0;
+
+    this._activeStates = [stateName];
+    this._effectiveStates = [stateName];
+    this._suppressed = [];
+
+    if (changed || !this.resolverCacheValid) {
+      this.resolverPatchCache.clear();
+      this.resolverCacheKey = stateName;
+      this.resolverCacheValid = true;
+      this._resolvedPatch = definition?.patch ? cloneValue(definition.patch) : {};
+    }
+
+    return {
+      changed,
+      activeStates: [...this._activeStates],
+      effectiveStates: [...this._effectiveStates],
+      suppressed: []
     };
   }
 

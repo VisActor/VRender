@@ -64,6 +64,33 @@ describe('StateEngine', () => {
     expect(engine.resolvedPatch).toEqual({});
   });
 
+  test('should bypass generic state resolution for a single static state', () => {
+    const compiledDefinitions = new StateDefinitionCompiler<any>().compile({
+      selected: {
+        fill: 'red',
+        opacity: 0.5
+      }
+    });
+    const engine = new StateEngine<any>({ compiledDefinitions });
+    const sortStates = jest.spyOn(engine as any, 'sortStates');
+    const adjudicate = jest.spyOn(engine as any, 'adjudicate');
+
+    const transition = engine.applyStates(['selected']);
+
+    expect(transition).toMatchObject({
+      changed: true,
+      activeStates: ['selected'],
+      effectiveStates: ['selected'],
+      suppressed: []
+    });
+    expect(engine.resolvedPatch).toEqual({
+      fill: 'red',
+      opacity: 0.5
+    });
+    expect(sortStates).not.toHaveBeenCalled();
+    expect(adjudicate).not.toHaveBeenCalled();
+  });
+
   test('should cache resolver patches and invalidate on demand', () => {
     const resolver = jest.fn(() => ({
       opacity: 0.5

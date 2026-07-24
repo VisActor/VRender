@@ -283,7 +283,7 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
   /* 场景树结构 */
   incrementalAppendChild(node: INode): INode | null {
     const data = super.appendChild(node);
-    if (data) {
+    if (data && this.shouldSyncChildSharedStateTreeBinding(data)) {
       this.syncChildSharedStateTreeBinding(data);
     }
     this.addUpdateBoundTag();
@@ -298,7 +298,7 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
   }
 
   protected _updateChildToStage(child: IGraphic) {
-    if (child) {
+    if (child && this.shouldSyncChildSharedStateTreeBinding(child)) {
       this.syncChildSharedStateTreeBinding(child);
     }
     this.addUpdateBoundTag();
@@ -307,10 +307,8 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
   // TODO 代码优化
   appendChild(node: INode, addStage: boolean = true): INode | null {
     const data = super.appendChild(node);
-    if (data) {
-      if (addStage) {
-        this.syncChildSharedStateTreeBinding(data);
-      }
+    if (data && addStage && this.shouldSyncChildSharedStateTreeBinding(data)) {
+      this.syncChildSharedStateTreeBinding(data);
     }
     this.addUpdateBoundTag();
     return data;
@@ -539,6 +537,22 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
     this.forEachChildren(item => {
       this.setStageToChild(item, childSharedStateScope);
     });
+  }
+
+  /**
+   * Detached subtrees have no stage-derived shared-state scope to bind. Deferring
+   * the default binding until their root enters a stage avoids repeating the
+   * same traversal for every child built by a component.
+   */
+  protected shouldSyncChildSharedStateTreeBinding(child: INode): boolean {
+    if (this.stage || this.layer) {
+      return true;
+    }
+
+    return (
+      child.onParentSharedStateTreeChanged !== Graphic.prototype.onParentSharedStateTreeChanged &&
+      child.onParentSharedStateTreeChanged !== Group.prototype.onParentSharedStateTreeChanged
+    );
   }
 
   protected setStageToChild(

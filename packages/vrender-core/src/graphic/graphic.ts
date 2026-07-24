@@ -2493,11 +2493,15 @@ abstract class GraphicImpl<T extends Partial<IGraphicAttribute> = Partial<IGraph
   }
 
   addState(stateName: string, keepCurrentStates?: boolean, hasAnimation?: boolean) {
-    const transition = this.resolveAddStateTransition(stateName, keepCurrentStates);
-    if (!transition.changed) {
+    const currentStates = this.currentStates;
+    if (currentStates?.includes(stateName) && (keepCurrentStates || currentStates.length === 1)) {
       return;
     }
-    this.useStates(transition.states, hasAnimation);
+
+    // `useStates` resolves the effective state set through StateEngine. Resolving it
+    // here first would run the same engine transition twice for every addState call.
+    const nextStates = keepCurrentStates && currentStates?.length ? currentStates.concat([stateName]) : [stateName];
+    this.useStates(nextStates, hasAnimation);
   }
 
   setStates(states?: string[] | null, hasAnimation?: boolean): void;

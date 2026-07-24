@@ -139,6 +139,39 @@ describe('DiscreteLegend', () => {
     expect(rerenderedLabels[1].attribute.fill).toBe('silver');
   });
 
+  it('should reuse static symbol states when no item-specific color is required', () => {
+    const legend = new DiscreteLegend({
+      select: true,
+      defaultSelected: ['A'],
+      item: {
+        shape: {
+          style: { size: 10 },
+          state: {
+            selected: { opacity: 0.8 },
+            unSelected: { fillOpacity: 0.2 }
+          }
+        }
+      },
+      items: [
+        { label: 'A', shape: { fill: 'red', symbolType: 'circle' } },
+        { label: 'B', shape: { fill: 'blue', symbolType: 'circle' } }
+      ]
+    });
+
+    stage.defaultLayer.add(legend as unknown as IGraphic);
+    stage.render();
+
+    const items = ((legend as any)._itemsContainer.getChildren() as IGroup[]).slice(0, 2);
+    const symbols = items.map(
+      item => (item.getChildren()[0] as IGroup).find(node => node.name === 'legendItemShape', false) as IGraphic
+    );
+
+    expect(symbols[0].states).toBe(symbols[1].states);
+    expect((symbols[0] as any).compiledStateDefinitions).toBe((symbols[1] as any).compiledStateDefinitions);
+    expect(symbols[0].attribute.fill).toBe('red');
+    expect(symbols[1].attribute.fill).toBe('blue');
+  });
+
   it('should return its own width when its own width does not exceed maxWidth', () => {
     const legend = new DiscreteLegend({
       layout: 'vertical',

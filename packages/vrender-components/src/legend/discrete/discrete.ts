@@ -610,20 +610,33 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
         ...shape,
         ...shapeStyle.style
       });
-      // 处理下 shape 的 fill stroke
-      Object.keys(shapeStyle.state || {}).forEach(key => {
-        const color =
-          (shapeStyle.state[key] as ISymbolGraphicAttribute).fill ||
-          (shapeStyle.state[key] as ISymbolGraphicAttribute).stroke;
-        if (shape.fill && isNil((shapeStyle.state[key] as ISymbolGraphicAttribute).fill) && color) {
-          (shapeStyle.state[key] as ISymbolGraphicAttribute).fill = color as string;
+      const shapeStateNeedsItemColor = Object.keys(shapeStyle.state || {}).some(key => {
+        const state = shapeStyle.state[key] as ISymbolGraphicAttribute;
+        const color = state.fill || state.stroke;
+        return !!color && ((!!shape.fill && isNil(state.fill)) || (!!shape.stroke && isNil(state.stroke)));
+      });
+      // Clone only when a state must inherit an item-specific fill or stroke.
+      // Static symbol states otherwise share the same precompiled definitions.
+      const shapeStates = shapeStateNeedsItemColor ? merge({}, shapeStyle.state) : shapeStyle.state;
+      Object.keys(shapeStates || {}).forEach(key => {
+        const state = shapeStates[key] as ISymbolGraphicAttribute;
+        const color = state.fill || state.stroke;
+        if (shape.fill && isNil(state.fill) && color) {
+          state.fill = color as string;
         }
 
-        if (shape.stroke && isNil((shapeStyle.state[key] as ISymbolGraphicAttribute).stroke) && color) {
-          (shapeStyle.state[key] as ISymbolGraphicAttribute).stroke = color as string;
+        if (shape.stroke && isNil(state.stroke) && color) {
+          state.stroke = color as string;
         }
       });
-      this._appendDataToShape(itemShape, LEGEND_ELEMENT_NAME.itemShape, item, itemGroup, shapeStyle.state, false);
+      this._appendDataToShape(
+        itemShape,
+        LEGEND_ELEMENT_NAME.itemShape,
+        item,
+        itemGroup,
+        shapeStates,
+        !shapeStateNeedsItemColor && shapeStyle.reuseStateDefinitions !== false
+      );
 
       itemShape.addState(isSelected ? LegendStateValue.selected : LegendStateValue.unSelected);
       innerGroup.add(itemShape);

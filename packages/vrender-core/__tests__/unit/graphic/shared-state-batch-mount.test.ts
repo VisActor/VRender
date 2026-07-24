@@ -3,6 +3,36 @@ import { createRect } from '../../../src/graphic/rect';
 import { createSharedStateTestStage } from './shared-state-test-utils';
 
 describe('shared state batch mount', () => {
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  test('should defer default state synchronization for a detached subtree until it enters a stage', () => {
+    const stage = createSharedStateTestStage();
+    const stateScope = createGroup({});
+    const item = createGroup({});
+    const shape = createRect({ fill: 'black', opacity: 1, width: 1, height: 1 });
+
+    (stateScope as any).sharedStateDefinitions = {
+      selected: { fill: 'red', opacity: 0.5 }
+    };
+    shape.states = { selected: { fill: 'local-selected' } };
+    shape.currentStates = ['selected'];
+    item.appendChild(shape);
+
+    const syncChildSharedStateTreeBinding = jest.spyOn(Group.prototype as any, 'syncChildSharedStateTreeBinding');
+    stateScope.appendChild(item);
+
+    expect(syncChildSharedStateTreeBinding).not.toHaveBeenCalled();
+
+    stage.appendChild(stateScope);
+    shape.refreshSharedStateBeforeRender();
+
+    expect(shape.stage).toBe(stage);
+    expect(shape.attribute.fill).toBe('red');
+    expect(shape.attribute.opacity).toBe(0.5);
+  });
+
   test('should preserve custom parent-tree synchronization hooks', () => {
     const stage = createSharedStateTestStage();
     const group = createGroup({});

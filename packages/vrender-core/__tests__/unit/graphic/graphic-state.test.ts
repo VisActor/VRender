@@ -412,6 +412,15 @@ describe('Graphic addState/removeState/toggleState', () => {
     expect(useStates).toHaveBeenCalledWith(['hover'], false);
   });
 
+  test('should resolve an addState transition once', () => {
+    const graphic = createGraphic();
+    const ensureStateEngine = jest.spyOn(graphic as any, 'ensureStateEngine');
+
+    graphic.addState('hover', false, false);
+
+    expect(ensureStateEngine).toHaveBeenCalledTimes(1);
+  });
+
   test('should remove an existing state and restore attrs', () => {
     const graphic = createGraphic();
     graphic.useStates(['hover'], false);

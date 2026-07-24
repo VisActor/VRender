@@ -1,0 +1,23 @@
+packages/vrender-kits/src/env/contributions/lynx-contribution.ts
+  s_ba01b3a5c92c61::t_ee03cf4afacde3 19-20,33-35,116-117,150-157,222,225-226
+packages/vrender/__tests__/lynx-raf.test.ts
+  s_ba01b3a5c92c61::t_5c84de910ac568 1-101
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "79874b4bb6a98a23242a96655e6b7124cf4d20ae",
+  "prompts": {},
+  "sessions": {
+    "s_ba01b3a5c92c61": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f94ce-f443-7042-8f0f-e555573b7a90",
+        "model": "unknown"
+      },
+      "human_author": "lixuefei.1313 <lixuef1313@163.com>"
+    }
+  },
+  "attestation_metadata": {},
+  "remote_transcripts": {}
+}

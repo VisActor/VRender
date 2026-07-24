@@ -1,0 +1,21 @@
+docs/superpowers/specs/2026-07-24-lynx-native-raf-design.md
+  s_4f31ae15471482::t_6b7cd2af4ed559 1-75
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "d101f62d68576c59777976d02e7c09a6e592fbb5",
+  "prompts": {},
+  "sessions": {
+    "s_4f31ae15471482": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f9333-664d-7e52-ab82-b4746edbcebf",
+        "model": "unknown"
+      },
+      "human_author": "lixuefei.1313 <lixuef1313@163.com>"
+    }
+  },
+  "attestation_metadata": {},
+  "remote_transcripts": {}
+}

@@ -16,6 +16,8 @@ declare const lynx: {
   createCanvasNG: (id: string) => any;
   createImage: (id: string) => any;
   createOffscreenCanvas: () => any;
+  requestAnimationFrame?: (callback: FrameRequestCallback) => number;
+  cancelAnimationFrame?: (handle: number) => void;
 };
 declare const SystemInfo: {
   pixelRatio: number;
@@ -27,6 +29,9 @@ try {
 } catch (err) {
   // do nothing
 }
+
+const requestAnimationFrameBasedSTO = (callback: FrameRequestCallback): number => rafBasedSto.call(callback);
+const cancelAnimationFrameBasedSTO = (handle: number): void => rafBasedSto.clear(handle);
 
 // 飞书小程序canvas的wrap
 function makeUpCanvas(
@@ -108,6 +113,8 @@ export class LynxEnvContribution extends BaseEnvContribution implements IEnvCont
   // 所有可用的canvasList
   freeCanvasList: ILynxCanvas[] = [];
   canvasIdx: number = 0;
+  private requestAnimationFrame = requestAnimationFrameBasedSTO;
+  private cancelAnimationFrame = cancelAnimationFrameBasedSTO;
 
   constructor() {
     super();
@@ -139,6 +146,14 @@ export class LynxEnvContribution extends BaseEnvContribution implements IEnvCont
         !!params.offscreen,
         params.pixelRatio
       );
+
+      if (typeof lynx.requestAnimationFrame === 'function' && typeof lynx.cancelAnimationFrame === 'function') {
+        this.requestAnimationFrame = lynx.requestAnimationFrame.bind(lynx);
+        this.cancelAnimationFrame = lynx.cancelAnimationFrame.bind(lynx);
+      } else {
+        this.requestAnimationFrame = requestAnimationFrameBasedSTO;
+        this.cancelAnimationFrame = cancelAnimationFrameBasedSTO;
+      }
 
       // loadFeishuContributions();
     }
@@ -204,23 +219,11 @@ export class LynxEnvContribution extends BaseEnvContribution implements IEnvCont
   }
 
   getRequestAnimationFrame(): (callback: FrameRequestCallback) => number {
-    // return requestAnimationFrame;
-
-    // 飞书小组件，在云文档浏览器环境中，没有requestAnimationFrame
-    // 但是在小组件工作台环境和模拟器中正常
-    // 反馈飞书修改，目前先使用setTimeout模拟，进行测试，飞书修复后替换回requestAnimationFrame
-    // return function (callback: FrameRequestCallback) {
-    //   return setTimeout(callback, 1000 / 60, true);
-    // } as any;
-    return function (callback: FrameRequestCallback) {
-      return rafBasedSto.call(callback);
-    } as any;
+    return this.requestAnimationFrame;
   }
 
-  getCancelAnimationFrame(): (h: number) => void {
-    return (h: number) => {
-      rafBasedSto.clear(h);
-    };
+  getCancelAnimationFrame(): (handle: number) => void {
+    return this.cancelAnimationFrame;
   }
 
   mapToCanvasPoint(event: any) {

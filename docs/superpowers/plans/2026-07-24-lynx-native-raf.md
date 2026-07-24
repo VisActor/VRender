@@ -154,7 +154,7 @@ Run:
 
 ```bash
 cd packages/vrender
-rushx test -- --runInBand __tests__/lynx-raf.test.ts
+rushx test --runInBand __tests__/lynx-raf.test.ts
 ```
 
 Expected: the first test fails because the current contribution returns a `rafBasedSto` handle instead of literal host handle `17`. The scheduled fallback is cancelled before the assertion, so the run must not leave an open timer.
@@ -219,7 +219,7 @@ Run:
 
 ```bash
 cd packages/vrender
-rushx test -- --runInBand __tests__/lynx-raf.test.ts
+rushx test --runInBand __tests__/lynx-raf.test.ts
 ```
 
 Expected: both tests pass with zero failures, no open-handle warning, and no unexpected console output.
@@ -230,7 +230,7 @@ Run:
 
 ```bash
 cd packages/vrender
-rushx test -- --runInBand
+rushx test --runInBand
 rushx compile
 ./node_modules/.bin/eslint __tests__/lynx-raf.test.ts
 

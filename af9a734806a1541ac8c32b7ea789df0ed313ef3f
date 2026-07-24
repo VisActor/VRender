@@ -1,0 +1,39 @@
+packages/vrender-components/__tests__/electron/legend/discrete.test.ts
+  s_5ca87603103e63::t_4318d430ae0876 76-141
+packages/vrender-components/src/legend/discrete/discrete.ts
+  s_5ca87603103e63::t_d7440814e9f940 36,66-70,114-115,211,574-581,626,664-671,691-698,1599-1606,1610-1630,1669-1680,1682-1683,1690
+packages/vrender-core/__tests__/unit/graphic/graphic-state.test.ts
+  s_5ca87603103e63::t_231fae9727ab8c 3,6-9,59-102
+packages/vrender-core/__tests__/unit/graphic/shared-state-batch-mount.test.ts
+  s_5ca87603103e63::t_4f690a770387c1 1-91
+packages/vrender-core/src/graphic/graphic.ts
+  s_5ca87603103e63::t_fd5110c7187943 533-536,557-571,581,598-601,617-631,649-653,655,659,2067-2080,2822,2834,2889
+packages/vrender-core/src/graphic/group.ts
+  s_5ca87603103e63::t_8de0801e5e68ed 358,372,377,387-388,390,523-538,540,544-568,571-575,577,582-583
+packages/vrender-core/src/graphic/node-tree.ts
+  s_5ca87603103e63::t_2ded6138f79aba 4,63-67
+packages/vrender-core/src/graphic/richtext.ts
+  s_5ca87603103e63::t_f94110f9a01e47 30,622-623
+packages/vrender-core/src/interface/graphic.ts
+  s_5ca87603103e63::t_d68a8bb003ce74 856-860
+packages/vrender-core/src/interface/node-tree.ts
+  s_5ca87603103e63::t_e25f165fd53e7a 4,73-77
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "af9a734806a1541ac8c32b7ea789df0ed313ef3f",
+  "prompts": {},
+  "sessions": {
+    "s_5ca87603103e63": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f83f8-22bf-7e43-a3a4-ff5c3b8991c0",
+        "model": "unknown"
+      },
+      "human_author": "lixuefei.1313 <lixuef1313@163.com>"
+    }
+  },
+  "attestation_metadata": {},
+  "remote_transcripts": {}
+}

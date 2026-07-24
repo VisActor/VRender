@@ -65,7 +65,7 @@ describe('lynx animation frame scheduler', () => {
     expect(cancelledHandle).toBe(17);
   });
 
-  test('resets both schedulers to the timeout fallback when native capability becomes incomplete', () => {
+  test('resets both schedulers to the timeout fallback when native capability becomes incomplete', async () => {
     const env = new LynxEnvContribution();
     let previousRequestCalls = 0;
     let previousCancelCalls = 0;
@@ -92,6 +92,7 @@ describe('lynx animation frame scheduler', () => {
       callbackCalls++;
     });
     env.getCancelAnimationFrame()(handle);
+    await new Promise<void>(resolve => setTimeout(resolve, 50));
 
     expect(previousRequestCalls).toBe(0);
     expect(previousCancelCalls).toBe(0);

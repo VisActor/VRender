@@ -1,4 +1,4 @@
-import { drawPolygon, drawRoundedPolygon } from '../../../src/common/polygon';
+import { drawPolygon, drawRoundedPolygon, offsetPolygonPoints } from '../../../src/common/polygon';
 
 type Call = { method: string; args: any[] };
 
@@ -42,7 +42,16 @@ describe('common/polygon', () => {
 
   test('drawRoundedPolygon falls back to drawPolygon when points length < 3', () => {
     const path = new MockPath();
-    drawRoundedPolygon(path as any, [{ x: 0, y: 0 }, { x: 10, y: 0 }], 0, 0, 2);
+    drawRoundedPolygon(
+      path as any,
+      [
+        { x: 0, y: 0 },
+        { x: 10, y: 0 }
+      ],
+      0,
+      0,
+      2
+    );
     expect(path.calls[0].method).toBe('moveTo');
     expect(path.calls.some(c => c.method === 'arcTo')).toBe(false);
   });
@@ -80,5 +89,56 @@ describe('common/polygon', () => {
     const last = path.calls[path.calls.length - 1];
     expect(last.method).toBe('lineTo');
     expect(last.args).toEqual([points[3].x + 3, points[3].y + 4]);
+  });
+
+  test('offsetPolygonPoints keeps collinear vertices on the offset edge', () => {
+    const result = offsetPolygonPoints(
+      [
+        { x: 0, y: 0 },
+        { x: 50, y: 0 },
+        { x: 100, y: 0 },
+        { x: 100, y: 100 },
+        { x: 0, y: 100 }
+      ],
+      10
+    );
+
+    expect(result[1]).toEqual({ x: 50, y: -10 });
+  });
+
+  test('offsetPolygonPoints skips duplicate edges when finding adjacent offset lines', () => {
+    const result = offsetPolygonPoints(
+      [
+        { x: 0, y: 0 },
+        { x: 0, y: 0 },
+        { x: 100, y: 0 },
+        { x: 100, y: 100 },
+        { x: 0, y: 100 }
+      ],
+      10
+    );
+
+    expect(result[0].x).toBeCloseTo(-10);
+    expect(result[0].y).toBeCloseTo(-10);
+    expect(result[1].x).toBeCloseTo(-10);
+    expect(result[1].y).toBeCloseTo(-10);
+    expect(result.every(point => Number.isFinite(point.x) && Number.isFinite(point.y))).toBe(true);
+  });
+
+  test('offsetPolygonPoints does not use the closing edge for an open polygon', () => {
+    const result = offsetPolygonPoints(
+      [
+        { x: 0, y: 0 },
+        { x: 100, y: 0 },
+        { x: 100, y: 100 }
+      ],
+      10,
+      false
+    );
+
+    expect(result[0]).toEqual({ x: 0, y: -10 });
+    expect(result[1].x).toBeCloseTo(110);
+    expect(result[1].y).toBeCloseTo(-10);
+    expect(result[2]).toEqual({ x: 110, y: 100 });
   });
 });

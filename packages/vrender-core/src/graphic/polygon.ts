@@ -7,11 +7,13 @@ import { CustomPath2D } from '../common/custom-path2d';
 import { application } from '../application';
 import type { GraphicType } from '../interface';
 import { POLYGON_NUMBER_TYPE } from './constants';
+import { getPolygonBoundsScale, updateBoundsOfPolygonOuterBorder } from './graphic-service/polygon-outer-border-bounds';
 
 const POLYGON_UPDATE_TAG_KEY = ['points', 'cornerRadius', ...GRAPHIC_UPDATE_TAG_KEY];
 
 export class Polygon extends Graphic<IPolygonGraphicAttribute> implements IPolygon {
   type: GraphicType = 'polygon';
+  private _outerBorderBoundsScale?: number;
 
   static NOWORK_ANIMATE_ATTR = NOWORK_ANIMATE_ATTR;
 
@@ -30,6 +32,20 @@ export class Polygon extends Graphic<IPolygonGraphicAttribute> implements IPolyg
 
   getGraphicTheme(): Required<IPolygonGraphicAttribute> {
     return getTheme(this).polygon;
+  }
+
+  protected tryUpdateAABBBounds(): IAABBBounds {
+    const { outerBorder } = this.attribute;
+    if (outerBorder && outerBorder.visible !== false) {
+      const boundsScale = getPolygonBoundsScale(this);
+      if (boundsScale !== this._outerBorderBoundsScale) {
+        this._outerBorderBoundsScale = boundsScale;
+        this.addUpdateBoundTag();
+      }
+    } else {
+      this._outerBorderBoundsScale = undefined;
+    }
+    return super.tryUpdateAABBBounds();
   }
 
   protected updateAABBBounds(
@@ -59,6 +75,8 @@ export class Polygon extends Graphic<IPolygonGraphicAttribute> implements IPolyg
     points.forEach(p => {
       aabbBounds.add(p.x, p.y);
     });
+
+    updateBoundsOfPolygonOuterBorder(attribute, polygonTheme, aabbBounds, this);
 
     return aabbBounds;
   }

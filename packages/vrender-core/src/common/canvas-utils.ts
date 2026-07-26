@@ -1,12 +1,13 @@
 import type { IColor, IConicalGradient, ILinearGradient, IRadialGradient } from '../interface/color';
 import type { IContext2d, ITransform } from '../interface';
-import type { IBoundsLike } from '@visactor/vutils';
-import { isArray } from '@visactor/vutils';
+import { isArray, type IBoundsLike, type IMatrixLike } from '@visactor/vutils';
 import { GradientParser } from './color-utils';
 
-export function getScaledStroke(context: IContext2d, width: number, dpr: number) {
+type StrokeScaleMatrix = Pick<IMatrixLike, 'a' | 'b' | 'c' | 'd'>;
+
+export function getScaledStrokeWithMatrix(matrix: StrokeScaleMatrix, width: number, dpr: number) {
   let strokeWidth = width;
-  const { a, b, c, d } = context.currentMatrix;
+  const { a, b, c, d } = matrix;
   const scaleX = Math.sign(a) * Math.sqrt(a * a + b * b);
   const scaleY = Math.sign(d) * Math.sqrt(c * c + d * d);
   // 如果没有scaleX和scaleY，那么认为什么都不用绘制
@@ -15,6 +16,10 @@ export function getScaledStroke(context: IContext2d, width: number, dpr: number)
   }
   strokeWidth = (strokeWidth / Math.abs(scaleX + scaleY)) * 2 * dpr;
   return strokeWidth;
+}
+
+export function getScaledStroke(context: IContext2d, width: number, dpr: number) {
+  return getScaledStrokeWithMatrix(context.currentMatrix, width, dpr);
 }
 
 export function createColor(

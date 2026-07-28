@@ -322,14 +322,19 @@ describe('Graphic state animation integration', () => {
     );
   });
 
-  test('should animate a removed rect alias back to its derived static value when changing states', () => {
+  test('should derive a removed rect alias from the target static state when changing states', () => {
     const graphic = createGraphic();
+    delete (graphic as any).baseAttributes.width;
+    delete (graphic.attribute as any).width;
+    (graphic as any).baseAttributes.x1 = 10;
+    (graphic.attribute as any).x1 = 10;
     graphic.states = {
       hover: {
-        x1: 40
+        width: 40
       },
       selected: {
-        fill: 'green'
+        x: 5,
+        x1: 30
       }
     } as any;
     const applyAnimationState = jest.fn();
@@ -344,7 +349,7 @@ describe('Graphic state animation integration', () => {
         {
           name: 'state',
           animation: expect.objectContaining({
-            to: expect.objectContaining({ x1: 10 })
+            to: expect.objectContaining({ width: 25 })
           })
         }
       ]

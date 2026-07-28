@@ -279,6 +279,23 @@ describe('Graphic state animation integration', () => {
     );
   });
 
+  test('should synchronously remove a no-work state attribute when clearing states', () => {
+    const graphic = createGraphic();
+    graphic.states = {
+      hover: {
+        globalZIndex: 400
+      }
+    } as any;
+
+    graphic.useStates(['hover'], true);
+
+    expect(graphic.attribute.globalZIndex).toBe(400);
+
+    graphic.clearStates(true);
+
+    expect(graphic.attribute.globalZIndex).toBeUndefined();
+  });
+
   test('should allow explicit animateConfig to override graphic and context defaults in applyStateAttrs', () => {
     const graphic = createGraphic();
     graphic.stateAnimateConfig = {

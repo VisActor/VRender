@@ -755,19 +755,16 @@ abstract class GraphicImpl<T extends Partial<IGraphicAttribute> = Partial<IGraph
       };
 
       if (hasTargetAttr) {
-        assignFallbackAttr(this.getStateTransitionDefaultAttribute(key, staticTargetAttrs));
+        assignFallbackAttr((targetStateAttrs as Record<string, any>)[key]);
         return;
       }
 
       if (Object.prototype.hasOwnProperty.call(snapshot, key)) {
-        const snapshotValue = snapshot[key];
-        assignFallbackAttr(
-          snapshotValue === undefined ? this.getStateTransitionDefaultAttribute(key, staticTargetAttrs) : snapshotValue
-        );
+        assignFallbackAttr(snapshot[key]);
         return;
       }
 
-      assignFallbackAttr(this.getStateTransitionDefaultAttribute(key, staticTargetAttrs));
+      assignFallbackAttr(undefined);
     });
 
     return extraAttrs as Partial<T>;

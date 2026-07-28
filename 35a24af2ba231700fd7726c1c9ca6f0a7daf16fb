@@ -1,0 +1,21 @@
+packages/vrender/__tests__/lynx-raf.test.ts
+  s_ba01b3a5c92c61::t_0d0a8c5fbaaf0f 68,95
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "35a24af2ba231700fd7726c1c9ca6f0a7daf16fb",
+  "prompts": {},
+  "sessions": {
+    "s_ba01b3a5c92c61": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f94ce-f443-7042-8f0f-e555573b7a90",
+        "model": "unknown"
+      },
+      "human_author": "lixuefei.1313 <lixuef1313@163.com>"
+    }
+  },
+  "attestation_metadata": {},
+  "remote_transcripts": {}
+}

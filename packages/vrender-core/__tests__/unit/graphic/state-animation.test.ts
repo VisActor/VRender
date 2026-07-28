@@ -296,6 +296,61 @@ describe('Graphic state animation integration', () => {
     expect(graphic.attribute.globalZIndex).toBeUndefined();
   });
 
+  test('should animate a removed rect alias back to its derived static value when clearing states', () => {
+    const graphic = createGraphic();
+    graphic.states = {
+      hover: {
+        x1: 40
+      }
+    } as any;
+    const applyAnimationState = jest.fn();
+    (graphic as any).applyAnimationState = applyAnimationState;
+
+    graphic.useStates(['hover'], true);
+    graphic.clearStates(true);
+
+    expect(applyAnimationState).toHaveBeenLastCalledWith(
+      ['state'],
+      [
+        {
+          name: 'state',
+          animation: expect.objectContaining({
+            to: expect.objectContaining({ x1: 10 })
+          })
+        }
+      ]
+    );
+  });
+
+  test('should animate a removed rect alias back to its derived static value when changing states', () => {
+    const graphic = createGraphic();
+    graphic.states = {
+      hover: {
+        x1: 40
+      },
+      selected: {
+        fill: 'green'
+      }
+    } as any;
+    const applyAnimationState = jest.fn();
+    (graphic as any).applyAnimationState = applyAnimationState;
+
+    graphic.useStates(['hover'], true);
+    graphic.useStates(['selected'], true);
+
+    expect(applyAnimationState).toHaveBeenLastCalledWith(
+      ['state'],
+      [
+        {
+          name: 'state',
+          animation: expect.objectContaining({
+            to: expect.objectContaining({ x1: 10 })
+          })
+        }
+      ]
+    );
+  });
+
   test('should allow explicit animateConfig to override graphic and context defaults in applyStateAttrs', () => {
     const graphic = createGraphic();
     graphic.stateAnimateConfig = {

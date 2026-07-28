@@ -740,7 +740,6 @@ abstract class GraphicImpl<T extends Partial<IGraphicAttribute> = Partial<IGraph
     }
 
     const snapshot = this.buildStaticAttributeSnapshot() as Record<string, any>;
-    const staticTargetAttrs = snapshot as Partial<T>;
     Object.keys(previousResolvedStatePatch).forEach(key => {
       const hasTargetAttr = Object.prototype.hasOwnProperty.call(targetStateAttrs, key);
       if (hasTargetAttr && (targetStateAttrs as Record<string, any>)[key] !== undefined) {
@@ -748,9 +747,6 @@ abstract class GraphicImpl<T extends Partial<IGraphicAttribute> = Partial<IGraph
       }
 
       const assignFallbackAttr = (value: any): void => {
-        if (value === undefined && this.shouldSkipStateTransitionDefaultAttribute(key, staticTargetAttrs)) {
-          return;
-        }
         extraAttrs[key] = value === undefined ? value : cloneAttributeValue(value);
       };
 
@@ -2314,6 +2310,7 @@ abstract class GraphicImpl<T extends Partial<IGraphicAttribute> = Partial<IGraph
       ? {
           animateConfig: resolvedAnimateConfig,
           extraAnimateAttrs: extraAnimateAttrs as Record<string, unknown>,
+          getStateTransitionDefaultAttribute: this.getStateTransitionDefaultAttribute.bind(this),
           shouldSkipDefaultAttribute: this.shouldSkipStateTransitionDefaultAttribute.bind(this) as (
             key: string,
             targetAttrs: Record<string, unknown>
@@ -2330,6 +2327,7 @@ abstract class GraphicImpl<T extends Partial<IGraphicAttribute> = Partial<IGraph
       noWorkAnimateAttr: this.getNoWorkAnimateAttr(),
       animateConfig: resolvedAnimateConfig,
       extraAnimateAttrs: extraAnimateAttrs as Record<string, unknown>,
+      getStateTransitionDefaultAttribute: this.getStateTransitionDefaultAttribute.bind(this),
       shouldSkipDefaultAttribute: this.shouldSkipStateTransitionDefaultAttribute.bind(this) as (
         key: string,
         targetAttrs: Record<string, unknown>

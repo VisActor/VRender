@@ -12,6 +12,7 @@ export interface IStateTransitionAnalysisOptions {
   noWorkAnimateAttr?: Record<string, number>;
   isClear?: boolean;
   getDefaultAttribute?: (key: string) => unknown;
+  getStateTransitionDefaultAttribute?: (key: string) => unknown;
   shouldSkipDefaultAttribute?: (key: string, targetAttrs: Record<string, unknown>) => boolean;
   animateConfig?: IAnimateConfig;
   extraAnimateAttrs?: Record<string, unknown>;
@@ -20,6 +21,7 @@ export interface IStateTransitionAnalysisOptions {
 export interface IStateTransitionApplyOptions {
   animateConfig?: IAnimateConfig;
   extraAnimateAttrs?: Record<string, unknown>;
+  getStateTransitionDefaultAttribute?: (key: string) => unknown;
   shouldSkipDefaultAttribute?: (key: string, targetAttrs: Record<string, unknown>) => boolean;
 }
 
@@ -107,11 +109,23 @@ export class StateTransitionOrchestrator<T extends Record<string, any> = Record<
     const isClear = options.isClear === true;
     const getDefaultAttribute = options.getDefaultAttribute;
     const readDefaultAttribute = getDefaultAttribute as (key: string) => unknown;
+    const readStateTransitionDefaultAttribute = (options.getStateTransitionDefaultAttribute ?? getDefaultAttribute) as
+      | ((key: string) => unknown)
+      | undefined;
     const shouldSkipDefaultAttribute = options.shouldSkipDefaultAttribute;
 
-    const assignTransitionAttr = (key: string, value: any): void => {
+    const assignTransitionAttr = (key: string, value: any, isRemovedStateAttr: boolean = false): void => {
       if (noWorkAnimateAttr[key]) {
         (plan.noAnimateAttrs as Record<string, any>)[key] = value;
+        return;
+      }
+
+      if (isRemovedStateAttr && value === undefined) {
+        const defaultValue = readStateTransitionDefaultAttribute?.(key);
+        if (defaultValue === undefined && shouldSkipDefaultAttribute?.(key, targetAttrs as Record<string, unknown>)) {
+          return;
+        }
+        (plan.animateAttrs as Record<string, any>)[key] = defaultValue;
         return;
       }
 
@@ -145,7 +159,7 @@ export class StateTransitionOrchestrator<T extends Record<string, any> = Record<
         ) {
           continue;
         }
-        assignTransitionAttr(key, (extraAnimateAttrs as Record<string, any>)[key]);
+        assignTransitionAttr(key, (extraAnimateAttrs as Record<string, any>)[key], true);
       }
     }
 
@@ -202,6 +216,7 @@ export class StateTransitionOrchestrator<T extends Record<string, any> = Record<
       noWorkAnimateAttr: graphic.getNoWorkAnimateAttr(),
       isClear: true,
       getDefaultAttribute: graphic.getDefaultAttribute.bind(graphic),
+      getStateTransitionDefaultAttribute: options.getStateTransitionDefaultAttribute,
       shouldSkipDefaultAttribute:
         options.shouldSkipDefaultAttribute ?? graphic.shouldSkipStateTransitionDefaultAttribute.bind(graphic),
       animateConfig: options.animateConfig,

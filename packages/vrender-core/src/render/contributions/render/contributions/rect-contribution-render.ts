@@ -70,6 +70,10 @@ export class DefaultRectRenderContribution implements IRectRenderContribution {
 
     width = (width ?? x1 - x) || 0;
     height = (height ?? y1 - y) || 0;
+    const borderX = width < 0 ? x + width : x;
+    const borderY = height < 0 ? y + height : y;
+    const borderWidth = width < 0 ? -width : width;
+    const borderHeight = height < 0 ? -height : height;
 
     const renderBorder = (borderStyle: Partial<IBorderStyle>, key: 'outerBorder' | 'innerBorder') => {
       const doStroke = !!(borderStyle && borderStyle.stroke);
@@ -77,13 +81,13 @@ export class DefaultRectRenderContribution implements IRectRenderContribution {
       const sign = key === 'outerBorder' ? -1 : 1;
       const { distance = rectAttribute[key].distance } = borderStyle;
       const d = keepStrokeScale ? (distance as number) : getScaledStroke(context, distance as number, context.dpr);
-      const nextX = x + sign * d;
-      const nextY = y + sign * d;
+      const nextX = borderX + sign * d;
+      const nextY = borderY + sign * d;
       const dw = d * 2;
       if (cornerRadius === 0 || (isArray(cornerRadius) && (<number[]>cornerRadius).every(num => num === 0))) {
         // 不需要处理圆角
         context.beginPath();
-        context.rect(nextX, nextY, width - sign * dw, height - sign * dw);
+        context.rect(nextX, nextY, borderWidth - sign * dw, borderHeight - sign * dw);
       } else {
         context.beginPath();
 
@@ -92,8 +96,8 @@ export class DefaultRectRenderContribution implements IRectRenderContribution {
           context,
           nextX,
           nextY,
-          width - sign * dw,
-          height - sign * dw,
+          borderWidth - sign * dw,
+          borderHeight - sign * dw,
           cornerRadius,
           cornerType !== 'bevel'
         );

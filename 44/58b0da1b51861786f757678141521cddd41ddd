@@ -1,0 +1,23 @@
+packages/vrender-core/__tests__/unit/graphic/state-animation.test.ts
+  s_326dd3520e53ee::t_6892791a2e0240 282-298
+packages/vrender-core/src/graphic/graphic.ts
+  s_326dd3520e53ee::t_82acb5c0e56545 758,763,767
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "4458b0da1b51861786f757678141521cddd41ddd",
+  "prompts": {},
+  "sessions": {
+    "s_326dd3520e53ee": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019fa6a4-30df-7bc3-88e7-97f4e4da3e77",
+        "model": "unknown"
+      },
+      "human_author": "lixuefei.1313 <lixuef1313@163.com>"
+    }
+  },
+  "attestation_metadata": {},
+  "remote_transcripts": {}
+}

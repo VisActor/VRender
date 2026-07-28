@@ -151,6 +151,46 @@ describe('rect split stroke contribution', () => {
     expect([x, x + width]).toEqual([86, 106]);
   });
 
+  test('resolves x1 width in attribute space when the draw origin includes dx', () => {
+    const contribution = new DefaultRectRenderContribution();
+    const context = { beginPath: jest.fn(), rect: jest.fn() };
+
+    contribution.drawShape(
+      {
+        attribute: {
+          x: 100,
+          x1: 92,
+          y: 20,
+          height: 10,
+          dx: 10,
+          outerBorder: { distance: 6 }
+        }
+      } as any,
+      context as any,
+      110,
+      20,
+      true,
+      true,
+      true,
+      true,
+      {
+        x: 100,
+        y: 20,
+        opacity: 1,
+        scaleX: 1,
+        scaleY: 1,
+        keepStrokeScale: true,
+        cornerRadius: 0,
+        cornerType: 'round',
+        outerBorder: { distance: 6 },
+        innerBorder: { distance: 0 }
+      } as any,
+      {} as any
+    );
+
+    expect(context.rect).toHaveBeenCalledWith(96, 14, 20, 22);
+  });
+
   test('preserves the non-degenerate positive inner-border path', () => {
     const contribution = new DefaultRectRenderContribution();
     const context = { beginPath: jest.fn(), rect: jest.fn() };

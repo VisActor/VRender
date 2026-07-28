@@ -68,8 +68,8 @@ export class DefaultRectRenderContribution implements IRectRenderContribution {
 
     let { width, height } = rect.attribute;
 
-    width = (width ?? x1 - x) || 0;
-    height = (height ?? y1 - y) || 0;
+    width = (width ?? x1 - originX) || 0;
+    height = (height ?? y1 - originY) || 0;
     const borderX = width < 0 ? x + width : x;
     const borderY = height < 0 ? y + height : y;
     const borderWidth = width < 0 ? -width : width;

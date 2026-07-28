@@ -426,6 +426,20 @@ describe('StateTransitionOrchestrator', () => {
     expect(plan.targetAttrs).not.toHaveProperty('fillOpacity');
   });
 
+  test('should retain an undefined removed attribute when no default resolver is provided', () => {
+    const orchestrator = new StateTransitionOrchestrator<any>();
+
+    const plan = orchestrator.analyzeTransition({}, true, {
+      extraAnimateAttrs: {
+        fillOpacity: undefined
+      }
+    });
+
+    expect(plan.animateAttrs).toEqual({
+      fillOpacity: undefined
+    });
+  });
+
   test('should allow extra animation attrs to replace an undefined clear target transiently', () => {
     const orchestrator = new StateTransitionOrchestrator<any>();
 

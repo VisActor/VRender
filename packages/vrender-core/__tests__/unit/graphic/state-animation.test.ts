@@ -279,6 +279,83 @@ describe('Graphic state animation integration', () => {
     );
   });
 
+  test('should synchronously remove a no-work state attribute when clearing states', () => {
+    const graphic = createGraphic();
+    graphic.states = {
+      hover: {
+        globalZIndex: 400
+      }
+    } as any;
+
+    graphic.useStates(['hover'], true);
+
+    expect(graphic.attribute.globalZIndex).toBe(400);
+
+    graphic.clearStates(true);
+
+    expect(graphic.attribute.globalZIndex).toBeUndefined();
+  });
+
+  test('should animate a removed rect alias back to its derived static value when clearing states', () => {
+    const graphic = createGraphic();
+    graphic.states = {
+      hover: {
+        x1: 40
+      }
+    } as any;
+    const applyAnimationState = jest.fn();
+    (graphic as any).applyAnimationState = applyAnimationState;
+
+    graphic.useStates(['hover'], true);
+    graphic.clearStates(true);
+
+    expect(applyAnimationState).toHaveBeenLastCalledWith(
+      ['state'],
+      [
+        {
+          name: 'state',
+          animation: expect.objectContaining({
+            to: expect.objectContaining({ x1: 10 })
+          })
+        }
+      ]
+    );
+  });
+
+  test('should derive a removed rect alias from the target static state when changing states', () => {
+    const graphic = createGraphic();
+    delete (graphic as any).baseAttributes.width;
+    delete (graphic.attribute as any).width;
+    (graphic as any).baseAttributes.x1 = 10;
+    (graphic.attribute as any).x1 = 10;
+    graphic.states = {
+      hover: {
+        width: 40
+      },
+      selected: {
+        x: 5,
+        x1: 30
+      }
+    } as any;
+    const applyAnimationState = jest.fn();
+    (graphic as any).applyAnimationState = applyAnimationState;
+
+    graphic.useStates(['hover'], true);
+    graphic.useStates(['selected'], true);
+
+    expect(applyAnimationState).toHaveBeenLastCalledWith(
+      ['state'],
+      [
+        {
+          name: 'state',
+          animation: expect.objectContaining({
+            to: expect.objectContaining({ width: 25 })
+          })
+        }
+      ]
+    );
+  });
+
   test('should allow explicit animateConfig to override graphic and context defaults in applyStateAttrs', () => {
     const graphic = createGraphic();
     graphic.stateAnimateConfig = {

@@ -1,0 +1,25 @@
+packages/vrender-core/__tests__/unit/graphic/state-animation.test.ts
+  s_326dd3520e53ee::t_a0747ce9a4ec06 325,327-330,333,336-337,352
+packages/vrender-core/src/graphic/graphic.ts
+  s_326dd3520e53ee::t_773789c0aa6a1c 735,737,741,765-768,2277-2280,2287-2288,2313-2314,2321-2324,2328-2329,2342-2345,2349-2350,2418-2421,2428-2429,2524-2527,2534-2535
+packages/vrender-core/src/graphic/state/state-transition-orchestrator.ts
+  s_326dd3520e53ee::t_7d15205358ca72 15,19,25,27,115,118,127-128,226-227
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "b06277a7045c1d23009af86a4d4c99a99d55d5f1",
+  "prompts": {},
+  "sessions": {
+    "s_326dd3520e53ee": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019fa6a4-30df-7bc3-88e7-97f4e4da3e77",
+        "model": "unknown"
+      },
+      "human_author": "lixuefei.1313 <lixuef1313@163.com>"
+    }
+  },
+  "attestation_metadata": {},
+  "remote_transcripts": {}
+}

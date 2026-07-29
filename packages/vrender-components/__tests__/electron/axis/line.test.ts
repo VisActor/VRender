@@ -198,6 +198,50 @@ describe('Line Axis', () => {
     expect(labelWidth).toBeLessThan(40);
   });
 
+  it('hides a flushed rotated endpoint label that overlaps its predecessor', () => {
+    const axis = new LineAxis({
+      orient: 'left',
+      start: { x: 0, y: 0 },
+      end: { x: 0, y: 400 },
+      verticalFactor: 1,
+      items: [
+        [
+          { id: -200000000000, label: '-200000000000', rawValue: -200000000000, value: 1 },
+          { id: -100000000000, label: '-100000000000', rawValue: -100000000000, value: 0.8571428571428571 },
+          { id: 0, label: '0', rawValue: 0, value: 0.7142857142857143 },
+          { id: 100000000000, label: '100000000000', rawValue: 100000000000, value: 0.5714285714285714 },
+          { id: 200000000000, label: '200000000000', rawValue: 200000000000, value: 0.4285714285714286 },
+          { id: 300000000000, label: '300000000000', rawValue: 300000000000, value: 0.2857142857142857 },
+          { id: 400000000000, label: '400000000000', rawValue: 400000000000, value: 0.14285714285714285 },
+          { id: 500000000000, label: '500000000000', rawValue: 500000000000, value: 0 }
+        ]
+      ],
+      label: {
+        visible: true,
+        autoLimit: false,
+        autoHide: true,
+        autoHideMethod: 'greedy',
+        flush: true,
+        style: {
+          angle: Math.PI / 2,
+          textAlign: 'center',
+          textBaseline: 'top'
+        }
+      }
+    });
+
+    (axis as any).render();
+
+    const labels = axis.getElementsByName(AXIS_ELEMENT_NAME.label) as unknown as IText[];
+    const first = labels.find(label => label.attribute.text === '-200000000000');
+    const second = labels.find(label => label.attribute.text === '-100000000000');
+
+    expect(first).toBeDefined();
+    expect(second).toBeDefined();
+    expect(first.attribute.visible).toBe(true);
+    expect(second.attribute.visible).toBe(false);
+  });
+
   it('Line Axis with Title', () => {
     const scale = new LinearScale().domain([0, 100]).range([0, 1]).nice();
     const items = scale.ticks(10).map(tick => {

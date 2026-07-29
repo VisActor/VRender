@@ -39,6 +39,8 @@ type LynxRuntime = Partial<{
   createCanvasNG: (id?: string) => any;
   createImage: (id: string) => any;
   createOffscreenCanvas: () => any;
+  requestAnimationFrame: (callback: FrameRequestCallback) => number;
+  cancelAnimationFrame: (handle: number) => void;
   krypton: LynxKryptonRuntime;
 }>;
 
@@ -127,6 +129,9 @@ function getGlobalSystemPixelRatio(): number | undefined {
 function getLynxRuntime(params?: LynxEnvParams): LynxRuntime | undefined {
   return params?.lynx ?? params?.runtime ?? getGlobalLynxRuntime();
 }
+
+const requestAnimationFrameBasedSTO = (callback: FrameRequestCallback): number => rafBasedSto.call(callback);
+const cancelAnimationFrameBasedSTO = (handle: number): void => rafBasedSto.clear(handle);
 
 function getLynxPixelRatio(params?: LynxEnvParams, runtime?: LynxRuntime): number {
   return params?.pixelRatio ?? runtime?.getSystemInfoSync?.()?.pixelRatio ?? getGlobalSystemPixelRatio() ?? 1;
@@ -257,6 +262,8 @@ export class LynxEnvContribution extends BaseEnvContribution implements IEnvCont
   canvasIdx: number = 0;
   private lynxRuntime?: LynxRuntime;
   private lynxEnvParams?: LynxEnvParams;
+  private requestAnimationFrame = requestAnimationFrameBasedSTO;
+  private cancelAnimationFrame = cancelAnimationFrameBasedSTO;
 
   constructor() {
     super();
@@ -278,6 +285,17 @@ export class LynxEnvContribution extends BaseEnvContribution implements IEnvCont
       service.setActiveEnvContribution(this);
       this.lynxEnvParams = params;
       this.lynxRuntime = getLynxRuntime(params);
+
+      if (
+        typeof this.lynxRuntime?.requestAnimationFrame === 'function' &&
+        typeof this.lynxRuntime?.cancelAnimationFrame === 'function'
+      ) {
+        this.requestAnimationFrame = this.lynxRuntime.requestAnimationFrame.bind(this.lynxRuntime);
+        this.cancelAnimationFrame = this.lynxRuntime.cancelAnimationFrame.bind(this.lynxRuntime);
+      } else {
+        this.requestAnimationFrame = requestAnimationFrameBasedSTO;
+        this.cancelAnimationFrame = cancelAnimationFrameBasedSTO;
+      }
 
       // loadFeishuContributions();
     }
@@ -375,23 +393,11 @@ export class LynxEnvContribution extends BaseEnvContribution implements IEnvCont
   }
 
   getRequestAnimationFrame(): (callback: FrameRequestCallback) => number {
-    // return requestAnimationFrame;
-
-    // 飞书小组件，在云文档浏览器环境中，没有requestAnimationFrame
-    // 但是在小组件工作台环境和模拟器中正常
-    // 反馈飞书修改，目前先使用setTimeout模拟，进行测试，飞书修复后替换回requestAnimationFrame
-    // return function (callback: FrameRequestCallback) {
-    //   return setTimeout(callback, 1000 / 60, true);
-    // } as any;
-    return function (callback: FrameRequestCallback) {
-      return rafBasedSto.call(callback);
-    } as any;
+    return this.requestAnimationFrame;
   }
 
-  getCancelAnimationFrame(): (h: number) => void {
-    return (h: number) => {
-      rafBasedSto.clear(h);
-    };
+  getCancelAnimationFrame(): (handle: number) => void {
+    return this.cancelAnimationFrame;
   }
 
   mapToCanvasPoint(event: any) {

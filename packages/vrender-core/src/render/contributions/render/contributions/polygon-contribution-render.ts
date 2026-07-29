@@ -122,15 +122,23 @@ export class DefaultPolygonRenderContribution implements IPolygonRenderContribut
       } else if (doBorderStroke) {
         // 主题里 border 的默认值不带 opacity，缺了会让 setStrokeStyle 整段空转，与 rect 一样先临时注入
         const lastOpacity = (polygonAttribute[key] as any).opacity;
+        const borderStyleWithStrokeScale = borderStyle as IBorderStyle & { keepStrokeScale?: boolean };
+        const lastKeepStrokeScale = borderStyleWithStrokeScale.keepStrokeScale;
         (polygonAttribute[key] as any).opacity = opacity;
+        borderStyleWithStrokeScale.keepStrokeScale = keepStrokeScale;
         context.setStrokeStyle(
           polygon,
-          borderStyle,
+          borderStyleWithStrokeScale,
           (originX - x) / scaleX,
           (originY - y) / scaleY,
           polygonAttribute[key] as any
         );
         (polygonAttribute[key] as any).opacity = lastOpacity;
+        if (lastKeepStrokeScale === undefined) {
+          delete borderStyleWithStrokeScale.keepStrokeScale;
+        } else {
+          borderStyleWithStrokeScale.keepStrokeScale = lastKeepStrokeScale;
+        }
         context.stroke();
       }
     };

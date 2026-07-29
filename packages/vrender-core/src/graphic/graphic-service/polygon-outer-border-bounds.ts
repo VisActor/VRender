@@ -54,7 +54,7 @@ export const updateBoundsOfPolygonOuterBorder = (
     offsetPolygonPoints(points, scaledDistance, closePath).forEach(point => {
       aabbBounds.add(point.x, point.y);
     });
-    const scaledLineWidth = lineWidth * boundsScale;
+    const scaledLineWidth = lineWidth * (keepStrokeScale ? 1 : boundsScale);
     const scaledShadowBlur = shadowBlur * boundsScale;
     boundStroke(aabbBounds, (scaledShadowBlur + scaledLineWidth) / 2, lineJoin === 'miter', strokeBoundsBuffer);
   }

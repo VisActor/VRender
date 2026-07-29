@@ -9,7 +9,7 @@ import type { GraphicType } from '../interface';
 import { POLYGON_NUMBER_TYPE } from './constants';
 import { getPolygonBoundsScale, updateBoundsOfPolygonOuterBorder } from './graphic-service/polygon-outer-border-bounds';
 
-const POLYGON_UPDATE_TAG_KEY = ['points', 'cornerRadius', ...GRAPHIC_UPDATE_TAG_KEY];
+const POLYGON_UPDATE_TAG_KEY = ['points', 'cornerRadius', 'outerBorder', 'keepStrokeScale', ...GRAPHIC_UPDATE_TAG_KEY];
 
 export class Polygon extends Graphic<IPolygonGraphicAttribute> implements IPolygon {
   type: GraphicType = 'polygon';

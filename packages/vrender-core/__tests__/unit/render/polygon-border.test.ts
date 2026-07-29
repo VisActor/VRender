@@ -191,4 +191,64 @@ describe('polygon border contribution', () => {
     expect(pathCalls.length).toBeGreaterThan(0);
     expect(pathCalls.every(Number.isFinite)).toBe(true);
   });
+
+  test('passes keepStrokeScale to the outer border stroke style', () => {
+    const contribution = new DefaultPolygonRenderContribution();
+    const nativeContext = {
+      moveTo: jest.fn(),
+      lineTo: jest.fn(),
+      arcTo: jest.fn()
+    };
+    let receivedKeepStrokeScale: boolean | undefined;
+    const context: any = {
+      camera: null,
+      nativeContext,
+      beginPath: jest.fn(),
+      closePath: jest.fn(),
+      setStrokeStyle: jest.fn((_polygon, attribute) => {
+        receivedKeepStrokeScale = attribute.keepStrokeScale;
+      }),
+      stroke: jest.fn()
+    };
+    const polygon = {
+      attribute: {
+        points: [
+          { x: 0, y: 0 },
+          { x: 100, y: 0 },
+          { x: 100, y: 100 },
+          { x: 0, y: 100 }
+        ],
+        keepStrokeScale: true,
+        outerBorder: { stroke: '#f00', distance: 10, lineWidth: 4 }
+      }
+    };
+
+    contribution.drawShape(
+      polygon as any,
+      context,
+      0,
+      0,
+      true,
+      true,
+      true,
+      true,
+      {
+        points: [],
+        cornerRadius: 0,
+        closePath: true,
+        keepStrokeScale: false,
+        opacity: 1,
+        x: 0,
+        y: 0,
+        scaleX: 1,
+        scaleY: 1,
+        outerBorder: { distance: 0, lineWidth: 1 },
+        innerBorder: { distance: 0 }
+      } as any,
+      {} as any
+    );
+
+    expect(context.setStrokeStyle).toHaveBeenCalledTimes(1);
+    expect(receivedKeepStrokeScale).toBe(true);
+  });
 });

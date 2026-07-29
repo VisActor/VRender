@@ -122,4 +122,77 @@ describe('polygon outer border bounds', () => {
       application.graphicService = previousGraphicService;
     }
   });
+
+  test('updates bounds when a state changes the outer border distance', () => {
+    const previousGraphicService = application.graphicService;
+    application.graphicService = new DefaultGraphicService();
+
+    try {
+      const polygon = new Polygon({
+        points: [
+          { x: 0, y: 0 },
+          { x: 100, y: 0 },
+          { x: 100, y: 100 },
+          { x: 0, y: 100 }
+        ],
+        outerBorder: {
+          stroke: '#f00',
+          distance: 10,
+          lineWidth: 0,
+          strokeBoundsBuffer: 0
+        }
+      });
+
+      expect(polygon.AABBBounds.x1).toBeLessThanOrEqual(-10);
+
+      polygon.states = {
+        hover: {
+          outerBorder: {
+            stroke: '#f00',
+            distance: 20,
+            lineWidth: 0,
+            strokeBoundsBuffer: 0
+          }
+        }
+      } as any;
+      polygon.useStates(['hover'], false);
+
+      expect(polygon.AABBBounds.x1).toBeLessThanOrEqual(-20);
+    } finally {
+      application.graphicService = previousGraphicService;
+    }
+  });
+
+  test('scales the outer border width when keepStrokeScale is true', () => {
+    const previousGraphicService = application.graphicService;
+    application.graphicService = new DefaultGraphicService();
+
+    try {
+      const polygon = new Polygon({
+        points: [
+          { x: 0, y: 0 },
+          { x: 100, y: 0 },
+          { x: 100, y: 100 },
+          { x: 0, y: 100 }
+        ],
+        scaleX: 0.5,
+        scaleY: 0.5,
+        keepStrokeScale: true,
+        outerBorder: {
+          stroke: '#f00',
+          distance: 0,
+          lineWidth: 10,
+          lineJoin: 'round',
+          strokeBoundsBuffer: 0
+        }
+      });
+
+      expect(polygon.AABBBounds.x1).toBeCloseTo(-2.5);
+      expect(polygon.AABBBounds.y1).toBeCloseTo(-2.5);
+      expect(polygon.AABBBounds.x2).toBeCloseTo(52.5);
+      expect(polygon.AABBBounds.y2).toBeCloseTo(52.5);
+    } finally {
+      application.graphicService = previousGraphicService;
+    }
+  });
 });

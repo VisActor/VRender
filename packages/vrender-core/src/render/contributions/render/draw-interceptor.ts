@@ -281,15 +281,16 @@ export class InteractiveDrawItemInterceptorContribution implements IDrawItemInte
    * @param params
    */
   /**
-   * 算出克隆的 postMatrix，让它落在原图元所在的位置上。
+   * 算出克隆的 postMatrix，让它的包围盒落回原图元所在的位置。
    *
-   * 目标是 clone.globalTransMatrix === graphic.globalTransMatrix。克隆和原图元的属性一致，局部矩阵
-   * `L`（不含 postMatrix）相同，于是：
-   *   graphic.globalTransMatrix = P × (ownPost × L) × T(scroll)      —— 见 doUpdateGlobalMatrix
-   *   clone.globalTransMatrix   = clonePost × L
-   * 把中间的 scroll 平移左移出来（T 为纯平移，`own × T(s) × own⁻¹` 仍是平移，位移量即 own 的线性部分
-   * 作用在 s 上），两边约掉 L 即得：
-   *   clonePost = P × T(own · scroll) × ownPost
+   * 对齐的目标是 `globalAABBBounds` —— 拾取预筛读的就是它。克隆和原图元的属性一致，局部矩阵 `L`
+   * （不含 postMatrix）相同，所以只要把祖先贡献补在 `L` 之外即可：
+   *   clonePost = P × ownPost
+   *
+   * 注意这里刻意不带父级的 scroll。`doUpdateGlobalMatrix` 会把 scroll 叠进 `globalTransMatrix`，但
+   * `globalAABBBounds` 并不包含它（父级 `scrollX/scrollY` 为 30/20 时，普通图元的 matrix.e 是 180 而
+   * bounds 中心是 150），所以按 matrix 去对齐反而会把克隆的包围盒推出去一个 scroll。
+   *
    * 每帧复用挂在克隆上的同一个 Matrix，避免反复分配。
    */
   protected resolveInteractivePostMatrix(graphic: IGraphic, interactiveGraphic: IGraphic): Matrix | undefined {
@@ -312,14 +313,6 @@ export class InteractiveDrawItemInterceptorContribution implements IDrawItemInte
       ancestorMatrix.e,
       ancestorMatrix.f
     );
-    const { scrollX = 0, scrollY = 0 } = parent.attribute;
-    if (scrollX || scrollY) {
-      const ownMatrix = graphic.transMatrix;
-      matrix.translate(
-        ownMatrix.a * scrollX + ownMatrix.c * scrollY,
-        ownMatrix.b * scrollX + ownMatrix.d * scrollY
-      );
-    }
     // 克隆是从原图元 clone 来的，自带原图元的 postMatrix，不能被祖先变换顶掉
     const ownPostMatrix = graphic.attribute.postMatrix;
     if (ownPostMatrix) {

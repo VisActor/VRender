@@ -110,18 +110,24 @@ describe('interactive graphic bounds', () => {
     expectSamePlacement(circle.interactiveGraphic.globalTransMatrix, circle.globalTransMatrix);
   });
 
-  test('accounts for the parent scroll that doUpdateGlobalMatrix applies after the local matrix', () => {
+  test('leaves the parent scroll out, because globalAABBBounds does not carry it either', () => {
     const parent = createGroup({ x: 100, y: 80, scrollX: 30, scrollY: 20 });
     const circle = createCircle({ x: 150, y: 100, radius: 12, globalZIndex: 100 });
     parent.add(circle);
 
     hoist(circle);
 
-    expectSamePlacement(circle.interactiveGraphic.globalTransMatrix, circle.globalTransMatrix);
+    // doUpdateGlobalMatrix 把 scroll 叠进 globalTransMatrix，globalAABBBounds 却不含它，
+    // 而拾取预筛读的是后者 —— 克隆要跟着 bounds 走，所以只补祖先变换、不补 scroll
+    const ancestor = parent.globalTransMatrix;
+    const placement = circle.interactiveGraphic.globalTransMatrix;
+    expect(placement.e).toBeCloseTo(ancestor.e + circle.transMatrix.e);
+    expect(placement.f).toBeCloseTo(ancestor.f + circle.transMatrix.f);
+    expect(placement.e).not.toBeCloseTo(circle.globalTransMatrix.e);
   });
 
-  test('handles a scaled ancestor, a source postMatrix and a parent scroll together', () => {
-    const parent = createGroup({ x: 100, y: 80, scaleX: 2, scaleY: 3, scrollX: 30, scrollY: 20 });
+  test('handles a scaled ancestor together with a source postMatrix and a rotated source', () => {
+    const parent = createGroup({ x: 100, y: 80, scaleX: 2, scaleY: 3 });
     const circle = createCircle({
       x: 150,
       y: 100,

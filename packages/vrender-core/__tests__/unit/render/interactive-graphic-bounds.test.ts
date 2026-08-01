@@ -1,3 +1,4 @@
+import { Matrix } from '@visactor/vutils';
 import { InteractiveDrawItemInterceptorContribution } from '../../../src/render/contributions/render/draw-interceptor';
 import { createCircle } from '../../../src/graphic/circle';
 import { createGroup } from '../../../src/graphic/group';
@@ -46,6 +47,17 @@ function expectSamePlacement(actual: any, expected: any) {
   expect(actual.f).toBeCloseTo(expected.f);
 }
 
+function hoist(graphic: any) {
+  const { hoisted, drawContext } = createDrawContextStub();
+  const handled = new InteractiveDrawItemInterceptorContribution().beforeSetInteractive(
+    graphic,
+    {} as any,
+    drawContext as any,
+    {} as any
+  );
+  return { handled, hoisted };
+}
+
 describe('interactive graphic bounds', () => {
   test('keeps the hoisted clone aligned with the source graphic under a transformed parent', () => {
     const parent = createGroup({ x: 100, y: 80 });
@@ -79,6 +91,64 @@ describe('interactive graphic bounds', () => {
     );
 
     expect(circle.interactiveGraphic.attribute.postMatrix).toBeUndefined();
+    expectSamePlacement(circle.interactiveGraphic.globalTransMatrix, circle.globalTransMatrix);
+  });
+
+  test('keeps the source postMatrix while adding the ancestor transform', () => {
+    const parent = createGroup({ x: 100, y: 80 });
+    const circle = createCircle({
+      x: 150,
+      y: 100,
+      radius: 12,
+      globalZIndex: 100,
+      postMatrix: new Matrix(1, 0, 0, 1, 30, 20)
+    });
+    parent.add(circle);
+
+    hoist(circle);
+
+    expectSamePlacement(circle.interactiveGraphic.globalTransMatrix, circle.globalTransMatrix);
+  });
+
+  test('accounts for the parent scroll that doUpdateGlobalMatrix applies after the local matrix', () => {
+    const parent = createGroup({ x: 100, y: 80, scrollX: 30, scrollY: 20 });
+    const circle = createCircle({ x: 150, y: 100, radius: 12, globalZIndex: 100 });
+    parent.add(circle);
+
+    hoist(circle);
+
+    expectSamePlacement(circle.interactiveGraphic.globalTransMatrix, circle.globalTransMatrix);
+  });
+
+  test('handles a scaled ancestor, a source postMatrix and a parent scroll together', () => {
+    const parent = createGroup({ x: 100, y: 80, scaleX: 2, scaleY: 3, scrollX: 30, scrollY: 20 });
+    const circle = createCircle({
+      x: 150,
+      y: 100,
+      radius: 12,
+      scaleX: 1.5,
+      angle: Math.PI / 6,
+      globalZIndex: 100,
+      postMatrix: new Matrix(1, 0, 0, 1, 30, 20)
+    });
+    parent.add(circle);
+
+    hoist(circle);
+
+    expectSamePlacement(circle.interactiveGraphic.globalTransMatrix, circle.globalTransMatrix);
+  });
+
+  test('reuses the cached matrix instead of allocating one per pass', () => {
+    const parent = createGroup({ x: 100, y: 80 });
+    const circle = createCircle({ x: 150, y: 100, radius: 12, globalZIndex: 100 });
+    parent.add(circle);
+
+    hoist(circle);
+    const first = circle.interactiveGraphic.attribute.postMatrix;
+
+    hoist(circle);
+
+    expect(circle.interactiveGraphic.attribute.postMatrix).toBe(first);
     expectSamePlacement(circle.interactiveGraphic.globalTransMatrix, circle.globalTransMatrix);
   });
 });

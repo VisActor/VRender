@@ -292,11 +292,15 @@ export class InteractiveDrawItemInterceptorContribution implements IDrawItemInte
         interactiveGraphic.baseGraphic = graphic;
       }
       // 设置位置
-      // const m = graphic.globalTransMatrix;
+      // 克隆挂进交互层后就脱离了原图元的祖先链，只剩自身的局部变换。绘制由 beforeDrawInteractive 用
+      // baseGraphic.parent.globalTransMatrix 手动补偿，但克隆自身的包围盒补不到，会整体少一个祖先变换；
+      // pickGroup 的 insideGroup 预筛读的正是这个包围盒，落在偏移框外的图元会被整层跳过而拾取不到。
+      // postMatrix 合成在局部变换之外（见 Graphic.doUpdateLocalMatrix），正好等价于祖先链的贡献。
       interactiveGraphic.setAttributes(
         {
           globalZIndex: 0,
-          zIndex: graphic.attribute.globalZIndex
+          zIndex: graphic.attribute.globalZIndex,
+          postMatrix: graphic.parent ? graphic.parent.globalTransMatrix.clone() : undefined
         },
         false,
         { skipUpdateCallback: true }

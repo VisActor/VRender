@@ -3,6 +3,25 @@ import { createGroup } from '../../../src/graphic/group';
 import { createSharedStateTestStage } from './shared-state-test-utils';
 
 describe('shared state refresh contract', () => {
+  test('should refresh an active empty state when its shared definition gains attrs', () => {
+    const stage = createSharedStateTestStage();
+    const group = createGroup({});
+    const rect = createRect({ x: 0, y: 0, width: 10, height: 10, fill: 'black' });
+
+    (group as any).sharedStateDefinitions = { selected: {} };
+    stage.appendChild(group);
+    group.appendChild(rect);
+
+    rect.addState('selected', false, false);
+    expect(rect.attribute).toBe((rect as any).baseAttributes);
+
+    (group as any).sharedStateDefinitions = { selected: { fill: 'red' } };
+    stage.hooks.beforeRender.call(stage);
+
+    expect(rect.currentStates).toEqual(['selected']);
+    expect(rect.attribute.fill).toBe('red');
+  });
+
   test('should refresh active descendants before next render when group shared definitions change', () => {
     const stage = createSharedStateTestStage();
     const outer = createGroup({});

@@ -2298,6 +2298,20 @@ abstract class GraphicImpl<T extends Partial<IGraphicAttribute> = Partial<IGraph
     return true;
   }
 
+  protected hasStatePatch(patch?: Partial<T>): boolean {
+    if (!patch) {
+      return false;
+    }
+
+    for (const key in patch) {
+      if (Object.prototype.hasOwnProperty.call(patch, key)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   protected commitSameStatePatchRefresh(
     states: string[],
     hasAnimation?: boolean,
@@ -2466,6 +2480,10 @@ abstract class GraphicImpl<T extends Partial<IGraphicAttribute> = Partial<IGraph
     this.resolvedStatePatch = undefined;
     this.sharedStateDirty = false;
     this.clearSharedStateActiveRegistrations();
+    if (!this.attributeMayContainTransientAttrs && !this.hasStatePatch(previousResolvedStatePatch)) {
+      this.emitStateUpdateEvent();
+      return;
+    }
     if (hasAnimation) {
       this._syncFinalAttributeFromStaticTruth();
       const removedStateAnimationAttrs = this.buildRemovedStateAnimationAttrs(
@@ -2572,6 +2590,14 @@ abstract class GraphicImpl<T extends Partial<IGraphicAttribute> = Partial<IGraph
     this.resolvedStatePatch = resolvedStateAttrs;
     this.sharedStateDirty = false;
     this.syncSharedStateActiveRegistrations();
+    if (
+      !this.attributeMayContainTransientAttrs &&
+      !this.hasStatePatch(previousResolvedStatePatch) &&
+      !this.hasStatePatch(resolvedStateAttrs)
+    ) {
+      this.emitStateUpdateEvent();
+      return;
+    }
     if (hasAnimation) {
       this._syncFinalAttributeFromStaticTruth();
       const removedStateAnimationAttrs = this.buildRemovedStateAnimationAttrs(

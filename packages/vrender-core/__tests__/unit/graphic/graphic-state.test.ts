@@ -255,6 +255,38 @@ describe('Graphic useStates', () => {
     expect(graphic.currentStates).toEqual(['hover']);
   });
 
+  test('should retain an empty state without submitting attribute updates', () => {
+    const graphics = Array.from({ length: 100 }, createGraphic);
+    const onAttributeUpdate = jest.fn();
+    const afterStateUpdate = jest.fn();
+
+    graphics[0].addEventListener('afterStateUpdate', afterStateUpdate as any);
+
+    graphics.forEach(graphic => {
+      graphic.states = { selected: {} } as any;
+      jest.spyOn(graphic as any, 'onAttributeUpdate').mockImplementation(onAttributeUpdate);
+      graphic.addState('selected', false, false);
+    });
+
+    graphics.forEach(graphic => {
+      expect(graphic.currentStates).toEqual(['selected']);
+      expect(graphic.attribute).toBe((graphic as any).baseAttributes);
+      expect(graphic.resolvedStatePatch).toEqual({});
+    });
+    expect(onAttributeUpdate).not.toHaveBeenCalled();
+    expect(afterStateUpdate).toHaveBeenCalledTimes(1);
+
+    graphics.forEach(graphic => graphic.clearStates(false));
+
+    graphics.forEach(graphic => {
+      expect(graphic.currentStates).toEqual([]);
+      expect(graphic.attribute).toBe((graphic as any).baseAttributes);
+      expect(graphic.resolvedStatePatch).toBeUndefined();
+    });
+    expect(onAttributeUpdate).not.toHaveBeenCalled();
+    expect(afterStateUpdate).toHaveBeenCalledTimes(2);
+  });
+
   test('should emit beforeStateUpdate with previous and next state info', () => {
     const graphic = createGraphic();
     graphic.states = {

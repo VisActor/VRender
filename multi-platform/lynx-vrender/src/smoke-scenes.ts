@@ -43,6 +43,8 @@ export const SCENES = [
   { key: 'states', label: '状态' },
   { key: 'transform', label: '变换' },
   { key: 'components', label: '组件' },
+  { key: 'tooltip', label: 'Tooltip' },
+  { key: 'baseline', label: '基准矩阵' },
   { key: 'events', label: '事件' },
   { key: 'stress', label: '批量' },
   { key: 'geometry', label: '几何' },
@@ -80,6 +82,14 @@ export const SCENE_META: Record<SceneKey, { title: string; hint: string }> = {
   components: {
     title: 'VRender Components',
     hint: '首屏挂载 Tag、Segment、Axis、Legend、Slider、DataZoom、ScrollBar 和输入控件，失败组件显示 fallback。'
+  },
+  tooltip: {
+    title: 'Tooltip 文字对齐',
+    hint: '红色横线是内容行中心，应同时穿过 symbol 中心和文字视觉中心。'
+  },
+  baseline: {
+    title: 'Baseline Matrix（PROTOTYPE）',
+    hint: '10/16/24px × 五种 correction；横线是传给 alphabetic baseline 的原始 y。'
   },
   events: {
     title: '事件拾取边界',
@@ -338,6 +348,10 @@ class LynxSmokeController {
         this.drawTransformScene();
       } else if (sceneKey === 'components') {
         this.drawComponentsScene();
+      } else if (sceneKey === 'tooltip') {
+        this.drawTooltipScene();
+      } else if (sceneKey === 'baseline') {
+        this.drawBaselineMatrixScene();
       } else if (sceneKey === 'events') {
         this.drawEventsScene();
       } else if (sceneKey === 'stress') {
@@ -1859,6 +1873,192 @@ class LynxSmokeController {
       deferredControlsMounted: false
     };
     this.mountDeferredComponentControls();
+  }
+
+  private drawTooltipScene() {
+    const tooltip = new (componentCtor(Tooltip))({
+      x: 16,
+      y: 18,
+      visible: true,
+      autoMeasure: false,
+      autoCalculatePosition: false,
+      padding: [18, 20],
+      panel: {
+        visible: true,
+        width: 294,
+        height: 172,
+        fill: '#FFFFFF',
+        stroke: '#98A2B3',
+        lineWidth: 1,
+        cornerRadius: 10,
+        shadow: false
+      },
+      title: {
+        visible: true,
+        height: 30,
+        value: { text: 'Tooltip alignment' }
+      },
+      titleStyle: {
+        value: {
+          fill: '#101828',
+          fontFamily: 'Arial',
+          fontSize: 20,
+          lineHeight: 30,
+          textBaseline: 'middle'
+        },
+        spaceRow: 8
+      },
+      content: [
+        {
+          height: 18,
+          key: { text: 'Alpha' },
+          value: { text: '12' },
+          shape: { visible: true, fill: '#276EF1' }
+        },
+        {
+          height: 18,
+          key: { text: 'Beta' },
+          value: { text: '34' },
+          shape: { visible: true, fill: '#11A579' }
+        }
+      ],
+      contentStyle: {
+        shape: { visible: true, size: 12, spacing: 12 },
+        key: {
+          fill: '#101828',
+          fontFamily: 'Arial',
+          fontSize: 18,
+          lineHeight: 18,
+          spacing: 52
+        },
+        value: {
+          fill: '#101828',
+          fontFamily: 'Arial',
+          fontSize: 18,
+          lineHeight: 18,
+          spacing: 0
+        },
+        spaceRow: 8
+      },
+      hasContentShape: true,
+      keyWidth: 65,
+      valueWidth: 24
+    });
+    this.stage.defaultLayer.add(tooltip);
+
+    for (const y of [83, 109]) {
+      this.stage.defaultLayer.add(
+        createLine({
+          points: [
+            { x: 30, y },
+            { x: 296, y }
+          ],
+          stroke: '#D92D20',
+          lineWidth: 1,
+          lineDash: [4, 3],
+          zIndex: 501,
+          pickable: false
+        })
+      );
+    }
+  }
+
+  private drawBaselineMatrixScene() {
+    const context = this.stage.window.getContext();
+    const fontSizes = [10, 16, 24];
+    const columns = [112, 210, 308];
+    const variants = [
+      { label: 'A none', offset: () => 0 },
+      { label: 'B −0.5em', offset: (fontSize: number) => -0.5 * fontSize },
+      {
+        label: 'C −fontAsc',
+        offset: (fontSize: number, metrics: any) =>
+          -(metrics.fontBoundingBoxAscent ?? 0.79 * fontSize)
+      },
+      { label: 'D −0.79em', offset: (fontSize: number) => -0.79 * fontSize },
+      {
+        label: 'E −actualAsc',
+        offset: (fontSize: number, metrics: any) =>
+          -(metrics.actualBoundingBoxAscent ?? 0.79 * fontSize)
+      }
+    ];
+
+    this.stage.defaultLayer.add(
+      createText({
+        x: 18,
+        y: 24,
+        text: 'baseline matrix (PROTOTYPE)',
+        fontSize: 14,
+        fill: '#667085'
+      })
+    );
+
+    fontSizes.forEach((fontSize, index) => {
+      this.stage.defaultLayer.add(
+        createText({
+          x: columns[index],
+          y: 52,
+          text: `${fontSize}px`,
+          fontSize: 11,
+          fill: '#667085',
+          textAlign: 'center',
+          textBaseline: 'middle'
+        })
+      );
+    });
+
+    variants.forEach((variant, rowIndex) => {
+      const baselineY = 94 + rowIndex * 72;
+      this.stage.defaultLayer.add(
+        createText({
+          x: 16,
+          y: baselineY - 20,
+          text: variant.label,
+          fontSize: 10,
+          fill: '#475467'
+        })
+      );
+      this.stage.defaultLayer.add(
+        createLine({
+          points: [
+            { x: 76, y: baselineY },
+            { x: 348, y: baselineY }
+          ],
+          stroke: '#98A2B3',
+          lineWidth: 1,
+          pickable: false
+        })
+      );
+
+      fontSizes.forEach((fontSize, columnIndex) => {
+        context.setTextStyleWithoutAlignBaseline({
+          fontFamily: 'Arial',
+          fontSize
+        });
+        const metrics = context.measureText('Hg') as any;
+        const x = columns[columnIndex];
+        this.stage.defaultLayer.add(
+          createCircle({
+            x,
+            y: baselineY,
+            radius: 3,
+            fill: '#D92D20',
+            pickable: false
+          })
+        );
+        this.stage.defaultLayer.add(
+          createText({
+            x: x + 8,
+            y: baselineY + variant.offset(fontSize, metrics),
+            text: 'Hg',
+            fontFamily: 'Arial',
+            fontSize,
+            fill: '#101828',
+            textBaseline: 'alphabetic'
+          })
+        );
+      });
+    });
   }
 
   private mountDeferredComponentControls() {

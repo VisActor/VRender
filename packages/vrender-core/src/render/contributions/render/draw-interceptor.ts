@@ -1,4 +1,4 @@
-import { AABBBounds } from '@visactor/vutils';
+import { AABBBounds, Matrix } from '@visactor/vutils';
 import { mat3Tomat4, multiplyMat4Mat4 } from '../../../common/matrix';
 import { createGraphic } from '../../../graphic/graphic-creator';
 import type {
@@ -17,6 +17,9 @@ import { draw3dItem } from '../../../common/3d-interceptor';
 
 // 拦截器
 export const DrawItemInterceptor = Symbol.for('DrawItemInterceptor');
+
+/** 挂在交互层克隆上的 postMatrix 缓存，避免每帧重新分配 */
+const INTERACTIVE_POST_MATRIX = '_interactivePostMatrix';
 
 // export class DefaultDrawItemInterceptor implements IDrawItemInterceptor {
 //   drawItem(graphic: IGraphic, renderService: IRenderService, params?: IGraphicRenderDrawParams): boolean {
@@ -277,6 +280,54 @@ export class InteractiveDrawItemInterceptorContribution implements IDrawItemInte
    * @param drawContribution
    * @param params
    */
+  /**
+   * 算出克隆的 postMatrix，让它的包围盒落回原图元所在的位置。
+   *
+   * 对齐的目标是 `globalAABBBounds` —— 拾取预筛读的就是它。克隆和原图元的属性一致，局部矩阵 `L`
+   * （不含 postMatrix）相同，所以只要把祖先贡献补在 `L` 之外即可：
+   *   clonePost = P × ownPost
+   *
+   * 注意这里刻意不带父级的 scroll。`doUpdateGlobalMatrix` 会把 scroll 叠进 `globalTransMatrix`，但
+   * `globalAABBBounds` 并不包含它（父级 `scrollX/scrollY` 为 30/20 时，普通图元的 matrix.e 是 180 而
+   * bounds 中心是 150），所以按 matrix 去对齐反而会把克隆的包围盒推出去一个 scroll。
+   *
+   * 每帧复用挂在克隆上的同一个 Matrix，避免反复分配。
+   */
+  protected resolveInteractivePostMatrix(graphic: IGraphic, interactiveGraphic: IGraphic): Matrix | undefined {
+    const parent = graphic.parent;
+    // 没有祖先时克隆自身的 postMatrix 就已经是完整变换，保持原样
+    if (!parent) {
+      return graphic.attribute.postMatrix;
+    }
+    let matrix: Matrix = (interactiveGraphic as any)[INTERACTIVE_POST_MATRIX];
+    if (!matrix) {
+      matrix = new Matrix();
+      (interactiveGraphic as any)[INTERACTIVE_POST_MATRIX] = matrix;
+    }
+    const ancestorMatrix = (parent as IGroup).globalTransMatrix;
+    matrix.setValue(
+      ancestorMatrix.a,
+      ancestorMatrix.b,
+      ancestorMatrix.c,
+      ancestorMatrix.d,
+      ancestorMatrix.e,
+      ancestorMatrix.f
+    );
+    // 克隆是从原图元 clone 来的，自带原图元的 postMatrix，不能被祖先变换顶掉
+    const ownPostMatrix = graphic.attribute.postMatrix;
+    if (ownPostMatrix) {
+      matrix.multiply(
+        ownPostMatrix.a,
+        ownPostMatrix.b,
+        ownPostMatrix.c,
+        ownPostMatrix.d,
+        ownPostMatrix.e,
+        ownPostMatrix.f
+      );
+    }
+    return matrix;
+  }
+
   beforeSetInteractive(
     graphic: IGraphic,
     renderService: IRenderService,
@@ -292,11 +343,14 @@ export class InteractiveDrawItemInterceptorContribution implements IDrawItemInte
         interactiveGraphic.baseGraphic = graphic;
       }
       // 设置位置
-      // const m = graphic.globalTransMatrix;
+      // 克隆挂进交互层后就脱离了原图元的祖先链，只剩自身的局部变换。绘制由 beforeDrawInteractive 用
+      // baseGraphic.parent.globalTransMatrix 手动补偿，但克隆自身的包围盒补不到，会整体少一个祖先变换；
+      // pickGroup 的 insideGroup 预筛读的正是这个包围盒，落在偏移框外的图元会被整层跳过而拾取不到。
       interactiveGraphic.setAttributes(
         {
           globalZIndex: 0,
-          zIndex: graphic.attribute.globalZIndex
+          zIndex: graphic.attribute.globalZIndex,
+          postMatrix: this.resolveInteractivePostMatrix(graphic, interactiveGraphic)
         },
         false,
         { skipUpdateCallback: true }

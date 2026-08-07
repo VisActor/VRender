@@ -90,6 +90,84 @@ describe('lynx window event contribution', () => {
     });
   });
 
+  test('uses the complete native lynx animation frame scheduler pair', () => {
+    const env = new LynxEnvContribution();
+    const service = {
+      env: 'lynx',
+      setActiveEnvContribution: (): void => undefined
+    };
+    let requestReceiver: unknown;
+    let cancelReceiver: unknown;
+    let scheduledCallback: FrameRequestCallback;
+    let cancelledHandle: number;
+    const runtime = {
+      requestAnimationFrame(this: unknown, callback: FrameRequestCallback) {
+        requestReceiver = this;
+        scheduledCallback = callback;
+        return 17;
+      },
+      cancelAnimationFrame(this: unknown, handle: number) {
+        cancelReceiver = this;
+        cancelledHandle = handle;
+      }
+    };
+    const callback = (): void => undefined;
+
+    env.configure(service as any, { lynx: runtime as any });
+
+    expect(env.getRequestAnimationFrame()(callback)).toBe(17);
+    env.getCancelAnimationFrame()(17);
+
+    expect(requestReceiver).toBe(runtime);
+    expect(cancelReceiver).toBe(runtime);
+    expect(scheduledCallback).toBe(callback);
+    expect(cancelledHandle).toBe(17);
+  });
+
+  test('falls back as a pair when the native lynx scheduler is incomplete', () => {
+    jest.useFakeTimers();
+    try {
+      const env = new LynxEnvContribution();
+      const service = {
+        env: 'lynx',
+        setActiveEnvContribution: (): void => undefined
+      };
+      let completeNativeRequestCallCount = 0;
+      let nativeRequestCallCount = 0;
+      let callbackCalled = false;
+
+      env.configure(service as any, {
+        lynx: {
+          requestAnimationFrame: () => {
+            completeNativeRequestCallCount++;
+            return 23;
+          },
+          cancelAnimationFrame: (): void => undefined
+        } as any
+      });
+      env.configure(service as any, {
+        lynx: {
+          requestAnimationFrame: () => {
+            nativeRequestCallCount++;
+            return 17;
+          }
+        } as any
+      });
+
+      const handle = env.getRequestAnimationFrame()(() => {
+        callbackCalled = true;
+      });
+      env.getCancelAnimationFrame()(handle);
+      jest.runOnlyPendingTimers();
+
+      expect(completeNativeRequestCallCount).toBe(0);
+      expect(nativeRequestCallCount).toBe(0);
+      expect(callbackCalled).toBe(false);
+    } finally {
+      jest.useRealTimers();
+    }
+  });
+
   test('reports missing lynx canvas bridge with a clear error', () => {
     const env = new LynxEnvContribution();
     const service = {

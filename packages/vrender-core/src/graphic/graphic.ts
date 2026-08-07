@@ -771,15 +771,13 @@ abstract class GraphicImpl<T extends Partial<IGraphicAttribute> = Partial<IGraph
   protected buildRemovedStateAnimationAttrs(
     targetStateAttrs: Partial<T>,
     previousResolvedStatePatch?: Partial<T>
-  ): Partial<T> {
-    const extraAttrs: Record<string, any> = {};
-
+  ): { extraAttrs: Partial<T>; stateTransitionTargetAttrs: Partial<T> } | undefined {
     if (!previousResolvedStatePatch) {
-      return extraAttrs as Partial<T>;
+      return;
     }
 
     const snapshot = this.buildStaticAttributeSnapshot() as Record<string, any>;
-    const staticTargetAttrs = snapshot as Partial<T>;
+    const extraAttrs: Record<string, any> = {};
     Object.keys(previousResolvedStatePatch).forEach(key => {
       const hasTargetAttr = Object.prototype.hasOwnProperty.call(targetStateAttrs, key);
       if (hasTargetAttr && (targetStateAttrs as Record<string, any>)[key] !== undefined) {
@@ -787,29 +785,26 @@ abstract class GraphicImpl<T extends Partial<IGraphicAttribute> = Partial<IGraph
       }
 
       const assignFallbackAttr = (value: any): void => {
-        if (value === undefined && this.shouldSkipStateTransitionDefaultAttribute(key, staticTargetAttrs)) {
-          return;
-        }
         extraAttrs[key] = value === undefined ? value : cloneAttributeValue(value);
       };
 
       if (hasTargetAttr) {
-        assignFallbackAttr(this.getStateTransitionDefaultAttribute(key, staticTargetAttrs));
+        assignFallbackAttr((targetStateAttrs as Record<string, any>)[key]);
         return;
       }
 
       if (Object.prototype.hasOwnProperty.call(snapshot, key)) {
-        const snapshotValue = snapshot[key];
-        assignFallbackAttr(
-          snapshotValue === undefined ? this.getStateTransitionDefaultAttribute(key, staticTargetAttrs) : snapshotValue
-        );
+        assignFallbackAttr(snapshot[key]);
         return;
       }
 
-      assignFallbackAttr(this.getStateTransitionDefaultAttribute(key, staticTargetAttrs));
+      assignFallbackAttr(undefined);
     });
 
-    return extraAttrs as Partial<T>;
+    return {
+      extraAttrs: extraAttrs as Partial<T>,
+      stateTransitionTargetAttrs: snapshot as Partial<T>
+    };
   }
 
   protected syncObjectToSnapshot(
@@ -2332,13 +2327,18 @@ abstract class GraphicImpl<T extends Partial<IGraphicAttribute> = Partial<IGraph
 
     if (hasAnimation && animateSameStatePatchChange) {
       this._syncFinalAttributeFromStaticTruth();
+      const removedStateAnimationAttrs = this.buildRemovedStateAnimationAttrs(
+        resolvedStateAttrs,
+        previousResolvedStatePatch
+      );
       this.applyStateAttrs(
         resolvedStateAttrs,
         transition.states,
         hasAnimation,
         false,
         undefined,
-        this.buildRemovedStateAnimationAttrs(resolvedStateAttrs, previousResolvedStatePatch)
+        removedStateAnimationAttrs?.extraAttrs,
+        removedStateAnimationAttrs?.stateTransitionTargetAttrs
       );
     } else {
       this.stopStateAnimates();
@@ -2363,17 +2363,23 @@ abstract class GraphicImpl<T extends Partial<IGraphicAttribute> = Partial<IGraph
     hasAnimation?: boolean,
     isClear?: boolean,
     animateConfig?: IAnimateConfig,
-    extraAnimateAttrs?: Partial<T>
+    extraAnimateAttrs?: Partial<T>,
+    stateTransitionTargetAttrs?: Partial<T>
   ) {
     const resolvedAnimateConfig = hasAnimation ? this.resolveStateAnimateConfig(animateConfig) : undefined;
     const transitionOptions = resolvedAnimateConfig
       ? {
           animateConfig: resolvedAnimateConfig,
           extraAnimateAttrs: extraAnimateAttrs as Record<string, unknown>,
+          getStateTransitionDefaultAttribute: this.getStateTransitionDefaultAttribute.bind(this) as (
+            key: string,
+            targetAttrs?: Record<string, unknown>
+          ) => unknown,
           shouldSkipDefaultAttribute: this.shouldSkipStateTransitionDefaultAttribute.bind(this) as (
             key: string,
             targetAttrs: Record<string, unknown>
-          ) => boolean
+          ) => boolean,
+          stateTransitionTargetAttrs: stateTransitionTargetAttrs as Record<string, unknown>
         }
       : undefined;
 
@@ -2386,10 +2392,15 @@ abstract class GraphicImpl<T extends Partial<IGraphicAttribute> = Partial<IGraph
       noWorkAnimateAttr: this.getNoWorkAnimateAttr(),
       animateConfig: resolvedAnimateConfig,
       extraAnimateAttrs: extraAnimateAttrs as Record<string, unknown>,
+      getStateTransitionDefaultAttribute: this.getStateTransitionDefaultAttribute.bind(this) as (
+        key: string,
+        targetAttrs?: Record<string, unknown>
+      ) => unknown,
       shouldSkipDefaultAttribute: this.shouldSkipStateTransitionDefaultAttribute.bind(this) as (
         key: string,
         targetAttrs: Record<string, unknown>
-      ) => boolean
+      ) => boolean,
+      stateTransitionTargetAttrs: stateTransitionTargetAttrs as Record<string, unknown>
     });
 
     this.getStateTransitionOrchestrator().applyTransition(this as any, plan, hasAnimation, transitionOptions);
@@ -2457,13 +2468,18 @@ abstract class GraphicImpl<T extends Partial<IGraphicAttribute> = Partial<IGraph
     this.clearSharedStateActiveRegistrations();
     if (hasAnimation) {
       this._syncFinalAttributeFromStaticTruth();
+      const removedStateAnimationAttrs = this.buildRemovedStateAnimationAttrs(
+        resolvedStateAttrs,
+        previousResolvedStatePatch
+      );
       this.applyStateAttrs(
         resolvedStateAttrs,
         transition.states,
         hasAnimation,
         true,
         undefined,
-        this.buildRemovedStateAnimationAttrs(resolvedStateAttrs, previousResolvedStatePatch)
+        removedStateAnimationAttrs?.extraAttrs,
+        removedStateAnimationAttrs?.stateTransitionTargetAttrs
       );
     } else {
       this.stopStateAnimates();
@@ -2558,13 +2574,18 @@ abstract class GraphicImpl<T extends Partial<IGraphicAttribute> = Partial<IGraph
     this.syncSharedStateActiveRegistrations();
     if (hasAnimation) {
       this._syncFinalAttributeFromStaticTruth();
+      const removedStateAnimationAttrs = this.buildRemovedStateAnimationAttrs(
+        resolvedStateAttrs,
+        previousResolvedStatePatch
+      );
       this.applyStateAttrs(
         resolvedStateAttrs,
         transition.states,
         hasAnimation,
         false,
         undefined,
-        this.buildRemovedStateAnimationAttrs(resolvedStateAttrs, previousResolvedStatePatch)
+        removedStateAnimationAttrs?.extraAttrs,
+        removedStateAnimationAttrs?.stateTransitionTargetAttrs
       );
     } else {
       this.stopStateAnimates();

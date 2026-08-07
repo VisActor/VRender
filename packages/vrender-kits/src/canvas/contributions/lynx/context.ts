@@ -75,15 +75,21 @@ export class LynxContext2d extends BrowserContext2d implements IContext2d {
     text: string,
     method: 'native' | 'simple' | 'quick' = application.global.measureTextMethod
   ): { width: number } {
-    this.setTransform(1, 0, 0, 1, 0, 0, true, application.global.devicePixelRatio);
-    const data: any = super.measureText(text, method);
-    // lynx环境中的fontBoundingBoxDescent和fontBoundingBoxAscent有严重偏移，暂时规避
+    const dpr = this.dpr || 1;
+    this.setTransform(1, 0, 0, 1, 0, 0, true, dpr);
+    const metrics = super.measureText(text, method) as TextMetrics;
+    if (dpr === 1 || metrics.fontBoundingBoxAscent == null || metrics.fontBoundingBoxDescent == null) {
+      return metrics;
+    }
     return {
-      width: data.width,
-      fontBoundingBoxDescent: undefined,
-      fontBoundingBoxAscent: undefined,
-      actualBoundingBoxAscent: undefined,
-      actualBoundingBoxDescent: undefined
+      ...metrics,
+      width: metrics.width,
+      actualBoundingBoxLeft: metrics.actualBoundingBoxLeft,
+      actualBoundingBoxRight: metrics.actualBoundingBoxRight,
+      actualBoundingBoxAscent: metrics.actualBoundingBoxAscent,
+      actualBoundingBoxDescent: metrics.actualBoundingBoxDescent,
+      fontBoundingBoxAscent: metrics.fontBoundingBoxAscent / dpr,
+      fontBoundingBoxDescent: metrics.fontBoundingBoxDescent / dpr
     } as any;
   }
 

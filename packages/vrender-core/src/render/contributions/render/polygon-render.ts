@@ -19,6 +19,7 @@ import { PolygonRenderContribution } from './contributions/constants';
 import { BaseRender } from './base-render';
 import {
   defaultPolygonBackgroundRenderContribution,
+  defaultPolygonRenderContribution,
   defaultPolygonTextureRenderContribution
 } from './contributions/polygon-contribution-render';
 
@@ -28,7 +29,11 @@ export class DefaultCanvasPolygonRender extends BaseRender<IPolygon> implements 
 
   constructor(protected readonly graphicRenderContributions: IContributionProvider<IPolygonRenderContribution>) {
     super();
-    this.builtinContributions = [defaultPolygonBackgroundRenderContribution, defaultPolygonTextureRenderContribution];
+    this.builtinContributions = [
+      defaultPolygonRenderContribution,
+      defaultPolygonBackgroundRenderContribution,
+      defaultPolygonTextureRenderContribution
+    ];
     this.init(graphicRenderContributions);
   }
 

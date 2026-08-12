@@ -1,6 +1,7 @@
 import { EventEmitter, Logger, isBoolean, isFunction, isObject, type Dict, type LooseFunction } from '@visactor/vutils';
 import { Generator } from '../common/generator';
 import type { ILayer, INode, IGroup, IStage } from '../interface';
+import type { SharedStateScope } from './state/shared-state-scope';
 
 export class Node extends EventEmitter<any, any> implements INode {
   parent: any;
@@ -59,7 +60,11 @@ export class Node extends EventEmitter<any, any> implements INode {
     this._count = 1;
   }
 
-  onParentSharedStateTreeChanged(_stage?: IStage, _layer?: ILayer): void {
+  onParentSharedStateTreeChanged(
+    _stage?: IStage,
+    _layer?: ILayer,
+    _inheritedSharedStateScope?: SharedStateScope<Record<string, any>> | null
+  ): void {
     return;
   }
 

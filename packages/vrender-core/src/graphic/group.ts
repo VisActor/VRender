@@ -355,7 +355,7 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
     this.addUpdateBoundTag();
   }
 
-  setStage(stage?: IStage, layer?: ILayer) {
+  setStage(stage?: IStage, layer?: ILayer, inheritedSharedStateScope?: SharedStateScope<Record<string, any>> | null) {
     const graphicService = stage?.graphicService ?? this.stage?.graphicService ?? application.graphicService;
     const needsSharedStateTreeSync =
       this.hasSharedStateDefinitions() ||
@@ -369,12 +369,12 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
       this.layer = layer;
       if (needsSharedStateTreeSync) {
         this.ensureSharedStateScopeBound();
-        this.syncSharedStateScopeBindingOnTreeChange(true);
+        this.syncSharedStateScopeBindingOnTreeChange(true, inheritedSharedStateScope);
       }
       this.setStageToShadowRoot(stage, layer);
       this._onSetStage && this._onSetStage(this, stage, layer);
       graphicService?.onSetStage?.(this, stage);
-      this.notifyChildrenSharedStateTreeChanged();
+      this.notifyChildrenSharedStateTreeChanged(inheritedSharedStateScope);
       return;
     }
 
@@ -384,10 +384,10 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
     }
     if (needsSharedStateTreeSync) {
       this.ensureSharedStateScopeBound();
-      this.syncSharedStateScopeBindingOnTreeChange(true);
-      this.notifyChildrenSharedStateTreeChanged();
+      this.syncSharedStateScopeBindingOnTreeChange(true, inheritedSharedStateScope);
+      this.notifyChildrenSharedStateTreeChanged(inheritedSharedStateScope);
     } else if (layerChanged) {
-      this.notifyChildrenSharedStateTreeChanged();
+      this.notifyChildrenSharedStateTreeChanged(inheritedSharedStateScope);
     }
   }
   /**
@@ -520,25 +520,67 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
     return !!this._sharedStateDefinitions && Object.keys(this._sharedStateDefinitions).length > 0;
   }
 
-  protected notifyChildrenSharedStateTreeChanged(): void {
+  protected resolveChildSharedStateScope(
+    inheritedSharedStateScope?: SharedStateScope<Record<string, any>> | null
+  ): SharedStateScope<Record<string, any>> | null {
+    if (this.sharedStateScope) {
+      return this.sharedStateScope;
+    }
+    if (inheritedSharedStateScope !== undefined) {
+      return inheritedSharedStateScope;
+    }
+    return this.resolveBoundSharedStateScope() ?? null;
+  }
+
+  protected notifyChildrenSharedStateTreeChanged(
+    inheritedSharedStateScope?: SharedStateScope<Record<string, any>> | null
+  ): void {
+    const childSharedStateScope = this.resolveChildSharedStateScope(inheritedSharedStateScope);
     this.forEachChildren(item => {
-      this.syncChildSharedStateTreeBinding(item);
+      this.setStageToChild(item, childSharedStateScope);
     });
   }
 
-  protected syncChildSharedStateTreeBinding(child: INode): void {
-    child.onParentSharedStateTreeChanged(this.stage, this.layer);
+  protected setStageToChild(
+    child: INode,
+    inheritedSharedStateScope?: SharedStateScope<Record<string, any>> | null
+  ): void {
+    const graphic = child as IGraphic;
+    if (
+      typeof graphic.setStage === 'function' &&
+      (child.onParentSharedStateTreeChanged === Graphic.prototype.onParentSharedStateTreeChanged ||
+        child.onParentSharedStateTreeChanged === Group.prototype.onParentSharedStateTreeChanged) &&
+      (graphic.stage !== this.stage || graphic.layer !== this.layer)
+    ) {
+      graphic.setStage(this.stage, this.layer, inheritedSharedStateScope);
+      return;
+    }
+    child.onParentSharedStateTreeChanged(this.stage, this.layer, inheritedSharedStateScope);
   }
 
-  onParentSharedStateTreeChanged(stage?: IStage, layer?: ILayer): void {
+  protected syncChildSharedStateTreeBinding(
+    child: INode,
+    inheritedSharedStateScope?: SharedStateScope<Record<string, any>> | null
+  ): void {
+    if (inheritedSharedStateScope === undefined) {
+      inheritedSharedStateScope = this.resolveChildSharedStateScope();
+    }
+    this.setStageToChild(child, inheritedSharedStateScope);
+  }
+
+  onParentSharedStateTreeChanged(
+    stage?: IStage,
+    layer?: ILayer,
+    inheritedSharedStateScope?: SharedStateScope<Record<string, any>> | null
+  ): void {
     if (this.stage !== stage || this.layer !== layer) {
-      this.setStage(stage, layer);
+      this.setStage(stage, layer, inheritedSharedStateScope);
       return;
     }
 
     this.ensureSharedStateScopeBound();
-    this.syncSharedStateScopeBindingOnTreeChange(!!this.currentStates?.length);
-    this.notifyChildrenSharedStateTreeChanged();
+    this.syncSharedStateScopeBindingOnTreeChange(!!this.currentStates?.length, inheritedSharedStateScope);
+    this.notifyChildrenSharedStateTreeChanged(inheritedSharedStateScope);
   }
 }
 

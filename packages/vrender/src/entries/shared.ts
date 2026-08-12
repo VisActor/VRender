@@ -1,4 +1,4 @@
-import type { IApp } from '@visactor/vrender-core';
+import type { IApp, IEnvParamsMap } from '@visactor/vrender-core';
 import { createBrowserVRenderApp, type TVRenderBrowserAppEntryOptions } from './browser';
 import {
   createFeishuVRenderApp,
@@ -45,6 +45,42 @@ export type TVRenderSharedAppOptions<TEnv extends TVRenderSharedAppEnv = TVRende
 
 export type TVRenderSharedAppHandle<TEnv extends TVRenderSharedAppEnv = TVRenderSharedAppEnv> = TSharedAppHandle<TEnv>;
 
+type TVRenderSharedAppArgument = TVRenderSharedAppOptions<TVRenderSharedAppEnv> | IEnvParamsMap[TVRenderSharedAppEnv];
+
+function isSharedAppOptions(
+  options: TVRenderSharedAppArgument
+): options is TVRenderSharedAppOptions<TVRenderSharedAppEnv> {
+  return 'context' in options || 'env' in options || 'envParams' in options || 'key' in options;
+}
+
+function resolveSharedAppOptions(
+  optionsOrEnvParams?: TVRenderSharedAppArgument,
+  env?: TVRenderSharedAppEnv
+): TVRenderSharedAppOptions<TVRenderSharedAppEnv> {
+  if (env !== undefined) {
+    return {
+      env,
+      envParams: optionsOrEnvParams as IEnvParamsMap[TVRenderSharedAppEnv] | undefined
+    } as TVRenderSharedAppOptions<TVRenderSharedAppEnv>;
+  }
+
+  if (optionsOrEnvParams === undefined) {
+    return { env: 'browser' } as TVRenderSharedAppOptions<'browser'>;
+  }
+
+  if (isSharedAppOptions(optionsOrEnvParams)) {
+    return {
+      ...optionsOrEnvParams,
+      env: optionsOrEnvParams.env ?? 'browser'
+    } as TVRenderSharedAppOptions<TVRenderSharedAppEnv>;
+  }
+
+  return {
+    env: 'browser',
+    envParams: optionsOrEnvParams
+  } as TVRenderSharedAppOptions<'browser'>;
+}
+
 function createAppForSharedEnv<TEnv extends TVRenderSharedAppEnv>(options: TVRenderSharedAppOptions<TEnv>): IApp {
   const { env } = options;
   const entryOptions = { ...options } as Record<string, unknown>;
@@ -76,8 +112,17 @@ function createAppForSharedEnv<TEnv extends TVRenderSharedAppEnv>(options: TVRen
 }
 
 export function acquireSharedVRenderApp<TEnv extends TVRenderSharedAppEnv>(
-  options: TVRenderSharedAppOptions<TEnv>
-): TVRenderSharedAppHandle<TEnv> {
+  options?: TVRenderSharedAppOptions<TEnv>
+): TVRenderSharedAppHandle<TEnv>;
+export function acquireSharedVRenderApp<TEnv extends TVRenderSharedAppEnv>(
+  envParams?: IEnvParamsMap[TEnv],
+  env?: TEnv
+): TVRenderSharedAppHandle<TEnv>;
+export function acquireSharedVRenderApp(
+  optionsOrEnvParams?: TVRenderSharedAppArgument,
+  env?: TVRenderSharedAppEnv
+): TVRenderSharedAppHandle<TVRenderSharedAppEnv> {
+  const options = resolveSharedAppOptions(optionsOrEnvParams, env);
   return acquireSharedApp(options.env, options, createAppForSharedEnv, options.env);
 }
 

@@ -31,7 +31,7 @@ const LIFECYCLE_MODES: Array<{ key: LifecycleMode; label: string }> = [
 
 let activeController: ReturnType<typeof mountVRenderSmoke> | null = null;
 let activeControllerSceneKey: SceneKey | null = null;
-let requestedSceneKey: SceneKey = 'primitives';
+let requestedSceneKey: SceneKey = 'tooltip';
 let lastCanvasTouchAt = 0;
 let canvasTouchActive = false;
 let canvasMouseActive = false;
@@ -285,7 +285,7 @@ function getLifecycleModeLabel(mode: LifecycleMode) {
 }
 
 export function App() {
-  const [sceneKey, setSceneKey] = useState<SceneKey>('primitives');
+  const [sceneKey, setSceneKey] = useState<SceneKey>('tooltip');
   const [lifecycleMode, setLifecycleMode] =
     useState<LifecycleMode>('reuse-stage');
   const [hasCanvasBridge, setHasCanvasBridge] = useState(

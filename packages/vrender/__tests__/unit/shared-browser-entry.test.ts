@@ -6,27 +6,62 @@ declare const require: any;
 export {};
 
 const emptyArray = (): never[] => [];
+const SHARED_APP_REGISTRY_KEY = Symbol.for('visactor.vrender.sharedAppRegistry');
 
-describe('browser-only shared app entry', () => {
+describe('browser-condition shared app entry', () => {
   beforeEach(() => {
     jest.resetModules();
+    delete (globalThis as any)[SHARED_APP_REGISTRY_KEY];
   });
 
-  test('does not load non-browser env, full custom animate, or gif modules', () => {
+  test('routes an explicit lynx env to the Lynx app without initializing the browser environment', () => {
+    jest.isolateModules(() => {
+      const lynxApp = {
+        env: 'lynx',
+        release: jest.fn()
+      };
+      const createBrowserApp = jest.fn(() => {
+        throw new Error('the Lynx shared app must not initialize the browser environment');
+      });
+      const createLynxVRenderApp = jest.fn(() => lynxApp);
+
+      jest.doMock('@visactor/vrender-core/entries/browser', () => ({
+        BrowserEntry: class BrowserEntry {},
+        createBrowserApp
+      }));
+      jest.doMock('../../src/entries/miniapp', () => ({ createLynxVRenderApp }));
+
+      const { acquireSharedVRenderApp } = require('../../src/entries/shared-browser');
+      const handle = (acquireSharedVRenderApp as any)(undefined, 'lynx');
+
+      expect(handle.env).toBe('lynx');
+      expect(handle.app).toBe(lynxApp);
+      expect(createLynxVRenderApp).toHaveBeenCalledTimes(1);
+      expect(createBrowserApp).not.toHaveBeenCalled();
+
+      handle.release();
+    });
+  });
+
+  test('keeps browser as the default and isolates browser and Lynx shared apps', () => {
     jest.isolateModules(() => {
       const legacyBindingContextMock = { getAll: jest.fn(emptyArray) };
-      const forbiddenLoads: string[] = [];
-      const createBrowserApp = jest.fn(() => ({
+      const browserApp = {
+        env: 'browser',
         registry: {
           renderer: { getAll: jest.fn(emptyArray), clear: jest.fn(), register: jest.fn() },
           picker: { getAll: jest.fn(emptyArray), clear: jest.fn(), register: jest.fn() }
         },
         release: jest.fn()
-      }));
+      };
+      const lynxApp = { env: 'lynx', release: jest.fn() };
+      const createBrowserApp = jest.fn(() => browserApp);
+      const createLynxVRenderApp = jest.fn(() => lynxApp);
 
       jest.doMock('@visactor/vrender-core/entries/browser', () => ({
         createBrowserApp
       }));
+      jest.doMock('../../src/entries/miniapp', () => ({ createLynxVRenderApp }));
       jest.doMock('@visactor/vrender-core/legacy/bootstrap', () => ({
         getLegacyBindingContext: jest.fn(() => legacyBindingContextMock)
       }));
@@ -90,26 +125,30 @@ describe('browser-only shared app entry', () => {
       [
         '@visactor/vrender-kits/env/node',
         '@visactor/vrender-kits/env/wx',
-        '@visactor/vrender-kits/env/lynx',
         '@visactor/vrender-kits/env/harmony',
         '@visactor/vrender-kits/env/browser',
         '@visactor/vrender-kits/register/register-gif',
         '@visactor/vrender-animate/custom/register'
       ].forEach(moduleName => {
         jest.doMock(moduleName, () => {
-          forbiddenLoads.push(moduleName);
-          return {};
+          throw new Error(`${moduleName} should not be loaded by shared-browser`);
         });
       });
 
-      const { acquireSharedBrowserVRenderApp } = require('../../src/entries/shared-browser');
-      const handle = acquireSharedBrowserVRenderApp({ env: 'browser', key: Symbol('browser-only') });
+      const { acquireSharedVRenderApp } = require('../../src/entries/shared-browser');
+      const browserHandle = acquireSharedVRenderApp();
+      const lynxHandle = (acquireSharedVRenderApp as any)(undefined, 'lynx');
 
       expect(createBrowserApp).toHaveBeenCalledTimes(1);
       expect(createBrowserApp).toHaveBeenCalledWith({});
-      expect(handle.env).toBe('browser');
-      expect(forbiddenLoads).toEqual([]);
-      handle.release();
+      expect(browserHandle.env).toBe('browser');
+      expect(browserHandle.app).toBe(browserApp);
+      expect(lynxHandle.env).toBe('lynx');
+      expect(lynxHandle.app).toBe(lynxApp);
+      expect(browserHandle.app).not.toBe(lynxHandle.app);
+
+      browserHandle.release();
+      lynxHandle.release();
     });
   });
 });

@@ -853,7 +853,11 @@ export interface IGraphic<T extends Partial<IGraphicAttribute> = Partial<IGraphi
 
   setAttribute: (key: string, value: any, forceUpdateTag?: boolean, context?: ISetAttributeContext) => void;
 
-  setStage: (stage?: IStage, layer?: ILayer) => void;
+  setStage: (
+    stage?: IStage,
+    layer?: ILayer,
+    inheritedSharedStateScope?: SharedStateScope<Record<string, any>> | null
+  ) => void;
   detachStageForRelease: () => void;
   onSetStage: (cb: (g: IGraphic, stage: IStage) => void) => void;
 

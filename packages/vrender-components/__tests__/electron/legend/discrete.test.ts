@@ -73,6 +73,72 @@ describe('DiscreteLegend', () => {
     // });
   });
 
+  it('should reuse static state definitions without coupling item selection', () => {
+    const legend = new DiscreteLegend({
+      select: true,
+      defaultSelected: ['A'],
+      item: {
+        shape: {
+          visible: false
+        },
+        label: {
+          style: {
+            fill: 'black'
+          },
+          state: {
+            selected: {
+              fill: 'red'
+            },
+            unSelected: {
+              fill: 'gray'
+            }
+          }
+        }
+      },
+      items: [
+        { label: 'A', shape: { fill: 'red' } },
+        { label: 'B', shape: { fill: 'blue' } }
+      ]
+    });
+
+    stage.defaultLayer.add(legend as unknown as IGraphic);
+    stage.render();
+
+    const items = ((legend as any)._itemsContainer.getChildren() as IGroup[]).slice(0, 2);
+    const labels = items.map(
+      item => (item.getChildren()[0] as IGroup).find(node => node.name === 'legendItemLabel', false) as IGraphic
+    );
+
+    expect(labels[0].states).toBe(labels[1].states);
+    expect((labels[0] as any).compiledStateDefinitions).toBe((labels[1] as any).compiledStateDefinitions);
+    expect(labels[0].attribute.fill).toBe('red');
+    expect(labels[1].attribute.fill).toBe('gray');
+
+    legend.setSelected(['B']);
+
+    expect(labels[0].attribute.fill).toBe('gray');
+    expect(labels[1].attribute.fill).toBe('red');
+
+    legend.setAttributes({
+      item: {
+        label: {
+          state: {
+            selected: { fill: 'green' },
+            unSelected: { fill: 'silver' }
+          }
+        }
+      }
+    } as any);
+
+    const rerenderedItems = ((legend as any)._itemsContainer.getChildren() as IGroup[]).slice(0, 2);
+    const rerenderedLabels = rerenderedItems.map(
+      item => (item.getChildren()[0] as IGroup).find(node => node.name === 'legendItemLabel', false) as IGraphic
+    );
+
+    expect(rerenderedLabels[0].attribute.fill).toBe('green');
+    expect(rerenderedLabels[1].attribute.fill).toBe('silver');
+  });
+
   it('should return its own width when its own width does not exceed maxWidth', () => {
     const legend = new DiscreteLegend({
       layout: 'vertical',

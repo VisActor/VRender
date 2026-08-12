@@ -530,8 +530,10 @@ abstract class GraphicImpl<T extends Partial<IGraphicAttribute> = Partial<IGraph
     return this.stage?.rootSharedStateScope as SharedStateScope<Record<string, any>> | undefined;
   }
 
-  protected syncSharedStateScopeBindingFromTree(markDirty: boolean = true): boolean {
-    const nextScope = this.resolveBoundSharedStateScope();
+  protected syncSharedStateScopeBinding(
+    nextScope: SharedStateScope<T> | SharedStateScope<Record<string, any>> | undefined,
+    markDirty: boolean = true
+  ): boolean {
     if (this.boundSharedStateScope === nextScope) {
       this.syncSharedStateActiveRegistrations();
       return false;
@@ -552,7 +554,21 @@ abstract class GraphicImpl<T extends Partial<IGraphicAttribute> = Partial<IGraph
     return true;
   }
 
-  protected syncSharedStateScopeBindingOnTreeChange(markDirty: boolean = true): boolean {
+  protected syncSharedStateScopeBindingFromTree(
+    markDirty: boolean = true,
+    inheritedSharedStateScope?: SharedStateScope<Record<string, any>> | null
+  ): boolean {
+    const nextScope =
+      inheritedSharedStateScope === undefined
+        ? this.resolveBoundSharedStateScope()
+        : inheritedSharedStateScope ?? undefined;
+    return this.syncSharedStateScopeBinding(nextScope, markDirty);
+  }
+
+  protected syncSharedStateScopeBindingOnTreeChange(
+    markDirty: boolean = true,
+    inheritedSharedStateScope?: SharedStateScope<Record<string, any>> | null
+  ): boolean {
     if (
       !this.currentStates?.length &&
       !this.boundSharedStateScope &&
@@ -562,7 +578,7 @@ abstract class GraphicImpl<T extends Partial<IGraphicAttribute> = Partial<IGraph
       return false;
     }
 
-    return this.syncSharedStateScopeBindingFromTree(markDirty);
+    return this.syncSharedStateScopeBindingFromTree(markDirty, inheritedSharedStateScope);
   }
 
   protected syncSharedStateActiveRegistrations(): void {
@@ -579,6 +595,10 @@ abstract class GraphicImpl<T extends Partial<IGraphicAttribute> = Partial<IGraph
       return;
     }
 
+    if (previousScopes?.size && this.isSharedStateScopeChainRegistered(previousScopes)) {
+      return;
+    }
+
     const nextScopes = new Set(collectSharedStateScopeChain(this.boundSharedStateScope));
 
     previousScopes?.forEach(scope => {
@@ -592,6 +612,21 @@ abstract class GraphicImpl<T extends Partial<IGraphicAttribute> = Partial<IGraph
     });
 
     this.registeredActiveScopes = nextScopes;
+  }
+
+  protected isSharedStateScopeChainRegistered(previousScopes: Set<SharedStateScope<T>>): boolean {
+    let scope = this.boundSharedStateScope;
+    let scopeCount = 0;
+
+    while (scope) {
+      if (!previousScopes.has(scope)) {
+        return false;
+      }
+      scopeCount += 1;
+      scope = scope.parentScope as SharedStateScope<T> | undefined;
+    }
+
+    return scopeCount === previousScopes.size;
   }
 
   protected clearSharedStateActiveRegistrations(): void {
@@ -611,13 +646,17 @@ abstract class GraphicImpl<T extends Partial<IGraphicAttribute> = Partial<IGraph
     scheduleStageSharedStateRefresh(this.stage);
   }
 
-  onParentSharedStateTreeChanged(stage?: IStage, layer?: ILayer): void {
+  onParentSharedStateTreeChanged(
+    stage?: IStage,
+    layer?: ILayer,
+    inheritedSharedStateScope?: SharedStateScope<Record<string, any>> | null
+  ): void {
     if (this.stage !== stage || this.layer !== layer) {
-      this.setStage(stage, layer);
+      this.setStage(stage, layer, inheritedSharedStateScope);
       return;
     }
 
-    this.syncSharedStateScopeBindingOnTreeChange();
+    this.syncSharedStateScopeBindingOnTreeChange(true, inheritedSharedStateScope);
   }
 
   refreshSharedStateBeforeRender(): void {
@@ -2020,6 +2059,20 @@ abstract class GraphicImpl<T extends Partial<IGraphicAttribute> = Partial<IGraph
     return this.states?.[stateName];
   }
 
+  /** @internal Used by bulk component construction to avoid recompiling known-static definitions. */
+  setStateDefinitionsWithCompiled(
+    definitions: StateDefinitionsInput<T>,
+    compiledDefinitions: Map<string, CompiledStateDefinition<T>>
+  ): void {
+    this.states = definitions;
+    if (this.localStateDefinitionsSource !== definitions) {
+      this.localStateDefinitionsSource = definitions;
+      this.localStateDefinitionsVersion = (this.localStateDefinitionsVersion ?? 0) + 1;
+    }
+    this.compiledStateDefinitions = compiledDefinitions;
+    this.compiledStateDefinitionsCacheKey = `local:${this.localStateDefinitionsVersion}`;
+  }
+
   protected getStateResolveBaseAttrs(): Partial<T> {
     return (this.baseAttributes ?? this.attribute) as Partial<T>;
   }
@@ -2245,6 +2298,20 @@ abstract class GraphicImpl<T extends Partial<IGraphicAttribute> = Partial<IGraph
     return true;
   }
 
+  protected hasStatePatch(patch?: Partial<T>): boolean {
+    if (!patch) {
+      return false;
+    }
+
+    for (const key in patch) {
+      if (Object.prototype.hasOwnProperty.call(patch, key)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   protected commitSameStatePatchRefresh(
     states: string[],
     hasAnimation?: boolean,
@@ -2413,6 +2480,10 @@ abstract class GraphicImpl<T extends Partial<IGraphicAttribute> = Partial<IGraph
     this.resolvedStatePatch = undefined;
     this.sharedStateDirty = false;
     this.clearSharedStateActiveRegistrations();
+    if (!this.attributeMayContainTransientAttrs && !this.hasStatePatch(previousResolvedStatePatch)) {
+      this.emitStateUpdateEvent();
+      return;
+    }
     if (hasAnimation) {
       this._syncFinalAttributeFromStaticTruth();
       const removedStateAnimationAttrs = this.buildRemovedStateAnimationAttrs(
@@ -2519,6 +2590,14 @@ abstract class GraphicImpl<T extends Partial<IGraphicAttribute> = Partial<IGraph
     this.resolvedStatePatch = resolvedStateAttrs;
     this.sharedStateDirty = false;
     this.syncSharedStateActiveRegistrations();
+    if (
+      !this.attributeMayContainTransientAttrs &&
+      !this.hasStatePatch(previousResolvedStatePatch) &&
+      !this.hasStatePatch(resolvedStateAttrs)
+    ) {
+      this.emitStateUpdateEvent();
+      return;
+    }
     if (hasAnimation) {
       this._syncFinalAttributeFromStaticTruth();
       const removedStateAnimationAttrs = this.buildRemovedStateAnimationAttrs(
@@ -2787,7 +2866,7 @@ abstract class GraphicImpl<T extends Partial<IGraphicAttribute> = Partial<IGraph
     }
   }
 
-  setStage(stage?: IStage, layer?: ILayer) {
+  setStage(stage?: IStage, layer?: ILayer, inheritedSharedStateScope?: SharedStateScope<Record<string, any>> | null) {
     const graphicService = stage?.graphicService ?? this.stage?.graphicService ?? application.graphicService;
     const previousStage = this.stage;
     if (this.stage !== stage || this.layer !== layer) {
@@ -2799,7 +2878,7 @@ abstract class GraphicImpl<T extends Partial<IGraphicAttribute> = Partial<IGraph
         this.registeredActiveScopes?.size ||
         this.sharedStateDirty
       ) {
-        this.syncSharedStateScopeBindingOnTreeChange(true);
+        this.syncSharedStateScopeBindingOnTreeChange(true, inheritedSharedStateScope);
       }
       this.setStageToShadowRoot(stage, layer);
       if (this.mayHaveTrackedAnimates() && this.hasAnyTrackedAnimate()) {
@@ -2854,7 +2933,7 @@ abstract class GraphicImpl<T extends Partial<IGraphicAttribute> = Partial<IGraph
       this.registeredActiveScopes?.size ||
       this.sharedStateDirty
     ) {
-      this.syncSharedStateScopeBindingOnTreeChange(true);
+      this.syncSharedStateScopeBindingOnTreeChange(true, inheritedSharedStateScope);
     }
   }
 

@@ -88,6 +88,9 @@ export class Area extends Graphic<IAreaGraphicAttribute> implements IArea {
     const { points = areaTheme.points } = attribute;
     const b = aabbBounds;
     points.forEach(p => {
+      if (p.defined === false) {
+        return;
+      }
       b.add(p.x, p.y);
       b.add(p.x1 ?? p.x, p.y1 ?? p.y); //面积图特殊性：由三个值构成，横向面积图，x1会省略；纵向面积图，y1会省略
     });
@@ -103,6 +106,9 @@ export class Area extends Graphic<IAreaGraphicAttribute> implements IArea {
     const b = aabbBounds;
     segments.forEach(s => {
       s.points.forEach(p => {
+        if (p.defined === false) {
+          return;
+        }
         b.add(p.x, p.y);
         b.add(p.x1 ?? p.x, p.y1 ?? p.y); //面积图特殊性：由三个值构成，横向面积图，x1会省略；纵向面积图，y1会省略
       });

@@ -1,3 +1,5 @@
+export {};
+
 declare const require: any;
 declare const __dirname: string;
 

@@ -1,3 +1,5 @@
+export {};
+
 declare const require: any;
 
 const createContainerMock = () => ({

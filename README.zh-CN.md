@@ -13,7 +13,7 @@
 
 <div align="center">
 
-VRender，不只是一个功能丰富的可视化渲染引可视化渲染擎，更是一支得心应手的生花妙笔。
+VRender，不只是一个功能丰富的可视化渲染引擎，更是一支得心应手的生花妙笔。
 
 <p align="center">
   <a href="https://www.visactor.io/vrender">简介</a> •

@@ -106,17 +106,11 @@ function createGraphicRegistryState(): IGraphicRegistryState {
   };
 }
 
+const sharedGraphicRegistry = createGraphicRegistryState();
+
 export function getGraphicRegistryState(): IGraphicRegistryState {
-  const scope = globalThis as typeof globalThis & { [GRAPHIC_REGISTRY_SYMBOL]?: IGraphicRegistryState };
-
-  if (!scope[GRAPHIC_REGISTRY_SYMBOL]) {
-    scope[GRAPHIC_REGISTRY_SYMBOL] = createGraphicRegistryState();
-  }
-
-  return scope[GRAPHIC_REGISTRY_SYMBOL] as IGraphicRegistryState;
+  return sharedGraphicRegistry;
 }
-
-const sharedGraphicRegistry = getGraphicRegistryState();
 
 export const graphicCreator = sharedGraphicRegistry.graphicCreator;
 

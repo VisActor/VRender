@@ -14,16 +14,30 @@ class GraphicStub {
   constructor(public readonly attribute: Record<string, unknown>) {}
 }
 
+class OtherGraphicStub extends GraphicStub {}
+
 describe('graphic factory migration', () => {
-  test('graphic registry should use realm-level shared state for duplicated ESM entry evaluation', () => {
-    registerGraphic('realm-shared-stub', GraphicStub as any);
+  test('graphic registry should stay module-local for duplicated module evaluation', () => {
+    const slot = Symbol.for('@visactor/vrender-core/graphic-registry');
+    delete (globalThis as any)[slot];
 
-    const registryState = (globalThis as any)[Symbol.for('@visactor/vrender-core/graphic-registry')];
+    jest.resetModules();
+    const firstRegistry = require('../../../src/graphic/graphic-registry');
+    firstRegistry.registerGraphic('module-local-stub', GraphicStub as any);
 
-    expect(registryState).toBeDefined();
-    expect(registryState.graphicCreator).toBe(graphicCreator);
-    expect(registryState.graphicFactory.create('realm-shared-stub', { x: 1 })).toBeInstanceOf(GraphicStub);
-    expect(createGraphic('realm-shared-stub', { x: 2 })).toBeInstanceOf(GraphicStub);
+    jest.resetModules();
+    const secondRegistry = require('../../../src/graphic/graphic-registry');
+    secondRegistry.registerGraphic('module-local-stub', OtherGraphicStub as any);
+
+    try {
+      expect(secondRegistry.graphicCreator).not.toBe(firstRegistry.graphicCreator);
+      expect(firstRegistry.createGraphic('module-local-stub', { x: 1 })).toBeInstanceOf(GraphicStub);
+      expect(firstRegistry.createGraphic('module-local-stub', { x: 1 })).not.toBeInstanceOf(OtherGraphicStub);
+      expect(secondRegistry.createGraphic('module-local-stub', { x: 2 })).toBeInstanceOf(OtherGraphicStub);
+      expect(Object.prototype.hasOwnProperty.call(globalThis, slot)).toBe(false);
+    } finally {
+      delete (globalThis as any)[slot];
+    }
   });
 
   test('Graphic class should stay module-local for duplicated module evaluation', () => {

@@ -8,7 +8,7 @@
 - 分层：上层整合包。
 - root entry：`packages/vrender/src/index.ts`
 - 主要职责：聚合导出 `@visactor/vrender-core`、`@visactor/vrender-kits`、`@visactor/vrender-animate`、`@visactor/vrender-components`，提供 app-scoped entries，并保留 legacy `createStage`。
-- 重要 exports：`.`、`./entries`、`./entries/browser`、`./entries/node`、`./entries/miniapp`、`./entries/shared`、`./entries/shared-browser`、`./entries/shared-browser-lite`。
+- 重要 exports：`.`、`./entries`、`./entries/browser`、`./entries/node`、`./entries/miniapp`、`./entries/shared`、`./entries/shared-browser`、`./entries/shared-browser-lite`；`./entries/shared` 另有 `lynx` 条件目标。
 - 运行时注册副作用：`sideEffects: true`。入口 bootstrap 会安装 env、graphics、pickers、plugins、animate，并同步 legacy render/picker binding。
 - 常见调用方：VChart、VTable、普通 VRender 用户、React 绑定层。
 - 改动风险：入口默认装配、shared app 引用计数、legacy 兼容、browser condition、Node canvas envParams。
@@ -21,7 +21,7 @@
 - 分层：核心渲染底座。
 - root entry：`packages/vrender-core/src/index.ts`
 - 主要职责：Graphic、Stage、Layer、render/picker service、event、state/shared-state、registry、factory、application、entries/app context。
-- 重要 exports：`.`、`./application`、`./container`、`./entries/browser`、`./entries/runtime-installer`、`./graphic/creator`、`./graphic/base`、`./graphic/group`、`./register/graphic`、`./render/*`、`./picker/constants`、`./path`、`./svg`、`./text`。
+- 重要 exports：`.`、`./application`、`./container`、`./entries/browser`、`./entries/miniapp`、`./entries/runtime-installer`、`./graphic/creator`、`./graphic/base`、`./graphic/group`、`./register/graphic`、`./render/*`、`./picker/constants`、`./path`、`./svg`、`./text`。
 - 运行时注册副作用：`sideEffects` 只列 `src/modules.ts` 及构建产物，顶层导出本身不应承担完整 env 装配。
 - 常见调用方：`vrender-kits`、`vrender-animate`、`vrender-components`、`vrender`。
 - 改动风险：高。图元属性、bounds、状态、render/picker 绑定和 legacy/app-scoped 双路径都可能跨包回归。
@@ -34,7 +34,7 @@
 - 分层：运行时装配与环境适配层。
 - root entry：`packages/vrender-kits/src/index.ts`，Node require 入口为构建后的 `index-node`。
 - 主要职责：env、canvas/window contribution、register/register-*、installers、browser/math picker、event extension、JSX/react-tree、gif/lottie/dynamicTexture。
-- 重要 exports：`.`、`./env/*`、`./event/extension/*`、`./installers/app`、`./installers/browser`、`./installers/browser-lite`、`./installers/graphics`、`./installers/graphics-lite`、`./register/register-*`、`./jsx/graphicType`、`./tools/dynamicTexture/effect`。
+- 重要 exports：`.`、`./env/*`、`./event/extension/*`、`./installers/app`、`./installers/browser`、`./installers/browser-lite`、`./installers/lynx`、`./installers/graphics`、`./installers/graphics-lite`、`./register/register-*`、`./jsx/graphicType`、`./tools/dynamicTexture/effect`。
 - 运行时注册副作用：`sideEffects: false`。注册函数/installer 显式调用后才装配。
 - 常见调用方：`@visactor/vrender` entries、按需装配调用方、测试 harness。
 - 改动风险：env 互相污染、picker/render binding 缺失、browser-lite 与 full 装配不一致、多端 canvas/window 参数边界。

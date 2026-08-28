@@ -178,6 +178,11 @@
       "import": "./es/installers/graphics-lite.js",
       "require": "./cjs/installers/graphics-lite.js"
     },
+    "./installers/lynx": {
+      "types": "./es/installers/lynx.d.ts",
+      "import": "./es/installers/lynx.js",
+      "require": "./cjs/installers/lynx.js"
+    },
     "./jsx/graphicType": {
       "types": "./es/jsx/graphicType.d.ts",
       "import": "./es/jsx/graphicType.js",

@@ -48,6 +48,7 @@ const expectedExports: ExpectedSubpath[] = [
   { subpath: './render/draw-interceptor', source: 'src/render/contributions/render/draw-interceptor.ts' },
   { subpath: './render/symbol', source: 'src/render/contributions/render/symbol.ts' },
   { subpath: './entries/browser', source: 'src/entries/browser.ts' },
+  { subpath: './entries/miniapp', source: 'src/entries/miniapp.ts' },
   { subpath: './entries/runtime-installer', source: 'src/entries/runtime-installer.ts' }
 ];
 

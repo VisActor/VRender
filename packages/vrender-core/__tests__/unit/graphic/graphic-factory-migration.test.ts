@@ -1,7 +1,6 @@
 import type { IRectGraphicAttribute } from '../../../src/interface';
 import { createGraphic, graphicCreator, registerGraphic } from '../../../src/graphic';
 import { Arc3d } from '../../../src/graphic/arc3d';
-import { Graphic } from '../../../src/graphic/base';
 import { DefaultGraphicService } from '../../../src/graphic/graphic-service/graphic-service';
 import { Group } from '../../../src/graphic/group';
 import { Rect } from '../../../src/graphic/rect';
@@ -9,34 +8,56 @@ import { registerArc3dGraphic } from '../../../src/register/register-arc3d';
 import { registerGroupGraphic } from '../../../src/register/register-group';
 import { registerRectGraphic } from '../../../src/register/register-rect';
 
+declare const require: any;
+
 class GraphicStub {
   constructor(public readonly attribute: Record<string, unknown>) {}
 }
 
+class OtherGraphicStub extends GraphicStub {}
+
 describe('graphic factory migration', () => {
-  test('graphic registry should use realm-level shared state for duplicated ESM entry evaluation', () => {
-    registerGraphic('realm-shared-stub', GraphicStub as any);
+  test('graphic registry should stay module-local for duplicated module evaluation', () => {
+    const slot = Symbol.for('@visactor/vrender-core/graphic-registry');
+    delete (globalThis as any)[slot];
 
-    const registryState = (globalThis as any)[Symbol.for('@visactor/vrender-core/graphic-registry')];
+    jest.resetModules();
+    const firstRegistry = require('../../../src/graphic/graphic-registry');
+    firstRegistry.registerGraphic('module-local-stub', GraphicStub as any);
 
-    expect(registryState).toBeDefined();
-    expect(registryState.graphicCreator).toBe(graphicCreator);
-    expect(registryState.graphicFactory.create('realm-shared-stub', { x: 1 })).toBeInstanceOf(GraphicStub);
-    expect(createGraphic('realm-shared-stub', { x: 2 })).toBeInstanceOf(GraphicStub);
+    jest.resetModules();
+    const secondRegistry = require('../../../src/graphic/graphic-registry');
+    secondRegistry.registerGraphic('module-local-stub', OtherGraphicStub as any);
+
+    try {
+      expect(secondRegistry.graphicCreator).not.toBe(firstRegistry.graphicCreator);
+      expect(firstRegistry.createGraphic('module-local-stub', { x: 1 })).toBeInstanceOf(GraphicStub);
+      expect(firstRegistry.createGraphic('module-local-stub', { x: 1 })).not.toBeInstanceOf(OtherGraphicStub);
+      expect(secondRegistry.createGraphic('module-local-stub', { x: 2 })).toBeInstanceOf(OtherGraphicStub);
+      expect(Object.prototype.hasOwnProperty.call(globalThis, slot)).toBe(false);
+    } finally {
+      delete (globalThis as any)[slot];
+    }
   });
 
-  test('Graphic class should use realm-level shared state for duplicated ESM entry evaluation', () => {
-    registerGroupGraphic();
-    registerArc3dGraphic();
+  test('Graphic class should stay module-local for duplicated module evaluation', () => {
+    const slot = Symbol.for('@visactor/vrender-core/graphic-class');
+    delete (globalThis as any)[slot];
 
-    const classState = (globalThis as any)[Symbol.for('@visactor/vrender-core/graphic-class')];
-    const group = createGraphic('group', {});
-    const arc3d = createGraphic('arc3d', {});
+    let firstGraphic: unknown = null;
+    let secondGraphic: unknown = null;
 
-    expect(classState).toBeDefined();
-    expect(classState.Graphic).toBe(Graphic);
-    expect(group).toBeInstanceOf(classState.Graphic);
-    expect(arc3d).toBeInstanceOf(classState.Graphic);
+    jest.resetModules();
+    firstGraphic = require('../../../src/graphic/graphic').Graphic;
+    jest.resetModules();
+    secondGraphic = require('../../../src/graphic/graphic').Graphic;
+
+    try {
+      expect(secondGraphic).not.toBe(firstGraphic);
+      expect(Object.prototype.hasOwnProperty.call(globalThis, slot)).toBe(false);
+    } finally {
+      delete (globalThis as any)[slot];
+    }
   });
 
   test('registerGraphic should register creators for createGraphic', () => {

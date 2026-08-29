@@ -60,7 +60,6 @@ import {
 import { bindBrowserCanvasModules } from '../canvas/contributions/browser/modules';
 import { bindFeishuCanvasModules } from '../canvas/contributions/feishu/modules';
 import { bindHarmonyCanvasModules } from '../canvas/contributions/harmony/modules';
-import { bindLynxCanvasModules } from '../canvas/contributions/lynx/modules';
 import { bindNodeCanvasModules } from '../canvas/contributions/node/modules';
 import { bindTaroCanvasModules } from '../canvas/contributions/taro/modules';
 import { bindTTCanvasModules } from '../canvas/contributions/tt/modules';
@@ -68,7 +67,6 @@ import { bindWxCanvasModules } from '../canvas/contributions/wx/modules';
 import { bindBrowserEnv } from '../env/browser';
 import { bindFeishuEnv } from '../env/feishu';
 import { bindHarmonyEnv } from '../env/harmony';
-import { bindLynxEnv } from '../env/lynx';
 import { bindNodeEnv } from '../env/node';
 import { bindTaroEnv } from '../env/taro';
 import { bindTTEnv } from '../env/tt';
@@ -100,7 +98,6 @@ import { bindGifImageRenderContribution } from '../render/contributions/canvas/g
 import { bindBrowserWindowContribution } from '../window/contributions/browser-contribution';
 import { bindFeishuWindowContribution } from '../window/contributions/feishu-contribution';
 import { bindHarmonyWindowContribution } from '../window/contributions/harmony-contribution';
-import { bindLynxWindowContribution } from '../window/contributions/lynx-contribution';
 import { bindNodeWindowContribution } from '../window/contributions/node-contribution';
 import { bindTaroWindowContribution } from '../window/contributions/taro-contribution';
 import { bindTTWindowContribution } from '../window/contributions/tt-contribution';
@@ -339,18 +336,7 @@ export function installWxEnvToApp(app: IApp, envParams?: IEnvParamsMap['wx']): v
   );
 }
 
-export function installLynxEnvToApp(app: IApp, envParams?: IEnvParamsMap['lynx']): void {
-  installRuntimeEnvToApp(
-    app,
-    'lynx',
-    {
-      bindEnv: bindLynxEnv,
-      bindCanvasModules: bindLynxCanvasModules,
-      bindWindowContribution: bindLynxWindowContribution
-    },
-    envParams
-  );
-}
+export { installLynxEnvToApp } from './lynx';
 
 export function installHarmonyEnvToApp(app: IApp, envParams?: IEnvParamsMap['harmony']): void {
   installRuntimeEnvToApp(

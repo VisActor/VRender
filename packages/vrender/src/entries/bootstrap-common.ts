@@ -65,9 +65,17 @@ const standardLegacyGraphicRegistrations = [
   registerStar
 ];
 
-export function registerStandardPipeline(): void {
+export function registerStandardPlugins(): void {
   pluginRegistrations.forEach(register => register());
+}
+
+export function registerStandardAnimation(): void {
   registerAnimate();
+}
+
+export function registerStandardPipeline(): void {
+  registerStandardPlugins();
+  registerStandardAnimation();
 }
 
 export function registerStandardLegacyGraphics(): void {

@@ -5,7 +5,6 @@
 declare const require: any;
 export {};
 
-const emptyArray = (): never[] => [];
 const SHARED_APP_REGISTRY_KEY = Symbol.for('visactor.vrender.sharedAppRegistry');
 
 describe('browser-condition shared app entry', () => {
@@ -14,141 +13,45 @@ describe('browser-condition shared app entry', () => {
     delete (globalThis as any)[SHARED_APP_REGISTRY_KEY];
   });
 
-  test('routes an explicit lynx env to the Lynx app without initializing the browser environment', () => {
+  test('creates the default browser app without loading Lynx', () => {
     jest.isolateModules(() => {
-      const lynxApp = {
-        env: 'lynx',
-        release: jest.fn()
-      };
-      const createBrowserApp = jest.fn(() => {
-        throw new Error('the Lynx shared app must not initialize the browser environment');
-      });
-      const createLynxVRenderApp = jest.fn(() => lynxApp);
+      const browserApp = { env: 'browser', release: jest.fn() };
+      const createBrowserApp = jest.fn(() => browserApp);
+      const bootstrapVRenderSharedBrowserApp = jest.fn((app: unknown) => app);
+      const installPendingRuntimeContributionModulesToApp = jest.fn();
 
-      jest.doMock('@visactor/vrender-core/entries/browser', () => ({
-        BrowserEntry: class BrowserEntry {},
-        createBrowserApp
-      }));
-      jest.doMock('../../src/entries/miniapp', () => ({ createLynxVRenderApp }));
+      jest.doMock('@visactor/vrender-core/entries/browser', () => ({ createBrowserApp }));
+      jest.doMock('../../src/entries/bootstrap-browser', () => ({ bootstrapVRenderSharedBrowserApp }));
+      jest.doMock('../../src/entries/runtime-contribution', () => ({ installPendingRuntimeContributionModulesToApp }));
+      jest.doMock('../../src/entries/miniapp', () => {
+        throw new Error('shared-browser must not load the multi-environment miniapp entry');
+      });
 
       const { acquireSharedVRenderApp } = require('../../src/entries/shared-browser');
-      const handle = (acquireSharedVRenderApp as any)(undefined, 'lynx');
+      const handle = acquireSharedVRenderApp();
 
-      expect(handle.env).toBe('lynx');
-      expect(handle.app).toBe(lynxApp);
-      expect(createLynxVRenderApp).toHaveBeenCalledTimes(1);
-      expect(createBrowserApp).not.toHaveBeenCalled();
+      expect(handle.env).toBe('browser');
+      expect(handle.app).toBe(browserApp);
+      expect(createBrowserApp).toHaveBeenCalledWith({});
+      expect(bootstrapVRenderSharedBrowserApp).toHaveBeenCalledWith(browserApp, undefined);
+      expect(installPendingRuntimeContributionModulesToApp).toHaveBeenCalledWith(browserApp);
 
       handle.release();
     });
   });
 
-  test('keeps browser as the default and isolates browser and Lynx shared apps', () => {
+  test('fails clearly when a non-browser environment resolves the browser condition', () => {
     jest.isolateModules(() => {
-      const legacyBindingContextMock = { getAll: jest.fn(emptyArray) };
-      const browserApp = {
-        env: 'browser',
-        registry: {
-          renderer: { getAll: jest.fn(emptyArray), clear: jest.fn(), register: jest.fn() },
-          picker: { getAll: jest.fn(emptyArray), clear: jest.fn(), register: jest.fn() }
-        },
-        release: jest.fn()
-      };
-      const lynxApp = { env: 'lynx', release: jest.fn() };
-      const createBrowserApp = jest.fn(() => browserApp);
-      const createLynxVRenderApp = jest.fn(() => lynxApp);
-
-      jest.doMock('@visactor/vrender-core/entries/browser', () => ({
-        createBrowserApp
+      jest.doMock('@visactor/vrender-core/entries/browser', () => ({ createBrowserApp: jest.fn() }));
+      jest.doMock('../../src/entries/bootstrap-browser', () => ({ bootstrapVRenderSharedBrowserApp: jest.fn() }));
+      jest.doMock('../../src/entries/runtime-contribution', () => ({
+        installPendingRuntimeContributionModulesToApp: jest.fn()
       }));
-      jest.doMock('../../src/entries/miniapp', () => ({ createLynxVRenderApp }));
-      jest.doMock('@visactor/vrender-core/legacy/bootstrap', () => ({
-        getLegacyBindingContext: jest.fn(() => legacyBindingContextMock)
-      }));
-      jest.doMock('@visactor/vrender-core/render/symbol', () => ({
-        GraphicRender: 'GraphicRender'
-      }));
-      jest.doMock('@visactor/vrender-core/plugin/3d', () => ({
-        registerDirectionalLight: jest.fn(),
-        registerOrthoCamera: jest.fn(),
-        registerViewTransform3dPlugin: jest.fn()
-      }));
-      jest.doMock('@visactor/vrender-core/plugin/attribute', () => ({
-        registerHtmlAttributePlugin: jest.fn(),
-        registerReactAttributePlugin: jest.fn()
-      }));
-      jest.doMock('@visactor/vrender-core/plugin/flex-layout', () => ({
-        registerFlexLayoutPlugin: jest.fn()
-      }));
-      jest.doMock('@visactor/vrender-kits/installers/browser', () => ({
-        installBrowserEnvToApp: jest.fn(),
-        installBrowserPickersToApp: jest.fn()
-      }));
-      jest.doMock('@visactor/vrender-kits/installers/graphics', () => ({
-        installStandardGraphicsToApp: jest.fn()
-      }));
-      jest.doMock('@visactor/vrender-kits/picker/contributions/constants', () => ({
-        CanvasPickerContribution: 'CanvasPickerContribution'
-      }));
-      jest.doMock('@visactor/vrender-animate/register', () => ({
-        registerAnimate: jest.fn()
-      }));
-
-      const registerMocks = {
-        arc: 'registerArc',
-        arc3d: 'registerArc3d',
-        area: 'registerArea',
-        circle: 'registerCircle',
-        glyph: 'registerGlyph',
-        group: 'registerGroup',
-        image: 'registerImage',
-        line: 'registerLine',
-        path: 'registerPath',
-        polygon: 'registerPolygon',
-        pyramid3d: 'registerPyramid3d',
-        rect: 'registerRect',
-        rect3d: 'registerRect3d',
-        richtext: 'registerRichtext',
-        shadowRoot: 'registerShadowRoot',
-        star: 'registerStar',
-        symbol: 'registerSymbol',
-        text: 'registerText',
-        wraptext: 'registerWrapText'
-      };
-
-      Object.entries(registerMocks).forEach(([name, exportName]) => {
-        jest.doMock(`@visactor/vrender-kits/register/register-${name}`, () => ({
-          [exportName]: jest.fn()
-        }));
-      });
-
-      [
-        '@visactor/vrender-kits/env/node',
-        '@visactor/vrender-kits/env/wx',
-        '@visactor/vrender-kits/env/harmony',
-        '@visactor/vrender-kits/env/browser',
-        '@visactor/vrender-kits/register/register-gif',
-        '@visactor/vrender-animate/custom/register'
-      ].forEach(moduleName => {
-        jest.doMock(moduleName, () => {
-          throw new Error(`${moduleName} should not be loaded by shared-browser`);
-        });
-      });
+      jest.doMock('../../src/entries/miniapp', () => ({ createLynxVRenderApp: jest.fn() }));
 
       const { acquireSharedVRenderApp } = require('../../src/entries/shared-browser');
-      const browserHandle = acquireSharedVRenderApp();
-      const lynxHandle = (acquireSharedVRenderApp as any)(undefined, 'lynx');
 
-      expect(createBrowserApp).toHaveBeenCalledTimes(1);
-      expect(createBrowserApp).toHaveBeenCalledWith({});
-      expect(browserHandle.env).toBe('browser');
-      expect(browserHandle.app).toBe(browserApp);
-      expect(lynxHandle.env).toBe('lynx');
-      expect(lynxHandle.app).toBe(lynxApp);
-      expect(browserHandle.app).not.toBe(lynxHandle.app);
-
-      browserHandle.release();
-      lynxHandle.release();
+      expect(() => acquireSharedVRenderApp({ env: 'lynx' } as any)).toThrow(/browser condition/i);
     });
   });
 });

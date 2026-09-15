@@ -2022,7 +2022,38 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     return this;
   }
 
+  /** Keep a glyph child's own attribute surfaces attached when state/animation replaces them. */
+  protected static bindGlyphAttributes(graphic: Graphic, inherited: object): void {
+    if (Object.getPrototypeOf(graphic.attribute) !== inherited) {
+      Object.setPrototypeOf(graphic.attribute, inherited);
+    }
+    if (graphic._baseAttributes && Object.getPrototypeOf(graphic._baseAttributes) !== inherited) {
+      Object.setPrototypeOf(graphic._baseAttributes, inherited);
+    }
+  }
+
+  /** @internal Batched removal for Glyph-derived attributes; ordinary setters retain their fast path. */
+  protected static commitDerivedAttributePatch(
+    graphic: Graphic,
+    patch: Record<string, any>,
+    removedKeys?: readonly string[],
+    context?: ISetAttributeContext
+  ): void {
+    if (!removedKeys?.length) {
+      graphic.setAttributes(patch, false, context);
+      return;
+    }
+    graphic.detachAttributeFromBaseAttributes();
+    const base = graphic.getBaseAttributesStorage() as Record<string, any>;
+    removedKeys.forEach(key => delete base[key]);
+    graphic.applyBaseAttributes(patch);
+    graphic.commitBaseAttributeMutation(false, context);
+  }
+
   onAttributeUpdate(context?: ISetAttributeContext) {
+    if (this.glyphHost) {
+      Graphic.bindGlyphAttributes(this, this.glyphHost.attribute);
+    }
     if (context && context.skipUpdateCallback) {
       return;
     }
@@ -2440,7 +2471,9 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     return false;
   }
 
-  protected stopStateAnimates(type: 'start' | 'end' = 'end') {
+  protected stopStateAnimates(type?: 'start' | 'end') {
+    // Internal state transitions restore static truth themselves. An explicit
+    // stop('end') would instead commit the old animation target as new base data.
     const stopAnimationState = (this as any).stopAnimationState;
     if (typeof stopAnimationState === 'function') {
       stopAnimationState.call(this, 'state', type);

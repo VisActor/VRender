@@ -217,7 +217,7 @@ describe('Graphic state animation integration', () => {
 
     graphic.useStates(['hover'], false);
 
-    expect((graphic as any).stopAnimationState).toHaveBeenCalledWith('state', 'end');
+    expect((graphic as any).stopAnimationState).toHaveBeenCalledWith('state', undefined);
   });
 
   test('should allow partial animation config overrides', () => {

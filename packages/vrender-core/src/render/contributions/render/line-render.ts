@@ -12,7 +12,9 @@ import type {
   IDrawContext,
   IRenderService,
   IGraphicRender,
-  IGraphicRenderDrawParams
+  IGraphicRenderDrawParams,
+  IContributionProvider,
+  ILineRenderContribution
 } from '../../../interface';
 import { getTheme } from '../../../graphic/theme';
 import { LINE_NUMBER_TYPE } from '../../../graphic/constants';
@@ -28,6 +30,12 @@ export class DefaultCanvasLineRender extends BaseRender<ILine> implements IGraph
   type: 'line';
   numberType: number = LINE_NUMBER_TYPE;
   declare z: number;
+
+  constructor(protected readonly graphicRenderContributions: IContributionProvider<ILineRenderContribution>) {
+    super();
+    this.builtinContributions = [];
+    this.init(graphicRenderContributions);
+  }
 
   draw(line: ILine, renderService: IRenderService, drawContext: IDrawContext, params?: IGraphicRenderDrawParams) {
     const lineAttribute = getTheme(line, params?.theme).line;
@@ -72,7 +80,8 @@ export class DefaultCanvasLineRender extends BaseRender<ILine> implements IGraph
       ctx: IContext2d,
       lineAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
       themeAttribute: IThemeAttribute | IThemeAttribute[]
-    ) => boolean
+    ) => boolean,
+    drawContext?: IDrawContext
   ): boolean {
     if (!cache) {
       return;
@@ -103,6 +112,21 @@ export class DefaultCanvasLineRender extends BaseRender<ILine> implements IGraph
 
     const { x: originX = 0, x: originY = 0 } = attribute;
     const ret: boolean = false;
+
+    this.beforeRenderStep(
+      line,
+      context,
+      offsetX,
+      offsetY,
+      !!fill,
+      !!stroke,
+      fillOpacity,
+      strokeOpacity,
+      defaultAttribute as Required<ILineGraphicAttribute>,
+      drawContext,
+      fillCb,
+      strokeCb
+    );
     if (fill !== false) {
       if (fillCb) {
         fillCb(context, attribute, defaultAttribute);
@@ -119,6 +143,21 @@ export class DefaultCanvasLineRender extends BaseRender<ILine> implements IGraph
         context.stroke();
       }
     }
+
+    this.afterRenderStep(
+      line,
+      context,
+      offsetX,
+      offsetY,
+      !!fill,
+      !!stroke,
+      fillOpacity,
+      strokeOpacity,
+      defaultAttribute as Required<ILineGraphicAttribute>,
+      drawContext,
+      fillCb,
+      strokeCb
+    );
     return !!ret;
   }
 
@@ -162,6 +201,21 @@ export class DefaultCanvasLineRender extends BaseRender<ILine> implements IGraph
     context.setShadowBlendStyle && context.setShadowBlendStyle(line, line.attribute, lineAttribute);
 
     const { x: originX = 0, x: originY = 0 } = line.attribute;
+
+    this.beforeRenderStep(
+      line,
+      context,
+      offsetX,
+      offsetY,
+      !!fill,
+      !!stroke,
+      fillOpacity,
+      strokeOpacity,
+      lineAttribute,
+      drawContext,
+      fillCb,
+      strokeCb
+    );
     if (fill !== false) {
       if (fillCb) {
         fillCb(context, line.attribute, lineAttribute);
@@ -178,6 +232,21 @@ export class DefaultCanvasLineRender extends BaseRender<ILine> implements IGraph
         context.stroke();
       }
     }
+
+    this.afterRenderStep(
+      line,
+      context,
+      offsetX,
+      offsetY,
+      !!fill,
+      !!stroke,
+      fillOpacity,
+      strokeOpacity,
+      lineAttribute,
+      drawContext,
+      fillCb,
+      strokeCb
+    );
   }
 
   drawShape(
@@ -350,7 +419,8 @@ export class DefaultCanvasLineRender extends BaseRender<ILine> implements IGraph
             y,
             line,
             fillCb,
-            strokeCb
+            strokeCb,
+            drawContext
           );
         });
       } else {
@@ -385,7 +455,8 @@ export class DefaultCanvasLineRender extends BaseRender<ILine> implements IGraph
               y,
               line,
               fillCb,
-              strokeCb
+              strokeCb,
+              drawContext
             );
           }
         });
@@ -406,7 +477,8 @@ export class DefaultCanvasLineRender extends BaseRender<ILine> implements IGraph
         y,
         line,
         fillCb,
-        strokeCb
+        strokeCb,
+        drawContext
       );
     }
   }

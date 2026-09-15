@@ -1,4 +1,4 @@
-import type { AABBBounds, IAABBBounds, IPointLike } from '@visactor/vutils';
+import type { AABBBounds, IAABBBounds } from '@visactor/vutils';
 import { Graphic, NOWORK_ANIMATE_ATTR } from './graphic';
 import type {
   GraphicType,
@@ -12,6 +12,7 @@ import { StateDefinitionCompiler } from './state/state-definition-compiler';
 import type { CompiledStateDefinition, StateDefinition, StateDefinitionsInput } from './state/state-definition';
 import type { SharedStateScope } from './state/shared-state-scope';
 import { getTheme } from './theme';
+import { UpdateCategory } from './state/attribute-update-classifier';
 import { GLYPH_NUMBER_TYPE } from './constants';
 
 export class Glyph extends Graphic<IGlyphGraphicAttribute> implements IGlyph {
@@ -33,6 +34,7 @@ export class Glyph extends Graphic<IGlyphGraphicAttribute> implements IGlyph {
     subAttributes: Partial<IGraphicAttribute>[];
   };
   protected declare subGraphic: IGraphic[];
+  private subGraphicEncoder?: (g: IGlyph, context?: ISetAttributeContext) => void;
   private legacyDefinitionsSource?: Glyph['glyphStates'];
   private legacyProxySource?: Glyph['glyphStateProxy'];
   private legacyDefinitions?: StateDefinitionsInput<IGlyphGraphicAttribute>;
@@ -53,16 +55,17 @@ export class Glyph extends Graphic<IGlyphGraphicAttribute> implements IGlyph {
     this.subGraphic = subGraphic;
     subGraphic.forEach(g => {
       g.glyphHost = this;
-      Object.setPrototypeOf(g.attribute, this.attribute);
+      Graphic.bindGlyphAttributes(g as Graphic, this.attribute);
     });
     this.valid = this.isValid();
     this.addUpdateBoundTag();
+    this.subGraphicEncoder?.(this);
   }
 
   protected detachSubGraphic() {
     this.subGraphic.forEach(g => {
       g.glyphHost = null;
-      Object.setPrototypeOf(g.attribute, {});
+      Graphic.bindGlyphAttributes(g as Graphic, Object.prototype);
     });
   }
 
@@ -82,84 +85,94 @@ export class Glyph extends Graphic<IGlyphGraphicAttribute> implements IGlyph {
     return true;
   }
 
-  setAttribute(key: string, value: any, forceUpdateTag?: boolean, context?: ISetAttributeContext) {
-    super.setAttribute(key, value, forceUpdateTag, context);
-    this.subGraphic.forEach(g => {
-      g.addUpdateShapeAndBoundsTag();
-      g.addUpdatePositionTag();
-    });
+  setSubGraphicEncoder(encoder?: (g: IGlyph, context?: ISetAttributeContext) => void): void {
+    this.subGraphicEncoder = encoder;
+    encoder?.(this);
   }
 
-  setAttributes(
+  commitSubGraphicAttributes(
+    subGraphic: IGraphic,
+    patch: Record<string, any>,
+    removedKeys?: readonly string[],
+    context?: ISetAttributeContext
+  ): void {
+    Graphic.commitDerivedAttributePatch(subGraphic as Graphic, patch, removedKeys, context);
+  }
+
+  onAttributeUpdate(context?: ISetAttributeContext): void {
+    if (this.glyphHost) {
+      Graphic.bindGlyphAttributes(this, this.glyphHost.attribute);
+    }
+    for (const child of this.subGraphic) {
+      Graphic.bindGlyphAttributes(child as Graphic, this.attribute);
+    }
+    this.subGraphicEncoder?.(this, context);
+    if (!context?.skipUpdateCallback) {
+      this._onUpdate?.(this);
+    }
+    super.onAttributeUpdate(context);
+  }
+
+  protected submitUpdateByCategory(category: UpdateCategory, forceUpdateTag: boolean = false): void {
+    super.submitUpdateByCategory(category, forceUpdateTag);
+    for (const child of this.subGraphic) {
+      if (forceUpdateTag || category & UpdateCategory.SHAPE) {
+        child.addUpdateShapeAndBoundsTag();
+      } else if (category & UpdateCategory.BOUNDS) {
+        child.addUpdateBoundTag();
+      }
+      if (category & UpdateCategory.PAINT) {
+        child.addUpdatePaintTag();
+      }
+      if (forceUpdateTag || category & UpdateCategory.TRANSFORM) {
+        child.addUpdatePositionTag();
+      }
+      if (forceUpdateTag || category & UpdateCategory.LAYOUT) {
+        child.addUpdateLayoutTag();
+      }
+    }
+  }
+
+  // Glyph forwards inherited invalidation to children, so its base fast path must
+  // classify changed keys too. Ordinary Graphic setters keep their existing path.
+  protected commitBaseAttributesByTouchedKeys(
     params: Partial<IGlyphGraphicAttribute>,
     forceUpdateTag: boolean = false,
     context?: ISetAttributeContext
-  ) {
-    super.setAttributes(params, forceUpdateTag, context);
-    this.subGraphic.forEach(g => {
-      g.addUpdateShapeAndBoundsTag();
-      g.addUpdatePositionTag();
-    });
+  ): void {
+    const base = this.getBaseAttributesStorage();
+    let category = UpdateCategory.NONE;
+    let hasKeys = false;
+    for (const key in params) {
+      if (!Object.prototype.hasOwnProperty.call(params, key)) {
+        continue;
+      }
+      hasKeys = true;
+      const prev = (base as any)[key];
+      const next = (params as any)[key];
+      if (prev !== next) {
+        category = this.mergeAttributeDeltaCategory(category, key, prev, next);
+      }
+      (base as any)[key] = next;
+    }
+    if (!hasKeys) {
+      return;
+    }
+    this.attribute = base;
+    this._baseAttributes = undefined;
+    this.attributeMayContainTransientAttrs = false;
+    this.valid = this.isValid();
+    this.submitUpdateByCategory(category, forceUpdateTag);
+    this.onAttributeUpdate(context);
   }
 
-  translate(x: number, y: number) {
-    super.translate(x, y);
-
-    this.subGraphic.forEach(g => {
-      g.addUpdatePositionTag();
-      g.addUpdateBoundTag();
-    });
-    return this;
-  }
-
-  translateTo(x: number, y: number) {
-    super.translateTo(x, y);
-
-    this.subGraphic.forEach(g => {
-      g.addUpdatePositionTag();
-      g.addUpdateBoundTag();
-    });
-    return this;
-  }
-
-  scale(scaleX: number, scaleY: number, scaleCenter?: IPointLike) {
-    super.scale(scaleX, scaleY, scaleCenter);
-
-    this.subGraphic.forEach(g => {
-      g.addUpdatePositionTag();
-      g.addUpdateBoundTag();
-    });
-    return this;
-  }
-
-  scaleTo(scaleX: number, scaleY: number) {
-    super.scaleTo(scaleX, scaleY);
-
-    this.subGraphic.forEach(g => {
-      g.addUpdatePositionTag();
-      g.addUpdateBoundTag();
-    });
-    return this;
-  }
-
-  rotate(angle: number) {
-    super.rotate(angle);
-
-    this.subGraphic.forEach(g => {
-      g.addUpdatePositionTag();
-      g.addUpdateBoundTag();
-    });
-    return this;
-  }
-
-  rotateTo(angle: number) {
-    super.rotate(angle);
-
-    this.subGraphic.forEach(g => {
-      g.addUpdatePositionTag();
-      g.addUpdateBoundTag();
-    });
-    return this;
+  protected commitBaseAttributeBySingleKey(
+    key: string,
+    value: any,
+    forceUpdateTag: boolean = false,
+    context?: ISetAttributeContext
+  ): void {
+    this.commitBaseAttributesByTouchedKeys({ [key]: value }, forceUpdateTag, context);
   }
 
   getGraphicTheme(): Required<IGlyphGraphicAttribute> {
@@ -271,6 +284,19 @@ export class Glyph extends Graphic<IGlyphGraphicAttribute> implements IGlyph {
     const glyph = new Glyph({ ...this.attribute });
     glyph.setSubGraphic(this.subGraphic.map(g => g.clone()));
     return glyph;
+  }
+
+  release(): void {
+    super.release();
+    this.subGraphicEncoder = undefined;
+    this._onUpdate = undefined;
+    this.legacyDefinitions = undefined;
+    this.legacyCompiledDefinitions = undefined;
+    this.legacyDefinitionsSource = undefined;
+    this.legacyProxySource = undefined;
+    this.detachSubGraphic();
+    this.subGraphic.forEach(child => child.release());
+    this.subGraphic = [];
   }
 
   getNoWorkAnimateAttr(): Record<string, number> {

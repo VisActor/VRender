@@ -1,4 +1,4 @@
-import type { IGraphicAttribute, IGraphic } from '../graphic';
+import type { IGraphicAttribute, IGraphic, ISetAttributeContext } from '../graphic';
 import type { ICustomPath2D } from '../path';
 
 // glyph是一种图元，这种图元组合了各种其他图元
@@ -39,5 +39,17 @@ export interface IGlyph<T extends Partial<IGraphicAttribute> = Partial<IGraphicA
 
   onInit: (cb: (g: this) => void) => void;
 
+  /** Observes committed attributes after derived children are synchronized. Honors skipUpdateCallback. */
   onUpdate: (cb: (g: this) => void) => void;
+
+  /** Bind after children/context are ready. Runs once immediately and after each host attribute commit. */
+  setSubGraphicEncoder: (encoder?: (g: IGlyph, context?: ISetAttributeContext) => void) => void;
+
+  /** Atomically apply derived values and remove owned keys, preserving child state/base truth. */
+  commitSubGraphicAttributes: (
+    subGraphic: IGraphic,
+    patch: Record<string, any>,
+    removedKeys?: readonly string[],
+    context?: ISetAttributeContext
+  ) => void;
 }

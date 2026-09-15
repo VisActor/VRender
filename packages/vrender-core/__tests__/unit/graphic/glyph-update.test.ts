@@ -99,6 +99,17 @@ describe('Glyph derived attributes', () => {
     expect((glyph as any)._updateTag & UpdateTag.UPDATE_SHAPE_AND_BOUNDS).toBe(0);
   });
 
+  test('derived paint patches do not invalidate child geometry', () => {
+    const { glyph, child } = createFixture();
+    (child as any)._updateTag = 0;
+    glyph.commitSubGraphicAttributes(child, { fill: 'gray', fillOpacity: 0.5 });
+    expect(child.attribute.fill).toBe('gray');
+    expect((child as any)._updateTag & UpdateTag.UPDATE_PAINT).not.toBe(0);
+    expect((child as any)._updateTag & UpdateTag.UPDATE_SHAPE_AND_BOUNDS).toBe(0);
+    glyph.commitSubGraphicAttributes(child, { width: 30 });
+    expect((child as any)._updateTag & UpdateTag.UPDATE_SHAPE_AND_BOUNDS).not.toBe(0);
+  });
+
   test('clone callbacks are independent and initAttributes resynchronizes children', () => {
     const { glyph, child, service } = createFixture();
     const encode = jest.fn((g, context) => {

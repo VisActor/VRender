@@ -978,11 +978,47 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     this.commitBaseAttributeMutation(false, context);
   }
 
+  /** Glyph updates must retain paint-only invalidation, including derived child patches. */
+  protected commitBaseAttributesByCategory(
+    params: Partial<T>,
+    forceUpdateTag: boolean = false,
+    context?: ISetAttributeContext
+  ): void {
+    const base = this.getBaseAttributesStorage();
+    let category = UpdateCategory.NONE;
+    let hasKeys = false;
+    for (const key in params) {
+      if (!Object.prototype.hasOwnProperty.call(params, key)) {
+        continue;
+      }
+      hasKeys = true;
+      const prev = (base as any)[key];
+      const next = (params as any)[key];
+      if (prev !== next) {
+        category = this.mergeAttributeDeltaCategory(category, key, prev, next);
+      }
+      (base as any)[key] = next;
+    }
+    if (!hasKeys) {
+      return;
+    }
+    this.attribute = base as T;
+    this._baseAttributes = undefined;
+    this.attributeMayContainTransientAttrs = false;
+    this.valid = this.isValid();
+    this.submitUpdateByCategory(category, forceUpdateTag);
+    this.onAttributeUpdate(context);
+  }
+
   protected commitBaseAttributesByTouchedKeys(
     params: Partial<T>,
     forceUpdateTag: boolean = false,
     context?: ISetAttributeContext
   ): void {
+    if (this.glyphHost) {
+      this.commitBaseAttributesByCategory(params, forceUpdateTag, context);
+      return;
+    }
     const source = params as Record<string, any>;
     const baseAttributes = this.getBaseAttributesStorage() as Record<string, any>;
     let hasKeys = false;

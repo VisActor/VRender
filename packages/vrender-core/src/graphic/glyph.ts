@@ -140,30 +140,7 @@ export class Glyph extends Graphic<IGlyphGraphicAttribute> implements IGlyph {
     forceUpdateTag: boolean = false,
     context?: ISetAttributeContext
   ): void {
-    const base = this.getBaseAttributesStorage();
-    let category = UpdateCategory.NONE;
-    let hasKeys = false;
-    for (const key in params) {
-      if (!Object.prototype.hasOwnProperty.call(params, key)) {
-        continue;
-      }
-      hasKeys = true;
-      const prev = (base as any)[key];
-      const next = (params as any)[key];
-      if (prev !== next) {
-        category = this.mergeAttributeDeltaCategory(category, key, prev, next);
-      }
-      (base as any)[key] = next;
-    }
-    if (!hasKeys) {
-      return;
-    }
-    this.attribute = base;
-    this._baseAttributes = undefined;
-    this.attributeMayContainTransientAttrs = false;
-    this.valid = this.isValid();
-    this.submitUpdateByCategory(category, forceUpdateTag);
-    this.onAttributeUpdate(context);
+    this.commitBaseAttributesByCategory(params, forceUpdateTag, context);
   }
 
   protected commitBaseAttributeBySingleKey(

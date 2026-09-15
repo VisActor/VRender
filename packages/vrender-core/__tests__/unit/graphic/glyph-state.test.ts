@@ -1,3 +1,4 @@
+import { StateDefinitionCompiler } from '../../../src/graphic/state/state-definition-compiler';
 import { createGlyph } from '../../../src/graphic/glyph';
 import { createRect } from '../../../src/graphic/rect';
 import { createGroup } from '../../../src/graphic/group';
@@ -212,5 +213,18 @@ describe('Glyph state', () => {
     expect(glyph.attribute.fillOpacity).toBe(0.4);
     glyph.clearStates(false);
     expect(glyph.registeredActiveScopes).toBeUndefined();
+  });
+  test('repeated legacy state switches reuse compiled definitions', () => {
+    const { glyph } = createTestGlyph();
+    glyph.glyphStateProxy = name => ({ attributes: { fill: name === 'hover' ? 'red' : 'blue' }, subAttributes: [] });
+    glyph.useStates(['hover', 'selected'], false);
+    const compile = jest.spyOn(StateDefinitionCompiler.prototype, 'compile');
+    for (let i = 0; i < 20; i++) {
+      glyph.useStates(['selected', 'hover'], false);
+      glyph.useStates(['hover', 'selected'], false);
+      glyph.clearStates(false);
+    }
+    expect(compile).not.toHaveBeenCalled();
+    compile.mockRestore();
   });
 });

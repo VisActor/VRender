@@ -37,6 +37,7 @@ function deepMerge(base: Record<string, any>, value: Record<string, any>): Recor
 export class StateEngine<T extends Record<string, any> = Record<string, any>> {
   private readonly compiledDefinitions: Map<string, CompiledStateDefinition<T>>;
   private readonly stateSort?: (a: string, b: string) => number;
+  private readonly stateOrder?: 'input';
   private readonly mergeMode: 'shallow' | 'deep';
 
   private _activeStates: string[] = [];
@@ -52,6 +53,7 @@ export class StateEngine<T extends Record<string, any> = Record<string, any>> {
   constructor(options: IStateEngineOptions<T>) {
     this.compiledDefinitions = options.compiledDefinitions;
     this.stateSort = options.stateSort;
+    this.stateOrder = options.stateOrder;
     this.mergeMode = options.mergeMode ?? 'shallow';
   }
 
@@ -195,6 +197,9 @@ export class StateEngine<T extends Record<string, any> = Record<string, any>> {
   }
 
   private sortStates(states: string[]): string[] {
+    if (this.stateOrder === 'input') {
+      return this.stateSort ? states.sort(this.stateSort) : states;
+    }
     const withDefinition: string[] = [];
     const withoutDefinition: string[] = [];
 

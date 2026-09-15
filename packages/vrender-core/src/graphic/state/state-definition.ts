@@ -46,5 +46,7 @@ export type StateDefinitionsInput<T extends Record<string, any> = Record<string,
 export interface IStateEngineOptions<T extends Record<string, any> = Record<string, any>> {
   compiledDefinitions: Map<string, CompiledStateDefinition<T>>;
   stateSort?: (a: string, b: string) => number;
+  /** @internal Legacy Glyph inputs merge in requested order, after stateSort. */
+  stateOrder?: 'input';
   mergeMode?: StateMergeMode;
 }

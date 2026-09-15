@@ -463,6 +463,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   protected stateEngine?: StateEngine<T>;
   protected stateEngineCompiledDefinitions?: Map<string, CompiledStateDefinition<T>>;
   protected stateEngineStateSort?: (stateA: string, stateB: string) => number;
+  protected stateEngineStateOrder?: 'input';
   protected stateEngineMergeMode?: StateMergeMode;
   protected stateTransitionOrchestrator?: StateTransitionOrchestrator<T>;
   protected localStateDefinitionsSource?: StateDefinitionsInput<T>;
@@ -686,8 +687,9 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     return this.localStateDefinitionsVersion ?? 0;
   }
 
-  protected resolveEffectiveCompiledDefinitions(): {
+  protected resolveEffectiveCompiledDefinitions(_stateNames?: readonly string[]): {
     compiledDefinitions?: Map<string, CompiledStateDefinition<T>>;
+    stateOrder?: 'input';
   } {
     this.syncSharedStateScopeBindingFromTree(false);
     const boundScope = this.boundSharedStateScope;
@@ -2082,8 +2084,11 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     return stateResolveBaseAttrs;
   }
 
-  protected ensureStateEngine(stateResolveBaseAttrs: Partial<T> = this.getStateResolveBaseAttrs()) {
-    const { compiledDefinitions } = this.resolveEffectiveCompiledDefinitions();
+  protected ensureStateEngine(
+    stateResolveBaseAttrs: Partial<T> = this.getStateResolveBaseAttrs(),
+    stateNames: readonly string[] = this.currentStates ?? EMPTY_STATE_NAMES
+  ) {
+    const { compiledDefinitions, stateOrder } = this.resolveEffectiveCompiledDefinitions(stateNames);
     this.compiledStateDefinitions = compiledDefinitions;
 
     if (!compiledDefinitions) {
@@ -2093,15 +2098,18 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       !this.stateEngine ||
       this.stateEngineCompiledDefinitions !== compiledDefinitions ||
       this.stateEngineStateSort !== this.stateSort ||
+      this.stateEngineStateOrder !== stateOrder ||
       this.stateEngineMergeMode !== this.stateMergeMode
     ) {
       this.stateEngine = new StateEngine<T>({
         compiledDefinitions,
         stateSort: this.stateSort,
+        stateOrder,
         mergeMode: this.stateMergeMode
       });
       this.stateEngineCompiledDefinitions = compiledDefinitions;
       this.stateEngineStateSort = this.stateSort;
+      this.stateEngineStateOrder = stateOrder;
       this.stateEngineMergeMode = this.stateMergeMode;
     }
 
@@ -2157,7 +2165,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     states: string[],
     stateResolveBaseAttrs: Partial<T> = this.getStateResolveBaseAttrs()
   ): GraphicStateTransition {
-    const stateEngine = this.ensureStateEngine(stateResolveBaseAttrs);
+    const stateEngine = this.ensureStateEngine(stateResolveBaseAttrs, states);
     return stateEngine
       ? this.toGraphicStateTransition(stateEngine.applyStates(states))
       : this.resolveLocalUseStatesTransition(states);
@@ -2171,7 +2179,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   }
 
   protected resolveAddStateTransition(stateName: string, keepCurrentStates?: boolean): GraphicStateTransition {
-    const stateEngine = this.ensureStateEngine();
+    const stateEngine = this.ensureStateEngine(undefined, [stateName]);
     if (stateEngine) {
       return this.toGraphicStateTransition(stateEngine.addState(stateName, keepCurrentStates));
     }
@@ -2220,7 +2228,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   }
 
   protected resolveToggleStateTransition(stateName: string): GraphicStateTransition {
-    const stateEngine = this.ensureStateEngine();
+    const stateEngine = this.ensureStateEngine(undefined, [stateName]);
     if (stateEngine) {
       return this.toGraphicStateTransition(stateEngine.toggleState(stateName));
     }
@@ -2240,7 +2248,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     forceResolverRefresh: boolean = false
   ): ResolvedGraphicStateTransition<T> {
     const stateResolveBaseAttrs = this.getStateResolveBaseAttrs();
-    const stateEngine = this.ensureStateEngine(stateResolveBaseAttrs);
+    const stateEngine = this.ensureStateEngine(stateResolveBaseAttrs, states);
     if (forceResolverRefresh) {
       stateEngine?.invalidateResolverCache();
     }

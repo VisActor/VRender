@@ -1,5 +1,6 @@
 import { createGlyph } from '../../../src/graphic/glyph';
 import { createRect } from '../../../src/graphic/rect';
+import { createGroup } from '../../../src/graphic/group';
 
 describe('Glyph state', () => {
   const createTestGlyph = () => {
@@ -115,7 +116,7 @@ describe('Glyph state', () => {
     expect(glyph.normalAttrs).toEqual((glyph as any).baseAttributes);
   });
 
-  test('should differ from normal graphic states by reading glyphStates instead of states', () => {
+  test('explicit glyphStates take precedence over standard local definitions', () => {
     const { glyph } = createTestGlyph();
     (glyph as any).states = {
       hover: {
@@ -134,5 +135,82 @@ describe('Glyph state', () => {
     glyph.useStates(['hover'], false);
 
     expect(glyph.attribute.stroke).toBe('glyph-state');
+  });
+
+  test('removes state-only keys and restores the latest base attributes', () => {
+    const { glyph } = createTestGlyph();
+    glyph.glyphStates = {
+      selected: { attributes: { fillOpacity: 0.25, stroke: 'red' }, subAttributes: [] }
+    };
+    glyph.setStates(['selected'], false);
+    expect(glyph.attribute.fillOpacity).toBe(0.25);
+    expect(glyph.baseAttributes.fillOpacity).toBeUndefined();
+    glyph.setAttribute('stroke', 'orange');
+    expect(glyph.attribute.stroke).toBe('red');
+    glyph.setStates([], false);
+    expect(glyph.attribute.stroke).toBe('orange');
+    expect(glyph.attribute.fillOpacity).toBeUndefined();
+    expect(Object.prototype.hasOwnProperty.call(glyph.attribute, 'fillOpacity')).toBe(false);
+  });
+
+  test('refreshes a proxy-only state without clearing it first', () => {
+    const { glyph } = createTestGlyph();
+    let opacity = 0.2;
+    glyph.glyphStateProxy = () => ({ attributes: { fillOpacity: opacity }, subAttributes: [] });
+    glyph.setStates(['selected'], { animate: false });
+    opacity = 0.8;
+    glyph.setStates(['selected'], { animate: false });
+    expect(glyph.currentStates).toEqual(['selected']);
+    expect(glyph.effectiveStates).toEqual(['selected']);
+    expect(glyph.resolvedStatePatch.fillOpacity).toBe(0.8);
+    expect(glyph.attribute.fillOpacity).toBe(0.8);
+    expect(glyph.baseAttributes.fillOpacity).toBeUndefined();
+  });
+
+  test('preserves legacy input order and stateSort without mutating the input', () => {
+    const { glyph } = createTestGlyph();
+    glyph.glyphStates = {
+      a: { attributes: { stroke: 'red' }, subAttributes: [] },
+      z: { attributes: { stroke: 'blue' }, subAttributes: [] }
+    };
+    glyph.useStates(['z', 'a'], false);
+    expect(glyph.attribute.stroke).toBe('red');
+    glyph.useStates(['a', 'z'], false);
+    expect(glyph.attribute.stroke).toBe('blue');
+    (glyph as any).stateSort = (a: string, b: string) => b.localeCompare(a);
+    const states = ['a', 'z'];
+    const proxy = jest.fn((name: string) => glyph.glyphStates[name]);
+    glyph.glyphStateProxy = proxy;
+    glyph.setStates(states, { animate: false });
+    expect(glyph.attribute.stroke).toBe('red');
+    expect(proxy).toHaveBeenCalledWith('a', ['z', 'a']);
+    expect(states).toEqual(['a', 'z']);
+  });
+
+  test('uses Group definitions unless explicit legacy inputs own the glyph', () => {
+    const { glyph } = createTestGlyph();
+    const group = createGroup({});
+    group.sharedStateDefinitions = {
+      hover: { stroke: 'shared' },
+      selected: { fillOpacity: 0.4 }
+    };
+    group.add(glyph);
+    glyph.states = { hover: { stroke: 'local' } };
+    glyph.setStates(['hover'], false);
+    expect(glyph.attribute.stroke).toBe('shared');
+    glyph.glyphStates = { hover: { attributes: { stroke: 'legacy' }, subAttributes: [] } };
+    glyph.setStates(['hover', 'selected'], { animate: false });
+    expect(glyph.attribute.stroke).toBe('legacy');
+    expect(glyph.attribute.fillOpacity).toBeUndefined();
+    glyph.glyphStateProxy = () => undefined;
+    glyph.setStates(['hover'], { animate: false });
+    expect(glyph.attribute.stroke).toBe('black');
+    glyph.glyphStateProxy = undefined;
+    glyph.glyphStates = undefined;
+    glyph.setStates(['hover', 'selected'], { animate: false });
+    expect(glyph.attribute.stroke).toBe('shared');
+    expect(glyph.attribute.fillOpacity).toBe(0.4);
+    glyph.clearStates(false);
+    expect(glyph.registeredActiveScopes).toBeUndefined();
   });
 });

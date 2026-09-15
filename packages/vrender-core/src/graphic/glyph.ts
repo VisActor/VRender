@@ -8,6 +8,9 @@ import type {
   IGraphicAttribute,
   ISetAttributeContext
 } from '../interface';
+import { StateDefinitionCompiler } from './state/state-definition-compiler';
+import type { CompiledStateDefinition, StateDefinition, StateDefinitionsInput } from './state/state-definition';
+import type { SharedStateScope } from './state/shared-state-scope';
 import { getTheme } from './theme';
 import { GLYPH_NUMBER_TYPE } from './constants';
 
@@ -30,6 +33,10 @@ export class Glyph extends Graphic<IGlyphGraphicAttribute> implements IGlyph {
     subAttributes: Partial<IGraphicAttribute>[];
   };
   protected declare subGraphic: IGraphic[];
+  private legacyDefinitionsSource?: Glyph['glyphStates'];
+  private legacyProxySource?: Glyph['glyphStateProxy'];
+  private legacyDefinitions?: StateDefinitionsInput<IGlyphGraphicAttribute>;
+  private legacyCompiledDefinitions?: Map<string, CompiledStateDefinition<IGlyphGraphicAttribute>>;
 
   static NOWORK_ANIMATE_ATTR = NOWORK_ANIMATE_ATTR;
 
@@ -189,54 +196,75 @@ export class Glyph extends Graphic<IGlyphGraphicAttribute> implements IGlyph {
     return false;
   }
 
-  useStates(states: string[], hasAnimation?: boolean): void {
-    if (!states.length) {
-      this.clearStates(hasAnimation);
-      return;
+  protected hasLegacyStateDefinitions(): boolean {
+    if (this.glyphStateProxy) {
+      return true;
     }
-    const previousStates = this.currentStates ? this.currentStates.slice() : [];
-
-    const isChange =
-      this.currentStates?.length !== states.length ||
-      states.some((stateName, index) => this.currentStates[index] !== stateName);
-    if (!isChange) {
-      return;
-    }
-
-    this.stopStateAnimates();
-
-    if (this.stateSort) {
-      states = states.sort(this.stateSort);
-    }
-    const stateAttrs = {};
-    states.forEach(stateName => {
-      const attrs = this.glyphStateProxy ? this.glyphStateProxy(stateName, states) : this.glyphStates[stateName];
-
-      if (attrs) {
-        Object.assign(stateAttrs, attrs.attributes);
+    for (const name in this.glyphStates) {
+      if (Object.prototype.hasOwnProperty.call(this.glyphStates, name)) {
+        return true;
       }
-    });
-
-    if (!this.beforeStateUpdate(stateAttrs, previousStates, states, hasAnimation, false)) {
-      return;
     }
-
-    this.currentStates = states;
-    this.applyStateAttrs(stateAttrs, states, hasAnimation);
+    return false;
   }
 
-  clearStates(hasAnimation?: boolean) {
-    this.stopStateAnimates();
-    const previousStates = this.currentStates ? this.currentStates.slice() : [];
-    if (this.hasState() && this.normalAttrs) {
-      if (!this.beforeStateUpdate(this.normalAttrs, previousStates, [], hasAnimation, true)) {
-        return;
-      }
-      this.currentStates = [];
-      this.applyStateAttrs(this.normalAttrs, this.currentStates, hasAnimation, true);
-    } else {
-      this.currentStates = [];
+  protected syncSharedStateScopeBindingFromTree(
+    markDirty: boolean = true,
+    inheritedSharedStateScope?: SharedStateScope<Record<string, any>> | null
+  ): boolean {
+    // Legacy Glyph definitions historically own the whole state surface.
+    return this.hasLegacyStateDefinitions()
+      ? this.syncSharedStateScopeBinding(undefined, markDirty)
+      : super.syncSharedStateScopeBindingFromTree(markDirty, inheritedSharedStateScope);
+  }
+
+  protected resolveEffectiveCompiledDefinitions(stateNames: readonly string[] = []) {
+    if (!this.hasLegacyStateDefinitions()) {
+      this.legacyDefinitions = undefined;
+      this.legacyCompiledDefinitions = undefined;
+      return super.resolveEffectiveCompiledDefinitions(stateNames);
     }
+    this.syncSharedStateScopeBindingFromTree(false);
+    let changed = false;
+    if (
+      !this.legacyDefinitions ||
+      this.legacyDefinitionsSource !== this.glyphStates ||
+      this.legacyProxySource !== this.glyphStateProxy
+    ) {
+      this.legacyDefinitionsSource = this.glyphStates;
+      this.legacyProxySource = this.glyphStateProxy;
+      this.legacyDefinitions = {};
+      for (const name of Object.keys(this.glyphStates ?? {})) {
+        this.legacyDefinitions[name] = this.createLegacyStateDefinition(name);
+      }
+      changed = true;
+    }
+    if (this.glyphStateProxy) {
+      const addDefinition = (name: string) => {
+        if (!Object.prototype.hasOwnProperty.call(this.legacyDefinitions, name)) {
+          this.legacyDefinitions[name] = this.createLegacyStateDefinition(name);
+          changed = true;
+        }
+      };
+      this.currentStates?.forEach(addDefinition);
+      stateNames.forEach(addDefinition);
+    }
+    if (changed) {
+      this.legacyCompiledDefinitions = new StateDefinitionCompiler<IGlyphGraphicAttribute>().compile(
+        this.legacyDefinitions
+      );
+    }
+    return { compiledDefinitions: this.legacyCompiledDefinitions, stateOrder: 'input' as const };
+  }
+
+  private createLegacyStateDefinition(name: string): StateDefinition<IGlyphGraphicAttribute> {
+    return this.glyphStateProxy
+      ? {
+          name,
+          resolver: ({ graphic, activeStates }) =>
+            (graphic as Glyph).glyphStateProxy(name, activeStates as string[])?.attributes
+        }
+      : { name, patch: this.glyphStates[name].attributes };
   }
 
   clone(): IGraphic<Partial<IGlyphGraphicAttribute>> {

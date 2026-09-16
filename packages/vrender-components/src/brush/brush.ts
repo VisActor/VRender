@@ -464,7 +464,7 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
   private _addBrushMask() {
     const { brushStyle, hasMask } = this.attribute as BrushAttributes;
     const brushMask = graphicCreator.polygon({
-      points: cloneDeep(this._cacheDrawPoints), // _cacheDrawPoints在不断更新，所以这里需要cloneDeep
+      points: this._computeMaskPoints(),
       cursor: 'move',
       pickable: false,
       ...brushStyle,

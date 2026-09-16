@@ -1,5 +1,4 @@
-import type { IPointLike } from '@visactor/vutils';
-import { abs, isArray, min } from '@visactor/vutils';
+import { isArray, min } from '@visactor/vutils';
 import { inject, injectable, named } from '../../../common/inversify-lite';
 import type {
   IArea,
@@ -9,7 +8,6 @@ import type {
   IContext2d,
   IMarkAttribute,
   IThemeAttribute,
-  ISegPath2D,
   IAreaRenderContribution,
   IDrawContext,
   IRenderService,
@@ -19,7 +17,7 @@ import type {
 } from '../../../interface';
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { ContributionProvider } from '../../../common/contribution-provider';
-import { calcLineCache } from '../../../common/segment';
+import { calcAreaCache, type AreaRenderCacheItem } from '../../../common/area-cache';
 
 import { getTheme } from '../../../graphic/theme';
 import { AreaRenderContribution } from './contributions/constants';
@@ -212,13 +210,6 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
       curveType = 'linearClosed';
     }
 
-    function parsePoint(points: IPointLike[], connectedType: 'none' | 'connect') {
-      if (connectedType !== 'connect') {
-        return points;
-      }
-      return points.filter(p => p.defined !== false);
-    }
-
     if (clipRange === 1 && !segments && !points.some(p => p.defined === false) && curveType === 'linear') {
       return this.drawLinearAreaHighPerformance(
         area,
@@ -237,105 +228,19 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
       );
     }
 
-    // 更新cache
     if (area.shouldUpdateShape()) {
-      if (segments && segments.length) {
-        let startPoint: IPointLike;
-        let lastTopSeg: { endX: number; endY: number };
-        const topCaches = segments
-          .map((seg, index) => {
-            if (seg.points.length <= 1) {
-              // 第一个点的话，直接设置lastTopSeg
-              if (index === 0) {
-                seg.points[0] && (lastTopSeg = { endX: seg.points[0].x, endY: seg.points[0].y });
-                return null;
-              }
-            }
-            // 添加上一个segment结束的点作为这个segment的起始点
-            if (index === 1) {
-              startPoint = { x: lastTopSeg.endX, y: lastTopSeg.endY };
-            } else if (index > 1) {
-              startPoint.x = lastTopSeg.endX;
-              startPoint.y = lastTopSeg.endY;
-            }
-            const data = calcLineCache(parsePoint(seg.points, connectedType), curveType, {
-              startPoint,
-              curveTension
-            });
-            lastTopSeg = data;
-            return data;
-          })
-          .filter(item => !!item);
-        let lastBottomSeg: ISegPath2D;
-        const bottomCaches = [];
-        for (let i = segments.length - 1; i >= 0; i--) {
-          const points = segments[i].points;
-          const bottomPoints: IPointLike[] = [];
-          for (let i = points.length - 1; i >= 0; i--) {
-            bottomPoints.push({
-              x: points[i].x1 ?? points[i].x,
-              y: points[i].y1 ?? points[i].y
-            });
-          }
-          // 处理一下bottom的segments，bottom的segments需要手动添加endPoints
-          if (i !== 0) {
-            const lastSegmentPoints = segments[i - 1].points;
-            const endPoint = lastSegmentPoints[lastSegmentPoints.length - 1];
-            endPoint &&
-              bottomPoints.push({
-                x: endPoint.x1 ?? endPoint.x,
-                y: endPoint.y1 ?? endPoint.y
-              });
-          }
-          if (bottomPoints.length > 1) {
-            lastBottomSeg = calcLineCache(
-              parsePoint(bottomPoints, connectedType),
-              curveType === 'stepBefore' ? 'stepAfter' : curveType === 'stepAfter' ? 'stepBefore' : curveType,
-              { curveTension }
-            );
-            bottomCaches.unshift(lastBottomSeg);
-          }
-        }
-        area.cacheArea = bottomCaches.map((item, index) => ({
-          top: topCaches[index],
-          bottom: item
-        }));
-      } else if (points && points.length) {
-        // 转换points
-        const topPoints = parsePoint(points, connectedType);
-        const bottomPoints: IPointLike[] = [];
-        for (let i = topPoints.length - 1; i >= 0; i--) {
-          bottomPoints.push({
-            x: topPoints[i].x1 ?? topPoints[i].x,
-            y: topPoints[i].y1 ?? topPoints[i].y
-          });
-        }
-        const topCache = calcLineCache(topPoints, curveType, { curveTension });
-        const bottomCache = calcLineCache(
-          bottomPoints,
-          curveType === 'stepBefore' ? 'stepAfter' : curveType === 'stepAfter' ? 'stepBefore' : curveType,
-          { curveTension }
-        );
-
-        area.cacheArea = { top: topCache, bottom: bottomCache };
-      } else {
-        area.cacheArea = null;
-        area.clearUpdateShapeTag();
-        return;
-      }
+      area.cacheArea = calcAreaCache(points, segments, curveType, connectedType, curveTension);
       area.clearUpdateShapeTag();
+    }
+    if (!area.cacheArea) {
+      return;
     }
 
     if (Array.isArray(area.cacheArea)) {
-      const segments = area.attribute.segments.filter(item => item.points.length);
-      // 如果第一个seg只有一个点，那么shift出去
-      if (segments[0].points.length === 1) {
-        segments.shift();
-      }
       if (clipRange === 1) {
         let skip = false;
         // 性能优化，不需要clip的线段不需要计算长度
-        area.cacheArea.forEach((cache, index) => {
+        area.cacheArea.forEach(cache => {
           if (skip) {
             return;
           }
@@ -346,7 +251,7 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
             fillOpacity,
             doStroke,
             strokeOpacity,
-            segments[index],
+            segments[(cache as AreaRenderCacheItem).sourceSegmentIndex],
             [areaAttribute, area.attribute],
             clipRange,
             x,
@@ -367,7 +272,7 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
         // 直到上次绘制的长度
         let drawedLengthUntilLast = 0;
         let skip = false;
-        area.cacheArea.forEach((cache, index) => {
+        area.cacheArea.forEach(cache => {
           if (skip) {
             return;
           }
@@ -382,7 +287,7 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
               fillOpacity,
               doStroke,
               strokeOpacity,
-              segments[index],
+              segments[(cache as AreaRenderCacheItem).sourceSegmentIndex],
               [areaAttribute, area.attribute],
               min(_cr, 1),
               x,
@@ -527,30 +432,7 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
     context.beginPath();
 
     const ret: boolean = false;
-    const { points, segments } = area.attribute;
-    let direction = Direction.ROW;
-    let endP: IPointLike;
-    let startP: IPointLike;
-    if (segments) {
-      const endSeg = segments[segments.length - 1];
-      const startSeg = segments[0];
-      startP = startSeg.points[0];
-      endP = endSeg.points[endSeg.points.length - 1];
-    } else {
-      startP = points[0];
-      endP = points[points.length - 1];
-    }
-    const xTotalLength = abs(endP.x - startP.x);
-    const yTotalLength = abs(endP.y - startP.y);
-    if (endP.x1 == null) {
-      direction = Direction.ROW;
-    } else if (endP.y1 == null) {
-      direction = Direction.COLUMN;
-    } else if (!Number.isFinite(xTotalLength + yTotalLength)) {
-      direction = Direction.ROW;
-    } else {
-      direction = xTotalLength > yTotalLength ? Direction.ROW : Direction.COLUMN;
-    }
+    const direction = (cache as AreaRenderCacheItem).direction ?? cache.top.direction;
     drawAreaSegments(context, cache, clipRange, {
       offsetX,
       offsetY,

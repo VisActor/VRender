@@ -1857,6 +1857,11 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     }
   }
 
+  /** Let composite graphics reuse their children's geometry invalidation rules. */
+  protected static needsShapeUpdate(graphic: Graphic, key: string): boolean {
+    return graphic.needUpdateTag(key);
+  }
+
   protected needUpdateTags(keys: string[], k: string[] = GRAPHIC_UPDATE_TAG_KEY): boolean {
     for (let i = 0; i < k.length; i++) {
       const attrKey = k[i];

@@ -12,7 +12,7 @@ import { StateDefinitionCompiler } from './state/state-definition-compiler';
 import type { CompiledStateDefinition, StateDefinition, StateDefinitionsInput } from './state/state-definition';
 import type { SharedStateScope } from './state/shared-state-scope';
 import { getTheme } from './theme';
-import { UpdateCategory } from './state/attribute-update-classifier';
+import { ATTRIBUTE_CATEGORY, UpdateCategory } from './state/attribute-update-classifier';
 import { GLYPH_NUMBER_TYPE } from './constants';
 
 export class Glyph extends Graphic<IGlyphGraphicAttribute> implements IGlyph {
@@ -180,9 +180,22 @@ export class Glyph extends Graphic<IGlyphGraphicAttribute> implements IGlyph {
   }
 
   protected needUpdateTags(keys: string[]): boolean {
+    for (const key of keys) {
+      if (this.needUpdateTag(key)) {
+        return true;
+      }
+    }
     return false;
   }
   protected needUpdateTag(key: string): boolean {
+    if (ATTRIBUTE_CATEGORY[key] === UpdateCategory.PAINT) {
+      return false;
+    }
+    for (const child of this.subGraphic) {
+      if (Graphic.needsShapeUpdate(child as Graphic, key)) {
+        return true;
+      }
+    }
     return false;
   }
 

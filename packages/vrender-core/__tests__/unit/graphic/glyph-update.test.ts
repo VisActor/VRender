@@ -1,6 +1,10 @@
 import { createGlyph } from '../../../src/graphic/glyph';
 import { createRect } from '../../../src/graphic/rect';
 import { UpdateTag } from '../../../src/common/enums';
+import { application } from '../../../src/application';
+import { DefaultGraphicService } from '../../../src/graphic/graphic-service/graphic-service';
+import { createPath } from '../../../src/graphic/path';
+import { createCircle } from '../../../src/graphic/circle';
 
 const createFixture = () => {
   const glyph = createGlyph({ fill: 'red', width: 20 });
@@ -134,5 +138,134 @@ describe('Glyph derived attributes', () => {
     expect(child.glyphHost).toBeNull();
     expect(child.releaseStatus).toBe('released');
     expect((glyph as any).subGraphicEncoder).toBeUndefined();
+  });
+});
+
+describe('Glyph cached geometry', () => {
+  let previousService: typeof application.graphicService;
+
+  beforeEach(() => {
+    previousService = application.graphicService;
+    application.graphicService = new DefaultGraphicService();
+  });
+
+  afterEach(() => {
+    application.graphicService = previousService;
+  });
+
+  describe.each(['attributes', 'derived', 'host'])('%s offset updates', writer => {
+    test.each(['dx', 'dy'])('refreshes cached matrices and bounds for %s', key => {
+      const glyph = createGlyph({});
+      const child = createRect({ width: 10, height: 10 });
+      glyph.setSubGraphic([child]);
+      const readPosition = () => ({
+        matrix: key === 'dx' ? child.transMatrix.e : child.transMatrix.f,
+        child: key === 'dx' ? child.AABBBounds.x1 : child.AABBBounds.y1,
+        glyph: key === 'dx' ? glyph.AABBBounds.x1 : glyph.AABBBounds.y1
+      });
+      expect(readPosition()).toEqual({ matrix: 0, child: 0, glyph: 0 });
+
+      if (writer === 'derived') {
+        glyph.commitSubGraphicAttributes(child, { [key]: 20 });
+      } else if (writer === 'host') {
+        glyph.setAttributes({ [key]: 20 });
+      } else {
+        child.setAttributes({ [key]: 20 });
+      }
+
+      expect(child.attribute[key]).toBe(20);
+      expect(readPosition()).toEqual({ matrix: 20, child: 20, glyph: 20 });
+    });
+  });
+
+  describe.each(['single', 'batch', 'state'])('%s inherited geometry updates', writer => {
+    [
+      {
+        key: 'path',
+        initial: 'M0 0H10V10H0Z',
+        next: 'M0 0H30V10H0Z',
+        initialWidth: 10,
+        nextWidth: 30,
+        createChild: () => createPath({})
+      },
+      {
+        key: 'radius',
+        initial: 10,
+        next: 30,
+        initialWidth: 20,
+        nextWidth: 60,
+        createChild: () => createCircle({})
+      }
+    ].forEach(({ key, initial, next, initialWidth, nextWidth, createChild }) => {
+      test(`refreshes child and host geometry for ${key}`, () => {
+        const glyph = createGlyph({ [key]: initial });
+        const child = createChild();
+        glyph.setSubGraphic([child]);
+        // Revalidate after inheritance is bound, including Path's required path attribute.
+        child.setAttribute('fill', 'red');
+        const expectWidths = (width: number) => {
+          expect(child.AABBBounds.width()).toBe(width);
+          expect(glyph.AABBBounds.width()).toBe(width);
+          if ('getParsedPathShape' in child) {
+            expect(child.getParsedPathShape().getBounds().width()).toBe(width);
+          }
+        };
+        expectWidths(initialWidth);
+
+        if (writer === 'single') {
+          glyph.setAttribute(key, next);
+        } else if (writer === 'batch') {
+          glyph.setAttributes({ [key]: next });
+        } else {
+          glyph.states = { expanded: { [key]: next } };
+          glyph.setStates(['expanded'], false);
+        }
+
+        expect(child.attribute[key]).toBe(next);
+        expectWidths(nextWidth);
+        if (writer === 'state') {
+          expect(glyph.baseAttributes[key]).toBe(initial);
+          glyph.clearStates(false);
+          expect(child.attribute[key]).toBe(initial);
+          expectWidths(initialWidth);
+        }
+      });
+    });
+  });
+
+  test.each(['host', 'derived', 'state'])('%s paint updates preserve warmed geometry caches', writer => {
+    const glyph = createGlyph({ fill: 'red', fillOpacity: 1 });
+    const child = createRect({ width: 10, height: 10 });
+    glyph.setSubGraphic([child]);
+    const graphics = [glyph, child];
+    const readGeometry = () =>
+      graphics.map(graphic => ({
+        width: graphic.AABBBounds.width(),
+        x: graphic.transMatrix.e,
+        y: graphic.transMatrix.f,
+        boundsUpdates: (graphic as any).updateAABBBoundsStamp
+      }));
+    const initialGeometry = readGeometry();
+    graphics.forEach(graphic => ((graphic as any)._updateTag = UpdateTag.NONE));
+    const paint = { fill: 'blue', fillOpacity: 0.5 };
+
+    if (writer === 'host') {
+      glyph.setAttributes(paint);
+    } else if (writer === 'derived') {
+      glyph.commitSubGraphicAttributes(child, paint);
+    } else {
+      glyph.states = { hover: paint };
+      glyph.setStates(['hover'], false);
+    }
+
+    expect(child.attribute.fill).toBe('blue');
+    expect(child.attribute.fillOpacity).toBe(0.5);
+    expect((child as any)._updateTag & UpdateTag.UPDATE_PAINT).not.toBe(0);
+    graphics.forEach(graphic => {
+      expect(
+        (graphic as any)._updateTag & (UpdateTag.UPDATE_SHAPE_AND_BOUNDS | UpdateTag.UPDATE_GLOBAL_LOCAL_MATRIX)
+      ).toBe(0);
+    });
+    expect(readGeometry()).toEqual(initialGeometry);
   });
 });

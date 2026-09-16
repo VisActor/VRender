@@ -44,6 +44,24 @@ describe('Graphic state update categories', () => {
     expect(((graphic as any)._updateTag & UpdateTag.UPDATE_PAINT) === UpdateTag.UPDATE_PAINT).toBe(true);
   });
 
+  test.each(['dx', 'dy'])('should refresh the cached %s transform on state entry and clear', key => {
+    const graphic = createGraphic();
+    const base = { ...graphic.baseAttributes };
+    const readOffset = () => (key === 'dx' ? graphic.transMatrix.e : graphic.transMatrix.f);
+    expect(readOffset()).toBe(0);
+    graphic.states = { shifted: { [key]: 20 } };
+
+    graphic.setStates(['shifted'], false);
+    expect(graphic.attribute[key]).toBe(20);
+    expect(readOffset()).toBe(20);
+    expect((graphic as any)._updateTag & UpdateTag.UPDATE_BOUNDS).not.toBe(0);
+    expect(graphic.baseAttributes).toEqual(base);
+
+    graphic.clearStates(false);
+    expect(readOffset()).toBe(0);
+    expect(graphic.baseAttributes).toEqual(base);
+  });
+
   test('should dirty cached global bounds for paint-only updates without upgrading to bounds', () => {
     const graphic = createGraphic();
     const graphicServiceHooks = {

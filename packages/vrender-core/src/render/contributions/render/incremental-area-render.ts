@@ -1,3 +1,4 @@
+import type { IPointLike } from '@visactor/vutils';
 import type {
   IArea,
   IAreaGraphicAttribute,
@@ -15,6 +16,23 @@ import { getTheme } from '../../../graphic/theme';
 import { fillVisible, runFill } from './utils';
 import { DefaultCanvasAreaRender } from './area-render';
 import { drawIncrementalAreaSegments } from '../../../common/render-curve';
+import { getAreaPointRuns } from '../../../common/area-cache';
+
+function previousPoint(segments: IAreaSegment[], index: number, connectedType: 'none' | 'connect') {
+  for (let i = index - 1; i >= 0; i--) {
+    const points = segments[i].points;
+    for (let j = points.length - 1; j >= 0; j--) {
+      const point = points[j];
+      if (point.defined !== false) {
+        return point;
+      }
+      if (connectedType !== 'connect') {
+        return undefined;
+      }
+    }
+  }
+  return undefined;
+}
 
 /**
  * 默认的基于canvas的line渲染器
@@ -48,7 +66,8 @@ export class DefaultIncrementalCanvasAreaRender extends DefaultCanvasAreaRender 
         fill = areaAttribute.fill,
         fillOpacity = areaAttribute.fillOpacity,
         opacity = areaAttribute.opacity,
-        visible = areaAttribute.visible
+        visible = areaAttribute.visible,
+        connectedType = areaAttribute.connectedType
       } = area.attribute;
       // 不绘制或者透明
       const fVisible = fillVisible(opacity, fillOpacity, fill);
@@ -68,7 +87,12 @@ export class DefaultIncrementalCanvasAreaRender extends DefaultCanvasAreaRender 
       }
 
       // 不支持clipRange，不支持pick，仅支持最基础的线段绘制
-      for (let i = startAtIdx; i < startAtIdx + length; i++) {
+      const endIndex = Math.min(startAtIdx + length, segments.length);
+      for (let i = startAtIdx; i < endIndex; i++) {
+        // Empty batches draw nothing and must not repeatedly search the same prefix.
+        if (!segments[i].points.some(p => p.defined !== false)) {
+          continue;
+        }
         this.drawIncreaseSegment(
           area,
           context,
@@ -77,7 +101,8 @@ export class DefaultIncrementalCanvasAreaRender extends DefaultCanvasAreaRender 
           area.attribute.segments[i],
           [areaAttribute, area.attribute],
           x,
-          y
+          y,
+          { connectedType, startPoint: previousPoint(segments, i, connectedType) }
         );
       }
     } else {
@@ -93,16 +118,24 @@ export class DefaultIncrementalCanvasAreaRender extends DefaultCanvasAreaRender 
     attribute: Partial<IAreaGraphicAttribute>,
     defaultAttribute: Required<IAreaGraphicAttribute> | Partial<IAreaGraphicAttribute>[],
     offsetX: number,
-    offsetY: number
+    offsetY: number,
+    continuity?: { connectedType: 'none' | 'connect'; startPoint?: IPointLike }
   ) {
     if (!seg) {
       return;
     }
 
+    const connectedType =
+      continuity?.connectedType ?? area.attribute.connectedType ?? getTheme(area).area.connectedType;
+    const startPoint = continuity
+      ? continuity.startPoint
+      : lastSeg && getAreaPointRuns(lastSeg.points, connectedType).tail;
     context.beginPath();
     drawIncrementalAreaSegments(context.camera ? context : context.nativeContext, lastSeg, seg, {
       offsetX,
-      offsetY
+      offsetY,
+      connectedType,
+      startPoint
     });
 
     // shadow

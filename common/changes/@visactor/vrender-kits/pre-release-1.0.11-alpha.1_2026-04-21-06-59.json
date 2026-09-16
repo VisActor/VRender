@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-kits",
+      "comment": "performance: memo leak problem of ticker. fix#2075",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-kits"
+}

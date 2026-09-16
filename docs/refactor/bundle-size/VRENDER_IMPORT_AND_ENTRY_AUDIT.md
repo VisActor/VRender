@@ -36,7 +36,7 @@ VRender 当前已经有 app-scoped entries 和 lite shared browser 入口，但 
 | root `.` | `packages/vrender/src/index.ts` 导出 `@visactor/vrender-core`、kits、animate、components、entries、legacy `createStage` | full 兼容入口，不能改成 lite；root import 本身是最高风险 | bundle 对比 root import vs subpath import；跑 root import 不 bootstrap 的 existing tests |
 | `./entries` | `packages/vrender/src/entries/index.ts` 导出 browser / miniapp / node / shared | entry barrel，非最窄入口 | analyzer 验证是否把 miniapp/node 静态带入 |
 | `./entries/browser` | `createBrowserVRenderApp`，走 `bootstrapVRenderBrowserApp` | full browser app，默认行为不能破坏 | `packages/vrender/__tests__/unit/entries.test.ts` |
-| `./entries/shared` | browser condition 指向 `shared-browser`；普通 import 走通用 `shared.ts`，静态导入 browser/node/miniapp creators | browser bundler 配置正确时较窄；条件不生效会变宽 | browser/non-browser resolve 条件各打一遍 |
+| `./entries/shared` | `lynx` / `browser` condition 分别指向 `shared-lynx` / `shared-browser`；普通 import 走通用 `shared.ts` | 对应 bundler condition 生效时只装配目标环境；条件不生效会变宽 | lynx/browser/non-browser resolve 条件各打一遍 |
 | `./entries/shared-browser` | 只面向 browser，走 full shared browser bootstrap | full shared browser 标准入口 | `shared-browser-entry.test.ts` |
 | `./entries/shared-browser-lite` | 只面向 browser，走 lite bootstrap | lite 候选入口，不能替代 full 默认 | `shared-browser-lite-entry.test.ts` |
 

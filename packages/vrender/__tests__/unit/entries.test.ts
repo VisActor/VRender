@@ -6,6 +6,7 @@ declare const require: any;
 export {};
 
 type BootstrapMockOptions = {
+  core?: Record<string, any>;
   installers?: Record<string, any>;
   loaders?: Record<string, any>;
   registers?: Record<string, any>;
@@ -52,6 +53,10 @@ function createEmptyLegacyBindingContext() {
 }
 
 function mockBootstrapSubpaths(options: BootstrapMockOptions = {}) {
+  jest.doMock('@visactor/vrender-core/entries/miniapp', () => ({
+    createMiniappApp: options.core?.createMiniappApp ?? jest.fn()
+  }));
+
   jest.doMock('@visactor/vrender-kits/installers/app', () => ({
     installBrowserEnvToApp: jest.fn(),
     installBrowserPickersToApp: jest.fn(),
@@ -66,6 +71,13 @@ function mockBootstrapSubpaths(options: BootstrapMockOptions = {}) {
     installTTEnvToApp: jest.fn(),
     installWxEnvToApp: jest.fn(),
     ...options.installers
+  }));
+  jest.doMock('@visactor/vrender-kits/installers/lynx', () => ({
+    installLynxEnvToApp: options.installers?.installLynxEnvToApp ?? jest.fn(),
+    installLynxPickersToApp: options.installers?.installLynxPickersToApp ?? jest.fn()
+  }));
+  jest.doMock('@visactor/vrender-kits/installers/graphics', () => ({
+    installStandardGraphicsToApp: options.installers?.installDefaultGraphicsToApp ?? jest.fn()
   }));
 
   jest.doMock('@visactor/vrender-kits/picker/contributions/constants', () => ({
@@ -366,9 +378,11 @@ describe('vrender app-scoped entries', () => {
           registerCustomAnimate: jest.fn()
         }));
         mockBootstrapSubpaths({
+          core: { createMiniappApp },
           installers: {
             installDefaultGraphicsToApp,
             installMathPickersToApp,
+            installLynxPickersToApp: installMathPickersToApp,
             [installName]: installEnv
           },
           loaders: {

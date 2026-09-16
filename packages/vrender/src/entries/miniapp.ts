@@ -40,10 +40,8 @@ export function createWxVRenderApp(options: TVRenderMiniAppEntryOptions<'wx'> = 
   return createMiniEnvVRenderApp('wx', options);
 }
 
-export function createLynxVRenderApp(options: TVRenderMiniAppEntryOptions<'lynx'> = {}): IApp {
-  return createMiniEnvVRenderApp('lynx', options);
-}
-
 export function createHarmonyVRenderApp(options: TVRenderMiniAppEntryOptions<'harmony'> = {}): IApp {
   return createMiniEnvVRenderApp('harmony', options);
 }
+
+export { createLynxVRenderApp } from './lynx';

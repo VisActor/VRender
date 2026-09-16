@@ -130,6 +130,8 @@ root：
 - `packages/vrender/__tests__/unit/entries.test.ts`
 - `packages/vrender/__tests__/unit/shared-app.test.ts`
 - `packages/vrender/__tests__/unit/shared-browser-entry.test.ts`
+- `packages/vrender/__tests__/unit/shared-lynx-entry.test.ts`
+- `packages/vrender/__tests__/unit/shared-entry-environment-isolation.test.ts`
 - `packages/vrender/__tests__/unit/shared-browser-lite-entry.test.ts`
 - `packages/vrender/__tests__/unit/app-bootstrap-binding.test.ts`
 - `packages/vrender/__tests__/unit/node-app-runtime.test.ts`

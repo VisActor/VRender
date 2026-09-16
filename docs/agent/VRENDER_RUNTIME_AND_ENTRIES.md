@@ -21,8 +21,10 @@ core entries 只创建 app/context，不做默认图元、环境、picker、动�
 - `browser.ts`：`createBrowserVRenderApp(options)`。
 - `node.ts`：`createNodeVRenderApp(options)`。
 - `miniapp.ts`：`createTaroVRenderApp`、`createFeishuVRenderApp`、`createTTVRenderApp`、`createWxVRenderApp`、`createLynxVRenderApp`、`createHarmonyVRenderApp`。
+- `lynx.ts`：不经过多环境 bootstrap 的 `createLynxVRenderApp` 窄入口。
 - `shared.ts`：按 `env` 创建/复用 shared app。
 - `shared-browser.ts`：browser shared full 装配。
+- `shared-lynx.ts`：Lynx shared full 装配。
 - `shared-browser-lite.ts`：browser shared lite 装配。
 - `shared-registry.ts`：`globalThis` 上的 shared app registry 与引用计数。
 - `bootstrap*.ts`：root package 默认装配逻辑。
@@ -63,10 +65,11 @@ Stage 创建属于 app：
 - handle 的 `release()` 减少引用计数；最后一个 handle 释放后 app 释放。
 - 直接调用 shared app 的 `app.release()` 会走同一 record release 逻辑。
 
-## `shared` / `shared-browser` / `shared-browser-lite`
+## `shared` / `shared-browser` / `shared-lynx` / `shared-browser-lite`
 
-- `./entries/shared`：通用 env shared entry，支持 `browser`、`node`、`taro`、`feishu`、`tt`、`wx`、`lynx`、`harmony`。package exports 中 browser condition 会路由到 `shared-browser.js`。
+- `./entries/shared`：通用 env shared entry，支持 `browser`、`node`、`taro`、`feishu`、`tt`、`wx`、`lynx`、`harmony`。package exports 中 `browser` condition 路由到 `shared-browser.js`，`lynx` condition 路由到 `shared-lynx.js`。
 - `./entries/shared-browser`：只面向 browser，使用 registry env `browser-shared`，走 standard/full browser bootstrap。
+- `lynx` condition 对应的 `shared-lynx`：只面向 Lynx，使用 registry env `lynx-shared`，只装配 Lynx env、math picker 和 full graphics。
 - `./entries/shared-browser-lite`：只面向 browser，使用 registry env `browser-lite-shared`，走 lite bootstrap。
 
 不要把 `shared-browser-lite` 当作 full 默认装配；它只安装 lite 图元和 lite picker 集合。
@@ -123,7 +126,7 @@ root package bootstrap 为“上层默认使用”服务；core entries 是更�
 
 ## 改 Entries 的高风险点
 
-- package exports 的 browser condition：`./entries/shared` 在 browser 下指向 `shared-browser`。
+- package exports 的条件顺序：`./entries/shared` 的 `lynx` 必须位于 `browser` 之前，分别指向 `shared-lynx`、`shared-browser`，避免 Rspeedy 同时启用两种 condition 时误选 browser。
 - shared app registry key：`browser-shared`、`browser-lite-shared` 与通用 env registry 不相同。
 - bootstrap idempotency：`BOOTSTRAP_STATE` 防止同一 app 重复 bootstrap。
 - legacy sync：`syncLegacyRenderersToApp` / `syncLegacyPickersToApp` 合并 app registry 和 legacy binding。
@@ -136,6 +139,8 @@ root package bootstrap 为“上层默认使用”服务；core entries 是更�
 - root entries：`packages/vrender/__tests__/unit/entries.test.ts`
 - shared app：`packages/vrender/__tests__/unit/shared-app.test.ts`
 - shared browser：`packages/vrender/__tests__/unit/shared-browser-entry.test.ts`
+- shared Lynx：`packages/vrender/__tests__/unit/shared-lynx-entry.test.ts`
+- shared 环境隔离：`packages/vrender/__tests__/unit/shared-entry-environment-isolation.test.ts`
 - shared browser lite：`packages/vrender/__tests__/unit/shared-browser-lite-entry.test.ts`
 - app bootstrap binding：`packages/vrender/__tests__/unit/app-bootstrap-binding.test.ts`
 - node runtime：`packages/vrender/__tests__/unit/node-app-runtime.test.ts`

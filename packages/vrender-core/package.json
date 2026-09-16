@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vrender-core",
-  "version": "1.1.9",
+  "version": "1.1.10",
   "description": "",
   "sideEffects": [
     "./src/modules.ts",
@@ -20,6 +20,7 @@
       "constants": ["es/constants.d.ts"],
       "container": ["es/container.d.ts"],
       "entries/browser": ["es/entries/browser.d.ts"],
+      "entries/miniapp": ["es/entries/miniapp.d.ts"],
       "entries/runtime-installer": ["es/entries/runtime-installer.d.ts"],
       "env": ["es/env.d.ts"],
       "event/constant": ["es/event/public-constant.d.ts"],
@@ -150,6 +151,11 @@
       "types": "./es/entries/browser.d.ts",
       "import": "./es/entries/browser.js",
       "require": "./cjs/entries/browser.js"
+    },
+    "./entries/miniapp": {
+      "types": "./es/entries/miniapp.d.ts",
+      "import": "./es/entries/miniapp.js",
+      "require": "./cjs/entries/miniapp.js"
     },
     "./entries/runtime-installer": {
       "types": "./es/entries/runtime-installer.d.ts",

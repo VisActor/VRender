@@ -16,6 +16,7 @@ type ExpectedSubpath = {
   subpath: string;
   source: string;
   browserSource?: string;
+  lynxSource?: string;
 };
 
 const expectedExports: Record<string, ExpectedSubpath[]> = {
@@ -31,6 +32,7 @@ const expectedExports: Record<string, ExpectedSubpath[]> = {
     { subpath: './installers/browser-lite', source: 'src/installers/browser-lite.ts' },
     { subpath: './installers/graphics', source: 'src/installers/graphics.ts' },
     { subpath: './installers/graphics-lite', source: 'src/installers/graphics-lite.ts' },
+    { subpath: './installers/lynx', source: 'src/installers/lynx.ts' },
     { subpath: './tools/dynamicTexture/effect', source: 'src/tools/dynamicTexture/effect.ts' }
   ],
   'vrender-components': [
@@ -61,7 +63,12 @@ const expectedExports: Record<string, ExpectedSubpath[]> = {
   vrender: [
     { subpath: './entries/shared-browser', source: 'src/entries/shared-browser.ts' },
     { subpath: './entries/shared-browser-lite', source: 'src/entries/shared-browser-lite.ts' },
-    { subpath: './entries/shared', source: 'src/entries/shared.ts', browserSource: 'src/entries/shared-browser.ts' },
+    {
+      subpath: './entries/shared',
+      source: 'src/entries/shared.ts',
+      browserSource: 'src/entries/shared-browser.ts',
+      lynxSource: 'src/entries/shared-lynx.ts'
+    },
     { subpath: './entries/browser', source: 'src/entries/browser.ts' },
     { subpath: './entries/node', source: 'src/entries/node.ts' },
     { subpath: './entries/miniapp', source: 'src/entries/miniapp.ts' },
@@ -111,7 +118,7 @@ describe('published public subpath exports', () => {
     test(`${packageName} exposes stable narrow subpaths`, () => {
       const packageJson = readPackageJson(packageName);
 
-      subpaths.forEach(({ subpath, source, browserSource }) => {
+      subpaths.forEach(({ subpath, source, browserSource, lynxSource }) => {
         const entry = packageJson.exports?.[subpath];
         const expectedImport = `./es/${source.replace(/^src\//, '').replace(/\.ts$/, '.js')}`;
         const expectedRequire = `./cjs/${source.replace(/^src\//, '').replace(/\.ts$/, '.js')}`;
@@ -122,14 +129,37 @@ describe('published public subpath exports', () => {
         const expectedBrowserRequire = browserSource
           ? `./cjs/${browserSource.replace(/^src\//, '').replace(/\.ts$/, '.js')}`
           : undefined;
+        const expectedLynxImport = lynxSource
+          ? `./es/${lynxSource.replace(/^src\//, '').replace(/\.ts$/, '.js')}`
+          : undefined;
+        const expectedLynxRequire = lynxSource
+          ? `./cjs/${lynxSource.replace(/^src\//, '').replace(/\.ts$/, '.js')}`
+          : undefined;
 
         expect(fs.existsSync(path.join(packagesRoot, packageName, source))).toBe(true);
+        if (lynxSource) {
+          expect(fs.existsSync(path.join(packagesRoot, packageName, lynxSource))).toBe(true);
+        }
         if (browserSource) {
           expect(fs.existsSync(path.join(packagesRoot, packageName, browserSource))).toBe(true);
-          expect(Object.keys(entry)).toEqual(['types', 'browser', 'import', 'require']);
+          expect(Object.keys(entry)).toEqual([
+            'types',
+            ...(lynxSource ? ['lynx'] : []),
+            'browser',
+            'import',
+            'require'
+          ]);
         }
         expect(entry).toEqual({
           types: expectedTypes,
+          ...(lynxSource
+            ? {
+                lynx: {
+                  import: expectedLynxImport,
+                  require: expectedLynxRequire
+                }
+              }
+            : null),
           ...(browserSource
             ? {
                 browser: {

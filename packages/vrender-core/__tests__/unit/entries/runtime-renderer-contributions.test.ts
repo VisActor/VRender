@@ -40,6 +40,11 @@ describe('runtime graphic renderer contributions', () => {
       contributionExport: 'AreaRenderContribution'
     },
     {
+      moduleExport: 'lineModule',
+      rendererName: 'DefaultCanvasLineRender',
+      contributionExport: 'LineRenderContribution'
+    },
+    {
       moduleExport: 'pathModule',
       rendererName: 'DefaultCanvasPathRender',
       contributionExport: 'PathRenderContribution'

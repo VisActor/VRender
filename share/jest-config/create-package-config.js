@@ -62,7 +62,7 @@ function createStablePackageJestConfig(options = {}) {
     verbose,
     coverageReporters,
     coveragePathIgnorePatterns,
-    testPathIgnorePatterns,
+    testPathIgnorePatterns: ['/node_modules/', '/__tests__/artifacts/', ...testPathIgnorePatterns],
     collectCoverageFrom
   };
 
@@ -75,6 +75,17 @@ function createStablePackageJestConfig(options = {}) {
   }
 
   return config;
+}
+
+function createArtifactPackageJestConfig() {
+  return {
+    ...createStablePackageJestConfig({
+      environment: 'node',
+      testRegex: '/__tests__/artifacts/.*\\.test\\.ts$'
+    }),
+    // Published package imports must resolve normally, without source aliases.
+    testPathIgnorePatterns: ['/node_modules/']
+  };
 }
 
 function createElectronPackageJestConfig(options = {}) {
@@ -91,5 +102,6 @@ function createElectronPackageJestConfig(options = {}) {
 
 module.exports = {
   createStablePackageJestConfig,
+  createArtifactPackageJestConfig,
   createElectronPackageJestConfig
 };

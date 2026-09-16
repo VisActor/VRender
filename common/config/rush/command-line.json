@@ -36,6 +36,15 @@
       "allowWarningsInSuccessfulBuild": true
     },
     {
+      "name": "test:artifacts",
+      "summary": "Validate published artifacts after building packages",
+      "enableParallelism": false,
+      "commandKind": "bulk",
+      "ignoreMissingScript": true,
+      "ignoreDependencyOrder": true,
+      "allowWarningsInSuccessfulBuild": true
+    },
+    {
       "name": "run",
       "summary": "",
       "commandKind": "global",

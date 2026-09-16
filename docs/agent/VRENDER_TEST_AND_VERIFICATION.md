@@ -12,6 +12,7 @@
 - `rush compile -t @visactor/vrender-core`
 - `rush test`
 - `rush test -t @visactor/vrender`
+- `rush test:artifacts --only tag:package`（先 build，再检查发布产物）
 - `rush eslint`
 - `rush lint-staged`
 - `rush start`
@@ -40,6 +41,23 @@
 如果改动影响依赖上游包，优先用 Rush `-t` 编译目标和依赖链，不只在包内跑 `tsc`。
 
 ## 单包 Test
+
+`rush test`、各包 `rushx test` 和 pre-push 只运行源码测试：仓库内包通过
+`share/jest-config/source-module-name-mapper.js` 解析到本地 `src`，不依赖 `es/cjs/dist`。
+第三方 npm 依赖仍使用安装版本。CI 在 build 之前运行源码测试，避免旧产物掩盖源码问题。
+
+构建产物断言位于各包 `__tests__/artifacts/`，默认单测和 Electron 测试不会收集它们。
+`vrender-core`、`vrender-kits`、`vrender` 提供独立的 `rushx test:artifacts`；这些测试不启用源码映射，
+并在缺少构建文件时失败。跨包产物检查需要先构建全部 package：
+
+```bash
+rush build --only tag:package
+rush test:artifacts --only tag:package
+```
+
+新增测试时，运行时行为及源码/配置契约归入默认单测；读取构建输出或验证发布包入口的断言归入 artifacts。
+同时包含两类断言的文件应拆分。验证源码测试独立性时，在没有各包 `es/cjs/dist` 的干净 worktree 中执行
+`rush test --only tag:package`，不通过跳过失败用例或自动 build 消除依赖。
 
 在对应 package 下：
 
@@ -135,7 +153,7 @@ root：
 - `packages/vrender/__tests__/unit/shared-browser-lite-entry.test.ts`
 - `packages/vrender/__tests__/unit/app-bootstrap-binding.test.ts`
 - `packages/vrender/__tests__/unit/node-app-runtime.test.ts`
-- `packages/vrender/__tests__/unit/build-artifact-consistency.test.ts`
+- 发布产物检查：`packages/vrender/__tests__/artifacts/*`
 
 ## Animate 测试
 

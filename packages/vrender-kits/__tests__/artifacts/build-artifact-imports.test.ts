@@ -51,10 +51,6 @@ const forbiddenCoreRootRuntimeImports = [
 
 function collectArtifactFiles(relativeDir: string): string[] {
   const absoluteDir = path.join(packageRoot, relativeDir);
-  if (!fs.existsSync(absoluteDir)) {
-    return [];
-  }
-
   const entries = fs.readdirSync(absoluteDir, { withFileTypes: true });
   return entries.flatMap((entry: { isDirectory: () => boolean; name: string }) => {
     const relativePath = path.join(relativeDir, entry.name);
@@ -69,12 +65,14 @@ function collectArtifactFiles(relativeDir: string): string[] {
 
 describe('vrender-kits published artifacts', () => {
   test('should not reference workspace source directories', () => {
-    const offenders = buildRoots.flatMap(buildRoot =>
-      collectArtifactFiles(buildRoot).flatMap(relativePath => {
+    const offenders = buildRoots.flatMap(buildRoot => {
+      const artifactFiles = collectArtifactFiles(buildRoot);
+      expect(artifactFiles.length).toBeGreaterThan(0);
+      return artifactFiles.flatMap(relativePath => {
         const artifact = fs.readFileSync(path.join(packageRoot, relativePath), 'utf8');
         return forbiddenWorkspaceSourcePatterns.some(pattern => pattern.test(artifact)) ? [relativePath] : [];
-      })
-    );
+      });
+    });
 
     expect(offenders).toEqual([]);
   });

@@ -28,10 +28,6 @@ function collectPackageDirs(): string[] {
 function collectArtifactFiles(packageRoot: string, relativeDir: string): string[] {
   const absoluteDir = path.join(packageRoot, relativeDir);
 
-  if (!fs.existsSync(absoluteDir)) {
-    return [];
-  }
-
   return fs
     .readdirSync(absoluteDir, { withFileTypes: true })
     .flatMap((entry: { isDirectory: () => boolean; name: string }) => {
@@ -85,27 +81,21 @@ function collectRootNamedImports(artifact: string, packageName: string): string[
 
 describe('published root bundle imports', () => {
   test('root named imports between VRender package artifacts should exist in target root bundle exports', () => {
-    const packages = collectPackageDirs()
-      .map((dir: string) => {
-        const packageRoot = path.join(packagesRoot, dir);
-        const bundlePath = path.join(packageRoot, rootBundlePath);
+    const packages = collectPackageDirs().map((dir: string) => {
+      const packageRoot = path.join(packagesRoot, dir);
+      const bundlePath = path.join(packageRoot, rootBundlePath);
 
-        if (!fs.existsSync(bundlePath)) {
-          return null;
-        }
+      const packageJson = JSON.parse(readText(path.join(packageRoot, 'package.json')));
+      const artifact = readText(bundlePath);
 
-        const packageJson = JSON.parse(readText(path.join(packageRoot, 'package.json')));
-        const artifact = readText(bundlePath);
-
-        return {
-          name: packageJson.name,
-          dir,
-          packageRoot,
-          artifactFiles: scannedBuildRoots.flatMap(relativeDir => collectArtifactFiles(packageRoot, relativeDir)),
-          exports: new Set(collectBundleNamedExports(artifact))
-        };
-      })
-      .filter(Boolean);
+      return {
+        name: packageJson.name,
+        dir,
+        packageRoot,
+        artifactFiles: scannedBuildRoots.flatMap(relativeDir => collectArtifactFiles(packageRoot, relativeDir)),
+        exports: new Set(collectBundleNamedExports(artifact))
+      };
+    });
 
     const failures: string[] = [];
 

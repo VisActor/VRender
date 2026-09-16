@@ -1,4 +1,3 @@
-const path = require('path');
 const { createStablePackageJestConfig } = require('../../share/jest-config/create-package-config');
 
 module.exports = createStablePackageJestConfig({
@@ -22,7 +21,5 @@ module.exports = createStablePackageJestConfig({
     '!**/interface.ts',
     '!**/**.d.ts'
   ],
-  moduleNameMapper: {
-    '@visactor/react-vrender': path.resolve(__dirname, '../react-vrender/src/index.ts')
-  }
+  moduleNameMapper: require('../../share/jest-config/source-module-name-mapper')
 });

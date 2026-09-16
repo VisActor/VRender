@@ -22,6 +22,14 @@ import { BaseRender } from './base-render';
 import { drawSegments } from '../../../common/render-curve';
 import { calcLineCache } from '../../../common/segment';
 
+/** BaseRender.valid() 算出的填充/描边资格与可见性，用于喂给渲染贡献点 */
+export interface ILineRenderVisibility {
+  doFill: boolean;
+  doStroke: boolean;
+  fVisible: boolean;
+  sVisible: boolean;
+}
+
 /**
  * 默认的基于canvas的line渲染器
  * 单例
@@ -71,6 +79,8 @@ export class DefaultCanvasLineRender extends BaseRender<ILine> implements IGraph
     offsetX: number,
     offsetY: number,
     line: ILine,
+    drawContext: IDrawContext,
+    visibility: ILineRenderVisibility,
     fillCb?: (
       ctx: IContext2d,
       lineAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
@@ -80,53 +90,66 @@ export class DefaultCanvasLineRender extends BaseRender<ILine> implements IGraph
       ctx: IContext2d,
       lineAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
       themeAttribute: IThemeAttribute | IThemeAttribute[]
-    ) => boolean,
-    drawContext?: IDrawContext
+    ) => boolean
   ): boolean {
     if (!cache) {
       return;
     }
-    context.beginPath();
 
     const z = this.z ?? 0;
 
-    drawSegments(context, cache, clipRange, clipRangeByDimension, {
-      offsetX,
-      offsetY,
-      offsetZ: z
-    });
+    // 内置裁剪贡献在 beforeFillStroke 里 beginPath 建裁剪路径，会冲掉这里建好的折线路径，故要能重建
+    const buildPath = () => {
+      context.beginPath();
 
-    // 如果是一根线，且是Closed，并且没有defined为false的点，需要close
-    if (
-      line.cache &&
-      !isArray(line.cache) &&
-      line.cache.curves.every(c => c.defined) &&
-      line.attribute.curveType &&
-      line.attribute.curveType.includes('Closed')
-    ) {
-      context.closePath();
-    }
+      drawSegments(context, cache, clipRange, clipRangeByDimension, {
+        offsetX,
+        offsetY,
+        offsetZ: z
+      });
+
+      // 如果是一根线，且是Closed，并且没有defined为false的点，需要close
+      if (
+        line.cache &&
+        !isArray(line.cache) &&
+        line.cache.curves.every(c => c.defined) &&
+        line.attribute.curveType &&
+        line.attribute.curveType.includes('Closed')
+      ) {
+        context.closePath();
+      }
+    };
+
+    buildPath();
 
     // shadow
     context.setShadowBlendStyle && context.setShadowBlendStyle(line, attribute, defaultAttribute);
 
     const { x: originX = 0, x: originY = 0 } = attribute;
     const ret: boolean = false;
+    const { doFill, doStroke, fVisible, sVisible } = visibility;
 
     this.beforeRenderStep(
       line,
       context,
       offsetX,
       offsetY,
-      !!fill,
-      !!stroke,
-      fillOpacity,
-      strokeOpacity,
+      doFill,
+      doStroke,
+      fVisible,
+      sVisible,
       defaultAttribute as Required<ILineGraphicAttribute>,
       drawContext,
       fillCb,
-      strokeCb
+      strokeCb,
+      { attribute }
     );
+
+    // 有裁剪配置时上面的贡献点已经 beginPath 建了裁剪路径，重建折线路径，否则 fill/stroke 画的是裁剪形状
+    if (line.attribute.clipConfig) {
+      buildPath();
+    }
+
     if (fill !== false) {
       if (fillCb) {
         fillCb(context, attribute, defaultAttribute);
@@ -149,14 +172,15 @@ export class DefaultCanvasLineRender extends BaseRender<ILine> implements IGraph
       context,
       offsetX,
       offsetY,
-      !!fill,
-      !!stroke,
-      fillOpacity,
-      strokeOpacity,
+      doFill,
+      doStroke,
+      fVisible,
+      sVisible,
       defaultAttribute as Required<ILineGraphicAttribute>,
       drawContext,
       fillCb,
-      strokeCb
+      strokeCb,
+      { attribute }
     );
     return !!ret;
   }
@@ -173,6 +197,7 @@ export class DefaultCanvasLineRender extends BaseRender<ILine> implements IGraph
     offsetY: number,
     lineAttribute: Required<ILineGraphicAttribute>,
     drawContext: IDrawContext,
+    visibility: ILineRenderVisibility,
     params?: IGraphicRenderDrawParams,
     fillCb?: (
       ctx: IContext2d,
@@ -185,37 +210,49 @@ export class DefaultCanvasLineRender extends BaseRender<ILine> implements IGraph
       themeAttribute: IThemeAttribute
     ) => boolean
   ) {
-    context.beginPath();
-
     const z = this.z ?? 0;
     const { points } = line.attribute;
     const startP = points[0];
 
-    context.moveTo(startP.x + offsetX, startP.y + offsetY, z);
-    for (let i = 1; i < points.length; i++) {
-      const p = points[i];
-      context.lineTo(p.x + offsetX, p.y + offsetY, z);
-    }
+    // 内置裁剪贡献在 beforeFillStroke 里 beginPath 建裁剪路径，会冲掉这里建好的折线路径，故要能重建
+    const buildPath = () => {
+      context.beginPath();
+      context.moveTo(startP.x + offsetX, startP.y + offsetY, z);
+      for (let i = 1; i < points.length; i++) {
+        const p = points[i];
+        context.lineTo(p.x + offsetX, p.y + offsetY, z);
+      }
+    };
+
+    buildPath();
 
     // shadow
     context.setShadowBlendStyle && context.setShadowBlendStyle(line, line.attribute, lineAttribute);
 
     const { x: originX = 0, x: originY = 0 } = line.attribute;
+    const { doFill, doStroke, fVisible, sVisible } = visibility;
 
     this.beforeRenderStep(
       line,
       context,
       offsetX,
       offsetY,
-      !!fill,
-      !!stroke,
-      fillOpacity,
-      strokeOpacity,
+      doFill,
+      doStroke,
+      fVisible,
+      sVisible,
       lineAttribute,
       drawContext,
       fillCb,
-      strokeCb
+      strokeCb,
+      { attribute: line.attribute }
     );
+
+    // 有裁剪配置时上面的贡献点已经 beginPath 建了裁剪路径，重建折线路径，否则 fill/stroke 画的是裁剪形状
+    if (line.attribute.clipConfig) {
+      buildPath();
+    }
+
     if (fill !== false) {
       if (fillCb) {
         fillCb(context, line.attribute, lineAttribute);
@@ -238,14 +275,15 @@ export class DefaultCanvasLineRender extends BaseRender<ILine> implements IGraph
       context,
       offsetX,
       offsetY,
-      !!fill,
-      !!stroke,
-      fillOpacity,
-      strokeOpacity,
+      doFill,
+      doStroke,
+      fVisible,
+      sVisible,
       lineAttribute,
       drawContext,
       fillCb,
-      strokeCb
+      strokeCb,
+      { attribute: line.attribute }
     );
   }
 
@@ -307,12 +345,12 @@ export class DefaultCanvasLineRender extends BaseRender<ILine> implements IGraph
         y,
         lineAttribute,
         drawContext,
+        data,
         params,
         fillCb,
         strokeCb
       );
     }
-    // const { fVisible, sVisible, doFill, doStroke } = data;
 
     function parsePoint(points: IPointLike[], connectedType: 'none' | 'connect') {
       if (connectedType === 'none') {
@@ -418,9 +456,10 @@ export class DefaultCanvasLineRender extends BaseRender<ILine> implements IGraph
             x,
             y,
             line,
+            drawContext,
+            data,
             fillCb,
-            strokeCb,
-            drawContext
+            strokeCb
           );
         });
       } else {
@@ -454,9 +493,10 @@ export class DefaultCanvasLineRender extends BaseRender<ILine> implements IGraph
               x,
               y,
               line,
+              drawContext,
+              data,
               fillCb,
-              strokeCb,
-              drawContext
+              strokeCb
             );
           }
         });
@@ -476,9 +516,10 @@ export class DefaultCanvasLineRender extends BaseRender<ILine> implements IGraph
         x,
         y,
         line,
+        drawContext,
+        data,
         fillCb,
-        strokeCb,
-        drawContext
+        strokeCb
       );
     }
   }

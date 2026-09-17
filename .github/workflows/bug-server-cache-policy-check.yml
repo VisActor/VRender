@@ -1,0 +1,17 @@
+name: Bug Server cache policy check
+
+on:
+  push:
+    branches: [codex/bugserver-workflow-dispatch]
+
+permissions: {}
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    cache-mode: none
+    steps:
+      - name: Verify effective cache mode
+        run: |
+          printf 'cache mode: %s\n' "${ACTIONS_CACHE_MODE:-unset}"
+          test "${ACTIONS_CACHE_MODE:-}" = none

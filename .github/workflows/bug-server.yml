@@ -17,6 +17,9 @@ on:
   pull_request:
     branches: ['main', 'develop', 'dev/**']
 
+permissions:
+  contents: read
+
 jobs:
   build:
     if: github.event_name != 'workflow_dispatch'
@@ -108,10 +111,14 @@ jobs:
     needs: resolve-manual-target
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    cache-mode: none
     permissions:
       contents: read
     steps:
-      # This runner executes PR code. Do not give it Bug Server secrets or shared caches.
+      - name: Verify cache isolation
+        run: test "${ACTIONS_CACHE_MODE:-}" = none
+      # PR code runs without Bug Server secrets or cache access.
+      # cache-mode controls cache tokens independently of GITHUB_TOKEN permissions.
       - uses: actions/checkout@v4
         with:
           ref: ${{ needs.resolve-manual-target.outputs.sha }}

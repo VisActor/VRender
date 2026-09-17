@@ -116,7 +116,14 @@ jobs:
       contents: read
     steps:
       - name: Verify cache isolation
-        run: test "${ACTIONS_CACHE_MODE:-}" = none
+        uses: actions/github-script@v8
+        with:
+          script: |
+            if (process.env.ACTIONS_CACHE_MODE !== 'none') {
+              core.setFailed('PR builds require cache-mode: none.');
+            } else {
+              core.info('Cache access is disabled for this job.');
+            }
       # PR code runs without Bug Server secrets or cache access.
       # cache-mode controls cache tokens independently of GITHUB_TOKEN permissions.
       - uses: actions/checkout@v4

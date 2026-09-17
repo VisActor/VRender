@@ -12,6 +12,10 @@ jobs:
     cache-mode: none
     steps:
       - name: Verify effective cache mode
-        run: |
-          printf 'cache mode: %s\n' "${ACTIONS_CACHE_MODE:-unset}"
-          test "${ACTIONS_CACHE_MODE:-}" = none
+        uses: actions/github-script@v8
+        with:
+          script: |
+            core.info(`Cache mode: ${process.env.ACTIONS_CACHE_MODE ?? 'unset'}`);
+            if (process.env.ACTIONS_CACHE_MODE !== 'none') {
+              core.setFailed('Expected cache-mode: none.');
+            }

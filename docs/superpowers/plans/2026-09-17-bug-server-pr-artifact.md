@@ -37,10 +37,10 @@ Files: `.github/workflows/bug-server-pr-bundle.yml`, `.github/workflows/bug-serv
 
 ## Task 3: Verify and document
 
-- [ ] Push the update to PR #2134, check CodeQL alert #45 and #46 on the new commit, and require the CodeQL check to pass without dismissals.
-- [ ] Wait for the new PR-only bundle workflow to succeed. Invoke the trusted resolver against that real run, download its immutable artifact, verify single-file extraction, and verify the existing upload client with the local mock API. Do not execute the bundle.
-- [ ] Update README, design, the previous security plan, PR description and the existing Lark maintenance section. Document that maintainers wait for `Bug Server PR Bundle` before dispatch; missing/expired artifacts require a fresh successful PR bundle run. Existing PRs may need a new PR event after the workflow is merged.
-- [ ] Record separate results for security checks, artifact pipeline and the existing photo CI. End-to-end manual dispatch from the default branch remains a post-merge check.
+- [x] Push the update to PR #2134, check CodeQL alert #45 and #46 on the new commit, and require the CodeQL check to pass without dismissals.
+- [x] Wait for the new PR-only bundle workflow to succeed. Invoke the trusted resolver against that real run, download its immutable artifact, verify single-file extraction, and verify the existing upload client with the local mock API. Do not execute the bundle.
+- [x] Update README, design, the previous security plan, PR description and the existing Lark maintenance section. Document that maintainers wait for `Bug Server PR Bundle` before dispatch; missing/expired artifacts require a fresh successful PR bundle run. Existing PRs may need a new PR event after the workflow is merged.
+- [x] Record separate results for security checks, artifact pipeline and the existing photo CI. End-to-end manual dispatch from the default branch remains a post-merge check.
 
 ## Validation before push
 
@@ -48,3 +48,14 @@ Files: `.github/workflows/bug-server-pr-bundle.yml`, `.github/workflows/bug-serv
 - Python archive tests: 6 tests passed, including multiple malicious-entry subcases.
 - actionlint 1.7.12: both final workflows pass without ignored diagnostics.
 - `git diff --check`: passed.
+
+## GitHub and integration validation
+
+Implementation commit: `ae7fc0926581218905a90a3838bfb5d65741f128`.
+
+- [CodeQL check](https://github.com/VisActor/VRender/runs/105095209881): `success`, no new alerts. Both Actions and JavaScript/TypeScript analyses passed. Alerts #45 and #46 have PR instance state `fixed`; neither was dismissed.
+- [PR bundle run 35188318138](https://github.com/VisActor/VRender/actions/runs/35188318138): `success`. Runner initialization confirms `Contents: read` and `Metadata: read`. Its cache mode is `write` in the PR event's cache scope, not the default-branch scope.
+- The production resolver and workflow download script were executed locally against the real GitHub API. They selected artifact `10483685493` from that run, bound to PR #2134 and the exact implementation SHA.
+- The trusted ZIP reader produced a single 3,210,456-byte bundle, SHA-256 `43e2b49b5edbf3fc1bbc52759b6844ab6608848ec97da666322a510e73f2b79e`. The trusted upload client passed success, photo-failure and missing-token scenarios with a local mock API, which checked that the uploaded bundle bytes were preserved. A separate throwing-JavaScript fixture was also uploaded as data without execution.
+- Required pre-push package tests passed. Existing automatic unit/photo CI runs were still running when this record was written; their results are separate from the verified artifact pipeline.
+- README, design notes, superseded-plan notices, PR description and Lark maintenance document were updated to the artifact workflow. No merge or default-branch dispatch was performed. The first live manual Bug Server run remains a post-merge check.

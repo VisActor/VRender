@@ -2,6 +2,16 @@ name: Bug Server CI
 
 # 这里业务方根据需求设置
 on:
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'PR number to test (including fork PRs)'
+        required: true
+        type: string
+      head_sha:
+        description: 'Reviewed PR head commit (full 40-character SHA)'
+        required: true
+        type: string
   push:
     branches: ['main']
   pull_request:
@@ -9,16 +19,20 @@ on:
 
 jobs:
   build:
+    if: github.event_name != 'workflow_dispatch'
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Use Node.js 24.x
         uses: actions/setup-node@v4
         with:
           node-version: 24.x
           cache: 'npm'
           cache-dependency-path: './common/config/rush/pnpm-lock.yaml'
+
+      - name: Test manual dispatch validation
+        run: node --test .github/scripts/bug-server-dispatch.test.cjs
 
       - name: Print All Github Environment Variables
         run: env
@@ -48,3 +62,126 @@ jobs:
         env:
           BUG_SERVER_TOKEN: ${{ secrets.BUG_SERVER_TOKEN }}
         run: node ../../common/scripts/install-run-rushx.js ci
+
+  resolve-manual-target:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      sha: ${{ steps.target.outputs.sha }}
+      pr_number: ${{ steps.target.outputs.pr_number }}
+      head_ref: ${{ steps.target.outputs.head_ref }}
+      pr_url: ${{ steps.target.outputs.pr_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.workflow_sha }}
+          persist-credentials: false
+          sparse-checkout: .github/scripts
+      - name: Validate reviewed PR head
+        id: target
+        uses: actions/github-script@v8
+        env:
+          PR_NUMBER: ${{ inputs.pr_number }}
+          HEAD_SHA: ${{ inputs.head_sha }}
+        with:
+          script: |
+            const { resolveBugServerTarget } = require('./.github/scripts/bug-server-dispatch.cjs');
+            const target = await resolveBugServerTarget({
+              github, context,
+              prNumber: process.env.PR_NUMBER,
+              headSha: process.env.HEAD_SHA
+            });
+            core.setOutput('sha', target.sha);
+            core.setOutput('pr_number', target.prNumber);
+            core.setOutput('head_ref', target.headRef);
+            core.setOutput('pr_url', target.prUrl);
+            await core.summary
+              .addHeading('Bug Server manual test')
+              .addLink(`PR #${target.prNumber}`, target.prUrl)
+              .addRaw(`\n\nTested head: \`${target.sha}\`\n`)
+              .write();
+
+  build-manual-bundle:
+    needs: resolve-manual-target
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    steps:
+      # This runner executes PR code. Do not give it Bug Server secrets or shared caches.
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.resolve-manual-target.outputs.sha }}
+          persist-credentials: false
+      - name: Verify checkout
+        env:
+          EXPECTED_SHA: ${{ needs.resolve-manual-target.outputs.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.x
+      - name: Install native deps for node-canvas
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential pkg-config libcairo2-dev libpango1.0-dev libpng-dev libjpeg-dev libgif-dev librsvg2-dev
+      - name: Install and build PR bundle
+        run: |
+          node common/scripts/install-run-rush.js update --bypass-policy
+          node common/scripts/install-run-rush.js install --bypass-policy
+          node common/scripts/install-run-rush.js build -t @internal/bugserver-trigger
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bug-server-manual-bundle
+          path: tools/bugserver-trigger/dist/index.js
+          if-no-files-found: error
+          retention-days: 7
+
+  submit-manual-bundle:
+    needs: [resolve-manual-target, build-manual-bundle]
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    permissions:
+      contents: read
+    steps:
+      # Use the immutable default-branch workflow commit, never scripts from the PR.
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.workflow_sha }}
+          persist-credentials: false
+          sparse-checkout: tools/bugserver-trigger/scripts
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.x
+      - name: Install isolated trigger client dependencies
+        run: |
+          mkdir -p "$RUNNER_TEMP/bug-server-client"
+          npm install --prefix "$RUNNER_TEMP/bug-server-client" --ignore-scripts --no-audit --no-fund --package-lock=false \
+            node-fetch@2.6.6 form-data@4.0.6 ts-node@10.9.0 typescript@4.9.5
+      - uses: actions/download-artifact@v4
+        with:
+          name: bug-server-manual-bundle
+          path: tools/bugserver-trigger/dist
+      - name: Trigger Bug Server for reviewed PR
+        working-directory: tools/bugserver-trigger
+        env:
+          BUG_SERVER_TOKEN: ${{ secrets.BUG_SERVER_TOKEN }}
+          NODE_PATH: ${{ runner.temp }}/bug-server-client/node_modules
+          TEST_SHA: ${{ needs.resolve-manual-target.outputs.sha }}
+          TEST_REF: refs/pull/${{ needs.resolve-manual-target.outputs.pr_number }}/head
+          TEST_BRANCH: ${{ needs.resolve-manual-target.outputs.head_ref }}
+          TEST_PR_URL: ${{ needs.resolve-manual-target.outputs.pr_url }}
+        run: |
+          if [ -z "$BUG_SERVER_TOKEN" ]; then
+            echo '::error::BUG_SERVER_TOKEN is not configured for this repository.'
+            exit 1
+          fi
+          test -f dist/index.js
+          printf 'PR: %s\nTested head: `%s`\n' "$TEST_PR_URL" "$TEST_SHA" >> "$GITHUB_STEP_SUMMARY"
+          env GITHUB_SHA="$TEST_SHA" GITHUB_REF="$TEST_REF" GITHUB_HEAD_REF="$TEST_BRANCH" \
+            node "$RUNNER_TEMP/bug-server-client/node_modules/ts-node/dist/bin.js" \
+              --transpile-only --skip-project \
+              --compiler-options '{"module":"CommonJS","moduleResolution":"node","esModuleInterop":true}' \
+              scripts/trigger-test.ts

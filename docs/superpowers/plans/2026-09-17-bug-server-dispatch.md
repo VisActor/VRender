@@ -48,3 +48,7 @@ Files: `tools/bugserver-trigger/README.md`.
 - actionlint 1.7.12: passed. Updated the existing checkout v3 to v4 because actionlint rejects its retired runtime.
 - Executed the workflow submission shell block in an isolated directory using the exact dependency versions: mock success, photo-test failure and missing-token cases all passed. The mock verified PR metadata and received a bundle that throws if executed; it was only uploaded.
 - `git diff --check`: passed. No live Bug Server call was made.
+
+## Security verification correction (2026-09-17)
+
+The original tests, mock integration and actionlint run verified functional behavior and workflow syntax, but did not verify cache permissions. Omitting a cache action does not remove the default-branch cache-write capability of a `workflow_dispatch` run. PR #2134 therefore adds explicit workflow-level read-only API permissions and job-level `cache-mode: none`, verified before PR checkout. See the [security fix plan](2026-09-17-bug-server-security-fix.md) for runtime evidence and scanner compatibility limitations.

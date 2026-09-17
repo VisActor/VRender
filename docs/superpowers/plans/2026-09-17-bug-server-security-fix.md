@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 >
-> 当前环境未安装上述执行技能。后续可在当前任务中顺序执行；本次仅制定计划，不修改 workflow、不触发 CI、不更新远端文档。
+> 当前环境未安装上述执行技能。用户已授权执行本计划，使用当前任务和仓库工具顺序完成；实际进度与证据记录在文末。
 
 **Goal:** 修复 PR #2134 的默认分支缓存污染风险和自动构建 token 权限过大问题。
 
@@ -40,14 +40,14 @@
 - Consumes: 原有事件、输入、job outputs、artifact 名称和提交脚本。
 - Produces: 所有 job 默认只有 `contents: read`；外部 PR 构建 job 没有缓存读写权限。
 
-- [ ] **1. 复核执行时的 PR head 和工作区，防止覆盖后续改动。**
+- [x] **1. 复核执行时的 PR head 和工作区，防止覆盖后续改动。**
 
 ```sh
 git status --short
 gh pr view 2134 --repo VisActor/VRender --json headRefOid,headRefName,baseRefName
 ```
 
-- [ ] **2. 在 `on` 与 `jobs` 之间增加顶层权限。**
+- [x] **2. 在 `on` 与 `jobs` 之间增加顶层权限。**
 
 ```yaml
 permissions:
@@ -56,7 +56,7 @@ permissions:
 
 保留 `resolve-manual-target` 的 `contents: read`、`pull-requests: read`，以及另外两个手动 jobs 现有的 `contents: read`。旧 `build` 自动继承顶层只读权限；未声明的其他 API 权限不授予。
 
-- [ ] **3. 在 `build-manual-bundle` 中增加 job 级缓存限制。**
+- [x] **3. 在 `build-manual-bundle` 中增加 job 级缓存限制。**
 
 ```yaml
     cache-mode: none
@@ -69,14 +69,23 @@ permissions:
       # cache-mode controls cache tokens independently of GITHUB_TOKEN permissions.
 ```
 
-- [ ] **4. 在该 job 的 checkout 之前增加运行时检查。**
+- [x] **4. 在该 job 的 checkout 之前增加运行时检查。**
 
 ```yaml
       - name: Verify cache isolation
-        run: test "${ACTIONS_CACHE_MODE:-}" = none
+        uses: actions/github-script@v8
+        with:
+          script: |
+            if (process.env.ACTIONS_CACHE_MODE !== 'none') {
+              core.setFailed('PR builds require cache-mode: none.');
+            } else {
+              core.info('Cache access is disabled for this job.');
+            }
 ```
 
 如果 runner 没有报告 `none`，立即停止，不能继续执行 PR 代码。该检查用于确认平台应用配置，实际权限边界仍是 job 级 `cache-mode`，不是环境变量本身。
+
+执行中修正了检查载体：runner 的 `NodeScriptActionHandler` 会注入 `ACTIONS_CACHE_MODE`，普通 shell step 不会。不能用原计划的 shell 检查把变量未注入误判为平台不支持。
 
 ## Task 2：验证平台支持、扫描结果和功能
 
@@ -89,7 +98,7 @@ permissions:
 - Consumes: Task 1 的 workflow 配置。
 - Produces: GitHub 原生解析与运行证据、权限日志、两条扫描告警的处理结果。
 
-- [ ] **1. 运行现有校验，记录 actionlint 版本及完整诊断。**
+- [x] **1. 运行现有校验，记录 actionlint 版本及完整诊断。**
 
 ```sh
 node --test .github/scripts/bug-server-dispatch.test.cjs
@@ -100,7 +109,7 @@ git diff --check
 
 预期已有 15 项输入校验测试通过。若 actionlint 仍是 1.7.12，明确记录其对新字段的语法误报；不能把这次检查写成通过，也不能泛化忽略所有语法错误。其余诊断均需解决。
 
-- [ ] **2. 在 PR 分支运行不包含 PR 代码和 secret 的平台探针。**
+- [x] **2. 在 PR 分支运行不包含 PR 代码和 secret 的平台探针。**
 
 临时文件的完整内容：
 
@@ -116,9 +125,13 @@ jobs:
     cache-mode: none
     steps:
       - name: Verify effective cache mode
-        run: |
-          printf 'cache mode: %s\n' "${ACTIONS_CACHE_MODE:-unset}"
-          test "${ACTIONS_CACHE_MODE:-}" = none
+        uses: actions/github-script@v8
+        with:
+          script: |
+            core.info(`Cache mode: ${process.env.ACTIONS_CACHE_MODE ?? 'unset'}`);
+            if (process.env.ACTIONS_CACHE_MODE !== 'none') {
+              core.setFailed('Expected cache-mode: none.');
+            }
 ```
 
 在修复实现进入正常提交、推送阶段时运行该探针。它不 checkout、不安装依赖、不调用 Bug Server、不读写缓存。验收要求 GitHub 接受 YAML，且日志输出 `cache mode: none`。保留 run URL，再删除临时 workflow。
@@ -155,7 +168,7 @@ gh api repos/VisActor/VRender/code-scanning/alerts/46
 - Consumes: Task 2 的真实验证结果。
 - Produces: 与实现一致的权限说明和未完成项记录。
 
-- [ ] **1. 用具体权限说明替换含糊的“无共享缓存”。**
+- [x] **1. 用具体权限说明替换含糊的“无共享缓存”。**
 
 README 的构建边界使用以下说明：
 
@@ -178,3 +191,16 @@ README 的构建边界使用以下说明：
 - [CodeQL 缓存写权限判断源码](https://github.com/github/codeql/blob/main/actions/ql/lib/codeql/actions/security/CachePoisoningQuery.qll)
 - [缓存污染告警](https://github.com/VisActor/VRender/pull/2134#discussion_r4032878435)
 - [缺失权限告警](https://github.com/VisActor/VRender/pull/2134#discussion_r4032878451)
+
+## 执行记录（2026-09-17）
+
+- 权限修复提交：`a1d30899c`；JavaScript action 检查修正：`f8fe1a07a`。
+- [首轮探针](https://github.com/VisActor/VRender/actions/runs/35179960262)：GitHub 接受配置，初始化日志为 `Cache mode: none`，但 shell 没有该变量。通过官方 [NodeScriptActionHandler 源码](https://github.com/actions/runner/blob/main/src/Runner.Worker/Handlers/NodeScriptActionHandler.cs) 确认注入边界，改用 JavaScript action 检查。
+- [修正后的平台探针](https://github.com/VisActor/VRender/actions/runs/35180071512)：**通过**。runner `2.337.0`；初始化日志及 JavaScript action 均报告 `Cache mode: none`。探针没有执行 PR 代码、接触 Bug Server secret 或读写缓存；验证后删除临时 workflow。
+- Node 输入校验：15/15 通过。直接运行 workflow 中的隔离检查脚本，确认 `none` 放行，`read`、`write`、未注入变量均拒绝，共 4 个场景通过。
+- 推送钩子要求的 `rush test --only tag:package` 已通过；没有以跳过钩子的方式推送。
+- actionlint 1.7.12：仅有 `cache-mode` 未识别诊断，**不记为通过**。GitHub 原生解析和 runner 验证通过。
+- CodeQL 权限告警 #46：实例状态为 **fixed**。缓存告警 #45 在 `f8fe1a07a` 上仍为 **open**；其规则未考虑 `cache-mode`。没有忽略规则或关闭告警。
+- 已查询 develop 的传统 required status checks 和适用 rulesets：前者未启用，后者为空。未修改合并规则，也未合并 PR。
+- 首次真实手动链路仍需在修复合入默认分支后执行；平台探针不等于端到端 Bug Server 验收。
+- README、设计文档、原实现验证记录和飞书维护文档均已同步；飞书文档 revision 17 已回读确认。

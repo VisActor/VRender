@@ -6,6 +6,7 @@ import type { ISymbol, ISymbolGraphicAttribute } from './graphic/symbol';
 import type { BaseRenderContributionTime } from '../common/enums';
 import type { IArc, IArcGraphicAttribute } from './graphic/arc';
 import type { IArea, IAreaGraphicAttribute } from './graphic/area';
+import type { ILine, ILineGraphicAttribute } from './graphic/line';
 import type { IText, ITextGraphicAttribute } from './graphic/text';
 import type { ICircle, ICircleGraphicAttribute } from './graphic/circle';
 import type { IGroup, IGroupGraphicAttribute } from './graphic/group';
@@ -74,6 +75,8 @@ export type IPathRenderContribution = IBaseRenderContribution<IPath, IPathGraphi
 export type IPolygonRenderContribution = IBaseRenderContribution<IPolygon, IPolygonGraphicAttribute>;
 
 export type IRectRenderContribution = IBaseRenderContribution<IRect, IRectGraphicAttribute>;
+
+export type ILineRenderContribution = IBaseRenderContribution<ILine, ILineGraphicAttribute>;
 
 export interface IContributionProvider<T> {
   getContributions: () => T[];

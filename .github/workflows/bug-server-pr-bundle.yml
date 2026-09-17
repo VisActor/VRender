@@ -1,0 +1,42 @@
+name: Bug Server PR Bundle
+
+on:
+  pull_request:
+    branches: ['main', 'develop', 'dev/**']
+
+permissions:
+  contents: read
+
+jobs:
+  build-pr-bundle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      # PR code runs only in the pull_request context; cache writes stay scoped to the PR.
+      # This workflow never receives the Bug Server token.
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - name: Verify checkout
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.x
+      - name: Install native deps for node-canvas
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential pkg-config libcairo2-dev libpango1.0-dev libpng-dev libjpeg-dev libgif-dev librsvg2-dev
+      - name: Install and build PR bundle
+        run: |
+          node common/scripts/install-run-rush.js update --bypass-policy
+          node common/scripts/install-run-rush.js install --bypass-policy
+          node common/scripts/install-run-rush.js build -t @internal/bugserver-trigger
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bug-server-pr-${{ github.event.pull_request.number }}-${{ github.event.pull_request.head.sha }}
+          path: tools/bugserver-trigger/dist/index.js
+          if-no-files-found: error
+          retention-days: 7

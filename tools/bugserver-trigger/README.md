@@ -4,7 +4,7 @@
 
 ## Manually test a PR
 
-After the manual workflow is merged into the repository's default branch (`develop`), maintainers with repository write access can open **Actions → Bug Server CI → Run workflow**. Select **develop**, then enter:
+After the workflows are merged into the repository's default branch (`develop`), wait for **Bug Server PR Bundle** to succeed for the reviewed PR head. Fork runs may need a maintainer's approval. Then maintainers with repository write access can open **Actions → Bug Server CI → Run workflow**. Select **develop**, then enter:
 
 - `pr_number`: the PR number, including PRs from external forks.
 - `head_sha`: the full 40-character SHA of the PR head that you reviewed.
@@ -21,19 +21,19 @@ gh workflow run bug-server.yml \
 
 Use the currently reviewed PR head; the example SHA becomes invalid if that PR changes. The workflow rejects non-default workflow branches, malformed inputs and a SHA that differs from the PR's current head. It builds the exact requested **head commit**, not GitHub's generated merge commit. Updates after validation cannot change the commit being built.
 
-The run appears under Actions; this manual run does not automatically attach a check or comment to the external PR. Its summary records the PR URL and tested head. The **Trigger Bug Server for reviewed PR** step prints `scmVersion`, `bundleId`, and the result counts, which identify the run in Bug Server. A missing token, failed SCM build or failed photo test makes the job fail.
+The run appears under Actions; this manual run does not automatically attach a check or comment to the external PR. Its summary records the PR URL, tested head and source build run. The **Trigger Bug Server for reviewed PR** step prints `scmVersion`, `bundleId`, and the result counts, which identify the run in Bug Server. A missing token, failed SCM build or failed photo test makes the job fail.
+
+The manual entry consumes an existing PR bundle; it does not build PR code. Artifacts are retained for 7 days. If the build or artifact is missing, failed or expired, approve/wait for/re-run **Bug Server PR Bundle** before dispatching again. For a PR opened before this workflow was introduced, update or reopen the PR to trigger a new PR event; re-running an old workflow definition does not create the new bundle workflow.
 
 ## Execution boundaries
 
-The manual workflow uses three separate jobs:
+1. **Bug Server PR Bundle** runs only on `pull_request`, builds the exact head with read-only repository permissions, disabled persisted checkout credentials and no Bug Server token. Any cache writes are confined to the PR scope. It uploads `bug-server-pr-<number>-<sha>`.
+2. The manual **resolve-manual-target** job validates the current PR head and source workflow ID/path, PR event, successful run, repository IDs, source branch and run SHA. It requires one non-expired artifact with matching GitHub API provenance. Fork runs can omit PR associations; the repository/branch/SHA checks still bind the source.
+3. **submit-manual-bundle** uses scripts from the immutable default-branch workflow commit. It downloads the selected artifact ID and accepts only a single regular `index.js` entry, up to 64 MiB. The trusted extractor writes bytes to a fixed path without extracting archive paths. The client only uploads those bytes; it never executes the bundle or PR package scripts.
 
-1. Validate the PR and reviewed SHA using the GitHub API.
-2. Build the reviewed PR with read-only repository access and `cache-mode: none`, which denies cache reads and writes independently of `GITHUB_TOKEN`. A JavaScript action verifies the runner reports this mode before checking out PR code. Keep checkout credentials disabled and the Bug Server token on the separate submission runner. Upload only the generated bundle.
-3. On a fresh runner, use the trigger script from the default-branch workflow commit. Install its dependencies separately with npm lifecycle scripts disabled, download the bundle as data, and pass the token only to the API client step. This job never executes the PR bundle or its package scripts.
+Both workflows default to `contents: read`. Manual lookup and download jobs also need `actions: read`, and target validation needs `pull-requests: read`. The Bug Server token is injected only into the final API client step. Existing push and pull-request automatic runs retain their build and test behavior with read-only repository permissions. A fork PR's automatic Bug Server run still cannot obtain repository secrets; use the manual entry for Bug Server validation.
 
-The workflow defaults to `contents: read`; only the PR validation job additionally requests `pull-requests: read`. Existing push and pull-request automatic runs retain their build and test steps with read-only repository permissions. A fork PR's automatic run still cannot obtain repository secrets; use the manual entry for Bug Server validation.
-
-If **Verify cache isolation** fails, stop and check the runner's cache-mode support. Do not set `ACTIONS_CACHE_MODE` yourself or remove the guard: the job-level `cache-mode` setting must restrict the cache token. The runner exposes the mode to JavaScript actions, not ordinary shell steps.
+The default-branch manual workflow does not check out or build PR code. This replaces the earlier `cache-mode` approach and does not require scanner exceptions.
 
 ## Local validation
 
@@ -41,7 +41,6 @@ From the repository root:
 
 ```sh
 node --test .github/scripts/bug-server-dispatch.test.cjs
-actionlint .github/workflows/bug-server.yml
+python3 -m unittest discover -s .github/scripts -p 'test_extract_bug_server_bundle.py'
+actionlint .github/workflows/bug-server.yml .github/workflows/bug-server-pr-bundle.yml
 ```
-
-As of 2026-09-17, actionlint 1.7.12 does not recognize `cache-mode`, and CodeQL's cache-poisoning rule does not account for it. Record these diagnostics separately from the GitHub runtime verification; do not describe them as passing or disable the security rule. See the [security fix plan](../../docs/superpowers/plans/2026-09-17-bug-server-security-fix.md) for evidence and remaining validation.

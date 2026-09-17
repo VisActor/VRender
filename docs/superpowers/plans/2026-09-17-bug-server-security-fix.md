@@ -1,5 +1,7 @@
 # Bug Server 手动入口安全修复 Implementation Plan
 
+> **已被替代：** 本文保留第一轮 `cache-mode` 修复及验证记录。该方案未消除最新 CodeQL 告警，不再作为最终实现；当前方案见 [PR artifact 修复计划](2026-09-17-bug-server-pr-artifact.md)。默认分支手动流程现改为只消费 PR 工作流的产物，不执行 PR 构建代码。
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 >
 > 当前环境未安装上述执行技能。用户已授权执行本计划，使用当前任务和仓库工具顺序完成；实际进度与证据记录在文末。

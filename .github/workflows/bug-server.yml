@@ -35,7 +35,9 @@ jobs:
           cache-dependency-path: './common/config/rush/pnpm-lock.yaml'
 
       - name: Test manual dispatch validation
-        run: node --test .github/scripts/bug-server-dispatch.test.cjs
+        run: |
+          node --test .github/scripts/bug-server-dispatch.test.cjs
+          python3 -m unittest discover -s .github/scripts -p 'test_extract_bug_server_bundle.py'
 
       - name: Print All Github Environment Variables
         run: env
@@ -72,11 +74,13 @@ jobs:
     permissions:
       contents: read
       pull-requests: read
+      actions: read
     outputs:
       sha: ${{ steps.target.outputs.sha }}
       pr_number: ${{ steps.target.outputs.pr_number }}
       head_ref: ${{ steps.target.outputs.head_ref }}
       pr_url: ${{ steps.target.outputs.pr_url }}
+      artifact_id: ${{ steps.target.outputs.artifact_id }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -101,71 +105,30 @@ jobs:
             core.setOutput('pr_number', target.prNumber);
             core.setOutput('head_ref', target.headRef);
             core.setOutput('pr_url', target.prUrl);
+            core.setOutput('artifact_id', target.artifactId);
             await core.summary
               .addHeading('Bug Server manual test')
               .addLink(`PR #${target.prNumber}`, target.prUrl)
+              .addLink(`Source build ${target.runId}`, target.runUrl)
               .addRaw(`\n\nTested head: \`${target.sha}\`\n`)
               .write();
 
-  build-manual-bundle:
-    needs: resolve-manual-target
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-    cache-mode: none
-    permissions:
-      contents: read
-    steps:
-      - name: Verify cache isolation
-        uses: actions/github-script@v8
-        with:
-          script: |
-            if (process.env.ACTIONS_CACHE_MODE !== 'none') {
-              core.setFailed('PR builds require cache-mode: none.');
-            } else {
-              core.info('Cache access is disabled for this job.');
-            }
-      # PR code runs without Bug Server secrets or cache access.
-      # cache-mode controls cache tokens independently of GITHUB_TOKEN permissions.
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ needs.resolve-manual-target.outputs.sha }}
-          persist-credentials: false
-      - name: Verify checkout
-        env:
-          EXPECTED_SHA: ${{ needs.resolve-manual-target.outputs.sha }}
-        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 24.x
-      - name: Install native deps for node-canvas
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential pkg-config libcairo2-dev libpango1.0-dev libpng-dev libjpeg-dev libgif-dev librsvg2-dev
-      - name: Install and build PR bundle
-        run: |
-          node common/scripts/install-run-rush.js update --bypass-policy
-          node common/scripts/install-run-rush.js install --bypass-policy
-          node common/scripts/install-run-rush.js build -t @internal/bugserver-trigger
-      - uses: actions/upload-artifact@v4
-        with:
-          name: bug-server-manual-bundle
-          path: tools/bugserver-trigger/dist/index.js
-          if-no-files-found: error
-          retention-days: 7
-
   submit-manual-bundle:
-    needs: [resolve-manual-target, build-manual-bundle]
+    needs: resolve-manual-target
     runs-on: ubuntu-latest
     timeout-minutes: 120
     permissions:
       contents: read
+      actions: read
     steps:
       # Use the immutable default-branch workflow commit, never scripts from the PR.
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.workflow_sha }}
           persist-credentials: false
-          sparse-checkout: tools/bugserver-trigger/scripts
+          sparse-checkout: |
+            .github/scripts
+            tools/bugserver-trigger/scripts
       - uses: actions/setup-node@v4
         with:
           node-version: 24.x
@@ -174,10 +137,22 @@ jobs:
           mkdir -p "$RUNNER_TEMP/bug-server-client"
           npm install --prefix "$RUNNER_TEMP/bug-server-client" --ignore-scripts --no-audit --no-fund --package-lock=false \
             node-fetch@2.6.6 form-data@4.0.6 ts-node@10.9.0 typescript@4.9.5
-      - uses: actions/download-artifact@v4
+      - name: Download reviewed PR artifact
+        uses: actions/github-script@v8
+        env:
+          ARTIFACT_ID: ${{ needs.resolve-manual-target.outputs.artifact_id }}
         with:
-          name: bug-server-manual-bundle
-          path: tools/bugserver-trigger/dist
+          script: |
+            const archive = await github.rest.actions.downloadArtifact({
+              ...context.repo,
+              artifact_id: Number(process.env.ARTIFACT_ID),
+              archive_format: 'zip'
+            });
+            const fs = require('node:fs');
+            const path = require('node:path');
+            fs.writeFileSync(path.join(process.env.RUNNER_TEMP, 'bug-server-bundle.zip'), Buffer.from(archive.data));
+      - name: Read bundle as data
+        run: python3 .github/scripts/extract_bug_server_bundle.py "$RUNNER_TEMP/bug-server-bundle.zip" tools/bugserver-trigger/dist/index.js
       - name: Trigger Bug Server for reviewed PR
         working-directory: tools/bugserver-trigger
         env:

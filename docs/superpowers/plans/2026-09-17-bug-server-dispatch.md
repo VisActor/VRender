@@ -1,5 +1,7 @@
 # Bug Server Manual Dispatch Implementation Plan
 
+> Historical implementation record. The default-branch build described below has been replaced by the [PR artifact flow](2026-09-17-bug-server-pr-artifact.md); use the current README and design for maintenance.
+
 > Execute inline in this task; the workflow design was approved in the conversation. The referenced superpowers execution skills are not installed, so implementation uses the available repository tools.
 
 **Goal:** Allow maintainers to test an external PR at a reviewed SHA without creating a temporary PR.

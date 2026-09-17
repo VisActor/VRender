@@ -23,6 +23,8 @@ export const ATTRIBUTE_CATEGORY: Record<string, UpdateCategory> = {
   shadowColor: UpdateCategory.PAINT,
   x: UpdateCategory.TRANSFORM | UpdateCategory.BOUNDS,
   y: UpdateCategory.TRANSFORM | UpdateCategory.BOUNDS,
+  dx: UpdateCategory.TRANSFORM | UpdateCategory.BOUNDS,
+  dy: UpdateCategory.TRANSFORM | UpdateCategory.BOUNDS,
   scaleX: UpdateCategory.TRANSFORM | UpdateCategory.BOUNDS,
   scaleY: UpdateCategory.TRANSFORM | UpdateCategory.BOUNDS,
   angle: UpdateCategory.TRANSFORM | UpdateCategory.BOUNDS,

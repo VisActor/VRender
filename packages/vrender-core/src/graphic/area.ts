@@ -7,7 +7,14 @@ import { getTheme } from './theme';
 import { application } from '../application';
 import { AREA_NUMBER_TYPE } from './constants';
 
-const AREA_UPDATE_TAG_KEY = ['segments', 'points', 'curveType', 'curveTension', ...GRAPHIC_UPDATE_TAG_KEY];
+const AREA_UPDATE_TAG_KEY = [
+  'segments',
+  'points',
+  'curveType',
+  'curveTension',
+  'connectedType',
+  ...GRAPHIC_UPDATE_TAG_KEY
+];
 
 export class Area extends Graphic<IAreaGraphicAttribute> implements IArea {
   type: 'area' = 'area';
@@ -88,6 +95,9 @@ export class Area extends Graphic<IAreaGraphicAttribute> implements IArea {
     const { points = areaTheme.points } = attribute;
     const b = aabbBounds;
     points.forEach(p => {
+      if (p.defined === false) {
+        return;
+      }
       b.add(p.x, p.y);
       b.add(p.x1 ?? p.x, p.y1 ?? p.y); //面积图特殊性：由三个值构成，横向面积图，x1会省略；纵向面积图，y1会省略
     });
@@ -103,6 +113,9 @@ export class Area extends Graphic<IAreaGraphicAttribute> implements IArea {
     const b = aabbBounds;
     segments.forEach(s => {
       s.points.forEach(p => {
+        if (p.defined === false) {
+          return;
+        }
         b.add(p.x, p.y);
         b.add(p.x1 ?? p.x, p.y1 ?? p.y); //面积图特殊性：由三个值构成，横向面积图，x1会省略；纵向面积图，y1会省略
       });

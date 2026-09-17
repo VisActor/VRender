@@ -82,10 +82,10 @@ export class Line extends Graphic<ILineGraphicAttribute> implements ILine {
     aabbBounds: IAABBBounds,
     graphic?: ILine
   ): IAABBBounds {
-    const { points = lineTheme.points, connectedType } = attribute;
+    const { points = lineTheme.points } = attribute;
     const b = aabbBounds;
     points.forEach(p => {
-      if (p.defined !== false || connectedType === 'connect') {
+      if (p.defined !== false) {
         b.add(p.x, p.y);
       }
     });
@@ -97,11 +97,11 @@ export class Line extends Graphic<ILineGraphicAttribute> implements ILine {
     aabbBounds: IAABBBounds,
     graphic?: ILine
   ): IAABBBounds {
-    const { segments = lineTheme.segments, connectedType } = attribute;
+    const { segments = lineTheme.segments } = attribute;
     const b = aabbBounds;
     segments.forEach(s => {
       s.points.forEach(p => {
-        if (p.defined !== false || connectedType === 'connect') {
+        if (p.defined !== false) {
           b.add(p.x, p.y);
         }
       });

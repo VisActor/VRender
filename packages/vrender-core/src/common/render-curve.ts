@@ -11,6 +11,7 @@ import type {
 } from '../interface';
 import { Direction } from './enums';
 import { drawSegItem } from './render-utils';
+import { getAreaPointRuns } from './area-cache';
 
 function drawEachCurve(
   path: IPath2D,
@@ -212,40 +213,29 @@ export function drawIncrementalAreaSegments(
   params?: {
     offsetX?: number;
     offsetY?: number;
+    connectedType?: 'none' | 'connect';
+    startPoint?: IPointLike;
   }
 ) {
-  const { offsetX = 0, offsetY = 0 } = params || {};
-  const { points } = segments;
-  // 分段
-  const definedPointsList: IPointLike[][] = [];
-  let lastIdx = 0;
-  for (let i = 0; i < points.length; i++) {
-    if (points[i].defined === false) {
-      if (lastIdx + 1 !== i) {
-        definedPointsList.slice(lastIdx, i);
-      }
-      lastIdx = i;
+  const { offsetX = 0, offsetY = 0, connectedType = 'none' } = params || {};
+  const startPoint =
+    params && 'startPoint' in params
+      ? params.startPoint
+      : lastSeg && getAreaPointRuns(lastSeg.points, connectedType).tail;
+  const { runs } = getAreaPointRuns(segments.points, connectedType, startPoint);
+  for (let i = 0; i < runs.length; i++) {
+    const points = runs[i];
+    if (points.length < 2) {
+      continue;
     }
-  }
-  definedPointsList.length === 0;
-  definedPointsList.push(points);
-  definedPointsList.forEach((points, i) => {
-    const startP = lastSeg && i === 0 ? lastSeg.points[lastSeg.points.length - 1] : points[0];
-    path.moveTo(startP.x + offsetX, startP.y + offsetY);
-    // 绘制上层
-    points.forEach(p => {
-      if (p.defined === false) {
-        path.moveTo(p.x + offsetX, p.y + offsetY);
-        return;
-      }
-      path.lineTo(p.x + offsetX, p.y + offsetY);
-    });
-    // 绘制下层
-    for (let i = points.length - 1; i >= 0; i--) {
-      const p = points[i];
+    path.moveTo(points[0].x + offsetX, points[0].y + offsetY);
+    for (let j = 1; j < points.length; j++) {
+      path.lineTo(points[j].x + offsetX, points[j].y + offsetY);
+    }
+    for (let j = points.length - 1; j >= 0; j--) {
+      const p = points[j];
       path.lineTo(p.x1 ?? p.x, p.y1 ?? p.y);
     }
-    path.lineTo(startP.x1 ?? startP.x, startP.y1 ?? startP.y);
     path.closePath();
-  });
+  }
 }

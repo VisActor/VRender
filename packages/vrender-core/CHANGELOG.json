@@ -2,6 +2,23 @@
   "name": "@visactor/vrender-core",
   "entries": [
     {
+      "version": "1.1.11",
+      "tag": "@visactor/vrender-core_v1.1.11",
+      "date": "Thu, 17 Sep 2026 07:31:09 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "统一 Glyph 状态生命周期，保留旧状态覆盖顺序，补齐派生子图形同步与属性撤销，并修复内部中断状态动画污染基础属性的问题。"
+          }
+        ],
+        "none": [
+          {
+            "comment": "performance: memo leak problem of ticker. fix#2075"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.1.10",
       "tag": "@visactor/vrender-core_v1.1.10",
       "date": "Sat, 29 Aug 2026 08:21:58 GMT",

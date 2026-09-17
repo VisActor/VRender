@@ -2,6 +2,18 @@
   "name": "@visactor/vrender-animate",
   "entries": [
     {
+      "version": "1.1.11",
+      "tag": "@visactor/vrender-animate_v1.1.11",
+      "date": "Thu, 17 Sep 2026 07:31:09 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "performance: memo leak problem of ticker. fix#2075"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.1.10",
       "tag": "@visactor/vrender-animate_v1.1.10",
       "date": "Sat, 29 Aug 2026 08:21:58 GMT",

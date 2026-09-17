@@ -25,6 +25,7 @@
     "dev": "cross-env DEBUG='Bundler*' bundle --clean -f es -w",
     "start": "vite ./__tests__/browser --host",
     "test": "jest -c jest.config.js",
+    "test:artifacts": "jest -c jest.artifacts.config.js",
     "test:electron": "jest -c jest.electron.config.js --runInBand --passWithNoTests --testPathPattern='__tests__/(browser|electron)/'",
     "test-cov": "jest -c jest.config.js -w 16 --coverage",
     "test-live": "npm run test-watch __tests__/unit/theme/line.test.ts",

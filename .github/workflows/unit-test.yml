@@ -41,7 +41,8 @@ jobs:
         run: node common/scripts/install-run-rush.js update --bypass-policy
       - name: Install rush
         run: node common/scripts/install-run-rush.js install --bypass-policy
+      - name: Source tests (without build artifacts)
+        run: node common/scripts/install-run-rush.js test --only tag:package
       - run: node common/scripts/install-run-rush.js build --only tag:package
-      - name: Pre unit test
-        run: cd packages/vrender && node ../../common/scripts/install-run-rushx.js test && cd ../..
-      - run: node common/scripts/install-run-rush.js test --only tag:package
+      - name: Published artifact tests
+        run: node common/scripts/install-run-rush.js test:artifacts --only tag:package

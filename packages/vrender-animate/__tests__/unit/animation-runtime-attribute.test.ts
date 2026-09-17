@@ -2,6 +2,7 @@ import {
   application,
   AttributeUpdateType,
   createGroup,
+  createGlyph,
   createLine,
   createRect,
   createSymbol,
@@ -122,6 +123,42 @@ describe('D3 pre-handoff animation runtime', () => {
 
   afterEach(() => {
     jest.restoreAllMocks();
+  });
+
+  test('Glyph children follow actual animation frames and interrupted state restoration', () => {
+    const { group, ticker, graphicService } = createStageHarness('glyph-state-runtime');
+    const glyph = createGlyph({ width: 20, fill: 'blue' });
+    const child = createRect({ height: 10 });
+    bindGraphicService(glyph, graphicService);
+    bindGraphicService(child, graphicService);
+    glyph.setSubGraphic([child]);
+    glyph.setSubGraphicEncoder((g, context) =>
+      g.commitSubGraphicAttributes(child, { width: g.attribute.width }, undefined, context)
+    );
+    group.appendChild(glyph);
+    glyph.states = { selected: { width: 60 } };
+    glyph.stateAnimateConfig = { duration: 100, easing: 'linear' };
+    glyph.useStates(['selected'], true);
+    expect(child.attribute.width).toBe(20);
+    tick(ticker, 50);
+    expect(child.attribute.width).toBeCloseTo(40);
+    expect(glyph.baseAttributes.width).toBe(20);
+    tick(ticker, 50);
+    expect(child.attribute.width).toBeCloseTo(60);
+    glyph.clearStates(true);
+    tick(ticker, 50);
+    expect(child.attribute.width).toBeCloseTo(40);
+    tick(ticker, 50);
+    expect(child.attribute.width).toBe(20);
+    glyph.useStates(['selected'], true);
+    tick(ticker, 25);
+    expect(child.attribute.width).toBeCloseTo(30);
+    glyph.clearStates(false);
+    expect({ host: glyph.attribute.width, base: glyph.baseAttributes.width }).toEqual({ host: 20, base: 20 });
+    expect(child.attribute.width).toBe(20);
+    tick(ticker, 100);
+    expect(child.attribute.width).toBe(20);
+    expect(glyph.baseAttributes.width).toBe(20);
   });
 
   test('state animation updates graphic.attribute over time without polluting baseAttributes', () => {

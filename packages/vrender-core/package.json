@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vrender-core",
-  "version": "1.1.10",
+  "version": "1.1.11",
   "description": "",
   "sideEffects": [
     "./src/modules.ts",
@@ -59,6 +59,7 @@
     "dev": "cross-env DEBUG='Bundler*' bundle --clean -f es -w",
     "start": "vite ./__tests__/browser",
     "test": "jest -c jest.config.js",
+    "test:artifacts": "jest -c jest.artifacts.config.js",
     "test:electron": "jest -c jest.electron.config.js --runInBand --passWithNoTests --testPathPattern='__tests__/(browser|electron)/'",
     "test-live": "npm run test-watch __tests__/unit/theme/line.test.ts",
     "test-watch": "cross-env DEBUG_MODE=1 jest --watch -c jest.config.js",

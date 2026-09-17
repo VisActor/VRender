@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vrender-kits",
-  "version": "1.1.10",
+  "version": "1.1.11",
   "description": "",
   "sideEffects": false,
   "main": "cjs/index-node.js",
@@ -31,13 +31,14 @@
     "dev": "cross-env DEBUG='Bundler*' bundle --clean -f es -w",
     "start": "vite ./vite",
     "test": "jest -c jest.config.js",
+    "test:artifacts": "jest -c jest.artifacts.config.js",
     "test:electron": "jest -c jest.electron.config.js --runInBand --passWithNoTests --testPathPattern='__tests__/(browser|electron)/'",
     "test-cov": "jest -c jest.config.js --coverage",
     "test-watch": "cross-env DEBUG_MODE=1 jest --watch -c jest.config.js"
   },
   "dependencies": {
     "@visactor/vutils": "~1.0.12",
-    "@visactor/vrender-core": "workspace:1.1.10",
+    "@visactor/vrender-core": "workspace:1.1.11",
     "@resvg/resvg-js": "2.4.1",
     "roughjs": "4.6.6",
     "gifuct-js": "2.1.2",

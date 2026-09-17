@@ -463,6 +463,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   protected stateEngine?: StateEngine<T>;
   protected stateEngineCompiledDefinitions?: Map<string, CompiledStateDefinition<T>>;
   protected stateEngineStateSort?: (stateA: string, stateB: string) => number;
+  protected stateEngineStateOrder?: 'input';
   protected stateEngineMergeMode?: StateMergeMode;
   protected stateTransitionOrchestrator?: StateTransitionOrchestrator<T>;
   protected localStateDefinitionsSource?: StateDefinitionsInput<T>;
@@ -686,8 +687,9 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     return this.localStateDefinitionsVersion ?? 0;
   }
 
-  protected resolveEffectiveCompiledDefinitions(): {
+  protected resolveEffectiveCompiledDefinitions(_stateNames?: readonly string[]): {
     compiledDefinitions?: Map<string, CompiledStateDefinition<T>>;
+    stateOrder?: 'input';
   } {
     this.syncSharedStateScopeBindingFromTree(false);
     const boundScope = this.boundSharedStateScope;
@@ -976,11 +978,47 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     this.commitBaseAttributeMutation(false, context);
   }
 
+  /** Glyph updates must retain paint-only invalidation, including derived child patches. */
+  protected commitBaseAttributesByCategory(
+    params: Partial<T>,
+    forceUpdateTag: boolean = false,
+    context?: ISetAttributeContext
+  ): void {
+    const base = this.getBaseAttributesStorage();
+    let category = UpdateCategory.NONE;
+    let hasKeys = false;
+    for (const key in params) {
+      if (!Object.prototype.hasOwnProperty.call(params, key)) {
+        continue;
+      }
+      hasKeys = true;
+      const prev = (base as any)[key];
+      const next = (params as any)[key];
+      if (prev !== next) {
+        category = this.mergeAttributeDeltaCategory(category, key, prev, next);
+      }
+      (base as any)[key] = next;
+    }
+    if (!hasKeys) {
+      return;
+    }
+    this.attribute = base as T;
+    this._baseAttributes = undefined;
+    this.attributeMayContainTransientAttrs = false;
+    this.valid = this.isValid();
+    this.submitUpdateByCategory(category, forceUpdateTag);
+    this.onAttributeUpdate(context);
+  }
+
   protected commitBaseAttributesByTouchedKeys(
     params: Partial<T>,
     forceUpdateTag: boolean = false,
     context?: ISetAttributeContext
   ): void {
+    if (this.glyphHost) {
+      this.commitBaseAttributesByCategory(params, forceUpdateTag, context);
+      return;
+    }
     const source = params as Record<string, any>;
     const baseAttributes = this.getBaseAttributesStorage() as Record<string, any>;
     let hasKeys = false;
@@ -1819,6 +1857,11 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     }
   }
 
+  /** Let composite graphics reuse their children's geometry invalidation rules. */
+  protected static needsShapeUpdate(graphic: Graphic, key: string): boolean {
+    return graphic.needUpdateTag(key);
+  }
+
   protected needUpdateTags(keys: string[], k: string[] = GRAPHIC_UPDATE_TAG_KEY): boolean {
     for (let i = 0; i < k.length; i++) {
       const attrKey = k[i];
@@ -2020,7 +2063,38 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     return this;
   }
 
+  /** Keep a glyph child's own attribute surfaces attached when state/animation replaces them. */
+  protected static bindGlyphAttributes(graphic: Graphic, inherited: object): void {
+    if (Object.getPrototypeOf(graphic.attribute) !== inherited) {
+      Object.setPrototypeOf(graphic.attribute, inherited);
+    }
+    if (graphic._baseAttributes && Object.getPrototypeOf(graphic._baseAttributes) !== inherited) {
+      Object.setPrototypeOf(graphic._baseAttributes, inherited);
+    }
+  }
+
+  /** @internal Batched removal for Glyph-derived attributes; ordinary setters retain their fast path. */
+  protected static commitDerivedAttributePatch(
+    graphic: Graphic,
+    patch: Record<string, any>,
+    removedKeys?: readonly string[],
+    context?: ISetAttributeContext
+  ): void {
+    if (!removedKeys?.length) {
+      graphic.setAttributes(patch, false, context);
+      return;
+    }
+    graphic.detachAttributeFromBaseAttributes();
+    const base = graphic.getBaseAttributesStorage() as Record<string, any>;
+    removedKeys.forEach(key => delete base[key]);
+    graphic.applyBaseAttributes(patch);
+    graphic.commitBaseAttributeMutation(false, context);
+  }
+
   onAttributeUpdate(context?: ISetAttributeContext) {
+    if (this.glyphHost) {
+      Graphic.bindGlyphAttributes(this, this.glyphHost.attribute);
+    }
     if (context && context.skipUpdateCallback) {
       return;
     }
@@ -2082,8 +2156,11 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     return stateResolveBaseAttrs;
   }
 
-  protected ensureStateEngine(stateResolveBaseAttrs: Partial<T> = this.getStateResolveBaseAttrs()) {
-    const { compiledDefinitions } = this.resolveEffectiveCompiledDefinitions();
+  protected ensureStateEngine(
+    stateResolveBaseAttrs: Partial<T> = this.getStateResolveBaseAttrs(),
+    stateNames: readonly string[] = this.currentStates ?? EMPTY_STATE_NAMES
+  ) {
+    const { compiledDefinitions, stateOrder } = this.resolveEffectiveCompiledDefinitions(stateNames);
     this.compiledStateDefinitions = compiledDefinitions;
 
     if (!compiledDefinitions) {
@@ -2093,15 +2170,18 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       !this.stateEngine ||
       this.stateEngineCompiledDefinitions !== compiledDefinitions ||
       this.stateEngineStateSort !== this.stateSort ||
+      this.stateEngineStateOrder !== stateOrder ||
       this.stateEngineMergeMode !== this.stateMergeMode
     ) {
       this.stateEngine = new StateEngine<T>({
         compiledDefinitions,
         stateSort: this.stateSort,
+        stateOrder,
         mergeMode: this.stateMergeMode
       });
       this.stateEngineCompiledDefinitions = compiledDefinitions;
       this.stateEngineStateSort = this.stateSort;
+      this.stateEngineStateOrder = stateOrder;
       this.stateEngineMergeMode = this.stateMergeMode;
     }
 
@@ -2157,7 +2237,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     states: string[],
     stateResolveBaseAttrs: Partial<T> = this.getStateResolveBaseAttrs()
   ): GraphicStateTransition {
-    const stateEngine = this.ensureStateEngine(stateResolveBaseAttrs);
+    const stateEngine = this.ensureStateEngine(stateResolveBaseAttrs, states);
     return stateEngine
       ? this.toGraphicStateTransition(stateEngine.applyStates(states))
       : this.resolveLocalUseStatesTransition(states);
@@ -2171,7 +2251,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   }
 
   protected resolveAddStateTransition(stateName: string, keepCurrentStates?: boolean): GraphicStateTransition {
-    const stateEngine = this.ensureStateEngine();
+    const stateEngine = this.ensureStateEngine(undefined, [stateName]);
     if (stateEngine) {
       return this.toGraphicStateTransition(stateEngine.addState(stateName, keepCurrentStates));
     }
@@ -2220,7 +2300,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   }
 
   protected resolveToggleStateTransition(stateName: string): GraphicStateTransition {
-    const stateEngine = this.ensureStateEngine();
+    const stateEngine = this.ensureStateEngine(undefined, [stateName]);
     if (stateEngine) {
       return this.toGraphicStateTransition(stateEngine.toggleState(stateName));
     }
@@ -2240,7 +2320,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     forceResolverRefresh: boolean = false
   ): ResolvedGraphicStateTransition<T> {
     const stateResolveBaseAttrs = this.getStateResolveBaseAttrs();
-    const stateEngine = this.ensureStateEngine(stateResolveBaseAttrs);
+    const stateEngine = this.ensureStateEngine(stateResolveBaseAttrs, states);
     if (forceResolverRefresh) {
       stateEngine?.invalidateResolverCache();
     }
@@ -2432,7 +2512,9 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     return false;
   }
 
-  protected stopStateAnimates(type: 'start' | 'end' = 'end') {
+  protected stopStateAnimates(type?: 'start' | 'end') {
+    // Internal state transitions restore static truth themselves. An explicit
+    // stop('end') would instead commit the old animation target as new base data.
     const stopAnimationState = (this as any).stopAnimationState;
     if (typeof stopAnimationState === 'function') {
       stopAnimationState.call(this, 'state', type);

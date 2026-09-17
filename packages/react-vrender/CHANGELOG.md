@@ -1,6 +1,13 @@
 # Change Log - @visactor/react-vrender
 
-This log was last generated on Sat, 29 Aug 2026 08:21:58 GMT and should not be manually modified.
+This log was last generated on Thu, 17 Sep 2026 07:31:09 GMT and should not be manually modified.
+
+## 1.1.11
+Thu, 17 Sep 2026 07:31:09 GMT
+
+### Updates
+
+- performance: memo leak problem of ticker. fix#2075
 
 ## 1.1.10
 Sat, 29 Aug 2026 08:21:58 GMT

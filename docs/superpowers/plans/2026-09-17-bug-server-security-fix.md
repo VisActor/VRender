@@ -138,7 +138,7 @@ jobs:
 
 如果 GitHub 拒绝字段或 runner 不报告 `none`，该方案不具备落地条件，应停止合并；不要删除隔离配置继续执行外部 PR。后续改用 `pull_request` 构建 artifact、手动入口校验其来源后上传的方案，并单独完成该架构的实现计划。
 
-- [ ] **3. 复查真实自动构建的权限和两条 CodeQL 告警。**
+- [x] **3. 复查真实自动构建的权限和两条 CodeQL 告警。**
 
 ```sh
 gh pr checks 2134 --repo VisActor/VRender
@@ -180,7 +180,7 @@ README 的构建边界使用以下说明：
 
 在原实现计划的验证结果后补记：此前单测、mock 和 actionlint 通过仅覆盖功能及旧语法检查，未验证缓存权限隔离；此次修复补齐这项边界。
 
-- [ ] **2. 交付时列出改动和真实状态。**
+- [x] **2. 交付时列出改动和真实状态。**
 
 至少记录最新 commit、两条告警结果、自动构建权限日志、缓存模式探针 URL、首次真实手动运行结果。区分“合并前已验证”和“合并后待验证”，不把计划写成已完成结果。
 
@@ -200,7 +200,8 @@ README 的构建边界使用以下说明：
 - Node 输入校验：15/15 通过。直接运行 workflow 中的隔离检查脚本，确认 `none` 放行，`read`、`write`、未注入变量均拒绝，共 4 个场景通过。
 - 推送钩子要求的 `rush test --only tag:package` 已通过；没有以跳过钩子的方式推送。
 - actionlint 1.7.12：仅有 `cache-mode` 未识别诊断，**不记为通过**。GitHub 原生解析和 runner 验证通过。
-- CodeQL 权限告警 #46：实例状态为 **fixed**。缓存告警 #45 在 `f8fe1a07a` 上仍为 **open**；其规则未考虑 `cache-mode`。没有忽略规则或关闭告警。
+- CodeQL 权限告警 #46：实例状态为 **fixed**。缓存告警 #45 在 `a3d5f2e6e` 上仍为 **open**；其规则未考虑 `cache-mode`。没有忽略规则或关闭告警。
+- [自动构建启动日志](https://github.com/VisActor/VRender/actions/runs/35179962932/job/105069769361)：`GITHUB_TOKEN Permissions` 仅有 `Contents: read`、`Metadata: read`，没有写权限。该 run 的构建步骤通过；后因新提交替代而取消，与另一旧提交的重复 CI 一同清理，最新提交的 CI 继续运行。
 - 已查询 develop 的传统 required status checks 和适用 rulesets：前者未启用，后者为空。未修改合并规则，也未合并 PR。
 - 首次真实手动链路仍需在修复合入默认分支后执行；平台探针不等于端到端 Bug Server 验收。
 - README、设计文档、原实现验证记录和飞书维护文档均已同步；飞书文档 revision 17 已回读确认。

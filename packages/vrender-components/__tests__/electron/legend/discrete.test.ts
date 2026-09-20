@@ -73,6 +73,34 @@ describe('DiscreteLegend', () => {
     // });
   });
 
+  it('should clip a measured label when an empty selected state is active', () => {
+    const legend = new DiscreteLegend({
+      item: {
+        width: 62,
+        value: { alignRight: true }
+      },
+      items: [{ label: 'test1', value: 'average:16', shape: { fill: 'blue' } }]
+    });
+
+    stage.defaultLayer.add(legend as unknown as IGraphic);
+    stage.render();
+
+    const label = legend.find(node => node.name === 'legendItemLabel', true) as IText;
+    expect(label.currentStates).toEqual(['selected']);
+    expect(label.attribute.maxLineWidth).toBeGreaterThan(0);
+    expect(label.clipedText).not.toBe('test1');
+    expect(label.AABBBounds.width()).toBeLessThanOrEqual(label.attribute.maxLineWidth);
+
+    legend.setSelected([]);
+    legend.setSelected(['test1']);
+    stage.render();
+
+    expect(label.clipedText).not.toBe('test1');
+    expect(label.AABBBounds.width()).toBeLessThanOrEqual(label.attribute.maxLineWidth);
+    stage.defaultLayer.removeChild(legend as unknown as IGraphic);
+    legend.release();
+  });
+
   it('should reuse static state definitions without coupling item selection', () => {
     const legend = new DiscreteLegend({
       select: true,

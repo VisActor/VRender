@@ -162,6 +162,34 @@ describe('Graphic attribute layering', () => {
     expect((graphic as any).baseAttributes.shadowBlur).toBe(shadowBlur);
   });
 
+  test.each([
+    { key: 'width', value: 30, expectedTag: UpdateTag.UPDATE_SHAPE_AND_BOUNDS },
+    { key: 'x', value: 12, expectedTag: UpdateTag.UPDATE_BOUNDS | UpdateTag.UPDATE_GLOBAL_LOCAL_MATRIX },
+    { key: 'fill', value: 'red', expectedTag: UpdateTag.UPDATE_PAINT }
+  ])('should preserve single attribute invalidation after an empty state: %p', ({ key, value, expectedTag }) => {
+    const graphic = createGraphic();
+    graphic.states = { selected: {} };
+    graphic.addState('selected', false, false);
+    (graphic as any)._updateTag = UpdateTag.NONE;
+
+    graphic.setAttribute(key, value);
+
+    expect(graphic.attribute[key]).toBe(value);
+    expect((graphic as any).baseAttributes[key]).toBe(value);
+    expect((graphic as any)._updateTag).toBe(expectedTag);
+    expect(graphic.currentStates).toEqual(['selected']);
+
+    (graphic as any)._updateTag = UpdateTag.NONE;
+    graphic.setAttribute(key, value);
+
+    expect((graphic as any)._updateTag).toBe(UpdateTag.NONE);
+
+    graphic.clearStates(false);
+
+    expect(graphic.attribute[key]).toBe(value);
+    expect((graphic as any).baseAttributes[key]).toBe(value);
+  });
+
   test('should adopt init attributes onto the shared static storage path', () => {
     const graphic = createGraphic();
     const syncSpy = jest.spyOn(graphic as any, '_syncAttribute');

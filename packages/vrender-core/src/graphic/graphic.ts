@@ -1841,6 +1841,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       if (this.canCommitBaseAttributesByTouchedKeys()) {
         this.commitBaseAttributeBySingleKey(key, value, !!forceUpdateTag, context);
       } else {
+        this.detachAttributeFromBaseAttributes();
         const nextAttrs = { [key]: value } as Partial<T>;
         this.applyBaseAttributes(nextAttrs);
         this.commitBaseAttributeMutation(!!forceUpdateTag, context);

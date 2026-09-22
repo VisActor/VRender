@@ -1,6 +1,7 @@
 import type {
   IContributionProvider,
   IAreaRenderContribution,
+  ILineRenderContribution,
   IDrawItemInterceptorContribution,
   IEnvContribution,
   IGlobal,
@@ -21,7 +22,10 @@ import graphicModule from '../graphic/graphic-service/graphic-module';
 import type { ILegacyBindingContext } from '../legacy/binding-context';
 import { getLegacyBindingContext, preLoadAllModule } from '../legacy/bootstrap';
 import pickModule from '../picker/pick-modules';
-import { AreaRenderContribution } from '../render/contributions/render/contributions/constants';
+import {
+  AreaRenderContribution,
+  LineRenderContribution
+} from '../render/contributions/render/contributions/constants';
 import { DrawItemInterceptor } from '../render/contributions/render/draw-interceptor';
 import { DefaultIncrementalCanvasAreaRender } from '../render/contributions/render/incremental-area-render';
 import { DefaultIncrementalDrawContribution } from '../render/contributions/render/incremental-draw-contribution';
@@ -169,7 +173,9 @@ export function configureRuntimeApplicationForApp(app: IApp): void {
   application.incrementalDrawContributionFactory = () =>
     new DefaultIncrementalDrawContribution(
       [],
-      new DefaultIncrementalCanvasLineRender(),
+      new DefaultIncrementalCanvasLineRender(
+        createContributionProvider<ILineRenderContribution>(LineRenderContribution, bindingContext)
+      ),
       new DefaultIncrementalCanvasAreaRender(
         createContributionProvider<IAreaRenderContribution>(AreaRenderContribution, bindingContext)
       ),

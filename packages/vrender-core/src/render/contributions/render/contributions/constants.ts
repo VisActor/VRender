@@ -6,6 +6,7 @@ export const ImageRenderContribution = Symbol.for('ImageRenderContribution');
 export const PathRenderContribution = Symbol.for('PathRenderContribution');
 export const PolygonRenderContribution = Symbol.for('PolygonRenderContribution');
 export const RectRenderContribution = Symbol.for('RectRenderContribution');
+export const LineRenderContribution = Symbol.for('LineRenderContribution');
 export const SymbolRenderContribution = Symbol.for('SymbolRenderContribution');
 export const TextRenderContribution = Symbol.for('TextRenderContribution');
 export const StarRenderContribution = Symbol.for('StarRenderContribution');

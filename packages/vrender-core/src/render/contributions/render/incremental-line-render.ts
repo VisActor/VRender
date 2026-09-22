@@ -13,6 +13,7 @@ import type {
 import { getTheme } from '../../../graphic/theme';
 import { LINE_NUMBER_TYPE } from '../../../graphic/constants';
 import { fillVisible, runFill, runStroke, strokeVisible } from './utils';
+import type { ILineRenderVisibility } from './line-render';
 import { DefaultCanvasLineRender } from './line-render';
 import { drawIncrementalSegments } from '../../../common/render-curve';
 
@@ -82,6 +83,7 @@ export class DefaultIncrementalCanvasLineRender extends DefaultCanvasLineRender 
       }
 
       const { context } = drawContext;
+      const visibility: ILineRenderVisibility = { doFill, doStroke, fVisible, sVisible };
       // 不支持clipRange，不支持pick，仅支持最基础的线段绘制
       for (let i = startAtIdx; i < startAtIdx + length; i++) {
         this.drawIncreaseSegment(
@@ -92,7 +94,9 @@ export class DefaultIncrementalCanvasLineRender extends DefaultCanvasLineRender 
           line.attribute.segments[i],
           [lineAttribute, line.attribute],
           x,
-          y
+          y,
+          drawContext,
+          visibility
         );
       }
     } else {
@@ -108,18 +112,65 @@ export class DefaultIncrementalCanvasLineRender extends DefaultCanvasLineRender 
     attribute: Partial<ILineGraphicAttribute>,
     defaultAttribute: Required<ILineGraphicAttribute> | Partial<ILineGraphicAttribute>[],
     offsetX: number,
-    offsetY: number
+    offsetY: number,
+    drawContext: IDrawContext,
+    visibility: ILineRenderVisibility
   ) {
     if (!seg) {
       return;
     }
 
-    context.beginPath();
-    drawIncrementalSegments(context.nativeContext, lastSeg, seg, { offsetX, offsetY });
+    // 内置裁剪贡献在 beforeFillStroke 里 beginPath 建裁剪路径，会冲掉这里建好的折线路径，故要能重建
+    const buildPath = () => {
+      context.beginPath();
+      drawIncrementalSegments(context.nativeContext, lastSeg, seg, { offsetX, offsetY });
+    };
+
+    buildPath();
 
     // shadow
     context.setShadowBlendStyle && context.setShadowBlendStyle(line, attribute, defaultAttribute);
+
+    const { doFill, doStroke, fVisible, sVisible } = visibility;
+
+    this.beforeRenderStep(
+      line,
+      context,
+      offsetX,
+      offsetY,
+      doFill,
+      doStroke,
+      fVisible,
+      sVisible,
+      defaultAttribute as Required<ILineGraphicAttribute>,
+      drawContext,
+      null,
+      null,
+      { attribute }
+    );
+
+    // 有裁剪配置时上面的贡献点已经 beginPath 建了裁剪路径，重建折线路径，否则 stroke 画的是裁剪形状
+    if (line.attribute.clipConfig) {
+      buildPath();
+    }
+
     context.setStrokeStyle(line, attribute, offsetX, offsetY, defaultAttribute);
     context.stroke();
+
+    this.afterRenderStep(
+      line,
+      context,
+      offsetX,
+      offsetY,
+      doFill,
+      doStroke,
+      fVisible,
+      sVisible,
+      defaultAttribute as Required<ILineGraphicAttribute>,
+      drawContext,
+      null,
+      null,
+      { attribute }
+    );
   }
 }

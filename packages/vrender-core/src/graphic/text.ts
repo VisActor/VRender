@@ -29,6 +29,8 @@ const TEXT_UPDATE_TAG_KEY = [
   'fontSize',
   'fontFamily',
   'fontWeight',
+  'fontStyle',
+  'fontVariant',
   'ellipsis',
   'lineHeight',
   'direction',
@@ -279,6 +281,8 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       textBaseline = textTheme.textBaseline,
       fontSize = textTheme.fontSize,
       fontWeight = textTheme.fontWeight,
+      fontStyle = textTheme.fontStyle,
+      fontVariant = textTheme.fontVariant,
       ellipsis = textTheme.ellipsis,
       maxLineWidth,
       stroke = textTheme.stroke,
@@ -306,7 +310,12 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       return this._AABBBounds;
     }
     const textMeasure = application.graphicUtil.getTextMeasureInstance(this.textMeasureId || this.stage?.textMeasureId);
-    const layoutObj = new CanvasTextLayout(fontFamily, { fontSize, fontWeight, fontFamily, lineHeight }, textMeasure);
+    // 测量与绘制必须使用同一字体，否则 small-caps 等变体会越过换行宽度和包围盒。
+    const layoutObj = new CanvasTextLayout(
+      fontFamily,
+      { fontSize, fontWeight, fontFamily, fontStyle, fontVariant, lineHeight },
+      textMeasure
+    );
     const layoutData = layoutObj.GetLayoutByLines(
       text,
       textAlign,
@@ -352,6 +361,8 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       lineWidth = textTheme.lineWidth,
       wordBreak = textTheme.wordBreak,
       fontWeight = textTheme.fontWeight,
+      fontStyle = textTheme.fontStyle,
+      fontVariant = textTheme.fontVariant,
       // widthLimit,
       ignoreBuf = textTheme.ignoreBuf,
       measureMode = textTheme.measureMode,
@@ -374,7 +385,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
     }
 
     const textMeasure = application.graphicUtil.getTextMeasureInstance(this.textMeasureId || this.stage?.textMeasureId);
-    const textOptions = { fontSize, fontWeight, fontFamily, lineHeight };
+    const textOptions = { fontSize, fontWeight, fontFamily, fontStyle, fontVariant, lineHeight };
     const layoutObj = new CanvasTextLayout(fontFamily, textOptions, textMeasure as any);
 
     // layoutObj内逻辑
@@ -555,6 +566,8 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       fontFamily = textTheme.fontFamily,
       fontSize = textTheme.fontSize,
       fontWeight = textTheme.fontWeight,
+      fontStyle = textTheme.fontStyle,
+      fontVariant = textTheme.fontVariant,
       stroke = textTheme.stroke,
       lineWidth = textTheme.lineWidth,
       // wordBreak = textTheme.wordBreak,
@@ -595,7 +608,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
           const strEllipsis = (ellipsis === true ? textTheme.ellipsis : ellipsis) as string;
           const data = textMeasure.clipTextWithSuffixVertical(
             verticalData,
-            { fontSize, fontWeight, fontFamily },
+            { fontSize, fontWeight, fontFamily, fontStyle, fontVariant },
             maxLineWidth,
             strEllipsis,
             false,
@@ -606,7 +619,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
         } else {
           const data = textMeasure.clipTextVertical(
             verticalData,
-            { fontSize, fontWeight, fontFamily },
+            { fontSize, fontWeight, fontFamily, fontStyle, fontVariant },
             maxLineWidth,
             false
           );
@@ -621,7 +634,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
           const w =
             t.direction === TextDirection.HORIZONTAL
               ? fontSize
-              : textMeasure.measureTextWidth(t.text, { fontSize, fontWeight, fontFamily });
+              : textMeasure.measureTextWidth(t.text, { fontSize, fontWeight, fontFamily, fontStyle, fontVariant });
 
           width += w;
           t.width = w;

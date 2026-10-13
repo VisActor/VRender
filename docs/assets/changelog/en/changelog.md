@@ -1,3 +1,14 @@
+# v1.1.12
+
+2026-10-13
+
+
+**🔖 other**
+
+- **@visactor/vrender-core**: Fix font variant and style measurements for wrapped, clipped and vertical text.
+
+[more detail about v1.1.12](https://github.com/VisActor/VRender/releases/tag/v1.1.12)
+
 # v1.1.3
 
 2026-07-02

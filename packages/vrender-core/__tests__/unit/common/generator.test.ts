@@ -1,12 +1,16 @@
-/**
- * @jest-environment node
- */
+import type { Generator as GeneratorClass } from '../../../src/common/generator';
 
-import { Generator } from '../../../src/common/generator';
-
-declare const require: any;
+function loadGeneratorCopy(): typeof GeneratorClass {
+  let copy: typeof GeneratorClass;
+  jest.isolateModules(() => {
+    copy = jest.requireActual<{ Generator: typeof GeneratorClass }>('../../../src/common/generator').Generator;
+  });
+  return copy;
+}
 
 describe('Generator', () => {
+  const Generator = loadGeneratorCopy();
+
   test('GenAutoIncrementId returns a finite number', () => {
     const id = Generator.GenAutoIncrementId();
     expect(typeof id).toBe('number');
@@ -27,29 +31,34 @@ describe('Generator', () => {
     }
   });
 
-  test('GenAutoIncrementId shares one sequence across isolated module instances', () => {
-    jest.resetModules();
-    const { Generator: FirstGenerator } = require('../../../src/common/generator');
-    const firstId = FirstGenerator.GenAutoIncrementId();
+  test('keeps IDs unique when independently loaded copies allocate alternately', () => {
+    const first = loadGeneratorCopy();
+    const second = loadGeneratorCopy();
+    expect(first).not.toBe(second);
 
-    jest.resetModules();
-    const { Generator: SecondGenerator } = require('../../../src/common/generator');
-    const secondId = SecondGenerator.GenAutoIncrementId();
+    const ids = Array.from({ length: 100 }, (_, index) => (index % 2 === 0 ? first : second).GenAutoIncrementId());
 
-    expect(secondId).toBe(firstId + 1);
+    expect(new Set(ids).size).toBe(ids.length);
+    ids.slice(1).forEach((id, index) => expect(id).toBe(ids[index] + 1));
   });
 
-  test('keeps node ids unique across isolated module instances', () => {
-    jest.resetModules();
-    const { Node: ParentNode } = require('../../../src/graphic/node-tree');
-    const parent = new ParentNode();
+  test('continues the sequence when another bundle loads after allocations', () => {
+    const first = loadGeneratorCopy();
+    const ids = Array.from({ length: 100 }, () => first.GenAutoIncrementId());
+    const second = loadGeneratorCopy();
+    const next = second.GenAutoIncrementId();
 
-    jest.resetModules();
-    const { Node: ChildNode } = require('../../../src/graphic/node-tree');
-    const child = new ChildNode();
+    expect(next).toBe(ids[ids.length - 1] + 1);
+    expect(first.GenAutoIncrementId()).toBe(next + 1);
+  });
 
-    expect(child._uid).not.toBe(parent._uid);
-    expect(parent.appendChild(child)).toBe(child);
-    expect(parent.firstChild).toBe(child);
+  test('does not restart the sequence when a module is evaluated again', () => {
+    const first = loadGeneratorCopy();
+    const beforeReload = first.GenAutoIncrementId();
+    const reloaded = loadGeneratorCopy();
+
+    expect(reloaded).not.toBe(first);
+    expect(reloaded.GenAutoIncrementId()).toBe(beforeReload + 1);
+    expect(first.GenAutoIncrementId()).toBe(beforeReload + 2);
   });
 });

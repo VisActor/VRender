@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
     inputs:
       pr_number:
-        description: 'PR number to test (including fork PRs)'
+        description: 'Fork PR number to test'
         required: true
         type: string
       head_sha:
@@ -22,9 +22,10 @@ permissions:
 
 jobs:
   build:
-    if: github.event_name != 'workflow_dispatch'
+    if: >-
+      github.event_name == 'push' ||
+      (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository)
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
       - name: Use Node.js 24.x

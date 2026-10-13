@@ -1,6 +1,13 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Thu, 17 Sep 2026 07:31:09 GMT and should not be manually modified.
+This log was last generated on Tue, 13 Oct 2026 08:17:49 GMT and should not be manually modified.
+
+## 1.1.12
+Tue, 13 Oct 2026 08:17:49 GMT
+
+### Updates
+
+- Fix font variant and style measurements for wrapped, clipped and vertical text.
 
 ## 1.1.11
 Thu, 17 Sep 2026 07:31:09 GMT

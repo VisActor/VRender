@@ -1,4 +1,5 @@
 import type { INode } from './node-tree';
+import type { IGroup } from './graphic/group';
 import type { ILayer, LayerMode } from './layer';
 import type { IColor } from './color';
 import type { IAABBBounds, IBounds, IBoundsLike, IMatrix } from '@visactor/vutils';
@@ -52,7 +53,10 @@ export interface IStageParams {
   // 是否关闭脏矩形检测
   disableDirtyBounds: boolean;
   // 是否支持interactiveLayer，默认为true
-  interactiveLayer: boolean;
+  /** group 在主层内合成高亮，不创建额外 Canvas。 */
+  interactiveLayer: boolean | 'group';
+  /** Delegate invalidation to an external compositor; paint explicitly with renderTo. */
+  requestRender?: () => void;
   // 是否支持HTML属性
   enableHtmlAttribute: string | boolean | HTMLElement;
   // 是否支持react-dom(传入ReactDOM)
@@ -98,6 +102,8 @@ export interface IStageParams {
 }
 
 export type EventConfig = {
+  /** 保留事件管理器，由外部输入事件，不监听共享 Canvas／Window。 */
+  nativeEvents?: boolean;
   /** 是否自动阻止事件 */
   autoPreventDefault?: boolean;
   /**
@@ -204,6 +210,7 @@ export interface IStage extends INode {
    */
   renderNextFrame: (layers?: ILayer[], force?: boolean) => void;
   tryInitInteractiveLayer: () => void;
+  getInteractiveContainer: () => IGroup | undefined;
 
   // 画布操作
   resize: (w: number, h: number, rerender?: boolean) => void;
@@ -224,7 +231,7 @@ export interface IStage extends INode {
   dirty: (b: IBounds, matrix?: IMatrix) => void;
   // 考虑操作回放
 
-  renderTo: (window: IWindow, params: { x: number; y: number; width: number; height: number }) => void;
+  renderTo: (window: IWindow, params?: { viewBox?: IBounds; transMatrix?: IMatrix; clear?: boolean }) => void;
 
   renderToNewWindow: (fullImage?: boolean) => IWindow;
 

@@ -9,7 +9,6 @@ import type {
   IGraphic,
   IGraphicRenderDrawParams,
   IGroup,
-  ILayer,
   IRenderService
 } from '../../../interface';
 import { mat4Allocate, matrixAllocate } from '../../../allocator/matrix-allocate';
@@ -356,8 +355,7 @@ export class InteractiveDrawItemInterceptorContribution implements IDrawItemInte
         { skipUpdateCallback: true }
       );
       // 添加到交互层中
-      drawContext.stage.tryInitInteractiveLayer();
-      const interactiveLayer = drawContext.stage.getLayer('_builtin_interactive');
+      const interactiveLayer = drawContext.stage.getInteractiveContainer();
       if (interactiveLayer) {
         const shadowRoot = this.getShadowRoot(interactiveLayer);
         shadowRoot.add(interactiveGraphic);
@@ -365,8 +363,7 @@ export class InteractiveDrawItemInterceptorContribution implements IDrawItemInte
       return true;
     } else if (interactiveGraphic) {
       // 从交互层中删除
-      drawContext.stage.tryInitInteractiveLayer();
-      const interactiveLayer = drawContext.stage.getLayer('_builtin_interactive');
+      const interactiveLayer = drawContext.stage.getInteractiveContainer();
       if (interactiveLayer) {
         const shadowRoot = this.getShadowRoot(interactiveLayer);
         shadowRoot.removeChild(interactiveGraphic);
@@ -406,7 +403,7 @@ export class InteractiveDrawItemInterceptorContribution implements IDrawItemInte
       _g = _g.parent;
     }
     if (!intree) {
-      const interactiveLayer = drawContext.stage.getLayer('_builtin_interactive');
+      const interactiveLayer = drawContext.stage.getInteractiveContainer();
       if (interactiveLayer) {
         const shadowRoot = this.getShadowRoot(interactiveLayer);
         shadowRoot.removeChild(graphic);
@@ -417,22 +414,32 @@ export class InteractiveDrawItemInterceptorContribution implements IDrawItemInte
       this.processing = true;
       const { context } = drawContext;
       context.highPerformanceSave();
-      // 直接transform
-      context.setTransformFromMatrix(baseGraphic.parent.globalTransMatrix, true);
-      // context.fillRect(0, 0, 100, 100);
-      // 设置context的transform到上一个节点
-      baseGraphic.isContainer
-        ? drawContribution.renderGroup(baseGraphic as IGroup, drawContext, baseGraphic.parent.globalTransMatrix)
-        : drawContribution.renderItem(baseGraphic, drawContext);
-
-      context.highPerformanceRestore();
-      this.processing = false;
+      // renderTo 的目标变换必须同时作用于提升后的图元；不修改原图元祖先矩阵。
+      const parent = baseGraphic.parent.globalTransMatrix;
+      const matrix = matrixAllocate.allocateByObj(parent);
+      if (drawContext.transMatrix) {
+        const outer = drawContext.transMatrix;
+        matrix.setValue(outer.a, outer.b, outer.c, outer.d, outer.e, outer.f);
+        matrix.multiply(parent.a, parent.b, parent.c, parent.d, parent.e, parent.f);
+      }
+      try {
+        context.setTransformFromMatrix(matrix, true);
+        // context.fillRect(0, 0, 100, 100);
+        // 设置context的transform到上一个节点
+        baseGraphic.isContainer
+          ? drawContribution.renderGroup(baseGraphic as IGroup, drawContext, matrix)
+          : drawContribution.renderItem(baseGraphic, drawContext);
+      } finally {
+        context.highPerformanceRestore();
+        matrixAllocate.free(matrix);
+        this.processing = false;
+      }
 
       return true;
     }
     return false;
   }
-  getShadowRoot(interactiveLayer: ILayer) {
+  getShadowRoot(interactiveLayer: IGroup) {
     // 获取绑定影子节点的group
     let group = interactiveLayer.getElementById('_interactive_group') as IGroup;
     if (!group) {

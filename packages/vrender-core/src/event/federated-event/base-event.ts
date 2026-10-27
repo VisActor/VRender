@@ -206,7 +206,7 @@ export class FederatedEvent<N extends Event = Event> implements Event {
         this.nativeEvent.preventDefault();
       }
     } catch (err) {
-      this.nativeEvent.preventDefault &&
+      this.nativeEvent?.preventDefault &&
         isFunction(this.nativeEvent.preventDefault) &&
         this.nativeEvent.preventDefault();
     }

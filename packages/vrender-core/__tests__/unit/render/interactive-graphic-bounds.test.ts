@@ -31,8 +31,7 @@ function createDrawContextStub() {
     hoisted,
     drawContext: {
       stage: {
-        tryInitInteractiveLayer: (): void => undefined,
-        getLayer: (name: string): any => (name === '_builtin_interactive' ? interactiveLayer : undefined)
+        getInteractiveContainer: (): any => interactiveLayer
       }
     }
   };

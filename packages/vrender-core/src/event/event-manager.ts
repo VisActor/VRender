@@ -108,8 +108,27 @@ export class EventManager {
     this.addEventMapping('pointerover', this.onPointerOver);
     this.addEventMapping('pointerup', this.onPointerUp);
     this.addEventMapping('pointerupoutside', this.onPointerUpOutside);
+    this.addEventMapping('pointercancel', this.onPointerCancel);
     this.addEventMapping('wheel', this.onWheel);
   }
+
+  protected onPointerCancel = (from: FederatedEvent, target?: IEventTarget): void => {
+    if (!(from instanceof FederatedPointerEvent)) {
+      return;
+    }
+    const tracking = this.trackingData(from.pointerId);
+    const pressPaths = Object.values(tracking.pressTargetsByButton);
+    const pressed = this.findMountedTarget(pressPaths[0]);
+    const event = this.createPointerEvent(from, 'pointercancel', pressed ?? target);
+    this.dispatchEvent(event);
+    if (event.pointerType === 'touch') {
+      this.dispatchEvent(event, 'touchcancel');
+    }
+    tracking.pressTargetsByButton = {};
+    tracking.clicksByButton = {};
+    this.freeEvent(event);
+    this.onPointerOut(from, target);
+  };
 
   addEventMapping(type: string, fn: (e: FederatedEvent, target: IEventTarget) => void): void {
     if (!this.mappingTable[type]) {

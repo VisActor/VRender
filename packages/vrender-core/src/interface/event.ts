@@ -214,6 +214,7 @@ export type IElementLike = Omit<IEventElement, 'on' | 'off' | 'once' | 'emit' | 
 };
 
 export type RenderConfig = {
+  nativeEvents?: boolean;
   /**
    * 事件绑定的元素
    */

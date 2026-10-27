@@ -9,6 +9,7 @@ import {
 } from '@visactor/vutils';
 import type {
   IGraphic,
+  IGroup,
   IExportType,
   IStage,
   IStageParams,
@@ -213,6 +214,7 @@ export class Stage extends Group implements IStage {
   protected lastRenderparams?: Partial<IDrawContext>;
 
   protected interactiveLayer?: ILayer;
+  protected interactiveGroup?: Group;
   protected supportInteractiveLayer: boolean;
   protected timeline: ITimeline;
   declare rootSharedStateScope?: SharedStateScope<Record<string, any>>;
@@ -268,7 +270,7 @@ export class Stage extends Group implements IStage {
       deps.pickerServiceFactory ??
       (deps.pickerService
         ? () => deps.pickerService as IPickerService
-        : application.pickerServiceFactory ?? (() => new DefaultGlobalPickerService()));
+        : (application.pickerServiceFactory ?? (() => new DefaultGlobalPickerService())));
     this.window = deps.window ?? this.windowFactory();
     this.renderService =
       deps.renderService ??
@@ -368,6 +370,16 @@ export class Stage extends Group implements IStage {
     this._afterClearScreen = params.afterClearScreen;
     this._afterClearRect = params.afterClearRect;
     this.supportInteractiveLayer = params.interactiveLayer !== false;
+    if (params.interactiveLayer === 'group') {
+      // 在首帧遍历前建好，避免第一次高亮时增添节点而漏绘。
+      this.interactiveGroup = new Group({ zIndex: Number.MAX_SAFE_INTEGER, pickable: false });
+      this.interactiveGroup.name = '_builtin_interactive';
+      const group = new Group({});
+      group.id = '_interactive_group';
+      group.attachShadow();
+      this.interactiveGroup.add(group);
+      this.defaultLayer.add(this.interactiveGroup);
+    }
     if (!params.optimize) {
       params.optimize = {
         tickRenderMode: 'effect'
@@ -820,7 +832,7 @@ export class Stage extends Group implements IStage {
     }
     // TODO：顺序可能会存在问题
     // 支持交互层，且没有创建过，那就创建
-    if (this.supportInteractiveLayer && !this.interactiveLayer) {
+    if (this.supportInteractiveLayer && !this.interactiveGroup && !this.interactiveLayer) {
       this.interactiveLayer = this.createLayer();
       this.interactiveLayer.name = '_builtin_interactive';
       this.interactiveLayer.attribute.pickable = false;
@@ -831,12 +843,21 @@ export class Stage extends Group implements IStage {
     // });
   }
 
+  getInteractiveContainer(): IGroup | undefined {
+    this.tryInitInteractiveLayer();
+    return this.interactiveGroup ?? this.interactiveLayer;
+  }
+
   clearViewBox(color?: string) {
     this.window.clearViewBox(color);
   }
 
   render(layers?: ILayer[], params?: Partial<IDrawContext>): void {
     if (this.releaseStatus === 'released') {
+      return;
+    }
+    if (this.params.requestRender) {
+      this.params.requestRender();
       return;
     }
     this.startAnimate();
@@ -887,6 +908,15 @@ export class Stage extends Group implements IStage {
   }
 
   renderNextFrame(layers?: ILayer[], force?: boolean): void {
+    if (this.releaseStatus === 'released') {
+      return;
+    }
+    if (this.params.requestRender) {
+      if (this.state !== 'rendering') {
+        this.params.requestRender();
+      }
+      return;
+    }
     // render状态中调用的不会触发nextFrame，避免loop
     // if (this.state === 'rendering' && !force) {
     //   console.log('abc');
@@ -1105,6 +1135,7 @@ export class Stage extends Group implements IStage {
       });
       this.interactiveLayer.release();
     }
+    this.interactiveGroup = undefined;
     this.window.release();
     this._ticker?.remTimeline(this?.timeline);
     this._ticker?.removeListener('tick', this.afterTickCb);
@@ -1146,21 +1177,33 @@ export class Stage extends Group implements IStage {
     return layer[0] as ILayer;
   }
 
-  renderTo(window: IWindow) {
+  renderTo(window: IWindow, params?: { viewBox?: IBounds; transMatrix?: IMatrix; clear?: boolean }) {
     if (this.releaseStatus === 'released') {
       return;
     }
-    this.forEachChildren<ILayer>((layer, i) => {
-      layer.drawTo(window, {
-        // ...params,
-        renderService: this.renderService,
-        viewBox: window.getViewBox(),
-        transMatrix: window.getViewBoxTransform(),
-        background: layer === this.defaultLayer ? this.background : undefined,
-        clear: i === 0, // 第一个layer需要clear
-        updateBounds: !!(this.dirtyBounds && !this.dirtyBounds.empty())
+    const state = this.state;
+    this.state = 'rendering';
+    try {
+      if (this.params.requestRender) {
+        this.hooks.beforeRender.call(this);
+      }
+      this.forEachChildren<ILayer>((layer, i) => {
+        layer.drawTo(window, {
+          // ...params,
+          renderService: this.renderService,
+          viewBox: params?.viewBox ?? window.getViewBox(),
+          transMatrix: params?.transMatrix ?? window.getViewBoxTransform(),
+          background: layer === this.defaultLayer ? this.background : undefined,
+          clear: i === 0 && params?.clear !== false,
+          updateBounds: !!(this.dirtyBounds && !this.dirtyBounds.empty())
+        });
       });
-    });
+      if (this.params.requestRender) {
+        this.hooks.afterRender.call(this);
+      }
+    } finally {
+      this.state = state;
+    }
   }
 
   /**

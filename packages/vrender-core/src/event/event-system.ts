@@ -90,6 +90,7 @@ export class EventSystem {
   private rootPointerEvent: FederatedPointerEvent;
   private rootWheelEvent: FederatedWheelEvent;
   private eventsAdded: boolean;
+  private readonly nativeEvents: boolean;
 
   constructor(params: RenderConfig) {
     const {
@@ -124,6 +125,7 @@ export class EventSystem {
       pointer: 'pointer'
     };
 
+    this.nativeEvents = params.nativeEvents !== false;
     this.resolution = resolution;
     this.setTargetElement(targetElement);
   }
@@ -233,6 +235,20 @@ export class EventSystem {
     this.rootPointerEvent.nativeEvent = null;
   };
 
+  private onPointerCancel = (nativeEvent: NativeEvent): void => {
+    if (this.supportsTouchEvents && (nativeEvent as PointerEvent).pointerType === 'touch') {
+      return;
+    }
+    const normalizedEvents = this.normalizeToPointerData(nativeEvent);
+    for (let i = 0; i < normalizedEvents.length; i++) {
+      const event = this.bootstrapEvent(this.rootPointerEvent, normalizedEvents[i]);
+      event.type = 'pointercancel';
+      this.manager.mapEvent(event);
+    }
+    this.setCursor(this.manager.cursor, this.manager.cursorTarget);
+    this.rootPointerEvent.nativeEvent = null;
+  };
+
   private onPointerOverOut = (nativeEvent: NativeEvent): void => {
     if (this.supportsTouchEvents && (nativeEvent as PointerEvent).pointerType === 'touch') {
       return;
@@ -264,7 +280,7 @@ export class EventSystem {
   }
 
   private addEvents(): void {
-    if (this.eventsAdded || !this.domElement) {
+    if (!this.nativeEvents || this.eventsAdded || !this.domElement) {
       return;
     }
     const { globalObj, domElement } = this;
@@ -273,9 +289,11 @@ export class EventSystem {
       if (globalObj.getDocument()) {
         globalObj.addEventListener('pointermove', this.onPointerMove, true);
         globalObj.addEventListener('pointerup', this.onPointerUp, true);
+        globalObj.addEventListener('pointercancel', this.onPointerCancel, true);
       } else {
         domElement.addEventListener('pointermove', this.onPointerMove, true);
         domElement.addEventListener('pointerup', this.onPointerUp, true);
+        domElement.addEventListener('pointercancel', this.onPointerCancel, true);
       }
       domElement.addEventListener('pointerdown', this.onPointerDown, true);
       domElement.addEventListener('pointerleave', this.onPointerOverOut, true);
@@ -296,6 +314,7 @@ export class EventSystem {
     if (this.supportsTouchEvents) {
       domElement.addEventListener('touchstart', this.onPointerDown, true);
       domElement.addEventListener('touchend', this.onPointerUp, true);
+      domElement.addEventListener('touchcancel', this.onPointerCancel, true);
       domElement.addEventListener('touchmove', this.onPointerMove, true);
     }
 
@@ -317,9 +336,11 @@ export class EventSystem {
       if (globalObj.getDocument()) {
         globalObj.removeEventListener('pointermove', this.onPointerMove, true);
         globalObj.removeEventListener('pointerup', this.onPointerUp, true);
+        globalObj.removeEventListener('pointercancel', this.onPointerCancel, true);
       } else {
         domElement.removeEventListener('pointermove', this.onPointerMove, true);
         domElement.removeEventListener('pointerup', this.onPointerUp, true);
+        domElement.removeEventListener('pointercancel', this.onPointerCancel, true);
       }
       domElement.removeEventListener('pointerdown', this.onPointerDown, true);
       domElement.removeEventListener('pointerleave', this.onPointerOverOut, true);
@@ -340,6 +361,7 @@ export class EventSystem {
     if (this.supportsTouchEvents) {
       domElement.removeEventListener('touchstart', this.onPointerDown, true);
       domElement.removeEventListener('touchend', this.onPointerUp, true);
+      domElement.removeEventListener('touchcancel', this.onPointerCancel, true);
       domElement.removeEventListener('touchmove', this.onPointerMove, true);
     }
 

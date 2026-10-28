@@ -304,3 +304,15 @@ export type GraphicEventType =
   | 'pinchstart'
   | 'pinchend'
   | 'swipe';
+
+export interface INativeEventOptions {
+  target: HTMLElement;
+  /** Use the host's dispatch root/phase when it arbitrates input before VRender. */
+  root: EventTarget;
+  pointerEvents: boolean;
+  filter(event: MouseEvent): boolean;
+  mapPoint(event: MouseEvent): { x: number; y: number };
+  onCursor(cursor: string): void;
+  /** Host error boundary; otherwise listener errors propagate normally. */
+  onError?(error: unknown): void;
+}

@@ -4,7 +4,14 @@ import type { IGlobal, IWindow } from '../interface';
 import { EventManager } from './event-manager';
 import { FederatedPointerEvent, FederatedWheelEvent } from './federated-event';
 import type { FederatedMouseEvent } from './federated-event/mouse-event';
-import type { EventPoint, IElementLike, IEventTarget, NativeEvent, RenderConfig } from '../interface/event';
+import type {
+  EventPoint,
+  IElementLike,
+  IEventTarget,
+  NativeEvent,
+  RenderConfig,
+  INativeEventOptions
+} from '../interface/event';
 import { clock } from './util';
 
 const MOUSE_POINTER_ID = 1;
@@ -131,6 +138,7 @@ export class EventSystem {
   }
 
   release(): void {
+    this.setNativeEventOptions();
     this.removeEvents();
     this.manager && this.manager.release();
     this.domElement = null;
@@ -164,6 +172,129 @@ export class EventSystem {
     } else if (applyStyles && isString(mode) && !has(this.cursorStyles, mode)) {
       domElement.style.cursor = mode;
     }
+  }
+
+  private nativeEventBinding?: { reset(): void; release(): void };
+
+  /** Bind a DOM input source independently from the render canvas. Filtering precedes pointer state updates. */
+  setNativeEventOptions(options?: INativeEventOptions): void {
+    this.nativeEventBinding?.release();
+    this.nativeEventBinding = undefined;
+    if (!options) {
+      return;
+    }
+    const system = this;
+    const { manager } = system;
+    const originalTarget = system.domElement;
+    const originalMap = system.mapToCanvasPoint;
+    const lastEvents = new Map<number, PointerEvent>();
+    let released = false;
+    system.removeEvents();
+    system.domElement = options.target;
+    system.mapToCanvasPoint = event => options.mapPoint(event as PointerEvent);
+
+    const reset = (pointerId?: number) => {
+      lastEvents.forEach((input, id) => {
+        if (pointerId !== undefined && pointerId !== id) {
+          return;
+        }
+        lastEvents.delete(id);
+        // Cancellation, unlike rejection, must reach the old target and logical canvas listeners.
+        const event = system.bootstrapEvent(system.rootPointerEvent, input);
+        event.type = 'pointercancel';
+        event.nativeEvent = null;
+        manager.mapEvent(event);
+      });
+    };
+    const receiveInput = (nativeEvent: Event) => {
+      if (released) {
+        return;
+      }
+      const target = nativeEvent.composedPath?.()[0] ?? nativeEvent.target;
+      if (target !== options.target || !options.filter(nativeEvent as MouseEvent)) {
+        if (lastEvents.size) {
+          reset((nativeEvent as PointerEvent).pointerId ?? 1);
+        }
+        return;
+      }
+      if (nativeEvent.type === 'wheel') {
+        manager.mapEvent(system.normalizeWheelEvent(nativeEvent as WheelEvent));
+        return;
+      }
+      const normalized = system.normalizeToPointerData(nativeEvent as NativeEvent);
+      normalized.forEach(input => {
+        const event = system.bootstrapEvent(system.rootPointerEvent, input);
+        lastEvents.delete(event.pointerId);
+        try {
+          manager.mapEvent(event);
+          if (
+            !released &&
+            event.type !== 'pointercancel' &&
+            event.type !== 'pointerleave' &&
+            event.type !== 'pointerout'
+          ) {
+            // Retain only active input; pooled federated events are reused by the engine.
+            lastEvents.set(event.pointerId, input);
+          }
+          if (!released) {
+            options.onCursor(manager.cursor || 'default');
+          }
+        } finally {
+          system.rootPointerEvent.nativeEvent = null;
+        }
+      });
+    };
+    const handleError = (error: unknown) => {
+      if (options.onError) {
+        options.onError(error);
+      } else {
+        throw error;
+      }
+    };
+    const receive = (event: Event) => {
+      try {
+        receiveInput(event);
+      } catch (error) {
+        handleError(error);
+      }
+    };
+    const types = options.pointerEvents
+      ? ['pointerdown', 'pointermove', 'pointerup', 'pointercancel']
+      : ['mousedown', 'mousemove', 'mouseup', 'pointercancel'];
+    // Host arbitration runs first on this root/phase; rejected input never reaches the pointer state machine.
+    types.forEach(type => options.root.addEventListener(type, receive));
+    options.target.addEventListener('wheel', receive);
+    const leave = () => {
+      try {
+        reset();
+      } catch (error) {
+        handleError(error);
+      }
+    };
+    options.target.addEventListener(options.pointerEvents ? 'pointerleave' : 'mouseleave', leave);
+    const view = options.target.ownerDocument.defaultView;
+    view?.addEventListener('blur', leave);
+
+    this.nativeEventBinding = {
+      reset,
+      release() {
+        if (released) {
+          return;
+        }
+        released = true;
+        types.forEach(type => options.root.removeEventListener(type, receive));
+        options.target.removeEventListener('wheel', receive);
+        options.target.removeEventListener(options.pointerEvents ? 'pointerleave' : 'mouseleave', leave);
+        view?.removeEventListener('blur', leave);
+        reset();
+        system.domElement = originalTarget;
+        system.mapToCanvasPoint = originalMap;
+      }
+    };
+  }
+
+  resetNativeEvents(): void {
+    this.nativeEventBinding?.reset();
   }
 
   private onPointerDown = (nativeEvent: NativeEvent): void => {

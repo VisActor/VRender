@@ -22,6 +22,22 @@ export type IExportType = 'canvas' | 'imageData';
 export type IStageCreateContext = {
   appName?: 'vchart' | 'vgrammar' | 'vtable' | string;
 };
+/** Options for drawing a stage into another window. Omitted fields use the target window geometry. */
+export interface IRenderToParams {
+  /** @deprecated Legacy rectangle fields were never applied by renderTo; retained for source compatibility. */
+  x?: number;
+  /** @deprecated Retained and ignored, as in earlier versions. */
+  y?: number;
+  /** @deprecated Retained and ignored, as in earlier versions. */
+  width?: number;
+  /** @deprecated Retained and ignored, as in earlier versions. */
+  height?: number;
+  viewBox?: IBounds;
+  transMatrix?: IMatrix;
+  /** Clear the destination before the first layer. Defaults to true. */
+  clear?: boolean;
+}
+
 export interface IStageParams {
   // x: number;
   // y: number;
@@ -52,9 +68,10 @@ export interface IStageParams {
   enableLayout: boolean;
   // 是否关闭脏矩形检测
   disableDirtyBounds: boolean;
-  // 是否支持interactiveLayer，默认为true
-  /** group 在主层内合成高亮，不创建额外 Canvas。 */
-  interactiveLayer: boolean | 'group';
+  // 是否支持独立交互 Layer，默认为 true。
+  interactiveLayer: boolean;
+  /** 在主层内用 Group 绘制高亮，默认为 false；启用后优先于 interactiveLayer，不创建额外交互 Layer。 */
+  interactiveGroup?: boolean;
   /** Delegate invalidation to an external compositor; paint explicitly with renderTo. */
   requestRender?: () => void;
   // 是否支持HTML属性
@@ -231,7 +248,7 @@ export interface IStage extends INode {
   dirty: (b: IBounds, matrix?: IMatrix) => void;
   // 考虑操作回放
 
-  renderTo: (window: IWindow, params?: { viewBox?: IBounds; transMatrix?: IMatrix; clear?: boolean }) => void;
+  renderTo: (window: IWindow, params?: IRenderToParams) => void;
 
   renderToNewWindow: (fullImage?: boolean) => IWindow;
 

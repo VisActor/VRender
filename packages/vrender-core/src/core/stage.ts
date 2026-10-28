@@ -34,7 +34,8 @@ import type {
   PickResult,
   IPlugin,
   IGraphicService,
-  IRenderServiceDrawParams
+  IRenderServiceDrawParams,
+  IRenderToParams
 } from '../interface';
 import { DefaultWindow } from './window';
 import type { Layer } from './layer';
@@ -370,7 +371,7 @@ export class Stage extends Group implements IStage {
     this._afterClearScreen = params.afterClearScreen;
     this._afterClearRect = params.afterClearRect;
     this.supportInteractiveLayer = params.interactiveLayer !== false;
-    if (params.interactiveLayer === 'group') {
+    if (params.interactiveGroup === true) {
       // 在首帧遍历前建好，避免第一次高亮时增添节点而漏绘。
       this.interactiveGroup = new Group({ zIndex: Number.MAX_SAFE_INTEGER, pickable: false });
       this.interactiveGroup.name = '_builtin_interactive';
@@ -1177,7 +1178,7 @@ export class Stage extends Group implements IStage {
     return layer[0] as ILayer;
   }
 
-  renderTo(window: IWindow, params?: { viewBox?: IBounds; transMatrix?: IMatrix; clear?: boolean }) {
+  renderTo(window: IWindow, params?: IRenderToParams) {
     if (this.releaseStatus === 'released') {
       return;
     }

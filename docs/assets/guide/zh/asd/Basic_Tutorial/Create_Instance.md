@@ -162,6 +162,8 @@ interface IStageParams {
   disableDirtyBounds: boolean;
   // 是否支持interactiveLayer，默认为true
   interactiveLayer: boolean;
+  // 在主层内用 Group 绘制高亮，默认 false；开启后优先于 interactiveLayer，不创建额外交互 Layer。
+  interactiveGroup?: boolean;
   // 是否支持HTML属性
   enableHtmlAttribute: string | boolean | HTMLElement;
   // 是否支持react-dom(传入ReactDOM)

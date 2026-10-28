@@ -23,15 +23,7 @@ export type IStageCreateContext = {
   appName?: 'vchart' | 'vgrammar' | 'vtable' | string;
 };
 /** Options for drawing a stage into another window. Omitted fields use the target window geometry. */
-export interface IRenderToParams {
-  /** @deprecated Legacy rectangle fields were never applied by renderTo; retained for source compatibility. */
-  x?: number;
-  /** @deprecated Retained and ignored, as in earlier versions. */
-  y?: number;
-  /** @deprecated Retained and ignored, as in earlier versions. */
-  width?: number;
-  /** @deprecated Retained and ignored, as in earlier versions. */
-  height?: number;
+export interface IRenderToOptions {
   viewBox?: IBounds;
   transMatrix?: IMatrix;
   /** Clear the destination before the first layer. Defaults to true. */
@@ -248,7 +240,12 @@ export interface IStage extends INode {
   dirty: (b: IBounds, matrix?: IMatrix) => void;
   // 考虑操作回放
 
-  renderTo: (window: IWindow, params?: IRenderToParams) => void;
+  // The legacy rectangle argument is retained unchanged; drawing options belong to the third argument.
+  renderTo: (
+    window: IWindow,
+    params?: { x: number; y: number; width: number; height: number },
+    options?: IRenderToOptions
+  ) => void;
 
   renderToNewWindow: (fullImage?: boolean) => IWindow;
 

@@ -35,7 +35,7 @@ import type {
   IPlugin,
   IGraphicService,
   IRenderServiceDrawParams,
-  IRenderToParams
+  IRenderToOptions
 } from '../interface';
 import { DefaultWindow } from './window';
 import type { Layer } from './layer';
@@ -1178,7 +1178,11 @@ export class Stage extends Group implements IStage {
     return layer[0] as ILayer;
   }
 
-  renderTo(window: IWindow, params?: IRenderToParams) {
+  renderTo(
+    window: IWindow,
+    _params?: { x: number; y: number; width: number; height: number },
+    options?: IRenderToOptions
+  ) {
     if (this.releaseStatus === 'released') {
       return;
     }
@@ -1190,12 +1194,11 @@ export class Stage extends Group implements IStage {
       }
       this.forEachChildren<ILayer>((layer, i) => {
         layer.drawTo(window, {
-          // ...params,
           renderService: this.renderService,
-          viewBox: params?.viewBox ?? window.getViewBox(),
-          transMatrix: params?.transMatrix ?? window.getViewBoxTransform(),
+          viewBox: options?.viewBox ?? window.getViewBox(),
+          transMatrix: options?.transMatrix ?? window.getViewBoxTransform(),
           background: layer === this.defaultLayer ? this.background : undefined,
-          clear: i === 0 && params?.clear !== false,
+          clear: i === 0 && options?.clear !== false,
           updateBounds: !!(this.dirtyBounds && !this.dirtyBounds.empty())
         });
       });

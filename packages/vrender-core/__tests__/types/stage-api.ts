@@ -13,8 +13,16 @@ export function stageApiCompatibility(stage: IStage, concrete: Stage, target: IW
   const callback: (window: IWindow, params: typeof legacy) => void = stage.renderTo;
   callback(target, legacy);
   stage.renderTo(target);
+  stage.renderTo(target, undefined, { clear: false });
+  stage.renderTo(target, legacy, { clear: false });
+  concrete.renderTo(target, undefined, { clear: false });
+  concrete.renderTo(target, legacy, { clear: false });
+  // @ts-expect-error New drawing options must not change the legacy rectangle argument.
   stage.renderTo(target, { clear: false });
-  concrete.renderTo(target, { clear: false });
+  // @ts-expect-error Legacy rectangle fields remain required when the second argument is supplied.
+  stage.renderTo(target, { x: 10 });
+  // @ts-expect-error Legacy rectangle fields do not belong to drawing options.
+  stage.renderTo(target, undefined, { x: 10 });
   const group: Partial<IStageParams> = { interactiveLayer: false, interactiveGroup: true };
   // @ts-expect-error interactiveLayer remains boolean; group is a separate option.
   const invalid: Partial<IStageParams> = { interactiveLayer: 'group' };

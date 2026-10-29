@@ -162,8 +162,8 @@ interface IStageParams {
   disableDirtyBounds: boolean;
   // Whether to support interactiveLayer, default is true
   interactiveLayer: boolean;
-  // Draw highlights in a Group within the main layer. Defaults to false; when true, takes precedence over interactiveLayer.
-  interactiveGroup?: boolean;
+  // Interactive layer mode; omitted uses the environment default. Virtual layers share the main canvas.
+  interactiveLayerMode?: LayerMode;
   // Whether to support HTML attributes
   enableHtmlAttribute: string | boolean | HTMLElement;
   // Whether to support react-dom (pass in ReactDOM)

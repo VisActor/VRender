@@ -62,8 +62,8 @@ export interface IStageParams {
   disableDirtyBounds: boolean;
   // 是否支持独立交互 Layer，默认为 true。
   interactiveLayer: boolean;
-  /** 在主层内用 Group 绘制高亮，默认为 false；启用后优先于 interactiveLayer，不创建额外交互 Layer。 */
-  interactiveGroup?: boolean;
+  /** 交互层的渲染模式；缺省沿用环境默认，virtual 复用主层 Canvas。 */
+  interactiveLayerMode?: LayerMode;
   /** Delegate invalidation to an external compositor; paint explicitly with renderTo. */
   requestRender?: () => void;
   // 是否支持HTML属性
@@ -219,7 +219,6 @@ export interface IStage extends INode {
    */
   renderNextFrame: (layers?: ILayer[], force?: boolean) => void;
   tryInitInteractiveLayer: () => void;
-  getInteractiveContainer: () => IGroup | undefined;
 
   // 画布操作
   resize: (w: number, h: number, rerender?: boolean) => void;

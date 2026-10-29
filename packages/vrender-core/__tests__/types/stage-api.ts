@@ -23,8 +23,8 @@ export function stageApiCompatibility(stage: IStage, concrete: Stage, target: IW
   stage.renderTo(target, { x: 10 });
   // @ts-expect-error Legacy rectangle fields do not belong to drawing options.
   stage.renderTo(target, undefined, { x: 10 });
-  const group: Partial<IStageParams> = { interactiveLayer: false, interactiveGroup: true };
-  // @ts-expect-error interactiveLayer remains boolean; group is a separate option.
+  const virtual: Partial<IStageParams> = { interactiveLayer: true, interactiveLayerMode: 'virtual' };
+  // @ts-expect-error interactiveLayer remains boolean; the layer mode is a separate option.
   const invalid: Partial<IStageParams> = { interactiveLayer: 'group' };
-  return { enabled, group, invalid };
+  return { enabled, virtual, invalid };
 }

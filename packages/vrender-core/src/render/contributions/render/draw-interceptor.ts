@@ -9,6 +9,7 @@ import type {
   IGraphic,
   IGraphicRenderDrawParams,
   IGroup,
+  ILayer,
   IRenderService
 } from '../../../interface';
 import { mat4Allocate, matrixAllocate } from '../../../allocator/matrix-allocate';
@@ -355,7 +356,8 @@ export class InteractiveDrawItemInterceptorContribution implements IDrawItemInte
         { skipUpdateCallback: true }
       );
       // 添加到交互层中
-      const interactiveLayer = drawContext.stage.getInteractiveContainer();
+      drawContext.stage.tryInitInteractiveLayer();
+      const interactiveLayer = drawContext.stage.getLayer('_builtin_interactive');
       if (interactiveLayer) {
         const shadowRoot = this.getShadowRoot(interactiveLayer);
         shadowRoot.add(interactiveGraphic);
@@ -363,7 +365,8 @@ export class InteractiveDrawItemInterceptorContribution implements IDrawItemInte
       return true;
     } else if (interactiveGraphic) {
       // 从交互层中删除
-      const interactiveLayer = drawContext.stage.getInteractiveContainer();
+      drawContext.stage.tryInitInteractiveLayer();
+      const interactiveLayer = drawContext.stage.getLayer('_builtin_interactive');
       if (interactiveLayer) {
         const shadowRoot = this.getShadowRoot(interactiveLayer);
         shadowRoot.removeChild(interactiveGraphic);
@@ -403,7 +406,7 @@ export class InteractiveDrawItemInterceptorContribution implements IDrawItemInte
       _g = _g.parent;
     }
     if (!intree) {
-      const interactiveLayer = drawContext.stage.getInteractiveContainer();
+      const interactiveLayer = drawContext.stage.getLayer('_builtin_interactive');
       if (interactiveLayer) {
         const shadowRoot = this.getShadowRoot(interactiveLayer);
         shadowRoot.removeChild(graphic);
@@ -439,7 +442,7 @@ export class InteractiveDrawItemInterceptorContribution implements IDrawItemInte
     }
     return false;
   }
-  getShadowRoot(interactiveLayer: IGroup) {
+  getShadowRoot(interactiveLayer: ILayer) {
     // 获取绑定影子节点的group
     let group = interactiveLayer.getElementById('_interactive_group') as IGroup;
     if (!group) {

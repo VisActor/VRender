@@ -215,7 +215,6 @@ export class Stage extends Group implements IStage {
   protected lastRenderparams?: Partial<IDrawContext>;
 
   protected interactiveLayer?: ILayer;
-  protected interactiveGroup?: Group;
   protected supportInteractiveLayer: boolean;
   protected timeline: ITimeline;
   declare rootSharedStateScope?: SharedStateScope<Record<string, any>>;
@@ -371,16 +370,6 @@ export class Stage extends Group implements IStage {
     this._afterClearScreen = params.afterClearScreen;
     this._afterClearRect = params.afterClearRect;
     this.supportInteractiveLayer = params.interactiveLayer !== false;
-    if (params.interactiveGroup === true) {
-      // 在首帧遍历前建好，避免第一次高亮时增添节点而漏绘。
-      this.interactiveGroup = new Group({ zIndex: Number.MAX_SAFE_INTEGER, pickable: false });
-      this.interactiveGroup.name = '_builtin_interactive';
-      const group = new Group({});
-      group.id = '_interactive_group';
-      group.attachShadow();
-      this.interactiveGroup.add(group);
-      this.defaultLayer.add(this.interactiveGroup);
-    }
     if (!params.optimize) {
       params.optimize = {
         tickRenderMode: 'effect'
@@ -833,8 +822,8 @@ export class Stage extends Group implements IStage {
     }
     // TODO：顺序可能会存在问题
     // 支持交互层，且没有创建过，那就创建
-    if (this.supportInteractiveLayer && !this.interactiveGroup && !this.interactiveLayer) {
-      this.interactiveLayer = this.createLayer();
+    if (this.supportInteractiveLayer && !this.interactiveLayer) {
+      this.interactiveLayer = this.createLayer(undefined, this.params.interactiveLayerMode);
       this.interactiveLayer.name = '_builtin_interactive';
       this.interactiveLayer.attribute.pickable = false;
       this.nextFrameRenderLayerSet.add(this.interactiveLayer as any); // to be fixed
@@ -844,10 +833,7 @@ export class Stage extends Group implements IStage {
     // });
   }
 
-  getInteractiveContainer(): IGroup | undefined {
-    this.tryInitInteractiveLayer();
-    return this.interactiveGroup ?? this.interactiveLayer;
-  }
+
 
   clearViewBox(color?: string) {
     this.window.clearViewBox(color);
@@ -1136,7 +1122,6 @@ export class Stage extends Group implements IStage {
       });
       this.interactiveLayer.release();
     }
-    this.interactiveGroup = undefined;
     this.window.release();
     this._ticker?.remTimeline(this?.timeline);
     this._ticker?.removeListener('tick', this.afterTickCb);

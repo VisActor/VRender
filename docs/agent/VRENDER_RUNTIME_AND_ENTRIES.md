@@ -65,6 +65,17 @@ Stage 创建属于 app：
 - handle 的 `release()` 减少引用计数；最后一个 handle 释放后 app 释放。
 - 直接调用 shared app 的 `app.release()` 会走同一 record release 逻辑。
 
+### 跨 bundle 的内部 ID
+
+`vrender-core/src/common/generator.ts` 在同一 JavaScript realm 内通过
+`Symbol.for('@visactor/vrender-core/generator-state')` 共享数字 ID 计数器。
+多个 bundle 的节点可能经 shared app / runtime service 进入同一棵树，
+因此 ID 不能按模块副本或 app 独立计数，也不能随 app release 重置。
+模块初始化时缓存计数器对象，分配 ID 的热路径只做一次递增。
+
+旧版本的模块独立计数器不会自动接入此机制；发布时仍需覆盖共存的依赖版本。
+回归入口：core 的 `common/generator.test.ts` 和 `graphic/node-tree-cross-bundle.test.ts`。
+
 ## `shared` / `shared-browser` / `shared-lynx` / `shared-browser-lite`
 
 - `./entries/shared`：通用 env shared entry，支持 `browser`、`node`、`taro`、`feishu`、`tt`、`wx`、`lynx`、`harmony`。package exports 中 `browser` condition 路由到 `shared-browser.js`，`lynx` condition 路由到 `shared-lynx.js`。

@@ -187,7 +187,9 @@ export class EventManager {
     data.ending = undefined;
     data.inside = false;
     data.overTargets = [];
-    this.dispatchingEvent?.stopImmediatePropagation();
+    if (this.dispatchingEvent instanceof FederatedPointerEvent && this.dispatchingEvent.pointerId === id) {
+      this.dispatchingEvent.stopImmediatePropagation();
+    }
     const event = this.allocateEvent(FederatedPointerEvent);
     event.type = 'pointercancel';
     event.pointerId = id;
@@ -912,7 +914,7 @@ export class EventManager {
     event.nativeEvent = from.nativeEvent;
     event.originalEvent = from;
 
-    if (target) {
+    if (target !== undefined) {
       event.target = target;
     } else {
       event.target = this.pickTarget(event.viewX ?? event.global.x, event.viewY ?? event.global.y, event);

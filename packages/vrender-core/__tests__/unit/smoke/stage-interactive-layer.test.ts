@@ -3,6 +3,7 @@ import { createNodeSmokeStage } from './node-smoke-stage';
 import { registerGroupGraphic } from '../../../src/register/register-group';
 import { registerShadowRootGraphic } from '../../../src/register/register-shadowRoot';
 import { createRect } from '../../../src/graphic/rect';
+import { EmptyLayerHandlerContribution } from '../../../src/core/contributions/layerHandler/empty-contribution';
 import type { IStageParams } from '../../../src/interface';
 
 describe('interactive layer mode', () => {
@@ -21,7 +22,7 @@ describe('interactive layer mode', () => {
       height: 100,
       autoRender: false,
       autoRefresh: false,
-      event: false,
+      event: { useNativeEvents: false },
       ...options
     });
     try {
@@ -32,7 +33,11 @@ describe('interactive layer mode', () => {
       if (layer) {
         expect(layer.layerMode).toBe('virtual');
         expect(layer.parent).toBe(stage);
-        expect(layer.getNativeHandler().canvas).toBeNull();
+        const handler = layer.getNativeHandler();
+        expect(handler).toBeInstanceOf(EmptyLayerHandlerContribution);
+        if (handler instanceof EmptyLayerHandlerContribution) {
+          expect(handler.canvas).toBeNull();
+        }
         const rect = createRect({ x: 10, y: 10, width: 20, height: 20, fill: 'red', globalZIndex: 1 });
         stage.defaultLayer.add(rect);
         stage.render();

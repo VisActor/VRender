@@ -66,6 +66,79 @@ export async function runHostInputChecks() {
   results = [];
   loadBrowserEnv();
   vglobal.setEnv('browser');
+  // A clipped point must not trigger another scenegraph pick.
+  for (const affine of [false, true]) {
+    const rect = createRect({ x: 10, y: 10, width: 60, height: 60, fill: 'red' });
+    const a = setup(rect);
+    const b = createRect({ x: 100, y: 10, width: 60, height: 60, fill: 'blue' });
+    a.stage.defaultLayer.add(b);
+    a.stage.render();
+    let hits = 0,
+      outsideMoves = 0,
+      leaves = 0;
+    for (const type of ['pointerover', 'pointerenter', 'pointermove', 'mousemove']) b.on(type, () => hits++);
+    rect.on('pointerout', () => leaves++);
+    a.sys.input.window.on('pointermove', () => outsideMoves++);
+    const send = (type, x, inside) => {
+      const client = affine ? { x: 1.5 * x + 46, y: 0.2 * x + 36 } : { x, y: 20 };
+      a.sys.handleNativeEvent(
+        new PointerEvent(type, {
+          clientX: client.x,
+          clientY: client.y,
+          pointerId: 1,
+          pointerType: 'mouse',
+          buttons: 1
+        }),
+        { canvasPoint: { x, y: 20 }, inViewport: inside }
+      );
+    };
+    send('pointermove', 20, true);
+    send('pointerdown', 20, true);
+    send('pointermove', 120, false);
+    check('host-clipped-target-' + affine, hits === 0 && outsideMoves === 2 && leaves === 1, {
+      hits,
+      outsideMoves,
+      leaves
+    });
+    a.release();
+  }
+  for (const capture of [true, false]) {
+    const rect = createRect({ x: 10, y: 10, width: 60, height: 60, fill: 'red' });
+    const a = setup(rect);
+    let later = 0,
+      cancelled = 0,
+      scoped = 0;
+    const cancelOther = e => {
+      if (e.pointerId === 7) a.sys.cancelPointer(19);
+    };
+    (capture ? a.stage : rect).addEventListener('pointerdown', cancelOther, capture);
+    rect.on('pointerdown', e => {
+      if (e.pointerId === 7) later++;
+    });
+    a.sys.input.window.on('pointercancel', e => {
+      if (e.pointerId === 19) cancelled++;
+    });
+    a.sys.input.window.on('pointerdown', e => {
+      if (e.pointerId === 7) scoped++;
+    });
+    for (const id of [19, 7])
+      a.sys.handleNativeEvent(
+        new PointerEvent('pointerdown', {
+          pointerId: id,
+          pointerType: 'touch',
+          clientX: 20,
+          clientY: 20,
+          buttons: 1
+        }),
+        { canvasPoint: { x: 20, y: 20 }, inViewport: true }
+      );
+    check('cancel-other-pointer-' + capture, later === 1 && cancelled === 1 && scoped === 1, {
+      later,
+      cancelled,
+      scoped
+    });
+    a.release();
+  }
   for (const defaults of [false, true]) {
     const a = setup(createRect({ x: 10, y: 10, width: 100, height: 100, fill: 'red' }), defaults);
     let clicks = 0,

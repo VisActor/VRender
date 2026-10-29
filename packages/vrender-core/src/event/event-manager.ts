@@ -1,3 +1,4 @@
+import { InputSource } from './input-source';
 import type { Dict } from '@visactor/vutils';
 import { EventEmitter, Logger, get } from '@visactor/vutils';
 import { FederatedMouseEvent, FederatedPointerEvent, FederatedWheelEvent } from './federated-event';
@@ -35,6 +36,17 @@ import type { Cursor, IGraphic } from '../interface';
 const PROPAGATION_LIMIT = 2048;
 
 type TrackingData = {
+  generation: number;
+  inside: boolean;
+  previousInside: boolean;
+  ending?: IEventTarget[];
+  pointerType: string;
+  button: number;
+  canvasX: number;
+  canvasY: number;
+  viewX: number;
+  viewY: number;
+
   pressTargetsByButton: {
     [id: number]: IEventTarget[];
   };
@@ -65,6 +77,16 @@ function isMouseLike(pointerType: string) {
 }
 
 const DEFAULT_CLICK_INTERVAL = 200;
+const TOUCH_INPUT_TYPES: Record<string, string> = {
+  pointerdown: 'touchstart',
+  pointermove: 'touchmove',
+  pointerup: 'touchend'
+};
+const MOUSE_INPUT_TYPES: Record<string, string> = {
+  pointerdown: 'mousedown',
+  pointermove: 'mousemove',
+  pointerup: 'mouseup'
+};
 
 export class EventManager {
   rootTarget: IEventTarget;
@@ -112,22 +134,176 @@ export class EventManager {
     this.addEventMapping('wheel', this.onWheel);
   }
 
-  protected onPointerCancel = (from: FederatedEvent, target?: IEventTarget): void => {
-    if (!(from instanceof FederatedPointerEvent)) {
+  private readonly canvasInput = new InputSource();
+  private readonly windowInput = new InputSource();
+  readonly input = { canvas: this.canvasInput.source, window: this.windowInput.source };
+  private currentTracking?: TrackingData;
+  private currentGeneration = 0;
+  private terminalDepth = 0;
+  private dispatchingEvent?: FederatedEvent;
+
+  private inputValid = (): boolean =>
+    !!this.rootTarget &&
+    (this.terminalDepth > 0 || !this.currentTracking || this.currentTracking.generation === this.currentGeneration);
+
+  hasPointer(id: number): boolean {
+    const data = this.mappingState.trackingData[id] as TrackingData;
+    if (!data) {
+      return false;
+    }
+    if (data.inside || data.ending) {
+      return true;
+    }
+    for (const button in data.pressTargetsByButton) {
+      if (data.pressTargetsByButton[button]) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  cancelAllPointers(): void {
+    for (const id in this.mappingState.trackingData) {
+      this.cancelPointer(Number(id));
+    }
+  }
+
+  cancelPointer(id: number): void {
+    if (!this.rootTarget || !this.hasPointer(id)) {
       return;
     }
-    const tracking = this.trackingData(from.pointerId);
-    const pressPaths = Object.values(tracking.pressTargetsByButton);
-    const pressed = this.findMountedTarget(pressPaths[0]);
-    const event = this.createPointerEvent(from, 'pointercancel', pressed ?? target);
-    this.dispatchEvent(event);
-    if (event.pointerType === 'touch') {
-      this.dispatchEvent(event, 'touchcancel');
+    const data = this.trackingData(id);
+    let press = data.ending;
+    for (const button in data.pressTargetsByButton) {
+      press = data.pressTargetsByButton[button];
+      break;
     }
-    tracking.pressTargetsByButton = {};
-    tracking.clicksByButton = {};
-    this.freeEvent(event);
-    this.onPointerOut(from, target);
+    const over = data.overTargets;
+    const inside = data.inside;
+    // Commit the terminal state before any callback, including capture listeners.
+    data.generation++;
+    data.pressTargetsByButton = {};
+    data.clicksByButton = {};
+    data.ending = undefined;
+    data.inside = false;
+    data.overTargets = [];
+    this.dispatchingEvent?.stopImmediatePropagation();
+    const event = this.allocateEvent(FederatedPointerEvent);
+    event.type = 'pointercancel';
+    event.pointerId = id;
+    event.pointerType = data.pointerType;
+    event.button = data.button;
+    event.nativeEvent = null;
+    event.canvas.x = data.canvasX;
+    event.canvas.y = data.canvasY;
+    event.viewport.x = data.viewX;
+    event.viewport.y = data.viewY;
+    event.target = this.findMountedTarget(press) ?? this.findMountedTarget(over);
+    this.terminalDepth++;
+    try {
+      this.dispatchEvent(event);
+      if (event.pointerType === 'touch') {
+        this.dispatchEvent(event, 'touchcancel');
+      }
+      this.windowInput.emit('pointercancel', event, this.inputValid);
+      if (event.pointerType === 'touch') {
+        this.windowInput.emit('touchcancel', event, this.inputValid);
+      }
+      if (inside) {
+        this.canvasInput.emit('pointercancel', event, this.inputValid);
+        if (event.pointerType === 'touch') {
+          this.canvasInput.emit('touchcancel', event, this.inputValid);
+        }
+        this.emitBoundary(event, false);
+      }
+      if (over?.length && this.rootTarget) {
+        event.target = this.findMountedTarget(over);
+        event.path = [];
+        this.dispatchEvent(event, 'pointerout');
+        if (isMouseLike(event.pointerType)) {
+          this.dispatchEvent(event, 'mouseout');
+        }
+        event.eventPhase = event.AT_TARGET;
+        while (event.target && this.rootTarget) {
+          event.currentTarget = event.target;
+          this.notifyTarget(event, 'pointerleave');
+          if (isMouseLike(event.pointerType)) {
+            this.notifyTarget(event, 'mouseleave');
+          }
+          event.target = event.target.parent as IEventTarget;
+        }
+      }
+    } finally {
+      this.terminalDepth--;
+      this.freeEvent(event);
+      this.cursorTarget = null;
+      this.cursor = '';
+    }
+  }
+
+  private emitBoundary(event: FederatedPointerEvent, inside: boolean): void {
+    this.canvasInput.emit(inside ? 'pointerover' : 'pointerout', event, this.inputValid);
+    this.canvasInput.emit(inside ? 'pointerenter' : 'pointerleave', event, this.inputValid);
+    if (isMouseLike(event.pointerType)) {
+      this.canvasInput.emit(inside ? 'mouseover' : 'mouseout', event, this.inputValid);
+      this.canvasInput.emit(inside ? 'mouseenter' : 'mouseleave', event, this.inputValid);
+    }
+  }
+
+  private emitInput(event: FederatedMouseEvent, type = event.type): void {
+    if (!this.inputValid()) {
+      return;
+    }
+    this.windowInput.emit(type, event, this.inputValid);
+    if (!this.inputValid()) {
+      return;
+    }
+    const data = event instanceof FederatedPointerEvent ? this.trackingData(event.pointerId) : undefined;
+    if (data && data.previousInside !== data.inside) {
+      data.previousInside = data.inside;
+      this.emitBoundary(event as FederatedPointerEvent, data.inside);
+    }
+    if (!data || data.inside) {
+      this.canvasInput.emit(type, event, this.inputValid);
+    }
+  }
+
+  private emitPointerInput(event: FederatedPointerEvent, type = event.type): void {
+    if (!this.inputValid()) {
+      return;
+    }
+    // Native over/out represent logical transitions only, not sibling mark transitions.
+    if (type === 'pointerover' || type === 'pointerout' || type === 'pointerleave') {
+      const data = this.trackingData(event.pointerId);
+      if (data.previousInside !== data.inside) {
+        data.previousInside = data.inside;
+        this.emitBoundary(event, data.inside);
+      }
+      return;
+    }
+    this.emitInput(event, type);
+    if (event.pointerType === 'touch') {
+      const alias = TOUCH_INPUT_TYPES[type];
+      if (alias) {
+        this.emitInput(event, alias);
+      }
+    } else if (isMouseLike(event.pointerType)) {
+      const alias =
+        event.button === 2 && type === 'pointerdown'
+          ? 'rightdown'
+          : event.button === 2 && type === 'pointerup'
+            ? 'rightup'
+            : MOUSE_INPUT_TYPES[type];
+      if (alias) {
+        this.emitInput(event, alias);
+      }
+    }
+  }
+
+  protected onPointerCancel = (from: FederatedEvent): void => {
+    if (from instanceof FederatedPointerEvent) {
+      this.cancelPointer(from.pointerId);
+    }
   };
 
   addEventMapping(type: string, fn: (e: FederatedEvent, target: IEventTarget) => void): void {
@@ -143,46 +319,92 @@ export class EventManager {
   }
 
   dispatchEvent(e: FederatedEvent, type?: string): void {
+    if (!this.inputValid()) {
+      return;
+    }
+    const previous = this.dispatchingEvent;
+    this.dispatchingEvent = e;
     e.propagationStopped = false;
     e.propagationImmediatelyStopped = false;
 
-    this.propagate(e, type);
-    this.dispatch.emit(type || e.type, e);
+    try {
+      this.propagate(e, type);
+      if (this.inputValid()) {
+        this.dispatch.emit(type || e.type, e);
+      }
+    } finally {
+      this.dispatchingEvent = previous;
+    }
   }
 
-  mapEvent(e: FederatedEvent): void {
+  mapEvent(e: FederatedEvent, inViewport = true): void {
     if (!this.rootTarget) {
       return;
     }
-    const mappers = this.mappingTable[e.type];
-
-    let target;
-    const cacheKey = `${e.canvasX}-${e.canvasY}`;
-    if (
-      this._prePointTargetCache?.[cacheKey] &&
-      (this._prePointTargetCache?.[cacheKey] as unknown as IGraphic)?.stage &&
-      (this._prePointTargetCache?.[cacheKey] as unknown as IGraphic)?.stage.renderCount ===
-        (this._prePointTargetCache?.stageRenderCount as number)
-    ) {
-      target = this._prePointTargetCache[cacheKey];
-    } else {
-      target = this.pickTarget(e.viewX, e.viewY, e);
-      // 缓存上一个坐标点的拾取结果，减少拾取的次数，如 pointermove pointerdown 和 pointerup 在同一个点触发
-      // 如果存在params，那么就不缓存
-      if (!(e as any).pickParams) {
-        this._prePointTargetCache = {
-          [cacheKey]: target,
-          stageRenderCount: target?.stage.renderCount ?? -1
-        };
-      }
+    const previous = this.currentTracking;
+    const generation = this.currentGeneration;
+    const tracking = e instanceof FederatedPointerEvent ? this.trackingData(e.pointerId) : undefined;
+    this.currentTracking = tracking;
+    this.currentGeneration = tracking?.generation ?? 0;
+    if (tracking) {
+      tracking.previousInside = tracking.inside;
+      tracking.inside = inViewport;
+      tracking.pointerType = (e as FederatedPointerEvent).pointerType;
+      tracking.button = (e as FederatedPointerEvent).button;
+      tracking.canvasX = e.canvasX;
+      tracking.canvasY = e.canvasY;
+      tracking.viewX = e.viewX;
+      tracking.viewY = e.viewY;
     }
-
-    if (mappers) {
-      for (let i = 0, j = mappers.length; i < j; i++) {
-        mappers[i].fn(e, target);
+    const type = e.type === 'pointerup' && !inViewport ? 'pointerupoutside' : e.type;
+    const mappers = this.mappingTable[type];
+    try {
+      let target;
+      const cacheKey = `${e.canvasX}-${e.canvasY}`;
+      if (!inViewport) {
+        target = null;
+      } else if (
+        this._prePointTargetCache?.[cacheKey] &&
+        (this._prePointTargetCache?.[cacheKey] as unknown as IGraphic)?.stage &&
+        (this._prePointTargetCache?.[cacheKey] as unknown as IGraphic)?.stage.renderCount ===
+          (this._prePointTargetCache?.stageRenderCount as number)
+      ) {
+        target = this._prePointTargetCache[cacheKey];
+      } else {
+        target = this.pickTarget(e.viewX, e.viewY, e);
+        // 缓存上一个坐标点的拾取结果，减少拾取的次数，如 pointermove pointerdown 和 pointerup 在同一个点触发
+        // 如果存在params，那么就不缓存
+        if (!(e as any).pickParams) {
+          this._prePointTargetCache = {
+            [cacheKey]: target,
+            stageRenderCount: target?.stage.renderCount ?? -1
+          };
+        }
       }
-    } else {
-      Logger.getInstance().warn(`[EventManager]: Event mapping not defined for ${e.type}`);
+
+      if (mappers) {
+        for (let i = 0, j = mappers.length; i < j && this.inputValid(); i++) {
+          mappers[i].fn(e, target);
+        }
+      } else {
+        Logger.getInstance().warn(`[EventManager]: Event mapping not defined for ${e.type}`);
+      }
+      if (
+        e instanceof FederatedPointerEvent &&
+        type !== 'pointerup' &&
+        type !== 'pointerupoutside' &&
+        type !== 'pointercancel'
+      ) {
+        this.emitPointerInput(e);
+      } else if (e instanceof FederatedWheelEvent) {
+        this.emitInput(e);
+      }
+    } finally {
+      if (tracking) {
+        tracking.ending = undefined;
+      }
+      this.currentTracking = previous;
+      this.currentGeneration = generation;
     }
   }
 
@@ -245,6 +467,10 @@ export class EventManager {
   }
 
   protected notifyTarget(e: FederatedEvent, type?: string): void {
+    if (!this.inputValid()) {
+      e.stopImmediatePropagation();
+      return;
+    }
     if (this.pauseNotify) {
       return;
     }
@@ -253,7 +479,7 @@ export class EventManager {
 
     this.notifyListeners(e, key);
 
-    if (e.eventPhase === e.AT_TARGET) {
+    if (e.eventPhase === e.AT_TARGET && this.inputValid() && !e.propagationImmediatelyStopped) {
       this.notifyListeners(e, type);
     }
   }
@@ -267,6 +493,8 @@ export class EventManager {
 
     const e = this.createPointerEvent(from, from.type, target);
 
+    const trackingData = this.trackingData(from.pointerId);
+    trackingData.pressTargetsByButton[from.button] = e.composedPath();
     this.dispatchEvent(e, 'pointerdown');
 
     if (e.pointerType === 'touch') {
@@ -276,10 +504,6 @@ export class EventManager {
 
       this.dispatchEvent(e, isRightButton ? 'rightdown' : 'mousedown');
     }
-
-    const trackingData = this.trackingData(from.pointerId);
-
-    trackingData.pressTargetsByButton[from.button] = e.composedPath();
 
     this.freeEvent(e);
   };
@@ -337,7 +561,7 @@ export class EventManager {
 
       let overTargetAncestor = outTarget?.parent;
 
-      while (overTargetAncestor && overTargetAncestor !== this.rootTarget.parent) {
+      while (this.inputValid() && overTargetAncestor && overTargetAncestor !== this.rootTarget.parent) {
         if (overTargetAncestor === e.target) {
           break;
         }
@@ -345,7 +569,8 @@ export class EventManager {
         overTargetAncestor = overTargetAncestor.parent;
       }
 
-      const didPointerEnter = !overTargetAncestor || overTargetAncestor === this.rootTarget.parent;
+      const didPointerEnter =
+        this.inputValid() && (!overTargetAncestor || overTargetAncestor === this.rootTarget.parent);
 
       if (didPointerEnter) {
         const enterEvent = this.clonePointerEvent(e, 'pointerenter');
@@ -361,7 +586,12 @@ export class EventManager {
           ancestor = ancestor.parent;
         }
 
-        while (currentTarget && currentTarget !== outTarget && currentTarget !== this.rootTarget.parent) {
+        while (
+          this.inputValid() &&
+          currentTarget &&
+          currentTarget !== outTarget &&
+          currentTarget !== this.rootTarget.parent
+        ) {
           // 检查 currentTarget 是否是 outTarget 的祖先
           if (!outTargetAncestors.has(currentTarget)) {
             enterEvent.currentTarget = currentTarget;
@@ -389,13 +619,15 @@ export class EventManager {
       this[propagationMethod](e, 'touchmove');
     }
 
-    if (isMouse) {
+    if (isMouse && this.inputValid()) {
       this[propagationMethod](e, 'mousemove');
       this.cursorTarget = e.target;
       this.cursor = (e.target?.attribute?.cursor as Cursor) || this.rootTarget.getCursor();
     }
 
-    trackingData.overTargets = e.composedPath();
+    if (this.inputValid()) {
+      trackingData.overTargets = e.composedPath();
+    }
 
     this.freeEvent(e);
   };
@@ -415,7 +647,7 @@ export class EventManager {
     if (isMouse) {
       this.dispatchEvent(e, 'mouseover');
     }
-    if (e.pointerType === 'mouse') {
+    if (e.pointerType === 'mouse' && this.inputValid()) {
       this.cursorTarget = e.target;
       this.cursor = (e.target?.attribute?.cursor as Cursor) || this.rootTarget.getCursor();
     }
@@ -424,7 +656,7 @@ export class EventManager {
 
     enterEvent.eventPhase = enterEvent.AT_TARGET;
 
-    while (enterEvent.target && enterEvent.target !== this.rootTarget.parent) {
+    while (this.inputValid() && enterEvent.target && enterEvent.target !== this.rootTarget.parent) {
       enterEvent.currentTarget = enterEvent.target;
 
       this.notifyTarget(enterEvent);
@@ -435,7 +667,9 @@ export class EventManager {
       enterEvent.target = enterEvent.target.parent as IEventTarget;
     }
 
-    trackingData.overTargets = e.composedPath();
+    if (this.inputValid()) {
+      trackingData.overTargets = e.composedPath();
+    }
 
     this.freeEvent(e);
     this.freeEvent(enterEvent);
@@ -465,7 +699,7 @@ export class EventManager {
 
       leaveEvent.eventPhase = leaveEvent.AT_TARGET;
 
-      while (leaveEvent.target && leaveEvent.target !== this.rootTarget.parent) {
+      while (this.inputValid() && leaveEvent.target && leaveEvent.target !== this.rootTarget.parent) {
         leaveEvent.currentTarget = leaveEvent.target;
 
         this.notifyTarget(leaveEvent);
@@ -496,6 +730,9 @@ export class EventManager {
     const now = clock.now();
     const e = this.createPointerEvent(from, from.type, target);
 
+    const trackingData = this.trackingData(from.pointerId);
+    trackingData.ending = trackingData.pressTargetsByButton[from.button];
+    delete trackingData.pressTargetsByButton[from.button];
     this.dispatchEvent(e, 'pointerup');
 
     if (e.pointerType === 'touch') {
@@ -506,8 +743,7 @@ export class EventManager {
       this.dispatchEvent(e, isRightButton ? 'rightup' : 'mouseup');
     }
 
-    const trackingData = this.trackingData(from.pointerId);
-    const pressTarget = this.findMountedTarget(trackingData.pressTargetsByButton[from.button]);
+    const pressTarget = this.findMountedTarget(trackingData.ending);
 
     let clickTarget = pressTarget;
 
@@ -535,7 +771,8 @@ export class EventManager {
       clickTarget = currentTarget;
     }
 
-    if (clickTarget) {
+    this.emitPointerInput(e, 'pointerup');
+    if (clickTarget && this.inputValid()) {
       const clickEvent = this.clonePointerEvent(e, 'click');
 
       clickEvent.target = clickTarget;
@@ -567,20 +804,25 @@ export class EventManager {
 
       if (isMouseLike(clickEvent.pointerType)) {
         this.dispatchEvent(clickEvent, 'click');
+        this.emitInput(clickEvent, 'click');
 
         if (clickHistory.clickCount === 2) {
           // 双击
           this.dispatchEvent(clickEvent, 'dblclick');
+          this.emitInput(clickEvent, 'dblclick');
         }
       } else if (clickEvent.pointerType === 'touch' && this._config.supportsTouchEvents) {
         this.dispatchEvent(clickEvent, 'tap');
+        this.emitInput(clickEvent, 'tap');
         if (clickHistory.clickCount === 2) {
           // 双击
           this.dispatchEvent(clickEvent, 'dbltap');
+          this.emitInput(clickEvent, 'dbltap');
         }
       }
 
       this.dispatchEvent(clickEvent, 'pointertap');
+      this.emitInput(clickEvent, 'pointertap');
 
       this.freeEvent(clickEvent);
     }
@@ -596,7 +838,9 @@ export class EventManager {
     }
 
     const trackingData = this.trackingData(from.pointerId);
-    const pressTarget = this.findMountedTarget(trackingData.pressTargetsByButton[from.button]);
+    trackingData.ending = trackingData.pressTargetsByButton[from.button];
+    delete trackingData.pressTargetsByButton[from.button];
+    const pressTarget = this.findMountedTarget(trackingData.ending);
     const e = this.createPointerEvent(from, from.type, target);
 
     if (pressTarget) {
@@ -619,6 +863,7 @@ export class EventManager {
       delete trackingData.pressTargetsByButton[from.button];
     }
 
+    this.emitPointerInput(e, 'pointerup');
     this.freeEvent(e);
   };
 
@@ -776,6 +1021,9 @@ export class EventManager {
   protected trackingData(id: number): TrackingData {
     if (!this.mappingState.trackingData[id]) {
       this.mappingState.trackingData[id] = {
+        generation: 0,
+        inside: false,
+        previousInside: false,
         pressTargetsByButton: {},
         clicksByButton: {},
         overTarget: null
@@ -802,6 +1050,11 @@ export class EventManager {
   }
 
   protected freeEvent<T extends FederatedEvent>(event: T): void {
+    event.nativeEvent = null;
+    event.originalEvent = null;
+    if (!this.rootTarget) {
+      return;
+    }
     if (event.manager !== this) {
       throw new Error('It is illegal to free an event not managed by this EventManager!');
     }
@@ -823,6 +1076,9 @@ export class EventManager {
   }
 
   private notifyListeners(e: FederatedEvent, type: string): void {
+    if (!this.inputValid() || !e.currentTarget) {
+      return;
+    }
     const events = (e.currentTarget as any)._events as EmitterListeners;
     const listeners = events[type];
 
@@ -833,7 +1089,7 @@ export class EventManager {
         }
         listeners.fn.call(listeners.context, e);
       } else {
-        for (let i = 0, j = listeners.length; i < j && !e.propagationImmediatelyStopped; i++) {
+        for (let i = 0, j = listeners.length; i < j && this.inputValid() && !e.propagationImmediatelyStopped; i++) {
           if (listeners[i].once) {
             e.currentTarget.removeEventListener(type, listeners[i].fn, { once: true });
           }
@@ -842,17 +1098,22 @@ export class EventManager {
       }
     }
     // 永远触发WILDCARD事件代理
-    this.emitDelegation(e, type);
+    if (this.inputValid()) {
+      this.emitDelegation(e, type);
+    }
   }
 
   private emitDelegation(e: FederatedEvent, type: string): void {
+    if (!this.inputValid() || !e.currentTarget) {
+      return;
+    }
     const events = (e.currentTarget as any)._events as EmitterListeners;
     const listeners = events[WILDCARD];
     if (listeners) {
       if ('fn' in listeners) {
         listeners.fn.call(listeners.context, e, type);
       } else {
-        for (let i = 0, j = listeners.length; i < j && !e.propagationImmediatelyStopped; i++) {
+        for (let i = 0, j = listeners.length; i < j && this.inputValid() && !e.propagationImmediatelyStopped; i++) {
           listeners[i].fn.call(listeners[i].context, e, type);
         }
       }
@@ -885,7 +1146,10 @@ export class EventManager {
     this.eventPool.clear();
     this.rootTarget = null;
     this.mappingTable = null;
-    this.mappingState = null;
+    this.mappingState = { trackingData: {} };
+    this.canvasInput.clear();
+    this.windowInput.clear();
+    this.dispatchingEvent?.stopImmediatePropagation();
     this.cursorTarget = null;
   }
 }

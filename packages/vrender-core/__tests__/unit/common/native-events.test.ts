@@ -19,7 +19,7 @@ function setup() {
     resolution: 1,
     rootNode: root,
     global: { supportsMouseEvents: true, supportsPointerEvents: false, supportsTouchEvents: false },
-    nativeEvents: false
+    useNativeEvents: false
   } as unknown as RenderConfig);
   const events: string[] = [];
   const errors: unknown[] = [];
@@ -33,20 +33,29 @@ function setup() {
   document.addEventListener('mousedown', arbitrate);
   document.addEventListener('mousemove', arbitrate);
   document.addEventListener('mouseup', arbitrate);
-  ['pointerdown', 'pointerup', 'pointercancel', 'pointerout', 'click'].forEach((type) =>
+  ['pointerdown', 'pointerup', 'pointercancel', 'pointerout', 'click'].forEach(type =>
     root.on(type, () => events.push(type))
   );
-  system.setNativeEventOptions({
-    target: canvas,
-    root: document,
-    pointerEvents: false,
-    filter: (event) => event === authorized,
-    mapPoint: (event) => ({ x: (event.clientX - 20) / 2, y: (event.clientY - 10) / 2 }),
-    onCursor: () => undefined,
-    onError: (error) => errors.push(error)
-  });
+  const receive = (event: MouseEvent) => {
+    if (event !== authorized || event.target !== canvas) {
+      return;
+    }
+    system.handleNativeEvent(event, {
+      canvasPoint: { x: (event.clientX - 20) / 2, y: (event.clientY - 10) / 2 },
+      inViewport: true
+    });
+  };
+  const blur = () => system.cancelAllPointers();
+  const types = ['mousedown', 'mousemove', 'mouseup'];
+  types.forEach(type => document.addEventListener(type, receive));
+  window.addEventListener('blur', blur);
+  const unbind = () => {
+    types.forEach(type => document.removeEventListener(type, receive));
+    window.removeEventListener('blur', blur);
+  };
   return {
     system,
+    unbind,
     canvas,
     root,
     events,
@@ -58,8 +67,9 @@ function setup() {
       target.dispatchEvent(new MouseEvent(type, { bubbles: true, clientX: 60, clientY: 50, button: 0 }));
     },
     release() {
+      unbind();
       system.release();
-      ['mousedown', 'mousemove', 'mouseup'].forEach((type) => document.removeEventListener(type, arbitrate));
+      ['mousedown', 'mousemove', 'mouseup'].forEach(type => document.removeEventListener(type, arbitrate));
       canvas.remove();
       expect(errors).toEqual([]);
     }
@@ -70,7 +80,7 @@ describe('native input ownership', () => {
   test('host arbitration precedes normalization and rejected down cannot click on allowed up', () => {
     const s = setup();
     const point: number[] = [];
-    s.root.on('pointerup', (event) => point.push(event.canvasX, event.canvasY));
+    s.root.on('pointerup', event => point.push(event.canvasX, event.canvasY));
     s.allow(false);
     s.send('mousedown');
     s.allow(true);
@@ -85,6 +95,7 @@ describe('native input ownership', () => {
     s.send('mousemove');
     s.send('mousedown');
     s.allow(false);
+    s.system.cancelAllPointers();
     s.send('mousemove');
     s.allow(true);
     s.send('mouseup');
@@ -98,10 +109,10 @@ describe('native input ownership', () => {
     const s = setup();
     s.send('mousemove');
     s.send('mousedown');
-    s.system.resetNativeEvents();
+    s.system.cancelAllPointers();
     const afterReset = s.events.slice();
     expect(afterReset).toContain('pointercancel');
-    s.system.resetNativeEvents();
+    s.system.cancelAllPointers();
     expect(s.events).toEqual(afterReset);
     s.send('mouseup');
     expect(s.events).not.toContain('click');
@@ -126,7 +137,7 @@ describe('native input ownership', () => {
     s.send('mouseup');
     expect(s.events).toContain('pointercancel');
     expect(s.events).not.toContain('click');
-    s.system.setNativeEventOptions();
+    s.unbind();
     const before = s.events.slice();
     s.send('mousedown');
     s.send('mouseup');

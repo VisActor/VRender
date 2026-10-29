@@ -214,7 +214,7 @@ export type IElementLike = Omit<IEventElement, 'on' | 'off' | 'once' | 'emit' | 
 };
 
 export type RenderConfig = {
-  nativeEvents?: boolean;
+  useNativeEvents?: boolean;
   /**
    * 事件绑定的元素
    */
@@ -305,14 +305,14 @@ export type GraphicEventType =
   | 'pinchend'
   | 'swipe';
 
-export interface INativeEventOptions {
-  target: HTMLElement;
-  /** Use the host's dispatch root/phase when it arbitrates input before VRender. */
-  root: EventTarget;
-  pointerEvents: boolean;
-  filter(event: MouseEvent): boolean;
-  mapPoint(event: MouseEvent): { x: number; y: number };
-  onCursor(cursor: string): void;
-  /** Host error boundary; otherwise listener errors propagate normally. */
-  onError?(error: unknown): void;
+/** Host coordinates are logical canvas units, after undoing host composition (never DPR-scaled). */
+export interface HostInputOptions {
+  canvasPoint: EventPoint;
+  inViewport: boolean;
+}
+
+/** Synchronous only: events are pooled. Async consumers must copy the required scalar values. */
+export interface InputEventSource {
+  on(type: string, listener: (event: IFederatedMouseEvent) => void): void;
+  off(type: string, listener: (event: IFederatedMouseEvent) => void): void;
 }

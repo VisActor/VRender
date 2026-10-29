@@ -122,3 +122,17 @@ window['stage'] = stage;
 ```
 
 【Note】: It is important to note that the event objects thrown by VRender are reusable, so be careful not to save event objects for later use, as the event object will change. This is particularly important to note in asynchronous processes.
+
+## Host-owned input and Stage composition
+
+Set `event: { useNativeEvents: false }` when the host owns DOM listeners. Route only accepted inputs through `stage.eventSystem.handleNativeEvent(nativeEvent, { canvasPoint: { x, y }, inViewport })`. The point uses logical canvas units after removing the host composition transform; do not scale it by DPR. EventSystem then applies the Stage window transform. Federated events already carry viewX/viewY, which Stage.eventPointTransform returns directly. Omitting options uses the default DOM mapping and viewport rules.
+
+Ignoring an input does not cancel a gesture. Call cancelPointer(pointerId), or cancelAllPointers(), when ownership changes. Cancellation clears pointer state before callbacks; reentrant new input is processed synchronously in FIFO order after the terminal transaction. Repeated cancellation is idempotent.
+
+`eventSystem.input.canvas` and `.window` expose on/off only. Both carry accepted Stage input, not unfiltered browser-window events. Dispatch order is scenegraph, window, canvas. Canvas out/leave describes logical viewport transitions, never sibling-mark transitions. An outside release emits one window pointerup and no canvas pointerup; the scenegraph retains pointerupoutside. Events are pooled: consume synchronously and save scalars for delayed work.
+
+Supported input types: pointerdown/move/up/cancel and wheel; mousedown/move/up (rightdown/rightup for the right button); touchstart/move/end/cancel; valid presses generate click/dblclick for mouse/pen, tap/dbltap when touch is supported, and pointertap. Canvas boundaries emit pointerover/enter/out/leave and corresponding mouse aliases. Do not forward native DOM click separately. stopPropagation does not control host authorization; cancel/release invalidate remaining normal dispatch.
+
+DataZoom and Slider subscribe to the accepted window scope and own one active pointer each. Cancellation keeps applied values and ends the gesture. DataZoom flushes the last accepted delayed move on normal up, discards pending moves on cancel, and commits its final value even with realTime=false. The DOM adapter preserves synchronous touch preventDefault; hosts own touch-action and scrolling policy.
+
+Use interactiveLayerMode:'virtual' to reuse the primary canvas. The interactive layer is prepared before the first draw and remains after business layers. Default layer selection and boolean interactiveLayer are preserved; false disables the layer. renderTo(window, rectangle?, options?) keeps its legacy second argument. Only explicit requestRender scheduling enables beforeRender/afterRender hooks in renderTo; default calls do not invoke new hooks. Its try/finally restores Stage state on failure without swallowing errors.

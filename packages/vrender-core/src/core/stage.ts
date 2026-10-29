@@ -39,7 +39,7 @@ import type {
 } from '../interface';
 import { DefaultWindow } from './window';
 import type { Layer } from './layer';
-import { EventSystem } from '../event';
+import { EventSystem, FederatedMouseEvent } from '../event';
 import { Group } from '../graphic/group';
 import { Theme } from '../graphic/theme';
 import { DefaultGlobalPickerService } from '../picker/global-picker-service';
@@ -797,6 +797,9 @@ export class Stage extends Group implements IStage {
       canvasId
     });
     this.appendChild(layer);
+    if (this.interactiveLayer && layer !== this.interactiveLayer) {
+      this.appendChild(this.interactiveLayer);
+    }
     return layer;
     // const layer = new Layer(this, this.global, this.window, {
     //   main: false,
@@ -812,6 +815,9 @@ export class Stage extends Group implements IStage {
     children.forEach(c => {
       this.appendChild(c);
     });
+    if (this.interactiveLayer) {
+      this.appendChild(this.interactiveLayer);
+    }
   }
   removeLayer(ILayerId: number): ILayer | false {
     return this.removeChild(this.findChildByUid(ILayerId) as IGraphic) as ILayer;
@@ -820,7 +826,6 @@ export class Stage extends Group implements IStage {
     if (this.releaseStatus === 'released') {
       return;
     }
-    // TODO：顺序可能会存在问题
     // 支持交互层，且没有创建过，那就创建
     if (this.supportInteractiveLayer && !this.interactiveLayer) {
       this.interactiveLayer = this.createLayer(undefined, this.params.interactiveLayerMode);
@@ -833,7 +838,13 @@ export class Stage extends Group implements IStage {
     // });
   }
 
-
+  private prepareRenderLayers(): void {
+    // The virtual handler needs a main handler before traversal; lazy creation during draw is too late.
+    if (this.params.interactiveLayerMode === 'virtual') {
+      this.tryInitInteractiveLayer();
+    }
+    this.layerService.prepareStageLayer(this);
+  }
 
   clearViewBox(color?: string) {
     this.window.clearViewBox(color);
@@ -850,11 +861,11 @@ export class Stage extends Group implements IStage {
     this.startAnimate();
     const state = this.state;
     this.state = 'rendering';
-    this.layerService.prepareStageLayer(this);
     if (!this._skipRender) {
       this.lastRenderparams = params;
       this.hooks.beforeRender.call(this);
       if (!this._skipRender) {
+        this.prepareRenderLayers();
         this.renderLayerList(this.children as ILayer[]);
         this.combineLayersToWindow();
         this.nextFrameRenderLayerSet.clear();
@@ -942,10 +953,10 @@ export class Stage extends Group implements IStage {
     this.startAnimate();
     const state = this.state;
     this.state = 'rendering';
-    this.layerService.prepareStageLayer(this);
     if (this.nextFrameRenderLayerSet.size && !this._skipRender) {
       this.hooks.beforeRender.call(this);
       if (!this._skipRender) {
+        this.prepareRenderLayers();
         this.renderLayerList(Array.from(this.nextFrameRenderLayerSet.values()), this.lastRenderparams || {});
         this.combineLayersToWindow();
         this.nextFrameRenderLayerSet.clear();
@@ -1177,6 +1188,7 @@ export class Stage extends Group implements IStage {
       if (this.params.requestRender) {
         this.hooks.beforeRender.call(this);
       }
+      this.prepareRenderLayers();
       this.forEachChildren<ILayer>((layer, i) => {
         layer.drawTo(window, {
           renderService: this.renderService,
@@ -1258,7 +1270,10 @@ export class Stage extends Group implements IStage {
     return this._cursor;
   }
 
-  eventPointTransform(e: PointerEvent | WheelEvent | TouchEvent): { x: number; y: number } {
+  eventPointTransform(e: PointerEvent | WheelEvent | TouchEvent | FederatedMouseEvent): { x: number; y: number } {
+    if (e instanceof FederatedMouseEvent) {
+      return { x: e.viewX, y: e.viewY };
+    }
     const point = this.global.mapToCanvasPoint(e, this.window);
 
     return this.stage.window.pointTransform(point.x, point.y);

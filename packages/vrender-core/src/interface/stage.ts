@@ -62,8 +62,8 @@ export interface IStageParams {
   disableDirtyBounds: boolean;
   // 是否支持独立交互 Layer，默认为 true。
   interactiveLayer: boolean;
-  /** 交互层的渲染模式；缺省沿用环境默认，virtual 复用主层 Canvas。 */
-  interactiveLayerMode?: LayerMode;
+  /** 交互层的渲染模式；缺省沿用环境默认，virtual 复用主层 Canvas，在首帧准备前创建。 */
+  interactiveLayerMode?: 'static' | 'virtual';
   /** Delegate invalidation to an external compositor; paint explicitly with renderTo. */
   requestRender?: () => void;
   // 是否支持HTML属性
@@ -111,8 +111,8 @@ export interface IStageParams {
 }
 
 export type EventConfig = {
-  /** 保留事件管理器，由外部输入事件，不监听共享 Canvas／Window。 */
-  nativeEvents?: boolean;
+  /** 设为 false 时保留事件管理器，由宿主输入事件，不绑定默认 DOM 监听。 */
+  useNativeEvents?: boolean;
   /** 是否自动阻止事件 */
   autoPreventDefault?: boolean;
   /**

@@ -26,5 +26,7 @@ export function stageApiCompatibility(stage: IStage, concrete: Stage, target: IW
   const virtual: Partial<IStageParams> = { interactiveLayer: true, interactiveLayerMode: 'virtual' };
   // @ts-expect-error interactiveLayer remains boolean; the layer mode is a separate option.
   const invalid: Partial<IStageParams> = { interactiveLayer: 'group' };
-  return { enabled, virtual, invalid };
+  // @ts-expect-error Interactive layers support physical or virtual backends, not incremental dynamic layers.
+  const dynamic: Partial<IStageParams> = { interactiveLayerMode: 'dynamic' };
+  return { enabled, virtual, invalid, dynamic };
 }

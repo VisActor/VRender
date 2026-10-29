@@ -10,7 +10,7 @@ import type {
   IEventTarget,
   NativeEvent,
   RenderConfig,
-  INativeEventOptions
+  HostInputOptions
 } from '../interface/event';
 import { clock } from './util';
 
@@ -97,7 +97,7 @@ export class EventSystem {
   private rootPointerEvent: FederatedPointerEvent;
   private rootWheelEvent: FederatedWheelEvent;
   private eventsAdded: boolean;
-  private readonly nativeEvents: boolean;
+  private readonly useNativeEvents: boolean;
 
   constructor(params: RenderConfig) {
     const {
@@ -132,18 +132,25 @@ export class EventSystem {
       pointer: 'pointer'
     };
 
-    this.nativeEvents = params.nativeEvents !== false;
+    this.useNativeEvents = params.useNativeEvents !== false;
     this.resolution = resolution;
     this.setTargetElement(targetElement);
   }
 
   release(): void {
-    this.setNativeEventOptions();
-    this.removeEvents();
-    this.manager && this.manager.release();
-    this.domElement = null;
-    (this as any).manager = null;
-    (this as any).globalObj = null;
+    if (this.released) {
+      return;
+    }
+    this.released = true;
+    this.pendingInputs = undefined;
+    try {
+      this.manager.cancelAllPointers();
+    } finally {
+      this.removeEvents();
+      this.manager.release();
+      this.domElement = null;
+      (this as any).globalObj = null;
+    }
   }
 
   setCursor(mode: string, target: IEventTarget | null | 'ignore'): void {
@@ -174,235 +181,127 @@ export class EventSystem {
     }
   }
 
-  private nativeEventBinding?: { reset(): void; release(): void };
+  /** The window scope is this Stage's accepted input, not the browser's unfiltered window. */
+  get input() {
+    return this.manager.input;
+  }
 
-  /** Bind a DOM input source independently from the render canvas. Filtering precedes pointer state updates. */
-  setNativeEventOptions(options?: INativeEventOptions): void {
-    this.nativeEventBinding?.release();
-    this.nativeEventBinding = undefined;
-    if (!options) {
+  private released = false;
+  private processingInput = false;
+  private pendingInputs?: { event: NativeEvent | WheelEvent; options?: HostInputOptions }[];
+
+  /** Ignoring an input and cancelling a gesture are separate host decisions. */
+  handleNativeEvent(event: NativeEvent | WheelEvent, options?: HostInputOptions): void {
+    if (this.released) {
       return;
     }
-    const system = this;
-    const { manager } = system;
-    const originalTarget = system.domElement;
-    const originalMap = system.mapToCanvasPoint;
-    const lastEvents = new Map<number, PointerEvent>();
-    let released = false;
-    system.removeEvents();
-    system.domElement = options.target;
-    system.mapToCanvasPoint = event => options.mapPoint(event as PointerEvent);
+    if (this.processingInput) {
+      // Allocate only for reentrant input. Finish the old transaction before starting a new gesture.
+      (this.pendingInputs ??= []).push({
+        event,
+        options: options && {
+          canvasPoint: { x: options.canvasPoint.x, y: options.canvasPoint.y },
+          inViewport: options.inViewport
+        }
+      });
+      return;
+    }
+    this.processingInput = true;
+    try {
+      this.processInput(event, options);
+      this.drainInputQueue();
+    } finally {
+      this.processingInput = false;
+      this.pendingInputs = undefined;
+      this.rootPointerEvent.nativeEvent = null;
+      this.rootWheelEvent.nativeEvent = null;
+    }
+  }
 
-    const reset = (pointerId?: number) => {
-      lastEvents.forEach((input, id) => {
-        if (pointerId !== undefined && pointerId !== id) {
-          return;
-        }
-        lastEvents.delete(id);
-        // Cancellation, unlike rejection, must reach the old target and logical canvas listeners.
-        const event = system.bootstrapEvent(system.rootPointerEvent, input);
-        event.type = 'pointercancel';
-        event.nativeEvent = null;
-        manager.mapEvent(event);
-      });
-    };
-    const receiveInput = (nativeEvent: Event) => {
-      if (released) {
-        return;
-      }
-      const target = nativeEvent.composedPath?.()[0] ?? nativeEvent.target;
-      if (target !== options.target || !options.filter(nativeEvent as MouseEvent)) {
-        if (lastEvents.size) {
-          reset((nativeEvent as PointerEvent).pointerId ?? 1);
-        }
-        return;
-      }
-      if (nativeEvent.type === 'wheel') {
-        manager.mapEvent(system.normalizeWheelEvent(nativeEvent as WheelEvent));
-        return;
-      }
-      const normalized = system.normalizeToPointerData(nativeEvent as NativeEvent);
-      normalized.forEach(input => {
-        const event = system.bootstrapEvent(system.rootPointerEvent, input);
-        lastEvents.delete(event.pointerId);
-        try {
-          manager.mapEvent(event);
-          if (
-            !released &&
-            event.type !== 'pointercancel' &&
-            event.type !== 'pointerleave' &&
-            event.type !== 'pointerout'
-          ) {
-            // Retain only active input; pooled federated events are reused by the engine.
-            lastEvents.set(event.pointerId, input);
-          }
-          if (!released) {
-            options.onCursor(manager.cursor || 'default');
-          }
-        } finally {
-          system.rootPointerEvent.nativeEvent = null;
-        }
-      });
-    };
-    const handleError = (error: unknown) => {
-      if (options.onError) {
-        options.onError(error);
+  cancelPointer(pointerId: number): void {
+    this.cancelInput(pointerId);
+  }
+
+  cancelAllPointers(): void {
+    this.cancelInput();
+  }
+
+  private cancelInput(pointerId?: number): void {
+    if (this.released) {
+      return;
+    }
+    const processing = this.processingInput;
+    this.processingInput = true;
+    try {
+      if (pointerId === undefined) {
+        this.manager.cancelAllPointers();
       } else {
-        throw error;
+        this.manager.cancelPointer(pointerId);
       }
-    };
-    const receive = (event: Event) => {
-      try {
-        receiveInput(event);
-      } catch (error) {
-        handleError(error);
+      if (!processing) {
+        this.drainInputQueue();
       }
-    };
-    const types = options.pointerEvents
-      ? ['pointerdown', 'pointermove', 'pointerup', 'pointercancel']
-      : ['mousedown', 'mousemove', 'mouseup', 'pointercancel'];
-    // Host arbitration runs first on this root/phase; rejected input never reaches the pointer state machine.
-    types.forEach(type => options.root.addEventListener(type, receive));
-    options.target.addEventListener('wheel', receive);
-    const leave = () => {
-      try {
-        reset();
-      } catch (error) {
-        handleError(error);
+    } finally {
+      this.processingInput = processing;
+      if (!processing) {
+        this.pendingInputs = undefined;
+        this.rootPointerEvent.nativeEvent = null;
+        this.rootWheelEvent.nativeEvent = null;
       }
-    };
-    options.target.addEventListener(options.pointerEvents ? 'pointerleave' : 'mouseleave', leave);
-    const view = options.target.ownerDocument.defaultView;
-    view?.addEventListener('blur', leave);
-
-    this.nativeEventBinding = {
-      reset,
-      release() {
-        if (released) {
-          return;
-        }
-        released = true;
-        types.forEach(type => options.root.removeEventListener(type, receive));
-        options.target.removeEventListener('wheel', receive);
-        options.target.removeEventListener(options.pointerEvents ? 'pointerleave' : 'mouseleave', leave);
-        view?.removeEventListener('blur', leave);
-        reset();
-        system.domElement = originalTarget;
-        system.mapToCanvasPoint = originalMap;
-      }
-    };
+    }
   }
 
-  resetNativeEvents(): void {
-    this.nativeEventBinding?.reset();
+  private drainInputQueue(): void {
+    while (!this.released && this.pendingInputs?.length) {
+      const next = this.pendingInputs.shift();
+      this.processInput(next.event, next.options);
+    }
   }
 
-  private onPointerDown = (nativeEvent: NativeEvent): void => {
-    if (this.supportsTouchEvents && (nativeEvent as PointerEvent).pointerType === 'touch') {
+  private processInput(nativeEvent: NativeEvent | WheelEvent, options?: HostInputOptions): void {
+    if (!options && this.supportsTouchEvents && (nativeEvent as PointerEvent).pointerType === 'touch') {
       return;
     }
-
+    if (nativeEvent.type === 'wheel') {
+      const event = this.normalizeWheelEvent(nativeEvent as WheelEvent, options?.canvasPoint);
+      if (options?.inViewport ?? !this.isEventOutsideOfTargetViewPort(nativeEvent, event)) {
+        this.manager.mapEvent(event);
+      }
+      return;
+    }
     const events = this.normalizeToPointerData(nativeEvent);
-
-    if (this.autoPreventDefault && (events[0] as any).isNormalized) {
-      const cancelable = nativeEvent.cancelable || !('cancelable' in nativeEvent);
-
-      if (cancelable) {
-        nativeEvent.preventDefault();
+    if (this.autoPreventDefault && (events[0] as VRenderPointerEvent)?.isNormalized && nativeEvent.cancelable) {
+      nativeEvent.preventDefault();
+    }
+    for (let i = 0; i < events.length && !this.released; i++) {
+      const event = this.bootstrapEvent(this.rootPointerEvent, events[i], options?.canvasPoint);
+      // Keep the original TouchEvent so synchronous preventDefault reaches the browser.
+      event.nativeEvent = nativeEvent;
+      if (event.type === 'pointercancel') {
+        this.manager.cancelPointer(event.pointerId);
+        continue;
       }
+      const inside =
+        event.type !== 'pointerout' &&
+        event.type !== 'pointerleave' &&
+        (options?.inViewport ?? !this.isEventOutsideOfTargetViewPort(nativeEvent, event));
+      if (!inside && (event.type === 'pointerdown' || !this.manager.hasPointer(event.pointerId))) {
+        continue;
+      }
+      this.manager.mapEvent(event, inside);
     }
-
-    for (let i = 0, j = events.length; i < j; i++) {
-      const nativeEvent = events[i];
-      const federatedEvent = this.bootstrapEvent(this.rootPointerEvent, nativeEvent);
-
-      this.manager.mapEvent(federatedEvent);
+    if (!options && !this.released) {
+      this.setCursor(this.manager.cursor, this.manager.cursorTarget);
     }
+  }
 
-    this.setCursor(this.manager.cursor, this.manager.cursorTarget);
-    // 避免内存泄露
-    this.rootPointerEvent.nativeEvent = null;
-  };
-
-  private onPointerMove = (nativeEvent: NativeEvent): void => {
-    if (this.supportsTouchEvents && (nativeEvent as PointerEvent).pointerType === 'touch') {
-      return;
-    }
-
-    if (this.isEventOutsideOfTargetElement(nativeEvent)) {
-      return;
-    }
-
-    const normalizedEvents = this.normalizeToPointerData(nativeEvent);
-    for (let i = 0, j = normalizedEvents.length; i < j; i++) {
-      const event = this.bootstrapEvent(this.rootPointerEvent, normalizedEvents[i]);
-
-      this.manager.mapEvent(event);
-    }
-
-    this.setCursor(this.manager.cursor, this.manager.cursorTarget);
-    // 避免内存泄露
-    this.rootPointerEvent.nativeEvent = null;
-  };
-
-  private onPointerUp = (nativeEvent: NativeEvent): void => {
-    if (this.supportsTouchEvents && (nativeEvent as PointerEvent).pointerType === 'touch') {
-      return;
-    }
-
-    const outside = this.isEventOutsideOfTargetViewPort(nativeEvent) ? 'outside' : '';
-    const normalizedEvents = this.normalizeToPointerData(nativeEvent);
-
-    for (let i = 0, j = normalizedEvents.length; i < j; i++) {
-      const event = this.bootstrapEvent(this.rootPointerEvent, normalizedEvents[i]);
-
-      event.type += outside;
-
-      this.manager.mapEvent(event);
-    }
-
-    this.setCursor(this.manager.cursor, this.manager.cursorTarget);
-    // 避免内存泄露
-    this.rootPointerEvent.nativeEvent = null;
-  };
-
-  private onPointerCancel = (nativeEvent: NativeEvent): void => {
-    if (this.supportsTouchEvents && (nativeEvent as PointerEvent).pointerType === 'touch') {
-      return;
-    }
-    const normalizedEvents = this.normalizeToPointerData(nativeEvent);
-    for (let i = 0; i < normalizedEvents.length; i++) {
-      const event = this.bootstrapEvent(this.rootPointerEvent, normalizedEvents[i]);
-      event.type = 'pointercancel';
-      this.manager.mapEvent(event);
-    }
-    this.setCursor(this.manager.cursor, this.manager.cursorTarget);
-    this.rootPointerEvent.nativeEvent = null;
-  };
-
-  private onPointerOverOut = (nativeEvent: NativeEvent): void => {
-    if (this.supportsTouchEvents && (nativeEvent as PointerEvent).pointerType === 'touch') {
-      return;
-    }
-
-    const normalizedEvents = this.normalizeToPointerData(nativeEvent);
-
-    for (let i = 0, j = normalizedEvents.length; i < j; i++) {
-      const event = this.bootstrapEvent(this.rootPointerEvent, normalizedEvents[i]);
-
-      this.manager.mapEvent(event);
-    }
-
-    this.setCursor(this.manager.cursor, this.manager.cursorTarget);
-    // 避免内存泄露
-    this.rootPointerEvent.nativeEvent = null;
-  };
-
-  protected onWheel = (nativeEvent: WheelEvent): void => {
-    const wheelEvent = this.normalizeWheelEvent(nativeEvent);
-
-    this.manager.mapEvent(wheelEvent);
-  };
+  private onPointerDown = (event: NativeEvent): void => this.handleNativeEvent(event);
+  private onPointerMove = (event: NativeEvent): void => this.handleNativeEvent(event);
+  private onPointerUp = (event: NativeEvent): void => this.handleNativeEvent(event);
+  private onPointerCancel = (event: NativeEvent): void => this.handleNativeEvent(event);
+  private onPointerOverOut = (event: NativeEvent): void => this.handleNativeEvent(event);
+  protected onWheel = (event: WheelEvent): void => this.handleNativeEvent(event);
+  private onBlur = (): void => this.cancelAllPointers();
 
   setTargetElement(element: IElementLike | null): void {
     this.removeEvents();
@@ -411,7 +310,7 @@ export class EventSystem {
   }
 
   private addEvents(): void {
-    if (!this.nativeEvents || this.eventsAdded || !this.domElement) {
+    if (!this.useNativeEvents || this.eventsAdded || !this.domElement) {
       return;
     }
     const { globalObj, domElement } = this;
@@ -446,13 +345,14 @@ export class EventSystem {
       domElement.addEventListener('touchstart', this.onPointerDown, true);
       domElement.addEventListener('touchend', this.onPointerUp, true);
       domElement.addEventListener('touchcancel', this.onPointerCancel, true);
-      domElement.addEventListener('touchmove', this.onPointerMove, true);
+      domElement.addEventListener('touchmove', this.onPointerMove, { capture: true, passive: false });
     }
 
     domElement.addEventListener('wheel', this.onWheel, {
       capture: true
     });
 
+    globalObj.getDocument?.()?.defaultView?.addEventListener('blur', this.onBlur);
     this.eventsAdded = true;
   }
 
@@ -461,6 +361,7 @@ export class EventSystem {
       return;
     }
     const { globalObj, domElement } = this;
+    globalObj.getDocument?.()?.defaultView?.removeEventListener('blur', this.onBlur);
     // const globalDocument = globalObj.getDocument() ?? domElement;
 
     if (this.supportsPointerEvents) {
@@ -639,7 +540,7 @@ export class EventSystem {
     return normalizedEvents as PointerEvent[];
   }
 
-  protected normalizeWheelEvent(nativeEvent: WheelEvent): FederatedWheelEvent {
+  protected normalizeWheelEvent(nativeEvent: WheelEvent, canvasPoint?: EventPoint): FederatedWheelEvent {
     const event = this.rootWheelEvent;
 
     this.transferMouseData(event, nativeEvent);
@@ -650,7 +551,7 @@ export class EventSystem {
     event.deltaZ = nativeEvent.deltaZ;
 
     // 获取相对画布坐标
-    const { x: canvasX, y: canvasY } = this.mapToCanvasPoint(nativeEvent);
+    const { x: canvasX, y: canvasY } = canvasPoint ?? this.mapToCanvasPoint(nativeEvent);
     event.canvas.x = canvasX;
     event.canvas.y = canvasY;
 
@@ -676,7 +577,11 @@ export class EventSystem {
    * @param event
    * @param nativeEvent
    */
-  private bootstrapEvent(event: FederatedPointerEvent, nativeEvent: PointerEvent): FederatedPointerEvent {
+  private bootstrapEvent(
+    event: FederatedPointerEvent,
+    nativeEvent: PointerEvent,
+    canvasPoint?: EventPoint
+  ): FederatedPointerEvent {
     event.originalEvent = null;
     event.nativeEvent = nativeEvent;
 
@@ -692,7 +597,7 @@ export class EventSystem {
     event.twist = nativeEvent.twist;
     this.transferMouseData(event, nativeEvent);
 
-    const { x: canvasX, y: canvasY } = this.mapToCanvasPoint(nativeEvent);
+    const { x: canvasX, y: canvasY } = canvasPoint ?? this.mapToCanvasPoint(nativeEvent);
     event.canvas.x = canvasX;
     event.canvas.y = canvasY;
 
@@ -747,14 +652,14 @@ export class EventSystem {
     event.relatedTarget = null;
   }
 
-  private isEventOutsideOfTargetViewPort(nativeEvent: NativeEvent) {
+  private isEventOutsideOfTargetViewPort(nativeEvent: NativeEvent, event: FederatedMouseEvent) {
     if (this.isEventOutsideOfTargetElement(nativeEvent)) {
       return true;
     }
 
     // 判断点是否在区间内
     if ((this.domElement as IWindow).getViewBox) {
-      const p = this.mapToViewportPoint(this.mapToCanvasPoint(nativeEvent as any));
+      const p = event.viewport;
       const b = (this.domElement as IWindow).getViewBox();
       const w = b.width();
       const h = b.height();

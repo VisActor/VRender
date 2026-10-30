@@ -162,6 +162,8 @@ interface IStageParams {
   disableDirtyBounds: boolean;
   // Whether to support interactiveLayer, default is true
   interactiveLayer: boolean;
+  // Interactive layer mode; omitted uses the environment default. Virtual layers share the main canvas.
+  interactiveLayerMode?: 'static' | 'virtual';
   // Whether to support HTML attributes
   enableHtmlAttribute: string | boolean | HTMLElement;
   // Whether to support react-dom (pass in ReactDOM)

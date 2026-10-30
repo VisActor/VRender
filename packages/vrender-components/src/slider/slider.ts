@@ -12,6 +12,7 @@ import type {
   IText,
   ITextGraphicAttribute,
   FederatedPointerEvent,
+  InputEventSource,
   Cursor
 } from '@visactor/vrender-core';
 import {
@@ -26,7 +27,7 @@ import {
   debounce,
   isFunction
 } from '@visactor/vutils';
-import { vglobal, CustomEvent } from '@visactor/vrender-core';
+import { CustomEvent } from '@visactor/vrender-core';
 import { graphicCreator } from '../util/graphic-creator';
 import { AbstractComponent } from '../core/base';
 import { SLIDER_ELEMENT_NAME } from './constant';
@@ -34,7 +35,6 @@ import { SLIDER_ELEMENT_NAME } from './constant';
 import type { SliderAttributes } from './type';
 import type { ComponentOptions } from '../interface';
 import { loadSliderComponent } from './register';
-import { getEndTriggersOfDrag } from '../util/event';
 
 function convertValueToRange(value: number | [number, number]) {
   if (isArray(value)) {
@@ -660,8 +660,8 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
         text: textConfig.formatter
           ? textConfig.formatter(this._tooltipState.value)
           : !this._isHorizontal && align === 'left'
-          ? `${this._tooltipState.value.toFixed(textConfig.precision ?? 0)} ≈`
-          : `≈ ${this._tooltipState.value.toFixed(textConfig.precision ?? 0)}`
+            ? `${this._tooltipState.value.toFixed(textConfig.precision ?? 0)} ≈`
+            : `≈ ${this._tooltipState.value.toFixed(textConfig.precision ?? 0)}`
       });
     }
   }
@@ -708,9 +708,6 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
       /**
        * move的时候，需要显示的设置passive: false，因为在移动端需要禁用浏览器默认行为
        */
-      (vglobal.env === 'browser' ? vglobal : this.stage).addEventListener('touchmove', this._handleTouchMove, {
-        passive: false
-      });
     }
   }
 
@@ -779,40 +776,47 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     this._dispatchTooltipEvent('sliderTooltipHide');
   };
 
+  private _inputSource?: InputEventSource;
+  private _activePointerId?: number;
+
   private _onHandlerPointerdown = (e: FederatedPointerEvent) => {
+    if (this._activePointerId !== undefined) {
+      return;
+    }
     this._clearAllDragEvents();
+    this._activePointerId = e.pointerId;
     this._isChanging = true;
     const { x, y } = this.stage.eventPointTransform(e);
     this._currentHandler = e.target as unknown as IGraphic;
     this._prePos = this._isHorizontal ? x : y;
-    const triggers = getEndTriggersOfDrag();
-    const obj = vglobal.env === 'browser' ? vglobal : this.stage;
-
-    /**
-     * move的时候，需要通过 capture: true，能够在捕获截断被拦截
-     */
-    obj.addEventListener('pointermove', this._onHandlerPointerMove, { capture: true });
-    triggers.forEach((trigger: string) => {
-      obj.addEventListener(trigger, this._onHandlerPointerUp);
-    });
+    this._bindDragEvents(this._onHandlerPointerMove);
   };
 
+  private _bindDragEvents(move: (e: FederatedPointerEvent) => void): void {
+    this._inputSource = this.stage.eventSystem.input.window;
+    this._inputSource.on('pointermove', move);
+    this._inputSource.on('pointerup', this._onHandlerPointerUp);
+    this._inputSource.on('pointercancel', this._onHandlerPointerUp);
+  }
+
   private _clearAllDragEvents() {
-    const triggers = getEndTriggersOfDrag();
-    const obj = vglobal.env === 'browser' ? vglobal : this.stage;
-
-    obj.removeEventListener('pointermove', this._onHandlerPointerMove, { capture: true });
-    triggers.forEach((trigger: string) => {
-      obj.removeEventListener(trigger, this._onHandlerPointerUp);
-    });
-
-    obj.removeEventListener('pointermove', this._onTrackPointerMove, { capture: true });
-    triggers.forEach((trigger: string) => {
-      obj.removeEventListener(trigger, this._onTrackPointerUp);
-    });
+    this._inputSource?.off('pointermove', this._onHandlerPointerMove);
+    this._inputSource?.off('pointermove', this._onTrackPointerMove);
+    this._inputSource?.off('pointerup', this._onHandlerPointerUp);
+    this._inputSource?.off('pointercancel', this._onHandlerPointerUp);
+    this._inputSource = undefined;
+    this._activePointerId = undefined;
+    this._isChanging = false;
+    this._currentHandler = null;
   }
 
   private _onHandlerPointerMove = (e: FederatedPointerEvent) => {
+    if (e.pointerId !== this._activePointerId) {
+      return;
+    }
+    if (e.pointerType === 'touch') {
+      e.preventDefault();
+    }
     this._isChanging = true;
     const { railWidth, railHeight, min, max } = this.attribute as SliderAttributes;
     if (max === min) {
@@ -852,39 +856,36 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
   };
 
   private _onHandlerPointerUp = (e: FederatedPointerEvent) => {
+    if (e.pointerId !== this._activePointerId) {
+      return;
+    }
     this._isChanging = false;
     this._currentHandler = null;
 
     this._clearAllDragEvents();
   };
 
-  private _handleTouchMove = (e: TouchEvent) => {
-    if (this._isChanging) {
-      /**
-       * https://developer.mozilla.org/zh-CN/docs/Web/CSS/overscroll-behavior
-       * 由于浏览器的overscroll-behavior属性，需要在move的时候阻止浏览器默认行为，否则会因为浏览器检测到scroll行为，阻止pointer事件，
-       * 抛出pointercancel事件，导致拖拽行为中断。
-       */
-      e.preventDefault();
-    }
-  };
-
   private _onTrackPointerdown = (e: FederatedPointerEvent) => {
+    e.stopPropagation();
+    if (this._activePointerId !== undefined) {
+      return;
+    }
     this._clearAllDragEvents();
+    this._activePointerId = e.pointerId;
     this._isChanging = true;
 
     const { x, y } = this.stage.eventPointTransform(e);
     this._prePos = this._isHorizontal ? x : y;
-    const triggers = getEndTriggersOfDrag();
-    const obj = vglobal.env === 'browser' ? vglobal : this.stage;
-
-    obj.addEventListener('pointermove', this._onTrackPointerMove, { capture: true });
-    triggers.forEach((trigger: string) => {
-      obj.addEventListener(trigger, this._onTrackPointerUp);
-    });
+    this._bindDragEvents(this._onTrackPointerMove);
   };
 
   private _onTrackPointerMove = (e: FederatedPointerEvent) => {
+    if (e.pointerId !== this._activePointerId) {
+      return;
+    }
+    if (e.pointerType === 'touch') {
+      e.preventDefault();
+    }
     this._isChanging = true;
     const { railWidth, railHeight, min, max, inverse } = this.attribute as SliderAttributes;
 
@@ -945,15 +946,11 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     this._dispatchChangeEvent();
   };
 
-  private _onTrackPointerUp = (e: FederatedPointerEvent) => {
-    this._isChanging = false;
-
-    this._clearAllDragEvents();
-  };
-
   private _onRailPointerDown = (e: FederatedPointerEvent) => {
+    if (this._activePointerId !== undefined) {
+      return;
+    }
     this._clearAllDragEvents();
-    this._isChanging = true;
     const { railWidth, railHeight, min, max } = this.attribute as SliderAttributes;
 
     if (max === min) {
@@ -1160,10 +1157,7 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     /**
      * 浏览器上的事件必须解绑，防止内存泄漏，场景树上的事件会自动解绑
      */
-    super.release(all);
-    (vglobal.env === 'browser' ? vglobal : this.stage).removeEventListener('touchmove', this._handleTouchMove, {
-      passive: false
-    });
     this._clearAllDragEvents();
+    super.release(all);
   }
 }

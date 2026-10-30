@@ -9,6 +9,7 @@ import {
 } from '@visactor/vutils';
 import type {
   IGraphic,
+  IGroup,
   IExportType,
   IStage,
   IStageParams,
@@ -33,11 +34,12 @@ import type {
   PickResult,
   IPlugin,
   IGraphicService,
-  IRenderServiceDrawParams
+  IRenderServiceDrawParams,
+  IRenderToOptions
 } from '../interface';
 import { DefaultWindow } from './window';
 import type { Layer } from './layer';
-import { EventSystem } from '../event';
+import { EventSystem, FederatedMouseEvent } from '../event';
 import { Group } from '../graphic/group';
 import { Theme } from '../graphic/theme';
 import { DefaultGlobalPickerService } from '../picker/global-picker-service';
@@ -268,7 +270,7 @@ export class Stage extends Group implements IStage {
       deps.pickerServiceFactory ??
       (deps.pickerService
         ? () => deps.pickerService as IPickerService
-        : application.pickerServiceFactory ?? (() => new DefaultGlobalPickerService()));
+        : (application.pickerServiceFactory ?? (() => new DefaultGlobalPickerService())));
     this.window = deps.window ?? this.windowFactory();
     this.renderService =
       deps.renderService ??
@@ -795,6 +797,9 @@ export class Stage extends Group implements IStage {
       canvasId
     });
     this.appendChild(layer);
+    if (this.interactiveLayer && layer !== this.interactiveLayer) {
+      this.appendChild(this.interactiveLayer);
+    }
     return layer;
     // const layer = new Layer(this, this.global, this.window, {
     //   main: false,
@@ -810,6 +815,9 @@ export class Stage extends Group implements IStage {
     children.forEach(c => {
       this.appendChild(c);
     });
+    if (this.interactiveLayer) {
+      this.appendChild(this.interactiveLayer);
+    }
   }
   removeLayer(ILayerId: number): ILayer | false {
     return this.removeChild(this.findChildByUid(ILayerId) as IGraphic) as ILayer;
@@ -818,10 +826,9 @@ export class Stage extends Group implements IStage {
     if (this.releaseStatus === 'released') {
       return;
     }
-    // TODO：顺序可能会存在问题
     // 支持交互层，且没有创建过，那就创建
     if (this.supportInteractiveLayer && !this.interactiveLayer) {
-      this.interactiveLayer = this.createLayer();
+      this.interactiveLayer = this.createLayer(undefined, this.params.interactiveLayerMode);
       this.interactiveLayer.name = '_builtin_interactive';
       this.interactiveLayer.attribute.pickable = false;
       this.nextFrameRenderLayerSet.add(this.interactiveLayer as any); // to be fixed
@@ -829,6 +836,14 @@ export class Stage extends Group implements IStage {
     // this.interactiveLayer.afterDraw(l => {
     //   l.removeAllChild();
     // });
+  }
+
+  private prepareRenderLayers(): void {
+    // The virtual handler needs a main handler before traversal; lazy creation during draw is too late.
+    if (this.params.interactiveLayerMode === 'virtual') {
+      this.tryInitInteractiveLayer();
+    }
+    this.layerService.prepareStageLayer(this);
   }
 
   clearViewBox(color?: string) {
@@ -839,14 +854,18 @@ export class Stage extends Group implements IStage {
     if (this.releaseStatus === 'released') {
       return;
     }
+    if (this.params.requestRender) {
+      this.params.requestRender();
+      return;
+    }
     this.startAnimate();
     const state = this.state;
     this.state = 'rendering';
-    this.layerService.prepareStageLayer(this);
     if (!this._skipRender) {
       this.lastRenderparams = params;
       this.hooks.beforeRender.call(this);
       if (!this._skipRender) {
+        this.prepareRenderLayers();
         this.renderLayerList(this.children as ILayer[]);
         this.combineLayersToWindow();
         this.nextFrameRenderLayerSet.clear();
@@ -887,6 +906,15 @@ export class Stage extends Group implements IStage {
   }
 
   renderNextFrame(layers?: ILayer[], force?: boolean): void {
+    if (this.releaseStatus === 'released') {
+      return;
+    }
+    if (this.params.requestRender) {
+      if (this.state !== 'rendering') {
+        this.params.requestRender();
+      }
+      return;
+    }
     // render状态中调用的不会触发nextFrame，避免loop
     // if (this.state === 'rendering' && !force) {
     //   console.log('abc');
@@ -925,10 +953,10 @@ export class Stage extends Group implements IStage {
     this.startAnimate();
     const state = this.state;
     this.state = 'rendering';
-    this.layerService.prepareStageLayer(this);
     if (this.nextFrameRenderLayerSet.size && !this._skipRender) {
       this.hooks.beforeRender.call(this);
       if (!this._skipRender) {
+        this.prepareRenderLayers();
         this.renderLayerList(Array.from(this.nextFrameRenderLayerSet.values()), this.lastRenderparams || {});
         this.combineLayersToWindow();
         this.nextFrameRenderLayerSet.clear();
@@ -1146,21 +1174,37 @@ export class Stage extends Group implements IStage {
     return layer[0] as ILayer;
   }
 
-  renderTo(window: IWindow) {
+  renderTo(
+    window: IWindow,
+    _params?: { x: number; y: number; width: number; height: number },
+    options?: IRenderToOptions
+  ) {
     if (this.releaseStatus === 'released') {
       return;
     }
-    this.forEachChildren<ILayer>((layer, i) => {
-      layer.drawTo(window, {
-        // ...params,
-        renderService: this.renderService,
-        viewBox: window.getViewBox(),
-        transMatrix: window.getViewBoxTransform(),
-        background: layer === this.defaultLayer ? this.background : undefined,
-        clear: i === 0, // 第一个layer需要clear
-        updateBounds: !!(this.dirtyBounds && !this.dirtyBounds.empty())
+    const state = this.state;
+    this.state = 'rendering';
+    try {
+      if (this.params.requestRender) {
+        this.hooks.beforeRender.call(this);
+      }
+      this.prepareRenderLayers();
+      this.forEachChildren<ILayer>((layer, i) => {
+        layer.drawTo(window, {
+          renderService: this.renderService,
+          viewBox: options?.viewBox ?? window.getViewBox(),
+          transMatrix: options?.transMatrix ?? window.getViewBoxTransform(),
+          background: layer === this.defaultLayer ? this.background : undefined,
+          clear: i === 0 && options?.clear !== false,
+          updateBounds: !!(this.dirtyBounds && !this.dirtyBounds.empty())
+        });
       });
-    });
+      if (this.params.requestRender) {
+        this.hooks.afterRender.call(this);
+      }
+    } finally {
+      this.state = state;
+    }
   }
 
   /**
@@ -1226,7 +1270,10 @@ export class Stage extends Group implements IStage {
     return this._cursor;
   }
 
-  eventPointTransform(e: PointerEvent | WheelEvent | TouchEvent): { x: number; y: number } {
+  eventPointTransform(e: PointerEvent | WheelEvent | TouchEvent | FederatedMouseEvent): { x: number; y: number } {
+    if (e instanceof FederatedMouseEvent) {
+      return { x: e.viewX, y: e.viewY };
+    }
     const point = this.global.mapToCanvasPoint(e, this.window);
 
     return this.stage.window.pointTransform(point.x, point.y);

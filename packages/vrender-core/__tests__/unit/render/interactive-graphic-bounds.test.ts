@@ -32,7 +32,7 @@ function createDrawContextStub() {
     drawContext: {
       stage: {
         tryInitInteractiveLayer: (): void => undefined,
-        getLayer: (name: string): any => (name === '_builtin_interactive' ? interactiveLayer : undefined)
+        getLayer: (): any => interactiveLayer
       }
     }
   };

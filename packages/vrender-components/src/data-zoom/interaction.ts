@@ -1,8 +1,6 @@
 import { DataZoomActiveTag, IDataZoomInteractiveEvent, type DataZoomAttributes } from './type';
-import { getEndTriggersOfDrag } from '../util/event';
 import type { IPointLike, Dict, Matrix } from '@visactor/vutils';
-import { vglobal } from '@visactor/vrender-core';
-import type { FederatedPointerEvent, IGroup, IRect, ISymbol, IStage } from '@visactor/vrender-core';
+import type { FederatedPointerEvent, InputEventSource, IGroup, IRect, ISymbol, IStage } from '@visactor/vrender-core';
 import { clamp, debounce, EventEmitter, throttle } from '@visactor/vutils';
 const delayMap = {
   debounce: debounce,
@@ -65,19 +63,32 @@ export class DataZoomInteraction extends EventEmitter {
   };
   private _spanCache: number;
 
-  private _onHandlerPointerMove: (e: FederatedPointerEvent) => void;
+  private _inputSource?: InputEventSource;
+  private _activePointerId?: number;
+  private _finishing = false;
+  private _pending = false;
+  private _pendingPoint = { x: 0, y: 0 };
+  private _scheduleMove: (() => void) & { cancel?: () => void };
+  private _delayTime = 0;
+  private _delayType = 'debounce';
 
   constructor(props: InteractionAttributes) {
     super();
-    this._initAttrs(props);
+    this._scheduleMove = this._applyPendingPoint;
+    this.setAttributes(props);
   }
 
   setAttributes(props: InteractionAttributes): void {
+    const delayTime = props.attribute.delayTime ?? 0;
+    const delayType = props.attribute.delayType ?? 'debounce';
+    if (delayTime !== this._delayTime || delayType !== this._delayType) {
+      this.clearDragEvents();
+      this._delayTime = delayTime;
+      this._delayType = delayType;
+      this._scheduleMove =
+        delayTime === 0 ? this._applyPendingPoint : delayMap[delayType](this._applyPendingPoint, delayTime);
+    }
     this._initAttrs(props);
-    this._onHandlerPointerMove =
-      (this.attribute?.delayTime ?? 0) === 0
-        ? this._pointerMove
-        : delayMap[this.attribute?.delayType ?? 'debounce'](this._pointerMove, this.attribute?.delayTime ?? 0);
   }
 
   private _initAttrs(props: InteractionAttributes) {
@@ -105,23 +116,14 @@ export class DataZoomInteraction extends EventEmitter {
   }
 
   clearDragEvents() {
-    const evtTarget = vglobal.env === 'browser' ? vglobal : this.stage;
-    const triggers = getEndTriggersOfDrag();
-
-    evtTarget.removeEventListener('pointermove', this._onHandlerPointerMove, { capture: true });
-    triggers.forEach((trigger: string) => {
-      evtTarget.removeEventListener(trigger, this._onHandlerPointerUp);
-    });
-
-    (this as unknown as IGroup).off('pointermove', this._onHandlerPointerMove, {
-      capture: true
-    });
-  }
-
-  clearVGlobalEvents() {
-    (vglobal.env === 'browser' ? vglobal : this.stage).removeEventListener('touchmove', this._handleTouchMove, {
-      passive: false
-    });
+    this._scheduleMove?.cancel?.();
+    this._pending = false;
+    this._inputSource?.off('pointermove', this._onHandlerPointerMove);
+    this._inputSource?.off('pointerup', this._onHandlerPointerUp);
+    this._inputSource?.off('pointercancel', this._onHandlerPointerCancel);
+    this._inputSource = undefined;
+    this._activePointerId = undefined;
+    this._activeState = false;
   }
 
   bindEvents(): void {
@@ -162,29 +164,18 @@ export class DataZoomInteraction extends EventEmitter {
       'pointerdown',
       (e: FederatedPointerEvent) => this._onHandlerPointerDown(e, selectedTag) as unknown as EventListener
     );
-
-    (vglobal.env === 'browser' ? vglobal : this.stage).addEventListener('touchmove', this._handleTouchMove, {
-      passive: false
-    });
   }
-  private _handleTouchMove = (e: TouchEvent) => {
-    if (this._activeState) {
-      /**
-       * https://developer.mozilla.org/zh-CN/docs/Web/CSS/overscroll-behavior
-       * 由于浏览器的overscroll-behavior属性，需要在move的时候阻止浏览器默认行为，否则会因为浏览器检测到scroll行为，阻止pointer事件，
-       * 抛出pointercancel事件，导致拖拽行为中断。
-       */
-      e.preventDefault();
-    }
-  };
 
   /**
    * 拖拽开始事件
    * @description 开启activeState + 通过tag判断事件在哪个元素上触发 并 更新交互坐标
    */
   private _onHandlerPointerDown = (e: FederatedPointerEvent, tag: string) => {
-    // 清除之前的事件，防止没有被清除掉
+    if (this._activeState || this._finishing) {
+      return;
+    }
     this.clearDragEvents();
+    this._activePointerId = e.pointerId;
     if (tag === 'start') {
       this._activeTag = DataZoomActiveTag.startHandler;
       this._activeItem = this._startHandlerMask;
@@ -204,20 +195,10 @@ export class DataZoomInteraction extends EventEmitter {
     this._activeState = true;
     this._activeCache.startPos = this._eventPosToStagePos(e);
     this._activeCache.lastPos = this._eventPosToStagePos(e);
-    const evtTarget = vglobal.env === 'browser' ? vglobal : this.stage;
-    const triggers = getEndTriggersOfDrag();
-
-    /**
-     * move的时候，需要通过 capture: true，能够在捕获截断被拦截，
-     */
-    evtTarget.addEventListener('pointermove', this._onHandlerPointerMove, { capture: true });
-    (this as unknown as IGroup).on('pointermove', this._onHandlerPointerMove, {
-      capture: true
-    });
-
-    triggers.forEach((trigger: string) => {
-      evtTarget.addEventListener(trigger, this._onHandlerPointerUp);
-    });
+    this._inputSource = this.stage.eventSystem.input.window;
+    this._inputSource.on('pointermove', this._onHandlerPointerMove);
+    this._inputSource.on('pointerup', this._onHandlerPointerUp);
+    this._inputSource.on('pointercancel', this._onHandlerPointerCancel);
   };
 
   /**
@@ -228,10 +209,29 @@ export class DataZoomInteraction extends EventEmitter {
    * 3. 在startHandler上拖拽 (activeTag === 'startHandler'): 改变lastPos、start & end + 边界处理: startHandler和endHandler交换 => render
    * 4. 在endHandler上拖拽，同上
    */
-  private _pointerMove = (e: FederatedPointerEvent) => {
+  private _onHandlerPointerMove = (e: FederatedPointerEvent) => {
+    if (e.pointerId !== this._activePointerId || this._finishing) {
+      return;
+    }
+    if (e.pointerType === 'touch') {
+      e.preventDefault();
+    }
+    this._eventPosToStagePos(e, this._pendingPoint);
+    this._pending = true;
+    this._scheduleMove();
+  };
+
+  private _applyPendingPoint = () => {
+    if (!this._pending || !this._activeState) {
+      return;
+    }
+    this._pending = false;
+    this._pointerMove(this._pendingPoint);
+  };
+
+  private _pointerMove = (pos: IPointLike) => {
     const { brushSelect } = this.attribute as DataZoomAttributes;
     const { position } = this._getLayoutAttrFromConfig();
-    const pos = this._eventPosToStagePos(e);
 
     const { attPos, size, attSize } = this._layoutCache;
     const dis = (pos[attPos] - this._activeCache.lastPos[attPos]) / size;
@@ -251,7 +251,8 @@ export class DataZoomInteraction extends EventEmitter {
         shouldRender = false;
         this._dispatchEvent(IDataZoomInteractiveEvent.maskUpdate);
       }
-      this._activeCache.lastPos = pos;
+      this._activeCache.lastPos.x = pos.x;
+      this._activeCache.lastPos.y = pos.y;
     }
 
     // 避免attributes相同时, 重复渲染
@@ -353,36 +354,42 @@ export class DataZoomInteraction extends EventEmitter {
    * 拖拽结束事件
    * @description 关闭activeState + 边界情况处理: 防止拖拽后start和end过近
    */
-  private _onHandlerPointerUp = (e: FederatedPointerEvent) => {
-    if (this._activeState) {
-      // brush的时候, 只改变了state, 没有触发重新渲染, 在抬起鼠标时触发
-      if (this._activeTag === DataZoomActiveTag.background) {
-        this._setStateAttr(this._getState().start, this._getState().end);
+  private _onHandlerPointerUp = (e: FederatedPointerEvent) => this._finish(e, false);
+  private _onHandlerPointerCancel = (e: FederatedPointerEvent) => this._finish(e, true);
+
+  private _finish(e: FederatedPointerEvent, cancel: boolean): void {
+    if (e.pointerId !== this._activePointerId || this._finishing) {
+      return;
+    }
+    this._finishing = true;
+    try {
+      this._scheduleMove.cancel?.();
+      if (!cancel) {
+        this._applyPendingPoint();
+      }
+      const tag = this._activeTag;
+      this.clearDragEvents();
+      if (tag === DataZoomActiveTag.background) {
         this._dispatchEvent(IDataZoomInteractiveEvent.stateUpdate, {
-          start: this._getState().start,
-          end: this._getState().end,
+          ...this._getState(),
           shouldRender: true,
-          tag: this._activeTag
+          tag
         });
       }
+      // Cancellation retains applied values; delayed samples are discarded. realTime=false still commits.
+      this._dispatchEvent(IDataZoomInteractiveEvent.dataZoomUpdate, {
+        ...this._getState(),
+        shouldRender: true,
+        tag
+      });
+    } finally {
+      this.clearDragEvents();
+      this._finishing = false;
     }
-    this._activeState = false;
-    // 此次dispatch不能被省略
-    // 因为pointermove时, 已经将状态更新至最新, 所以在pointerup时, 必定start = state.start & end = state.end
-    // 而realTime = false时, 需要依赖这次dispatch来更新图表图元
-    this._dispatchEvent(IDataZoomInteractiveEvent.dataZoomUpdate, {
-      start: this._getState().start,
-      end: this._getState().end,
-      shouldRender: true,
-      tag: this._activeTag
-    });
-
-    this.clearDragEvents();
-  };
+  }
 
   /** 事件系统坐标转换为stage坐标 */
-  private _eventPosToStagePos(e: FederatedPointerEvent) {
-    const result = { x: 0, y: 0 };
+  private _eventPosToStagePos(e: FederatedPointerEvent, result = { x: 0, y: 0 }) {
     // 1. 外部坐标 -> 内部坐标
     const stagePoints = this.stage?.eventPointTransform(e as any) ?? { x: 0, y: 0 }; // updateSpec过程中交互的话, stage可能为空
     // 2. 内部坐标 -> 组件坐标 (比如: 给layer设置 scale / x / y)

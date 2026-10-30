@@ -1,4 +1,5 @@
 import type { INode } from './node-tree';
+import type { IGroup } from './graphic/group';
 import type { ILayer, LayerMode } from './layer';
 import type { IColor } from './color';
 import type { IAABBBounds, IBounds, IBoundsLike, IMatrix } from '@visactor/vutils';
@@ -21,6 +22,14 @@ export type IExportType = 'canvas' | 'imageData';
 export type IStageCreateContext = {
   appName?: 'vchart' | 'vgrammar' | 'vtable' | string;
 };
+/** Options for drawing a stage into another window. Omitted fields use the target window geometry. */
+export interface IRenderToOptions {
+  viewBox?: IBounds;
+  transMatrix?: IMatrix;
+  /** Clear the destination before the first layer. Defaults to true. */
+  clear?: boolean;
+}
+
 export interface IStageParams {
   // x: number;
   // y: number;
@@ -51,8 +60,12 @@ export interface IStageParams {
   enableLayout: boolean;
   // 是否关闭脏矩形检测
   disableDirtyBounds: boolean;
-  // 是否支持interactiveLayer，默认为true
+  // 是否支持独立交互 Layer，默认为 true。
   interactiveLayer: boolean;
+  /** 交互层的渲染模式；缺省沿用环境默认，virtual 复用主层 Canvas，在首帧准备前创建。 */
+  interactiveLayerMode?: 'static' | 'virtual';
+  /** Delegate invalidation to an external compositor; paint explicitly with renderTo. */
+  requestRender?: () => void;
   // 是否支持HTML属性
   enableHtmlAttribute: string | boolean | HTMLElement;
   // 是否支持react-dom(传入ReactDOM)
@@ -98,6 +111,8 @@ export interface IStageParams {
 }
 
 export type EventConfig = {
+  /** 设为 false 时保留事件管理器，由宿主输入事件，不绑定默认 DOM 监听。 */
+  useNativeEvents?: boolean;
   /** 是否自动阻止事件 */
   autoPreventDefault?: boolean;
   /**
@@ -224,7 +239,12 @@ export interface IStage extends INode {
   dirty: (b: IBounds, matrix?: IMatrix) => void;
   // 考虑操作回放
 
-  renderTo: (window: IWindow, params: { x: number; y: number; width: number; height: number }) => void;
+  // The legacy rectangle argument is retained unchanged; drawing options belong to the third argument.
+  renderTo: (
+    window: IWindow,
+    params?: { x: number; y: number; width: number; height: number },
+    options?: IRenderToOptions
+  ) => void;
 
   renderToNewWindow: (fullImage?: boolean) => IWindow;
 

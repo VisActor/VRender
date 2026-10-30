@@ -417,16 +417,26 @@ export class InteractiveDrawItemInterceptorContribution implements IDrawItemInte
       this.processing = true;
       const { context } = drawContext;
       context.highPerformanceSave();
-      // 直接transform
-      context.setTransformFromMatrix(baseGraphic.parent.globalTransMatrix, true);
-      // context.fillRect(0, 0, 100, 100);
-      // 设置context的transform到上一个节点
-      baseGraphic.isContainer
-        ? drawContribution.renderGroup(baseGraphic as IGroup, drawContext, baseGraphic.parent.globalTransMatrix)
-        : drawContribution.renderItem(baseGraphic, drawContext);
-
-      context.highPerformanceRestore();
-      this.processing = false;
+      // renderTo 的目标变换必须同时作用于提升后的图元；不修改原图元祖先矩阵。
+      const parent = baseGraphic.parent.globalTransMatrix;
+      const matrix = matrixAllocate.allocateByObj(parent);
+      if (drawContext.transMatrix) {
+        const outer = drawContext.transMatrix;
+        matrix.setValue(outer.a, outer.b, outer.c, outer.d, outer.e, outer.f);
+        matrix.multiply(parent.a, parent.b, parent.c, parent.d, parent.e, parent.f);
+      }
+      try {
+        context.setTransformFromMatrix(matrix, true);
+        // context.fillRect(0, 0, 100, 100);
+        // 设置context的transform到上一个节点
+        baseGraphic.isContainer
+          ? drawContribution.renderGroup(baseGraphic as IGroup, drawContext, matrix)
+          : drawContribution.renderItem(baseGraphic, drawContext);
+      } finally {
+        context.highPerformanceRestore();
+        matrixAllocate.free(matrix);
+        this.processing = false;
+      }
 
       return true;
     }

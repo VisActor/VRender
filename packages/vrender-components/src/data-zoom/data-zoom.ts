@@ -196,8 +196,8 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     /**
      * 浏览器上的事件必须解绑，防止内存泄漏，场景树上的事件会自动解绑
      */
-    super.release(all);
     this._interaction.clearDragEvents();
+    super.release(all);
   }
 
   /** 外部重置组件的起始状态 */

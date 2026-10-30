@@ -162,6 +162,8 @@ interface IStageParams {
   disableDirtyBounds: boolean;
   // 是否支持interactiveLayer，默认为true
   interactiveLayer: boolean;
+  // 交互层模式；缺省沿用环境默认。virtual 复用主层 Canvas。
+  interactiveLayerMode?: 'static' | 'virtual';
   // 是否支持HTML属性
   enableHtmlAttribute: string | boolean | HTMLElement;
   // 是否支持react-dom(传入ReactDOM)

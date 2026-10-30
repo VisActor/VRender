@@ -2,6 +2,7 @@ import { DataZoomActiveTag, IDataZoomInteractiveEvent, type DataZoomAttributes }
 import type { IPointLike, Dict, Matrix } from '@visactor/vutils';
 import type { FederatedPointerEvent, InputEventSource, IGroup, IRect, ISymbol, IStage } from '@visactor/vrender-core';
 import { clamp, debounce, EventEmitter, throttle } from '@visactor/vutils';
+import { DEFAULT_DATA_ZOOM_ATTRIBUTES } from './config';
 const delayMap = {
   debounce: debounce,
   throttle: throttle
@@ -69,8 +70,8 @@ export class DataZoomInteraction extends EventEmitter {
   private _pending = false;
   private _pendingPoint = { x: 0, y: 0 };
   private _scheduleMove: (() => void) & { cancel?: () => void };
-  private _delayTime = 0;
-  private _delayType = 'debounce';
+  private _delayTime = DEFAULT_DATA_ZOOM_ATTRIBUTES.delayTime;
+  private _delayType = DEFAULT_DATA_ZOOM_ATTRIBUTES.delayType;
 
   constructor(props: InteractionAttributes) {
     super();
@@ -79,15 +80,16 @@ export class DataZoomInteraction extends EventEmitter {
   }
 
   setAttributes(props: InteractionAttributes): void {
-    const delayTime = props.attribute.delayTime ?? 0;
-    const delayType = props.attribute.delayType ?? 'debounce';
-    if (delayTime !== this._delayTime || delayType !== this._delayType) {
+    const delayTime = props.attribute.delayTime ?? DEFAULT_DATA_ZOOM_ATTRIBUTES.delayTime;
+    const delayType = props.attribute.delayType ?? DEFAULT_DATA_ZOOM_ATTRIBUTES.delayType;
+    // 零延迟时 delayType 不影响调度，等价的属性更新应保留正在进行的拖拽。
+    if (delayTime !== this._delayTime || (delayTime !== 0 && delayType !== this._delayType)) {
       this.clearDragEvents();
-      this._delayTime = delayTime;
-      this._delayType = delayType;
       this._scheduleMove =
         delayTime === 0 ? this._applyPendingPoint : delayMap[delayType](this._applyPendingPoint, delayTime);
     }
+    this._delayTime = delayTime;
+    this._delayType = delayType;
     this._initAttrs(props);
   }
 

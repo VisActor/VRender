@@ -5,6 +5,7 @@ import { loadBrowserEnv } from '@visactor/vrender-kits';
 import { vglobal } from '@visactor/vrender-core';
 import { Matrix } from '@visactor/vutils';
 import { Slider } from '@visactor/vrender-components';
+/** @type {Array<{ name: string, pass: boolean, detail: unknown }>} */
 let results;
 const check = (name, ok, detail) => {
   results.push({ name, pass: !!ok, detail });
@@ -15,6 +16,7 @@ function setup(component, defaults = false, extra = {}, defer = false) {
   document.body.appendChild(canvas);
   const stage = createStage({
     canvas,
+    canvasControled: true,
     width: 400,
     height: 180,
     dpr: devicePixelRatio,
@@ -28,9 +30,11 @@ function setup(component, defaults = false, extra = {}, defer = false) {
   if (!defer) stage.render();
   const sys = stage.eventSystem;
   function send(type, x, y, id = 1, inside = true) {
+    // fixture 的输入统一为画布局部坐标，不依赖 Electron 页面自身的 DOM 布局。
+    const rect = defaults ? canvas.getBoundingClientRect() : null;
     const ev = new PointerEvent(type, {
-      clientX: x,
-      clientY: y,
+      clientX: x + (rect ? rect.left : 0),
+      clientY: y + (rect ? rect.top : 0),
       pointerId: id,
       pointerType: 'mouse',
       button: 0,
@@ -239,6 +243,80 @@ export async function runHostInputChecks() {
         );
         a.release();
       }
+
+  // 布局回写不能中断拖拽；必须继续到达第二个目标，而不是仅验证范围曾经变化。
+  for (const native of [false, true]) {
+    for (const orient of ['bottom', 'right']) {
+      for (const realTime of [false, true]) {
+        for (const { delayType, delayTime } of [
+          { delayType: undefined, delayTime: 0 },
+          { delayType: 'throttle', delayTime: 0 },
+          { delayType: 'debounce', delayTime: 0 },
+          // 非零延迟也必须将缺省类型解析为组件默认的 throttle。
+          { delayType: undefined, delayTime: 30 }
+        ]) {
+          const horizontal = orient === 'bottom';
+          const component = new DataZoom({
+            position: { x: 30, y: 30 },
+            size: horizontal ? { width: 300, height: 50 } : { width: 50, height: 120 },
+            orient,
+            start: 0.2,
+            end: 0.8,
+            realTime,
+            delayTime
+          });
+          const a = setup(component, native);
+          try {
+            let updated = false;
+            let latest;
+            const updateLayout = () => {
+              updated = true;
+              component.setAttributes({
+                start: component._state.start,
+                end: component._state.end,
+                delayType,
+                delayTime
+              });
+            };
+            component.addEventListener('dataZoomChange', e => {
+              latest = { start: e.detail.start, end: e.detail.end };
+              if (realTime && !updated) updateLayout();
+            });
+            const send = a.send;
+            const pos = center(node(a, 'startHandlerMask'));
+            const layout = component.getLayoutAttrFromConfig();
+            const point = value =>
+              horizontal
+                ? [layout.position.x + layout.width * value, pos[1]]
+                : [pos[0], layout.position.y + layout.height * value];
+            send('pointerdown', ...pos);
+            send('pointermove', ...point(0.3));
+            const name = `${native}-${orient}-${realTime}-${delayType}-${delayTime}`;
+            check(`zoom-layout-first-${name}`, Math.abs(component._state.start - 0.3) < 1e-6 && (realTime || !latest), {
+              state: component._state,
+              latest
+            });
+            // realTime=false 没有中途公开事件，直接模拟上层布局回写。
+            if (!realTime) updateLayout();
+            send('pointermove', ...point(0.6));
+            send('pointerup', ...point(0.6));
+            check(
+              `zoom-layout-update-${name}`,
+              updated && latest && Math.abs(latest.start - 0.6) < 1e-6 && Math.abs(latest.end - 0.8) < 1e-6,
+              { latest, expected: [0.6, 0.8] }
+            );
+            send('pointermove', ...point(0.7));
+            if (delayTime) await new Promise(resolve => setTimeout(resolve, delayTime * 2));
+            check(`zoom-layout-ended-${name}`, Math.abs(component._state.start - 0.6) < 1e-6, {
+              state: component._state
+            });
+          } finally {
+            a.release();
+          }
+        }
+      }
+    }
+  }
 
   // Logical canvas scope must not follow scenegraph sibling boundaries.
   {

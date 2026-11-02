@@ -1,3 +1,20 @@
+# v1.1.13
+
+2026-10-30
+
+
+**What's Changed**
+
+* [Auto changelog] changlog of v1.1.12 by @github-actions[bot] in https://github.com/VisActor/VRender/pull/2144
+* [Auto Sync] Sync the code from branch main to branch develop after release 1.1.12 by @github-actions[bot] in https://github.com/VisActor/VRender/pull/2145
+* feat: support host-driven stage composition and pointer cancellation by @g1f9 in https://github.com/VisActor/VRender/pull/2146
+* [Auto release] release 1.1.13 by @github-actions[bot] in https://github.com/VisActor/VRender/pull/2147
+
+
+**Full Changelog**: https://github.com/VisActor/VRender/compare/v1.1.12...v1.1.13
+
+[more detail about v1.1.13](https://github.com/VisActor/VRender/releases/tag/v1.1.13)
+
 # v1.1.12
 
 2026-10-13

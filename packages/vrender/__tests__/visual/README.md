@@ -2,6 +2,8 @@
 
 在 Chromium 中对当前工作区和官方 `VisActor/VRender develop` 的构建逐例比较。两侧使用冻结的同一套用例和断言，仅替换 SDK。协议沿用 VChart/VTable 串行运行器：完整 SHA、逐侧依赖校验、两侧构建、原生 Playwright 比较和可搬迁报告。首期 6 项代表用例，不代表 VRender 全功能、多浏览器或多端通过；不替代单测和 BugServer Photo。
 
+运行器与报告基础复用 VChart `0b14ff87f9cc3970248c26f4ce9ecd50d9d82262` 的串行实现，仅适配 VRender 构建和页面。后续协议修复应对照两仓同步，不另建共享运行时服务。
+
 ## 准备与运行
 
 使用 Node.js 22 或 24（产品 CI 使用 24），安装锁文件依赖和 Playwright 1.63.0 对应 Chromium；Linux 还需要浏览器系统库。

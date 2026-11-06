@@ -117,8 +117,8 @@ for (const metadata of cases.filter(item => selectedIds.includes(item.id))) {
         throw error;
       }
     } finally {
-      // 显式释放图表，浏览器 context 由 Playwright fixture 自动回收。
-      await page.evaluate(() => window.__visualChart?.release()).catch(() => {});
+      // 显式释放 Stage，浏览器 context 由 Playwright fixture 自动回收。
+      await page.evaluate(() => window.__visualStage?.release()).catch(() => {});
     }
   });
 }

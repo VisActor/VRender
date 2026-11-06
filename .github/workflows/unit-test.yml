@@ -41,6 +41,8 @@ jobs:
         run: node common/scripts/install-run-rush.js update --bypass-policy
       - name: Install rush
         run: node common/scripts/install-run-rush.js install --bypass-policy
+      - name: Visual runner contract tests
+        run: node --test packages/vrender/scripts/visual-test.test.mjs
       - name: Source tests (without build artifacts)
         run: node common/scripts/install-run-rush.js test --only tag:package
       - run: node common/scripts/install-run-rush.js build --only tag:package

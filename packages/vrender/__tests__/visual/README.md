@@ -18,6 +18,8 @@ node packages/vrender/scripts/visual-test.mjs --case picking-events
 node packages/vrender/scripts/visual-test.mjs --baseline <完整40位SHA>
 node packages/vrender/scripts/visual-test.mjs
 node --test packages/vrender/scripts/visual-test.test.mjs
+# 使用已经通过的真实报告执行负对照（不改源码/标准图）
+VRENDER_VISUAL_FIXTURE=<报告绝对目录> node --test packages/vrender/scripts/visual-negative.test.mjs
 ```
 
 不传筛选参数运行清单全部用例；`--case` 和 `--dir` 互斥，`--dir` 按用例子目录选择（首批用例位于根目录）。默认从固定官方地址获取 develop，fork origin 不参与解析。`--self-compare` 使用同一构建、两个浏览器上下文，仅用于确定性检查，不是正式 head/base 验证。SDK 使用既有 bundler，依次构建 core、kits、animate、components 的 ES 及主包 UMD；不会修改产品运行时代码。

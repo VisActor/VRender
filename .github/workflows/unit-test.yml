@@ -26,6 +26,9 @@ jobs:
       #   run: |
       #     fc-list
 
+      - name: Photo CI handoff contract tests
+        run: node --test .github/scripts/bug-server-gray-scope.test.cjs
+
       # Install rush
       - name: Install native deps for node-canvas (macOS)
         if: runner.os == 'macOS'

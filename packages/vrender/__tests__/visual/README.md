@@ -55,4 +55,4 @@ VRENDER_VISUAL_FIXTURE=<报告绝对目录> node --test packages/vrender/scripts
 
 在 `cases/` 新增模块并在 `cases/index.mjs` 显式登记稳定 ID、中文目的和文件路径。模块必须可被 Node/浏览器导入：`createSpec(VRender, stage)` 创建图形并返回供断言使用的对象；可选 `exercise(page)` 执行交互；`verify(page)` 核对真实业务结果。仅明确的业务不符使用 `assertionError`，不得把资源/浏览器异常包装成业务失败。新增后运行自检、自比较和冻结基线比较，并证明可见变化/错误行为能被检测。
 
-本入口合入不代表 AI PR 工作流已上线。当前不改变旧 Photo CI、GitHub 发布权限或生产调度；正式切流另行验收与授权。
+本入口合入不代表 AI PR 工作流已上线。旧 Photo CI 已准备独立的 `gray-scope` 判断，`VISACTOR_WORKFLOW_INTERNAL_SINCE` 未配置时保持原有触发。启用后仅交接仓库 ID 649514587、同仓、目标 develop 且创建时间晚于起点的新 PR；新 Draft 同样交接并由 Bot 等待 ready。存量、fork、其他目标、main push 和维护者手动入口保持原职责。起点或仓库身份非法时停止旧构建，避免重复派发。该变量必须与 Bot discovery.createdAfter、BugServer 服务身份 internalSince 一致，并在起点前完成存量快照；本提交不设置变量或变更生产调度，正式切流另行验收与授权。

@@ -1,8 +1,10 @@
 # Contributing
 
+[简体中文](./CONTRIBUTING.zh-CN.md)
+
 ## Code of Conduct
 
-We has adopted [the Contributor Covenant](CODE_OF_CONDUCT.md) as our Code of Conduct, and we expect project participants to adhere to it. Please read the full text so that you can understand what actions will and will not be tolerated.
+We have adopted [the Contributor Covenant](CODE_OF_CONDUCT.md) as our Code of Conduct, and we expect project participants to adhere to it. Please read the full text so that you can understand what actions will and will not be tolerated.
 
 ## Open Development
 
@@ -14,25 +16,19 @@ VRender follows [semantic versioning](https://semver.org/). We release patch ver
 
 Every significant change is documented in the changelog file.
 
-## Release Schedule
+## Branch organization
 
-<!-- TODO -->
-
-## Branch Organization
-
-Submit all changes directly to the main branch. We don’t use separate branches for development or for upcoming releases. We do our best to keep main in good shape, with all tests passing.
-
-Code that lands in main must be compatible with the latest stable release. It may contain additional features, but no breaking changes. We should be able to release a new minor version from the tip of main at any time.
+Create a branch from `develop` and target `develop` for normal fixes and features. Coordinate release or other target branches with maintainers; do not push directly to the base branch. Preserve public API compatibility and record user-visible changes. Maintainers decide release timing.
 
 ## Bugs
 
-We are using [GitHub Issues](todo) for our public bugs. We keep a close eye on this and try to make it clear when we have an internal fix in progress. Before filing a new task, try to make sure your problem doesn’t already exist.
+We are using [GitHub Issues](https://github.com/VisActor/VRender/issues) for our public bugs. We keep a close eye on this and try to make it clear when we have an internal fix in progress. Before filing a new task, try to make sure your problem doesn’t already exist.
 
-We have already prepared issue templates for bug reports and feature requests. If you want to fire an issue, just enter the [New issue](todo) page and select either of them to get started. The best way to get your bug fixed is by using our issue template and provide reproduction steps with this [template](todo).
+We have already prepared issue templates for bug reports and feature requests. If you want to fire an issue, just enter the [New issue](https://github.com/VisActor/VRender/issues/new/choose) page and select either of them to get started. The best way to get your bug fixed is by using our issue template and provide reproduction steps with this [template](https://github.com/VisActor/VRender/issues/new/choose).
 
 ## Proposing a Change
 
-If you intend to change the public API, or make any non-trivial changes to the implementation, we recommend filing an issue, or just enter the [New issue](todo) page and select either of them to get started.
+If you intend to change the public API, or make any non-trivial changes to the implementation, we recommend filing an issue, or just enter the [New issue](https://github.com/VisActor/VRender/issues/new/choose) page and select either of them to get started.
 
 If you’re only fixing a bug, it’s fine to submit a pull request right away but we still recommend to file an issue detailing what you’re fixing. This is helpful in case we don’t accept that specific fix but want to keep track of the issue.
 
@@ -40,7 +36,7 @@ If you’re only fixing a bug, it’s fine to submit a pull request right away b
 
 Working on your first Pull Request? You can learn how from this free video series:[How to Contribute to an Open Source Project on GitHub](https://egghead.io/courses/how-to-contribute-to-an-open-source-project-on-github)
 
-To help you get your feet wet and get you familiar with our contribution process, we have a list of [good first issues](todo) that contain bugs that have a relatively limited scope. This is a great place to get started.
+To help you get your feet wet and get you familiar with our contribution process, we have a list of [good first issues](https://github.com/VisActor/VRender/issues?q=is%3Aopen+label%3A%22good+first+issue%22) that contain bugs that have a relatively limited scope. This is a great place to get started.
 
 If you decide to fix an issue, please be sure to check the comment thread in case somebody is already working on a fix. If nobody is working on it at the moment, please leave a comment stating that you intend to work on it so other people don’t accidentally duplicate your effort.
 
@@ -50,29 +46,73 @@ If somebody claims an issue but doesn’t follow up for more than two weeks, it�
 
 The core team is monitoring for pull requests. We will review your pull request and either merge it, request changes to it, or close it with an explanation. We’ll do our best to provide updates and feedback throughout the process.
 
-**Before submitting a pull request**, please make sure the following is done:
+## Local development and validation
 
-1. Fork the [repository](todo) and create your branch from `main`.
-2. (If rush has been install, just go to step 3) global install [@microsoft/rush](https://rushjs.io/pages/intro/get_started/)：`npm i --global @microsoft/rush`.
-3. Run `rush update --full` in the repository root.
-4. If you’ve fixed a bug or added code that should be tested, add tests!
-5. Ensure the test suite passes (`rush test`). Tip: `rush test -- --watch TestName` is helpful in development.
-6. Make sure your code lints (`rush lint`). Tip: Lint runs automatically when you git commit (Use Git Hooks).
-7. Run `rush compile` for typecheck.
+Use Node.js 24 to match current product CI; the visual runtime is validated on Node22/24. Install the system libraries needed by `canvas`. Reinstall native dependencies when switching Node majors rather than reusing the wrong ABI. Keep the lockfile for ordinary installation; use Rush update only for intentional dependency changes and review its diff.
 
-## Development Workflow
+Run from the repository root:
 
-VRender development is verified against Node.js `20`, `22`, and `24`. We recommend using Node.js `24` for day-to-day local development.
+```sh
+node common/scripts/install-run-rush.js install --ignore-hooks
+node common/scripts/install-run-rush.js test --only tag:package
+node common/scripts/install-run-rush.js build --only tag:package
+node common/scripts/install-run-rush.js test:artifacts --only tag:package
+node common/scripts/install-run-rush.js compile --only tag:package
+node common/scripts/install-run-rush.js eslint --only tag:package
+```
 
-If you switch between Node.js major versions, make sure to rebuild native dependencies such as `canvas`:
+These commands cover CI's source and artifact checks plus type/style validation; they do not claim all checks pass in your environment. ESLint may modify files, so inspect the diff. Focus on affected packages during development and include their callers for cross-package changes. Start the main package browser examples with `node common/scripts/install-run-rush.js start`. Unit tests do not replace the full visual comparison below. Use Conventional Commits and supply changelog entries required by the repository's release process.
 
-1. `node common/scripts/install-run-rush.js purge`
-2. `node common/scripts/install-run-rush.js install --bypass-policy`
+## PR checks and merge process
 
-After cloning VRender, run `node common/scripts/install-run-rush.js update --bypass-policy` to fetch its dependencies. Then, you can run several commands:
+**Activation snapshot (2026-11-06):** the advisory workflow was enabled at **2026-11-06 17:05 Asia/Shanghai (UTC+8)**. Integration: [#2154](https://github.com/VisActor/VRender/pull/2154). Activation and a designated PR validation do not establish long-term reliability; the first natural PR and at least 24 hours/3 natural executions remain to be observed.
 
-1. `rush run -p @internal/dev-demos -s start` runs VRender test page locally.
-2. `rush eslint` checks the code style.
-3. `rush test` runs the complete test suite.
-4. `rush run -p <project_name> -s <script>` run the specified script for the specified project, eg. `rush run -p @visActor/VRender -s start`
-5. `rush prettier --dir <project_relative_path> --ext <file_type>` prettier the specified script for the specified project, eg. `rush prettier --dir packages/VRender --ext ts`
+### Scope
+
+The workflow handles non-draft PRs created after initialization and strictly after the cutoff, with both branches in `VisActor/VRender`, targeting `develop`. “Internal” means same-repository branches, not employee status. Eligible new drafts enter after Ready for review. Existing PRs, forks and out-of-scope PRs are not backfilled by updates, reopening or changing draft status. Do not recreate a PR to bypass this boundary.
+
+Stable CR and GitHub Actions have independent scopes. Stable CR covers new and revised non-draft PRs across the repository after its initial baseline; the advisory workflow's branch restrictions do not narrow CR. Missing workflow output does not waive tests or human review. Legacy Photo CI handles unclaimed PRs and push events only under its existing triggers; maintainers coordinate screenshot ownership, so do not dispatch a duplicate batch.
+
+### Before submitting
+
+- Run relevant unit tests, build/type and style checks. For features, fixes or coverage gaps, add deterministic regression cases or strengthen existing ones. Interactions must exercise real actions and assert the resulting state.
+- For product, rendering, interaction, dependency or visual-case changes, run the default full comparison in the [visual guide](packages/vrender/__tests__/visual/README.md) before submitting. Focused cases/directories help during development; self-comparison only checks determinism and cannot replace the official baseline comparison. “Full” means the current manifest, not all product behavior.
+- For documentation-only changes, check links, commands, versions and actual behavior. Explain why product tests were not run; do not manually rerun models or dispatch Photo just for documentation. Existing CI and automated workflow triggers still apply after submission.
+- Report commands, outcomes, report scope, head/base when available, expected visual changes, skipped checks and blockers. Errors are not passes. Do not skip assertions, relax thresholds or replace baselines to hide failures.
+- Follow the [case authoring guide](packages/vrender/__tests__/visual/cases/README.md). Only administrators of the corresponding product may create platform cases; other contributors supply reproduction material. Never invent IDs. See [BugServer case collaboration](packages/vrender/__tests__/visual/BUGSERVER_CASE_WORKFLOW.md) (Chinese).
+
+### After submitting
+
+Check the current head, comparison base and report version before reading the Bot Review, Actions runs and PR summary. The three automated recommendations are CR, unit tests and Playwright; other repository CI checks may also apply.
+
+| Result | Action |
+| --- | --- |
+| CR Review | Fix findings or provide evidence; closing a discussion does not prove a fix |
+| Unit tests | Check `unit-test.yml`, the `build` job, `Source tests (without build artifacts)` and `Published artifact tests`; missing, skipped, running or failed results are not passes |
+| Playwright | Inspect full comparison images, assertions and difference analysis; execution errors are not acceptable visual changes |
+| BugServer Photo | Automatically executed, manually reviewed, report-only; differences, missing baselines, errors and incomplete results remain visible without blocking the three recommendations |
+
+Passing all three checks or reaching completed does not mean every Photo test passed. Contributors without platform access should request maintainer help; do not publish internal reports, business data, private logs or credentials.
+
+### Status and next action
+
+| Summary status | Action |
+| --- | --- |
+| Queued / running | Wait for the current stage; no result is not a pass |
+| Changes or investigation needed | Fix the issue, add coverage or provide verifiable evidence |
+| Blocked | Read the action item; ask maintainers about permissions, services or recovery |
+| Awaiting approval | Maintainer checks all three results and manually reviews Photo for the current revision |
+| Awaiting merge | A valid current-commit approval was recognized; a maintainer merges manually |
+| Merged / baseline processing | Wait for cleanup; skipping automatic baseline updates is expected in report-only mode |
+| Completed | Workflow cleanup finished; original Photo differences and errors remain |
+| Superseded / closed without merge | Read the new revision's result, or treat the PR as unmerged; neither implies a baseline update |
+
+A new head or comparison base requires version checks and necessary reruns. Old results cannot prove the new revision passed; a new commit needs its own valid approval. If a summary is missing, check repository, target, creation time, draft status before contacting maintainers.
+
+### Approval, merge and recovery
+
+The workflow recognizes a valid GitHub Approve from a repository Maintain/Admin user for the **current commit**, including their manual Photo verification. The Bot never approves or merges. GitHub protection rules and other checks still apply; the workflow does not add required Checks or change branch protection.
+
+Automatic Photo difference assessment and baseline updates are paused. Approve/Merge does not authorize automatic adoption of screenshots. Early merge does not turn incomplete or failed checks into passes. Shared baseline changes require separate explicit authorization, administrator review and a new verification; retain original reports.
+
+For help, provide the PR, current SHA, Review/CI links and a public-safe error description. Do not edit managed summaries or hidden markers, repeatedly reopen PRs, delete state, change request IDs or dispatch duplicate batches. Maintainers recover the original task. Stop test servers, browsers and child processes you started when finished.

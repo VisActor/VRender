@@ -110,7 +110,7 @@ VRender 是底层可视化渲染库，工程基准应优先服务“正确调用
 
 面向 agent / 维护者的长期项目知识库入口在：
 
-- [Agent 文档入口](/Users/bytedance/Documents/GitHub/VRender2/docs/agent/README.md)
+- [Agent 文档入口](./docs/agent/README.md)
 
 `docs/agent/` 用于快速了解当前代码结构、模块边界、owner 判断、运行时装配和验证入口。它不替代本文件的操作约束，也不承诺 public API；公开 API 仍以 package exports、README、用户文档和类型定义为准。
 
@@ -135,15 +135,15 @@ VRender 是底层可视化渲染库，工程基准应优先服务“正确调用
 
 对 D3 状态引擎重构，统一入口在：
 
-- [state-engine README](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/README.md)
+- [state-engine README](./docs/refactor/state-engine/README.md)
 
 ### 5.3 归档与后续项
 
 如果需要快速了解 D3 项目整体结论、归档入口和保留问题，可查看：
 
-- [D3 最终总结](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_FINAL_SUMMARY.md)
-- [D3 归档索引](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_ARCHIVE_INDEX.md)
-- [D3 后续项](/Users/bytedance/Documents/GitHub/VRender2/docs/refactor/state-engine/D3_FOLLOWUPS.md)
+- [D3 最终总结](./docs/refactor/state-engine/D3_FINAL_SUMMARY.md)
+- [D3 归档索引](./docs/refactor/state-engine/D3_ARCHIVE_INDEX.md)
+- [D3 后续项](./docs/refactor/state-engine/D3_FOLLOWUPS.md)
 
 这些文档是归档/导航材料，不是新的规范源。
 
@@ -156,3 +156,12 @@ VRender 是底层可视化渲染库，工程基准应优先服务“正确调用
   - React 绑定层适配问题
 - 提交前注意工作区里是否混有本地辅助文件；这类文件不应默认进仓。
 - 如果需要给后续 agent 留长期有效的信息，应优先更新正式文档、README、归档索引或本文件，而不是重新引入“记忆文件”。
+
+## 7. PR 工作流与视觉用例
+
+- 提交前阅读[贡献指南](./CONTRIBUTING.zh-CN.md#pr-检查与合入流程)，常规PR目标为develop；正式工作流仅接管符合起点的同仓新PR，稳定CR有独立范围。
+- 产品、依赖或视觉用例变更先完成受影响包的单测/类型检查，再运行默认全量：`node packages/vrender/scripts/visual-test.mjs`。开发阶段可跑单例或目录；自比较仅验证稳定性，不能代替官方develop比较。纯文档检查链接、命令与实际状态，说明未运行测试即可。
+- 新功能、缺陷修复和覆盖空缺补充确定性回归；按[用例指南](./packages/vrender/__tests__/visual/cases/README.md)登记，真实交互必须有业务断言。执行错误如实记录，不放宽阈值、跳过断言或替换基准。
+- 平台Photo用例遵循[管理员协作流程](./packages/vrender/__tests__/visual/BUGSERVER_CASE_WORKFLOW.md)，不编造caseId，不认为本地和平台自动同步。
+- 处理Bot反馈先核对当前head/base和报告范围；Photo由维护者人工核查，report-only/流程完成不等于全部通过。不得自行Approve/Merge、编辑受管摘要/标记、自动更新基准或绕过未知请求去重。
+- 结束时停止本轮启动的测试服务、浏览器及子进程，保留真实失败和未验证项。

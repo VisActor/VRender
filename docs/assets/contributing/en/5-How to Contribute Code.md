@@ -156,9 +156,9 @@ Common `type` values include docs (documentation, log changes), feat (new featur
 
 Write a short and precise description in English.
 
-Before submitting the commit, we will perform a commit lint check. You can check the specific rules [here](https://github.com/VisActor/VStory/blob/develop/common/autoinstallers/lint/commitlint.config.js).
+Before submitting the commit, we will perform a commit lint check. You can check the specific rules [here](https://github.com/VisActor/VRender/blob/develop/common/autoinstallers/lint/commitlint.config.js).
 
-A common issue is when the upstream (@visactor/vstroy) has new updates, which may cause conflicts when submitting a Pull Request. Therefore, before submitting, merge the commits from other developers with your own commits. Use the following code to switch to the develop branch:
+A common issue is when the upstream (VisActor/VRender) has new updates, which may cause conflicts when submitting a Pull Request. Therefore, before submitting, merge the commits from other developers with your own commits. Use the following code to switch to the develop branch:
 
 ```
 git checkout develop
@@ -242,3 +242,7 @@ Discord: https://discord.com/invite/3wPyxVyH6m
 # This Document is Contributed by the Following Individuals
 
 [玄魂](https://github.com/xuanhun)
+
+## PR checks and merge process
+
+Use the [repository contribution guide](https://github.com/VisActor/VRender/blob/develop/CONTRIBUTING.md#pr-checks-and-merge-process) for current pre-PR checks, activation scope/cutoff, statuses, manual Photo review and approval/merge. It links to the current visual runner and case authoring guides.

@@ -136,3 +136,7 @@ st.defaultLayer.add(sy);
 # ライセンス
 
 [MIT ライセンス](./LICENSE)
+
+## 開発チェックと PR ワークフロー
+
+[貢献ガイド（英語）](./CONTRIBUTING.md#pr-checks-and-merge-process)には、提出前チェック、有効化済みの対象範囲と開始日時、PRの状態、Photoの手動確認、承認とマージを記載しています。[視覚テストガイド（中国語）](./packages/vrender/__tests__/visual/README.md)も参照してください。

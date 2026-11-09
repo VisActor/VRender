@@ -73,6 +73,8 @@ export interface IFederatedEvent<N = Event> {
 }
 
 export interface IFederatedMouseEvent extends IFederatedEvent {
+  /** Copies coordinates and paths; targets, native events and extension payloads stay shared. */
+  clone: () => IFederatedMouseEvent;
   altKey: boolean;
   button: number;
   buttons: number;
@@ -311,7 +313,7 @@ export interface HostInputOptions {
   inViewport: boolean;
 }
 
-/** Synchronous only: events are pooled. Async consumers must copy the required scalar values. */
+/** Events are pooled; async consumers must call event.clone() before returning from the listener. */
 export interface InputEventSource {
   on(type: string, listener: (event: IFederatedMouseEvent) => void): void;
   off(type: string, listener: (event: IFederatedMouseEvent) => void): void;

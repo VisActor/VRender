@@ -131,6 +131,29 @@ export class FederatedMouseEvent extends FederatedEvent<MouseEvent | PointerEven
     return this.screen.y;
   }
 
+  /** Coordinates and paths are detached; targets, native events and extension payloads retain their identity. */
+  clone(): FederatedMouseEvent {
+    return this.cloneProperties(new FederatedMouseEvent(this.manager));
+  }
+
+  protected cloneProperties<T extends FederatedMouseEvent>(event: T): T {
+    Object.assign(event, this);
+    const points = ['layer', 'page', 'canvas', 'viewport', 'client', 'movement', 'offset', 'global', 'screen'] as const;
+    for (const key of points) {
+      const point = this[key];
+      event[key] = { x: point.x, y: point.y };
+    }
+    // Root input has no manager or propagation path, but still owns reusable coordinates.
+    event.path = (this.manager ? this.composedPath() : this.path)?.slice() ?? [];
+    event.detailPath = this.detailPath?.slice();
+    event.eventPhase = event.NONE;
+    event.currentTarget = null;
+    event.defaultPrevented = false;
+    event.propagationStopped = false;
+    event.propagationImmediatelyStopped = false;
+    return event;
+  }
+
   /**
    * Whether the modifier key was pressed when this event natively occurred.
    * @param key - The modifier key.

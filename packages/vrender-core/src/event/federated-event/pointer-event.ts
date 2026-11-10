@@ -107,29 +107,7 @@ export class FederatedPointerEvent extends FederatedMouseEvent implements Pointe
     throw new Error('getPredictedEvents is not supported!');
   }
 
-  clone() {
-    const event = new FederatedPointerEvent(this.manager);
-
-    event.eventPhase = event.NONE;
-    event.currentTarget = null;
-    event.path = [];
-    event.detailPath = [];
-    event.target = null;
-
-    event.nativeEvent = this.nativeEvent;
-    event.originalEvent = this.originalEvent;
-
-    this.manager?.copyPointerData(this, event);
-    this.manager?.copyMouseData(this, event);
-    this.manager?.copyData(this, event);
-
-    // copy propagation path for perf
-    event.target = this.target;
-    event.path = this.composedPath().slice();
-    const p = this.composedDetailPath();
-    event.detailPath = p && p.slice();
-    event.type = this.type;
-
-    return event;
+  clone(): FederatedPointerEvent {
+    return this.cloneProperties(new FederatedPointerEvent(this.manager));
   }
 }

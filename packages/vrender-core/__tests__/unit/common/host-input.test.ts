@@ -1,7 +1,7 @@
 /** @jest-environment jsdom */
 import { EventEmitter } from '@visactor/vutils';
 import { EventSystem } from '../../../src/event/event-system';
-import type { RenderConfig } from '../../../src/interface/event';
+import type { IFederatedMouseEvent, RenderConfig } from '../../../src/interface/event';
 
 function setup() {
   const canvas = document.createElement('canvas');
@@ -122,5 +122,26 @@ test('new input enqueued while draining cancellation stays behind already queued
   system.cancelPointer(1);
   expect(order).toEqual(['down', 'up', 'move']);
   root.removeAllListeners();
+  system.release();
+});
+
+test.each(['canvas', 'window'] as const)('%s input clones survive root event reuse', source => {
+  const { system, send } = setup();
+  let saved: IFederatedMouseEvent;
+  let borrowed: IFederatedMouseEvent;
+  system.input[source].on('pointerdown', event => {
+    borrowed = event;
+    saved = event.clone();
+  });
+  send('mousedown');
+  send('mousemove');
+  send('mouseup');
+  expect(saved).not.toBe(borrowed);
+  expect(saved.type).toBe('pointerdown');
+  expect(saved.nativeEvent.type).toBe('mousedown');
+  expect(saved.canvasX).toBe(20);
+  expect(saved.clientX).toBe(60);
+  expect(borrowed.nativeEvent).toBeNull();
+  expect(borrowed.type).toBe('pointerup');
   system.release();
 });

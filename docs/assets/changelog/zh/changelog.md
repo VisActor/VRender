@@ -1,3 +1,17 @@
+# v1.1.14
+
+2026-11-02
+
+
+**What's Changed**
+
+* fix(datazoom): preserve dragging across equivalent delay updates by @xile611 in https://github.com/VisActor/VRender/pull/2150
+
+
+**Full Changelog**: https://github.com/VisActor/VRender/compare/v1.1.13...v1.1.14
+
+[更多详情请查看 v1.1.14](https://github.com/VisActor/VRender/releases/tag/v1.1.14)
+
 # v1.1.13
 
 2026-10-30

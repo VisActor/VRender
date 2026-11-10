@@ -101,3 +101,6 @@ spec-types
 *.tsbuildinfo
 .omx/
 .worktrees/
+
+# 本地视觉运行产物
+.vrender-visual/

@@ -52,28 +52,7 @@ export class FederatedWheelEvent extends FederatedMouseEvent implements WheelEve
 
   readonly DOM_DELTA_PAGE = 2;
 
-  clone() {
-    const event = new FederatedWheelEvent(this.manager);
-
-    event.eventPhase = event.NONE;
-    event.currentTarget = null;
-    event.path = [];
-    event.detailPath = [];
-    event.target = null;
-
-    event.nativeEvent = this.nativeEvent;
-    event.originalEvent = this.originalEvent;
-
-    this.manager?.copyWheelData(this, event);
-    this.manager?.copyMouseData(this, event);
-    this.manager?.copyData(this, event);
-
-    event.target = this.target;
-    event.path = this.composedPath().slice();
-    const p = this.composedDetailPath();
-    event.detailPath = p && p.slice();
-    event.type = this.type;
-
-    return event;
+  clone(): FederatedWheelEvent {
+    return this.cloneProperties(new FederatedWheelEvent(this.manager));
   }
 }

@@ -137,3 +137,7 @@ st.defaultLayer.add(sy);
 # 许可证
 
 [MIT 协议](./LICENSE)
+
+## Playwright 视觉回归
+
+首批用例、运行命令、报告协议和维护说明见[本地视觉回归指南](packages/vrender/__tests__/visual/README.md)。该入口不改变现有 Photo CI 或生产工作流启用范围。

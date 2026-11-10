@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vrender",
-  "version": "1.1.14",
+  "version": "1.1.15",
   "description": "",
   "sideEffects": true,
   "main": "cjs/index.js",
@@ -8,8 +8,12 @@
   "types": "es/index.d.ts",
   "typesVersions": {
     "*": {
-      "entries": ["es/entries/index.d.ts"],
-      "entries/*": ["es/entries/*"]
+      "entries": [
+        "es/entries/index.d.ts"
+      ],
+      "entries/*": [
+        "es/entries/*"
+      ]
     }
   },
   "files": [
@@ -29,13 +33,15 @@
     "test:electron": "jest -c jest.electron.config.js --runInBand --passWithNoTests --testPathPattern='__tests__/(browser|electron)/'",
     "test-cov": "jest -c jest.config.js -w 16 --coverage",
     "test-live": "npm run test-watch __tests__/unit/theme/line.test.ts",
-    "test-watch": "cross-env DEBUG_MODE=1 jest --watch -c jest.config.js"
+    "test-watch": "cross-env DEBUG_MODE=1 jest --watch -c jest.config.js",
+    "test:visual": "node scripts/visual-test.mjs",
+    "test:visual-runner": "node --test scripts/visual-test.test.mjs"
   },
   "dependencies": {
-    "@visactor/vrender-core": "workspace:1.1.14",
-    "@visactor/vrender-kits": "workspace:1.1.14",
-    "@visactor/vrender-animate": "workspace:1.1.14",
-    "@visactor/vrender-components": "workspace:1.1.14"
+    "@visactor/vrender-core": "workspace:1.1.15",
+    "@visactor/vrender-kits": "workspace:1.1.15",
+    "@visactor/vrender-animate": "workspace:1.1.15",
+    "@visactor/vrender-components": "workspace:1.1.15"
   },
   "devDependencies": {
     "@internal/bundler": "workspace:*",
@@ -58,7 +64,8 @@
     "vite": "3.2.6",
     "typescript": "4.9.5",
     "zrender": "5.4.0",
-    "cross-env": "^7.0.3"
+    "cross-env": "^7.0.3",
+    "@playwright/test": "1.63.0"
   },
   "keywords": [
     "VisActor",

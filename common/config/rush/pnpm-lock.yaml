@@ -22,7 +22,7 @@ importers:
         specifier: ~0.5.7
         version: 0.5.7
       '@visactor/vrender':
-        specifier: workspace:1.1.14
+        specifier: workspace:1.1.15
         version: link:../packages/vrender
       '@visactor/vutils':
         specifier: ~1.0.12
@@ -95,7 +95,7 @@ importers:
   ../../packages/react-vrender:
     dependencies:
       '@visactor/vrender':
-        specifier: workspace:1.1.14
+        specifier: workspace:1.1.15
         version: link:../vrender
       '@visactor/vutils':
         specifier: ~1.0.12
@@ -168,10 +168,10 @@ importers:
   ../../packages/react-vrender-utils:
     dependencies:
       '@visactor/react-vrender':
-        specifier: workspace:1.1.14
+        specifier: workspace:1.1.15
         version: link:../react-vrender
       '@visactor/vrender':
-        specifier: workspace:1.1.14
+        specifier: workspace:1.1.15
         version: link:../vrender
       '@visactor/vutils':
         specifier: ~1.0.12
@@ -241,16 +241,16 @@ importers:
   ../../packages/vrender:
     dependencies:
       '@visactor/vrender-animate':
-        specifier: workspace:1.1.14
+        specifier: workspace:1.1.15
         version: link:../vrender-animate
       '@visactor/vrender-components':
-        specifier: workspace:1.1.14
+        specifier: workspace:1.1.15
         version: link:../vrender-components
       '@visactor/vrender-core':
-        specifier: workspace:1.1.14
+        specifier: workspace:1.1.15
         version: link:../vrender-core
       '@visactor/vrender-kits':
-        specifier: workspace:1.1.14
+        specifier: workspace:1.1.15
         version: link:../vrender-kits
     devDependencies:
       '@internal/bundler':
@@ -323,7 +323,7 @@ importers:
   ../../packages/vrender-animate:
     dependencies:
       '@visactor/vrender-core':
-        specifier: workspace:1.1.14
+        specifier: workspace:1.1.15
         version: link:../vrender-core
       '@visactor/vutils':
         specifier: ~1.0.12
@@ -396,13 +396,13 @@ importers:
   ../../packages/vrender-components:
     dependencies:
       '@visactor/vrender-animate':
-        specifier: workspace:1.1.14
+        specifier: workspace:1.1.15
         version: link:../vrender-animate
       '@visactor/vrender-core':
-        specifier: workspace:1.1.14
+        specifier: workspace:1.1.15
         version: link:../vrender-core
       '@visactor/vrender-kits':
-        specifier: workspace:1.1.14
+        specifier: workspace:1.1.15
         version: link:../vrender-kits
       '@visactor/vscale':
         specifier: ~1.0.12
@@ -521,7 +521,7 @@ importers:
         specifier: 2.4.1
         version: 2.4.1
       '@visactor/vrender-core':
-        specifier: workspace:1.1.14
+        specifier: workspace:1.1.15
         version: link:../vrender-core
       '@visactor/vutils':
         specifier: ~1.0.12
@@ -652,19 +652,19 @@ importers:
   ../../tools/bugserver-trigger:
     dependencies:
       '@visactor/vrender':
-        specifier: workspace:1.1.14
+        specifier: workspace:1.1.15
         version: link:../../packages/vrender
       '@visactor/vrender-animate':
-        specifier: workspace:1.1.14
+        specifier: workspace:1.1.15
         version: link:../../packages/vrender-animate
       '@visactor/vrender-components':
-        specifier: workspace:1.1.14
+        specifier: workspace:1.1.15
         version: link:../../packages/vrender-components
       '@visactor/vrender-core':
-        specifier: workspace:1.1.14
+        specifier: workspace:1.1.15
         version: link:../../packages/vrender-core
       '@visactor/vrender-kits':
-        specifier: workspace:1.1.14
+        specifier: workspace:1.1.15
         version: link:../../packages/vrender-kits
     devDependencies:
       '@internal/bundler':
@@ -3995,6 +3995,7 @@ packages:
   image-size@0.5.5:
     resolution: {integrity: sha512-6TDAlDPZxUFCv+fuOkIoXT/V/f3Qbq8e37p+YOiYrUv3v9cc3/6x78VdfPgFVaB9dZYeLUfKgHRebpkm/oP2VQ==}
     engines: {node: '>=0.10.0'}
+    deprecated: Please migrate to image-size@2.x
     hasBin: true
 
   import-fresh@3.3.1:
@@ -10766,7 +10767,7 @@ snapshots:
       jest-environment-jsdom: 26.6.2(canvas@2.11.2)
       jest-environment-node: 26.6.2
       jest-get-type: 26.3.0
-      jest-jasmine2: 26.6.3(canvas@2.11.2)(ts-node@10.9.0(@types/node@25.6.0)(typescript@4.9.5))
+      jest-jasmine2: 26.6.3
       jest-regex-util: 26.0.0
       jest-resolve: 26.6.2
       jest-util: 26.6.2
@@ -10860,7 +10861,7 @@ snapshots:
     optionalDependencies:
       fsevents: 2.3.3
 
-  jest-jasmine2@26.6.3(canvas@2.11.2)(ts-node@10.9.0(@types/node@25.6.0)(typescript@4.9.5)):
+  jest-jasmine2@26.6.3:
     dependencies:
       '@babel/traverse': 7.29.0
       '@jest/environment': 26.6.2
@@ -10881,11 +10882,7 @@ snapshots:
       pretty-format: 26.6.2
       throat: 5.0.0
     transitivePeerDependencies:
-      - bufferutil
-      - canvas
       - supports-color
-      - ts-node
-      - utf-8-validate
 
   jest-leak-detector@26.6.2:
     dependencies:

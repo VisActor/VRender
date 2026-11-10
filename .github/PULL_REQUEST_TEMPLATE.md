@@ -6,7 +6,7 @@ Your pull requests will be merged after one of the collaborators approve.
 Thank you!
 -->
 
-[中文版模板 / Chinese template](./PULL_REQUEST_TEMPLATE/pr_cn.md)
+[中文版模板 / Chinese template](https://github.com/VisActor/VRender/blob/develop/.github/PULL_REQUEST_TEMPLATE/pr_cn.md)
 
 ### 🤔 This is a ...
 
@@ -36,7 +36,7 @@ Thank you!
 
 ### 🐞 Bugserver case id
 
-Only provide confirmed, public-safe case IDs. If unavailable, state that a product administrator must supply them. Only that product’s administrators may create cases; never use empty, placeholder or invented IDs. [Collaboration guide](../packages/vrender/__tests__/visual/BUGSERVER_CASE_WORKFLOW.md) (Chinese).
+Only provide confirmed, public-safe case IDs. If unavailable, state that a product administrator must supply them. Only that product’s administrators may create cases; never use empty, placeholder or invented IDs. [Collaboration guide](https://github.com/VisActor/VRender/blob/develop/packages/vrender/__tests__/visual/BUGSERVER_CASE_WORKFLOW.md) (Chinese).
 
 ### 💡 Background and solution
 
@@ -59,7 +59,7 @@ Describe changes from the user side, and list all potential break changes or oth
 
 ### ☑️ Self-Check before Merge
 
-Read [PR checks and merge process](../CONTRIBUTING.md#pr-checks-and-merge-process). Target `develop`; the advisory workflow accepts eligible same-repository, non-draft PRs created after 2026-11-06 17:05 Asia/Shanghai.
+Read [PR checks and merge process](https://github.com/VisActor/VRender/blob/develop/CONTRIBUTING.md#pr-checks-and-merge-process). Target `develop`; the advisory workflow accepts eligible same-repository, non-draft PRs created after 2026-11-06 17:05 Asia/Shanghai.
 
 - [ ] Reported actual commands, outcomes, report scope and skipped checks/reasons.
 - [ ] Ran relevant unit tests and full official-baseline comparison for product/dependency/case changes, or explained documentation-only applicability. Self-comparison is not a two-sided pass.

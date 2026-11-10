@@ -33,7 +33,7 @@
 
 ### 🐞 Bugserver 用例 id
 
-仅填写已确认存在且可公开的真实caseId；无权限或未创建时注明“待项目管理员补充”。只有对应产品管理员可新增，禁止空值/占位/虚构ID。[协作流程](../../packages/vrender/__tests__/visual/BUGSERVER_CASE_WORKFLOW.md)。
+仅填写已确认存在且可公开的真实caseId；无权限或未创建时注明“待项目管理员补充”。只有对应产品管理员可新增，禁止空值/占位/虚构ID。[协作流程](https://github.com/VisActor/VRender/blob/develop/packages/vrender/__tests__/visual/BUGSERVER_CASE_WORKFLOW.md)。
 
 ### 💡 问题的背景&解决方案
 
@@ -56,7 +56,7 @@
 
 ### ☑️ 自测
 
-请阅读[PR检查与合入流程](../../CONTRIBUTING.zh-CN.md#pr-检查与合入流程)。目标为develop；同仓且在2026-11-06 17:05北京时间起点后新建的非Draft PR可接入。
+请阅读[PR检查与合入流程](https://github.com/VisActor/VRender/blob/develop/CONTRIBUTING.zh-CN.md#pr-检查与合入流程)。目标为develop；同仓且在2026-11-06 17:05北京时间起点后新建的非Draft PR可接入。
 
 - [ ] 已填写实际测试命令、结果、报告范围和未运行项/原因。
 - [ ] 产品/依赖/用例变更已完成相关单测及默认全量基线比较；纯文档说明不适用。自比较不能代替双侧通过。

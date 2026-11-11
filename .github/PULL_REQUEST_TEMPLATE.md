@@ -65,7 +65,7 @@ Read [PR checks and merge process](https://github.com/VisActor/VRender/blob/deve
 - [ ] Ran relevant unit tests and full official-baseline comparison for product/dependency/case changes, or explained documentation-only applicability. Self-comparison is not a two-sided pass.
 - [ ] Described expected visual changes and regression coverage; retained execution errors and blockers.
 
-Photo needs maintainer review. Report-only/completed is not an all-Photo pass; approval is tied to the current commit and never automatically merges or updates baselines.
+Photo needs maintainer review; report-only/completed is not an all-Photo pass. Approve is an audit record and the Bot never merges. When Photo selection is explicitly enabled, only the saved pre-merge selection can update baselines after manual merge; other PRs retain their existing mode.
 
 
 ⚠️ Please check all items below before requesting a reviewing. ⚠️

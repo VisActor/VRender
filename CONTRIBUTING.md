@@ -111,8 +111,12 @@ A new head or comparison base requires version checks and necessary reruns. Old 
 
 ### Approval, merge and recovery
 
-The workflow recognizes a valid GitHub Approve from a repository Maintain/Admin user for the **current commit**, including their manual Photo verification. The Bot never approves or merges. GitHub protection rules and other checks still apply; the workflow does not add required Checks or change branch protection.
+GitHub Approve is an audit record in this workflow. Maintainers may merge manually after checking CR, unit tests, Playwright and Photo for the current commit. GitHub branch protection and repository review requirements still apply. The Bot does not change those rules, approve, or merge.
 
-Automatic Photo difference assessment and baseline updates are paused. Approve/Merge does not authorize automatic adoption of screenshots. Early merge does not turn incomplete or failed checks into passes. Shared baseline changes require separate explicit authorization, administrator review and a new verification; retain original reports.
+For PRs explicitly enabled for Photo selection, BugServer shows the current images and short explanations. New candidates are selected by default. Inspect each item, deselect any baseline that should stay unchanged, and save successfully before merging. The server's saved revision is authoritative; an unsaved draft has no effect. Default selection does not overwrite a saved manual choice.
+
+After merge, only the selected baselines in that revision are updated. Unselected items stay unchanged. Writes still verify the frozen commit, three checks, merged content, save time and original baseline. Stale versions, post-merge selections and conflicts are not silently accepted. Ask maintainers to resume the original task after a timeout or partial success; do not dispatch another batch or change request IDs.
+
+Photo remains report-only. An unavailable selection list, including more than 20 differences, incomplete explanations or execution errors, adds no merge gate and does not update baselines. PRs without this capability retain their existing mode. Baseline updates do not rewrite the original Photo report, and completed does not mean Photo passed.
 
 For help, provide the PR, current SHA, Review/CI links and a public-safe error description. Do not edit managed summaries or hidden markers, repeatedly reopen PRs, delete state, change request IDs or dispatch duplicate batches. Maintainers recover the original task. Stop test servers, browsers and child processes you started when finished.

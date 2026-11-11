@@ -102,12 +102,12 @@ Passing all three checks or reaching completed does not mean every Photo test pa
 | Changes or investigation needed | Fix the issue, add coverage or provide verifiable evidence |
 | Blocked | Read the action item; ask maintainers about permissions, services or recovery |
 | Awaiting approval | Maintainer checks all three results and manually reviews Photo for the current revision |
-| Awaiting merge | A valid current-commit approval was recognized; a maintainer merges manually |
-| Merged / baseline processing | Wait for cleanup; skipping automatic baseline updates is expected in report-only mode |
+| Awaiting merge | The three recommendations are complete; inspect Photo and any saved selection, then merge manually subject to repository rules |
+| Merged / baseline processing | Check selected-baseline results when selection is enabled; otherwise automatic updates remain skipped |
 | Completed | Workflow cleanup finished; original Photo differences and errors remain |
 | Superseded / closed without merge | Read the new revision's result, or treat the PR as unmerged; neither implies a baseline update |
 
-A new head or comparison base requires version checks and necessary reruns. Old results cannot prove the new revision passed; a new commit needs its own valid approval. If a summary is missing, check repository, target, creation time, draft status before contacting maintainers.
+A new head or comparison base requires version checks and necessary reruns. Old results cannot prove the new revision passed; verify current results and any saved Photo selection again for each new commit. If a summary is missing, check repository, target, creation time, draft status before contacting maintainers.
 
 ### Approval, merge and recovery
 

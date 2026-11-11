@@ -1,3 +1,21 @@
+# v1.1.15
+
+2026-11-11
+
+
+**What's Changed**
+
+* [Auto Sync] Sync the code from branch main to branch develop after release 1.1.14 by @github-actions[bot] in https://github.com/VisActor/VRender/pull/2152
+* test: add VRender visual regression and prepare PR workflow handoff by @Rui-Sun in https://github.com/VisActor/VRender/pull/2154
+* [Auto changelog] changlog of v1.1.14 by @github-actions[bot] in https://github.com/VisActor/VRender/pull/2153
+* fix(core): preserve federated input payloads when cloning by @g1f9 in https://github.com/VisActor/VRender/pull/2156
+* [Auto release] release 1.1.15 by @github-actions[bot] in https://github.com/VisActor/VRender/pull/2157
+
+
+**Full Changelog**: https://github.com/VisActor/VRender/compare/v1.1.14...v1.1.15
+
+[更多详情请查看 v1.1.15](https://github.com/VisActor/VRender/releases/tag/v1.1.15)
+
 # v1.1.14
 
 2026-11-02

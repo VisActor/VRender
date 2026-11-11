@@ -1,6 +1,6 @@
 <!--
 首先，感谢您参与代码贡献! 😄
-为了提交新的功能或修改,请在主分支`main`分支上拉取开发分支 。
+为了提交新的功能或修改,请在主分支`develop`分支上拉取开发分支 。
 在提交PR 之前，请确认下面列到的一些内容
 你的PR在核心成员review后，合并到主分支
 谢谢！
@@ -33,7 +33,7 @@
 
 ### 🐞 Bugserver 用例 id
 
-<!-- 将 bugserver case 上的 `fileid` 字段值黏贴过来 -->
+仅填写已确认存在且可公开的真实caseId；无权限或未创建时注明“待项目管理员补充”。只有对应产品管理员可新增，禁止空值/占位/虚构ID。[协作流程](https://github.com/VisActor/VRender/blob/develop/packages/vrender/__tests__/visual/BUGSERVER_CASE_WORKFLOW.md)。
 
 ### 💡 问题的背景&解决方案
 
@@ -55,6 +55,15 @@
 | 🇨🇳 Chinese |           |
 
 ### ☑️ 自测
+
+请阅读[PR检查与合入流程](https://github.com/VisActor/VRender/blob/develop/CONTRIBUTING.zh-CN.md#pr-检查与合入流程)。目标为develop；同仓且在2026-11-06 17:05北京时间起点后新建的非Draft PR可接入。
+
+- [ ] 已填写实际测试命令、结果、报告范围和未运行项/原因。
+- [ ] 产品/依赖/用例变更已完成相关单测及默认全量基线比较；纯文档说明不适用。自比较不能代替双侧通过。
+- [ ] 已说明预期视觉变化及新增/修改的回归用例；执行错误和阻断如实保留。
+
+Photo由维护者人工核查，report-only/流程完成不等于Photo全通过；批准绑定当前提交，不自动Merge或更新基准。
+
 
 ⚠️ 在提交 PR 之前，请检查一下内容. ⚠️
 

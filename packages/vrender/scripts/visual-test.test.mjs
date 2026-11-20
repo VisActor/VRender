@@ -10,10 +10,20 @@ import { saveReport } from '../__tests__/visual/report.mjs';
 import Reporter from '../__tests__/visual/reporter.mjs';
 
 const suite = fileURLToPath(new URL('../__tests__/visual', import.meta.url));
-test('首批清单恰好六项，非法参数和结果漏项/重复项拒绝', async () => {
+test('清单包含必备用例，非法参数和结果漏项/重复项拒绝', async () => {
   const cases = await loadCases(suite);
-  assert.equal(cases.length, 6);
-  assert.equal(selectCases(cases, {case:'picking-events'})[0].id, 'picking-events');
+  const requiredIds = [
+    'primitives-text',
+    'transform-clip',
+    'picking-events',
+    'tag-component',
+    'label-line-update',
+    'attribute-update',
+    'stage-lifecycle'
+  ];
+  for (const id of requiredIds) {
+    assert.deepEqual(selectCases(cases, { case: id }).map(item => item.id), [id]);
+  }
   for (const args of [['--offline'], ['--baseline','abc'], ['--case','../x'], ['--update-snapshots'], ['--case','x','--dir','y']]) assert.throws(()=>parseOptions(args));
   assert.throws(()=>selectCases(cases,{case:'unknown'}));
   for(const tests of [[],[{id:'a'},{id:'a'}],[{id:'b'}]]) assert.throws(()=>validateResults({tests},['a']));

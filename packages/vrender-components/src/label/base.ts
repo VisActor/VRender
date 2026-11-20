@@ -1009,7 +1009,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
           const prevLabel = prevTextMap.get(textKey);
           prevTextMap.delete(textKey);
           currentTextMap.set(textKey, prevLabel);
-          this._updateLabel(prevLabel, currentLabel);
+          this._updateLabel(prevLabel, currentLabel, relatedGraphic);
         }
       });
 
@@ -1053,12 +1053,35 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
     });
   }
 
-  protected _runUpdateAnimation(prevLabel: LabelContent, currentLabel: LabelContent) {
+  protected _getRestoredLabelLinePoints(
+    text: IText | IRichText,
+    _targetText: IText | IRichText,
+    markBounds?: IBoundsLike
+  ): IPointLike[] | undefined {
+    return connectLineBetweenBounds(text.AABBBounds, markBounds);
+  }
+
+  protected _runUpdateAnimation(prevLabel: LabelContent, currentLabel: LabelContent, relatedGraphic?: IGraphic) {
     const { text: prevText, labelLine: prevLabelLine } = prevLabel;
     const { text: curText, labelLine: curLabelLine } = currentLabel;
+    const restoreLine =
+      curLabelLine &&
+      curLabelLine.attribute.visible !== false &&
+      (!prevLabelLine || prevLabelLine.attribute.visible === false);
 
     commitUpdateAnimationTarget(prevText, curText?.attribute as Record<string, any>);
     commitUpdateAnimationTarget(prevLabelLine, curLabelLine?.attribute as Record<string, any>);
+
+    let getRestoredLinePoints: () => IPointLike[] | undefined;
+    if (restoreLine) {
+      const markBounds = this.getGraphicFinalLayoutBounds(relatedGraphic);
+      const style = this.attribute.line?.style;
+      // A custom path or point set only defines the final geometry.
+      getRestoredLinePoints =
+        curLabelLine.pathProxy || style?.points || style?.segments
+          ? () => undefined
+          : () => this._getRestoredLabelLinePoints(prevText, curText, markBounds);
+    }
 
     prevText.applyAnimationState(
       ['update'],
@@ -1072,7 +1095,8 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
               prevText,
               curText,
               prevLabelLine,
-              curLabelLine
+              curLabelLine,
+              getRestoredLinePoints
             }
           }
         }
@@ -1107,9 +1131,13 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
     this.runEnterAnimation(text, labelLine);
   }
 
-  protected _updateLabel(prevLabel: LabelContent, currentLabel: LabelContent) {
+  protected _updateLabel(prevLabel: LabelContent, currentLabel: LabelContent, relatedGraphic?: IGraphic) {
     const { labelLine: prevLabelLine } = prevLabel;
     const { text: curText, labelLine: curLabelLine } = currentLabel;
+
+    if (!prevLabelLine && curLabelLine) {
+      this.add(curLabelLine);
+    }
 
     if (this._enableAnimation === false || this._animationConfig.update === false) {
       prevLabel.text.setAttributes(curText.attribute as any);
@@ -1117,14 +1145,13 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
         prevLabelLine.setAttributes(curLabelLine.attribute);
       }
     } else {
-      this._runUpdateAnimation(prevLabel, currentLabel);
+      this._runUpdateAnimation(prevLabel, currentLabel, relatedGraphic);
     }
 
     if (prevLabelLine && !curLabelLine) {
       this.removeChild(prevLabelLine);
       prevLabel.labelLine = undefined;
     } else if (!prevLabelLine && curLabelLine) {
-      this.add(curLabelLine);
       prevLabel.labelLine = curLabelLine;
     }
   }

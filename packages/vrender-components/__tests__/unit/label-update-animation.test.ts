@@ -1,5 +1,6 @@
 import { application, createLine, createRect, createText } from '@visactor/vrender-core';
 import { DefaultTimeline, ManualTicker, registerAnimate } from '@visactor/vrender-animate';
+import { AABBBounds } from '@visactor/vutils';
 import { LabelBase } from '../../src/label/base';
 import { RectLabel } from '../../src/label/rect';
 import type { LabelContent } from '../../src/label/type';
@@ -9,8 +10,8 @@ class TestLabel extends LabelBase<any> {
     return;
   }
 
-  runUpdate(prevLabel: LabelContent, currentLabel: LabelContent): void {
-    this._updateLabel(prevLabel, currentLabel);
+  runUpdate(prevLabel: LabelContent, currentLabel: LabelContent, mark?: ReturnType<typeof createRect>): void {
+    this._updateLabel(prevLabel, currentLabel, mark);
   }
 }
 
@@ -204,21 +205,36 @@ describe('Label update animation static truth', () => {
 
     const restoredLine = createLine({
       points: [
-        { x: 0, y: 0 },
-        { x: 60, y: 0 }
+        { x: 60, y: 5 },
+        { x: 45, y: 5 }
       ]
     });
-    label.runUpdate(renderedLabel, { text: createText({ x: 60, y: 0, text: 'Label' }), labelLine: restoredLine });
+    const mark = createRect({ x: 35, y: 0, width: 10, height: 10 });
+    jest.spyOn(text, 'AABBBounds', 'get').mockImplementation(() => {
+      const x = text.attribute.x;
+      return new AABBBounds().set(x, 0, x + 20, 10);
+    });
+    label.runUpdate(renderedLabel, { text: createText({ x: 60, y: 0, text: 'Label' }), labelLine: restoredLine }, mark);
     expect(renderedLabel.labelLine).toBe(restoredLine);
     expect(restoredLine.parent).toBe(label);
     if (animation) {
-      tick(ticker, 300);
+      expect(restoredLine.attribute.visible).toBe(false);
+      tick(ticker, 150);
+      expect(text.attribute.x).toBe(50);
+      expect(restoredLine.attribute.visible).toBe(true);
+      expect(restoredLine.attribute.points).toEqual([
+        { x: 50, y: 5 },
+        { x: 45, y: 5 }
+      ]);
+      expect(restoredLine.baseAttributes.points[0].x).toBe(60);
+      tick(ticker, 150);
     }
+    expect(restoredLine.attribute.points[0].x).toBe(60);
 
     const nextLine = createLine({
       points: [
-        { x: 0, y: 0 },
-        { x: 80, y: 0 }
+        { x: 80, y: 5 },
+        { x: 45, y: 5 }
       ]
     });
     label.runUpdate(renderedLabel, { text: createText({ x: 80, y: 0, text: 'Label' }), labelLine: nextLine });
@@ -226,11 +242,11 @@ describe('Label update animation static truth', () => {
     expect(label.getChildren()).toEqual([text, restoredLine]);
     if (animation) {
       tick(ticker, 150);
-      expect(restoredLine.attribute.points[1].x).toBeGreaterThan(60);
-      expect(restoredLine.attribute.points[1].x).toBeLessThan(80);
+      expect(restoredLine.attribute.points[0].x).toBeGreaterThan(60);
+      expect(restoredLine.attribute.points[0].x).toBeLessThan(80);
       tick(ticker, 150);
     }
-    expect(restoredLine.attribute.points[1].x).toBe(80);
+    expect(restoredLine.attribute.points[0].x).toBe(80);
   });
 
   test('lays out labels from related rect context final attrs before update handoff', () => {

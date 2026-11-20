@@ -22,7 +22,7 @@ export const cases = [
   },
   {
     "id": "label-line-update",
-    "purpose": "数据标签在柱条内外切换时移除并恢复引线",
+    "purpose": "数据标签在静止和移动柱条内外切换时移除并同步恢复引线",
     "file": "./label-line-update.mjs"
   },
   {

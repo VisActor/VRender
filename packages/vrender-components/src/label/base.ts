@@ -1074,13 +1074,17 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
 
     let getRestoredLinePoints: () => IPointLike[] | undefined;
     if (restoreLine) {
-      const markBounds = this.getGraphicFinalLayoutBounds(relatedGraphic);
       const style = this.attribute.line?.style;
       // A custom path or point set only defines the final geometry.
       getRestoredLinePoints =
         curLabelLine.pathProxy || style?.points || style?.segments
           ? () => undefined
-          : () => this._getRestoredLabelLinePoints(prevText, curText, markBounds);
+          : () =>
+              this._getRestoredLabelLinePoints(
+                prevText,
+                curText,
+                relatedGraphic?.attribute.visible === false ? undefined : relatedGraphic?.AABBBounds
+              );
     }
 
     prevText.applyAnimationState(

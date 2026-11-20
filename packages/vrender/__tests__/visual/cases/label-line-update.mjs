@@ -80,7 +80,39 @@ export async function exercise(page) {
     if (oldLine.parent || findLine()) return '标签移入柱条后引线未移除';
     ticker.tick(duration);
     if (Math.abs(text.attribute.x - insideX) > 0.01) return '移入动画结束后文字应回到柱内';
-    return moveOutside();
+    const restored = moveOutside();
+    if (restored) return restored;
+
+    label.setAttributes({ position: 'inside-middle', offset: 128 });
+    ticker.tick(duration);
+    const finalAttrs = { ...bar.attribute, x: 100 };
+    bar.context = { animationState: 'update', finalAttrs };
+    // Component updates can precede mark animation registration in VChart.
+    label.setAttribute('position', 'right');
+    bar.setAttributes(finalAttrs);
+    bar.animate().from({ x: 60 }, duration, 'linear');
+    ticker.tick(duration / 2);
+    const movingLine = findLine();
+    const [textPoint, barPoint] = movingLine?.attribute.points ?? [];
+    const textBounds = text.AABBBounds;
+    const markBounds = bar.AABBBounds;
+    if (Math.abs(bar.attribute.x - 80) > 0.01 || textBounds.x1 <= markBounds.x2) {
+      return '柱条和文字未到达分离的移动中间帧';
+    }
+    if (
+      !textPoint ||
+      !barPoint ||
+      movingLine.attribute.visible === false ||
+      Math.abs(textPoint.x - textBounds.x1) > 0.01 ||
+      Math.abs(textPoint.y - (textBounds.y1 + textBounds.y2) / 2) > 0.01 ||
+      Math.abs(barPoint.x - markBounds.x2) > 0.01 ||
+      Math.abs(barPoint.y - (markBounds.y1 + markBounds.y2) / 2) > 0.01
+    ) {
+      return '移动中间帧的引线未连接柱条和文字的当前边界';
+    }
+    ticker.tick(duration / 2);
+    objects.outsideX = text.attribute.x;
+    return Math.abs(findLine().attribute.points[1].x - bar.AABBBounds.x2) < 0.01 ? null : '移动结束后的引线终点不正确';
   });
   if (result) throw assertionError(result);
 }

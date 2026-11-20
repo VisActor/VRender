@@ -1,4 +1,4 @@
-import type { ILineGraphicAttribute, Line } from '@visactor/vrender-core';
+import type { ILineGraphicAttribute, ITicker, Line } from '@visactor/vrender-core';
 import { AttributeUpdateType } from '@visactor/vrender-core/event/constant';
 import type { IPointLike } from '@visactor/vutils';
 import { createComponentAnimator } from '@visactor/vrender-animate/component';
@@ -8,23 +8,82 @@ import { AnimateExecutor } from '@visactor/vrender-animate/executor/animate-exec
 
 const animationFrame = { type: AttributeUpdateType.ANIMATE_UPDATE };
 
+// Batch restored lines per ticker so listener removal stays constant-time as label counts grow.
+const restoredLineFrames = new WeakMap<ITicker, { lines: Set<RestoreLabelLine>; flush: () => void }>();
+
 class RestoreLabelLine extends ACustomAnimate<ILineGraphicAttribute> {
   declare params: { getPoints: () => IPointLike[] | undefined };
+  private pendingTicker?: ITicker;
+
+  private updateAfterTick(): void {
+    this.pendingTicker = undefined;
+    if (this.animate.validAttr('points')) {
+      this.updateLine(this.params.getPoints());
+    }
+  }
 
   onBind(): void {
-    this.onUpdate(false);
+    this.updateLine(this.params.getPoints());
   }
 
   onUpdate(end: boolean): void {
     if (!this.animate.validAttr('points')) {
       return;
     }
-    const points = end ? this.to.points : this.params.getPoints();
+    this.clearPendingTick();
+    if (end) {
+      this.updateLine(this.to.points);
+    } else if (this.target.stage?.ticker) {
+      // Marks may be animated after labels; both must finish this frame before reading their bounds.
+      this.pendingTicker = this.target.stage.ticker;
+      const ticker = this.pendingTicker;
+      let frame = restoredLineFrames.get(ticker);
+      if (!frame) {
+        const lines = new Set<RestoreLabelLine>();
+        const flush = () => {
+          ticker.removeListener('tick', flush);
+          for (const line of lines) {
+            lines.delete(line);
+            line.updateAfterTick();
+          }
+        };
+        frame = { lines, flush };
+        restoredLineFrames.set(ticker, frame);
+      }
+      if (!frame.lines.size) {
+        ticker.on('tick', frame.flush);
+      }
+      frame.lines.add(this);
+    } else {
+      this.updateLine(this.params.getPoints());
+    }
+  }
+
+  private updateLine(points?: IPointLike[]): void {
     (this.target as Line).applyAnimationTransientAttributes(
       { points: points ?? this.to.points, visible: !!points && this.to.visible },
       false,
       animationFrame
     );
+  }
+
+  private clearPendingTick(): void {
+    if (this.pendingTicker) {
+      const frame = restoredLineFrames.get(this.pendingTicker);
+      frame.lines.delete(this);
+      if (!frame.lines.size) {
+        this.pendingTicker.removeListener('tick', frame.flush);
+      }
+    }
+    this.pendingTicker = undefined;
+  }
+
+  stop(): void {
+    this.clearPendingTick();
+  }
+
+  release(): void {
+    this.clearPendingTick();
   }
 }
 

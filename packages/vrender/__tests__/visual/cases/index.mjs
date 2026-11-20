@@ -1,4 +1,4 @@
-/** 冻结的首批用例清单；新增用例须显式登记。 */
+/** 视觉用例清单，新增用例须显式登记。 */
 export const cases = [
   {
     "id": "primitives-text",
@@ -19,6 +19,16 @@ export const cases = [
     "id": "tag-component",
     "purpose": "标签组件文字、背景与更新",
     "file": "./tag-component.mjs"
+  },
+  {
+    "id": "label-line-update",
+    "purpose": "数据标签在静止和移动柱条内外切换时移除并同步恢复引线",
+    "file": "./label-line-update.mjs"
+  },
+  {
+    "id": "arc-label-line-update",
+    "purpose": "移动扇区标签由内向外切换时引线连接当前扇区与文字",
+    "file": "./arc-label-line-update.mjs"
   },
   {
     "id": "attribute-update",

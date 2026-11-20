@@ -1,15 +1,16 @@
-import { application, createRect, createText } from '@visactor/vrender-core';
+import { application, createLine, createRect, createText } from '@visactor/vrender-core';
 import { DefaultTimeline, ManualTicker, registerAnimate } from '@visactor/vrender-animate';
 import { LabelBase } from '../../src/label/base';
 import { RectLabel } from '../../src/label/rect';
+import type { LabelContent } from '../../src/label/type';
 
 class TestLabel extends LabelBase<any> {
   protected render(): void {
     return;
   }
 
-  runUpdate(prevLabel: any, currentLabel: any): void {
-    (this as any)._updateLabel(prevLabel, currentLabel);
+  runUpdate(prevLabel: LabelContent, currentLabel: LabelContent): void {
+    this._updateLabel(prevLabel, currentLabel);
   }
 }
 
@@ -163,6 +164,73 @@ describe('Label update animation static truth', () => {
     expect((prevText as any).getFinalAttribute().y).toBeCloseTo(newAttrs.y, 5);
     expect((prevText as any).getFinalAttribute().text).toBe(newAttrs.text);
     expect((prevText as any).getFinalAttribute().opacity).toBeCloseTo(newAttrs.opacity, 5);
+  });
+
+  test.each([true, false])('reconciles label lines during updates with animation=%s', animation => {
+    const { stage, ticker } = createStageHarness('label-line-update');
+    const label = new TestLabel({
+      type: 'rect',
+      baseMarkGroupName: 'bar',
+      data: [],
+      animation,
+      animationEnter: false,
+      animationExit: false,
+      animationUpdate: { duration: 300, easing: 'linear' }
+    });
+    label._prepareAnimate({});
+    label.setStage(stage, null as any);
+    const firstLine = createLine({
+      points: [
+        { x: 0, y: 0 },
+        { x: 20, y: 0 }
+      ]
+    });
+    const text = createText({ x: 20, y: 0, text: 'Label' });
+    const renderedLabel: LabelContent = { text, labelLine: firstLine };
+    label.add(text);
+    label.add(firstLine);
+
+    label.runUpdate(renderedLabel, { text: createText({ x: 40, y: 0, text: 'Label' }) });
+    expect(renderedLabel.labelLine).toBeUndefined();
+    expect(firstLine.parent).toBeNull();
+    expect(text.parent).toBe(label);
+    if (animation) {
+      tick(ticker, 150);
+      expect(text.attribute.x).toBeGreaterThan(20);
+      expect(text.attribute.x).toBeLessThan(40);
+      tick(ticker, 150);
+    }
+    expect(text.attribute.x).toBe(40);
+
+    const restoredLine = createLine({
+      points: [
+        { x: 0, y: 0 },
+        { x: 60, y: 0 }
+      ]
+    });
+    label.runUpdate(renderedLabel, { text: createText({ x: 60, y: 0, text: 'Label' }), labelLine: restoredLine });
+    expect(renderedLabel.labelLine).toBe(restoredLine);
+    expect(restoredLine.parent).toBe(label);
+    if (animation) {
+      tick(ticker, 300);
+    }
+
+    const nextLine = createLine({
+      points: [
+        { x: 0, y: 0 },
+        { x: 80, y: 0 }
+      ]
+    });
+    label.runUpdate(renderedLabel, { text: createText({ x: 80, y: 0, text: 'Label' }), labelLine: nextLine });
+    expect(renderedLabel.labelLine).toBe(restoredLine);
+    expect(label.getChildren()).toEqual([text, restoredLine]);
+    if (animation) {
+      tick(ticker, 150);
+      expect(restoredLine.attribute.points[1].x).toBeGreaterThan(60);
+      expect(restoredLine.attribute.points[1].x).toBeLessThan(80);
+      tick(ticker, 150);
+    }
+    expect(restoredLine.attribute.points[1].x).toBe(80);
   });
 
   test('lays out labels from related rect context final attrs before update handoff', () => {

@@ -43,7 +43,7 @@ export class LabelUpdate extends AComponentAnimate<any> {
       });
     }
 
-    if (prevLabelLine) {
+    if (prevLabelLine && curLabelLine) {
       animator.animate(prevLabelLine, {
         type: 'to',
         to: curLabelLine.attribute,

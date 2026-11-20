@@ -1114,10 +1114,18 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
     if (this._enableAnimation === false || this._animationConfig.update === false) {
       prevLabel.text.setAttributes(curText.attribute as any);
       if (prevLabelLine && curLabelLine) {
-        prevLabel.labelLine.setAttributes(curLabelLine.attribute);
+        prevLabelLine.setAttributes(curLabelLine.attribute);
       }
     } else {
       this._runUpdateAnimation(prevLabel, currentLabel);
+    }
+
+    if (prevLabelLine && !curLabelLine) {
+      this.removeChild(prevLabelLine);
+      prevLabel.labelLine = undefined;
+    } else if (!prevLabelLine && curLabelLine) {
+      this.add(curLabelLine);
+      prevLabel.labelLine = curLabelLine;
     }
   }
 

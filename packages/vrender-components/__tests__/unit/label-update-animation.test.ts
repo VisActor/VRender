@@ -1,5 +1,5 @@
-import { application, createArc, createLine, createRect, createText } from '@visactor/vrender-core';
-import { DefaultTimeline, ManualTicker, registerAnimate } from '@visactor/vrender-animate';
+import { application, CustomPath2D, createArc, createLine, createRect, createText } from '@visactor/vrender-core';
+import { DefaultTimeline, ManualTicker, defaultTimeline, registerAnimate } from '@visactor/vrender-animate';
 import { AABBBounds } from '@visactor/vutils';
 import { LabelBase } from '../../src/label/base';
 import { RectLabel } from '../../src/label/rect';
@@ -559,6 +559,177 @@ describe('Label update animation static truth', () => {
     tick(ticker, 300);
     expect(label.getChildren()).toEqual([text]);
     expect(ticker.listenerCount('tick')).toBe(0);
+    stage.getTimeline().clear();
+  });
+
+  describe.each(['rect', 'arc'])('restoration completion: %s', type => {
+    const createCase = (markFirst = false) =>
+      type === 'rect' ? createMovingMarkCase(markFirst, true) : createMovingArcCase(arcCases[4], markFirst);
+
+    test.each([undefined, true])('keeps hidden marks hidden after completion with line visible=%s', visible => {
+      const { stage, ticker, label, mark, line, content, text } = createCase();
+      try {
+        if (visible !== undefined) {
+          line.setAttribute('visible', visible);
+        }
+        mark.setAttribute('visible', false);
+        tick(ticker, 100);
+        expect(line.attribute.visible).toBe(false);
+        tick(ticker, 200);
+        expect(mark.attribute.visible).toBe(false);
+        expect(line.attribute.visible).toBe(false);
+        expect(line.baseAttributes.visible).toBe(false);
+        tick(ticker, 100);
+        line.setAttribute('stroke', 'red');
+        expect(line.attribute.visible).toBe(false);
+        expect(ticker.listenerCount('tick')).toBe(0);
+        mark.setAttribute('visible', true);
+        const points = line.baseAttributes.points;
+        const next = createText({ ...text.baseAttributes, points } as any);
+        (label as TestLabel).runUpdate(
+          content,
+          { text: next, labelLine: createLine({ points, visible: true }) },
+          mark as any
+        );
+        tick(ticker, 300);
+        expect(line.attribute.visible).toBe(true);
+        expect(line.baseAttributes.visible).toBe(true);
+      } finally {
+        stage.getTimeline().clear();
+      }
+    });
+
+    test.each([true, false])('reads a mark hidden on its final tick with markFirst=%s', markFirst => {
+      const { stage, ticker, mark, line } = createCase(markFirst);
+      mark.animates.forEach(animate => animate.onEnd(() => mark.setAttribute('visible', false)));
+      tick(ticker, 300);
+      expect(mark.attribute.visible).toBe(false);
+      expect(line.attribute.visible).toBe(false);
+      expect(line.baseAttributes.visible).toBe(false);
+      tick(ticker, 100);
+      expect(line.attribute.visible).toBe(false);
+      stage.getTimeline().clear();
+    });
+
+    test('shows a mark restored before completion', () => {
+      const { stage, ticker, mark, line } = createCase();
+      mark.setAttribute('visible', false);
+      tick(ticker, 100);
+      expect(line.attribute.visible).toBe(false);
+      mark.setAttribute('visible', true);
+      tick(ticker, 200);
+      expect(line.attribute.visible).toBe(true);
+      expect(line.baseAttributes.visible).toBe(true);
+      stage.getTimeline().clear();
+    });
+  });
+
+  test.each(['stop', 'detach', 'release'])('cancels a queued completion on %s', action => {
+    const { stage, ticker, label, mark, line } = createMovingMarkCase(false, true);
+    mark.setAttribute('visible', false);
+    const commit = jest.spyOn(line as any, '_commitAnimationStaticAttributes');
+    stage.getTimeline().tick(300);
+    expect(ticker.listenerCount('tick')).toBe(1);
+    if (action === 'stop') {
+      line.stopAnimates();
+    } else if (action === 'detach') {
+      label.removeChild(line);
+    } else {
+      line.release();
+    }
+    const visible = line.attribute.visible;
+    ticker.emit('tick', 300);
+    expect(commit).not.toHaveBeenCalled();
+    expect(line.attribute.visible).toBe(visible);
+    expect(ticker.listenerCount('tick')).toBe(0);
+    stage.getTimeline().clear();
+  });
+
+  test.each(['points', 'visible', 'completed visible'])('preserves a new %s owner before completion flush', key => {
+    const { stage, ticker, mark, line } = createMovingMarkCase(false, true);
+    mark.setAttribute('visible', false);
+    stage.getTimeline().tick(300);
+    const nextPoints = [
+      { x: 200, y: 0 },
+      { x: 220, y: 0 }
+    ];
+    const next = line.animate().to(key === 'points' ? { points: nextPoints } : { visible: true }, 100, 'linear');
+    // Start the competing animation before the queued frame is flushed.
+    next.advance(key === 'completed visible' ? 100 : 50);
+    const points = line.attribute.points;
+    ticker.emit('tick', 300);
+    if (key === 'points') {
+      expect(line.attribute.points).toBe(points);
+      expect(line.baseAttributes.visible).toBe(false);
+    } else {
+      expect(line.attribute.visible).not.toBe(false);
+      expect(line.baseAttributes.visible).not.toBe(false);
+    }
+    expect(ticker.listenerCount('tick')).toBe(0);
+    stage.getTimeline().clear();
+  });
+
+  test('commits hidden completion without a stage ticker', () => {
+    ensureRuntime();
+    const label = new TestLabel({
+      type: 'rect',
+      baseMarkGroupName: 'bar',
+      data: [],
+      animation: true,
+      animationUpdate: { duration: 300 }
+    });
+    label._prepareAnimate({});
+    const text = createText({ x: 40, y: 0, text: 'Label' });
+    jest.spyOn(text, 'AABBBounds', 'get').mockReturnValue(new AABBBounds().set(40, 0, 60, 10));
+    label.add(text);
+    const mark = createRect({ x: 35, y: 0, width: 10, height: 10, visible: false });
+    const line = createLine({
+      points: [
+        { x: 100, y: 5 },
+        { x: 45, y: 5 }
+      ],
+      visible: true
+    });
+    try {
+      label.runUpdate({ text }, { text: createText({ x: 100, y: 0, text: 'Label' }), labelLine: line }, mark);
+      defaultTimeline.tick(300);
+      expect(line.attribute.visible).toBe(false);
+      expect(line.baseAttributes.visible).toBe(false);
+      defaultTimeline.tick(100);
+      expect(line.attribute.visible).toBe(false);
+    } finally {
+      defaultTimeline.clear();
+    }
+  });
+
+  test.each(['path', 'points', 'segments'])('preserves final-only %s visibility semantics', geometry => {
+    const { stage, ticker, label, mark, content } = createMovingMarkCase(false, true);
+    tick(ticker, 300);
+    const points = [
+      { x: 100, y: 5 },
+      { x: 85, y: 5 }
+    ];
+    for (const hidden of [false, true]) {
+      label.runUpdate(content, { text: createText({ x: 80, y: 0, text: 'Label' }) }, mark);
+      tick(ticker, 300);
+      label.setAttribute('line', {
+        style: geometry === 'points' ? { points } : geometry === 'segments' ? { segments: [{ points }] } : {}
+      });
+      const line = createLine({ points, visible: true });
+      if (geometry === 'path') {
+        line.pathProxy = () => new CustomPath2D();
+      }
+      label.runUpdate(content, { text: createText({ x: 100, y: 0, text: 'Label' }), labelLine: line }, mark);
+      if (hidden) {
+        mark.setAttribute('visible', false);
+      }
+      tick(ticker, 150);
+      expect(line.attribute.visible).toBe(false);
+      tick(ticker, 150);
+      expect(line.attribute.visible).toBe(!hidden);
+      expect(line.baseAttributes.visible).toBe(!hidden);
+      expect(line.attribute.points).toEqual(points);
+    }
     stage.getTimeline().clear();
   });
 

@@ -1098,6 +1098,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
               curText,
               prevLabelLine,
               curLabelLine,
+              relatedGraphic,
               getRestoredLinePoints
             }
           }

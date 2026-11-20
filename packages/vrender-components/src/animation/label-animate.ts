@@ -1,4 +1,4 @@
-import type { ILineGraphicAttribute, ITicker, Line } from '@visactor/vrender-core';
+import type { IGraphic, ILineGraphicAttribute, ITicker, Line } from '@visactor/vrender-core';
 import { AttributeUpdateType } from '@visactor/vrender-core/event/constant';
 import type { IPointLike } from '@visactor/vutils';
 import { createComponentAnimator } from '@visactor/vrender-animate/component';
@@ -7,17 +7,23 @@ import { IncreaseCount } from '@visactor/vrender-animate/custom/number';
 import { AnimateExecutor } from '@visactor/vrender-animate/executor/animate-executor';
 
 const animationFrame = { type: AttributeUpdateType.ANIMATE_UPDATE };
+const animationEnd = { type: AttributeUpdateType.ANIMATE_END };
 
 // Batch restored lines per ticker so listener removal stays constant-time as label counts grow.
 const restoredLineFrames = new WeakMap<ITicker, { lines: Set<RestoreLabelLine>; flush: () => void }>();
 
 class RestoreLabelLine extends ACustomAnimate<ILineGraphicAttribute> {
-  declare params: { getPoints: () => IPointLike[] | undefined };
+  declare params: { getPoints: () => IPointLike[] | undefined; relatedGraphic?: IGraphic };
   private pendingTicker?: ITicker;
+  private pendingEnd = false;
 
   private updateAfterTick(): void {
     this.pendingTicker = undefined;
-    if (this.animate.validAttr('points')) {
+    const end = this.pendingEnd;
+    this.pendingEnd = false;
+    if (end) {
+      this.finishLine();
+    } else if (this.animate.validAttr('points') || this.animate.validAttr('visible')) {
       this.updateLine(this.params.getPoints());
     }
   }
@@ -27,13 +33,12 @@ class RestoreLabelLine extends ACustomAnimate<ILineGraphicAttribute> {
   }
 
   onUpdate(end: boolean): void {
-    if (!this.animate.validAttr('points')) {
+    if (!this.animate.validAttr('points') && !this.animate.validAttr('visible')) {
       return;
     }
     this.clearPendingTick();
-    if (end) {
-      this.updateLine(this.to.points);
-    } else if (this.target.stage?.ticker) {
+    this.pendingEnd = end;
+    if (this.target.stage?.ticker) {
       // Marks may be animated after labels; both must finish this frame before reading their bounds.
       this.pendingTicker = this.target.stage.ticker;
       const ticker = this.pendingTicker;
@@ -55,16 +60,38 @@ class RestoreLabelLine extends ACustomAnimate<ILineGraphicAttribute> {
       }
       frame.lines.add(this);
     } else {
-      this.updateLine(this.params.getPoints());
+      this.updateAfterTick();
     }
   }
 
   private updateLine(points?: IPointLike[]): void {
-    (this.target as Line).applyAnimationTransientAttributes(
-      { points: points ?? this.to.points, visible: !!points && this.to.visible },
-      false,
-      animationFrame
-    );
+    const attrs: Partial<ILineGraphicAttribute> = {};
+    if (this.animate.validAttr('points')) {
+      attrs.points = points ?? this.to.points;
+    }
+    if (this.animate.validAttr('visible')) {
+      attrs.visible = !!points && this.to.visible;
+    }
+    (this.target as Line).applyAnimationTransientAttributes(attrs, false, animationFrame);
+  }
+
+  private finishLine(): void {
+    const line = this.target as Line;
+    if (this.animate.validAttr('visible')) {
+      // A jump straight to completion skips start props, so a later animation may not invalidate us.
+      let afterCurrent = false;
+      for (const animate of (line as any).getTrackedAnimates().values()) {
+        if (animate === this.animate) {
+          afterCurrent = true;
+        } else if (afterCurrent && animate.validAttr('visible') && 'visible' in animate.getEndProps()) {
+          return;
+        }
+      }
+      // Completion must survive static restoration, including marks updated later in the same tick.
+      const attrs = { visible: this.to.visible !== false && this.params.relatedGraphic?.attribute.visible !== false };
+      (line as any).setFinalAttributes(attrs);
+      (line as any)._commitAnimationStaticAttributes(attrs, animationEnd);
+    }
   }
 
   private clearPendingTick(): void {
@@ -76,6 +103,7 @@ class RestoreLabelLine extends ACustomAnimate<ILineGraphicAttribute> {
       }
     }
     this.pendingTicker = undefined;
+    this.pendingEnd = false;
   }
 
   stop(): void {
@@ -103,6 +131,7 @@ export class LabelUpdate extends AComponentAnimate<any> {
       prevLabelLine,
       curLabelLine,
       getRestoredLinePoints,
+      relatedGraphic,
       increaseEffect = true
     } = this.params;
     const diff: Record<string, any> = {};
@@ -138,7 +167,7 @@ export class LabelUpdate extends AComponentAnimate<any> {
       // Run after the text animations so the line reads the bounds of the current frame.
       animator.animate(prevLabelLine ?? curLabelLine, {
         custom: RestoreLabelLine,
-        customParameters: { getPoints: getRestoredLinePoints },
+        customParameters: { getPoints: getRestoredLinePoints, relatedGraphic },
         to: { points: curLabelLine.attribute.points, visible: curLabelLine.attribute.visible ?? true },
         duration,
         easing

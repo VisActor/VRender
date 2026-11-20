@@ -112,7 +112,31 @@ export async function exercise(page) {
     }
     ticker.tick(duration / 2);
     objects.outsideX = text.attribute.x;
-    return Math.abs(findLine().attribute.points[1].x - bar.AABBBounds.x2) < 0.01 ? null : '移动结束后的引线终点不正确';
+    if (Math.abs(findLine().attribute.points[1].x - bar.AABBBounds.x2) >= 0.01) return '移动结束后的引线终点不正确';
+
+    label.setAttribute('position', 'inside-middle');
+    ticker.tick(duration);
+    label.setAttribute('position', 'right');
+    const hiddenLine = findLine();
+    bar.setAttribute('visible', false);
+    ticker.tick(duration / 2);
+    if (hiddenLine.attribute.visible !== false) return '隐藏柱条的恢复中引线应隐藏';
+    ticker.tick(duration / 2);
+    ticker.tick(duration);
+    hiddenLine.setAttribute('stroke', '#2d548c');
+    if (
+      bar.attribute.visible !== false ||
+      hiddenLine.attribute.visible !== false ||
+      hiddenLine.baseAttributes.visible !== false
+    ) {
+      return '隐藏柱条的引线在动画结束后重新出现';
+    }
+    bar.setAttribute('visible', true);
+    label.setAttribute('position', 'right');
+    ticker.tick(duration);
+    if (findLine().attribute.visible === false) return '柱条重新显示并更新标签后引线未恢复';
+    objects.outsideX = text.attribute.x;
+    return null;
   });
   if (result) throw assertionError(result);
 }

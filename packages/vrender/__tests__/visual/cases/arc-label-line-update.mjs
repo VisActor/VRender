@@ -88,6 +88,27 @@ export async function exercise(page) {
     label.setAttribute('position', 'outside');
     ticker.tick(300);
     objects.oldLine = line;
+    label.setAttribute('position', 'inside');
+    ticker.tick(300);
+    label.setAttribute('position', 'outside');
+    const hiddenLine = findLine();
+    arc.setAttribute('visible', false);
+    ticker.tick(150);
+    if (hiddenLine.attribute.visible !== false) return '隐藏扇区的恢复中引线应隐藏';
+    ticker.tick(150);
+    ticker.tick(300);
+    hiddenLine.setAttribute('stroke', '#2d548c');
+    if (
+      arc.attribute.visible !== false ||
+      hiddenLine.attribute.visible !== false ||
+      hiddenLine.baseAttributes.visible !== false
+    ) {
+      return '隐藏扇区的引线在动画结束后重新出现';
+    }
+    arc.setAttribute('visible', true);
+    label.setAttribute('position', 'outside');
+    ticker.tick(300);
+    if (findLine().attribute.visible === false) return '扇区重新显示并更新标签后引线未恢复';
     return null;
   });
   if (result) throw assertionError(result);

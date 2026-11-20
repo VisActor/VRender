@@ -18,6 +18,7 @@ test('清单包含必备用例，非法参数和结果漏项/重复项拒绝', a
     'picking-events',
     'tag-component',
     'label-line-update',
+    'arc-label-line-update',
     'attribute-update',
     'stage-lifecycle'
   ];

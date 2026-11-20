@@ -1056,9 +1056,12 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
   protected _getRestoredLabelLinePoints(
     text: IText | IRichText,
     _targetText: IText | IRichText,
-    markBounds?: IBoundsLike
+    relatedGraphic?: IGraphic
   ): IPointLike[] | undefined {
-    return connectLineBetweenBounds(text.AABBBounds, markBounds);
+    return connectLineBetweenBounds(
+      text.AABBBounds,
+      relatedGraphic?.attribute.visible === false ? undefined : relatedGraphic?.AABBBounds
+    );
   }
 
   protected _runUpdateAnimation(prevLabel: LabelContent, currentLabel: LabelContent, relatedGraphic?: IGraphic) {
@@ -1079,12 +1082,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
       getRestoredLinePoints =
         curLabelLine.pathProxy || style?.points || style?.segments
           ? () => undefined
-          : () =>
-              this._getRestoredLabelLinePoints(
-                prevText,
-                curText,
-                relatedGraphic?.attribute.visible === false ? undefined : relatedGraphic?.AABBBounds
-              );
+          : () => this._getRestoredLabelLinePoints(prevText, curText, relatedGraphic);
     }
 
     prevText.applyAnimationState(

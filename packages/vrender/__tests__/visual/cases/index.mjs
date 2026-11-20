@@ -26,6 +26,11 @@ export const cases = [
     "file": "./label-line-update.mjs"
   },
   {
+    "id": "arc-label-line-update",
+    "purpose": "移动扇区标签由内向外切换时引线连接当前扇区与文字",
+    "file": "./arc-label-line-update.mjs"
+  },
+  {
     "id": "attribute-update",
     "purpose": "属性更新同步改变几何与拾取位置",
     "file": "./attribute-update.mjs"

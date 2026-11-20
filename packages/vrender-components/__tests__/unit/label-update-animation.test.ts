@@ -1,8 +1,9 @@
-import { application, createLine, createRect, createText } from '@visactor/vrender-core';
+import { application, createArc, createLine, createRect, createText } from '@visactor/vrender-core';
 import { DefaultTimeline, ManualTicker, registerAnimate } from '@visactor/vrender-animate';
 import { AABBBounds } from '@visactor/vutils';
 import { LabelBase } from '../../src/label/base';
 import { RectLabel } from '../../src/label/rect';
+import { ArcLabel } from '../../src/label/arc';
 import type { LabelContent } from '../../src/label/type';
 import { commitUpdateAnimationTarget } from '../../src/animation/static-truth';
 
@@ -13,6 +14,16 @@ class TestLabel extends LabelBase<any> {
 
   runUpdate(prevLabel: LabelContent, currentLabel: LabelContent, mark?: ReturnType<typeof createRect>): void {
     this._updateLabel(prevLabel, currentLabel, mark);
+  }
+}
+
+class TestArcLabel extends ArcLabel {
+  protected render(): void {
+    return;
+  }
+
+  runUpdate(prev: LabelContent, next: LabelContent, mark?: ReturnType<typeof createArc>): void {
+    this._updateLabel(prev, next, mark);
   }
 }
 
@@ -145,6 +156,89 @@ function createMovingMarkCase(
     animateMark();
   }
   return { stage, ticker, label, text, mark, line, content };
+}
+
+const arcCases = [
+  { name: 'translation', from: { x: 60 }, to: { x: 100 }, mid: [110, 100] },
+  { name: 'radius', from: { outerRadius: 20 }, to: { outerRadius: 40 }, mid: [130, 100] },
+  {
+    name: 'angle',
+    from: {},
+    to: { startAngle: Math.PI / 2 - 0.3, endAngle: Math.PI / 2 + 0.3 },
+    mid: [100 + 30 / Math.sqrt(2), 100 + 30 / Math.sqrt(2)]
+  },
+  {
+    name: 'combined',
+    from: { x: 60, outerRadius: 20 },
+    to: { x: 100, y: 140, outerRadius: 40, startAngle: Math.PI / 2 - 0.3, endAngle: Math.PI / 2 + 0.3 },
+    mid: [80 + 30 / Math.sqrt(2), 120 + 30 / Math.sqrt(2)]
+  },
+  { name: 'stationary', from: {}, to: {}, mid: [130, 100] }
+];
+
+function createMovingArcCase(scenario = arcCases[0], markFirst = false, finalContext = true) {
+  const { stage, ticker } = createStageHarness('moving-arc-line');
+  const label = new TestArcLabel({
+    type: 'arc',
+    baseMarkGroupName: 'arc',
+    data: [],
+    position: 'outside',
+    animation: true,
+    animationEnter: false,
+    animationExit: false,
+    animationUpdate: { duration: 300, easing: 'linear' }
+  });
+  label._prepareAnimate({});
+  label.setStage(stage, null as any);
+  const mark = createArc({
+    x: 100,
+    y: 100,
+    innerRadius: 0,
+    outerRadius: 30,
+    startAngle: -0.3,
+    endAngle: 0.3,
+    ...scenario.from
+  });
+  mark.setStage(stage, null as any);
+  // The lightweight stage stub does not provide arc bounds services.
+  jest
+    .spyOn(mark, 'AABBBounds', 'get')
+    .mockImplementation(() =>
+      new AABBBounds().set(
+        mark.attribute.x - mark.attribute.outerRadius,
+        mark.attribute.y - mark.attribute.outerRadius,
+        mark.attribute.x + mark.attribute.outerRadius,
+        mark.attribute.y + mark.attribute.outerRadius
+      )
+    );
+  const finalAttrs = { ...mark.attribute, ...scenario.to };
+  if (finalContext) {
+    mark.context = { animationState: 'update', finalAttrs };
+  }
+  commitUpdateAnimationTarget(mark, finalAttrs);
+  const text = createText({ x: 110, y: 110, text: 'Arc' });
+  label.add(text);
+  const angle = (finalAttrs.startAngle + finalAttrs.endAngle) / 2;
+  const points = [
+    {
+      x: finalAttrs.x + finalAttrs.outerRadius * Math.cos(angle),
+      y: finalAttrs.y + finalAttrs.outerRadius * Math.sin(angle)
+    },
+    { x: 180, y: 160 },
+    { x: 195, y: 160 }
+  ];
+  const target = createText({ x: 200, y: 160, text: 'Arc', points } as any);
+  const line = createLine({ points });
+  const content: LabelContent = { text };
+  const animateMark = () => mark.animate().to(scenario.to, 300, 'linear');
+  if (markFirst) {
+    animateMark();
+  }
+  label.runUpdate(content, { text: target, labelLine: line }, mark);
+  if (!markFirst) {
+    animateMark();
+  }
+  return { stage, ticker, label, mark, text, target, line, content, finalAttrs };
 }
 
 describe('Label update animation static truth', () => {
@@ -394,6 +488,73 @@ describe('Label update animation static truth', () => {
     expect(line.attribute.points).toEqual(nextLine.attribute.points);
     expect(line.baseAttributes.points).toEqual(nextLine.attribute.points);
     label.runUpdate(content, { text: createText({ x: 80, y: 0, text: 'Label' }) }, mark);
+    expect(line.parent).toBeNull();
+    tick(ticker, 300);
+    expect(label.getChildren()).toEqual([text]);
+    expect(ticker.listenerCount('tick')).toBe(0);
+    stage.getTimeline().clear();
+  });
+
+  describe.each(arcCases)('arc restoration: $name', scenario => {
+    test.each([
+      [true, true],
+      [true, false],
+      [false, true],
+      [false, false]
+    ])('uses current geometry with markFirst=%s, finalContext=%s', (markFirst, finalContext) => {
+      const { stage, ticker, mark, text, line, finalAttrs } = createMovingArcCase(scenario, markFirst, finalContext);
+      try {
+        expect(line.attribute.points[0].x).toBeCloseTo(mark.attribute.x + mark.attribute.outerRadius);
+        expect(line.attribute.points[0].y).toBeCloseTo(mark.attribute.y);
+        tick(ticker, 150);
+        expect(text.attribute.x).toBe(155);
+        expect(text.attribute.y).toBe(135);
+        expect(line.attribute.visible).toBe(true);
+        expect(line.attribute.points[0].x).toBeCloseTo(scenario.mid[0]);
+        expect(line.attribute.points[0].y).toBeCloseTo(scenario.mid[1]);
+        expect(line.attribute.points.slice(1)).toEqual([
+          { x: 180, y: 135 },
+          { x: 150, y: 135 }
+        ]);
+        expect(mark.baseAttributes).toMatchObject(finalAttrs);
+        expect(text.baseAttributes).toMatchObject({ x: 200, y: 160 });
+        expect(line.baseAttributes.points[2]).toEqual({ x: 195, y: 160 });
+        tick(ticker, 150);
+        expect(line.attribute.points).toEqual(line.baseAttributes.points);
+        expect(mark.attribute).toMatchObject(finalAttrs);
+        expect(ticker.listenerCount('tick')).toBe(0);
+      } finally {
+        stage.getTimeline().clear();
+      }
+    });
+  });
+
+  test('hides a restored arc line while its related arc is hidden', () => {
+    const { stage, ticker, mark, line } = createMovingArcCase(arcCases[4]);
+    mark.setAttribute('visible', false);
+    tick(ticker, 100);
+    expect(line.attribute.visible).toBe(false);
+    mark.setAttribute('visible', true);
+    tick(ticker, 50);
+    expect(line.attribute.visible).toBe(true);
+    expect(line.attribute.points[0].x).toBeCloseTo(130);
+    stage.getTimeline().clear();
+  });
+
+  test('replaces an arc restoration target and removes its line without residual writes', () => {
+    const { stage, ticker, label, mark, text, line, content } = createMovingArcCase();
+    tick(ticker, 150);
+    const points = [
+      { x: 130, y: 100 },
+      { x: 210, y: 180 },
+      { x: 225, y: 180 }
+    ];
+    const target = createText({ x: 230, y: 180, text: 'Arc', points } as any);
+    label.runUpdate(content, { text: target, labelLine: createLine({ points }) }, mark);
+    tick(ticker, 300);
+    expect(line.attribute.points).toEqual(points);
+    expect(line.baseAttributes.points).toEqual(points);
+    label.runUpdate(content, { text: createText({ x: 110, y: 100, text: 'Arc' }) }, mark);
     expect(line.parent).toBeNull();
     tick(ticker, 300);
     expect(label.getChildren()).toEqual([text]);

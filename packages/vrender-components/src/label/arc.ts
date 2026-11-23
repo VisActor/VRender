@@ -1007,6 +1007,22 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
     return (text.attribute as ArcLabelAttrs).points;
   }
 
+  protected _getRestoredLabelLinePoints(
+    text: IText | IRichText,
+    targetText: IText | IRichText,
+    relatedGraphic?: IGraphic
+  ): IPoint[] | undefined {
+    if (!relatedGraphic || relatedGraphic.attribute.visible === false) {
+      return;
+    }
+    const { x = 0, y = 0, outerRadius, startAngle, endAngle } = relatedGraphic.attribute as IArcGraphicAttribute;
+    const anchor = polarToCartesian({ x, y }, outerRadius, (startAngle + endAngle) / 2);
+    const [, bend, end] = this._getLabelLinePoints(targetText);
+    const dx = text.attribute.x - targetText.attribute.x;
+    const dy = text.attribute.y - targetText.attribute.y;
+    return [anchor, { x: bend.x, y: bend.y + dy }, { x: end.x + dx, y: end.y + dy }];
+  }
+
   protected _createLabelLine(text: IText, baseMark?: IGraphic) {
     const { line = {}, visible } = text.attribute as ArcLabelAttrs;
     const lineGraphic = super._createLabelLine(text, baseMark);

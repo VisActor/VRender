@@ -1,15 +1,29 @@
-import { application, createRect, createText } from '@visactor/vrender-core';
-import { DefaultTimeline, ManualTicker, registerAnimate } from '@visactor/vrender-animate';
+import { application, CustomPath2D, createArc, createLine, createRect, createText } from '@visactor/vrender-core';
+import { DefaultTimeline, ManualTicker, defaultTimeline, registerAnimate } from '@visactor/vrender-animate';
+import { AABBBounds } from '@visactor/vutils';
 import { LabelBase } from '../../src/label/base';
 import { RectLabel } from '../../src/label/rect';
+import { ArcLabel } from '../../src/label/arc';
+import type { LabelContent } from '../../src/label/type';
+import { commitUpdateAnimationTarget } from '../../src/animation/static-truth';
 
 class TestLabel extends LabelBase<any> {
   protected render(): void {
     return;
   }
 
-  runUpdate(prevLabel: any, currentLabel: any): void {
-    (this as any)._updateLabel(prevLabel, currentLabel);
+  runUpdate(prevLabel: LabelContent, currentLabel: LabelContent, mark?: ReturnType<typeof createRect>): void {
+    this._updateLabel(prevLabel, currentLabel, mark);
+  }
+}
+
+class TestArcLabel extends ArcLabel {
+  protected render(): void {
+    return;
+  }
+
+  runUpdate(prev: LabelContent, next: LabelContent, mark?: ReturnType<typeof createArc>): void {
+    this._updateLabel(prev, next, mark);
   }
 }
 
@@ -97,6 +111,136 @@ function tick(ticker: ManualTicker, delta: number) {
   ticker.tick(delta);
 }
 
+function createMovingMarkCase(
+  markFirst: boolean,
+  finalContext: boolean,
+  harness = createStageHarness('moving-mark-line')
+) {
+  const { stage, ticker } = harness;
+  const label = new TestLabel({
+    type: 'rect',
+    baseMarkGroupName: 'bar',
+    data: [],
+    animation: true,
+    animationEnter: false,
+    animationExit: false,
+    animationUpdate: { duration: 300, easing: 'linear' }
+  });
+  label._prepareAnimate({});
+  label.setStage(stage, null as any);
+  const text = createText({ x: 40, y: 0, text: 'Label' });
+  label.add(text);
+  jest
+    .spyOn(text, 'AABBBounds', 'get')
+    .mockImplementation(() => new AABBBounds().set(text.attribute.x, 0, text.attribute.x + 20, 10));
+  const mark = createRect({ x: 35, y: 0, width: 10, height: 10 });
+  mark.setStage(stage, null as any);
+  const finalAttrs = { ...mark.attribute, x: 75 };
+  if (finalContext) {
+    mark.context = { animationState: 'update', finalAttrs };
+  }
+  commitUpdateAnimationTarget(mark, finalAttrs);
+  const line = createLine({
+    points: [
+      { x: 100, y: 5 },
+      { x: 85, y: 5 }
+    ]
+  });
+  const content: LabelContent = { text };
+  const animateMark = () => mark.animate().to({ x: 75 }, 300, 'linear');
+  if (markFirst) {
+    animateMark();
+  }
+  label.runUpdate(content, { text: createText({ x: 100, y: 0, text: 'Label' }), labelLine: line }, mark);
+  if (!markFirst) {
+    animateMark();
+  }
+  return { stage, ticker, label, text, mark, line, content };
+}
+
+const arcCases = [
+  { name: 'translation', from: { x: 60 }, to: { x: 100 }, mid: [110, 100] },
+  { name: 'radius', from: { outerRadius: 20 }, to: { outerRadius: 40 }, mid: [130, 100] },
+  {
+    name: 'angle',
+    from: {},
+    to: { startAngle: Math.PI / 2 - 0.3, endAngle: Math.PI / 2 + 0.3 },
+    mid: [100 + 30 / Math.sqrt(2), 100 + 30 / Math.sqrt(2)]
+  },
+  {
+    name: 'combined',
+    from: { x: 60, outerRadius: 20 },
+    to: { x: 100, y: 140, outerRadius: 40, startAngle: Math.PI / 2 - 0.3, endAngle: Math.PI / 2 + 0.3 },
+    mid: [80 + 30 / Math.sqrt(2), 120 + 30 / Math.sqrt(2)]
+  },
+  { name: 'stationary', from: {}, to: {}, mid: [130, 100] }
+];
+
+function createMovingArcCase(scenario = arcCases[0], markFirst = false, finalContext = true) {
+  const { stage, ticker } = createStageHarness('moving-arc-line');
+  const label = new TestArcLabel({
+    type: 'arc',
+    baseMarkGroupName: 'arc',
+    data: [],
+    position: 'outside',
+    animation: true,
+    animationEnter: false,
+    animationExit: false,
+    animationUpdate: { duration: 300, easing: 'linear' }
+  });
+  label._prepareAnimate({});
+  label.setStage(stage, null as any);
+  const mark = createArc({
+    x: 100,
+    y: 100,
+    innerRadius: 0,
+    outerRadius: 30,
+    startAngle: -0.3,
+    endAngle: 0.3,
+    ...scenario.from
+  });
+  mark.setStage(stage, null as any);
+  // The lightweight stage stub does not provide arc bounds services.
+  jest
+    .spyOn(mark, 'AABBBounds', 'get')
+    .mockImplementation(() =>
+      new AABBBounds().set(
+        mark.attribute.x - mark.attribute.outerRadius,
+        mark.attribute.y - mark.attribute.outerRadius,
+        mark.attribute.x + mark.attribute.outerRadius,
+        mark.attribute.y + mark.attribute.outerRadius
+      )
+    );
+  const finalAttrs = { ...mark.attribute, ...scenario.to };
+  if (finalContext) {
+    mark.context = { animationState: 'update', finalAttrs };
+  }
+  commitUpdateAnimationTarget(mark, finalAttrs);
+  const text = createText({ x: 110, y: 110, text: 'Arc' });
+  label.add(text);
+  const angle = (finalAttrs.startAngle + finalAttrs.endAngle) / 2;
+  const points = [
+    {
+      x: finalAttrs.x + finalAttrs.outerRadius * Math.cos(angle),
+      y: finalAttrs.y + finalAttrs.outerRadius * Math.sin(angle)
+    },
+    { x: 180, y: 160 },
+    { x: 195, y: 160 }
+  ];
+  const target = createText({ x: 200, y: 160, text: 'Arc', points } as any);
+  const line = createLine({ points });
+  const content: LabelContent = { text };
+  const animateMark = () => mark.animate().to(scenario.to, 300, 'linear');
+  if (markFirst) {
+    animateMark();
+  }
+  label.runUpdate(content, { text: target, labelLine: line }, mark);
+  if (!markFirst) {
+    animateMark();
+  }
+  return { stage, ticker, label, mark, text, target, line, content, finalAttrs };
+}
+
 describe('Label update animation static truth', () => {
   let originalGraphicService: typeof application.graphicService;
 
@@ -163,6 +307,430 @@ describe('Label update animation static truth', () => {
     expect((prevText as any).getFinalAttribute().y).toBeCloseTo(newAttrs.y, 5);
     expect((prevText as any).getFinalAttribute().text).toBe(newAttrs.text);
     expect((prevText as any).getFinalAttribute().opacity).toBeCloseTo(newAttrs.opacity, 5);
+  });
+
+  test.each([true, false])('reconciles label lines during updates with animation=%s', animation => {
+    const { stage, ticker } = createStageHarness('label-line-update');
+    const label = new TestLabel({
+      type: 'rect',
+      baseMarkGroupName: 'bar',
+      data: [],
+      animation,
+      animationEnter: false,
+      animationExit: false,
+      animationUpdate: { duration: 300, easing: 'linear' }
+    });
+    label._prepareAnimate({});
+    label.setStage(stage, null as any);
+    const firstLine = createLine({
+      points: [
+        { x: 0, y: 0 },
+        { x: 20, y: 0 }
+      ]
+    });
+    const text = createText({ x: 20, y: 0, text: 'Label' });
+    const renderedLabel: LabelContent = { text, labelLine: firstLine };
+    label.add(text);
+    label.add(firstLine);
+
+    label.runUpdate(renderedLabel, { text: createText({ x: 40, y: 0, text: 'Label' }) });
+    expect(renderedLabel.labelLine).toBeUndefined();
+    expect(firstLine.parent).toBeNull();
+    expect(text.parent).toBe(label);
+    if (animation) {
+      tick(ticker, 150);
+      expect(text.attribute.x).toBeGreaterThan(20);
+      expect(text.attribute.x).toBeLessThan(40);
+      tick(ticker, 150);
+    }
+    expect(text.attribute.x).toBe(40);
+
+    const restoredLine = createLine({
+      points: [
+        { x: 60, y: 5 },
+        { x: 45, y: 5 }
+      ]
+    });
+    const mark = createRect({ x: 35, y: 0, width: 10, height: 10 });
+    jest.spyOn(text, 'AABBBounds', 'get').mockImplementation(() => {
+      const x = text.attribute.x;
+      return new AABBBounds().set(x, 0, x + 20, 10);
+    });
+    label.runUpdate(renderedLabel, { text: createText({ x: 60, y: 0, text: 'Label' }), labelLine: restoredLine }, mark);
+    expect(renderedLabel.labelLine).toBe(restoredLine);
+    expect(restoredLine.parent).toBe(label);
+    if (animation) {
+      expect(restoredLine.attribute.visible).toBe(false);
+      tick(ticker, 150);
+      expect(text.attribute.x).toBe(50);
+      expect(restoredLine.attribute.visible).toBe(true);
+      expect(restoredLine.attribute.points).toEqual([
+        { x: 50, y: 5 },
+        { x: 45, y: 5 }
+      ]);
+      expect(restoredLine.baseAttributes.points[0].x).toBe(60);
+      tick(ticker, 150);
+    }
+    expect(restoredLine.attribute.points[0].x).toBe(60);
+
+    const nextLine = createLine({
+      points: [
+        { x: 80, y: 5 },
+        { x: 45, y: 5 }
+      ]
+    });
+    label.runUpdate(renderedLabel, { text: createText({ x: 80, y: 0, text: 'Label' }), labelLine: nextLine });
+    expect(renderedLabel.labelLine).toBe(restoredLine);
+    expect(label.getChildren()).toEqual([text, restoredLine]);
+    if (animation) {
+      tick(ticker, 150);
+      expect(restoredLine.attribute.points[0].x).toBeGreaterThan(60);
+      expect(restoredLine.attribute.points[0].x).toBeLessThan(80);
+      tick(ticker, 150);
+    }
+    expect(restoredLine.attribute.points[0].x).toBe(80);
+  });
+
+  test.each([
+    [true, true],
+    [true, false],
+    [false, true],
+    [false, false]
+  ])('restores a line against moving geometry with markFirst=%s, finalContext=%s', (markFirst, finalContext) => {
+    const { ticker, text, mark, line } = createMovingMarkCase(markFirst, finalContext);
+    expect(line.attribute.visible).toBe(false);
+    tick(ticker, 150);
+    const points = line.attribute.points;
+    expect([mark.AABBBounds.x1, mark.AABBBounds.x2]).toEqual([55, 65]);
+    expect([text.AABBBounds.x1, text.AABBBounds.x2]).toEqual([70, 90]);
+    expect(line.attribute.visible).toBe(true);
+    expect(points).toEqual([
+      { x: 70, y: 5 },
+      { x: 65, y: 5 }
+    ]);
+    expect(line.baseAttributes.points).toEqual([
+      { x: 100, y: 5 },
+      { x: 85, y: 5 }
+    ]);
+    expect(text.baseAttributes.x).toBe(100);
+    expect(mark.baseAttributes.x).toBe(75);
+    tick(ticker, 150);
+    expect(line.attribute.points).toEqual(line.baseAttributes.points);
+    expect(line.attribute.visible).not.toBe(false);
+    expect(text.attribute.x).toBe(100);
+    expect(mark.attribute.x).toBe(75);
+    expect(ticker.listenerCount('tick')).toBe(0);
+  });
+
+  test('batches restored lines and preserves the remaining frame when one line is cancelled', () => {
+    const harness = createStageHarness('shared-moving-lines');
+    const first = createMovingMarkCase(false, true, harness);
+    const second = createMovingMarkCase(false, true, harness);
+    harness.stage.getTimeline().tick(150);
+    expect(harness.ticker.listenerCount('tick')).toBe(1);
+    first.line.stopAnimates();
+    expect(harness.ticker.listenerCount('tick')).toBe(1);
+    harness.ticker.emit('tick', 150);
+    expect(second.line.attribute.points).toEqual([
+      { x: 70, y: 5 },
+      { x: 65, y: 5 }
+    ]);
+    expect(harness.ticker.listenerCount('tick')).toBe(0);
+    harness.stage.getTimeline().clear();
+  });
+
+  test.each(['stop', 'detach', 'release'])('clears a pending restored-line frame on %s', action => {
+    const { stage, ticker, label, line } = createMovingMarkCase(false, true);
+    stage.getTimeline().tick(150);
+    expect(ticker.listenerCount('tick')).toBe(1);
+    if (action === 'stop') {
+      line.stopAnimates();
+    } else if (action === 'detach') {
+      label.removeChild(line);
+    } else {
+      line.release();
+    }
+    expect(ticker.listenerCount('tick')).toBe(0);
+    const points = line.attribute.points;
+    ticker.emit('tick', 150);
+    expect(line.attribute.points).toBe(points);
+  });
+
+  test('uses the current stage ticker after switching tickers during restoration', () => {
+    const { stage, ticker, line, label, mark } = createMovingMarkCase(false, true);
+    tick(ticker, 100);
+    const next = createStageHarness('next-label-stage');
+    // Reparent the label and its related mark to the same destination stage.
+    label.setStage(next.stage, null as any);
+    mark.setStage(next.stage, null as any);
+    tick(next.ticker, 100);
+    expect(ticker.listenerCount('tick')).toBe(0);
+    expect(next.ticker.listenerCount('tick')).toBe(0);
+    expect(line.attribute.visible).toBe(true);
+    expect(line.attribute.points[1].x).toBeCloseTo(mark.AABBBounds.x2);
+    label.setStage(null, null);
+    stage.getTimeline().clear();
+    next.stage.getTimeline().clear();
+  });
+
+  test('takes over restored-line points on a new update and removes the line without residual writes', () => {
+    const { stage, ticker, label, text, mark, line, content } = createMovingMarkCase(false, true);
+    tick(ticker, 150);
+    const nextLine = createLine({
+      points: [
+        { x: 120, y: 5 },
+        { x: 85, y: 5 }
+      ]
+    });
+    label.runUpdate(content, { text: createText({ x: 120, y: 0, text: 'Label' }), labelLine: nextLine }, mark);
+    tick(ticker, 150);
+    tick(ticker, 150);
+    expect(line.attribute.points).toEqual(nextLine.attribute.points);
+    expect(line.baseAttributes.points).toEqual(nextLine.attribute.points);
+    label.runUpdate(content, { text: createText({ x: 80, y: 0, text: 'Label' }) }, mark);
+    expect(line.parent).toBeNull();
+    tick(ticker, 300);
+    expect(label.getChildren()).toEqual([text]);
+    expect(ticker.listenerCount('tick')).toBe(0);
+    stage.getTimeline().clear();
+  });
+
+  describe.each(arcCases)('arc restoration: $name', scenario => {
+    test.each([
+      [true, true],
+      [true, false],
+      [false, true],
+      [false, false]
+    ])('uses current geometry with markFirst=%s, finalContext=%s', (markFirst, finalContext) => {
+      const { stage, ticker, mark, text, line, finalAttrs } = createMovingArcCase(scenario, markFirst, finalContext);
+      try {
+        expect(line.attribute.points[0].x).toBeCloseTo(mark.attribute.x + mark.attribute.outerRadius);
+        expect(line.attribute.points[0].y).toBeCloseTo(mark.attribute.y);
+        tick(ticker, 150);
+        expect(text.attribute.x).toBe(155);
+        expect(text.attribute.y).toBe(135);
+        expect(line.attribute.visible).toBe(true);
+        expect(line.attribute.points[0].x).toBeCloseTo(scenario.mid[0]);
+        expect(line.attribute.points[0].y).toBeCloseTo(scenario.mid[1]);
+        expect(line.attribute.points.slice(1)).toEqual([
+          { x: 180, y: 135 },
+          { x: 150, y: 135 }
+        ]);
+        expect(mark.baseAttributes).toMatchObject(finalAttrs);
+        expect(text.baseAttributes).toMatchObject({ x: 200, y: 160 });
+        expect(line.baseAttributes.points[2]).toEqual({ x: 195, y: 160 });
+        tick(ticker, 150);
+        expect(line.attribute.points).toEqual(line.baseAttributes.points);
+        expect(mark.attribute).toMatchObject(finalAttrs);
+        expect(ticker.listenerCount('tick')).toBe(0);
+      } finally {
+        stage.getTimeline().clear();
+      }
+    });
+  });
+
+  test('hides a restored arc line while its related arc is hidden', () => {
+    const { stage, ticker, mark, line } = createMovingArcCase(arcCases[4]);
+    mark.setAttribute('visible', false);
+    tick(ticker, 100);
+    expect(line.attribute.visible).toBe(false);
+    mark.setAttribute('visible', true);
+    tick(ticker, 50);
+    expect(line.attribute.visible).toBe(true);
+    expect(line.attribute.points[0].x).toBeCloseTo(130);
+    stage.getTimeline().clear();
+  });
+
+  test('replaces an arc restoration target and removes its line without residual writes', () => {
+    const { stage, ticker, label, mark, text, line, content } = createMovingArcCase();
+    tick(ticker, 150);
+    const points = [
+      { x: 130, y: 100 },
+      { x: 210, y: 180 },
+      { x: 225, y: 180 }
+    ];
+    const target = createText({ x: 230, y: 180, text: 'Arc', points } as any);
+    label.runUpdate(content, { text: target, labelLine: createLine({ points }) }, mark);
+    tick(ticker, 300);
+    expect(line.attribute.points).toEqual(points);
+    expect(line.baseAttributes.points).toEqual(points);
+    label.runUpdate(content, { text: createText({ x: 110, y: 100, text: 'Arc' }) }, mark);
+    expect(line.parent).toBeNull();
+    tick(ticker, 300);
+    expect(label.getChildren()).toEqual([text]);
+    expect(ticker.listenerCount('tick')).toBe(0);
+    stage.getTimeline().clear();
+  });
+
+  describe.each(['rect', 'arc'])('restoration completion: %s', type => {
+    const createCase = (markFirst = false) =>
+      type === 'rect' ? createMovingMarkCase(markFirst, true) : createMovingArcCase(arcCases[4], markFirst);
+
+    test.each([undefined, true])('keeps hidden marks hidden after completion with line visible=%s', visible => {
+      const { stage, ticker, label, mark, line, content, text } = createCase();
+      try {
+        if (visible !== undefined) {
+          line.setAttribute('visible', visible);
+        }
+        mark.setAttribute('visible', false);
+        tick(ticker, 100);
+        expect(line.attribute.visible).toBe(false);
+        tick(ticker, 200);
+        expect(mark.attribute.visible).toBe(false);
+        expect(line.attribute.visible).toBe(false);
+        expect(line.baseAttributes.visible).toBe(false);
+        tick(ticker, 100);
+        line.setAttribute('stroke', 'red');
+        expect(line.attribute.visible).toBe(false);
+        expect(ticker.listenerCount('tick')).toBe(0);
+        mark.setAttribute('visible', true);
+        const points = line.baseAttributes.points;
+        const next = createText({ ...text.baseAttributes, points } as any);
+        (label as TestLabel).runUpdate(
+          content,
+          { text: next, labelLine: createLine({ points, visible: true }) },
+          mark as any
+        );
+        tick(ticker, 300);
+        expect(line.attribute.visible).toBe(true);
+        expect(line.baseAttributes.visible).toBe(true);
+      } finally {
+        stage.getTimeline().clear();
+      }
+    });
+
+    test.each([true, false])('reads a mark hidden on its final tick with markFirst=%s', markFirst => {
+      const { stage, ticker, mark, line } = createCase(markFirst);
+      mark.animates.forEach(animate => animate.onEnd(() => mark.setAttribute('visible', false)));
+      tick(ticker, 300);
+      expect(mark.attribute.visible).toBe(false);
+      expect(line.attribute.visible).toBe(false);
+      expect(line.baseAttributes.visible).toBe(false);
+      tick(ticker, 100);
+      expect(line.attribute.visible).toBe(false);
+      stage.getTimeline().clear();
+    });
+
+    test('shows a mark restored before completion', () => {
+      const { stage, ticker, mark, line } = createCase();
+      mark.setAttribute('visible', false);
+      tick(ticker, 100);
+      expect(line.attribute.visible).toBe(false);
+      mark.setAttribute('visible', true);
+      tick(ticker, 200);
+      expect(line.attribute.visible).toBe(true);
+      expect(line.baseAttributes.visible).toBe(true);
+      stage.getTimeline().clear();
+    });
+  });
+
+  test.each(['stop', 'detach', 'release'])('cancels a queued completion on %s', action => {
+    const { stage, ticker, label, mark, line } = createMovingMarkCase(false, true);
+    mark.setAttribute('visible', false);
+    const commit = jest.spyOn(line as any, '_commitAnimationStaticAttributes');
+    stage.getTimeline().tick(300);
+    expect(ticker.listenerCount('tick')).toBe(1);
+    if (action === 'stop') {
+      line.stopAnimates();
+    } else if (action === 'detach') {
+      label.removeChild(line);
+    } else {
+      line.release();
+    }
+    const visible = line.attribute.visible;
+    ticker.emit('tick', 300);
+    expect(commit).not.toHaveBeenCalled();
+    expect(line.attribute.visible).toBe(visible);
+    expect(ticker.listenerCount('tick')).toBe(0);
+    stage.getTimeline().clear();
+  });
+
+  test.each(['points', 'visible', 'completed visible'])('preserves a new %s owner before completion flush', key => {
+    const { stage, ticker, mark, line } = createMovingMarkCase(false, true);
+    mark.setAttribute('visible', false);
+    stage.getTimeline().tick(300);
+    const nextPoints = [
+      { x: 200, y: 0 },
+      { x: 220, y: 0 }
+    ];
+    const next = line.animate().to(key === 'points' ? { points: nextPoints } : { visible: true }, 100, 'linear');
+    // Start the competing animation before the queued frame is flushed.
+    next.advance(key === 'completed visible' ? 100 : 50);
+    const points = line.attribute.points;
+    ticker.emit('tick', 300);
+    if (key === 'points') {
+      expect(line.attribute.points).toBe(points);
+      expect(line.baseAttributes.visible).toBe(false);
+    } else {
+      expect(line.attribute.visible).not.toBe(false);
+      expect(line.baseAttributes.visible).not.toBe(false);
+    }
+    expect(ticker.listenerCount('tick')).toBe(0);
+    stage.getTimeline().clear();
+  });
+
+  test('commits hidden completion without a stage ticker', () => {
+    ensureRuntime();
+    const label = new TestLabel({
+      type: 'rect',
+      baseMarkGroupName: 'bar',
+      data: [],
+      animation: true,
+      animationUpdate: { duration: 300 }
+    });
+    label._prepareAnimate({});
+    const text = createText({ x: 40, y: 0, text: 'Label' });
+    jest.spyOn(text, 'AABBBounds', 'get').mockReturnValue(new AABBBounds().set(40, 0, 60, 10));
+    label.add(text);
+    const mark = createRect({ x: 35, y: 0, width: 10, height: 10, visible: false });
+    const line = createLine({
+      points: [
+        { x: 100, y: 5 },
+        { x: 45, y: 5 }
+      ],
+      visible: true
+    });
+    try {
+      label.runUpdate({ text }, { text: createText({ x: 100, y: 0, text: 'Label' }), labelLine: line }, mark);
+      defaultTimeline.tick(300);
+      expect(line.attribute.visible).toBe(false);
+      expect(line.baseAttributes.visible).toBe(false);
+      defaultTimeline.tick(100);
+      expect(line.attribute.visible).toBe(false);
+    } finally {
+      defaultTimeline.clear();
+    }
+  });
+
+  test.each(['path', 'points', 'segments'])('preserves final-only %s visibility semantics', geometry => {
+    const { stage, ticker, label, mark, content } = createMovingMarkCase(false, true);
+    tick(ticker, 300);
+    const points = [
+      { x: 100, y: 5 },
+      { x: 85, y: 5 }
+    ];
+    for (const hidden of [false, true]) {
+      label.runUpdate(content, { text: createText({ x: 80, y: 0, text: 'Label' }) }, mark);
+      tick(ticker, 300);
+      label.setAttribute('line', {
+        style: geometry === 'points' ? { points } : geometry === 'segments' ? { segments: [{ points }] } : {}
+      });
+      const line = createLine({ points, visible: true });
+      if (geometry === 'path') {
+        line.pathProxy = () => new CustomPath2D();
+      }
+      label.runUpdate(content, { text: createText({ x: 100, y: 0, text: 'Label' }), labelLine: line }, mark);
+      if (hidden) {
+        mark.setAttribute('visible', false);
+      }
+      tick(ticker, 150);
+      expect(line.attribute.visible).toBe(false);
+      tick(ticker, 150);
+      expect(line.attribute.visible).toBe(!hidden);
+      expect(line.baseAttributes.visible).toBe(!hidden);
+      expect(line.attribute.points).toEqual(points);
+    }
+    stage.getTimeline().clear();
   });
 
   test('lays out labels from related rect context final attrs before update handoff', () => {

@@ -230,6 +230,50 @@ function getTrackedChildren(marker: IGraphic) {
   return trackedGraphics;
 }
 
+test('keeps the markPoint label fading in when an update interrupts an earlier fade', () => {
+  const harness = createStageHarness('mark-point-interrupted-fade');
+  const markPoint = new MarkPoint({
+    position: { x: 100, y: 100 },
+    animationEnter: { type: 'fadeIn', duration: 100, easing: 'linear' },
+    animationUpdate: { type: 'fadeIn', duration: 200, easing: 'linear' },
+    itemContent: {
+      type: 'text',
+      offsetX: 50,
+      offsetY: 30,
+      style: {
+        text: { type: 'rich', text: [{ text: 'marker', fill: '#E8346D' }] }
+      }
+    }
+  });
+
+  try {
+    harness.stage.defaultLayer.add(markPoint as unknown as IGraphic);
+    harness.stage.render();
+    harness.ticker.tick(220);
+
+    const label = collectGraphics(markPoint as unknown as TraversableGraphic).find(
+      graphic => graphic.type === 'richtext'
+    );
+    expect(label?.attribute.fillOpacity).toBe(1);
+
+    markPoint.setAttributes({ position: { x: 140, y: 100 } });
+    harness.ticker.tick(50);
+    expect(label?.attribute.fillOpacity).toBeCloseTo(0.25);
+
+    markPoint.setAttributes({ position: { x: 180, y: 100 } });
+    expect(label?.attribute.fillOpacity).toBe(0);
+    harness.ticker.tick(50);
+    expect(label?.attribute.fillOpacity).toBeCloseTo(0.25);
+
+    harness.ticker.tick(150);
+    harness.ticker.tick(16);
+    expect(label?.attribute.fillOpacity).toBe(1);
+    expect(getTrackedAnimateCount(markPoint as unknown as TraversableGraphic)).toBe(0);
+  } finally {
+    releaseStageHarness(harness);
+  }
+});
+
 describe('marker exit animation lifecycle', () => {
   test.each([
     ['markPoint', createMarkPoint],

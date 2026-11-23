@@ -138,7 +138,6 @@ export class DefaultTimeline extends EventEmitter implements ITimeline {
     }
 
     if (release) {
-      animate._onRemove && animate._onRemove.forEach(cb => cb());
       animate.release();
     }
 

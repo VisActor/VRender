@@ -1,3 +1,22 @@
+# v1.1.16
+
+2026-11-23
+
+
+**What's Changed**
+
+* docs: 补齐 PR 工作流与视觉测试协作指南 by @Rui-Sun in https://github.com/VisActor/VRender/pull/2155
+* [Auto Sync] Sync the code from branch main to branch develop after release 1.1.15 by @github-actions[bot] in https://github.com/VisActor/VRender/pull/2158
+* docs: document saved Photo selections and optional approval by @Rui-Sun in https://github.com/VisActor/VRender/pull/2160
+* [Auto changelog] changlog of v1.1.15 by @github-actions[bot] in https://github.com/VisActor/VRender/pull/2159
+* fix: reconcile label lines during label updates by @xile611 in https://github.com/VisActor/VRender/pull/2161
+* [Auto release] release 1.1.16 by @github-actions[bot] in https://github.com/VisActor/VRender/pull/2162
+
+
+**Full Changelog**: https://github.com/VisActor/VRender/compare/v1.1.15...v1.1.16
+
+[more detail about v1.1.16](https://github.com/VisActor/VRender/releases/tag/v1.1.16)
+
 # v1.1.15
 
 2026-11-11

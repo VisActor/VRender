@@ -8,15 +8,33 @@
   "types": "es/index.d.ts",
   "typesVersions": {
     "*": {
-      "env": ["es/env/index.d.ts"],
-      "env/*": ["es/env/*"],
-      "event/extension": ["es/event/extension/index.d.ts"],
-      "event/extension/*": ["es/event/extension/*"],
-      "installers/*": ["es/installers/*"],
-      "jsx/*": ["es/jsx/*"],
-      "picker/*": ["es/picker/*"],
-      "register/*": ["es/register/*"],
-      "tools/*": ["es/tools/*"]
+      "env": [
+        "es/env/index.d.ts"
+      ],
+      "env/*": [
+        "es/env/*"
+      ],
+      "event/extension": [
+        "es/event/extension/index.d.ts"
+      ],
+      "event/extension/*": [
+        "es/event/extension/*"
+      ],
+      "installers/*": [
+        "es/installers/*"
+      ],
+      "jsx/*": [
+        "es/jsx/*"
+      ],
+      "picker/*": [
+        "es/picker/*"
+      ],
+      "register/*": [
+        "es/register/*"
+      ],
+      "tools/*": [
+        "es/tools/*"
+      ]
     }
   },
   "files": [
@@ -37,7 +55,7 @@
     "test-watch": "cross-env DEBUG_MODE=1 jest --watch -c jest.config.js"
   },
   "dependencies": {
-    "@visactor/vutils": "~1.0.12",
+    "@visactor/vutils": "~1.0.29",
     "@visactor/vrender-core": "workspace:1.1.15",
     "@resvg/resvg-js": "2.4.1",
     "roughjs": "4.6.6",

@@ -8,43 +8,117 @@
   "types": "es/index.d.ts",
   "typesVersions": {
     "*": {
-      "axis": ["es/axis/index.d.ts"],
-      "axis/*": ["es/axis/*"],
-      "brush": ["es/brush/index.d.ts"],
-      "brush/*": ["es/brush/*"],
-      "checkbox": ["es/checkbox/index.d.ts"],
-      "checkbox/*": ["es/checkbox/*"],
-      "crosshair": ["es/crosshair/index.d.ts"],
-      "crosshair/*": ["es/crosshair/*"],
-      "data-zoom": ["es/data-zoom/index.d.ts"],
-      "data-zoom/*": ["es/data-zoom/*"],
-      "label": ["es/label/index.d.ts"],
-      "label/*": ["es/label/*"],
-      "legend/*": ["es/legend/*"],
-      "marker": ["es/marker/index.d.ts"],
-      "marker/*": ["es/marker/*"],
-      "player": ["es/player/index.d.ts"],
-      "player/*": ["es/player/*"],
-      "poptip": ["es/poptip/index.d.ts"],
-      "poptip/*": ["es/poptip/*"],
-      "radio": ["es/radio/index.d.ts"],
-      "radio/*": ["es/radio/*"],
-      "scrollbar": ["es/scrollbar/index.d.ts"],
-      "scrollbar/*": ["es/scrollbar/*"],
-      "slider": ["es/slider/index.d.ts"],
-      "slider/*": ["es/slider/*"],
-      "table-series-number": ["es/table-series-number/index.d.ts"],
-      "table-series-number/*": ["es/table-series-number/*"],
-      "tag": ["es/tag/index.d.ts"],
-      "tag/*": ["es/tag/*"],
-      "timeline": ["es/timeline/index.d.ts"],
-      "timeline/*": ["es/timeline/*"],
-      "title": ["es/title/index.d.ts"],
-      "title/*": ["es/title/*"],
-      "tooltip": ["es/tooltip/index.d.ts"],
-      "tooltip/*": ["es/tooltip/*"],
-      "util": ["es/util/index.d.ts"],
-      "util/*": ["es/util/*"]
+      "axis": [
+        "es/axis/index.d.ts"
+      ],
+      "axis/*": [
+        "es/axis/*"
+      ],
+      "brush": [
+        "es/brush/index.d.ts"
+      ],
+      "brush/*": [
+        "es/brush/*"
+      ],
+      "checkbox": [
+        "es/checkbox/index.d.ts"
+      ],
+      "checkbox/*": [
+        "es/checkbox/*"
+      ],
+      "crosshair": [
+        "es/crosshair/index.d.ts"
+      ],
+      "crosshair/*": [
+        "es/crosshair/*"
+      ],
+      "data-zoom": [
+        "es/data-zoom/index.d.ts"
+      ],
+      "data-zoom/*": [
+        "es/data-zoom/*"
+      ],
+      "label": [
+        "es/label/index.d.ts"
+      ],
+      "label/*": [
+        "es/label/*"
+      ],
+      "legend/*": [
+        "es/legend/*"
+      ],
+      "marker": [
+        "es/marker/index.d.ts"
+      ],
+      "marker/*": [
+        "es/marker/*"
+      ],
+      "player": [
+        "es/player/index.d.ts"
+      ],
+      "player/*": [
+        "es/player/*"
+      ],
+      "poptip": [
+        "es/poptip/index.d.ts"
+      ],
+      "poptip/*": [
+        "es/poptip/*"
+      ],
+      "radio": [
+        "es/radio/index.d.ts"
+      ],
+      "radio/*": [
+        "es/radio/*"
+      ],
+      "scrollbar": [
+        "es/scrollbar/index.d.ts"
+      ],
+      "scrollbar/*": [
+        "es/scrollbar/*"
+      ],
+      "slider": [
+        "es/slider/index.d.ts"
+      ],
+      "slider/*": [
+        "es/slider/*"
+      ],
+      "table-series-number": [
+        "es/table-series-number/index.d.ts"
+      ],
+      "table-series-number/*": [
+        "es/table-series-number/*"
+      ],
+      "tag": [
+        "es/tag/index.d.ts"
+      ],
+      "tag/*": [
+        "es/tag/*"
+      ],
+      "timeline": [
+        "es/timeline/index.d.ts"
+      ],
+      "timeline/*": [
+        "es/timeline/*"
+      ],
+      "title": [
+        "es/title/index.d.ts"
+      ],
+      "title/*": [
+        "es/title/*"
+      ],
+      "tooltip": [
+        "es/tooltip/index.d.ts"
+      ],
+      "tooltip/*": [
+        "es/tooltip/*"
+      ],
+      "util": [
+        "es/util/index.d.ts"
+      ],
+      "util/*": [
+        "es/util/*"
+      ]
     }
   },
   "files": [
@@ -67,8 +141,8 @@
     "build:spec-types": "rm -rf ./spec-types && tsc -p ./tsconfig.spec.json --declaration --emitDeclarationOnly --outDir ./spec-types"
   },
   "dependencies": {
-    "@visactor/vutils": "~1.0.12",
-    "@visactor/vscale": "~1.0.12",
+    "@visactor/vutils": "~1.0.29",
+    "@visactor/vscale": "~1.0.29",
     "@visactor/vrender-core": "workspace:1.1.15",
     "@visactor/vrender-kits": "workspace:1.1.15",
     "@visactor/vrender-animate": "workspace:1.1.15"
@@ -78,7 +152,7 @@
     "@internal/eslint-config": "workspace:*",
     "@internal/ts-config": "workspace:*",
     "@rushstack/eslint-patch": "~1.1.4",
-    "@visactor/vscale": "~1.0.12",
+    "@visactor/vscale": "~1.0.29",
     "@types/jest": "^26.0.0",
     "jest": "^26.0.0",
     "jest-electron": "npm:@pixi/jest-electron@26.1.0",

@@ -12,38 +12,102 @@
   "types": "es/index.d.ts",
   "typesVersions": {
     "*": {
-      "application": ["es/application.d.ts"],
-      "color-string": ["es/color-string/index.d.ts"],
-      "common/diff": ["es/common/diff.d.ts"],
-      "common/generator": ["es/common/generator.d.ts"],
-      "common/performance-raf": ["es/common/performance-raf.d.ts"],
-      "constants": ["es/constants.d.ts"],
-      "container": ["es/container.d.ts"],
-      "entries/browser": ["es/entries/browser.d.ts"],
-      "entries/miniapp": ["es/entries/miniapp.d.ts"],
-      "entries/runtime-installer": ["es/entries/runtime-installer.d.ts"],
-      "env": ["es/env.d.ts"],
-      "event/constant": ["es/event/public-constant.d.ts"],
-      "global": ["es/global.d.ts"],
-      "graphic/base": ["es/graphic/base.d.ts"],
-      "graphic/builtin-symbol": ["es/graphic/builtin-symbol.d.ts"],
-      "graphic/creator": ["es/graphic/creator.d.ts"],
-      "graphic/graphic-registry": ["es/graphic/graphic-registry.d.ts"],
-      "graphic/group": ["es/graphic/group.d.ts"],
-      "graphic/modules": ["es/graphic/modules.d.ts"],
-      "graphic/symbol": ["es/graphic/symbol.d.ts"],
-      "interpolate": ["es/interpolate.d.ts"],
-      "legacy/bootstrap": ["es/legacy/bootstrap.d.ts"],
-      "path": ["es/path.d.ts"],
-      "picker/constants": ["es/picker/constants.d.ts"],
-      "plugin/3d": ["es/plugin/3d.d.ts"],
-      "plugin/attribute": ["es/plugin/attribute.d.ts"],
-      "plugin/flex-layout": ["es/plugin/flex-layout.d.ts"],
-      "register/graphic": ["es/register/graphic.d.ts"],
-      "render/draw-interceptor": ["es/render/contributions/render/draw-interceptor.d.ts"],
-      "render/symbol": ["es/render/contributions/render/symbol.d.ts"],
-      "svg": ["es/svg.d.ts"],
-      "text": ["es/text.d.ts"]
+      "application": [
+        "es/application.d.ts"
+      ],
+      "color-string": [
+        "es/color-string/index.d.ts"
+      ],
+      "common/diff": [
+        "es/common/diff.d.ts"
+      ],
+      "common/generator": [
+        "es/common/generator.d.ts"
+      ],
+      "common/performance-raf": [
+        "es/common/performance-raf.d.ts"
+      ],
+      "constants": [
+        "es/constants.d.ts"
+      ],
+      "container": [
+        "es/container.d.ts"
+      ],
+      "entries/browser": [
+        "es/entries/browser.d.ts"
+      ],
+      "entries/miniapp": [
+        "es/entries/miniapp.d.ts"
+      ],
+      "entries/runtime-installer": [
+        "es/entries/runtime-installer.d.ts"
+      ],
+      "env": [
+        "es/env.d.ts"
+      ],
+      "event/constant": [
+        "es/event/public-constant.d.ts"
+      ],
+      "global": [
+        "es/global.d.ts"
+      ],
+      "graphic/base": [
+        "es/graphic/base.d.ts"
+      ],
+      "graphic/builtin-symbol": [
+        "es/graphic/builtin-symbol.d.ts"
+      ],
+      "graphic/creator": [
+        "es/graphic/creator.d.ts"
+      ],
+      "graphic/graphic-registry": [
+        "es/graphic/graphic-registry.d.ts"
+      ],
+      "graphic/group": [
+        "es/graphic/group.d.ts"
+      ],
+      "graphic/modules": [
+        "es/graphic/modules.d.ts"
+      ],
+      "graphic/symbol": [
+        "es/graphic/symbol.d.ts"
+      ],
+      "interpolate": [
+        "es/interpolate.d.ts"
+      ],
+      "legacy/bootstrap": [
+        "es/legacy/bootstrap.d.ts"
+      ],
+      "path": [
+        "es/path.d.ts"
+      ],
+      "picker/constants": [
+        "es/picker/constants.d.ts"
+      ],
+      "plugin/3d": [
+        "es/plugin/3d.d.ts"
+      ],
+      "plugin/attribute": [
+        "es/plugin/attribute.d.ts"
+      ],
+      "plugin/flex-layout": [
+        "es/plugin/flex-layout.d.ts"
+      ],
+      "register/graphic": [
+        "es/register/graphic.d.ts"
+      ],
+      "render/draw-interceptor": [
+        "es/render/contributions/render/draw-interceptor.d.ts"
+      ],
+      "render/symbol": [
+        "es/render/contributions/render/symbol.d.ts"
+      ],
+      "svg": [
+        "es/svg.d.ts"
+      ],
+      "text": [
+        "es/text.d.ts"
+      ]
     }
   },
   "files": [
@@ -68,7 +132,7 @@
   },
   "dependencies": {
     "color-convert": "2.0.1",
-    "@visactor/vutils": "~1.0.12"
+    "@visactor/vutils": "~1.0.29"
   },
   "devDependencies": {
     "@internal/bundler": "workspace:*",

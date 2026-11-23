@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vrender-animate",
-  "version": "1.1.15",
+  "version": "1.1.16",
   "description": "",
   "sideEffects": false,
   "main": "cjs/index.js",
@@ -8,15 +8,33 @@
   "types": "es/index.d.ts",
   "typesVersions": {
     "*": {
-      "animate": ["es/animate.d.ts"],
-      "component": ["es/component/index.d.ts"],
-      "custom/*": ["es/custom/*"],
-      "executor/*": ["es/executor/*"],
-      "register": ["es/register.d.ts"],
-      "state": ["es/state/index.d.ts"],
-      "state/*": ["es/state/*"],
-      "ticker/*": ["es/ticker/*"],
-      "timeline": ["es/timeline.d.ts"]
+      "animate": [
+        "es/animate.d.ts"
+      ],
+      "component": [
+        "es/component/index.d.ts"
+      ],
+      "custom/*": [
+        "es/custom/*"
+      ],
+      "executor/*": [
+        "es/executor/*"
+      ],
+      "register": [
+        "es/register.d.ts"
+      ],
+      "state": [
+        "es/state/index.d.ts"
+      ],
+      "state/*": [
+        "es/state/*"
+      ],
+      "ticker/*": [
+        "es/ticker/*"
+      ],
+      "timeline": [
+        "es/timeline.d.ts"
+      ]
     }
   },
   "files": [
@@ -36,8 +54,8 @@
     "test-watch": "cross-env DEBUG_MODE=1 jest --watch -c jest.config.js"
   },
   "dependencies": {
-    "@visactor/vutils": "~1.0.12",
-    "@visactor/vrender-core": "workspace:1.1.15"
+    "@visactor/vutils": "~1.0.29",
+    "@visactor/vrender-core": "workspace:1.1.16"
   },
   "devDependencies": {
     "@internal/bundler": "workspace:*",

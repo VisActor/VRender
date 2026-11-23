@@ -156,9 +156,9 @@ VisActor 的 commit 提交信息遵循 [Conventional Commits](https://www.conven
 
 请用简短精确的英文描述编写 description
 
-提交 commit 之前，我们会进行 commit lint 检查，具体可以查看[检查规则](https://github.com/VisActor/VStory/blob/develop/common/autoinstallers/lint/commitlint.config.js)。
+提交 commit 之前，我们会进行 commit lint 检查，具体可以查看[检查规则](https://github.com/VisActor/VRender/blob/develop/common/autoinstallers/lint/commitlint.config.js)。
 
-一个常见的问题是远程的 upstream (@visactor/vstroy) 有了新的更新， 从而会导致我们提交的 Pull Request 时会导致冲突。 因此我们可以在提交前先把远程其他开发者的 commit 和我们的 commit 合并。使用以下代码切换到 develop 分支:
+一个常见的问题是远程的 upstream (VisActor/VRender) 有了新的更新， 从而会导致我们提交的 Pull Request 时会导致冲突。 因此我们可以在提交前先把远程其他开发者的 commit 和我们的 commit 合并。使用以下代码切换到 develop 分支:
 
 ```
 git checkout develop
@@ -242,3 +242,7 @@ discord：https://discord.com/invite/3wPyxVyH6m
 # 本文档由由以下人员贡献
 
 [玄魂](https://github.com/xuanhun)
+
+## PR 检查与合入流程
+
+实际提交前检查、已启用范围和起点、PR状态、Photo人工核查及批准/合入以[仓库贡献指南](https://github.com/VisActor/VRender/blob/develop/CONTRIBUTING.zh-CN.md#pr-检查与合入流程)为准；视觉用例编写与完整比较由该指南链接到当前运行器文档。

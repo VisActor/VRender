@@ -257,3 +257,10 @@ Not-tested 应具体说明缺口，例如：
 - `Not-tested: 未跑 full rush test，已跑 impacted package targeted tests。`
 
 不要写“未测试”这种无法指导后续工作的泛化描述。
+
+
+## Playwright 与 PR 工作流
+
+产品、依赖或视觉用例变更在提交PR前运行 `node packages/vrender/scripts/visual-test.mjs`，全量比较当前工作区与官方develop；单例/自比较用于开发定位，不能代替全量双侧证据。新增场景按[用例指南](../../packages/vrender/__tests__/visual/cases/README.md)补业务断言和确定性验证。
+
+[贡献指南](../../CONTRIBUTING.zh-CN.md#pr-检查与合入流程)统一说明正式准入、当前版本结果、PR状态、Photo人工核查和人工合入；纯文档变更检查链接和说明并记录未运行项，不触发手动模型/Photo重跑。

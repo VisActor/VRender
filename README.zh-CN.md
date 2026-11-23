@@ -138,6 +138,6 @@ st.defaultLayer.add(sy);
 
 [MIT 协议](./LICENSE)
 
-## Playwright 视觉回归
+## 开发检查与 PR 工作流
 
-首批用例、运行命令、报告协议和维护说明见[本地视觉回归指南](packages/vrender/__tests__/visual/README.md)。该入口不改变现有 Photo CI 或生产工作流启用范围。
+[贡献指南](./CONTRIBUTING.zh-CN.md#pr-检查与合入流程)说明提交前检查、已启用范围和起点、PR状态、Photo人工核查与批准/合入。运行命令和报告见[视觉指南](./packages/vrender/__tests__/visual/README.md)，新增场景见[用例指南](./packages/vrender/__tests__/visual/cases/README.md)。

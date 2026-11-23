@@ -137,6 +137,6 @@ Small streams converge to make great rivers and seas!
 
 [MIT License](./LICENSE)
 
-## Playwright 视觉回归
+## Development checks and PR workflow
 
-首批用例、运行命令、报告协议和维护说明见[本地视觉回归指南](packages/vrender/__tests__/visual/README.md)。该入口不改变现有 Photo CI 或生产工作流启用范围。
+Read [Contributing](./CONTRIBUTING.md#pr-checks-and-merge-process) for pre-PR checks, activation scope and cutoff, PR states, manual Photo review and approval/merge. See the [visual guide](./packages/vrender/__tests__/visual/README.md) and [case authoring guide](./packages/vrender/__tests__/visual/cases/README.md) (Chinese) for commands, reports and new cases.

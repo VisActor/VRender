@@ -55,6 +55,8 @@ export interface IDrawContext extends IRenderServiceDrawParams {
   drawContribution?: IDrawContribution;
   // hack内容
   hack_pieFace?: 'inside' | 'bottom' | 'top' | 'outside';
+  /** 进入组的绘制拦截器前写入的滚动状态，供绘制扩展读取。 */
+  isGroupScroll?: boolean;
 }
 
 export interface IDrawContribution {

@@ -258,6 +258,8 @@ export class DefaultDrawContribution implements IDrawContribution {
       return;
     }
 
+    const { scrollX = 0, scrollY = 0 } = group.attribute;
+    const isGroupScroll = !!(scrollX || scrollY);
     let nextM: IMatrix = parentMatrix;
     let tempBounds: IBounds;
 
@@ -266,14 +268,14 @@ export class DefaultDrawContribution implements IDrawContribution {
       // 变换dirtyBounds
       const gm = group.transMatrix;
       nextM = matrixAllocate.allocateByObj(parentMatrix).multiply(gm.a, gm.b, gm.c, gm.d, gm.e, gm.f);
-      const { scrollX = 0, scrollY = 0 } = group.attribute;
-      if (scrollX || scrollY) {
+      if (isGroupScroll) {
         // 绘制子图元前会应用滚动偏移，局部重绘也使用同一坐标空间。
         nextM.translate(scrollX, scrollY);
       }
       this.dirtyBounds.copy(this.backupDirtyBounds).transformWithMatrix(nextM.getInverse());
     }
 
+    drawContext.isGroupScroll = isGroupScroll;
     this.renderItem(group, drawContext, {
       renderInGroupParams: {
         skipSort,

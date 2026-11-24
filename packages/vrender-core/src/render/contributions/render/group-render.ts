@@ -329,7 +329,7 @@ export class DefaultCanvasGroupRender implements IGraphicRender {
     }
 
     // 绘制子元素的时候要添加scroll
-    const { scrollX, scrollY } = group.attribute;
+    const { scrollX = 0, scrollY = 0 } = group.attribute;
     if (scrollX || scrollY) {
       context.translate(scrollX, scrollY);
     }

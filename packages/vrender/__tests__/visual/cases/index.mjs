@@ -11,6 +11,11 @@ export const cases = [
     "file": "./transform-clip.mjs"
   },
   {
+    "id": "scroll-dirty-bounds",
+    "purpose": "滚动组嵌套图元在真实悬停后正确局部重绘",
+    "file": "./scroll-dirty-bounds.mjs"
+  },
+  {
     "id": "picking-events",
     "purpose": "真实鼠标悬停及点击命中顶层图元",
     "file": "./picking-events.mjs"

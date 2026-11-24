@@ -1,5 +1,6 @@
 import {
   application,
+  AnimateStatus,
   AttributeUpdateType,
   createGroup,
   createGlyph,
@@ -860,6 +861,91 @@ describe('D3 pre-handoff animation runtime', () => {
     customAnimate.stop({ x: 12 });
     expect(customRect.attribute.x).toBe(12);
     expect((customRect as any).baseAttributes.x).toBe(12);
+  });
+
+  test('explicitly removing a running graphic animation notifies end and removal once in order', () => {
+    const { group, ticker, timeline, graphicService } = createStageHarness('timeline-remove-graphic-animation');
+    const rect = createAnimatedRect(graphicService);
+    group.appendChild(rect);
+
+    const events: string[] = [];
+    const animate = rect
+      .animate({
+        onEnd: () => events.push('end'),
+        onRemove: () => events.push('remove')
+      })
+      .to({ x: 100 }, 100, 'linear');
+
+    tick(ticker, 25);
+    expect(animate.status).toBe(AnimateStatus.RUNNING);
+    expect(rect.attribute.x).toBe(25);
+    timeline.removeAnimate(animate);
+    timeline.removeAnimate(animate);
+
+    expect(events).toEqual(['end', 'remove']);
+    expect(animate.status).toBe(AnimateStatus.END);
+    expect(timeline.animateCount).toBe(0);
+    expect(rect.animates.size).toBe(0);
+  });
+
+  test('removing a running animation from its timeline ends the executor lifecycle', () => {
+    const { group, ticker, timeline, graphicService } = createStageHarness('timeline-remove-executor-animation');
+    const rect = createAnimatedRect(graphicService);
+    group.appendChild(rect);
+
+    const executor = new AnimateExecutor(rect);
+    const onEnd = jest.fn();
+    executor.onEnd(onEnd);
+    executor.execute({ channel: { x: { to: 100 } }, duration: 100, easing: 'linear' });
+    const [animate] = rect.animates.values();
+
+    tick(ticker, 25);
+    expect(animate.status).toBe(AnimateStatus.RUNNING);
+    expect(executor.started).toBe(true);
+    timeline.removeAnimate(animate);
+    tick(ticker, 100);
+
+    expect(executor.started).toBe(false);
+    expect(onEnd).toHaveBeenCalledTimes(1);
+  });
+
+  test.each(['release', 'clear'] as const)('%s releases graphics without notifying animation end', method => {
+    const { group, ticker, timeline, graphicService } = createStageHarness('silent-animation-' + method);
+    const rect = createAnimatedRect(graphicService);
+    group.appendChild(rect);
+    const onEnd = jest.fn();
+    const onRemove = jest.fn();
+    const animate = rect.animate({ onEnd, onRemove }).to({ x: 100 }, 100, 'linear');
+
+    tick(ticker, 25);
+    expect(animate.status).toBe(AnimateStatus.RUNNING);
+    if (method === 'release') {
+      animate.release();
+    } else {
+      timeline.clear();
+    }
+    tick(ticker, 25);
+
+    expect(onEnd).not.toHaveBeenCalled();
+    expect(onRemove).toHaveBeenCalledTimes(1);
+    expect(timeline.animateCount).toBe(0);
+  });
+
+  test('timeline cleanup preserves a single onEnd notification after natural completion', () => {
+    const { group, ticker, timeline, graphicService } = createStageHarness('naturally-ended-graphic-animation');
+    const rect = createAnimatedRect(graphicService);
+    group.appendChild(rect);
+    const onEnd = jest.fn();
+    const onRemove = jest.fn();
+    rect.animate({ onEnd, onRemove }).to({ x: 100 }, 100, 'linear');
+
+    tick(ticker, 100);
+    expect(onEnd).toHaveBeenCalledTimes(1);
+    tick(ticker, 16);
+
+    expect(onEnd).toHaveBeenCalledTimes(1);
+    expect(onRemove).toHaveBeenCalledTimes(1);
+    expect(timeline.animateCount).toBe(0);
   });
 
   test('executor attrOutChannel commits non-animated diff attrs as static truth', () => {

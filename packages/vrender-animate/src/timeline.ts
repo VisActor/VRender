@@ -138,7 +138,7 @@ export class DefaultTimeline extends EventEmitter implements ITimeline {
     }
 
     if (release) {
-      animate.release();
+      animate.release(true);
     }
 
     // 从链表中移除节点

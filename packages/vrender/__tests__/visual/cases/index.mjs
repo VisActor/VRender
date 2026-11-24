@@ -36,6 +36,11 @@ export const cases = [
     "file": "./attribute-update.mjs"
   },
   {
+    "id": "size-legend-handler-text",
+    "purpose": "尺寸图例真实拖动后双标签分离且值相关样式更新",
+    "file": "./size-legend-handler-text.mjs"
+  },
+  {
     "id": "stage-lifecycle",
     "purpose": "销毁独立 Stage 后画布移除且主 Stage 可继续绘制",
     "file": "./stage-lifecycle.mjs"

@@ -28,11 +28,12 @@ import {
   isFunction
 } from '@visactor/vutils';
 import { CustomEvent } from '@visactor/vrender-core';
+import { getTextBounds } from '@visactor/vrender-core/text';
 import { graphicCreator } from '../util/graphic-creator';
 import { AbstractComponent } from '../core/base';
 import { SLIDER_ELEMENT_NAME } from './constant';
 
-import type { SliderAttributes } from './type';
+import type { HandlerTextStyleCallback, SliderAttributes } from './type';
 import type { ComponentOptions } from '../interface';
 import { loadSliderComponent } from './register';
 
@@ -46,6 +47,24 @@ function convertValueToRange(value: number | [number, number]) {
 function getDefaultCursor(isHorizontal: boolean) {
   return isHorizontal ? 'ew-resize' : 'ns-resize';
 }
+
+type HandlerTextStyle = ReturnType<HandlerTextStyleCallback>;
+type TextAttributeKey = keyof ITextGraphicAttribute;
+
+const handlerTextPlacementKeys: readonly TextAttributeKey[] = [
+  'x',
+  'y',
+  'dx',
+  'dy',
+  'textAlign',
+  'textBaseline',
+  'angle',
+  'scaleX',
+  'scaleY',
+  'postMatrix',
+  'direction'
+];
+const handlerTextGap = 2;
 
 loadSliderComponent();
 
@@ -126,7 +145,10 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
   // 保留滑块上一次的位置
   private _prePos!: number;
   // 存储当前正在操作的滑块
-  private _currentHandler: IGraphic | null = null;
+  private _currentHandler: ISymbol | null = null;
+  private readonly _separateHandlerText: boolean;
+  private _startHandlerTextIsLeading?: boolean;
+  private _handlerTextStyleKeys?: WeakMap<IText, TextAttributeKey[]>;
   private _currentValue: { startValue?: number; endValue?: number; startPos?: number; endPos?: number } = {};
   private _tooltipState: {
     isActive?: boolean;
@@ -158,8 +180,9 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     return this._tooltipShape;
   }
 
-  constructor(attributes: SliderAttributes, options?: ComponentOptions) {
+  constructor(attributes: SliderAttributes, options?: ComponentOptions & { separateHandlerText?: boolean }) {
     super(options?.skipDefault ? attributes : merge({}, Slider.defaultAttributes, attributes));
+    this._separateHandlerText = options?.separateHandlerText === true;
   }
 
   protected calculatePosByValue(value: number, pos?: 'start' | 'end') {
@@ -209,6 +232,10 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
 
   render() {
     this.removeAllChild(true);
+    this._startHandler = this._endHandler = null;
+    this._startHandlerText = this._endHandlerText = null;
+    this._startHandlerTextIsLeading = undefined;
+    this._handlerTextStyleKeys = undefined;
     const {
       layout = 'horizontal',
       railWidth,
@@ -300,6 +327,8 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
 
     if (showHandler) {
       this._renderHandlers(mainContainer);
+      this._updateHandlerTextLayout();
+      this._reserveHandlerTextSpace(mainContainer);
       this._bindEvents();
     }
 
@@ -487,8 +516,15 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
   }
 
   private _renderHandlerText(value: number, position: 'start' | 'end') {
-    const textShape = graphicCreator.text(this._getHandlerTextAttributes(value, position));
-    return textShape;
+    const style = this._getHandlerTextStyle(value, position);
+    const text = graphicCreator.text(
+      this._getHandlerTextAttributes(value, this.calculatePosByValue(value, position), style)
+    );
+    if (isFunction(this.attribute.handlerText?.style) && style) {
+      this._handlerTextStyleKeys ??= new WeakMap();
+      this._handlerTextStyleKeys.set(text, Object.keys(style) as TextAttributeKey[]);
+    }
+    return text;
   }
 
   private _getHandlerTextStyle(value: number, position: 'start' | 'end') {
@@ -515,7 +551,12 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     return handlerText.style;
   }
 
-  private _getHandlerTextAttributes(value: number, position: 'start' | 'end'): ITextGraphicAttribute {
+  private _getHandlerTextAttributes(
+    value: number,
+    pos: number,
+    handlerTextStyle: HandlerTextStyle,
+    leading?: boolean
+  ): ITextGraphicAttribute {
     const {
       align,
       handlerSize = 14,
@@ -527,9 +568,7 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
 
     const isHorizontal = this._isHorizontal;
 
-    const pos = this.calculatePosByValue(value, position);
     const textSpace = handlerText.space ?? 4;
-    const handlerTextStyle = this._getHandlerTextStyle(value, position);
     const textStyle: ITextGraphicAttribute = {
       text: handlerText.formatter ? handlerText.formatter(value) : value.toFixed(handlerText.precision ?? 0),
       lineHeight: handlerTextStyle?.lineHeight,
@@ -567,8 +606,89 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
 
     return {
       ...textStyle,
+      ...(leading === undefined ? undefined : this._getOutwardHandlerTextPlacement(leading)),
       ...handlerTextStyle
     };
+  }
+
+  private _getOutwardHandlerTextPlacement(leading: boolean): Partial<ITextGraphicAttribute> {
+    const offset = leading ? -handlerTextGap : handlerTextGap;
+    return this._isHorizontal
+      ? { textAlign: leading ? 'right' : 'left', dx: offset }
+      : { textBaseline: leading ? 'bottom' : 'top', dy: offset };
+  }
+
+  private _updateHandlerTextLayout() {
+    if (!this._separateHandlerText || !this._startHandlerText || !this._endHandlerText) {
+      return;
+    }
+    const axis = this._isHorizontal ? 'x' : 'y';
+    const start = this._startHandler.attribute[axis];
+    const end = this._endHandler.attribute[axis];
+    const leading = start === end ? this._startHandlerTextIsLeading ?? !this.attribute.inverse : start < end;
+    if (leading === this._startHandlerTextIsLeading) {
+      return;
+    }
+    this._startHandlerTextIsLeading = leading;
+    this._setOutwardHandlerTextPlacement(this._startHandlerText, leading);
+    this._setOutwardHandlerTextPlacement(this._endHandlerText, !leading);
+  }
+
+  private _setOutwardHandlerTextPlacement(text: IText, leading: boolean) {
+    if (!this._hasCustomHandlerTextPlacement(text)) {
+      text.setAttributes(this._getOutwardHandlerTextPlacement(leading));
+    }
+  }
+
+  private _hasCustomHandlerTextPlacement(text: IText) {
+    const style = this.attribute.handlerText?.style;
+    if (isFunction(style)) {
+      const keys = this._handlerTextStyleKeys?.get(text);
+      return keys?.some(key => handlerTextPlacementKeys.includes(key));
+    }
+    return style && handlerTextPlacementKeys.some(key => key in style);
+  }
+
+  private _reserveHandlerTextSpace(container: IGroup) {
+    if (this._startHandlerTextIsLeading === undefined) {
+      return;
+    }
+    const { min, max, inverse, railWidth, railHeight, handlerText = {} } = this.attribute;
+    const { startValue, endValue } = this._currentValue;
+    const { formatter, precision = 0 } = handlerText;
+    // Full-range labels already contribute their endpoint extents to the initial layout.
+    if (startValue === min && endValue === max) {
+      return;
+    }
+    const measure = (label: IText, value: number) => {
+      if (this._hasCustomHandlerTextPlacement(label)) {
+        return 0;
+      }
+      const bounds = getTextBounds({
+        ...label.attribute,
+        text: formatter ? formatter(value) : value.toFixed(precision)
+      });
+      return (this._isHorizontal ? bounds.width() : bounds.height()) + handlerTextGap;
+    };
+    const leadingLabel = this._startHandlerTextIsLeading ? this._startHandlerText : this._endHandlerText;
+    const trailingLabel = this._startHandlerTextIsLeading ? this._endHandlerText : this._startHandlerText;
+    const leading = measure(leadingLabel, inverse ? max : min);
+    const trailing = measure(trailingLabel, inverse ? min : max);
+    if (!leading && !trailing) {
+      return;
+    }
+    // Preserve the space needed at the domain endpoints when the initial selection is narrower.
+    container.add(
+      graphicCreator.rect({
+        x: this._isHorizontal ? -leading : 0,
+        y: this._isHorizontal ? 0 : -leading,
+        width: this._isHorizontal ? railWidth + leading + trailing : 0,
+        height: this._isHorizontal ? 0 : railHeight + leading + trailing,
+        fill: false,
+        stroke: false,
+        pickable: false
+      })
+    );
   }
 
   private _renderTooltip() {
@@ -660,8 +780,8 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
         text: textConfig.formatter
           ? textConfig.formatter(this._tooltipState.value)
           : !this._isHorizontal && align === 'left'
-            ? `${this._tooltipState.value.toFixed(textConfig.precision ?? 0)} ≈`
-            : `≈ ${this._tooltipState.value.toFixed(textConfig.precision ?? 0)}`
+          ? `${this._tooltipState.value.toFixed(textConfig.precision ?? 0)} ≈`
+          : `≈ ${this._tooltipState.value.toFixed(textConfig.precision ?? 0)}`
       });
     }
   }
@@ -787,7 +907,13 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     this._activePointerId = e.pointerId;
     this._isChanging = true;
     const { x, y } = this.stage.eventPointTransform(e);
-    this._currentHandler = e.target as unknown as IGraphic;
+    const target = e.target as unknown as IGraphic;
+    this._currentHandler =
+      target === this._startHandlerText
+        ? this._startHandler
+        : target === this._endHandlerText
+        ? this._endHandler
+        : (target as ISymbol);
     this._prePos = this._isHorizontal ? x : y;
     this._bindDragEvents(this._onHandlerPointerMove);
   };
@@ -843,11 +969,7 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     const newPos = clamp(originPos + delta, 0, railLen);
     const currentValue = this.calculateValueByPos(newPos);
 
-    if (this._currentHandler.type === 'text') {
-      this._updateHandlerText(this._currentHandler as IText, newPos, currentValue);
-    } else {
-      this._updateHandler(this._currentHandler as ISymbol, newPos, currentValue);
-    }
+    this._updateHandler(this._currentHandler, newPos, currentValue);
 
     this._updateTrack();
     this._prePos = currentPos;
@@ -925,23 +1047,10 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
         ? clamp(originPos + delta, 0, railLen - trackLen)
         : clamp(originPos + delta, trackLen, railLen);
       const currentValue = this.calculateValueByPos(newPos);
-      const startHandlerAttribute = startHandler?.attribute;
       this._updateHandler(endHandler, newPos, currentValue);
-      this._track.setAttributes(
-        this._isHorizontal
-          ? {
-              x: Math.min(startHandlerAttribute.x as number, endHandler.attribute.x as number),
-              // @ts-ignore
-              width: Math.abs((startHandlerAttribute.x as number) - (endHandler.attribute.x as number))
-            }
-          : {
-              y: Math.min(startHandlerAttribute.y as number, endHandler.attribute.y as number),
-              // @ts-ignore
-              height: Math.abs((startHandlerAttribute.y as number) - (endHandler.attribute.y as number))
-            }
-      );
     }
 
+    this._updateTrack();
     this._prePos = currentPos;
     this._dispatchChangeEvent();
   };
@@ -1044,23 +1153,19 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
         });
       }
     }
+    this._updateHandlerTextLayout();
   }
 
   // 更新 handler 以及对应 text
   private _updateHandler(handler: ISymbol, position: number, value: number) {
-    const isHorizontal = this._isHorizontal;
-    handler.setAttribute(isHorizontal ? 'x' : 'y', position);
-    const updateHandlerText =
-      handler.name === SLIDER_ELEMENT_NAME.startHandler ? this._startHandlerText : this._endHandlerText;
-    if (updateHandlerText) {
-      const { handlerText = {} } = this.attribute as SliderAttributes;
-      updateHandlerText.setAttributes({
-        text: handlerText.formatter ? handlerText.formatter(value) : value.toFixed(handlerText.precision ?? 0),
-        [isHorizontal ? 'x' : 'y']: position
-      });
+    handler.setAttribute(this._isHorizontal ? 'x' : 'y', position);
+    const isStartHandler = handler === this._startHandler;
+    const text = isStartHandler ? this._startHandlerText : this._endHandlerText;
+    if (text) {
+      this._updateHandlerTextGraphic(text, position, value, isStartHandler);
     }
 
-    if (handler.name === SLIDER_ELEMENT_NAME.startHandler) {
+    if (isStartHandler) {
       this._currentValue.startValue = value;
       this._currentValue.startPos = position;
     } else {
@@ -1069,29 +1174,42 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     }
   }
 
-  // 更新 handler 以及对应 text
-  private _updateHandlerText(handlerText: IText, position: number, value: number) {
-    const isHorizontal = this._isHorizontal;
-    const { handlerText: handlerTextAttr = {} } = this.attribute as SliderAttributes;
-    handlerText.setAttributes({
-      [isHorizontal ? 'x' : 'y']: position,
-      text: handlerTextAttr.formatter ? handlerTextAttr.formatter(value) : value.toFixed(handlerTextAttr.precision ?? 0)
-    });
-    const updateHandler =
-      handlerText.name === SLIDER_ELEMENT_NAME.startHandlerText ? this._startHandler : this._endHandler;
-    if (updateHandler) {
-      updateHandler.setAttributes({
-        [isHorizontal ? 'x' : 'y']: position
+  private _updateHandlerTextGraphic(text: IText, position: number, value: number, isStartHandler: boolean) {
+    const { range, handlerText = {} } = this.attribute;
+    if (!isFunction(handlerText.style)) {
+      text.setAttributes({
+        [this._isHorizontal ? 'x' : 'y']: position,
+        text: handlerText.formatter ? handlerText.formatter(value) : value.toFixed(handlerText.precision ?? 0)
       });
+      return;
     }
 
-    if (handlerText.name === SLIDER_ELEMENT_NAME.startHandlerText) {
-      this._currentValue.startValue = value;
-      this._currentValue.startPos = position;
-    } else {
-      this._currentValue.endValue = value;
-      this._currentValue.endPos = position;
+    const style = this._getHandlerTextStyle(value, range && isStartHandler ? 'start' : 'end');
+    const startLeading = this._startHandlerTextIsLeading;
+    const useDefaultPlacement =
+      startLeading !== undefined && !handlerTextPlacementKeys.some(key => style && key in style);
+    const attributes = this._getHandlerTextAttributes(
+      value,
+      position,
+      style,
+      useDefaultPlacement ? isStartHandler === startLeading : undefined
+    );
+    this._handlerTextStyleKeys ??= new WeakMap();
+    const patch: Partial<Record<TextAttributeKey, unknown>> = attributes;
+    for (const key of this._handlerTextStyleKeys.get(text) ?? []) {
+      if (!(key in attributes)) {
+        patch[key] = undefined;
+      }
     }
+    // The default layout also owns an offset. Clear it when the callback takes over positioning.
+    if (startLeading !== undefined && !useDefaultPlacement) {
+      const offset = this._isHorizontal ? 'dx' : 'dy';
+      if (!(offset in attributes)) {
+        attributes[offset] = undefined;
+      }
+    }
+    this._handlerTextStyleKeys.set(text, style ? (Object.keys(style) as TextAttributeKey[]) : []);
+    text.setAttributes(attributes);
   }
 
   private _dispatchChangeEvent() {

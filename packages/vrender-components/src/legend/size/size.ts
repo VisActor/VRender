@@ -82,37 +82,40 @@ export class SizeContinuousLegend extends LegendBase<SizeLegendAttributes> {
     });
     this._innerView.add(mainContainer);
 
-    const slider = new Slider({
-      x: 0,
-      y: 0,
-      zIndex: 1,
-      range: {
-        draggableTrack: true
+    const slider = new Slider(
+      {
+        x: 0,
+        y: 0,
+        zIndex: 1,
+        range: {
+          draggableTrack: true
+        },
+        slidable,
+        layout,
+        align,
+        min,
+        max,
+        value,
+        railWidth,
+        railHeight,
+        showHandler,
+        handlerSize,
+        handlerStyle: {
+          symbolType: getSizeHandlerPath(align),
+          ...handlerStyle
+        },
+        railStyle,
+        trackStyle,
+        startText,
+        endText,
+        handlerText,
+        showTooltip,
+        tooltip,
+        disableTriggerEvent,
+        inverse
       },
-      slidable,
-      layout,
-      align,
-      min,
-      max,
-      value,
-      railWidth,
-      railHeight,
-      showHandler,
-      handlerSize,
-      handlerStyle: {
-        symbolType: getSizeHandlerPath(align),
-        ...handlerStyle
-      },
-      railStyle,
-      trackStyle,
-      startText,
-      endText,
-      handlerText,
-      showTooltip,
-      tooltip,
-      disableTriggerEvent,
-      inverse
-    });
+      { separateHandlerText: true }
+    );
     mainContainer.add(slider as unknown as INode);
 
     // 绘制 size 背景

@@ -547,13 +547,16 @@ export class Animate implements IAnimate {
   /**
    * 释放动画资源
    */
-  release(): void {
-    this.status = AnimateStatus.END;
+  release(notifyEnd: boolean = false): void {
+    if (!notifyEnd) {
+      this.status = AnimateStatus.END;
+    }
 
-    // 触发移除回调
+    // bind 注册的移除回调通过 stop() 结束仍在运行的动画。
     if (this._onRemove) {
       this._onRemove.forEach(cb => cb());
     }
+    this.status = AnimateStatus.END;
 
     // 清空回调
     this._onStart = [];

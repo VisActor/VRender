@@ -1,3 +1,20 @@
+# v1.1.17
+
+2026-11-24
+
+
+**What's Changed**
+
+* [Auto Sync] Sync the code from branch main to branch develop after release 1.1.16 by @github-actions[bot] in https://github.com/VisActor/VRender/pull/2163
+* [Auto changelog] changlog of v1.1.16 by @github-actions[bot] in https://github.com/VisActor/VRender/pull/2164
+* fix: avoid duplicate animation removal callbacks by @xile611 in https://github.com/VisActor/VRender/pull/2165
+* [Auto release] release 1.1.17 by @github-actions[bot] in https://github.com/VisActor/VRender/pull/2166
+
+
+**Full Changelog**: https://github.com/VisActor/VRender/compare/v1.1.16...v1.1.17
+
+[more detail about v1.1.17](https://github.com/VisActor/VRender/releases/tag/v1.1.17)
+
 # v1.1.16
 
 2026-11-23

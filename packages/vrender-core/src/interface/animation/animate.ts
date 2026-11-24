@@ -129,8 +129,8 @@ export interface IAnimate {
   getToValue: () => Record<string, any>;
   // 停止，可以设置停止后设置target的属性为开始的值（fromValue），还是结束的值（toValue）
   stop: (type?: 'start' | 'end' | Record<string, any>) => void;
-  /** 打上END标志，下一帧被删除 */
-  release: () => void;
+  /** 执行移除回调并释放动画步骤。notifyEnd 为 true 时保留已绑定动画的结束通知。 */
+  release: (notifyEnd?: boolean) => void;
   // 获取持续的时长
   getDuration: () => number;
   getTotalDuration: () => number;

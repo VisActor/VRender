@@ -1,4 +1,5 @@
 import { AnimateStatus } from '@visactor/vrender-core';
+import { Animate } from '../../src/animate';
 import { DefaultTimeline } from '../../src/timeline';
 
 type TestAnimate = {
@@ -7,7 +8,6 @@ type TestAnimate = {
   getDuration: jest.Mock<number, []>;
   advance: jest.Mock<void, [number]>;
   release: jest.Mock<void, []>;
-  _onRemove?: Array<() => void>;
 };
 
 function createAnimate(partial?: Partial<TestAnimate>): TestAnimate {
@@ -17,7 +17,6 @@ function createAnimate(partial?: Partial<TestAnimate>): TestAnimate {
     getDuration: jest.fn(() => 100),
     advance: jest.fn(),
     release: jest.fn(),
-    _onRemove: [jest.fn()],
     ...partial
   };
 }
@@ -67,6 +66,42 @@ describe('vrender-animate DefaultTimeline', () => {
     expect(timeline.animateCount).toBe(0);
     expect(animationEnd).toHaveBeenCalledTimes(1);
     expect(animate2.release).toHaveBeenCalledTimes(1);
+  });
+
+  test('runs each removal callback once when explicitly removing an animation', () => {
+    const timeline = new DefaultTimeline();
+    const animate = new Animate('explicit-remove', timeline);
+    const onRemove = jest.fn();
+    animate.onRemove(onRemove);
+
+    timeline.removeAnimate(animate);
+    timeline.removeAnimate(animate);
+
+    expect(onRemove).toHaveBeenCalledTimes(1);
+    expect(animate.status).toBe(AnimateStatus.END);
+    expect(timeline.animateCount).toBe(0);
+  });
+
+  test('keeps callbacks during timeline transfer and runs them once when the animation ends', () => {
+    const previousTimeline = new DefaultTimeline();
+    const nextTimeline = new DefaultTimeline();
+    const animate = new Animate('timeline-transfer', previousTimeline);
+    const onRemove = jest.fn();
+    animate.onRemove(onRemove);
+
+    previousTimeline.removeAnimate(animate, false);
+    animate.setTimeline(nextTimeline);
+    nextTimeline.addAnimate(animate);
+
+    expect(previousTimeline.animateCount).toBe(0);
+    expect(animate.status).toBe(AnimateStatus.INITIAL);
+    expect(onRemove).not.toHaveBeenCalled();
+
+    animate.status = AnimateStatus.END;
+    nextTimeline.tick(16);
+
+    expect(nextTimeline.animateCount).toBe(0);
+    expect(onRemove).toHaveBeenCalledTimes(1);
   });
 
   test('playSpeed scales delta; pause blocks tick', () => {

@@ -25,10 +25,10 @@ import {
   isArray,
   clampRange,
   debounce,
-  isFunction
+  isFunction,
+  AABBBounds
 } from '@visactor/vutils';
 import { CustomEvent } from '@visactor/vrender-core';
-import { getTextBounds } from '@visactor/vrender-core/text';
 import { graphicCreator } from '../util/graphic-creator';
 import { AbstractComponent } from '../core/base';
 import { SLIDER_ELEMENT_NAME } from './constant';
@@ -65,6 +65,10 @@ const handlerTextPlacementKeys: readonly TextAttributeKey[] = [
   'direction'
 ];
 const handlerTextGap = 2;
+
+function hasCustomHandlerTextPlacement(style: HandlerTextStyle) {
+  return !!style && handlerTextPlacementKeys.some(key => key in style);
+}
 
 loadSliderComponent();
 
@@ -646,44 +650,55 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
       const keys = this._handlerTextStyleKeys?.get(text);
       return keys?.some(key => handlerTextPlacementKeys.includes(key));
     }
-    return style && handlerTextPlacementKeys.some(key => key in style);
+    return hasCustomHandlerTextPlacement(style);
   }
 
   private _reserveHandlerTextSpace(container: IGroup) {
-    if (this._startHandlerTextIsLeading === undefined) {
+    const startLeading = this._startHandlerTextIsLeading;
+    if (startLeading === undefined) {
       return;
     }
-    const { min, max, inverse, railWidth, railHeight, handlerText = {} } = this.attribute;
+    const { min, max, inverse } = this.attribute;
     const { startValue, endValue } = this._currentValue;
-    const { formatter, precision = 0 } = handlerText;
-    // Full-range labels already contribute their endpoint extents to the initial layout.
-    if (startValue === min && endValue === max) {
+    const startAtMin = startLeading !== !!inverse;
+    const startEndpoint = startAtMin ? min : max;
+    const endEndpoint = startAtMin ? max : min;
+    // Labels already at their endpoints contribute their own bounds.
+    if (startValue === startEndpoint && endValue === endEndpoint) {
       return;
     }
-    const measure = (label: IText, value: number) => {
-      if (this._hasCustomHandlerTextPlacement(label)) {
-        return 0;
+    const bounds = new AABBBounds();
+    const addEndpointBounds = (value: number, position: 'start' | 'end', leading: boolean) => {
+      const style = this._getHandlerTextStyle(value, position);
+      if (!hasCustomHandlerTextPlacement(style)) {
+        const attributes = this._getHandlerTextAttributes(
+          value,
+          this.calculatePosByValue(value, position),
+          style,
+          leading
+        );
+        const label = graphicCreator.text(attributes);
+        label.attachedThemeGraphic = container;
+        bounds.union(label.AABBBounds);
+        label.release();
       }
-      const bounds = getTextBounds({
-        ...label.attribute,
-        text: formatter ? formatter(value) : value.toFixed(precision)
-      });
-      return (this._isHorizontal ? bounds.width() : bounds.height()) + handlerTextGap;
     };
-    const leadingLabel = this._startHandlerTextIsLeading ? this._startHandlerText : this._endHandlerText;
-    const trailingLabel = this._startHandlerTextIsLeading ? this._endHandlerText : this._startHandlerText;
-    const leading = measure(leadingLabel, inverse ? max : min);
-    const trailing = measure(trailingLabel, inverse ? min : max);
-    if (!leading && !trailing) {
+    if (startValue !== startEndpoint) {
+      addEndpointBounds(startEndpoint, 'start', startLeading);
+    }
+    if (endValue !== endEndpoint) {
+      addEndpointBounds(endEndpoint, 'end', !startLeading);
+    }
+    if (bounds.empty()) {
       return;
     }
-    // Preserve the space needed at the domain endpoints when the initial selection is narrower.
+    // Reserve both the along-rail and cross-rail extents of the endpoint labels.
     container.add(
       graphicCreator.rect({
-        x: this._isHorizontal ? -leading : 0,
-        y: this._isHorizontal ? 0 : -leading,
-        width: this._isHorizontal ? railWidth + leading + trailing : 0,
-        height: this._isHorizontal ? 0 : railHeight + leading + trailing,
+        x: bounds.x1,
+        y: bounds.y1,
+        width: bounds.width(),
+        height: bounds.height(),
         fill: false,
         stroke: false,
         pickable: false
@@ -1186,8 +1201,7 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
 
     const style = this._getHandlerTextStyle(value, range && isStartHandler ? 'start' : 'end');
     const startLeading = this._startHandlerTextIsLeading;
-    const useDefaultPlacement =
-      startLeading !== undefined && !handlerTextPlacementKeys.some(key => style && key in style);
+    const useDefaultPlacement = startLeading !== undefined && !hasCustomHandlerTextPlacement(style);
     const attributes = this._getHandlerTextAttributes(
       value,
       position,

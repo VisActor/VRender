@@ -2,16 +2,18 @@ import { assertionError } from '../assertions.mjs';
 
 const min = 199579;
 const max = 1318683096;
+const railWidth = 200;
+const narrowSelection = [400000000, 500000000];
 const blue = '#0055cc';
 const red = '#b32329';
 
-/** 原始尺寸图例缩小选区时检查默认双标签布局和值相关样式。 */
+/** 检查缩小和扩大选区时的双标签布局与值相关样式。 */
 export function createSpec(v, stage) {
   const attrs = {
     x: 55,
     min,
     max,
-    railWidth: 200,
+    railWidth,
     railHeight: 8,
     title: { visible: true, text: 'Population' },
     handlerText: { visible: true, style: { fill: '#505968', fontFamily: 'Arial', fontSize: 12 } }
@@ -26,14 +28,31 @@ export function createSpec(v, stage) {
       style: value => ({ fill: Number(value) > 200e6 ? blue : red, fontFamily: 'Arial', fontSize: 12 })
     }
   });
-  const events = { defaults: null, dynamic: null };
-  for (const [key, legend] of Object.entries({ defaults, dynamic })) {
+  const endpoint = new v.SizeContinuousLegend({
+    ...attrs,
+    y: 265,
+    align: 'bottom',
+    value: narrowSelection,
+    title: { visible: true, text: 'Population (larger endpoint label)' },
+    handlerText: {
+      visible: true,
+      style: (value, position) => ({
+        fill: attrs.handlerText.style.fill,
+        fontSize: value === max && position === 'end' ? 36 : 12
+      })
+    }
+  });
+  endpoint.setTheme({ text: { fontFamily: 'Courier New, monospace' } });
+  const legends = { defaults, dynamic, endpoint };
+  const events = {};
+  for (const [key, legend] of Object.entries(legends)) {
+    events[key] = null;
     legend.addEventListener('change', event => {
       events[key] = event.detail;
     });
     stage.defaultLayer.add(legend);
   }
-  return { defaults, dynamic, events };
+  return { ...legends, events };
 }
 
 async function readLegend(page, key) {
@@ -57,6 +76,7 @@ async function readLegend(page, key) {
       return {
         value: Number(attribute.text),
         fill: attribute.fill,
+        fontSize: attribute.fontSize,
         visible: attribute.visible !== false,
         x1,
         x2,
@@ -64,6 +84,7 @@ async function readLegend(page, key) {
         y2
       };
     };
+    const { x, y, width, height } = legend.attribute;
     return {
       start: label('startHandlerText'),
       end: label('sliderEndHandlerText'),
@@ -71,6 +92,7 @@ async function readLegend(page, key) {
       endHandle: point('sliderEndHandler'),
       endLabel: point('sliderEndHandlerText'),
       track: point('sliderTrack'),
+      layoutBounds: { x1: x, y1: y, x2: x + width, y2: y + height },
       event: events[key]
     };
   }, key);
@@ -147,6 +169,30 @@ export async function exercise(page) {
   const reset = await readLegend(page, 'dynamic');
   await drag(page, reset.endHandle, reset.startHandle.x + 22);
   await page.mouse.up();
+
+  const endpointBefore = await readLegend(page, 'endpoint');
+  if (
+    endpointBefore.start.value !== narrowSelection[0] ||
+    endpointBefore.end.value !== narrowSelection[1] ||
+    endpointBefore.end.fontSize !== 12
+  ) {
+    throw assertionError('尺寸图例应从窄选区和 12px 标签开始');
+  }
+  await drag(page, endpointBefore.endHandle, endpointBefore.endHandle.x + railWidth);
+  await page.mouse.up();
+  const endpointAfter = await readLegend(page, 'endpoint');
+  assertSelection(endpointAfter, endpointBefore);
+  const { end } = endpointAfter;
+  if (!end.visible || end.value !== max || endpointAfter.event.value[1] !== max || end.fontSize !== 36) {
+    throw assertionError('应拖到最大值并显示 36px 的端点标签');
+  }
+  const bounds = endpointBefore.layoutBounds;
+  const overflow = [bounds.x1 - end.x1, bounds.y1 - end.y1, end.x2 - bounds.x2, end.y2 - bounds.y2].map(distance =>
+    Math.max(0, distance)
+  );
+  if (overflow.some(distance => !(distance <= 1e-6))) {
+    throw assertionError(`端点标签应在图例初始布局内，左、上、右、下的超出量为 ${overflow.join(', ')}px`);
+  }
 }
 
 /** 验证截图对应的真实选区与无重叠的两组标签。 */

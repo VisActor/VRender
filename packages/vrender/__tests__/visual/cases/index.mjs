@@ -37,7 +37,7 @@ export const cases = [
   },
   {
     "id": "size-legend-handler-text",
-    "purpose": "尺寸图例真实拖动后双标签分离且值相关样式更新",
+    "purpose": "尺寸图例拖动时标签分离、样式更新且端点标签落在初始布局内",
     "file": "./size-legend-handler-text.mjs"
   },
   {

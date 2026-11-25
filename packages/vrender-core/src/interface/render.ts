@@ -55,7 +55,7 @@ export interface IDrawContext extends IRenderServiceDrawParams {
   drawContribution?: IDrawContribution;
   // hack内容
   hack_pieFace?: 'inside' | 'bottom' | 'top' | 'outside';
-  // group是否有旋转，每一个renderGroup都会更新，用于在renderItem的时候给子节点使用
+  /** 进入组的绘制拦截器前写入的滚动状态，供绘制扩展读取。 */
   isGroupScroll?: boolean;
 }
 

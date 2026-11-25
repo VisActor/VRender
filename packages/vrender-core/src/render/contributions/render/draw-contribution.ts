@@ -68,7 +68,6 @@ export class DefaultDrawContribution implements IDrawContribution {
   declare global: IGlobal;
   declare layerService: ILayerService;
 
-  declare scrollMatrix?: IMatrix;
   protected readonly rendererRegistry?: IRendererRegistry;
 
   constructor(
@@ -259,6 +258,8 @@ export class DefaultDrawContribution implements IDrawContribution {
       return;
     }
 
+    const { scrollX = 0, scrollY = 0 } = group.attribute;
+    const isGroupScroll = !!(scrollX || scrollY);
     let nextM: IMatrix = parentMatrix;
     let tempBounds: IBounds;
 
@@ -267,12 +268,14 @@ export class DefaultDrawContribution implements IDrawContribution {
       // 变换dirtyBounds
       const gm = group.transMatrix;
       nextM = matrixAllocate.allocateByObj(parentMatrix).multiply(gm.a, gm.b, gm.c, gm.d, gm.e, gm.f);
-      // const m = group.globalTransMatrix.getInverse();
+      if (isGroupScroll) {
+        // 绘制子图元前会应用滚动偏移，局部重绘也使用同一坐标空间。
+        nextM.translate(scrollX, scrollY);
+      }
       this.dirtyBounds.copy(this.backupDirtyBounds).transformWithMatrix(nextM.getInverse());
     }
 
-    drawContext.isGroupScroll = !!(group.attribute.scrollX || group.attribute.scrollY);
-
+    drawContext.isGroupScroll = isGroupScroll;
     this.renderItem(group, drawContext, {
       renderInGroupParams: {
         skipSort,
@@ -407,44 +410,12 @@ export class DefaultDrawContribution implements IDrawContribution {
       return;
     }
 
-    let retrans: boolean = false;
-    let tempBounds: IBounds;
-
-    if (drawContext.isGroupScroll) {
-      const { scrollX = 0, scrollY = 0 } = graphic.parent.attribute;
-      retrans = true;
-      if (!this.scrollMatrix) {
-        this.scrollMatrix = matrixAllocate.allocate(1, 0, 0, 1, 0, 0);
-      }
-      this.scrollMatrix.translate(-scrollX, -scrollY);
-    }
-    // if (graphic.parent) {
-    //   const { scrollX = 0, scrollY = 0 } = graphic.parent.attribute;
-    //   if (!!(scrollX || scrollY)) {
-    //     retrans = true;
-    //     if (!this.scrollMatrix) {
-    //       this.scrollMatrix = matrixAllocate.allocate(1, 0, 0, 1, 0, 0);
-    //     }
-    //     this.scrollMatrix.translate(-scrollX, -scrollY);
-    //   }
-    // }
-    // 需要二次变化，那就重新算一个变换后的Bounds
-    if (retrans) {
-      tempBounds = this.dirtyBounds.clone().transformWithMatrix(this.scrollMatrix);
-    }
-
     if (
       this.useDirtyBounds &&
-      !(
-        graphic.isContainer ||
-        graphic.attribute.boundsMode === 'empty' ||
-        isRectIntersect(graphic.AABBBounds, tempBounds ?? this.dirtyBounds, false)
-      )
+      !graphic.isContainer &&
+      graphic.attribute.boundsMode !== 'empty' &&
+      !isRectIntersect(graphic.AABBBounds, this.dirtyBounds, false)
     ) {
-      if (retrans && graphic.parent) {
-        const { scrollX = 0, scrollY = 0 } = graphic.parent.attribute;
-        this.scrollMatrix && this.scrollMatrix.translate(scrollX, scrollY);
-      }
       return;
     }
 
@@ -457,12 +428,6 @@ export class DefaultDrawContribution implements IDrawContribution {
       graphic.isContainer && renderer.draw(graphic, this.currentRenderService, drawContext, params);
     } else {
       renderer.draw(graphic, this.currentRenderService, drawContext, params);
-    }
-
-    // retrans && this.dirtyBounds.copy(tempBounds);
-    if (retrans && graphic.parent) {
-      const { scrollX = 0, scrollY = 0 } = graphic.parent.attribute;
-      this.scrollMatrix && this.scrollMatrix.translate(scrollX, scrollY);
     }
 
     // 添加拦截器

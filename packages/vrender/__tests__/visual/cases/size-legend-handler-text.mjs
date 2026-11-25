@@ -7,7 +7,7 @@ const narrowSelection = [400000000, 500000000];
 const blue = '#0055cc';
 const red = '#b32329';
 
-/** 检查缩小和扩大选区时的双标签布局与值相关样式。 */
+/** 检查缩小、扩大选区和交叉手柄时的标签布局与样式。 */
 export function createSpec(v, stage) {
   const attrs = {
     x: 55,
@@ -43,7 +43,21 @@ export function createSpec(v, stage) {
     }
   });
   endpoint.setTheme({ text: { fontFamily: 'Courier New, monospace' } });
-  const legends = { defaults, dynamic, endpoint };
+  const crossed = new v.SizeContinuousLegend({
+    ...attrs,
+    y: 390,
+    align: 'bottom',
+    value: [min, max],
+    title: { visible: true, text: 'Population (crossed handles)' },
+    handlerText: {
+      visible: true,
+      style: (value, position) => ({
+        ...attrs.handlerText.style,
+        fontSize: (value === max && position === 'start') || (value === min && position === 'end') ? 36 : 12
+      })
+    }
+  });
+  const legends = { defaults, dynamic, endpoint, crossed };
   const events = {};
   for (const [key, legend] of Object.entries(legends)) {
     events[key] = null;
@@ -124,6 +138,15 @@ function assertSeparated(state) {
   }
 }
 
+function assertWithinLayout(label, bounds, description) {
+  const overflow = [bounds.x1 - label.x1, bounds.y1 - label.y1, label.x2 - bounds.x2, label.y2 - bounds.y2].map(distance =>
+    Math.max(0, distance)
+  );
+  if (overflow.some(distance => !(distance <= 1e-6))) {
+    throw assertionError(`${description}应在图例初始布局内，左、上、右、下的超出量为 ${overflow.join(', ')}px`);
+  }
+}
+
 /** 通过真实鼠标覆盖拖手柄、拖标签、拖区间轨道及点击未选中的轨道。 */
 export async function exercise(page) {
   // 先记录两项结果，再统一断言，使旧版基线可报告两条独立的失败。
@@ -186,13 +209,40 @@ export async function exercise(page) {
   if (!end.visible || end.value !== max || endpointAfter.event.value[1] !== max || end.fontSize !== 36) {
     throw assertionError('应拖到最大值并显示 36px 的端点标签');
   }
-  const bounds = endpointBefore.layoutBounds;
-  const overflow = [bounds.x1 - end.x1, bounds.y1 - end.y1, end.x2 - bounds.x2, end.y2 - bounds.y2].map(distance =>
-    Math.max(0, distance)
-  );
-  if (overflow.some(distance => !(distance <= 1e-6))) {
-    throw assertionError(`端点标签应在图例初始布局内，左、上、右、下的超出量为 ${overflow.join(', ')}px`);
+  assertWithinLayout(end, endpointBefore.layoutBounds, '端点标签');
+
+  const crossedBefore = await readLegend(page, 'crossed');
+  if (
+    crossedBefore.start.value !== min ||
+    crossedBefore.end.value !== max ||
+    crossedBefore.start.fontSize !== 12 ||
+    crossedBefore.end.fontSize !== 12
+  ) {
+    throw assertionError('交叉手柄用例应从全选和两个 12px 标签开始');
   }
+  // 先把起始手柄拖入区间，让结束手柄能越过它，最后将起始手柄拖到另一端。
+  await drag(page, crossedBefore.startHandle, crossedBefore.endHandle.x - 35);
+  await page.mouse.up();
+  await drag(page, crossedBefore.endHandle, crossedBefore.startHandle.x - 25);
+  await page.mouse.up();
+  const crossedDuring = await readLegend(page, 'crossed');
+  await drag(page, crossedDuring.startHandle, crossedBefore.endHandle.x + 25);
+  await page.mouse.up();
+  const crossedAfter = await readLegend(page, 'crossed');
+  if (
+    crossedAfter.start.value !== max ||
+    crossedAfter.end.value !== min ||
+    crossedAfter.start.fontSize !== 36 ||
+    crossedAfter.end.fontSize !== 36 ||
+    !crossedAfter.event ||
+    crossedAfter.event.value[0] !== min ||
+    crossedAfter.event.value[1] !== max
+  ) {
+    throw assertionError('两个手柄应交换端点，选区事件仍为全选，两个标签均为 36px');
+  }
+  assertSeparated({ start: crossedAfter.end, end: crossedAfter.start });
+  assertWithinLayout(crossedAfter.start, crossedBefore.layoutBounds, '交叉后的起始标签');
+  assertWithinLayout(crossedAfter.end, crossedBefore.layoutBounds, '交叉后的结束标签');
 }
 
 /** 验证截图对应的真实选区与无重叠的两组标签。 */

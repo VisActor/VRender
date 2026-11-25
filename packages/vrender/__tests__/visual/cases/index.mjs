@@ -37,7 +37,7 @@ export const cases = [
   },
   {
     "id": "size-legend-handler-text",
-    "purpose": "尺寸图例拖动时标签分离、样式更新且端点标签落在初始布局内",
+    "purpose": "尺寸图例缩放选区和交叉手柄时，标签分离、样式更新且端点标签落在初始布局内",
     "file": "./size-legend-handler-text.mjs"
   },
   {

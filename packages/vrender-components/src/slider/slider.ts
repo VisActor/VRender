@@ -655,16 +655,17 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
 
   private _reserveHandlerTextSpace(container: IGroup) {
     const startLeading = this._startHandlerTextIsLeading;
-    if (startLeading === undefined) {
+    const { min, max, inverse, handlerText } = this.attribute;
+    if (startLeading === undefined || min === max) {
       return;
     }
-    const { min, max, inverse } = this.attribute;
     const { startValue, endValue } = this._currentValue;
     const startAtMin = startLeading !== !!inverse;
     const startEndpoint = startAtMin ? min : max;
     const endEndpoint = startAtMin ? max : min;
+    const hasStyleCallback = isFunction(handlerText?.style);
     // Labels already at their endpoints contribute their own bounds.
-    if (startValue === startEndpoint && endValue === endEndpoint) {
+    if (!hasStyleCallback && startValue === startEndpoint && endValue === endEndpoint) {
       return;
     }
     const bounds = new AABBBounds();
@@ -688,6 +689,11 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     }
     if (endValue !== endEndpoint) {
       addEndpointBounds(endEndpoint, 'end', !startLeading);
+    }
+    if (hasStyleCallback) {
+      // Crossing the handles swaps their endpoints and outward alignment, while the callback keeps their roles.
+      addEndpointBounds(endEndpoint, 'start', !startLeading);
+      addEndpointBounds(startEndpoint, 'end', startLeading);
     }
     if (bounds.empty()) {
       return;

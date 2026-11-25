@@ -31,6 +31,11 @@ export const cases = [
     "file": "./label-line-update.mjs"
   },
   {
+    "id": "arc-gradient-stroke",
+    "purpose": "带坐标偏移的等半径圆弧保留锥形渐变描边",
+    "file": "./arc-gradient-stroke.mjs"
+  },
+  {
     "id": "arc-label-line-update",
     "purpose": "移动扇区标签由内向外切换时引线连接当前扇区与文字",
     "file": "./arc-label-line-update.mjs"

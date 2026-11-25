@@ -218,6 +218,8 @@ export class DefaultCanvasArcRender extends BaseRender<IArc> implements IGraphic
       return;
     }
     const { fVisible, sVisible, doFill, doStroke } = data;
+    const offsetX = originX - x;
+    const offsetY = originY - y;
 
     const {
       outerPadding = arcAttribute.outerPadding,
@@ -300,11 +302,11 @@ export class DefaultCanvasArcRender extends BaseRender<IArc> implements IGraphic
       // };
 
       if (!fillStrokeOrder) {
-        this._runFill(arc, context, x, y, arcAttribute, doFill, fVisible, originX, originY, fillCb);
-        this._runStroke(arc, context, x, y, arcAttribute, doStroke, isFullStroke, sVisible, strokeCb);
+        this._runFill(arc, context, offsetX, offsetY, arcAttribute, doFill, fVisible, fillCb);
+        this._runStroke(arc, context, offsetX, offsetY, arcAttribute, doStroke, isFullStroke, sVisible, strokeCb);
       } else {
-        this._runStroke(arc, context, x, y, arcAttribute, doStroke, isFullStroke, sVisible, strokeCb);
-        this._runFill(arc, context, x, y, arcAttribute, doFill, fVisible, originX, originY, fillCb);
+        this._runStroke(arc, context, offsetX, offsetY, arcAttribute, doStroke, isFullStroke, sVisible, strokeCb);
+        this._runFill(arc, context, offsetX, offsetY, arcAttribute, doFill, fVisible, fillCb);
       }
     }
 
@@ -333,7 +335,7 @@ export class DefaultCanvasArcRender extends BaseRender<IArc> implements IGraphic
       if (strokeCb) {
         strokeCb(context, arc.attribute, arcAttribute);
       } else if (sVisible) {
-        context.setStrokeStyle(arc, arc.attribute, x, y, arcAttribute);
+        context.setStrokeStyle(arc, arc.attribute, offsetX, offsetY, arcAttribute);
         context.stroke();
       }
     }
@@ -391,7 +393,7 @@ export class DefaultCanvasArcRender extends BaseRender<IArc> implements IGraphic
             if (strokeCb) {
               // fillCb(context, arc.attribute, arcAttribute);
             } else if (sVisible) {
-              context.setStrokeStyle(arc, arc.attribute, x, y, arcAttribute);
+              context.setStrokeStyle(arc, arc.attribute, offsetX, offsetY, arcAttribute);
               // context.strokeStyle = 'red';
               context.stroke();
             }
@@ -432,13 +434,11 @@ export class DefaultCanvasArcRender extends BaseRender<IArc> implements IGraphic
   private _runFill(
     arc: IArc,
     context: IContext2d,
-    x: number,
-    y: number,
+    offsetX: number,
+    offsetY: number,
     arcAttribute: Required<IArcGraphicAttribute>,
     doFill: boolean,
     fVisible: boolean,
-    originX: number,
-    originY: number,
     fillCb?: (
       ctx: IContext2d,
       markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
@@ -449,7 +449,7 @@ export class DefaultCanvasArcRender extends BaseRender<IArc> implements IGraphic
       if (fillCb) {
         fillCb(context, arc.attribute, arcAttribute);
       } else if (fVisible) {
-        context.setCommonStyle(arc, arc.attribute, originX - x, originY - y, arcAttribute);
+        context.setCommonStyle(arc, arc.attribute, offsetX, offsetY, arcAttribute);
         context.fill();
       }
     }
@@ -458,8 +458,8 @@ export class DefaultCanvasArcRender extends BaseRender<IArc> implements IGraphic
   private _runStroke(
     arc: IArc,
     context: IContext2d,
-    x: number,
-    y: number,
+    offsetX: number,
+    offsetY: number,
     arcAttribute: Required<IArcGraphicAttribute>,
     doStroke: boolean,
     isFullStroke: boolean,
@@ -474,7 +474,7 @@ export class DefaultCanvasArcRender extends BaseRender<IArc> implements IGraphic
       if (strokeCb) {
         strokeCb(context, arc.attribute, arcAttribute);
       } else if (sVisible) {
-        context.setStrokeStyle(arc, arc.attribute, x, y, arcAttribute);
+        context.setStrokeStyle(arc, arc.attribute, offsetX, offsetY, arcAttribute);
         // context.strokeStyle = 'red';
         context.stroke();
       }

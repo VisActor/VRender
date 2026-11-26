@@ -663,26 +663,27 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     const startAtMin = startLeading !== !!inverse;
     const startEndpoint = startAtMin ? min : max;
     const endEndpoint = startAtMin ? max : min;
-    const hasStyleCallback = isFunction(handlerText?.style);
-    // Labels already at their endpoints contribute their own bounds.
-    if (!hasStyleCallback && startValue === startEndpoint && endValue === endEndpoint) {
+    const style = handlerText?.style;
+    const hasStyleCallback = isFunction(style);
+    if (
+      !hasStyleCallback &&
+      (hasCustomHandlerTextPlacement(style) || (startValue === startEndpoint && endValue === endEndpoint))
+    ) {
       return;
     }
     const bounds = new AABBBounds();
     const addEndpointBounds = (value: number, position: 'start' | 'end', leading: boolean) => {
-      const style = this._getHandlerTextStyle(value, position);
-      if (!hasCustomHandlerTextPlacement(style)) {
-        const attributes = this._getHandlerTextAttributes(
-          value,
-          this.calculatePosByValue(value, position),
-          style,
-          leading
-        );
-        const label = graphicCreator.text(attributes);
-        label.attachedThemeGraphic = container;
-        bounds.union(label.AABBBounds);
-        label.release();
-      }
+      const endpointStyle = this._getHandlerTextStyle(value, position);
+      const attributes = this._getHandlerTextAttributes(
+        value,
+        this.calculatePosByValue(value, position),
+        endpointStyle,
+        hasCustomHandlerTextPlacement(endpointStyle) ? undefined : leading
+      );
+      const label = graphicCreator.text(attributes);
+      label.attachedThemeGraphic = container;
+      bounds.union(label.AABBBounds);
+      label.release();
     };
     if (startValue !== startEndpoint) {
       addEndpointBounds(startEndpoint, 'start', startLeading);

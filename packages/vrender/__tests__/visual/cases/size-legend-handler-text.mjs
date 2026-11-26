@@ -6,6 +6,17 @@ const railWidth = 200;
 const narrowSelection = [400000000, 500000000];
 const blue = '#0055cc';
 const red = '#b32329';
+const endpointCases = {
+  endpoint: {
+    x: 55,
+    y: 265,
+    title: 'Population (larger endpoint label)',
+    initialAlign: 'left',
+    endpointAlign: 'left'
+  },
+  centered: { x: 435, y: 45, title: 'Centered labels', initialAlign: 'center', endpointAlign: 'center' },
+  centeredAtMax: { x: 435, y: 155, title: 'Centered at max', initialAlign: 'left', endpointAlign: 'center' }
+};
 
 /** 检查缩小、扩大选区和交叉手柄时的标签布局与样式。 */
 export function createSpec(v, stage) {
@@ -28,21 +39,6 @@ export function createSpec(v, stage) {
       style: value => ({ fill: Number(value) > 200e6 ? blue : red, fontFamily: 'Arial', fontSize: 12 })
     }
   });
-  const endpoint = new v.SizeContinuousLegend({
-    ...attrs,
-    y: 265,
-    align: 'bottom',
-    value: narrowSelection,
-    title: { visible: true, text: 'Population (larger endpoint label)' },
-    handlerText: {
-      visible: true,
-      style: (value, position) => ({
-        fill: attrs.handlerText.style.fill,
-        fontSize: value === max && position === 'end' ? 36 : 12
-      })
-    }
-  });
-  endpoint.setTheme({ text: { fontFamily: 'Courier New, monospace' } });
   const crossed = new v.SizeContinuousLegend({
     ...attrs,
     y: 390,
@@ -57,7 +53,31 @@ export function createSpec(v, stage) {
       })
     }
   });
-  const legends = { defaults, dynamic, endpoint, crossed };
+  const legends = { defaults, dynamic, crossed };
+  for (const [key, { x, y, title, initialAlign, endpointAlign }] of Object.entries(endpointCases)) {
+    const legend = new v.SizeContinuousLegend({
+      ...attrs,
+      x,
+      y,
+      align: 'bottom',
+      value: narrowSelection,
+      title: { visible: true, text: title },
+      handlerText: {
+        visible: true,
+        style: (value, position) => {
+          const atMax = value === max && position === 'end';
+          const textAlign = atMax ? endpointAlign : initialAlign;
+          return {
+            fill: attrs.handlerText.style.fill,
+            fontSize: atMax ? 36 : 12,
+            ...(textAlign === 'center' ? { textAlign } : undefined)
+          };
+        }
+      }
+    });
+    legend.setTheme({ text: { fontFamily: 'Courier New, monospace' } });
+    legends[key] = legend;
+  }
   const events = {};
   for (const [key, legend] of Object.entries(legends)) {
     events[key] = null;
@@ -91,6 +111,8 @@ async function readLegend(page, key) {
         value: Number(attribute.text),
         fill: attribute.fill,
         fontSize: attribute.fontSize,
+        textAlign: attribute.textAlign,
+        dx: attribute.dx ?? 0,
         visible: attribute.visible !== false,
         x1,
         x2,
@@ -193,23 +215,33 @@ export async function exercise(page) {
   await drag(page, reset.endHandle, reset.startHandle.x + 22);
   await page.mouse.up();
 
-  const endpointBefore = await readLegend(page, 'endpoint');
-  if (
-    endpointBefore.start.value !== narrowSelection[0] ||
-    endpointBefore.end.value !== narrowSelection[1] ||
-    endpointBefore.end.fontSize !== 12
-  ) {
-    throw assertionError('尺寸图例应从窄选区和 12px 标签开始');
+  for (const [key, { title, initialAlign, endpointAlign }] of Object.entries(endpointCases)) {
+    const before = await readLegend(page, key);
+    if (
+      before.start.value !== narrowSelection[0] ||
+      before.end.value !== narrowSelection[1] ||
+      before.end.fontSize !== 12 ||
+      before.end.textAlign !== initialAlign
+    ) {
+      throw assertionError(`${title} 应从窄选区和正确对齐的 12px 标签开始`);
+    }
+    await drag(page, before.endHandle, before.endHandle.x + railWidth);
+    await page.mouse.up();
+    const after = await readLegend(page, key);
+    assertSelection(after, before);
+    const { end } = after;
+    if (
+      !end.visible ||
+      end.value !== max ||
+      after.event.value[1] !== max ||
+      end.fontSize !== 36 ||
+      end.textAlign !== endpointAlign ||
+      end.dx !== (endpointAlign === 'center' ? 0 : 2)
+    ) {
+      throw assertionError(`${title} 应拖到最大值并显示按预期定位的 36px 标签`);
+    }
+    assertWithinLayout(end, before.layoutBounds, title);
   }
-  await drag(page, endpointBefore.endHandle, endpointBefore.endHandle.x + railWidth);
-  await page.mouse.up();
-  const endpointAfter = await readLegend(page, 'endpoint');
-  assertSelection(endpointAfter, endpointBefore);
-  const { end } = endpointAfter;
-  if (!end.visible || end.value !== max || endpointAfter.event.value[1] !== max || end.fontSize !== 36) {
-    throw assertionError('应拖到最大值并显示 36px 的端点标签');
-  }
-  assertWithinLayout(end, endpointBefore.layoutBounds, '端点标签');
 
   const crossedBefore = await readLegend(page, 'crossed');
   if (

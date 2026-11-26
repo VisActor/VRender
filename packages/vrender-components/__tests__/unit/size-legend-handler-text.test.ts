@@ -55,14 +55,42 @@ describe('SizeContinuousLegend handler text', () => {
     expect(end.attribute.textAlign).toBe('right');
   });
 
-  it('uses the physical ordering for inverse vertical labels and keeps custom placement', () => {
-    const legend = mountLegend({ inverse: true, layout: 'vertical', align: 'left', railWidth: 8, railHeight: 200 });
+  it.each([
+    ['right', false, 'start'],
+    ['left', true, 'end']
+  ] as const)('keeps %s vertical labels centered on their handles', (align, inverse, textAlign) => {
+    const legend = mountLegend({
+      inverse,
+      layout: 'vertical',
+      align,
+      railWidth: 8,
+      railHeight: 200,
+      handlerText: { style: value => ({ fill: Number(value) > 400e6 ? '#0055cc' : '#b32329' }) }
+    });
     const [start, end] = getHandlerTexts(legend);
-    expect(start.attribute.textBaseline).toBe('top');
-    expect(end.attribute.textBaseline).toBe('bottom');
-    legend.setSelected([300000000, 300000000]);
-    expect(end.globalAABBBounds.y2).toBeLessThan(start.globalAABBBounds.y1);
+    const startHandle = legend.find(node => node.name === SLIDER_ELEMENT_NAME.startHandler, true) as IGraphic;
+    const endHandle = legend.find(node => node.name === SLIDER_ELEMENT_NAME.endHandler, true) as IGraphic;
+    const expectCenteredLabels = () => {
+      for (const [label, handle] of [
+        [start, startHandle],
+        [end, endHandle]
+      ] as const) {
+        expect(label.attribute.textBaseline).toBe('middle');
+        expect(label.attribute.textAlign).toBe(textAlign);
+        const labelBounds = label.globalAABBBounds;
+        const handleBounds = handle.globalAABBBounds;
+        expect((labelBounds.y1 + labelBounds.y2) / 2).toBeCloseTo((handleBounds.y1 + handleBounds.y2) / 2);
+      }
+    };
+    expectCenteredLabels();
 
+    legend.setSelected([300000000, 300000000]);
+    expectCenteredLabels();
+    expect(end.attribute.text).toBe('300000000');
+    expect(end.attribute.fill).toBe('#b32329');
+  });
+
+  it('keeps custom horizontal label placement', () => {
     const custom = mountLegend({ handlerText: { style: { textAlign: 'center', dx: 10 } } });
     const [customStart, customEnd] = getHandlerTexts(custom);
     for (const label of [customStart, customEnd]) {

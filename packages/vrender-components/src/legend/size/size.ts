@@ -114,7 +114,7 @@ export class SizeContinuousLegend extends LegendBase<SizeLegendAttributes> {
         disableTriggerEvent,
         inverse
       },
-      { separateHandlerText: true }
+      { separateHandlerText: layout === 'horizontal' }
     );
     mainContainer.add(slider as unknown as INode);
 

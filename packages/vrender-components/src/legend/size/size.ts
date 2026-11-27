@@ -55,6 +55,7 @@ export class SizeContinuousLegend extends LegendBase<SizeLegendAttributes> {
     const {
       slidable,
       layout,
+      separateHandlerText = layout === 'horizontal',
       align,
       min,
       max,
@@ -114,7 +115,7 @@ export class SizeContinuousLegend extends LegendBase<SizeLegendAttributes> {
         disableTriggerEvent,
         inverse
       },
-      { separateHandlerText: layout === 'horizontal' }
+      { separateHandlerText }
     );
     mainContainer.add(slider as unknown as INode);
 

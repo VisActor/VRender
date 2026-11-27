@@ -18,7 +18,7 @@ function getHandlerTexts(legend: SizeContinuousLegend | ColorContinuousLegend) {
   ] as const;
 }
 
-describe('SizeContinuousLegend handler text', () => {
+describe('Continuous legend handler text', () => {
   let stage: Stage;
   let canvas: HTMLCanvasElement;
 
@@ -99,6 +99,23 @@ describe('SizeContinuousLegend handler text', () => {
     }
   });
 
+  it('lets a horizontal size legend turn off outward alignment', () => {
+    const legend = mountLegend({ separateHandlerText: false });
+    legend.setSelected([300000000, 300000000]);
+    expect(getHandlerTexts(legend).map(label => label.attribute.textAlign)).toEqual(['center', 'center']);
+  });
+
+  it('lets a vertical size legend turn on outward alignment', () => {
+    const legend = mountLegend({
+      separateHandlerText: true,
+      layout: 'vertical',
+      align: 'left',
+      railWidth: 8,
+      railHeight: 200
+    });
+    expect(getHandlerTexts(legend).map(label => label.attribute.textBaseline)).toEqual(['bottom', 'top']);
+  });
+
   it.each([
     ['static style', { fill: '#0055cc' }],
     ['value-dependent color', (value: string | number) => ({ fill: Number(value) > 300e6 ? '#0055cc' : '#b32329' })]
@@ -117,11 +134,41 @@ describe('SizeContinuousLegend handler text', () => {
     expect(start.globalAABBBounds.x1).toBeGreaterThanOrEqual(0);
   });
 
-  it('keeps the color legend default layout', () => {
-    const legend = new ColorContinuousLegend({ ...legendAttributes, colors: ['#fff', '#000'] });
+  it.each([
+    ['horizontal', undefined, ['right', 'left']],
+    ['horizontal', false, ['center', 'center']],
+    ['vertical', undefined, ['middle', 'middle']],
+    ['vertical', true, ['bottom', 'top']]
+  ] as const)('lays out %s color labels with separateHandlerText=%s', (layout, separateHandlerText, expected) => {
+    const vertical = layout === 'vertical';
+    const legend = new ColorContinuousLegend({
+      ...legendAttributes,
+      layout,
+      ...(vertical ? { align: 'right', railWidth: 8, railHeight: 200 } : {}),
+      separateHandlerText,
+      colors: ['#fff', '#000']
+    });
     stage.defaultLayer.add(legend as unknown as IGraphic);
-    for (const label of getHandlerTexts(legend)) {
-      expect(label.attribute.textAlign).toBe('center');
-    }
+    expect(
+      getHandlerTexts(legend).map(label => (vertical ? label.attribute.textBaseline : label.attribute.textAlign))
+    ).toEqual(expected);
+  });
+
+  it('lets a color legend turn on outward alignment and follow crossing handles', () => {
+    const legend = new ColorContinuousLegend({
+      ...legendAttributes,
+      colors: ['#fff', '#000'],
+      separateHandlerText: true
+    });
+    stage.defaultLayer.add(legend as unknown as IGraphic);
+    const [start, end] = getHandlerTexts(legend);
+    expect([start.attribute.textAlign, end.attribute.textAlign]).toEqual(['right', 'left']);
+
+    legend.setSelected([300000000, 300000000]);
+    expect(start.globalAABBBounds.x2).toBeLessThan(end.globalAABBBounds.x1);
+
+    legend.setSelected([500000000, 300000000]);
+    expect([start.attribute.textAlign, end.attribute.textAlign]).toEqual(['left', 'right']);
+    expect(end.globalAABBBounds.x2).toBeLessThan(start.globalAABBBounds.x1);
   });
 });

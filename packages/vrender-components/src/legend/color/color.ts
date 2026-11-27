@@ -75,6 +75,7 @@ export class ColorContinuousLegend extends LegendBase<ColorLegendAttributes> {
       colors,
       slidable,
       layout,
+      separateHandlerText = layout === 'horizontal',
       align,
       min,
       max,
@@ -105,36 +106,39 @@ export class ColorContinuousLegend extends LegendBase<ColorLegendAttributes> {
     this._colorScale = new LinearScale().domain(domain, true).range(colors);
     this._color = this._getTrackColor();
 
-    const slider = new Slider({
-      x: 0,
-      y: 0,
-      range: {
-        draggableTrack: true
+    const slider = new Slider(
+      {
+        x: 0,
+        y: 0,
+        range: {
+          draggableTrack: true
+        },
+        slidable,
+        layout,
+        align,
+        min,
+        max,
+        value,
+        railWidth,
+        railHeight,
+        showHandler,
+        handlerSize,
+        handlerStyle,
+        railStyle,
+        trackStyle: {
+          fill: this._color,
+          ...trackStyle
+        },
+        startText,
+        endText,
+        handlerText,
+        showTooltip,
+        tooltip,
+        disableTriggerEvent,
+        inverse
       },
-      slidable,
-      layout,
-      align,
-      min,
-      max,
-      value,
-      railWidth,
-      railHeight,
-      showHandler,
-      handlerSize,
-      handlerStyle,
-      railStyle,
-      trackStyle: {
-        fill: this._color,
-        ...trackStyle
-      },
-      startText,
-      endText,
-      handlerText,
-      showTooltip,
-      tooltip,
-      disableTriggerEvent,
-      inverse
-    });
+      { separateHandlerText }
+    );
     this._innerView.add(slider as unknown as INode);
     this._slider = slider;
     // 做下位置调整，对齐

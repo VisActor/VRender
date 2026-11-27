@@ -46,6 +46,11 @@ export const cases = [
     "file": "./attribute-update.mjs"
   },
   {
+    "id": "size-legend-handler-text",
+    "purpose": "尺寸图例缩放选区和交叉手柄时，标签分离、样式更新且端点标签落在初始布局内",
+    "file": "./size-legend-handler-text.mjs"
+  },
+  {
     "id": "stage-lifecycle",
     "purpose": "销毁独立 Stage 后画布移除且主 Stage 可继续绘制",
     "file": "./stage-lifecycle.mjs"
